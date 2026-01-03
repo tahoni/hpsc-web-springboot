@@ -39,10 +39,7 @@ public class HpscImageService implements ImageService {
                      csvMapper.readerFor(ImageRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
-            List<ImageRequest> requestList = requestMappingIterator.readAll();
-            return requestList.stream()
-                    .filter(request -> request.getTitle() != null)
-                    .toList();
+            return requestMappingIterator.readAll();
         }
     }
 

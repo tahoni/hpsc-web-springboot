@@ -51,6 +51,37 @@ class HpscImageServiceTest {
     }
 
     @Test
+    void testReadImages_withValidCsvRearrangedColumns_thenCreatesImageRequestList() {
+        // Arrange
+        String csvData = """
+                summary,title,description,category,tags,filePath,fileName
+                Summary 1,Image 1,Description 1,Category 1,Tag1|Tag2,/path/to/image1,image1.png
+                Summary 2,Image 2,Description 2,Category 2,Tag3|Tag4,/path/to/image2,image2.png
+                """;
+
+        // Act
+        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(csvData));
+
+        // Assert
+        assertNotNull(imageRequests);
+        assertThat(imageRequests).hasSize(2);
+
+        ImageRequest firstRequest = imageRequests.getFirst();
+        assertEquals("Image 1", firstRequest.getTitle());
+        assertEquals("Summary 1", firstRequest.getSummary());
+        assertEquals("Description 1", firstRequest.getDescription());
+        assertEquals("Category 1", firstRequest.getCategory());
+        assertEquals("/path/to/image1", firstRequest.getFilePath());
+        assertEquals("image1.png", firstRequest.getFileName());
+        List<String> tags = firstRequest.getTags();
+        assertEquals(2, tags.size());
+        assertTrue(tags.contains("Tag1"));
+
+        ImageRequest secondRequest = imageRequests.get(1);
+        assertEquals("Image 2", secondRequest.getTitle());
+    }
+
+    @Test
     void testReadImages_withEmptyCsv_thenReturnsEmptyList() {
         // Arrange
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
@@ -78,6 +109,25 @@ class HpscImageServiceTest {
         assertNotNull(imageRequests);
         assertEquals(1, imageRequests.size());
         assertEquals("Invalid Row Without Correct Columns", imageRequests.getFirst().getTitle());
+    }
+
+    @Test
+    void testReadImages_withPartialCsvColumns_thenReturnsEmptyList() {
+        // Arrange
+        String partialCsvData = """
+                title,summary,description,category,tags,filePath,fileName
+                Invalid Row Without Correct Columns
+                Another Invalid Row Without Correct Columns
+                """;
+
+        // Act
+        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(partialCsvData));
+
+        // Assert
+        assertNotNull(imageRequests);
+        assertEquals(2, imageRequests.size());
+        assertEquals("Invalid Row Without Correct Columns", imageRequests.get(0).getTitle());
+        assertEquals("Another Invalid Row Without Correct Columns", imageRequests.get(1).getTitle());
     }
 
     @Test

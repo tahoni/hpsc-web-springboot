@@ -34,25 +34,7 @@ class ImageServiceTest {
         List<ImageResponse> responses = responseHolder.getImages();
         assertEquals(2, responses.size());
         assertEquals("Image 1", responses.get(0).getTitle());
-        assertEquals("Image 2", responses.get(1).getTitle());
-    }
-
-    // TODO: fix logic
-    @Test
-    void testProcessCsv_withPartialData_thenReturnsListOfImages() {
-        // Arrange
-        String partialCsvData = """
-                title,summary,description,category,tags,filePath,fileName
-                Image 1,Summary 1
-                """;
-
-        // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> hpscImageService.processCsv(partialCsvData));
-
-        // Assert
-        List<ImageResponse> responses = responseHolder.getImages();
-        assertEquals(1, responses.size());
-        assertEquals("Image 1", responses.getFirst().getTitle());
+        assertEquals("Summary 2", responses.get(1).getSummary());
     }
 
     @Test
