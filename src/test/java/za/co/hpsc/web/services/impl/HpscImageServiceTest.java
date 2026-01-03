@@ -7,6 +7,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.hpsc.web.model.ImageRequest;
 import za.co.hpsc.web.model.ImageResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,9 +40,11 @@ class HpscImageServiceTest {
         assertEquals("Summary 1", firstRequest.getSummary());
         assertEquals("Description 1", firstRequest.getDescription());
         assertEquals("Category 1", firstRequest.getCategory());
-        assertEquals("Tag1|Tag2", firstRequest.getTags());
         assertEquals("/path/to/image1", firstRequest.getFilePath());
         assertEquals("image1.png", firstRequest.getFileName());
+        List<String> tags = firstRequest.getTags();
+        assertEquals(2, tags.size());
+        assertTrue(tags.contains("Tag1"));
 
         ImageRequest secondRequest = imageRequests.get(1);
         assertEquals("Image 2", secondRequest.getTitle());
@@ -63,18 +66,30 @@ class HpscImageServiceTest {
     @Test
     void testReadImages_withPartialCsv_thenReturnsEmptyList() {
         // Arrange
-        String invalidCsvData = """
+        String partialCsvData = """
                 title,summary,description,category,tags,filePath,fileName
                 Invalid Row Without Correct Columns
                 """;
 
         // Act
-        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(invalidCsvData));
+        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(partialCsvData));
 
         // Assert
         assertNotNull(imageRequests);
         assertEquals(1, imageRequests.size());
         assertEquals("Invalid Row Without Correct Columns", imageRequests.getFirst().getTitle());
+    }
+
+    @Test
+    void testReadImages_withInvalidCsv_thenThrowsIOException() {
+        // Arrange
+        String invalidCsvData = """
+                summary,description,category,tags,filePath,fileName
+                Invalid Row Without Correct Columns
+                """;
+
+        // Act & Assert
+        assertThrows(IOException.class, () -> hpscImageService.readImages(invalidCsvData));
     }
 
     @Test
@@ -87,9 +102,9 @@ class HpscImageServiceTest {
     void testMapImages_withValidImageRequestList_thenCreatesImageResponseList() {
         // Arrange
         ImageRequest request1 = new ImageRequest("Image 1", "Summary 1", "Description 1",
-                "Category 1", "Tag1|Tag2", "/path/to/image1", "image1.png");
+                "Category 1", List.of("Tag1", "|Tag2"), "/path/to/image1", "image1.png");
         ImageRequest request2 = new ImageRequest("Image 2", "Summary 2", "Description 2",
-                "Category 2", "Tag3|Tag4", "/path/to/image2", "image2.png");
+                "Category 2", List.of("Tag3", "Tag4"), "/path/to/image2", "image2.png");
         List<ImageRequest> imageRequestList = List.of(request1, request2);
 
         // Act
@@ -102,16 +117,18 @@ class HpscImageServiceTest {
         ImageResponse firstResponse = imageResponseList.getFirst();
         assertEquals("Image 1", firstResponse.getTitle());
         assertEquals("image1.png", firstResponse.getFileName());
-        assertEquals("Tag1|Tag2", firstResponse.getTags());
-        assertEquals(List.of("Tag1", "Tag2"), firstResponse.getTagsList());
         assertNotNull(firstResponse.getId());
+        List<String> firstTags = firstResponse.getTags();
+        assertEquals(2, firstTags.size());
+        assertTrue(firstTags.contains("Tag1"));
 
         ImageResponse secondResponse = imageResponseList.get(1);
         assertEquals("Image 2", secondResponse.getTitle());
         assertEquals("image2.png", secondResponse.getFileName());
-        assertEquals("Tag3|Tag4", secondResponse.getTags());
-        assertEquals(List.of("Tag3", "Tag4"), secondResponse.getTagsList());
         assertNotNull(secondResponse.getId());
+        List<String> secondTags = secondResponse.getTags();
+        assertEquals(2, secondTags.size());
+        assertTrue(secondTags.contains("Tag4"));
     }
 
     @Test

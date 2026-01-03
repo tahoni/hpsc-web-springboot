@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,13 +15,13 @@ public class ImageRequest {
     private String description;
 
     private String category;
-    private String tags;
+    private List<String> tags;
 
     private String filePath;
     private String fileName;
 
     public ImageRequest(String title, String summary, String description, String category,
-                        String tags, String filePath, String fileName) {
+                        List<String> tags, String filePath, String fileName) {
         this.title = title;
         this.summary = summary;
         this.description = description;

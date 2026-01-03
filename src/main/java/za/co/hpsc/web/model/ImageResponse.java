@@ -18,31 +18,25 @@ public class ImageResponse extends ImageRequest {
     @Getter
     private String mimeType;
 
-    @Getter
-    List<String> tagsList;
-
-    public ImageResponse(String title, String summary, String description, String category, String tags,
+    public ImageResponse(String title, String summary, String description, String category, List<String> tags,
                          String filePath, String fileName, UUID id, String mimeType) {
         super(title, summary, description, category, tags, filePath, fileName);
         this.id = ((id != null) ? id : UUID.randomUUID());
         setMimeType(mimeType);
-        this.setTagsList(null);
     }
 
-    public ImageResponse(String title, String summary, String description, String category, String tags,
+    public ImageResponse(String title, String summary, String description, String category, List<String> tags,
                          String filePath, String fileName) {
         super(title, summary, description, category, tags, filePath, fileName);
         this.id = UUID.randomUUID();
-        setMimeType(null);
-        setTagsList(null);
+        setMimeType();
     }
 
     public ImageResponse(ImageRequest imageRequest) {
         this(imageRequest.getTitle(), imageRequest.getSummary(), imageRequest.getDescription(),
                 imageRequest.getCategory(), imageRequest.getTags(), imageRequest.getFilePath(),
                 imageRequest.getFileName());
-        setMimeType(null);
-        setTagsList(null);
+        setMimeType();
     }
 
     public void setMimeType(String mimeType) {
@@ -56,13 +50,7 @@ public class ImageResponse extends ImageRequest {
         }
     }
 
-    public void setTagsList(List<String> tagsList) {
-        if ((tagsList != null) && (!tagsList.isEmpty())) {
-            this.tagsList = tagsList;
-        } else {
-            if (this.getTags() != null) {
-                this.tagsList = List.of(this.getTags().split("\\|"));
-            }
-        }
+    public void setMimeType() {
+        setMimeType(null);
     }
 }

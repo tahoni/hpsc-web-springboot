@@ -27,14 +27,22 @@ public class HpscImageService implements ImageService {
 
     protected List<ImageRequest> readImages(String csvData) throws IOException {
         CsvMapper csvMapper = new CsvMapper();
-        CsvSchema csvSchema = csvMapper.schemaFor(ImageRequestForCsv.class).withHeader();
+        CsvSchema csvSchema = csvMapper
+                .schemaFor(ImageRequestForCsv.class)
+                .withArrayElementSeparator("|")
+                .withStrictHeaders(true)
+                .withColumnReordering(true)
+                .withHeader();
         csvMapper.addMixIn(ImageRequest.class, ImageRequestForCsv.class);
 
         try (MappingIterator<ImageRequest> requestMappingIterator =
                      csvMapper.readerFor(ImageRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
-            return requestMappingIterator.readAll();
+            List<ImageRequest> requestList = requestMappingIterator.readAll();
+            return requestList.stream()
+                    .filter(request -> request.getTitle() != null)
+                    .toList();
         }
     }
 

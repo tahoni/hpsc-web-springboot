@@ -7,6 +7,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.hpsc.web.model.ImageResponse;
 import za.co.hpsc.web.model.ImageResponseHolder;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +19,7 @@ class ImageServiceTest {
     private HpscImageService hpscImageService = new HpscImageService();
 
     @Test
-    void testProcessCsv_withValidData_thenReturnsHolderWithList() {
+    void testProcessCsv_withValidData_thenReturnsListOfImages() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -36,39 +37,38 @@ class ImageServiceTest {
         assertEquals("Image 2", responses.get(1).getTitle());
     }
 
+    // TODO: fix logic
     @Test
-    void testProcessCsv_withPartialData_thenReturnsHolderWithEmptyList() {
+    void testProcessCsv_withPartialData_thenReturnsListOfImages() {
         // Arrange
-        String invalidCsvData = """
+        String partialCsvData = """
                 title,summary,description,category,tags,filePath,fileName
                 Image 1,Summary 1
                 """;
 
         // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> hpscImageService.processCsv(invalidCsvData));
+        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> hpscImageService.processCsv(partialCsvData));
 
+        // Assert
         List<ImageResponse> responses = responseHolder.getImages();
         assertEquals(1, responses.size());
         assertEquals("Image 1", responses.getFirst().getTitle());
     }
 
     @Test
-    void testProcessCsv_withInvalidData_thenReturnsHolderWithEmptyList() {
+    void testProcessCsv_withInvalidData_thenThrowsIOException() {
         // Arrange
         String invalidCsvData = """
                 summary,description,category,tags,filePath,fileName
                 Summary 1
                 """;
 
-        // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> hpscImageService.processCsv(invalidCsvData));
-
-        List<ImageResponse> responses = responseHolder.getImages();
-        assertEquals(1, responses.size());
+        // Act & Assert
+        assertThrows(IOException.class, () -> hpscImageService.processCsv(invalidCsvData));
     }
 
     @Test
-    void testProcessCsv_withEmptyData_thenReturnsHolderWithEmptyList() {
+    void testProcessCsv_withEmptyData_thenReturnsEmptyList() {
         // Arrange
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
@@ -77,7 +77,7 @@ class ImageServiceTest {
 
         // Assert
         List<ImageResponse> responses = responseHolder.getImages();
-        assertEquals(0, responses.size());
+        assertTrue(responses.isEmpty());
     }
 
     @Test
