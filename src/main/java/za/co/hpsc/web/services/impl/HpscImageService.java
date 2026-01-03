@@ -30,7 +30,6 @@ public class HpscImageService implements ImageService {
         CsvSchema csvSchema = csvMapper
                 .schemaFor(ImageRequestForCsv.class)
                 .withArrayElementSeparator("|")
-                .withStrictHeaders(true)
                 .withColumnReordering(true)
                 .withHeader();
         csvMapper.addMixIn(ImageRequest.class, ImageRequestForCsv.class);

@@ -18,7 +18,7 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping("/processCsv")
+    @PostMapping(value = "/processCsv", produces = "application/json")
     ImageResponseHolder processCsv(@RequestBody String csvData) throws IOException {
         return imageService.processCsv(csvData);
     }
