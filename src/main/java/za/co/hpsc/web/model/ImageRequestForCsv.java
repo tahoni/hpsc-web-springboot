@@ -1,7 +1,11 @@
 package za.co.hpsc.web.model;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @JsonPropertyOrder({"title", "summary", "description", "category", "tags", "filePath", "fileName"})
 public abstract class ImageRequestForCsv {
     private String title;

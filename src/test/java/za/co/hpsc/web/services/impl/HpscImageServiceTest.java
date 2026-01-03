@@ -80,7 +80,7 @@ class HpscImageServiceTest {
     @Test
     void testReadImages_withNullCsv_thenThrowsIllegalArgumentException() {
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> hpscImageService.readImages(null));
+        assertThrows(IllegalArgumentException.class, () -> hpscImageService.readImages(null));
     }
 
     @Test
@@ -103,12 +103,14 @@ class HpscImageServiceTest {
         assertEquals("Image 1", firstResponse.getTitle());
         assertEquals("image1.png", firstResponse.getFileName());
         assertEquals("Tag1|Tag2", firstResponse.getTags());
+        assertEquals(List.of("Tag1", "Tag2"), firstResponse.getTagsList());
         assertNotNull(firstResponse.getId());
 
         ImageResponse secondResponse = imageResponseList.get(1);
         assertEquals("Image 2", secondResponse.getTitle());
         assertEquals("image2.png", secondResponse.getFileName());
         assertEquals("Tag3|Tag4", secondResponse.getTags());
+        assertEquals(List.of("Tag3", "Tag4"), secondResponse.getTagsList());
         assertNotNull(secondResponse.getId());
     }
 
