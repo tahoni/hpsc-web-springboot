@@ -1,5 +1,6 @@
 package za.co.hpsc.web.config;
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +53,16 @@ public class ApiControllerAdvice {
         body.put("error", "Internal Server Error");
 
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MismatchedInputException.class)
+    public ResponseEntity<Object> handleMismatchedInputException(RuntimeException ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        body.put("error", "Bad Request");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     /**

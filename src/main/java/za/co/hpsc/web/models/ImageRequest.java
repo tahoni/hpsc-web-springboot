@@ -1,9 +1,10 @@
-package za.co.hpsc.web.model;
+package za.co.hpsc.web.models;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,17 +23,32 @@ import java.util.List;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 public class ImageRequest {
+    @NotNull
     private String title;
     private String summary;
     private String description;
 
     private String category;
-    private List<String> tags;
+    private List<String> tags = new ArrayList<>();
 
+    @NotNull
     private String filePath;
+    @NotNull
     private String fileName;
+
+    /**
+     * Constructs a new {@code ImageRequest} object with the specified title, file path, and file name.
+     *
+     * @param title    the title of the image.
+     * @param filePath the file path where the image is stored.
+     * @param fileName the name of the file containing the image.
+     */
+    public ImageRequest(String title, String filePath, String fileName) {
+        this.title = title;
+        this.filePath = filePath;
+        this.fileName = fileName;
+    }
 
     /**
      * Constructs a new {@code ImageRequest} object with the specified details.

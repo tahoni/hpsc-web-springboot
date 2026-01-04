@@ -5,10 +5,10 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.model.ImageRequest;
-import za.co.hpsc.web.model.ImageRequestForCsv;
-import za.co.hpsc.web.model.ImageResponse;
-import za.co.hpsc.web.model.ImageResponseHolder;
+import za.co.hpsc.web.models.ImageRequest;
+import za.co.hpsc.web.models.ImageRequestForCsv;
+import za.co.hpsc.web.models.ImageResponse;
+import za.co.hpsc.web.models.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
 import java.io.IOException;

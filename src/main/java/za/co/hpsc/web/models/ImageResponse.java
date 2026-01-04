@@ -1,7 +1,6 @@
-package za.co.hpsc.web.model;
+package za.co.hpsc.web.models;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
@@ -25,13 +24,18 @@ import java.util.UUID;
  * - Compatibility with {@code ImageRequest} objects for seamless conversions between
  * request and response representations of an image.
  */
-@NoArgsConstructor
 public class ImageResponse extends ImageRequest {
     @Getter
     @Setter
     private UUID id = UUID.randomUUID();
     @Getter
     private String mimeType;
+
+    public ImageResponse(String title, String filePath, String fileName, UUID id, String mimeType) {
+        super(title, filePath, fileName);
+        this.id = ((id != null) ? id : UUID.randomUUID());
+        setMimeType(mimeType);
+    }
 
     /**
      * Constructs a new {@code ImageResponse} object with the specified details,

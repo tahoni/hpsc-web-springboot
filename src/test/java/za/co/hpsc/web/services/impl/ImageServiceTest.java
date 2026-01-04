@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import za.co.hpsc.web.model.ImageResponse;
-import za.co.hpsc.web.model.ImageResponseHolder;
+import za.co.hpsc.web.models.ImageResponse;
+import za.co.hpsc.web.models.ImageResponseHolder;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,7 +38,7 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withInvalidData_thenThrowsIOException() {
+    void testProcessCsv_withInvalidData_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
                 summary,description,category,tags,filePath,fileName
@@ -63,7 +63,7 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withNullData_thenThrowsIllegalArgumentException() {
+    void testProcessCsv_withNullData_thenThrowsException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> hpscImageService.processCsv(null));
     }

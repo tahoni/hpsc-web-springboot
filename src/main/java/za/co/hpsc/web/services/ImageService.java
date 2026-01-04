@@ -1,7 +1,7 @@
 package za.co.hpsc.web.services;
 
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.model.ImageResponseHolder;
+import za.co.hpsc.web.models.ImageResponseHolder;
 
 import java.io.IOException;
 

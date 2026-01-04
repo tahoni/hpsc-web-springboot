@@ -1,11 +1,12 @@
 package za.co.hpsc.web.services.impl;
 
+import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import za.co.hpsc.web.model.ImageRequest;
-import za.co.hpsc.web.model.ImageResponse;
+import za.co.hpsc.web.models.ImageRequest;
+import za.co.hpsc.web.models.ImageResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +30,8 @@ class HpscImageServiceTest {
                 """;
 
         // Act
-        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(csvData));
+        List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
+                hpscImageService.readImages(csvData));
 
         // Assert
         assertNotNull(imageRequests);
@@ -87,7 +89,8 @@ class HpscImageServiceTest {
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
         // Act
-        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(emptyCsvData));
+        List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
+                hpscImageService.readImages(emptyCsvData));
 
         // Assert
         assertNotNull(imageRequests);
@@ -95,43 +98,20 @@ class HpscImageServiceTest {
     }
 
     @Test
-    void testReadImages_withPartialCsv_thenReturnsEmptyList() {
+    void testReadImages_withMissingCsvColumns_thenThrowsException() {
         // Arrange
-        String partialCsvData = """
-                title,summary,description,category,tags,filePath,fileName
-                Invalid Row Without Correct Columns
+        String csvData = """
+                title,filePath,fileName
+                Image 1,/path/to/image1,image1.png
+                Image 2,/path/to/image2,image2.png
                 """;
 
-        // Act
-        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(partialCsvData));
-
-        // Assert
-        assertNotNull(imageRequests);
-        assertEquals(1, imageRequests.size());
-        assertEquals("Invalid Row Without Correct Columns", imageRequests.getFirst().getTitle());
+        // Act & Assert
+        assertThrows(CsvReadException.class, () -> hpscImageService.readImages(csvData));
     }
 
     @Test
-    void testReadImages_withPartialCsvColumns_thenReturnsEmptyList() {
-        // Arrange
-        String partialCsvData = """
-                title,summary,description,category,tags,filePath,fileName
-                Invalid Row Without Correct Columns
-                Another Invalid Row Without Correct Columns
-                """;
-
-        // Act
-        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(partialCsvData));
-
-        // Assert
-        assertNotNull(imageRequests);
-        assertEquals(2, imageRequests.size());
-        assertEquals("Invalid Row Without Correct Columns", imageRequests.get(0).getTitle());
-        assertEquals("Another Invalid Row Without Correct Columns", imageRequests.get(1).getTitle());
-    }
-
-    @Test
-    void testReadImages_withInvalidCsv_thenThrowsIOException() {
+    void testReadImages_withInvalidCsv_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
                 summary,description,category,tags,filePath,fileName
@@ -143,7 +123,7 @@ class HpscImageServiceTest {
     }
 
     @Test
-    void testReadImages_withNullCsv_thenThrowsIllegalArgumentException() {
+    void testReadImages_withNullCsv_thenThrowsException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> hpscImageService.readImages(null));
     }
