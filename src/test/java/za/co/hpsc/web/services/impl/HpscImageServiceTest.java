@@ -1,14 +1,13 @@
 package za.co.hpsc.web.services.impl;
 
-import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageRequest;
 import za.co.hpsc.web.models.ImageResponse;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,7 +107,7 @@ class HpscImageServiceTest {
                 """;
 
         // Act & Assert
-        assertThrows(CsvReadException.class, () ->
+        assertThrows(ValidationException.class, () ->
                 hpscImageService.readImages(csvData));
     }
 
@@ -121,14 +120,14 @@ class HpscImageServiceTest {
                 """;
 
         // Act & Assert
-        assertThrows(IOException.class, () ->
+        assertThrows(ValidationException.class, () ->
                 hpscImageService.readImages(invalidCsvData));
     }
 
     @Test
     void testReadImages_withNullCsv_thenThrowsException() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(ValidationException.class, () ->
                 hpscImageService.readImages(null));
     }
 
@@ -168,12 +167,9 @@ class HpscImageServiceTest {
 
     @Test
     void testMapImages_withEmptyImageRequestList_thenReturnsEmptyList() {
-        // Arrange
-        List<ImageRequest> emptyRequestList = List.of();
-
         // Act
         List<ImageResponse> imageResponseList =
-                hpscImageService.mapImages(emptyRequestList);
+                hpscImageService.mapImages(List.of());
 
         // Assert
         assertNotNull(imageResponseList);
@@ -181,16 +177,9 @@ class HpscImageServiceTest {
     }
 
     @Test
-    void testMapImages_withNullImageRequestList_thenReturnsEmptyList() {
-        // Arrange
-        List<ImageRequest> emptyRequestList = List.of();
-
-        // Act
-        List<ImageResponse> imageResponseList =
-                hpscImageService.mapImages(emptyRequestList);
-
-        // Assert
-        assertNotNull(imageResponseList);
-        assertTrue(imageResponseList.isEmpty());
+    void testMapImages_withNullImageRequestList_thenThrowsException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () ->
+                hpscImageService.mapImages(null));
     }
 }

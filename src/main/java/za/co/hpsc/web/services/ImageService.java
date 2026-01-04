@@ -1,9 +1,9 @@
 package za.co.hpsc.web.services;
 
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.exceptions.FatalException;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageResponseHolder;
-
-import java.io.IOException;
 
 /**
  * Provides functionality for processing image-related data from various sources.
@@ -25,8 +25,9 @@ public interface ImageService {
      *                title, summary, description, category, tags, filePath, and fileName.
      * @return an {@code ImageResponseHolder} containing a list of image responses
      * parsed from the CSV data.
-     * @throws IOException if there is an error reading or parsing the provided CSV data.
-     *                     This may occur if the CSV data is malformed or incomplete.
+     * @throws ValidationException if the CSV data contains invalid or missing values.
+     * @throws FatalException      if there is an error processing the CSV data.
      */
-    ImageResponseHolder processCsv(String csvData) throws IOException;
+    ImageResponseHolder processCsv(String csvData)
+            throws ValidationException, FatalException;
 }

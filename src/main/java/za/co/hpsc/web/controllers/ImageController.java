@@ -4,11 +4,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
-import java.io.IOException;
-
+/**
+ * Controller responsible for managing and processing image-related requests.
+ * Provides endpoints for handling operations such as parsing and processing CSV
+ * data containing image metadata.
+ * <p>
+ * This class is annotated with {@code @Controller} and {@code @RequestMapping}
+ * to designate it as a Spring MVC controller and map requests with the "/image" base URI.
+ * </p>
+ */
 @Controller
 @RequestMapping("/image")
 public class ImageController {
@@ -27,10 +35,15 @@ public class ImageController {
      *                title, summary, description, category, tags, filePath, and fileName.
      * @return an {@code ImageResponseHolder} containing a list of image responses
      * parsed from the CSV data.
-     * @throws IOException if there is an error reading or parsing the provided CSV data.
+     * @throws ValidationException if the CSV data contains invalid or missing values.
      */
     @PostMapping(value = "/processCsv", produces = "application/json")
-    ImageResponseHolder processCsv(@RequestBody String csvData) throws IOException {
-        return imageService.processCsv(csvData);
+    ImageResponseHolder processCsv(@RequestBody String csvData)
+            throws ValidationException {
+        try {
+            return imageService.processCsv(csvData);
+        } catch (za.co.hpsc.web.exceptions.FatalException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

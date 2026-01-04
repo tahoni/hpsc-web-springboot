@@ -6,8 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class HpscWebApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @SuppressWarnings("EmptyMethod")
+    @Test
+    void contextLoads() {
+    }
 
 }
