@@ -55,8 +55,19 @@ public class ApiControllerAdvice {
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * Handles exceptions of type {@code MismatchedInputException} that occur during
+     * the processing of requests. Constructs a response entity containing an error
+     * message, a timestamp, and details about the mismatched input, providing feedback
+     * to the client about the bad request.
+     *
+     * @param ex      the {@code MismatchedInputException}, that was thrown
+     * @param request the current web request context
+     * @return a {@code ResponseEntity} containing a structured error response
+     * with HTTP status 400 (Bad Request)
+     */
     @ExceptionHandler(MismatchedInputException.class)
-    public ResponseEntity<Object> handleMismatchedInputException(RuntimeException ex, WebRequest request) {
+    public ResponseEntity<Object> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
@@ -66,7 +77,8 @@ public class ApiControllerAdvice {
     }
 
     /**
-     * Handles exceptions of type {@code IllegalArgumentException} that occur during the processing of requests.
+     * Handles exceptions of type {@code IllegalArgumentException} that occur during
+     * the processing of requests.
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to notify the client of a bad request.
      *

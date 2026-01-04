@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="src" pattern="file[web]:src/main/java//*||file[web]:src/main/resources//*||file[web]:||file[web]:LICENSE||file[web]:README.md" />
+</component>

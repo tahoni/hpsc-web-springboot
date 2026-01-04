@@ -18,6 +18,17 @@ public class ImageController {
         this.imageService = imageService;
     }
 
+    /**
+     * Handles the processing of CSV data containing image-related details and returns a
+     * structured response encapsulated in an {@code ImageResponseHolder}.
+     *
+     * @param csvData the CSV data containing image information. Each line represents
+     *                an image and should follow the required format with columns:
+     *                title, summary, description, category, tags, filePath, and fileName.
+     * @return an {@code ImageResponseHolder} containing a list of image responses
+     * parsed from the CSV data.
+     * @throws IOException if there is an error reading or parsing the provided CSV data.
+     */
     @PostMapping(value = "/processCsv", produces = "application/json")
     ImageResponseHolder processCsv(@RequestBody String csvData) throws IOException {
         return imageService.processCsv(csvData);

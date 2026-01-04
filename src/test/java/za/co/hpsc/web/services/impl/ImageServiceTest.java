@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImageServiceTest {
 
     @InjectMocks
-    private HpscImageService hpscImageService = new HpscImageService();
+    private final HpscImageService hpscImageService = new HpscImageService();
 
     @Test
     void testProcessCsv_withValidData_thenReturnsListOfImages() {
@@ -28,7 +28,8 @@ class ImageServiceTest {
                 """;
 
         // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> hpscImageService.processCsv(csvData));
+        ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
+                hpscImageService.processCsv(csvData));
 
         // Assert
         List<ImageResponse> responses = responseHolder.getImages();
@@ -46,7 +47,8 @@ class ImageServiceTest {
                 """;
 
         // Act & Assert
-        assertThrows(IOException.class, () -> hpscImageService.processCsv(invalidCsvData));
+        assertThrows(IOException.class, () ->
+                hpscImageService.processCsv(invalidCsvData));
     }
 
     @Test
@@ -55,7 +57,8 @@ class ImageServiceTest {
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
         // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> hpscImageService.processCsv(emptyCsvData));
+        ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
+                hpscImageService.processCsv(emptyCsvData));
 
         // Assert
         List<ImageResponse> responses = responseHolder.getImages();
@@ -65,6 +68,7 @@ class ImageServiceTest {
     @Test
     void testProcessCsv_withNullData_thenThrowsException() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> hpscImageService.processCsv(null));
+        assertThrows(IllegalArgumentException.class, () ->
+                hpscImageService.processCsv(null));
     }
 }

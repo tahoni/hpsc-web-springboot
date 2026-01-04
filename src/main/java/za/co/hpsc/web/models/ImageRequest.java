@@ -38,7 +38,8 @@ public class ImageRequest {
     private String fileName;
 
     /**
-     * Constructs a new {@code ImageRequest} object with the specified title, file path, and file name.
+     * Constructs a new {@code ImageRequest} object with the specified title,
+     * file path, and file name.
      *
      * @param title    the title of the image.
      * @param filePath the file path where the image is stored.

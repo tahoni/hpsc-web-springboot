@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Represents a response for an image resource, extending the {@code ImageRequest} to include
- * additional metadata such as a unique identifier and MIME type.
+ * Represents a response for an image resource, extending the {@code ImageRequest}
+ * to include additional metadata such as a unique identifier and MIME type.
  * <p>
  * The {@code ImageResponse} class is designed to encapsulate details of an image resource
  * along with a generated or provided UUID and its inferred or explicitly provided MIME type.
@@ -29,8 +29,19 @@ public class ImageResponse extends ImageRequest {
     @Setter
     private UUID id = UUID.randomUUID();
     @Getter
-    private String mimeType;
+    private String mimeType = "";
 
+    /**
+     * Constructs a new {@code ImageResponse} object with specified details.
+     * This constructor initializes the title, file path, file name, and MIME type fields.
+     * It also assigns a unique identifier if none is provided.
+     *
+     * @param title    the title of the image.
+     * @param filePath the file path where the image is stored.
+     * @param fileName the name of the file containing the image.
+     * @param id       a unique identifier for the image response; if {@code null}, a new UUID will be generated.
+     * @param mimeType the MIME type of the image; if {@code null} or blank, it will be inferred from the file name.
+     */
     public ImageResponse(String title, String filePath, String fileName, UUID id, String mimeType) {
         super(title, filePath, fileName);
         this.id = ((id != null) ? id : UUID.randomUUID());
@@ -57,8 +68,8 @@ public class ImageResponse extends ImageRequest {
      * @param mimeType    the MIME type of the image; if {@code null} or blank,
      *                    it will be inferred from the file name.
      */
-    public ImageResponse(String title, String summary, String description, String category, List<String> tags,
-                         String filePath, String fileName, UUID id, String mimeType) {
+    public ImageResponse(String title, String summary, String description, String category,
+                         List<String> tags, String filePath, String fileName, UUID id, String mimeType) {
         super(title, summary, description, category, tags, filePath, fileName);
         this.id = ((id != null) ? id : UUID.randomUUID());
         setMimeType(mimeType);
@@ -78,8 +89,8 @@ public class ImageResponse extends ImageRequest {
      * @param filePath    the file path where the image is stored.
      * @param fileName    the name of the file containing the image.
      */
-    public ImageResponse(String title, String summary, String description, String category, List<String> tags,
-                         String filePath, String fileName) {
+    public ImageResponse(String title, String summary, String description, String category,
+                         List<String> tags, String filePath, String fileName) {
         super(title, summary, description, category, tags, filePath, fileName);
         this.id = UUID.randomUUID();
         setMimeType();
@@ -116,8 +127,10 @@ public class ImageResponse extends ImageRequest {
             this.mimeType = mimeType;
         } else {
             if (this.getFileName() != null) {
-                Optional<MediaType> optionalMediaType = MediaTypeFactory.getMediaType(this.getFileName());
-                optionalMediaType.ifPresent(mediaType -> this.mimeType = mediaType.toString());
+                Optional<MediaType> optionalMediaType =
+                        MediaTypeFactory.getMediaType(this.getFileName());
+                optionalMediaType.ifPresent(mediaType ->
+                        this.mimeType = mediaType.toString());
             }
         }
     }

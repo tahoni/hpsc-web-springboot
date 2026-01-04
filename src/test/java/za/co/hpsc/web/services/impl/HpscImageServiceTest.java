@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HpscImageServiceTest {
 
     @InjectMocks
-    private HpscImageService hpscImageService = new HpscImageService();
+    private final HpscImageService hpscImageService = new HpscImageService();
 
     @Test
     void testReadImages_withValidCsv_thenCreatesImageRequestList() {
@@ -62,7 +62,8 @@ class HpscImageServiceTest {
                 """;
 
         // Act
-        List<ImageRequest> imageRequests = assertDoesNotThrow(() -> hpscImageService.readImages(csvData));
+        List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
+                hpscImageService.readImages(csvData));
 
         // Assert
         assertNotNull(imageRequests);
@@ -107,7 +108,8 @@ class HpscImageServiceTest {
                 """;
 
         // Act & Assert
-        assertThrows(CsvReadException.class, () -> hpscImageService.readImages(csvData));
+        assertThrows(CsvReadException.class, () ->
+                hpscImageService.readImages(csvData));
     }
 
     @Test
@@ -119,13 +121,15 @@ class HpscImageServiceTest {
                 """;
 
         // Act & Assert
-        assertThrows(IOException.class, () -> hpscImageService.readImages(invalidCsvData));
+        assertThrows(IOException.class, () ->
+                hpscImageService.readImages(invalidCsvData));
     }
 
     @Test
     void testReadImages_withNullCsv_thenThrowsException() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> hpscImageService.readImages(null));
+        assertThrows(IllegalArgumentException.class, () ->
+                hpscImageService.readImages(null));
     }
 
     @Test
@@ -138,7 +142,8 @@ class HpscImageServiceTest {
         List<ImageRequest> imageRequestList = List.of(request1, request2);
 
         // Act
-        List<ImageResponse> imageResponseList = hpscImageService.mapImages(imageRequestList);
+        List<ImageResponse> imageResponseList =
+                hpscImageService.mapImages(imageRequestList);
 
         // Assert
         assertNotNull(imageResponseList);
@@ -167,7 +172,8 @@ class HpscImageServiceTest {
         List<ImageRequest> emptyRequestList = List.of();
 
         // Act
-        List<ImageResponse> imageResponseList = hpscImageService.mapImages(emptyRequestList);
+        List<ImageResponse> imageResponseList =
+                hpscImageService.mapImages(emptyRequestList);
 
         // Assert
         assertNotNull(imageResponseList);
@@ -180,7 +186,8 @@ class HpscImageServiceTest {
         List<ImageRequest> emptyRequestList = List.of();
 
         // Act
-        List<ImageResponse> imageResponseList = hpscImageService.mapImages(emptyRequestList);
+        List<ImageResponse> imageResponseList =
+                hpscImageService.mapImages(emptyRequestList);
 
         // Assert
         assertNotNull(imageResponseList);
