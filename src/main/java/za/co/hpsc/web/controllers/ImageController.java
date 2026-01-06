@@ -1,10 +1,20 @@
 package za.co.hpsc.web.controllers;
 
-import org.springframework.stereotype.Controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ImageRequest;
 import za.co.hpsc.web.models.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
@@ -17,8 +27,9 @@ import za.co.hpsc.web.services.ImageService;
  * to designate it as a Spring MVC controller and map requests with the "/image" base URI.
  * </p>
  */
-@Controller
+@RestController
 @RequestMapping("/image")
+@Tag(name = "Image", description = "API for image-related functionality.")
 public class ImageController {
     private final ImageService imageService;
 
@@ -37,13 +48,21 @@ public class ImageController {
      * parsed from the CSV data.
      * @throws ValidationException if the CSV data contains invalid or missing values.
      */
-    @PostMapping(value = "/processCsv", produces = "application/json")
-    ImageResponseHolder processCsv(@RequestBody String csvData)
-            throws ValidationException {
-        try {
-            return imageService.processCsv(csvData);
-        } catch (za.co.hpsc.web.exceptions.FatalException e) {
-            throw new RuntimeException(e);
-        }
+    @PostMapping(value = "/processCsv")
+    @Operation(summary = "Process image CSV", description = "Convert CSV data about images to JSON.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ImageResponseHolder.class)))
+    })
+    ResponseEntity<ImageResponseHolder> processCsv(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "text/csv",
+                    schema = @Schema(implementation = ImageRequest.class),
+                    examples = @ExampleObject("""
+                            title,summary,description,category,tags,filePath,fileName
+                            string,string,string,string|string,string,string
+                            """)))
+            @RequestBody String csvData)
+            throws ValidationException, FatalException {
+        return ResponseEntity.ok(imageService.processCsv(csvData));
     }
 }

@@ -5,12 +5,12 @@ import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import za.co.hpsc.web.models.ApiErrorResponse;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Global exception handling advice for REST controllers. This class provides
@@ -40,14 +40,11 @@ public class ApiControllerAdvice {
      * @return a {@code ResponseEntity} containing a structured error response
      * with HTTP status 500 (Internal Server Error)
      */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGeneralException(Exception ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("error", "Internal Server Error");
-
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiErrorResponse> handleGeneralException(Exception ex, WebRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
@@ -61,14 +58,11 @@ public class ApiControllerAdvice {
      * @return a {@code ResponseEntity} containing a structured error response
      * with HTTP status 500 (Internal Server Error)
      */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("error", "Internal Server Error");
-
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -82,14 +76,11 @@ public class ApiControllerAdvice {
      * @return a {@code ResponseEntity} containing a structured error response
      * with HTTP status 400 (Bad Request)
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("error", "Bad Request");
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -103,14 +94,11 @@ public class ApiControllerAdvice {
      * @return a {@code ResponseEntity} containing a structured error response
      * with HTTP status 400 (Bad Request)
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MismatchedInputException.class)
-    public ResponseEntity<Object> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("error", "Bad Request");
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiErrorResponse> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -124,13 +112,10 @@ public class ApiControllerAdvice {
      * @return a {@code ResponseEntity} containing a structured error response
      * with HTTP status 400 (Bad Request)
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CsvReadException.class)
-    public ResponseEntity<Object> handleCsvReadException(CsvReadException ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("error", "Bad Request");
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiErrorResponse> handleCsvReadException(CsvReadException ex, WebRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

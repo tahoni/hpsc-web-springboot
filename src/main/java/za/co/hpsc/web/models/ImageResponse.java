@@ -27,7 +27,7 @@ import java.util.UUID;
 public class ImageResponse extends ImageRequest {
     @Getter
     @Setter
-    private UUID id = UUID.randomUUID();
+    private UUID id;
     @Getter
     private String mimeType = "";
 
