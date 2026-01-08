@@ -8,9 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageRequest;
@@ -27,7 +28,8 @@ import za.co.hpsc.web.services.ImageService;
  * to designate it as a Spring MVC controller and map requests with the "/image" base URI.
  * </p>
  */
-@RestController("/image")
+@Controller("/image")
+@RequestMapping("/image")
 @Tag(name = "Image", description = "API for image-related functionality.")
 public class ImageController {
     private final ImageService imageService;

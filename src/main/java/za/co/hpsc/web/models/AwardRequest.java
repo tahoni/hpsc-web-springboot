@@ -6,20 +6,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AwardRequest extends Request {
-    private String date;
+    private LocalDateTime date;
     private String imageFilePath;
 
     @NotNull
-    private String firstPlace;
+    private String firstPlaceName;
     @NotNull
-    private String secondPlace;
+    private String secondPlaceName;
     @NotNull
-    private String thirdPlace;
+    private String thirdPlaceName;
 
     private String firstPlaceImageFileName;
     private String secondPlaceImageFilePath;

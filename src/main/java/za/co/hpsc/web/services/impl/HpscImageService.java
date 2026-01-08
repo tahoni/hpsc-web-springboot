@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -19,7 +19,6 @@ import za.co.hpsc.web.services.ImageService;
 import java.io.IOException;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
 public class HpscImageService implements ImageService {
     @Override
@@ -50,7 +49,7 @@ public class HpscImageService implements ImageService {
      * @throws ValidationException if the CSV data is malformed or incomplete.
      * @throws FatalException      if an unexpected error occurs while reading the CSV data.
      */
-    protected List<ImageRequest> readImages(String csvData)
+    protected List<ImageRequest> readImages(@NotNull @NotBlank String csvData)
             throws ValidationException, FatalException {
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = csvMapper
@@ -77,13 +76,12 @@ public class HpscImageService implements ImageService {
      * Each {@code ImageRequest} in the input list is transformed into a corresponding {@code ImageResponse}.
      * If the input list is null, an empty list is returned.
      *
-     * @param imageRequestList the list of {@code ImageRequest} objects to be mapped;
-     *                         may be null, in which case an empty list is returned.
+     * @param imageRequestList the list of {@code ImageRequest} objects to be mapped.
      * @return a list of {@code ImageResponse} objects resulting from mapping the input list;
      * never null but may be empty.
      * @throws ValidationException if the input list is null.
      */
-    protected List<ImageResponse> mapImages(@NotNull List<ImageRequest> imageRequestList)
+    protected List<ImageResponse> mapImages(List<ImageRequest> imageRequestList)
             throws ValidationException {
         if (imageRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");

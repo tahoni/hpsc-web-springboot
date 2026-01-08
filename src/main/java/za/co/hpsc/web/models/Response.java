@@ -40,6 +40,12 @@ public class Response extends Request {
         setUUID(uuid);
     }
 
+    public Response(String title, String summary, String description, String category,
+                    List<String> tags) {
+        super(title, summary, description, category, tags);
+        setUUID(null);
+    }
+
     protected void setUUID(UUID uuid) {
         this.uuid = (uuid != null ? uuid : UUID.randomUUID());
     }
