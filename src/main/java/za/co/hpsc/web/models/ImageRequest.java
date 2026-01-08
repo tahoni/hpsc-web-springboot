@@ -5,35 +5,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents a request to provide details and metadata for an image,
  * including its title, summary, description, category, tags, file path,
  * and file name.
+ *
  * <p>
  * The {@code ImageRequest} class serves as a data model for encapsulating
  * information required to describe an image resource. Each image is
  * characterized by its title, a brief summary, an optional detailed
  * description, a category it belongs to, a list of associated tags,
  * and the path and name of its file.
- * <p>
  * This class provides both a no-arguments constructor and a parameterized
  * constructor to initialize its fields.
+ * </p>
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class ImageRequest {
-    @NotNull
-    private String title;
-    private String summary;
-    private String description;
-
-    private String category;
-    private List<String> tags = new ArrayList<>();
-
+public class ImageRequest extends Request {
     @NotNull
     private String filePath;
     @NotNull
@@ -48,7 +40,7 @@ public class ImageRequest {
      * @param fileName the name of the file containing the image.
      */
     public ImageRequest(String title, String filePath, String fileName) {
-        this.title = title;
+        super(title);
         this.filePath = filePath;
         this.fileName = fileName;
     }
@@ -68,13 +60,7 @@ public class ImageRequest {
      */
     public ImageRequest(String title, String summary, String description, String category,
                         List<String> tags, String filePath, String fileName) {
-        this.title = title;
-        this.summary = summary;
-        this.description = description;
-
-        this.category = category;
-        this.tags = tags;
-
+        super(title, summary, description, category, tags);
         this.filePath = filePath;
         this.fileName = fileName;
     }

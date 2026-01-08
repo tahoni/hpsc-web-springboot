@@ -151,7 +151,7 @@ class HpscImageServiceTest {
         ImageResponse firstResponse = imageResponseList.getFirst();
         assertEquals("Image 1", firstResponse.getTitle());
         assertEquals("image1.png", firstResponse.getFileName());
-        assertNotNull(firstResponse.getId());
+        assertNotNull(firstResponse.getUuid());
         List<String> firstTags = firstResponse.getTags();
         assertEquals(2, firstTags.size());
         assertTrue(firstTags.contains("Tag1"));
@@ -159,7 +159,7 @@ class HpscImageServiceTest {
         ImageResponse secondResponse = imageResponseList.get(1);
         assertEquals("Image 2", secondResponse.getTitle());
         assertEquals("image2.png", secondResponse.getFileName());
-        assertNotNull(secondResponse.getId());
+        assertNotNull(secondResponse.getUuid());
         List<String> secondTags = secondResponse.getTags();
         assertEquals(2, secondTags.size());
         assertTrue(secondTags.contains("Tag4"));

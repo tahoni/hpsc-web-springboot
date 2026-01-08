@@ -36,10 +36,12 @@ public class HpscImageService implements ImageService {
 
     /**
      * Parses the provided CSV data to extract a list of {@code ImageRequest} objects.
+     *
      * <p>
      * The method uses a {@code CsvMapper} and a custom {@code CsvSchema} configuration
      * to read, map, and convert the input CSV data into instances of {@code ImageRequest}.
      * It ensures that CSV headers are correctly processed and supports reordering of columns.
+     * </p>
      *
      * @param csvData the CSV data containing information about image requests.
      *                Each row in the CSV should represent an image request with fields

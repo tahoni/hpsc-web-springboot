@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import za.co.hpsc.web.models.ApiErrorResponse;
+import za.co.hpsc.web.models.ErrorResponse;
 
 import java.time.LocalDateTime;
 
@@ -16,19 +16,19 @@ import java.time.LocalDateTime;
  * Global exception handling advice for REST controllers. This class provides
  * centralized exception handling for exceptions occurring within the application's
  * controller classes by using defined exception handler methods.
+ *
  * <p>
  * Each handler method captures a specific type of exception or a broader category
  * of exceptions and constructs an appropriate error response as a {@code ResponseEntity},
  * containing an error description, timestamp, and any additional relevant details.
- * <p>
  * The responses generated are intended to provide structured feedback to clients
  * regarding errors arising during API interactions, ensuring consistent error formats.
- * <p>
  * The {@code @RestControllerAdvice} annotation specifies that this class applies
  * globally to controllers within the specified package.
+ * </p>
  */
 @RestControllerAdvice("za.co.hpsc.web.controllers")
-public class ApiControllerAdvice {
+public class ControllerAdvice {
 
     /**
      * Handles generic exceptions that occur during the processing of requests.
@@ -42,8 +42,8 @@ public class ApiControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleGeneralException(Exception ex, WebRequest request) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -60,8 +60,8 @@ public class ApiControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -78,8 +78,8 @@ public class ApiControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -96,8 +96,8 @@ public class ApiControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MismatchedInputException.class)
-    public ResponseEntity<ApiErrorResponse> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ErrorResponse> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -114,8 +114,8 @@ public class ApiControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CsvReadException.class)
-    public ResponseEntity<ApiErrorResponse> handleCsvReadException(CsvReadException ex, WebRequest request) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ErrorResponse> handleCsvReadException(CsvReadException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

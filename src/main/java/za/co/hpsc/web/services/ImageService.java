@@ -9,6 +9,7 @@ import za.co.hpsc.web.models.ImageResponseHolder;
  * Provides functionality for processing image-related data from various sources.
  * Designed to handle operations such as parsing CSV files containing image information
  * and returning structured data encapsulated within a response holder.
+ *
  * <p>
  * This service defines a contract for implementing and managing image-related workflows,
  * ensuring consistency and reusability across different components of the application.

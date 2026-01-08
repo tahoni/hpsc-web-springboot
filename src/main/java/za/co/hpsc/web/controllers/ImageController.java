@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -22,13 +21,13 @@ import za.co.hpsc.web.services.ImageService;
  * Controller responsible for managing and processing image-related requests.
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing image metadata.
+ *
  * <p>
  * This class is annotated with {@code @Controller} and {@code @RequestMapping}
  * to designate it as a Spring MVC controller and map requests with the "/image" base URI.
  * </p>
  */
-@RestController
-@RequestMapping("/image")
+@RestController("/image")
 @Tag(name = "Image", description = "API for image-related functionality.")
 public class ImageController {
     private final ImageService imageService;
