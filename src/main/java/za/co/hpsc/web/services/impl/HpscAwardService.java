@@ -10,10 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.AwardRequest;
-import za.co.hpsc.web.models.AwardRequestForCSV;
-import za.co.hpsc.web.models.AwardResponse;
-import za.co.hpsc.web.models.AwardResponseHolder;
+import za.co.hpsc.web.models.*;
 import za.co.hpsc.web.services.AwardService;
 
 import java.io.IOException;
@@ -28,8 +25,8 @@ public class HpscAwardService implements AwardService {
         }
 
         List<AwardRequest> awardRequestList = readAwards(csvData);
-        List<AwardResponse> awardResponseList = mapAwards(awardRequestList);
-        return new AwardResponseHolder(awardResponseList);
+        List<AwardCeremonyResponse> awardCeremonyResponseList = mapAwards(awardRequestList);
+        return new AwardResponseHolder(awardCeremonyResponseList);
     }
 
     protected List<AwardRequest> readAwards(@NotNull @NotBlank String csvData)
@@ -54,13 +51,13 @@ public class HpscAwardService implements AwardService {
         }
     }
 
-    protected List<AwardResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
+    protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");
         }
 
         return awardRequestList.stream()
-                .map(AwardResponse::new)
+                .map(awardRequest -> new AwardResponse[awardRequest])
                 .toList();
     }
 }

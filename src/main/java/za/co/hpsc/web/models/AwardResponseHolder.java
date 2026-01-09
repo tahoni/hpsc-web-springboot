@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,5 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AwardResponseHolder {
-    private List<AwardResponse> awards;
+    @NotNull
+    private List<AwardCeremonyResponse> awards;
 }

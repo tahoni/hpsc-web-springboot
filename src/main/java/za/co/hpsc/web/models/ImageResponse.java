@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public class ImageResponse extends Response {
     private String fileName;
 
     @Getter
+    @NotNull
     private String mimeType = "";
 
     /**
@@ -52,8 +54,8 @@ public class ImageResponse extends Response {
      */
     public ImageResponse(UUID uuid, String title, String filePath, String fileName, String mimeType) {
         super(uuid, title);
-        this.filePath = filePath;
-        this.fileName = fileName;
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType(mimeType);
     }
 
@@ -80,8 +82,8 @@ public class ImageResponse extends Response {
     public ImageResponse(UUID uuid, String title, String summary, String description, String category,
                          List<String> tags, String filePath, String fileName, String mimeType) {
         super(uuid, title, summary, description, category, tags);
-        this.filePath = filePath;
-        this.fileName = fileName;
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType(mimeType);
     }
 
@@ -102,8 +104,8 @@ public class ImageResponse extends Response {
     public ImageResponse(String title, String summary, String description, String category,
                          List<String> tags, String filePath, String fileName) {
         super(null, title, summary, description, category, tags);
-        this.filePath = filePath;
-        this.fileName = fileName;
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType();
     }
 

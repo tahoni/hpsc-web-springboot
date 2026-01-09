@@ -1,4 +1,4 @@
-package za.co.hpsc.web.config;
+package za.co.hpsc.web.configs;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
