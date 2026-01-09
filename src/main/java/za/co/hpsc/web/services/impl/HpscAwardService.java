@@ -10,10 +10,14 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.*;
+import za.co.hpsc.web.models.AwardCeremonyResponse;
+import za.co.hpsc.web.models.AwardRequest;
+import za.co.hpsc.web.models.AwardRequestForCSV;
+import za.co.hpsc.web.models.AwardResponseHolder;
 import za.co.hpsc.web.services.AwardService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,8 +60,27 @@ public class HpscAwardService implements AwardService {
             throw new ValidationException("Image request list cannot be null.");
         }
 
-        return awardRequestList.stream()
-                .map(awardRequest -> new AwardResponse[awardRequest])
-                .toList();
+        String previousCeremonyTitle = null;
+        String currentCeremonyTitle = "";
+        List<AwardCeremonyResponse> awardCeremonyResponseList = new ArrayList<>();
+        List<AwardRequest> awardCeremonyAwardRequests = new ArrayList<>();
+        for (AwardRequest awardRequest : awardRequestList) {
+            if (!currentCeremonyTitle.equalsIgnoreCase(awardRequest.getTitle())) {
+                currentCeremonyTitle = awardRequest.getTitle();
+
+                if (previousCeremonyTitle != null) {
+                    awardCeremonyResponseList.add(
+                            new AwardCeremonyResponse(awardCeremonyAwardRequests)
+                    );
+                    awardCeremonyAwardRequests = new ArrayList<>();
+                }
+
+                previousCeremonyTitle = currentCeremonyTitle;
+            }
+
+            awardCeremonyAwardRequests.add(awardRequest);
+        }
+
+        return awardCeremonyResponseList;
     }
 }
