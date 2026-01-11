@@ -12,7 +12,7 @@ import java.util.UUID;
 
 /**
  * Represents a response object that contains details about an award ceremony.
- * This class extends the {@code Response} class to include information such as
+ * This class extends the {@link Response} class to include information such as
  * the date of the ceremony, the path to a representative image, and a list of awards.
  * <p>
  * The {@code AwardCeremonyResponse} class is designed to encapsulate information
@@ -22,20 +22,20 @@ import java.util.UUID;
  * tags, and other response metadata.
  * <p>
  * Key Features:
- * - Stores the ceremony date as a {@code LocalDateTime}.
+ * - Stores the ceremony date as a {@link LocalDateTime}.
  * - Holds the file path of the ceremony's representative image.
- * - Maintains a list of awards, each represented by an {@code AwardResponse}.
+ * - Maintains a list of awards, each represented by an {@link AwardResponse}.
  * <p>
  * Default values:
  * - The image file path is initialized to an empty string.
- * - The awards list is initialized to an empty {@code ArrayList}.
+ * - The awards list is initialized to an empty {@link ArrayList}.
  * <p>
  * Constructors:
  * - Default constructor initializes all fields to their default values.
  * - Multiple constructors allow initializing the object with varying levels
  * of data such as UUID, title, summary, category, tags, date, imageFilePath,
  * and award details.
- * - A specialized constructor accepts a list of {@code AwardRequest}
+ * - A specialized constructor accepts a list of {@link AwardRequest}
  * objects to initialize the award details.
  */
 // TODO: Javadoc
@@ -57,7 +57,7 @@ public class AwardCeremonyResponse extends Response {
      * field is initialized to an empty string.
      * <p>
      * This constructor delegates the initialization of common properties to the
-     * superclass {@code Response}.
+     * superclass {@link Response}.
      */
     public AwardCeremonyResponse() {
         super();
@@ -72,7 +72,7 @@ public class AwardCeremonyResponse extends Response {
      * @param date          the date and time of the award ceremony, must not be null.
      * @param imageFilePath the file path to the image associated with the award ceremony;
      *                      if null, it defaults to an empty string.
-     * @param awards        the list of {@code AwardResponse} objects representing individual awards;
+     * @param awards        the list of {@link AwardResponse} objects representing individual awards;
      *                      if null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(LocalDateTime date, String imageFilePath,
@@ -91,7 +91,7 @@ public class AwardCeremonyResponse extends Response {
      * @param date          the date and time of the award ceremony; must not be null.
      * @param imageFilePath the file path to the image associated with the award ceremony; if null, it defaults
      *                      to an empty string.
-     * @param awards        the list of {@code AwardResponse} objects representing individual awards; if null,
+     * @param awards        the list of {@link AwardResponse} objects representing individual awards; if null,
      *                      it defaults to an empty list.
      */
     public AwardCeremonyResponse(UUID uuid, LocalDateTime date, String imageFilePath,
@@ -115,7 +115,7 @@ public class AwardCeremonyResponse extends Response {
      * @param date          the date and time of the award ceremony, must not be null.
      * @param imageFilePath the file path to the image associated with the award ceremony; if null, it defaults
      *                      to an empty string.
-     * @param awards        the list of {@code AwardResponse} objects representing individual awards; if null,
+     * @param awards        the list of {@link AwardResponse} objects representing individual awards; if null,
      *                      it defaults to an empty list.
      */
     public AwardCeremonyResponse(UUID uuid, String title, String summary, String description,
@@ -137,7 +137,7 @@ public class AwardCeremonyResponse extends Response {
      * @param date          the date and time of the award ceremony; must not be null.
      * @param imageFilePath the file path to the image associated with the award ceremony; if null, it
      *                      defaults to an empty string.
-     * @param awards        the list of {@code AwardResponse} objects representing individual awards;
+     * @param awards        the list of {@link AwardResponse} objects representing individual awards;
      *                      if null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(UUID uuid, String title, LocalDateTime date, String imageFilePath,
@@ -159,7 +159,7 @@ public class AwardCeremonyResponse extends Response {
      * @param tags          a list of tags relevant to the award ceremony; if null, it defaults to an empty list.
      * @param date          the date and time of the award ceremony; must not be null.
      * @param imageFilePath the file path to the image associated with the award ceremony; if null, it defaults to an empty string.
-     * @param awards        the list of {@code AwardResponse} objects representing individual awards; if null, it defaults to an empty list.
+     * @param awards        the list of {@link AwardResponse} objects representing individual awards; if null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(String title, String summary, String description, String category,
                                  List<String> tags, LocalDateTime date, String imageFilePath,
@@ -171,13 +171,13 @@ public class AwardCeremonyResponse extends Response {
     }
 
     /**
-     * Constructs an instance of {@code AwardCeremonyResponse} using a list of {@code AwardRequest} objects.
+     * Constructs an instance of {@code AwardCeremonyResponse} using a list of {@link AwardRequest} objects.
      * <p>
      * Initializes the {@code date} and {@code imageFilePath} fields based on the first element of the list,
-     * and maps the list of {@code AwardRequest} objects to a list of {@code AwardResponse} objects.
+     * and maps the list of {@link AwardRequest} objects to a list of {@link AwardResponse} objects.
      * If the provided list is null or empty, the object is initialized with default values.
      *
-     * @param awardRequestList the list of {@code AwardRequest} objects containing data for the award ceremony;
+     * @param awardRequestList the list of {@link AwardRequest} objects containing data for the award ceremony;
      *                         if null or empty, no further initialization is performed.
      */
     public AwardCeremonyResponse(List<AwardRequest> awardRequestList) {

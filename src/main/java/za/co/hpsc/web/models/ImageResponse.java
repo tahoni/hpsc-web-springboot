@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * Represents a response object specifically designed for handling images.
  * This class extends the functionality of the {@link Response} superclass
- * by including additional fields and behaviors related to image-specific
+ * by including additional fields and behaviours related to image-specific
  * properties, such as file path, file name, and MIME type.
  * <p>
  * The {@code ImageResponse} class provides multiple constructors for
@@ -39,7 +39,7 @@ public class ImageResponse extends Response {
     /**
      * Constructs a new {@code ImageResponse} object with specified UUID, title,
      * file path, file name, and MIME type.
-     * This constructor initializes the fields and ensures that the
+     * This constructor initialises the fields and ensures that the
      * file path and file name are not null by substituting empty strings for null values.
      * The MIME type is set using the {@link #setMimeType} method.
      *
@@ -63,7 +63,7 @@ public class ImageResponse extends Response {
 
     /**
      * Constructs a new {@code ImageResponse} object with the specified details.
-     * This constructor initializes the fields inheriting from the {@link Response} superclass,
+     * This constructor initialises the fields inheriting from the {@link Response} superclass,
      * as well as the {@code filePath}, {@code fileName}, and {@code mimeType} fields, ensuring
      * that null values for {@code filePath} and {@code fileName} are substituted with empty strings.
      * The MIME type is set using the {@link #setMimeType} method.
@@ -94,7 +94,7 @@ public class ImageResponse extends Response {
 
     /**
      * Constructs a new {@code ImageResponse} object with the specified details.
-     * This constructor initializes the fields inheriting from the {@link Response} superclass,
+     * This constructor initialises the fields inheriting from the {@link Response} superclass,
      * as well as the {@code filePath}, {@code fileName}, and {@code mimeType} fields, ensuring
      * that null values for {@code filePath} and {@code fileName} are substituted with empty strings.
      * Additionally, the MIME type is automatically set using the {@link #setMimeType} method.
@@ -123,8 +123,8 @@ public class ImageResponse extends Response {
      * {@link ImageRequest}.
      *
      * <p>
-     * This constructor initializes the {@code ImageResponse} fields based on the
-     * information encapsulated in the given {@code ImageRequest}. The attributes such as
+     * This constructor initialises the {@code ImageResponse} fields based on the
+     * information encapsulated in the given {@link ImageRequest}. The attributes such as
      * title, summary, description, category, tags, file path, and file name are copied
      * from the {@link ImageRequest} instance.
      * </p>
@@ -141,7 +141,7 @@ public class ImageResponse extends Response {
     /**
      * Sets the MIME type for the current image response instance.
      * If the provided MIME type is null or blank, it attempts to determine the MIME type
-     * based on the file name using {@code MediaTypeFactory}.
+     * based on the file name using {@link MediaTypeFactory}.
      *
      * @param mimeType the MIME type to be set; if null or blank, an attempt will be made
      *                 to infer it from the file name.

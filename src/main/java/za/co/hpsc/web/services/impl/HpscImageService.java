@@ -34,18 +34,18 @@ public class HpscImageService implements ImageService {
     }
 
     /**
-     * Parses the provided CSV data to extract a list of {@code ImageRequest} objects.
+     * Parses the provided CSV data to extract a list of {@link ImageRequest} objects.
      *
      * <p>
-     * The method uses a {@code CsvMapper} and a custom {@code CsvSchema} configuration
-     * to read, map, and convert the input CSV data into instances of {@code ImageRequest}.
+     * The method uses a {@link CsvMapper} and a custom {@link CsvSchema} configuration
+     * to read, map, and convert the input CSV data into instances of {@link ImageRequest}.
      * It ensures that CSV headers are correctly processed and supports reordering of columns.
      * </p>
      *
      * @param csvData the CSV data containing information about image requests.
      *                Each row in the CSV should represent an image request with fields
      *                such as title, file path, file name, and optional metadata.
-     * @return a list of {@code ImageRequest} objects parsed from the CSV data.
+     * @return a list of {@link ImageRequest} objects parsed from the CSV data.
      * @throws ValidationException if the CSV data is malformed or incomplete.
      * @throws FatalException      if an unexpected error occurs while reading the CSV data.
      */
@@ -72,12 +72,12 @@ public class HpscImageService implements ImageService {
     }
 
     /**
-     * Maps a list of {@code ImageRequest} objects to a list of {@code ImageResponse} objects.
-     * Each {@code ImageRequest} in the input list is transformed into a corresponding {@code ImageResponse}.
+     * Maps a list of {@link ImageRequest} objects to a list of {@link ImageResponse} objects.
+     * Each {@link ImageRequest} in the input list is transformed into a corresponding {@link ImageResponse}.
      * If the input list is null, an empty list is returned.
      *
-     * @param imageRequestList the list of {@code ImageRequest} objects to be mapped.
-     * @return a list of {@code ImageResponse} objects resulting from mapping the input list;
+     * @param imageRequestList the list of {@link ImageRequest} objects to be mapped.
+     * @return a list of {@link ImageResponse} objects resulting from mapping the input list;
      * never null but may be empty.
      * @throws ValidationException if the input list is null.
      */

@@ -10,10 +10,10 @@ import za.co.hpsc.web.utils.ValueUtil;
 import java.util.List;
 
 /**
- * A specialized request class that encapsulates additional information for image-related requests.
+ * A specialised request class that encapsulates additional information for image-related requests.
  * The {@code ImageRequest} class extends {@link Request} and introduces properties for
  * specifying the file path and file name associated with the image. It provides constructors
- * for initializing an image request with basic or detailed metadata.
+ * for initialising an image request with basic or detailed metadata.
  */
 @Getter
 @Setter
@@ -27,7 +27,7 @@ public class ImageRequest extends Request {
     /**
      * Constructs a new {@code ImageRequest} object with the specified title,
      * file path, and file name.
-     * This constructor initializes the image request by setting the title using the superclass
+     * This constructor initialises the image request by setting the title using the superclass
      * constructor and handling null values for file path and file name by replacing them
      * with empty strings.
      *
@@ -45,7 +45,7 @@ public class ImageRequest extends Request {
 
     /**
      * Constructs a new {@code ImageRequest} object with the specified details.
-     * This constructor initializes all the fields required for an image-related request
+     * This constructor initialises all the fields required for an image-related request
      * by using the parent class constructor to set common properties and handling null
      * values for image-specific properties using default substitutions.
      *

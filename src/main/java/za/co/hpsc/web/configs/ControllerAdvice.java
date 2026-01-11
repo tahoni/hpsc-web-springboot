@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 
 /**
  * Global exception handling advice for REST controllers. This class provides
- * centralized exception handling for exceptions occurring within the application's
+ * centralised exception handling for exceptions occurring within the application's
  * controller classes by using defined exception handler methods.
  *
  * <p>
  * Each handler method captures a specific type of exception or a broader category
- * of exceptions and constructs an appropriate error response as a {@code ResponseEntity},
+ * of exceptions and constructs an appropriate error response as a {@link ResponseEntity},
  * containing an error description, timestamp, and any additional relevant details.
  * The responses generated are intended to provide structured feedback to clients
  * regarding errors arising during API interactions, ensuring consistent error formats.
@@ -37,7 +37,7 @@ public class ControllerAdvice {
      *
      * @param ex      the exception that was thrown
      * @param request the current web request context
-     * @return a {@code ResponseEntity} containing a structured error response
+     * @return a {@link ResponseEntity} containing a structured error response
      * with HTTP status 500 (Internal Server Error)
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -49,13 +49,13 @@ public class ControllerAdvice {
 
 
     /**
-     * Handles exceptions of type {@code RuntimeException} that occur during the processing of requests.
+     * Handles exceptions of type {@link RuntimeException} that occur during the processing of requests.
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to provide feedback to the client.
      *
      * @param ex      the runtime exception that was thrown
      * @param request the current web request context
-     * @return a {@code ResponseEntity} containing a structured error response
+     * @return a {@link ResponseEntity} containing a structured error response
      * with HTTP status 500 (Internal Server Error)
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -66,14 +66,14 @@ public class ControllerAdvice {
     }
 
     /**
-     * Handles exceptions of type {@code IllegalArgumentException} that occur during
+     * Handles exceptions of type {@link IllegalArgumentException} that occur during
      * the processing of requests.
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to notify the client of a bad request.
      *
-     * @param ex      the {@code IllegalArgumentException} that was thrown
+     * @param ex      the {@link IllegalArgumentException} that was thrown
      * @param request the current web request context
-     * @return a {@code ResponseEntity} containing a structured error response
+     * @return a {@link ResponseEntity} containing a structured error response
      * with HTTP status 400 (Bad Request)
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -84,14 +84,14 @@ public class ControllerAdvice {
     }
 
     /**
-     * Handles exceptions of type {@code MismatchedInputException} that occur during
+     * Handles exceptions of type {@link MismatchedInputException} that occur during
      * the processing of requests. Constructs a response entity containing an error
      * message, a timestamp, and details about the mismatched input, providing feedback
      * to the client about the bad request.
      *
-     * @param ex      the {@code MismatchedInputException}, that was thrown
+     * @param ex      the {@link MismatchedInputException}, that was thrown
      * @param request the current web request context
-     * @return a {@code ResponseEntity} containing a structured error response
+     * @return a {@link ResponseEntity} containing a structured error response
      * with HTTP status 400 (Bad Request)
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -102,14 +102,14 @@ public class ControllerAdvice {
     }
 
     /**
-     * Handles exceptions of type {@code CsvReadException} that occur during
+     * Handles exceptions of type {@link CsvReadException} that occur during
      * the processing of requests. Constructs a response entity containing an
      * error message, a timestamp, and additional error details to notify the
      * client of a bad request.
      *
-     * @param ex      the {@code CsvReadException} that was thrown
+     * @param ex      the {@link CsvReadException} that was thrown
      * @param request the current web request context
-     * @return a {@code ResponseEntity} containing a structured error response
+     * @return a {@link ResponseEntity} containing a structured error response
      * with HTTP status 400 (Bad Request)
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)

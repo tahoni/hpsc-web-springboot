@@ -24,7 +24,7 @@ public interface ImageService {
      * @param csvData the CSV data containing image information. Each line represents
      *                an image and should follow the required format with columns:
      *                title, summary, description, category, tags, filePath, and fileName.
-     * @return an {@code ImageResponseHolder} containing a list of image responses
+     * @return an {@link ImageResponseHolder} containing a list of image responses
      * parsed from the CSV data.
      * @throws ValidationException if the CSV data contains invalid or missing values.
      * @throws FatalException      if there is an error processing the CSV data.

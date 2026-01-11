@@ -18,7 +18,7 @@ import java.util.UUID;
  * - Multiple constructors for initializing response data with varying levels of detail,
  *   including award names, image file paths, and metadata from associated requests.
  * <p>
- * The {@code AwardResponse} class extends the {@code Response} class, inheriting
+ * The {@code AwardResponse} class extends the {@link Response} class, inheriting
  * core response features such as UUID-based identification and base request properties.
  */
 // TODO: Javadoc

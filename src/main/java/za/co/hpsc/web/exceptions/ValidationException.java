@@ -8,6 +8,7 @@ import java.security.PrivilegedActionException;
  * {@link IllegalArgumentException}, allowing it to be used in scenarios
  * where invalid arguments are encountered.
  */
+// TODO: Javadoc
 public class ValidationException extends IllegalArgumentException {
     /**
      * Constructs an {@code IllegalArgumentException} with no

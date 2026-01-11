@@ -14,7 +14,7 @@ import java.util.List;
  * Represents a specialized type of request used for creating and managing award-related details.
  *
  * <p>
- * The {@code AwardRequest} class extends the functionality of the {@code Request} base class
+ * The {@code AwardRequest} class extends the functionality of the {@link Request} base class
  * by introducing additional fields specific to awards. These include information about
  * the award ceremony, associated media files, and the names of winners for first, second,
  * and third places. This class is designed to handle structured data required for award submissions

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Javadoc
 @Service
 public class HpscAwardService implements AwardService {
     @Override
@@ -33,6 +34,17 @@ public class HpscAwardService implements AwardService {
         return new AwardResponseHolder(awardCeremonyResponseList);
     }
 
+    /**
+     * Reads award data from a CSV-formatted string and converts it into a list of {@link AwardRequest} objects.
+     * <p>
+     * The method uses Jackson's CSV parsing functionality with a predefined schema to map CSV data
+     * to {@link AwardRequest} instances. Additional validation is performed to ensure data integrity.
+     *
+     * @param csvData the CSV data containing award information, must not be null or blank
+     * @return a list of {@link AwardRequest} objects parsed from the provided CSV data
+     * @throws ValidationException if the CSV data format is invalid or contains mismatched input
+     * @throws FatalException      if an I/O error occurs while processing the CSV data
+     */
     protected List<AwardRequest> readAwards(@NotNull @NotBlank String csvData)
             throws ValidationException, FatalException {
         CsvMapper csvMapper = new CsvMapper();
@@ -55,6 +67,18 @@ public class HpscAwardService implements AwardService {
         }
     }
 
+    /**
+     * Processes a list of award requests and groups them into award ceremony responses
+     * based on the title of each ceremony.
+     * <p>
+     * This method iterates through the list of {@link AwardRequest} objects, grouping
+     * them by their `title` property. For each unique title, a new {@link AwardCeremonyResponse}
+     * object is created that contains the grouped requests.
+     *
+     * @param awardRequestList the list of {@link AwardRequest} objects to be processed, must not be null
+     * @return a list of {@link AwardCeremonyResponse} objects, each representing a group of awards for a specific ceremony
+     * @throws ValidationException if the provided awardRequestList is null
+     */
     protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");

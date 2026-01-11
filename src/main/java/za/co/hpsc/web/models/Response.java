@@ -11,11 +11,11 @@ import java.util.UUID;
  * Represents a response extending common request properties and containing a unique identifier.
  *
  * <p>
- * The {@code Response} class is a specialized subclass of {@link Request} that introduces
+ * The {@code Response} class is a specialised subclass of {@link Request} that introduces
  * a unique identifier (UUID) for every response. This identifier is either provided during
  * the object construction or automatically generated if not supplied.
  * This class is designed to handle various use cases where a response must be uniquely identified.
- * It provides multiple constructors to support different initialization scenarios, allowing
+ * It provides multiple constructors to support different initialisation scenarios, allowing
  * response data to be populated with varying levels of detail.
  * </p>
  */
@@ -28,7 +28,7 @@ public class Response extends Request {
     /**
      * Default constructor for the {@code Response} class.
      * <p>
-     * This constructor initializes a new instance of {@code Response} with a unique
+     * This constructor initialises a new instance of {@code Response} with a unique
      * identifier (UUID). If no UUID is explicitly provided, a random UUID is
      * generated using the {@link ValueUtil#nullAsRandomUuid} method to ensure that
      * every response instance is uniquely identifiable.

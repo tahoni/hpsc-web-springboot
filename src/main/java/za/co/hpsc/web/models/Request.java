@@ -16,10 +16,10 @@ import java.util.List;
  *
  * <p>
  * The {@code Request} class serves as a base model for various types of requests
- * by encapsulating common properties. Each request is characterized by its title,
+ * by encapsulating common properties. Each request is characterised by its title,
  * with optional fields for a brief summary, detailed description, category, and
  * associated tags.
- * This class provides constructors to initialize the request object with different
+ * This class provides constructors to initialise the request object with different
  * combinations of its fields.
  * </p>
  */
@@ -38,7 +38,7 @@ public class Request {
 
     /**
      * Constructs a new {@code Request} object with the specified details.
-     * This constructor initializes the fields for the title, summary,
+     * This constructor initialises the fields for the title, summary,
      * description, category, and tags.
      *
      * @param title       the title of the request. Must not be null or blank.

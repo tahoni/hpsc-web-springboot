@@ -22,7 +22,7 @@ import java.util.List;
  * This class uses the {@code @JsonProperty} annotation to specify mandatory fields
  * for JSON deserialization and ensures that they are populated when an instance is created.
  * The {@code @JsonCreator} constructor allows for creating instances with a subset of fields,
- * specifically focusing on the required fields for minimal valid initialization.
+ * specifically focusing on the required fields for minimal valid initialisation.
  * </p>
  */
 @Getter
@@ -48,7 +48,7 @@ public abstract class ImageRequestForCsv {
      * This constructor is annotated with {@code @JsonCreator} to enable
      * deserialization from JSON, specifically requiring the title, file path,
      * and file name as mandatory fields. The provided details are used to
-     * initialize the corresponding attributes of the object.
+     * initialise the corresponding attributes of the object.
      * </p>
      *
      * @param title    the title of the image. This field is required.

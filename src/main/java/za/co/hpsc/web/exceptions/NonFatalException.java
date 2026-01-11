@@ -7,6 +7,7 @@ package za.co.hpsc.web.exceptions;
  * typically used in scenarios where an issue needs to be handled but
  * does not terminate the application.
  */
+// TODO: Javadoc
 public class NonFatalException extends RuntimeException {
     /**
      * Constructs a new non-fatal exception with {@code null} as its
