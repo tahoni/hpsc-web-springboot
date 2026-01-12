@@ -63,7 +63,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void testConstructorWithImageRequestMapsFields_thenInitializesAllFieldsAndInfersMimeType() {
+    void testConstructor_withImageRequestMapsFields_thenInitializesAllFieldsAndInfersMimeType() {
         // Arrange
         ImageRequest request = new ImageRequest();
         request.setTitle("Request Title");
