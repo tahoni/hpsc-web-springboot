@@ -1,8 +1,10 @@
 package za.co.hpsc.web.models;
 
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.constants.HpscConstants;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AwardCeremonyResponseTest {
 
-    private final LocalDateTime now = LocalDateTime.now();
+    private final String now = DateTimeFormatter.ofPattern(HpscConstants.HPSC_DATE_FORMAT).format(LocalDateTime.now());
     private final List<AwardResponse> sampleAwards = List.of(
             new AwardResponse(new AwardResponse.AwardPlace(1, "A", "a.png"),
                     new AwardResponse.AwardPlace(2, "B", "b.png"),
@@ -48,7 +50,8 @@ class AwardCeremonyResponseTest {
         UUID uuid = UUID.randomUUID();
 
         // Act
-        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, now, "path/to/img", sampleAwards);
+        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, now, "path/to/img",
+                sampleAwards);
 
         // Assert
         assertEquals(uuid, response.getUuid());
@@ -66,7 +69,8 @@ class AwardCeremonyResponseTest {
 
         // Act
         AwardCeremonyResponse response = new AwardCeremonyResponse(
-                uuid, "Title", "Summary", "Desc", "Cat", tags, now, "img.png", sampleAwards
+                uuid, "Title", "Summary", "Desc", "Cat", tags, now, "img.png",
+                sampleAwards
         );
 
         // Assert
@@ -89,7 +93,8 @@ class AwardCeremonyResponseTest {
         UUID uuid = UUID.randomUUID();
 
         // Act
-        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, "Short Title", now, "img.png", sampleAwards);
+        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, "Short Title", now, "img.png",
+                sampleAwards);
 
         // Assert
         assertEquals(uuid, response.getUuid());
@@ -101,7 +106,8 @@ class AwardCeremonyResponseTest {
     void testConstructorWithoutUuidButWithMetadata_thenInitialisesUuidAndMetadata() {
         // Act
         AwardCeremonyResponse response = new AwardCeremonyResponse(
-                "Title", "Sum", "Desc", "Cat", List.of("T"), now, "img.png", sampleAwards
+                "Title", "Sum", "Desc", "Cat", List.of("T"), now, "img.png",
+                sampleAwards
         );
 
         assertNotNull(response.getUuid());

@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.AwardResponseHolder;
+import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
 
 /**
  * Service interface for handling award processing operations. This interface
@@ -16,11 +16,11 @@ public interface AwardService {
      *
      * @param csvData the CSV data containing award information. Each line represents
      *                an award and should follow the required format.
-     * @return an {@link AwardResponseHolder} containing a list of award responses
+     * @return an {@link AwardCeremonyResponseHolder} containing a list of award responses
      * parsed from the CSV data.
      * @throws ValidationException if the CSV data contains invalid or missing values.
      * @throws FatalException      if there is an error processing the CSV data.
      */
-    AwardResponseHolder processCsv(String csvData)
+    AwardCeremonyResponseHolder processCsv(String csvData)
             throws ValidationException, FatalException;
 }

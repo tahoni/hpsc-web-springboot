@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.AwardCeremonyResponse;
+import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.models.AwardRequest;
 import za.co.hpsc.web.models.AwardRequestForCSV;
-import za.co.hpsc.web.models.AwardResponseHolder;
 import za.co.hpsc.web.services.AwardService;
 
 import java.io.IOException;
@@ -24,14 +24,14 @@ import java.util.List;
 @Service
 public class HpscAwardService implements AwardService {
     @Override
-    public AwardResponseHolder processCsv(String csvData) throws ValidationException, FatalException {
+    public AwardCeremonyResponseHolder processCsv(String csvData) throws ValidationException, FatalException {
         if (csvData == null || csvData.isBlank()) {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
         List<AwardRequest> awardRequestList = readAwards(csvData);
         List<AwardCeremonyResponse> awardCeremonyResponseList = mapAwards(awardRequestList);
-        return new AwardResponseHolder(awardCeremonyResponseList);
+        return new AwardCeremonyResponseHolder(awardCeremonyResponseList);
     }
 
     /**
@@ -40,7 +40,7 @@ public class HpscAwardService implements AwardService {
      * The method uses Jackson's CSV parsing functionality with a predefined schema to map CSV data
      * to {@link AwardRequest} instances. Additional validation is performed to ensure data integrity.
      *
-     * @param csvData the CSV data containing award information, must not be null or blank
+     * @param csvData the CSV data containing award information; must not be null or blank
      * @return a list of {@link AwardRequest} objects parsed from the provided CSV data
      * @throws ValidationException if the CSV data format is invalid or contains mismatched input
      * @throws FatalException      if an I/O error occurs while processing the CSV data
@@ -67,44 +67,31 @@ public class HpscAwardService implements AwardService {
         }
     }
 
-    /**
-     * Processes a list of award requests and groups them into award ceremony responses
-     * based on the title of each ceremony.
-     * <p>
-     * This method iterates through the list of {@link AwardRequest} objects, grouping
-     * them by their `title` property. For each unique title, a new {@link AwardCeremonyResponse}
-     * object is created that contains the grouped requests.
-     *
-     * @param awardRequestList the list of {@link AwardRequest} objects to be processed, must not be null
-     * @return a list of {@link AwardCeremonyResponse} objects, each representing a group of awards for a specific ceremony
-     * @throws ValidationException if the provided awardRequestList is null
-     */
     protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");
         }
 
-        String previousCeremonyTitle = null;
-        String currentCeremonyTitle = "";
-        List<AwardCeremonyResponse> awardCeremonyResponseList = new ArrayList<>();
-        List<AwardRequest> awardCeremonyAwardRequests = new ArrayList<>();
-        for (AwardRequest awardRequest : awardRequestList) {
-            if (!currentCeremonyTitle.equalsIgnoreCase(awardRequest.getTitle())) {
-                currentCeremonyTitle = awardRequest.getTitle();
+        List<AwardCeremonyResponse> responses = new ArrayList<>();
+        List<AwardRequest> currentGroup = new ArrayList<>();
+        String currentCeremonyTitle = null;
 
-                if (previousCeremonyTitle != null) {
-                    awardCeremonyResponseList.add(
-                            new AwardCeremonyResponse(awardCeremonyAwardRequests)
-                    );
-                    awardCeremonyAwardRequests = new ArrayList<>();
-                }
+        for (AwardRequest request : awardRequestList) {
+            String ceremonyTitle = request.getCeremonyTitle();
 
-                previousCeremonyTitle = currentCeremonyTitle;
+            if (currentCeremonyTitle != null && !currentCeremonyTitle.equalsIgnoreCase(ceremonyTitle)) {
+                responses.add(new AwardCeremonyResponse(currentGroup));
+                currentGroup = new ArrayList<>();
             }
 
-            awardCeremonyAwardRequests.add(awardRequest);
+            currentGroup.add(request);
+            currentCeremonyTitle = ceremonyTitle;
         }
 
-        return awardCeremonyResponseList;
+        if (!currentGroup.isEmpty()) {
+            responses.add(new AwardCeremonyResponse(currentGroup));
+        }
+
+        return responses;
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AwardResponseHolder {
+public class AwardCeremonyResponseHolder {
     @NotNull
-    private List<AwardCeremonyResponse> awards;
+    private List<AwardCeremonyResponse> awardCeremonies;
 }

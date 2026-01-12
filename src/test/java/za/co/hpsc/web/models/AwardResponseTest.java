@@ -9,9 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AwardResponseTest {
 
-    private final AwardResponse.AwardPlace first = new AwardResponse.AwardPlace(1, "Gold", "gold.png");
-    private final AwardResponse.AwardPlace second = new AwardResponse.AwardPlace(2, "Silver", "silver.png");
-    private final AwardResponse.AwardPlace third = new AwardResponse.AwardPlace(3, "Bronze", "bronze.png");
+    private final AwardResponse.AwardPlace first =
+            new AwardResponse.AwardPlace(1, "Gold", "gold.png");
+    private final AwardResponse.AwardPlace second =
+            new AwardResponse.AwardPlace(2, "Silver", "silver.png");
+    private final AwardResponse.AwardPlace third =
+            new AwardResponse.AwardPlace(3, "Bronze", "bronze.png");
 
     @Test
     void testConstructor_withAwardPlaces_thenInitialisesUuidAndAwardPlaces() {

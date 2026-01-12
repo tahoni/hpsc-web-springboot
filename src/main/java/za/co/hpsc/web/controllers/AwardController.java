@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.models.AwardRequest;
-import za.co.hpsc.web.models.AwardResponseHolder;
 import za.co.hpsc.web.services.AwardService;
 
 /**
@@ -53,7 +53,7 @@ public class AwardController {
      * @param csvData The CSV content as a string containing details about awards,
      *                formatted according to the expected schema. This parameter
      *                is required and cannot be null.
-     * @return A {@code ResponseEntity} containing an {@link AwardResponseHolder},
+     * @return A {@code ResponseEntity} containing an {@link AwardCeremonyResponseHolder},
      * which encapsulates the JSON representation of the processed awards data.
      * @throws ValidationException If the provided CSV data does not meet validation requirements
      *                             or contains invalid structures.
@@ -64,9 +64,9 @@ public class AwardController {
     @Operation(summary = "Process award CSV", description = "Convert CSV data about awards to JSON.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AwardResponseHolder.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AwardCeremonyResponseHolder.class)))
     })
-    ResponseEntity<AwardResponseHolder> processCsv(
+    ResponseEntity<AwardCeremonyResponseHolder> processCsv(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "text/csv",
                     schema = @Schema(implementation = AwardRequest.class),
                     examples = @ExampleObject("""

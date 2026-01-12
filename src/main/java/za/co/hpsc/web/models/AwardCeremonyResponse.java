@@ -42,7 +42,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AwardCeremonyResponse extends Response {
-    private LocalDateTime date;
+    private String date;
     @NotNull
     private String imageFilePath = "";
 
@@ -75,8 +75,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing individual awards;
      *                      if null, it defaults to an empty list.
      */
-    public AwardCeremonyResponse(LocalDateTime date, String imageFilePath,
-                                 List<AwardResponse> awards) {
+    public AwardCeremonyResponse(String date, String imageFilePath, List<AwardResponse> awards) {
         this.date = date;
         this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
         this.awards = ValueUtil.nullAsEmptyList(awards);
@@ -94,8 +93,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing individual awards; if null,
      *                      it defaults to an empty list.
      */
-    public AwardCeremonyResponse(UUID uuid, LocalDateTime date, String imageFilePath,
-                                 List<AwardResponse> awards) {
+    public AwardCeremonyResponse(UUID uuid, String date, String imageFilePath, List<AwardResponse> awards) {
         super(uuid);
         this.date = date;
         this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
@@ -119,8 +117,8 @@ public class AwardCeremonyResponse extends Response {
      *                      it defaults to an empty list.
      */
     public AwardCeremonyResponse(UUID uuid, String title, String summary, String description,
-                                 String category, List<String> tags, LocalDateTime date,
-                                 String imageFilePath, List<AwardResponse> awards) {
+                                 String category, List<String> tags, String date, String imageFilePath,
+                                 List<AwardResponse> awards) {
         super(uuid, title, summary, description, category, tags);
         this.date = date;
         this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
@@ -140,7 +138,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing individual awards;
      *                      if null, it defaults to an empty list.
      */
-    public AwardCeremonyResponse(UUID uuid, String title, LocalDateTime date, String imageFilePath,
+    public AwardCeremonyResponse(UUID uuid, String title, String date, String imageFilePath,
                                  List<AwardResponse> awards) {
         super(uuid, title);
         this.date = date;
@@ -162,7 +160,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing individual awards; if null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(String title, String summary, String description, String category,
-                                 List<String> tags, LocalDateTime date, String imageFilePath,
+                                 List<String> tags, String date, String imageFilePath,
                                  List<AwardResponse> awards) {
         super(title, summary, description, category, tags);
         this.date = date;

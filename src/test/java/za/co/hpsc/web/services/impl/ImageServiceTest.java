@@ -19,7 +19,7 @@ class ImageServiceTest {
     private final HpscImageService hpscImageService = new HpscImageService();
 
     @Test
-    void testProcessCsv_withValidData_thenReturnsListOfImages() {
+    void testProcessCsv_withValidCsvData_thenReturnsListOfImages() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -39,7 +39,7 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withInvalidData_thenThrowsException() {
+    void testProcessCsv_withInvalidCsvData_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
                 summary,description,category,tags,filePath,fileName
@@ -52,7 +52,7 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withEmptyData_thenReturnsEmptyList() {
+    void testProcessCsv_withEmptyCsvData_thenReturnsEmptyList() {
         // Arrange
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
@@ -66,9 +66,18 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withNullData_thenThrowsException() {
+    void testProcessCsv_withNullCsvData_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 hpscImageService.processCsv(null));
+    }
+
+    @Test
+    void testProcessCsv_withInvalidCsvFormat_thenThrowsException() {
+        // Arrange
+        String csvData = "Invalid CSV Format";
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> hpscImageService.processCsv(csvData));
     }
 }
