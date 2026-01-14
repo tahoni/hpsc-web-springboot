@@ -5,6 +5,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.AwardCeremonyResponse;
 import za.co.hpsc.web.models.AwardRequest;
+import za.co.hpsc.web.models.AwardResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,7 +178,7 @@ public class HpscAwardServiceTest {
         assertEquals("Ceremony Description 400", awardRequests.get(400).getCeremonyDescription());
         // Assert random awards (award places)
         assertEquals("First 600", awardRequests.get(600).getFirstPlaceName());
-        assertEquals("img600.png", awardRequests.get(600).getFirstPlaceImageFileName());
+        assertEquals("imgA600.png", awardRequests.get(600).getFirstPlaceImageFileName());
         // Assert random awards (ceremony tags)
         assertEquals("Tag0", awardRequests.get(800).getTags().getFirst());
 
@@ -292,13 +293,13 @@ public class HpscAwardServiceTest {
     void testMapAwards_withValidAwardRequests_thenReturnsAwardCeremonyResponseList() {
         // Arrange
         AwardRequest request1 = new AwardRequest("Award 1", "Ceremony A", "Alice", "Bob", "Charlie");
-        request1.setImageFilePath("image1.png");
+        request1.setImageFilePath("/path/to/images1");
 
         AwardRequest request2 = new AwardRequest("Award 2", "Ceremony A", "Dan", "Eve", "Frank");
-        request2.setImageFilePath("image2.png");
+        request2.setImageFilePath("/path/to/images2.png");
 
         AwardRequest request3 = new AwardRequest("Award 3", "Ceremony B", "Grace", "Heidi", "Ivan");
-        request3.setImageFilePath("image3.png");
+        request3.setImageFilePath("/path/to/images3");
 
         List<AwardRequest> awardRequests = List.of(request1, request2, request3);
 
@@ -306,16 +307,38 @@ public class HpscAwardServiceTest {
         List<AwardCeremonyResponse> responses = hpscAwardService.mapAwards(awardRequests);
 
         // Assert
-        // TODO: test all fields
         assertEquals(2, responses.size());
 
+        // Test the first ceremony
         AwardCeremonyResponse ceremonyA = responses.getFirst();
         assertEquals("Ceremony A", ceremonyA.getTitle());
+        assertEquals("/path/to/images1", ceremonyA.getImageFilePath());
+        // Test the first ceremony's awards'
         assertEquals(2, ceremonyA.getAwards().size());
+        List<AwardResponse> awardsCeremonyA = ceremonyA.getAwards();
+        // Test the first award of the first ceremony
+        assertEquals("Award 1", awardsCeremonyA.getFirst().getTitle());
+        assertEquals("Alice", awardsCeremonyA.getFirst().getFirstPlace().getName());
+        assertEquals("Bob", awardsCeremonyA.getFirst().getSecondPlace().getName());
+        assertEquals("Charlie", awardsCeremonyA.getFirst().getThirdPlace().getName());
+        // Test the second award of the first ceremony
+        assertEquals("Award 2", awardsCeremonyA.getLast().getTitle());
+        assertEquals("Dan", awardsCeremonyA.getLast().getFirstPlace().getName());
+        assertEquals("Eve", awardsCeremonyA.getLast().getSecondPlace().getName());
+        assertEquals("Frank", awardsCeremonyA.getLast().getThirdPlace().getName());
 
+        // Test the second ceremony
         AwardCeremonyResponse ceremonyB = responses.getLast();
         assertEquals("Ceremony B", ceremonyB.getTitle());
+        assertEquals("/path/to/images3", ceremonyB.getImageFilePath());
+        // Test the second ceremony's awards'
         assertEquals(1, ceremonyB.getAwards().size());
+        List<AwardResponse> awardsCeremonyB = ceremonyB.getAwards();
+        // Test the first (and only) award of the second ceremony
+        assertEquals("Award 3", awardsCeremonyB.getFirst().getTitle());
+        assertEquals("Grace", awardsCeremonyB.getFirst().getFirstPlace().getName());
+        assertEquals("Heidi", awardsCeremonyB.getFirst().getSecondPlace().getName());
+        assertEquals("Ivan", awardsCeremonyB.getFirst().getThirdPlace().getName());
     }
 
     @Test
