@@ -5,6 +5,7 @@ import org.mockito.InjectMocks;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.AwardCeremonyResponse;
 import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
+import za.co.hpsc.web.models.AwardResponse;
 
 import java.util.List;
 
@@ -20,8 +21,8 @@ class AwardServiceTest {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFilePath,thirdPlaceImageFilePath
-                Award 1,Summary 1,Description 1,Category 1,tag1|tag2,2023-10-10,path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png";
-                Award 2,Summary 2,Description 2,Category 2,tag3|tag4,2023-10-10,path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,Mary Jane,Tom Brown,Karen White,w1.png,w2.png,w3.png";
+                Award 1,Summary 1,Description 1,Category 1,tag1|tag2,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png
+                Award 2,Summary 2,Description 2,Category 2,tag3|tag4,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,Mary Jane,Tom Brown,Karen White,wX.png,wY.png,wZ.png
                 """;
 
         // Act
@@ -29,12 +30,48 @@ class AwardServiceTest {
 
         // Assert
         assertNotNull(responseHolder);
+        // Assert ceremonies
         List<AwardCeremonyResponse> awardCeremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, awardCeremonies.size());
+        // Assert first and only ceremony
         AwardCeremonyResponse ceremonyResponse = awardCeremonies.getFirst();
-        assertEquals(2, ceremonyResponse.getAwards().size());
+        assertNotNull(ceremonyResponse.getUuid());
+        assertEquals("2023-10-10", ceremonyResponse.getDate());
+        assertEquals("/path/to", ceremonyResponse.getImageFilePath());
         assertEquals("Ceremony 1", ceremonyResponse.getTitle());
-        assertEquals("Award 2", ceremonyResponse.getAwards().get(1).getTitle());
+        assertEquals("Ceremony Summary 1", ceremonyResponse.getSummary());
+        assertEquals("Ceremony Description 1", ceremonyResponse.getDescription());
+        assertEquals("Ceremony Category 1", ceremonyResponse.getCategory());
+        assertEquals(List.of("tags1"), ceremonyResponse.getTags());
+        // Assert awards
+        assertEquals(2, ceremonyResponse.getAwards().size());
+        List<AwardResponse> awards = ceremonyResponse.getAwards();
+        // Assert the first award
+        AwardResponse firstAward = awards.getFirst();
+        assertEquals("Award 1", firstAward.getTitle());
+        assertEquals("Summary 1", firstAward.getSummary());
+        assertEquals("Description 1", firstAward.getDescription());
+        assertEquals("Category 1", firstAward.getCategory());
+        assertEquals(List.of("tag1", "tag2"), firstAward.getTags());
+        assertEquals("John Doe", firstAward.getFirstPlace().getName());
+        assertEquals("Alice Smith", firstAward.getSecondPlace().getName());
+        assertEquals("Bob Johnson", firstAward.getThirdPlace().getName());
+        assertEquals("w1.png", firstAward.getFirstPlace().getImageFilePath());
+        assertEquals("w2.png", firstAward.getSecondPlace().getImageFilePath());
+        assertEquals("w3.png", firstAward.getThirdPlace().getImageFilePath());
+        // Assert the second award
+        AwardResponse secondAward = awards.getLast();
+        assertEquals("Award 2", secondAward.getTitle());
+        assertEquals("Summary 2", secondAward.getSummary());
+        assertEquals("Description 2", secondAward.getDescription());
+        assertEquals("Category 2", secondAward.getCategory());
+        assertEquals(List.of("tag3", "tag4"), secondAward.getTags());
+        assertEquals("Mary Jane", secondAward.getFirstPlace().getName());
+        assertEquals("Tom Brown", secondAward.getSecondPlace().getName());
+        assertEquals("Karen White", secondAward.getThirdPlace().getName());
+        assertEquals("wX.png", secondAward.getFirstPlace().getImageFilePath());
+        assertEquals("wY.png", secondAward.getSecondPlace().getImageFilePath());
+        assertEquals("wZ.png", secondAward.getThirdPlace().getImageFilePath());
     }
 
     @Test

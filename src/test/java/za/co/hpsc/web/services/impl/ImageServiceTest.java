@@ -31,8 +31,26 @@ class ImageServiceTest {
         // Assert
         List<ImageResponse> responses = responseHolder.getImages();
         assertEquals(2, responses.size());
-        assertEquals("Image 1", responses.get(0).getTitle());
-        assertEquals("Summary 2", responses.get(1).getSummary());
+
+        // Assert the first image
+        ImageResponse imageResponse1 = responses.getFirst();
+        assertEquals("Image 1", imageResponse1.getTitle());
+        assertEquals("Summary 1", imageResponse1.getSummary());
+        assertEquals("Description 1", imageResponse1.getDescription());
+        assertEquals("Category 1", imageResponse1.getCategory());
+        assertEquals(List.of("Tag1", "Tag2"), imageResponse1.getTags());
+        assertEquals("/path/to/image1", imageResponse1.getFilePath());
+        assertEquals("image1.png", imageResponse1.getFileName());
+
+        // Assert the second image
+        ImageResponse imageResponse2 = responses.get(1);
+        assertEquals("Image 2", imageResponse2.getTitle());
+        assertEquals("Summary 2", imageResponse2.getSummary());
+        assertEquals("Description 2", imageResponse2.getDescription());
+        assertEquals("Category 2", imageResponse2.getCategory());
+        assertEquals(List.of("Tag3"), imageResponse2.getTags());
+        assertEquals("/path/to/image2", imageResponse2.getFilePath());
+        assertEquals("image2.png", imageResponse2.getFileName());
     }
 
     @Test

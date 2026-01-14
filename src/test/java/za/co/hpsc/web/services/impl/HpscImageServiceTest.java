@@ -41,8 +41,8 @@ class HpscImageServiceTest {
         assertEquals("/path/to/image1", firstRequest.getFilePath());
         assertEquals("image1.png", firstRequest.getFileName());
         List<String> firstTags = firstRequest.getTags();
-        assertEquals(2, firstRequest.getTags().size());
-        assertTrue(firstRequest.getTags().containsAll(List.of("Tag1", "Tag2")));
+        assertEquals(2, firstTags.size());
+        assertTrue(firstTags.containsAll(List.of("Tag1", "Tag2")));
 
         // Assert the second image
         ImageRequest secondRequest = imageRequests.get(1);
@@ -236,7 +236,7 @@ class HpscImageServiceTest {
         assertNotNull(imageResponseList);
         assertEquals(2, imageResponseList.size());
 
-        // Assert first image
+        // Assert the first image
         ImageResponse firstResponse = imageResponseList.getFirst();
         assertEquals("Image 1", firstResponse.getTitle());
         assertEquals("image1.png", firstResponse.getFileName());
@@ -245,7 +245,7 @@ class HpscImageServiceTest {
         assertEquals(2, firstTags.size());
         assertTrue(firstTags.containsAll(List.of("Tag1", "Tag2")));
 
-        // Assert second image
+        // Assert the second image
         ImageResponse secondResponse = imageResponseList.get(1);
         assertEquals("Image 2", secondResponse.getTitle());
         assertEquals("image2.png", secondResponse.getFileName());
