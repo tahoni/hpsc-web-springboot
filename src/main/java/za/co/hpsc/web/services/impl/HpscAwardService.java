@@ -67,6 +67,16 @@ public class HpscAwardService implements AwardService {
         }
     }
 
+    /**
+     * Maps a list of award requests into a list of award ceremony responses, grouping requests by
+     * their ceremony title. Each group represents a ceremony and includes all associated requests.
+     *
+     * @param awardRequestList the list of award requests to be grouped and mapped into responses;
+     *                         must not be null
+     * @return a list of {@link AwardCeremonyResponse} objects, each representing a group of award
+     * requests associated with the same ceremony title
+     * @throws ValidationException if the provided list is null
+     */
     protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");

@@ -1,9 +1,7 @@
 package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageRequest;
 import za.co.hpsc.web.models.ImageResponse;
@@ -13,7 +11,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
 class HpscImageServiceTest {
 
     @InjectMocks
@@ -81,6 +78,23 @@ class HpscImageServiceTest {
 
         ImageRequest secondRequest = imageRequests.get(1);
         assertEquals("Image 2", secondRequest.getTitle());
+    }
+
+    @Test
+    public void testReadImages_withLargeCsv_thenCreatesImageRequestList() {
+        StringBuilder largeCsv = new StringBuilder("title,summary,description,category,tags,filePath,fileName\n");
+
+        for (int i = 0; i < 1000; i++) {
+            largeCsv.append("Title ").append(i).append(",Summary ").append(i).append(",Description ").append(i)
+                    .append(",Category ").append(i % 10).append(",Tag").append(i % 10)
+                    .append(",path/to/image").append(i).append(",image").append(i).append(".png\n");
+        }
+
+        List<ImageRequest> awardRequests = assertDoesNotThrow(() ->
+                hpscImageService.readImages(largeCsv.toString()));
+
+        assertNotNull(awardRequests);
+        assertEquals(1000, awardRequests.size());
     }
 
     @Test
