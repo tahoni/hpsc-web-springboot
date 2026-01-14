@@ -10,6 +10,8 @@ A summary of the main changes.
 
 #### Bug Fixes
 
+#### Tests and Quality Assurance
+
 #### General Code Improvements
 
 #### Licence and Documentation
