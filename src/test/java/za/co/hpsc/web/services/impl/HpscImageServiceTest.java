@@ -128,6 +128,7 @@ class HpscImageServiceTest {
         // Assert last image
         assertEquals("Title 999", awardRequests.get(999).getTitle());
         assertEquals("Summary 999", awardRequests.get(999).getSummary());
+        assertEquals("Description 999", awardRequests.get(999).getDescription());
         assertEquals("Category 9", awardRequests.get(999).getCategory());
         assertEquals("Tag9", awardRequests.get(999).getTags().getFirst());
         assertEquals("path/to/image999", awardRequests.get(999).getFilePath());
