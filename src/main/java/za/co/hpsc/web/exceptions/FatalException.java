@@ -8,6 +8,7 @@ import java.security.PrivilegedActionException;
  * {@link Exception} and is typically used in scenarios where an
  * operation cannot proceed due to a critical failure.
  */
+// TODO: Javadoc
 public class FatalException extends Exception {
     /**
      * Constructs a new fatal exception with {@code null} as its detail message.
@@ -32,9 +33,13 @@ public class FatalException extends Exception {
 
     /**
      * Constructs a new fatal exception with the specified detail message and
-     * cause.  <p>Note that the detail message associated with
-     * {@code cause} is <i>not</i> automatically incorporated in
-     * this exception's detail message.
+     * cause.
+     *
+     * <p>
+     * Note that the detail message associated with {@code cause} is
+     * <i>not</i> automatically incorporated in this exception's detail
+     * message.
+     * </p>
      *
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link #getMessage()} method).

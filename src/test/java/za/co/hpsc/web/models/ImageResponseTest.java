@@ -1,25 +1,93 @@
 package za.co.hpsc.web.models;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaTypeFactory;
+import org.springframework.http.MediaType;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ImageResponseTest {
 
-    private static final String TITLE = "Title";
-    private static final String FILE_PATH = "/path/to/image";
-    private static final UUID ID = UUID.randomUUID();
+    @Test
+    void testConstructor_withMimeType_thenUseProvidedMimeType() {
+        // Act
+        ImageResponse response = new ImageResponse(
+                UUID.randomUUID(), "Title", "path/to", "image.jpg", MediaType.IMAGE_PNG_VALUE
+        );
+
+        // Assert
+        assertEquals(MediaType.IMAGE_PNG_VALUE, response.getMimeType());
+    }
+
+    @Test
+    void testConstructor_withNoMimeType_thenInfersMimeTypeFromFileName() {
+        // Act
+        ImageResponse jpgResponse = new ImageResponse(
+                null, "Title", "path/", "photo.jpg", ""
+        );
+        ImageResponse pngResponse = new ImageResponse(
+                null, "Title", "path/", "graphic.png", null
+        );
+
+        // Assert
+        assertEquals(MediaType.IMAGE_JPEG_VALUE, jpgResponse.getMimeType());
+        assertEquals(MediaType.IMAGE_PNG_VALUE, pngResponse.getMimeType());
+    }
+
+    @Test
+    void testFullConstructor_thenInitializesAllFields() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+        List<String> tags = List.of("nature", "forest");
+
+        // Act
+        ImageResponse response = new ImageResponse(
+                uuid, "Forest", "A summary", "Long description",
+                "Nature", tags, "/images", "forest.webp", "image/webp"
+        );
+
+        // Assert
+        assertEquals(uuid, response.getUuid());
+        assertEquals("Forest", response.getTitle());
+        assertEquals("A summary", response.getSummary());
+        assertEquals("Long description", response.getDescription());
+        assertEquals("Nature", response.getCategory());
+        assertEquals("/images", response.getFilePath());
+        assertEquals("forest.webp", response.getFileName());
+        assertEquals("image/webp", response.getMimeType());
+
+        assertEquals(2, response.getTags().size());
+        assertTrue(response.getTags().containsAll(tags));
+    }
+
+    @Test
+    void testConstructor_withImageRequestMapsFields_thenInitializesAllFieldsAndInfersMimeType() {
+        // Arrange
+        ImageRequest request = new ImageRequest();
+        request.setTitle("Request Title");
+        request.setSummary("Summary");
+        request.setDescription("Desc");
+        request.setCategory("Cat");
+        request.setTags(List.of("t1"));
+        request.setFilePath("/path");
+        request.setFileName("file.png");
+
+        // Act
+        ImageResponse response = new ImageResponse(request);
+
+        // Assert
+        assertEquals("Request Title", response.getTitle());
+        assertEquals("file.png", response.getFileName());
+        assertEquals(MediaType.IMAGE_PNG_VALUE, response.getMimeType());
+        assertNotNull(response.getUuid());
+    }
 
     @Test
     void setMimeType_withValidMimeType_thenSetMimeType() {
         // Arrange
-        String fileName = "";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "", "");
         String validMimeType = "image/png";
 
         // Act
@@ -32,9 +100,7 @@ class ImageResponseTest {
     @Test
     void setMimeType_withNullOrBlankValues_doesNotAlterExistingMimeType() {
         // Arrange
-        String fileName = "example.jpg";
-        String existingMimeType = "image/jpeg";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, existingMimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.jpg", "image/jpeg");
 
         // Act
         imageResponse.setMimeType(null);
@@ -43,46 +109,38 @@ class ImageResponseTest {
         String mimeTypeAfterBlankInput = imageResponse.getMimeType();
 
         // Assert
-        assertEquals(existingMimeType, mimeTypeAfterNullInput);
-        assertEquals(existingMimeType, mimeTypeAfterBlankInput);
+        assertEquals(MediaType.IMAGE_JPEG_VALUE, mimeTypeAfterNullInput);
+        assertEquals(MediaType.IMAGE_JPEG_VALUE, mimeTypeAfterBlankInput);
     }
 
     @Test
     void setMimeType_withBlankMimeType_thenInferMimeTypeFromFileName() {
         // Arrange
-        String fileName = "example.jpg";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.jpg", "");
 
         // Act
         imageResponse.setMimeType("");
 
         // Assert
-        Optional<String> expectedMimeType = MediaTypeFactory.getMediaType(fileName).map(Object::toString);
-        assertEquals(expectedMimeType.orElse(null), imageResponse.getMimeType());
+        assertEquals(MediaType.IMAGE_JPEG_VALUE, imageResponse.getMimeType());
     }
 
     @Test
     void setMimeType_withNullMimeType_thenInferMimeTypeFromFileName() {
         // Arrange
-        String fileName = "example.gif";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.gif", "");
 
         // Act
         imageResponse.setMimeType(null);
 
         // Assert
-        Optional<String> expectedMimeType = MediaTypeFactory.getMediaType(fileName).map(Object::toString);
-        assertEquals(expectedMimeType.orElse(null), imageResponse.getMimeType());
+        assertEquals("image/gif", imageResponse.getMimeType());
     }
 
     @Test
     void setMimeType_withNullOrBlankMimeTypeAndNoFileName_thenDoesNotSetMimeType() {
         // Arrange
-        String fileName = "";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "", "");
 
         // Act
         imageResponse.setMimeType(null);
@@ -94,23 +152,19 @@ class ImageResponseTest {
     @Test
     void setMimeType_withNoMimeTypeAndFileNameWithoutRecognizedExtension_thenDoesNotSetMimeType() {
         // Arrange
-        String fileName = "example.unknown";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.unknown", "");
 
         // Act
         imageResponse.setMimeType(null);
 
         // Assert
-        Optional<String> expectedMimeType = MediaTypeFactory.getMediaType(fileName).map(Object::toString);
-        assertEquals(expectedMimeType.orElse(""), imageResponse.getMimeType());
+        assertEquals("", imageResponse.getMimeType());
     }
 
     @Test
     void setMimeType_withoutFileNameAndMimeType_thenDoesNotSetMimeType() {
         // Arrange
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, "", ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "", "");
 
         // Act
         imageResponse.setMimeType("");
@@ -122,9 +176,8 @@ class ImageResponseTest {
     @Test
     void setMimeType_withNoMimeTypeAndFileNameWithoutRecognizedExtension_thenDoesNotModifyMimeType() {
         // Arrange
-        String fileName = "example.unknown";
-        String existingMimeType = "image/jpeg";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, existingMimeType);
+        String existingMimeType = MediaType.IMAGE_JPEG_VALUE;
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.unknown", existingMimeType);
 
         // Act
         imageResponse.setMimeType(null);
@@ -136,9 +189,8 @@ class ImageResponseTest {
     @Test
     void setMimeType_withoutFileNameAndMimeType_thenDoesNotModifyMimeType() {
         // Arrange
-        String fileName = "";
-        String existingMimeType = "image/jpeg";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, existingMimeType);
+        String existingMimeType = MediaType.IMAGE_JPEG_VALUE;
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "", existingMimeType);
 
         // Act
         imageResponse.setMimeType("");
@@ -150,23 +202,19 @@ class ImageResponseTest {
     @Test
     void setMimeType_withUpperCaseFileExtension_thenInferMimeTypeCorrectly() {
         // Arrange
-        String fileName = "IMAGE.PNG";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "IMAGE.PNG", "");
 
         // Act
         imageResponse.setMimeType(null);
 
         // Assert
-        Optional<String> expectedMimeType = MediaTypeFactory.getMediaType(fileName).map(Object::toString);
-        assertEquals(expectedMimeType.orElse(null), imageResponse.getMimeType());
+        assertEquals(MediaType.IMAGE_PNG_VALUE, imageResponse.getMimeType());
     }
 
     @Test
     void setMimeType_withNullFileNameAndMimeType_thenDoesNotSetMimeType() {
         // Arrange
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, null, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", null, "");
 
         // Act
         imageResponse.setMimeType(null);
@@ -178,9 +226,7 @@ class ImageResponseTest {
     @Test
     void setMimeType_withBlankFileNameAndMimeType_thenDoesNotSetMimeType() {
         // Arrange
-        String fileName = "   ";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "   ", "");
 
         // Act
         imageResponse.setMimeType(null);
@@ -192,9 +238,7 @@ class ImageResponseTest {
     @Test
     void setMimeType_withUncommonValidMimeType_thenRetainsMimeType() {
         // Arrange
-        String fileName = "example.custom";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.custom", "");
         String validMimeType = "custom/type";
 
         // Act
@@ -207,10 +251,9 @@ class ImageResponseTest {
     @Test
     void setMimeType_withOverwriteExistingMimeType_thenUpdatesMimeType() {
         // Arrange
-        String fileName = "example.jpg";
-        String existingMimeType = "image/jpeg";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, existingMimeType);
-        String newMimeType = "image/png";
+        String existingMimeType = MediaType.IMAGE_JPEG_VALUE;
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.jpg", existingMimeType);
+        String newMimeType = MediaType.IMAGE_PNG_VALUE;
 
         // Act
         imageResponse.setMimeType(newMimeType);
@@ -222,10 +265,8 @@ class ImageResponseTest {
     @Test
     void setMimeType_withConflictingFileNameAndValidMimeType_thenUsesExplicitMimeType() {
         // Arrange
-        String fileName = "example.jpg";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
-        String validMimeType = "application/pdf";
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.jpg", "");
+        String validMimeType = MediaType.IMAGE_JPEG_VALUE;
 
         // Act
         imageResponse.setMimeType(validMimeType);
@@ -237,15 +278,12 @@ class ImageResponseTest {
     @Test
     void setMimeType_withNoParameters_thenInferMimeTypeFromFileName() {
         // Arrange
-        String fileName = "example.gif";
-        String mimeType = "";
-        ImageResponse imageResponse = new ImageResponse(TITLE, FILE_PATH, fileName, ID, mimeType);
+        ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.gif", "");
 
         // Act
         imageResponse.setMimeType();
 
         // Assert
-        Optional<String> expectedMimeType = MediaTypeFactory.getMediaType(fileName).map(Object::toString);
-        assertEquals(expectedMimeType.orElse(null), imageResponse.getMimeType());
+        assertEquals(MediaType.IMAGE_GIF_VALUE, imageResponse.getMimeType());
     }
 }

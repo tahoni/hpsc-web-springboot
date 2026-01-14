@@ -1,9 +1,7 @@
 package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageResponse;
 import za.co.hpsc.web.models.ImageResponseHolder;
@@ -12,14 +10,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
 class ImageServiceTest {
 
     @InjectMocks
     private final HpscImageService hpscImageService = new HpscImageService();
 
     @Test
-    void testProcessCsv_withValidData_thenReturnsListOfImages() {
+    void testProcessCsv_withValidCsvData_thenReturnsListOfImages() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -34,12 +31,30 @@ class ImageServiceTest {
         // Assert
         List<ImageResponse> responses = responseHolder.getImages();
         assertEquals(2, responses.size());
-        assertEquals("Image 1", responses.get(0).getTitle());
-        assertEquals("Summary 2", responses.get(1).getSummary());
+
+        // Assert the first image
+        ImageResponse imageResponse1 = responses.getFirst();
+        assertEquals("Image 1", imageResponse1.getTitle());
+        assertEquals("Summary 1", imageResponse1.getSummary());
+        assertEquals("Description 1", imageResponse1.getDescription());
+        assertEquals("Category 1", imageResponse1.getCategory());
+        assertEquals(List.of("Tag1", "Tag2"), imageResponse1.getTags());
+        assertEquals("/path/to/image1", imageResponse1.getFilePath());
+        assertEquals("image1.png", imageResponse1.getFileName());
+
+        // Assert the second image
+        ImageResponse imageResponse2 = responses.get(1);
+        assertEquals("Image 2", imageResponse2.getTitle());
+        assertEquals("Summary 2", imageResponse2.getSummary());
+        assertEquals("Description 2", imageResponse2.getDescription());
+        assertEquals("Category 2", imageResponse2.getCategory());
+        assertEquals(List.of("Tag3"), imageResponse2.getTags());
+        assertEquals("/path/to/image2", imageResponse2.getFilePath());
+        assertEquals("image2.png", imageResponse2.getFileName());
     }
 
     @Test
-    void testProcessCsv_withInvalidData_thenThrowsException() {
+    void testProcessCsv_withInvalidCsvData_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
                 summary,description,category,tags,filePath,fileName
@@ -52,7 +67,7 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withEmptyData_thenReturnsEmptyList() {
+    void testProcessCsv_withEmptyCsvData_thenReturnsEmptyList() {
         // Arrange
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
@@ -66,9 +81,18 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withNullData_thenThrowsException() {
+    void testProcessCsv_withNullCsvData_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 hpscImageService.processCsv(null));
+    }
+
+    @Test
+    void testProcessCsv_withInvalidCsvFormat_thenThrowsException() {
+        // Arrange
+        String csvData = "Invalid CSV Format";
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> hpscImageService.processCsv(csvData));
     }
 }
