@@ -136,6 +136,6 @@ public class AwardResponse extends Response {
                 awardRequest.getCategory(), awardRequest.getTags(),
                 awardRequest.getFirstPlaceName(), awardRequest.getSecondPlaceName(),
                 awardRequest.getThirdPlaceName(), awardRequest.getFirstPlaceImageFileName(),
-                awardRequest.getSecondPlaceImageFilePath(), awardRequest.getThirdPlaceImageFilePath());
+                awardRequest.getSecondPlaceImageFileName(), awardRequest.getThirdPlaceImageFileName());
     }
 }

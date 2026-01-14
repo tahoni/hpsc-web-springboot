@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +36,7 @@ public abstract class AwardRequestForCSV {
     private String ceremonyCategory;
     private List<String> ceremonyTags = new ArrayList<>();
 
-    private LocalDateTime date;
-    @JsonProperty(required = true)
+    private String date;
     private String imageFilePath;
 
     @JsonProperty(required = true)
@@ -49,35 +47,34 @@ public abstract class AwardRequestForCSV {
     private List<String> tags = new ArrayList<>();
 
     @JsonProperty(required = true)
-    private String firstPlace;
+    private String firstPlaceName;
     @JsonProperty(required = true)
-    private String secondPlace;
+    private String secondPlaceName;
     @JsonProperty(required = true)
-    private String thirdPlace;
+    private String thirdPlaceName;
     private String firstPlaceImageFileName;
-    private String secondPlaceImageFilePath;
-    private String thirdPlaceImageFilePath;
+    private String secondPlaceImageFileName;
+    private String thirdPlaceImageFileName;
 
     /**
      * Constructs an instance of {@code AwardRequestForCSV} with the specified parameters.
-     * This constructor initializes fields required to represent an award request for CSV processing.
+     * This constructor initialises fields required to represent an award request for CSV processing.
      *
-     * @param categoryName the name of the category associated with the award ceremony. Must not be null or blank.
-     * @param title        the title of the award. Must not be null or blank.
-     * @param firstPlace   the name of the first-place winner. Must not be null or blank.
-     * @param secondPlace  the name of the second-place winner. Must not be null or blank.
-     * @param thirdPlace   the name of the third-place winner. Must not be null or blank.
+     * @param title           the title of the award. Must not be null or blank.
+     * @param ceremonyTitle   the title of the award ceremony. Must not be null or blank.
+     * @param firstPlaceName  the name of the first-place winner. Must not be null or blank.
+     * @param secondPlaceName the name of the second-place winner. Must not be null or blank.
+     * @param thirdPlaceName  the name of the third-place winner. Must not be null or blank.
      */
     @JsonCreator
-    public AwardRequestForCSV(@JsonProperty(value = "categoryName", required = true) String categoryName,
-                              @JsonProperty(value = "title", required = true) String title,
-                              @JsonProperty(value = "firstPlace", required = true) String firstPlace,
-                              @JsonProperty(value = "secondPlace", required = true) String secondPlace,
-                              @JsonProperty(value = "thirdPlace", required = true) String thirdPlace) {
-        this.ceremonyCategory = categoryName;
+    public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title, @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
+                              @JsonProperty(value = "firstPlaceName", required = true) String firstPlaceName,
+                              @JsonProperty(value = "secondPlaceName", required = true) String secondPlaceName,
+                              @JsonProperty(value = "thirdPlaceName", required = true) String thirdPlaceName) {
+        this.ceremonyTitle = ceremonyTitle;
         this.title = title;
-        this.firstPlace = firstPlace;
-        this.secondPlace = secondPlace;
-        this.thirdPlace = thirdPlace;
+        this.firstPlaceName = firstPlaceName;
+        this.secondPlaceName = secondPlaceName;
+        this.thirdPlaceName = thirdPlaceName;
     }
 }

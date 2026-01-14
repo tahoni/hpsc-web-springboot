@@ -54,7 +54,7 @@ class AwardResponseTest {
                 uuid, "Title", "Summary", "Desc", "Cat", tags, first, second, third
         );
 
-        // Assert meta data
+        // Assert meta-data
         assertEquals(uuid, response.getUuid());
         assertEquals("Title", response.getTitle());
         assertEquals("Summary", response.getSummary());
@@ -76,7 +76,7 @@ class AwardResponseTest {
         // Act
         AwardResponse response = new AwardResponse(uuid, "Mini Title", first, second, third);
 
-        // Assert meta data
+        // Assert meta-data
         assertEquals(uuid, response.getUuid());
         assertEquals("Mini Title", response.getTitle());
         // Assert places
@@ -92,7 +92,7 @@ class AwardResponseTest {
                 "Title", "Summary", "Desc", "Cat", List.of("tag"), first, second, third
         );
 
-        // Assert meta data
+        // Assert meta-data
         assertNotNull(response.getUuid());
         assertEquals("Title", response.getTitle());
         assertEquals("Summary", response.getSummary());
@@ -115,7 +115,7 @@ class AwardResponseTest {
                 "img1.jpg", "img2.jpg", "img3.jpg"
         );
 
-        // Assert meta data
+        // Assert meta-data
         assertEquals("T", response.getTitle());
         assertEquals("S", response.getSummary());
         assertEquals("D", response.getDescription());
@@ -140,29 +140,34 @@ class AwardResponseTest {
     @Test
     void testConstructor_withAwardRequest_thenInitialisesAllFields() {
         // Arrange
-        AwardRequest request = new AwardRequest();
-        request.setTitle("Req Title");
-        request.setSummary("Req Sum");
-        request.setDescription("Req Desc");
-        request.setCategory("Req Cat");
-        request.setTags(List.of("req-tag"));
+        AwardRequest request = new AwardRequest("Request Title", "Request Ceremony", "Winner 1", "Winner 2", "Winner 3");
+        request.setSummary("Request Sum");
+        request.setDescription("Request Desc");
+        request.setCategory("Request Cat");
+        request.setTags(List.of("Request-tag"));
+        request.setImageFilePath("/path/to/img");
+        request.setDate("2023-10-10");
+        request.setCeremonyDescription("Ceremony Desc");
+        request.setCeremonySummary("Ceremony Sum");
+        request.setCeremonyCategory("Ceremony Cat");
+        request.setCeremonyTags(List.of("ceremony-tag"));
         request.setFirstPlaceName("Winner 1");
         request.setSecondPlaceName("Winner 2");
         request.setThirdPlaceName("Winner 3");
         request.setFirstPlaceImageFileName("win1.png");
-        request.setSecondPlaceImageFilePath("win2.png");
-        request.setThirdPlaceImageFilePath("win3.png");
+        request.setSecondPlaceImageFileName("win2.png");
+        request.setThirdPlaceImageFileName("win3.png");
 
         // Act
         AwardResponse response = new AwardResponse(request);
 
-        // Assert meta data
+        // Assert meta-data
         assertNotNull(response.getUuid());
-        assertEquals("Req Sum", response.getSummary());
-        assertEquals("Req Desc", response.getDescription());
-        assertEquals("Req Cat", response.getCategory());
+        assertEquals("Request Sum", response.getSummary());
+        assertEquals("Request Desc", response.getDescription());
+        assertEquals("Request Cat", response.getCategory());
         assertEquals(1, response.getTags().size());
-        assertTrue(response.getTags().contains("req-tag"));
+        assertTrue(response.getTags().contains("Request-tag"));
 
         // Assert places (names)
         assertEquals("Winner 1", response.getFirstPlace().getName());

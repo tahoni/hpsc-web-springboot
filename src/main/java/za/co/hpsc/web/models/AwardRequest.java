@@ -1,9 +1,8 @@
 package za.co.hpsc.web.models;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -34,11 +33,8 @@ import java.util.List;
 // TODO: Javadoc
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class AwardRequest extends Request {
     private String date;
-    @NotNull
     private String imageFilePath;
 
     @NotNull
@@ -56,6 +52,15 @@ public class AwardRequest extends Request {
     private String thirdPlaceName;
 
     private String firstPlaceImageFileName;
-    private String secondPlaceImageFilePath;
-    private String thirdPlaceImageFilePath;
+    private String secondPlaceImageFileName;
+    private String thirdPlaceImageFileName;
+
+    public AwardRequest(@NotNull @NotBlank String title, String ceremonyTitle, String firstPlaceName,
+                        String secondPlaceName, String thirdPlaceName) {
+        super(title);
+        this.firstPlaceName = firstPlaceName;
+        this.secondPlaceName = secondPlaceName;
+        this.thirdPlaceName = thirdPlaceName;
+        this.ceremonyTitle = ceremonyTitle;
+    }
 }

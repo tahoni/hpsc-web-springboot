@@ -29,7 +29,7 @@ class AwardCeremonyResponseTest {
         assertNotNull(response.getUuid());
         assertNull(response.getDate());
         assertTrue(response.getImageFilePath().isEmpty());
-        // Assert meta data
+        // Assert meta-data
         assertNull(response.getTitle());
         // Assert awards
         assertTrue(response.getAwards().isEmpty());
@@ -44,7 +44,7 @@ class AwardCeremonyResponseTest {
         assertNotNull(response.getUuid());
         assertEquals(now, response.getDate());
         assertTrue(response.getImageFilePath().isEmpty());
-        // Assert meta data
+        // Assert meta-data
         assertNull(response.getTitle());
         // Assert awards
         assertTrue(response.getAwards().isEmpty());
@@ -63,7 +63,7 @@ class AwardCeremonyResponseTest {
         assertEquals(uuid, response.getUuid());
         assertEquals(now, response.getDate());
         assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertNull(response.getTitle());
         // Assert awards
         assertEquals(1, response.getAwards().size());
@@ -86,7 +86,7 @@ class AwardCeremonyResponseTest {
         assertEquals(uuid, response.getUuid());
         assertEquals(now, response.getDate());
         assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertEquals("Title", response.getTitle());
         assertEquals("Summary", response.getSummary());
         assertEquals("Desc", response.getDescription());
@@ -112,7 +112,7 @@ class AwardCeremonyResponseTest {
         assertEquals(uuid, response.getUuid());
         assertEquals(now, response.getDate());
         assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertEquals("Short Title", response.getTitle());
 
         // Assert awards
@@ -132,7 +132,7 @@ class AwardCeremonyResponseTest {
         assertNotNull(response.getUuid());
         assertEquals(now, response.getDate());
         assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertEquals("Title", response.getTitle());
         assertEquals("Sum", response.getSummary());
         assertEquals("Desc", response.getDescription());
@@ -148,8 +148,7 @@ class AwardCeremonyResponseTest {
     @Test
     void testConstructor_withValidAwardRequestList_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
-        AwardRequest request1 = new AwardRequest();
-        request1.setCeremonyTitle("Ceremony 2024");
+        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
         request1.setCeremonyDescription("Annual Awards");
         request1.setCeremonySummary("Summary 2024");
         request1.setCeremonyCategory("General");
@@ -157,31 +156,23 @@ class AwardCeremonyResponseTest {
         request1.setDate("2024-01-01");
         request1.setImageFilePath("/path/to/img");
 
-        request1.setTitle("Award 1");
         request1.setDescription("Ceremony 2024 Award 1");
         request1.setSummary("Summary 2024 Award 1");
         request1.setCategory("Category 1");
         request1.setTags(List.of("Tag3", "Tag4"));
-        request1.setFirstPlaceName("Winner A");
-        request1.setSecondPlaceName("Winner B");
-        request1.setThirdPlaceName("Winner C");
         request1.setFirstPlaceImageFileName("imga.png");
-        request1.setSecondPlaceImageFilePath("imgb.png");
-        request1.setThirdPlaceImageFilePath("imgc.png");
+        request1.setSecondPlaceImageFileName("imgb.png");
+        request1.setThirdPlaceImageFileName("imgc.png");
 
         // Arrange second award request
-        AwardRequest request2 = new AwardRequest();
-        request2.setTitle("Award 2");
+        AwardRequest request2 = new AwardRequest("Award 2", "Ceremony 2025", "Winner X", "Winner Y", "Winner Z");
         request2.setDescription("Ceremony 2024 Award 2");
         request2.setSummary("Summary 2024 Award 2");
         request2.setCategory("Category 2");
         request2.setTags(List.of("Tag5", "Tag6"));
-        request2.setFirstPlaceName("Winner X");
-        request2.setSecondPlaceName("Winner Y");
-        request2.setThirdPlaceName("Winner Z");
         request2.setFirstPlaceImageFileName("imgx.png");
-        request2.setSecondPlaceImageFilePath("imgy.png");
-        request2.setThirdPlaceImageFilePath("imgz.png");
+        request2.setSecondPlaceImageFileName("imgy.png");
+        request2.setThirdPlaceImageFileName("imgz.png");
 
         // Arrange all requests in a list
         List<AwardRequest> requestList = List.of(request1, request2);
@@ -193,7 +184,7 @@ class AwardCeremonyResponseTest {
         assertNotNull(response.getUuid());
         assertEquals("2024-01-01", response.getDate());
         assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertEquals("Ceremony 2024", response.getTitle());
         assertEquals("Annual Awards", response.getDescription());
         assertEquals("Summary 2024", response.getSummary());
@@ -245,8 +236,7 @@ class AwardCeremonyResponseTest {
     @Test
     void testConstructor_withValidAwardRequestListPrecedence_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
-        AwardRequest request1 = new AwardRequest();
-        request1.setCeremonyTitle("Ceremony 2024");
+        AwardRequest request1 = new AwardRequest("Award 1 Title", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
         request1.setCeremonyDescription("Annual Awards");
         request1.setCeremonySummary("Summary 2024");
         request1.setCeremonyCategory("General");
@@ -254,17 +244,12 @@ class AwardCeremonyResponseTest {
         request1.setDate("2024-01-01");
         request1.setImageFilePath("/path/to/img1");
 
-        request1.setTitle("Award 1 Title");
-        request1.setFirstPlaceName("Winner A");
         request1.setFirstPlaceImageFileName("imga.png");
-        request1.setSecondPlaceName("Winner B");
-        request1.setSecondPlaceImageFilePath("imgb.png");
-        request1.setThirdPlaceName("Winner C");
-        request1.setThirdPlaceImageFilePath("imgc.png");
+        request1.setSecondPlaceImageFileName("imgb.png");
+        request1.setThirdPlaceImageFileName("imgc.png");
 
         // Arrange second award request
-        AwardRequest request2 = new AwardRequest();
-        request2.setCeremonyTitle("Ceremony 2025");
+        AwardRequest request2 = new AwardRequest("Award 2 Title", "Ceremony 2025", "Winner X", "Winner Y", "Winner Z");
         request2.setCeremonyDescription("Annual Awards");
         request2.setCeremonySummary("Summary 2025");
         request2.setCeremonyCategory("General");
@@ -272,13 +257,9 @@ class AwardCeremonyResponseTest {
         request2.setDate("2025-01-01");
         request2.setImageFilePath("/path/to/img2");
 
-        request2.setTitle("Award 2 Title");
-        request2.setFirstPlaceName("Winner X");
         request2.setFirstPlaceImageFileName("imgx.png");
-        request2.setSecondPlaceName("Winner Y");
-        request2.setSecondPlaceImageFilePath("imgy.png");
-        request2.setThirdPlaceName("Winner Z");
-        request2.setThirdPlaceImageFilePath("imgz.png");
+        request2.setSecondPlaceImageFileName("imgy.png");
+        request2.setThirdPlaceImageFileName("imgz.png");
 
         // Arrange all requests in a list
         List<AwardRequest> requestList = List.of(request1, request2);
@@ -290,7 +271,7 @@ class AwardCeremonyResponseTest {
         assertNotNull(response.getUuid());
         assertEquals("2024-01-01", response.getDate());
         assertEquals("/path/to/img1", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertEquals("Ceremony 2024", response.getTitle());
         assertEquals("Annual Awards", response.getDescription());
         assertEquals("Summary 2024", response.getSummary());
@@ -336,7 +317,7 @@ class AwardCeremonyResponseTest {
         assertNotNull(response.getUuid());
         assertNull(response.getDate());
         assertEquals("", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertNull(response.getTitle());
         // Assert awards
         assertTrue(response.getAwards().isEmpty());
@@ -351,7 +332,7 @@ class AwardCeremonyResponseTest {
         assertNotNull(response.getUuid());
         assertNull(response.getDate());
         assertEquals("", response.getImageFilePath());
-        // Assert meta data
+        // Assert meta-data
         assertNull(response.getTitle());
         // Assert awards
         assertTrue(response.getAwards().isEmpty());

@@ -105,9 +105,11 @@ class HpscImageServiceTest {
         StringBuilder largeCsv = new StringBuilder("title,summary,description,category,tags,filePath,fileName\n");
 
         for (int i = 0; i < 1000; i++) {
+            // Appends title, summary, description, category to CSV
             largeCsv.append("Title ").append(i).append(",Summary ").append(i).append(",Description ").append(i)
-                    .append(",Category ").append(i % 10).append(",Tag").append(i % 10)
-                    .append(",path/to/image").append(i).append(",image").append(i).append(".png\n");
+                    .append(",Category ").append(i % 10).append(",Tag").append(i % 10);
+            // Appends file path and file name
+            largeCsv.append(",path/to/image").append(i).append(",image").append(i).append(".png\n");
         }
 
         // Act
@@ -150,7 +152,7 @@ class HpscImageServiceTest {
     void testReadImages_withInvalidCsvData_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
-                summary,title,description,category,tags,filePath,fileName
+                title,summary,description,category,tags,filePath,fileName
                 Invalid Row Without Correct Columns
                 """;
 
