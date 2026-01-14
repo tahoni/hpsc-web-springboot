@@ -8,7 +8,6 @@ import za.co.hpsc.web.models.ImageResponse;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HpscImageServiceTest {
@@ -17,7 +16,7 @@ class HpscImageServiceTest {
     private final HpscImageService hpscImageService = new HpscImageService();
 
     @Test
-    void testReadImages_withValidCsv_thenCreatesImageRequestList() {
+    void testReadImages_withValidCsv_thenReturnsImageRequestList() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -31,7 +30,7 @@ class HpscImageServiceTest {
 
         // Assert
         assertNotNull(imageRequests);
-        assertThat(imageRequests).hasSize(2);
+        assertEquals(2, imageRequests.size());
 
         ImageRequest firstRequest = imageRequests.getFirst();
         assertEquals("Image 1", firstRequest.getTitle());
@@ -49,7 +48,7 @@ class HpscImageServiceTest {
     }
 
     @Test
-    void testReadImages_withValidCsvRearrangedColumns_thenCreatesImageRequestList() {
+    void testReadImages_withValidCsvRearrangedColumns_thenReturnsImageRequestList() {
         // Arrange
         String csvData = """
                 summary,title,description,category,tags,filePath,fileName
@@ -63,7 +62,7 @@ class HpscImageServiceTest {
 
         // Assert
         assertNotNull(imageRequests);
-        assertThat(imageRequests).hasSize(2);
+        assertEquals(2, imageRequests.size());
 
         ImageRequest firstRequest = imageRequests.getFirst();
         assertEquals("Image 1", firstRequest.getTitle());
@@ -81,7 +80,8 @@ class HpscImageServiceTest {
     }
 
     @Test
-    public void testReadImages_withLargeCsv_thenCreatesImageRequestList() {
+    public void testReadImages_withLargeCsv_thenReturnsImageRequestList() {
+        // Arrange
         StringBuilder largeCsv = new StringBuilder("title,summary,description,category,tags,filePath,fileName\n");
 
         for (int i = 0; i < 1000; i++) {
@@ -90,25 +90,13 @@ class HpscImageServiceTest {
                     .append(",path/to/image").append(i).append(",image").append(i).append(".png\n");
         }
 
+        // Act
         List<ImageRequest> awardRequests = assertDoesNotThrow(() ->
                 hpscImageService.readImages(largeCsv.toString()));
 
+        // Assert
         assertNotNull(awardRequests);
         assertEquals(1000, awardRequests.size());
-    }
-
-    @Test
-    void testReadImages_withEmptyCsv_thenReturnsEmptyList() {
-        // Arrange
-        String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
-
-        // Act
-        List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
-                hpscImageService.readImages(emptyCsvData));
-
-        // Assert
-        assertNotNull(imageRequests);
-        assertTrue(imageRequests.isEmpty());
     }
 
     @Test
@@ -126,16 +114,69 @@ class HpscImageServiceTest {
     }
 
     @Test
-    void testReadImages_withInvalidCsv_thenThrowsException() {
+    void testReadImages_withInvalidCsvData_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
-                summary,description,category,tags,filePath,fileName
+                summary,title,description,category,tags,filePath,fileName
                 Invalid Row Without Correct Columns
                 """;
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 hpscImageService.readImages(invalidCsvData));
+    }
+
+    @Test
+    void testReadImages_withEmptyCsvData_thenReturnsEmptyList() {
+        // Arrange
+        String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
+
+        // Act
+        List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
+                hpscImageService.readImages(emptyCsvData));
+
+        // Assert
+        assertNotNull(imageRequests);
+        assertTrue(imageRequests.isEmpty());
+    }
+
+    @Test
+    void testReadImages_withInvalidCsvStructure_thenThrowsException() {
+        // Arrange
+        String invalidCsvStructure = """
+                Invalid_Header1,Invalid_Header2,Invalid_Header3
+                value1,value2
+                """;
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () ->
+                hpscImageService.readImages(invalidCsvStructure));
+    }
+
+    @Test
+    void testReadImages_withInvalidCsv_thenThrowsException() {
+        // Arrange
+        String invalidCsv = """
+                Invalid CSV With One Column and no Header
+                """;
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () ->
+                hpscImageService.readImages(invalidCsv));
+    }
+
+    @Test
+    void testReadImages_withBlankCsv_thenThrowsException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () ->
+                hpscImageService.readImages("    "));
+    }
+
+    @Test
+    void testReadImages_withEmptyCsv_thenThrowsException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () ->
+                hpscImageService.readImages(""));
     }
 
     @Test
@@ -146,7 +187,7 @@ class HpscImageServiceTest {
     }
 
     @Test
-    void testMapImages_withValidImageRequestList_thenCreatesImageResponseList() {
+    void testMapImages_withValidImageRequestList_thenReturnsImageResponseList() {
         // Arrange
         ImageRequest request1 = new ImageRequest("Image 1", "Summary 1", "Description 1",
                 "Category 1", List.of("Tag1", "|Tag2"), "/path/to/image1", "image1.png");
@@ -160,7 +201,7 @@ class HpscImageServiceTest {
 
         // Assert
         assertNotNull(imageResponseList);
-        assertThat(imageResponseList).hasSize(2);
+        assertEquals(2, imageResponseList.size());
 
         ImageResponse firstResponse = imageResponseList.getFirst();
         assertEquals("Image 1", firstResponse.getTitle());

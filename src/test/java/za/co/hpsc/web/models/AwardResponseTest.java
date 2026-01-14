@@ -54,16 +54,18 @@ class AwardResponseTest {
                 uuid, "Title", "Summary", "Desc", "Cat", tags, first, second, third
         );
 
+        // Assert meta data
         assertEquals(uuid, response.getUuid());
         assertEquals("Title", response.getTitle());
         assertEquals("Summary", response.getSummary());
         assertEquals("Desc", response.getDescription());
         assertEquals("Cat", response.getCategory());
+        assertEquals(2, response.getTags().size());
+        assertTrue(response.getTags().containsAll(tags));
+        // Assert places
         assertEquals(first, response.getFirstPlace());
         assertEquals(second, response.getSecondPlace());
         assertEquals(third, response.getThirdPlace());
-        assertEquals(2, response.getTags().size());
-        assertTrue(response.getTags().containsAll(tags));
     }
 
     @Test
@@ -74,9 +76,10 @@ class AwardResponseTest {
         // Act
         AwardResponse response = new AwardResponse(uuid, "Mini Title", first, second, third);
 
-        // Assert
+        // Assert meta data
         assertEquals(uuid, response.getUuid());
         assertEquals("Mini Title", response.getTitle());
+        // Assert places
         assertEquals(first, response.getFirstPlace());
         assertEquals(second, response.getSecondPlace());
         assertEquals(third, response.getThirdPlace());
@@ -84,20 +87,23 @@ class AwardResponseTest {
 
     @Test
     void testConstructor_withoutUuidButWithBasicFields_thenInitialisesAllFields() {
+        // Act
         AwardResponse response = new AwardResponse(
                 "Title", "Summary", "Desc", "Cat", List.of("tag"), first, second, third
         );
 
+        // Assert meta data
         assertNotNull(response.getUuid());
         assertEquals("Title", response.getTitle());
         assertEquals("Summary", response.getSummary());
         assertEquals("Desc", response.getDescription());
         assertEquals("Cat", response.getCategory());
+        assertEquals(1, response.getTags().size());
+        assertTrue(response.getTags().contains("tag"));
+        // Assert places
         assertEquals(first, response.getFirstPlace());
         assertEquals(second, response.getSecondPlace());
         assertEquals(third, response.getThirdPlace());
-        assertEquals(1, response.getTags().size());
-        assertTrue(response.getTags().contains("tag"));
     }
 
     @Test
@@ -109,7 +115,7 @@ class AwardResponseTest {
                 "img1.jpg", "img2.jpg", "img3.jpg"
         );
 
-        // Assert
+        // Assert meta data
         assertEquals("T", response.getTitle());
         assertEquals("S", response.getSummary());
         assertEquals("D", response.getDescription());
@@ -117,14 +123,15 @@ class AwardResponseTest {
         assertEquals(1, response.getTags().size());
         assertTrue(response.getTags().contains("tag"));
 
+        // Assert places (names)
         assertEquals("First Name", response.getFirstPlace().getName());
         assertEquals("Second Name", response.getSecondPlace().getName());
         assertEquals("Third Name", response.getThirdPlace().getName());
-
+        // Assert places (images)
         assertEquals("img1.jpg", response.getFirstPlace().getImageFilePath());
         assertEquals("img2.jpg", response.getSecondPlace().getImageFilePath());
         assertEquals("img3.jpg", response.getThirdPlace().getImageFilePath());
-
+        // Assert places (place numbers)
         assertEquals(1, response.getFirstPlace().getPlace());
         assertEquals(2, response.getSecondPlace().getPlace());
         assertEquals(3, response.getThirdPlace().getPlace());
@@ -149,7 +156,7 @@ class AwardResponseTest {
         // Act
         AwardResponse response = new AwardResponse(request);
 
-        // Assert
+        // Assert meta data
         assertNotNull(response.getUuid());
         assertEquals("Req Sum", response.getSummary());
         assertEquals("Req Desc", response.getDescription());
@@ -157,14 +164,15 @@ class AwardResponseTest {
         assertEquals(1, response.getTags().size());
         assertTrue(response.getTags().contains("req-tag"));
 
+        // Assert places (names)
         assertEquals("Winner 1", response.getFirstPlace().getName());
         assertEquals("Winner 2", response.getSecondPlace().getName());
         assertEquals("Winner 3", response.getThirdPlace().getName());
-
+        // Assert places (images)
         assertEquals("win1.png", response.getFirstPlace().getImageFilePath());
         assertEquals("win2.png", response.getSecondPlace().getImageFilePath());
         assertEquals("win3.png", response.getThirdPlace().getImageFilePath());
-
+        // Assert places (place numbers)
         assertEquals(1, response.getFirstPlace().getPlace());
         assertEquals(2, response.getSecondPlace().getPlace());
         assertEquals(3, response.getThirdPlace().getPlace());
