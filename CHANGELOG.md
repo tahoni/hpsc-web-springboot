@@ -31,7 +31,7 @@ null-safety across the application.
   across the project.
 - Standardised error handling using a new `ErrorResponse` model in `ApiControllerAdvice`.
 - Enhanced field validation across all models using `@NotNull` and `@NotBlank`.
-- Added `ValueUtil` to provide consistent null-to-default initialization for common types.
+- Added `ValueUtil` to provide consistent null-to-default initialisation for common types.
 
 #### Licence and Documentation
 
@@ -50,14 +50,12 @@ null-safety across the application.
 ### [Version 1.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-1.0.0) -_2026-01-04_
 
 Introduced robust image gallery functionality in a Spring Boot application, focusing on CSV-based
-image data
-processing, improved error handling, and better maintainability.
+image data processing, improved error handling, and better maintainability.
 
 #### Enhancements and Updates
 
-- Added image processing with CSV support, including new models (`ImageRequest`, `ImageResponse`,
-  etc.),
-  `HpscImageService` for processing logic, and `ImageController` for API endpoints.
+- Added image processing with CSV support, including new models (`ImageRequest`, `ImageResponse`, etc.),
+- `HpscImageService` for processing logic, and `ImageController` for API endpoints.
 - Introduced tag parsing and extended `ImageResponse` with `List<String>` for tags, improving data
   flexibility.
 - Enabled MIME type inference and handling for rearranged CSV columns, partial data, and array
@@ -65,16 +63,14 @@ processing, improved error handling, and better maintainability.
 
 #### Tests and Quality Assurance
 
-- Updated unit tests to validate new logic, including exception scenarios, MIME type inference, and
-  CSV edge
-  cases.
+- Updated unit tests to validate new logic, including exception scenarios, MIME type inference,
+  and CSV edge cases.
 
 #### General Code Improvements
 
 - Migrated models to the `za.co.hpsc.web.models` package and refactored CSV processing for better
-  validation
-  and exception handling (e.g., custom exceptions like `ValidationException`, `FatalException`, and
-  `CsvReadException`).
+  validation and exception handling (e.g., custom exceptions like `ValidationException`, `FatalException`,
+  and `CsvReadException`).
 - Enhanced exception management in `ApiControllerAdvice` to cover mismatched inputs and non-fatal
   errors.
 

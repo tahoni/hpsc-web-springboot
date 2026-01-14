@@ -26,7 +26,7 @@ null-safety across the application.
   across the project.
 - Standardised error handling using a new `ErrorResponse` model in `ApiControllerAdvice`.
 - Enhanced field validation across all models using `@NotNull` and `@NotBlank`.
-- Added `ValueUtil` to provide consistent null-to-default initialization for common types.
+- Added `ValueUtil` to provide consistent null-to-default initialisation for common types.
 
 #### Licence and Documentation
 
