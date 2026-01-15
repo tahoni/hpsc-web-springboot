@@ -57,7 +57,7 @@ public class AwardController {
      * which encapsulates the JSON representation of the processed awards data.
      * @throws ValidationException If the provided CSV data does not meet validation requirements
      *                             or contains invalid structures.
-     * @throws FatalException      If a critical error occurs during processing that prevents
+     * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
     @PostMapping(value = "/processCsv")

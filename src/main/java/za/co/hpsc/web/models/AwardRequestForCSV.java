@@ -23,7 +23,7 @@ import java.util.List;
  * - Information about the winners, including names and associated image file paths for first, second,
  * and third places.
  * - A constructor that mandates certain fields such as category name, title, and winner information
- * to ensure proper initialization for valid CSV representation.
+ * to ensure proper initialisation for valid CSV representation.
  */
 // TODO: Javadoc
 @Getter

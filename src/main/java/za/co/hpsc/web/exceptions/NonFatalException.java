@@ -11,8 +11,8 @@ package za.co.hpsc.web.exceptions;
 public class NonFatalException extends RuntimeException {
     /**
      * Constructs a new non-fatal exception with {@code null} as its
-     * detail message.  The cause is not initialized, and may subsequently be
-     * initialized by a call to {@link #initCause}.
+     * detail message.  The cause is not initialised, and may subsequently be
+     * initialised by a call to {@link #initCause}.
      */
     public NonFatalException() {
         super();
@@ -20,7 +20,7 @@ public class NonFatalException extends RuntimeException {
 
     /**
      * Constructs a new non-fatal exception with the specified detail message.
-     * The cause is not initialized, and may subsequently be initialized by a
+     * The cause is not initialised, and may subsequently be initialised by a
      * call to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for

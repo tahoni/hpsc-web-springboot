@@ -183,6 +183,7 @@ public class AwardCeremonyResponse extends Response {
             return;
         }
 
+        // Ceremony info (initialised from the first request in the list)
         AwardRequest firstRequest = awardRequestList.getFirst();
         super.setTitle(firstRequest.getCeremonyTitle());
         super.setDescription(firstRequest.getCeremonyDescription());
@@ -192,6 +193,7 @@ public class AwardCeremonyResponse extends Response {
         this.date = firstRequest.getDate();
         this.imageFilePath = firstRequest.getImageFilePath();
 
+        // Awards info
         this.awards = awardRequestList.stream()
                 .map(AwardResponse::new)
                 .toList();

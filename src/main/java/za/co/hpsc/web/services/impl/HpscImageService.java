@@ -51,6 +51,7 @@ public class HpscImageService implements ImageService {
      */
     protected List<ImageRequest> readImages(@NotNull @NotBlank String csvData)
             throws ValidationException, FatalException {
+        // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = csvMapper
                 .schemaFor(ImageRequestForCsv.class)
@@ -59,11 +60,13 @@ public class HpscImageService implements ImageService {
                 .withHeader();
         csvMapper.addMixIn(ImageRequest.class, ImageRequestForCsv.class);
 
+        // Read the CSV data using the mapper and schema
         try (MappingIterator<ImageRequest> requestMappingIterator =
                      csvMapper.readerFor(ImageRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
+
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
             throw new ValidationException("Invalid CSV data format.", e);
         } catch (IOException e) {
@@ -87,6 +90,7 @@ public class HpscImageService implements ImageService {
             throw new ValidationException("Image request list cannot be null.");
         }
 
+        // Map each request to a response
         return imageRequestList.stream()
                 .map(ImageResponse::new)
                 .toList();

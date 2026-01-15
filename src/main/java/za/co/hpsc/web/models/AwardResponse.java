@@ -15,7 +15,7 @@ import java.util.UUID;
  * Key features of this class include:
  * - Support for managing details of the top three awards.
  * - Nested static class {@code AwardPlace}, representing individual award details.
- * - Multiple constructors for initializing response data with varying levels of detail,
+ * - Multiple constructors for initialising response data with varying levels of detail,
  *   including award names, image file paths, and metadata from associated requests.
  * <p>
  * The {@code AwardResponse} class extends the {@link Response} class, inheriting

@@ -47,6 +47,7 @@ public class HpscAwardService implements AwardService {
      */
     protected List<AwardRequest> readAwards(@NotNull @NotBlank String csvData)
             throws ValidationException, FatalException {
+        // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = csvMapper
                 .schemaFor(AwardRequestForCSV.class)
@@ -55,11 +56,13 @@ public class HpscAwardService implements AwardService {
                 .withHeader();
         csvMapper.addMixIn(AwardRequest.class, AwardRequestForCSV.class);
 
+        // Read the CSV data using the mapper and schema
         try (MappingIterator<AwardRequest> requestMappingIterator =
                      csvMapper.readerFor(AwardRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
+
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
             throw new ValidationException("Invalid CSV data format.", e);
         } catch (IOException e) {
@@ -86,18 +89,23 @@ public class HpscAwardService implements AwardService {
         List<AwardRequest> currentGroup = new ArrayList<>();
         String currentCeremonyTitle = null;
 
+        // Group requests by ceremony title and create a response for each group
         for (AwardRequest request : awardRequestList) {
             String ceremonyTitle = request.getCeremonyTitle();
 
+            // Create a new response if the current ceremony title
+            // is different from the previous one
             if (currentCeremonyTitle != null && !currentCeremonyTitle.equalsIgnoreCase(ceremonyTitle)) {
                 responses.add(new AwardCeremonyResponse(currentGroup));
                 currentGroup = new ArrayList<>();
             }
 
+            // Add the current request to the current response
             currentGroup.add(request);
             currentCeremonyTitle = ceremonyTitle;
         }
 
+        // Add the last response if it's not empty'
         if (!currentGroup.isEmpty()) {
             responses.add(new AwardCeremonyResponse(currentGroup));
         }
