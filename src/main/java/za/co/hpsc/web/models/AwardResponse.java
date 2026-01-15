@@ -134,9 +134,6 @@ public class AwardResponse extends Response {
     }
 
     /**
-     * Initializes from request, extracting award details
-     */
-    /**
      * Constructs a new {@code AwardResponse} object with the specified title, summary, description,
      * category, tags, and award place details for first, second, and third positions.
      *
