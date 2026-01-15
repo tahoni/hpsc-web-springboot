@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Javadoc
 @Service
 public class HpscAwardService implements AwardService {
     @Override
@@ -35,15 +34,22 @@ public class HpscAwardService implements AwardService {
     }
 
     /**
-     * Reads award data from a CSV-formatted string and converts it into a list of {@link AwardRequest} objects.
+     * Reads award data from a CSV-formatted string and converts it into a list of
+     * {@link AwardRequest} objects.
      * <p>
-     * The method uses Jackson's CSV parsing functionality with a predefined schema to map CSV data
-     * to {@link AwardRequest} instances. Additional validation is performed to ensure data integrity.
+     * <p>
+     * The method uses a {@link CsvMapper} and a custom {@link CsvSchema} configuration
+     * to read, map, and convert the input CSV data into instances of {@link AwardRequest}.
+     * It ensures that CSV headers are correctly processed and supports reordering of columns.
+     * </p>
      *
-     * @param csvData the CSV data containing award information; must not be null or blank
-     * @return a list of {@link AwardRequest} objects parsed from the provided CSV data
-     * @throws ValidationException if the CSV data format is invalid or contains mismatched input
-     * @throws FatalException      if an I/O error occurs while processing the CSV data
+     * @param csvData the CSV data containing information about award requests.
+     *                Each row in the CSV should represent an award request with fields
+     *                such as title, file path, file name, and optional metadata.
+     *                Must not be null or blank.
+     * @return a list of {@link AwardRequest} objects parsed from the provided CSV data.
+     * @throws ValidationException if the CSV data format is invalid or contains mismatched input.
+     * @throws FatalException      if an I/O error occurs while processing the CSV data.
      */
     protected List<AwardRequest> readAwards(@NotNull @NotBlank String csvData)
             throws ValidationException, FatalException {
@@ -71,14 +77,19 @@ public class HpscAwardService implements AwardService {
     }
 
     /**
-     * Maps a list of award requests into a list of award ceremony responses, grouping requests by
-     * their ceremony title. Each group represents a ceremony and includes all associated requests.
+     * Maps a list of {@link AwardRequest} objects into a list of {@link AwardCeremonyResponse}
+     * objects, grouping requests by their ceremony title. Each group represents a ceremony
+     * and includes all its associated awards.
      *
-     * @param awardRequestList the list of award requests to be grouped and mapped into responses;
-     *                         must not be null
-     * @return a list of {@link AwardCeremonyResponse} objects, each representing a group of award
-     * requests associated with the same ceremony title
-     * @throws ValidationException if the provided list is null
+     * <p>
+     * If the input list is null, an empty list is returned.
+     * </p>
+     *
+     * @param awardRequestList the list of {@link AwardRequest} objects to be grouped
+     *                         and mapped into responses. Must not be null.
+     * @return a list of {@link AwardCeremonyResponse} objects, each representing a group
+     * of awards associated with the same ceremony. It will never be null, but it may be empty.
+     * @throws ValidationException if the input list is null.
      */
     protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {

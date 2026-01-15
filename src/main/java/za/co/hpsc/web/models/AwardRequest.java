@@ -55,6 +55,17 @@ public class AwardRequest extends Request {
     private String secondPlaceImageFileName;
     private String thirdPlaceImageFileName;
 
+    /**
+     * Constructs a new {@code AwardRequest} object with the specified details.
+     * This constructor initializes fields specific to an award, such as the title of the award,
+     * the ceremony title, and the names of recipients for first, second, and third places.
+     *
+     * @param title           the title of the award. Must not be null or blank.
+     * @param ceremonyTitle   the title of the ceremony associated with the award. It may be null.
+     * @param firstPlaceName  the name of the first-place recipient. It may be null.
+     * @param secondPlaceName the name of the second-place recipient. It may be null.
+     * @param thirdPlaceName  the name of the third-place recipient. It may be null.
+     */
     public AwardRequest(@NotNull @NotBlank String title, String ceremonyTitle, String firstPlaceName,
                         String secondPlaceName, String thirdPlaceName) {
         super(title);

@@ -6,14 +6,10 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageResponseHolder;
 
 /**
- * Provides functionality for processing image-related data from various sources.
- * Designed to handle operations such as parsing CSV files containing image information
- * and returning structured data encapsulated within a response holder.
- *
- * <p>
- * This service defines a contract for implementing and managing image-related workflows,
- * ensuring consistency and reusability across different components of the application.
- * </p>
+ * The {@code ImageService} interface provides methods for processing image-related data
+ * and transforming it into structured response objects. Implementations of this
+ * interface are responsible for handling and validating input data, as well as mapping
+ * it to domain-specific models for further use.
  */
 @Service
 public interface ImageService {
@@ -22,8 +18,7 @@ public interface ImageService {
      * containing a list of image responses.
      *
      * @param csvData the CSV data containing image information. Each line represents
-     *                an image and should follow the required format with columns:
-     *                title, summary, description, category, tags, filePath, and fileName.
+     *                an image and should follow the required format.
      * @return an {@link ImageResponseHolder} containing a list of image responses
      * parsed from the CSV data.
      * @throws ValidationException if the CSV data contains invalid or missing values.

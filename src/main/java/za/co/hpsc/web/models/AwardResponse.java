@@ -111,6 +111,19 @@ public class AwardResponse extends Response {
         this.thirdPlace = thirdPlace;
     }
 
+    /**
+     * Constructs a new {@code AwardResponse} object with the specified title, summary,
+     * description, category, tags, and award places for first, second, and third positions.
+     *
+     * @param title       the title of the award response. Must not be null or blank.
+     * @param summary     a brief summary of the award response. It may be null.
+     * @param description a detailed description of the award response. It may be null.
+     * @param category    the category under which the award response is classified. It may be null.
+     * @param tags        a list of tags associated with the award response. If null, an empty list is assigned.
+     * @param firstPlace  the award place representing the first position. Must not be null.
+     * @param secondPlace the award place representing the second position. Must not be null.
+     * @param thirdPlace  the award place representing the third position. Must not be null.
+     */
     public AwardResponse(String title, String summary, String description, String category,
                          List<String> tags, AwardPlace firstPlace, AwardPlace secondPlace,
                          AwardPlace thirdPlace) {
@@ -120,6 +133,25 @@ public class AwardResponse extends Response {
         this.thirdPlace = thirdPlace;
     }
 
+    /**
+     * Initializes from request, extracting award details
+     */
+    /**
+     * Constructs a new {@code AwardResponse} object with the specified title, summary, description,
+     * category, tags, and award place details for first, second, and third positions.
+     *
+     * @param title                    the title of the award response. Must not be null or blank.
+     * @param summary                  a brief summary of the award response. It may be null.
+     * @param description              a detailed description of the award response. It may be null.
+     * @param category                 the category under which the award response is classified. It may be null.
+     * @param tags                     a list of tags associated with the award response. If null, an empty list is assigned.
+     * @param firstPlaceName           the name of the awardee for the first position. It may be null.
+     * @param secondPlaceName          the name of the awardee for the second position. It may be null.
+     * @param thirdPlaceName           the name of the awardee for the third position. It may be null.
+     * @param firstPlaceImageFileName  the file name of the image associated with the first position. It may be null.
+     * @param secondPlaceImageFileName the file name of the image associated with the second position. It may be null.
+     * @param thirdPlaceImageFileName  the file name of the image associated with the third position. It may be null.
+     */
     public AwardResponse(String title, String summary, String description,
                          String category, List<String> tags,
                          String firstPlaceName, String secondPlaceName, String thirdPlaceName,
@@ -131,6 +163,14 @@ public class AwardResponse extends Response {
         this.thirdPlace = new AwardPlace(3, thirdPlaceName, thirdPlaceImageFileName);
     }
 
+    /**
+     * Constructs a new {@code AwardResponse} object by extracting award details
+     * from the provided {@code AwardRequest}.
+     *
+     * @param awardRequest the request object containing details such as title, summary,
+     *                     description, category, tags, and award place details for first,
+     *                     second, and third positions. Must not be null.
+     */
     public AwardResponse(AwardRequest awardRequest) {
         this(awardRequest.getTitle(), awardRequest.getSummary(), awardRequest.getDescription(),
                 awardRequest.getCategory(), awardRequest.getTags(),
