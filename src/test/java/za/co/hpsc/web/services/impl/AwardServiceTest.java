@@ -1,7 +1,9 @@
 package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.AwardCeremonyResponse;
 import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
@@ -11,10 +13,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class AwardServiceTest {
 
     @InjectMocks
-    private final HpscAwardService hpscAwardService = new HpscAwardService();
+    private HpscAwardService hpscAwardService;
 
     @Test
     void testProcessCsv_withValidCsvData_thenReturnsListOfAwards() {
