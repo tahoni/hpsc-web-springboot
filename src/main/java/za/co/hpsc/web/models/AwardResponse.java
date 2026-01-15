@@ -169,6 +169,7 @@ public class AwardResponse extends Response {
      *                     second, and third positions. Must not be null.
      */
     public AwardResponse(AwardRequest awardRequest) {
+        // Initialises response fields from request attributes
         this(awardRequest.getTitle(), awardRequest.getSummary(), awardRequest.getDescription(),
                 awardRequest.getCategory(), awardRequest.getTags(),
                 awardRequest.getFirstPlaceName(), awardRequest.getSecondPlaceName(),

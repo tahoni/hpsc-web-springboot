@@ -133,6 +133,7 @@ public class ImageResponse extends Response {
      *                     Must not be null.
      */
     public ImageResponse(@NotNull ImageRequest imageRequest) {
+        // Initialises response fields from request attributes
         this(imageRequest.getTitle(), imageRequest.getSummary(), imageRequest.getDescription(),
                 imageRequest.getCategory(), imageRequest.getTags(), imageRequest.getFilePath(),
                 imageRequest.getFileName());
@@ -149,9 +150,11 @@ public class ImageResponse extends Response {
     // TODO: only accept valid MIME types
     public void setMimeType(String mimeType) {
         if ((mimeType != null) && (!mimeType.isBlank())) {
+            // Set the MIME type directly
             this.mimeType = mimeType;
         } else {
             if (this.fileName != null) {
+                // Infer MIME type from the file name
                 Optional<MediaType> optionalMediaType =
                         MediaTypeFactory.getMediaType(this.fileName);
                 optionalMediaType.ifPresent(mediaType ->
