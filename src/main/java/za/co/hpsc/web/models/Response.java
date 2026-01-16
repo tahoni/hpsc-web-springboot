@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -51,7 +52,7 @@ public class Response extends Request {
      * @param uuid  the unique identifier for the response. If null, a random UUID is generated.
      * @param title the title of the response. Must not be null or blank.
      */
-    public Response(UUID uuid, String title) {
+    public Response(UUID uuid, @NotNull @NotBlank String title) {
         super(title);
         this.uuid = ValueUtil.nullAsRandomUuid(uuid);
     }
@@ -65,13 +66,13 @@ public class Response extends Request {
      * @param uuid        the unique identifier for the response. If null, a random UUID
      *                    is generated.
      * @param title       the title of the response. Must not be null or blank.
-     * @param summary     a brief summary of the response. It may be null.
-     * @param description a detailed description of the response. It may be null.
-     * @param category    the category under which the response is classified. It may be null.
+     * @param summary     a brief summary of the response. Can be null.
+     * @param description a detailed description of the response. Can be null.
+     * @param category    the category under which the response is classified. Can be null.
      * @param tags        a list of tags associated with the response.
      */
-    public Response(UUID uuid, String title, String summary, String description, String category,
-                    List<String> tags) {
+    public Response(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
+                    String category, List<String> tags) {
         super(title, summary, description, category, tags);
         this.uuid = ValueUtil.nullAsRandomUuid(uuid);
     }
@@ -83,13 +84,13 @@ public class Response extends Request {
      * As no UUID is provided, a random UUID is generated.
      *
      * @param title       the title of the response. Must not be null or blank.
-     * @param summary     a brief summary of the response. It may be null.
-     * @param description a detailed description of the response. It may be null.
-     * @param category    the category under which the response is classified. It may be null.
+     * @param summary     a brief summary of the response. Can be null.
+     * @param description a detailed description of the response. Can be null.
+     * @param category    the category under which the response is classified. Can be null.
      * @param tags        a list of tags associated with the response.
      */
-    public Response(String title, String summary, String description, String category,
-                    List<String> tags) {
+    public Response(@NotNull @NotBlank String title, String summary, String description,
+                    String category, List<String> tags) {
         super(title, summary, description, category, tags);
         this.uuid = ValueUtil.nullAsRandomUuid(null);
     }
