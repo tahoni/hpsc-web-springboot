@@ -19,7 +19,7 @@ import za.co.hpsc.web.models.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
 /**
- * Controller responsible for managing and processing image-related requests.
+ * Controller responsible for managing and processing image-related API endpoints.
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing image metadata.
  *
@@ -42,13 +42,15 @@ public class ImageController {
      * Handles the processing of CSV data containing image-related details and returns a
      * structured response encapsulated in an {@link ImageResponseHolder}.
      *
-     * @param csvData the CSV data containing image information. Each line represents
-     *                an image and should follow the required format with columns:
-     *                title, summary, description, category, tags, filePath, and fileName.
-     * @return an {@link ImageResponseHolder} containing a list of image responses
-     * parsed from the CSV data.
-     * @throws ValidationException if the CSV data contains invalid or missing values.
-     * @throws FatalException      if there is an error processing the CSV data.
+     * @param csvData The CSV content as a string containing details about images,
+     *                formatted according to the expected schema. This parameter
+     *                is required and cannot be null.
+     * @return an {@link ImageResponseHolder} containing a list of image responses which
+     * encapsulates the JSON representation of the processed image data.
+     * @throws ValidationException If the provided CSV data does not meet validation requirements
+     *                             or contains invalid structures.
+     * @throws FatalException      If a critical error occurs during processing, that prevents
+     *                             the operation from completing successfully.
      */
     @PostMapping(value = "/processCsv")
     @Operation(summary = "Process image CSV", description = "Convert CSV data about images to JSON.")

@@ -5,10 +5,11 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
 
 /**
- * Service interface for handling award processing operations. This interface
- * defines methods for processing award data and generating responses.
+ * The {@code AwardService} interface provides methods for processing award-related data
+ * and transforming it into structured response objects. Implementations of this
+ * interface are responsible for handling and validating input data, as well as mapping
+ * it to domain-specific models for further use.
  */
-// TODO: Javadoc
 public interface AwardService {
     /**
      * Processes the provided CSV data to extract award details and returns an object

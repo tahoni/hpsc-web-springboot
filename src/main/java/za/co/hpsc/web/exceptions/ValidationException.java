@@ -1,49 +1,47 @@
 package za.co.hpsc.web.exceptions;
 
-import java.security.PrivilegedActionException;
-
 /**
- * Represents a validation exception typically used to indicate that an
- * input validation error has occurred. This class extends
- * {@link IllegalArgumentException}, allowing it to be used in scenarios
+ * Represents a validation exception used to indicate that an input validation error
+ * has occurred.
+ * This class extends {@link IllegalArgumentException}, allowing it to be used in scenarios
  * where invalid arguments are encountered.
  */
-// TODO: Javadoc
 public class ValidationException extends IllegalArgumentException {
     /**
-     * Constructs an {@code IllegalArgumentException} with no
-     * detail message.
+     * Constructs a new {@code ValidationException} exception with null as its detail message.
+     * The cause is not initialised, and may subsequently be initialised by a call
+     * to {@link #initCause}.
      */
     public ValidationException() {
         super();
     }
 
     /**
-     * Constructs an {@code IllegalArgumentException} with the
-     * specified detail message.
+     * Constructs new a {@code ValidationException} exception with the specified detail message.
+     * The cause is not initialised, and may subsequently be initialised by a call
+     * to {@link #initCause}.
      *
-     * @param s the detail message.
+     * @param message the detail message. The detail message is saved for later retrieval
+     *                by the {@link #getMessage()} method.
      */
-    public ValidationException(String s) {
-        super(s);
+    public ValidationException(String message) {
+        super(message);
     }
 
     /**
-     * Constructs a new exception with the specified detail message and
-     * cause.
+     * Constructs a new {@code ValidationException} exception with the specified detail message
+     * and cause.
      *
      * <p>
-     * Note that the detail message associated with {@code cause} is
-     * <i>not</i> automatically incorporated in this exception's detail
-     * message.
+     * Note that the detail message associated with {@code cause} is <i>not</i> automatically
+     * incorporated in this exception's detail message.
      * </p>
      *
-     * @param message the detail message (which is saved for later retrieval
-     *                by the {@link Throwable#getMessage()} method).
+     * @param message the detail message (which is saved for later retrieval by the
+     *                {@link #getMessage()} method).
      * @param cause   the cause (which is saved for later retrieval by the
-     *                {@link Throwable#getCause()} method).  (A {@code null} value
-     *                is permitted, and indicates that the cause is nonexistent or
-     *                unknown.)
+     *                {@link #getCause()} method). A null value is permitted and indicates
+     *                that the cause is nonexistent or unknown.
      * @since 1.5
      */
     public ValidationException(String message, Throwable cause) {
@@ -51,17 +49,18 @@ public class ValidationException extends IllegalArgumentException {
     }
 
     /**
-     * Constructs a new exception with the specified cause and a detail
-     * message of {@code (cause==null ? null : cause.toString())} (which
-     * typically contains the class and detail message of {@code cause}).
+     * Constructs a new {@code ValidationException} exception with the specified cause and a
+     * detail message of {@code (cause == null ? null : cause.toString())} (which typically
+     * contains the class and detail message of {@code cause}).
+     *
+     * <p>
      * This constructor is useful for exceptions that are little more than
-     * wrappers for other throwables (for example, {@link
-     * PrivilegedActionException}).
+     * wrappers for other throwable objets.
+     * </p>
      *
      * @param cause the cause (which is saved for later retrieval by the
-     *              {@link Throwable#getCause()} method).  (A {@code null} value is
-     *              permitted, and indicates that the cause is nonexistent or
-     *              unknown.)
+     *              {@link #getCause()} method). A null value is permitted and indicates
+     *              that the cause is nonexistent or unknown.
      * @since 1.5
      */
     public ValidationException(Throwable cause) {

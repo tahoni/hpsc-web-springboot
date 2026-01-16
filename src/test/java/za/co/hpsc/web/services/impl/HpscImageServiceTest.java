@@ -1,7 +1,9 @@
 package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ImageRequest;
 import za.co.hpsc.web.models.ImageResponse;
@@ -10,10 +12,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class HpscImageServiceTest {
 
     @InjectMocks
-    private final HpscImageService hpscImageService = new HpscImageService();
+    private HpscImageService hpscImageService;
 
     @Test
     void testReadImages_withValidCsv_thenReturnsImageRequestList() {

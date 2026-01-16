@@ -8,17 +8,19 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * Abstract class representing a request model for image details,
- * primarily used for CSV-related operations.
+ * Abstract class representing a request model for image details, primarily used for
+ * CSV-related operations.
  *
  * <p>
- * This class encapsulates metadata about an image, including its title, summary,
- * detailed description, category, associated tags, file path, and file name.
- * It is intended to be extended by specific implementations that handle CSV-related
- * functionality for images.
- * The class mandates the presence of certain required fields (title, filePath, fileName)
- * that define the basic attributes of an image. Additional optional fields such as summary,
- * description, category, and tags provide further descriptive information about the image.
+ * The {@code AwardRequestForCSV} abstract class encapsulates metadata about an image,
+ * including its title, summary, detailed description, category, associated tags, file
+ * path, and file name.
+ * This class is specifically designed to handle structured data points required for
+ * generating or managing CSV representations of images.
+ * The class mandates the presence of certain required fields. The title, file path,
+ * and file name define the basic attributes of an image.
+ * Additional optional fields such as summary, description, category, and tags provide
+ * further descriptive information about the image.
  * This class uses the {@code @JsonProperty} annotation to specify mandatory fields
  * for JSON deserialization and ensures that they are populated when an instance is created.
  * The {@code @JsonCreator} constructor allows for creating instances with a subset of fields,
