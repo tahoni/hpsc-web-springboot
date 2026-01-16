@@ -20,23 +20,13 @@ import za.co.hpsc.web.services.AwardService;
 
 /**
  * Controller class responsible for handling award-related API endpoints.
- * Provides functionality for processing award data in CSV format and converting
- * it to JSON.
+ * Provides endpoints for handling operations such as parsing and processing CSV
+ * data containing award metadata.
  * <p>
- * This class is designed to manage HTTP requests related to awards and delegate
- * the processing tasks to the {@link AwardService}. It uses RESTful design principles
- * and leverages Spring Boot annotations for mapping requests and responses.
- * <p>
- * Annotations:
- * - {@code @Controller}: Indicates that this class is a Spring MVC controller.
- * - {@code @RequestMapping("/award")}: Maps incoming requests with paths prefixed
- * by {@code /award} to the methods in this class.
- * - {@code @Tag}: Adds OpenAPI metadata for describing the purpose of this controller.
- * <p>
- * Dependencies:
- * - {@link AwardService}: A service layer interface for processing award-related operations.
+ * This class is annotated with {@code @Controller} and {@code @RequestMapping}
+ * to designate it as a Spring MVC controller and map requests with the "/award" base URI.
+ * </p>
  */
-// TODO: Javadoc
 @Controller
 @RequestMapping("/award")
 @Tag(name = "Award", description = "API for award-related functionality.")
@@ -48,16 +38,17 @@ public class AwardController {
     }
 
     /**
-     * Processes the provided CSV data about awards and converts it into a JSON response.
+     * Handles the processing of CSV data containing award-related details and returns a
+     * structured response encapsulated in an {@link AwardCeremonyResponseHolder}.
      *
      * @param csvData The CSV content as a string containing details about awards,
      *                formatted according to the expected schema. This parameter
      *                is required and cannot be null.
-     * @return A {@code ResponseEntity} containing an {@link AwardCeremonyResponseHolder},
-     * which encapsulates the JSON representation of the processed awards data.
+     * @return an {@link AwardCeremonyResponseHolder} containing a list of image responses which
+     * encapsulates the JSON representation of the processed awards data.
      * @throws ValidationException If the provided CSV data does not meet validation requirements
      *                             or contains invalid structures.
-     * @throws FatalException      If a critical error occurs during processing that prevents
+     * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
     @PostMapping(value = "/processCsv")

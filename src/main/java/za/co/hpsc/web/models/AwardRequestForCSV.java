@@ -9,23 +9,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a model for capturing award-related request details to be exported or processed in CSV format.
+ * Abstract class representing a request model for image details, primarily used for
+ * CSV-related operations.
  * <p>
- * The {@code AwardRequestForCSV} abstract class encapsulates detailed information about an award event
- * and its associated attributes. This class is specifically designed to handle structured data points
- * required for generating or managing CSV representations of awards. It supports capturing metadata for
- * both the award ceremony and individual award details, as well as winner information for first, second,
- * and third places.
- * <p>
- * Key features of this class include:
- * - Metadata about the ceremony, such as title, summary, description, category, and tags.
- * - Structured data fields for the award details, including title, summary, description, category, and tags.
- * - Information about the winners, including names and associated image file paths for first, second,
- * and third places.
- * - A constructor that mandates certain fields such as category name, title, and winner information
- * to ensure proper initialization for valid CSV representation.
+ * The {@code AwardRequestForCSV} abstract class encapsulates metadata about an award event,
+ * including both the award ceremony and individual award details, as well as winner
+ * information for first, second, and third places.
+ * This class is specifically designed to handle structured data points required for
+ * generating or managing CSV representations of awards.
+ * The class mandates the presence of certain required fields. The title, ceremony title,
+ * and details about the first, second, and third places define the basic attributes of an award.
+ * Additional optional fields such as summary, description, category, and tags provide
+ * further descriptive information about the award.
+ * This class uses the {@code @JsonProperty} annotation to specify mandatory fields
+ * for JSON deserialization and ensures that they are populated when an instance is created.
+ * The {@code @JsonCreator} constructor allows for creating instances with a subset of fields,
+ * specifically focusing on the required fields for minimal valid initialisation.
+ * </p>
  */
-// TODO: Javadoc
 @Getter
 @Setter
 public abstract class AwardRequestForCSV {
@@ -48,29 +49,34 @@ public abstract class AwardRequestForCSV {
 
     @JsonProperty(required = true)
     private String firstPlaceName;
-    @JsonProperty(required = true)
     private String secondPlaceName;
-    @JsonProperty(required = true)
     private String thirdPlaceName;
     private String firstPlaceImageFileName;
     private String secondPlaceImageFileName;
     private String thirdPlaceImageFileName;
 
     /**
-     * Constructs an instance of {@code AwardRequestForCSV} with the specified parameters.
-     * This constructor initialises fields required to represent an award request for CSV processing.
+     * Constructs an instance of {@code AwardRequestForCSV} with the specified title,
+     * ceremony title, and award details for first, second, and third places.
+     *
+     * <p>
+     * This constructor is annotated with {@code @JsonCreator} to enable deserialization
+     * from JSON, specifically requiring the title, ceremony title, and details for
+     * first place.
+     * </p>
      *
      * @param title           the title of the award. Must not be null or blank.
      * @param ceremonyTitle   the title of the award ceremony. Must not be null or blank.
      * @param firstPlaceName  the name of the first-place winner. Must not be null or blank.
-     * @param secondPlaceName the name of the second-place winner. Must not be null or blank.
-     * @param thirdPlaceName  the name of the third-place winner. Must not be null or blank.
+     * @param secondPlaceName the name of the second-place winner. Can be null.
+     * @param thirdPlaceName  the name of the third-place winner. Can be null.
      */
     @JsonCreator
-    public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title, @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
+    public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
+                              @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
                               @JsonProperty(value = "firstPlaceName", required = true) String firstPlaceName,
-                              @JsonProperty(value = "secondPlaceName", required = true) String secondPlaceName,
-                              @JsonProperty(value = "thirdPlaceName", required = true) String thirdPlaceName) {
+                              @JsonProperty(value = "secondPlaceName") String secondPlaceName,
+                              @JsonProperty(value = "thirdPlaceName") String thirdPlaceName) {
         this.ceremonyTitle = ceremonyTitle;
         this.title = title;
         this.firstPlaceName = firstPlaceName;
