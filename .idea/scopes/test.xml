@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="test" pattern="file[web]:src/test/java//*" />
-</component>
