@@ -1,68 +1,61 @@
 # Architecture Documentation
 
-This document outlines the architectural design and technical stack of the HPSC Website Back-end.
+This document outlines the architectural design of the HPSC Back-end application.
 
-## High-Level Overview
+## System Overview
 
-The application follows a standard N-tier architecture, optimized for Spring Boot's ecosystem. It is designed
-to be a lightweight yet robust back-end service that processes structured data (CSV) and serves it via RESTful
-endpoints.
+The application follows a classic **N-Tier Architecture** pattern, ensuring a clean separation of concerns
+between the entry points, business logic, and data processing layers.
 
-## Technical Stack
+## Layered Structure
 
-- **Language**: Java 25
-- **Framework**: Spring Boot 4.0.1
-- **Build Tool**: Maven
-- **Data Formats**: JSON (API), CSV (Data Input)
-- **Documentation**: SpringDoc OpenAPI (Swagger), Spring REST Docs
-- **Utilities**: Lombok, Jackson (CSV & Databind)
+### 1. Presentation Layer (`za.co.hpsc.web.controllers`)
 
-## Layered Architecture
+- Responsible for handling incoming HTTP requests.
+- Maps REST endpoints to service layer methods.
+- Handles Request/Response DTO mapping and basic input validation via Spring's validation framework.
 
-### 1. Presentation Layer (Controllers)
+### 2. Service Layer (`za.co.hpsc.web.services`)
 
-Located in `za.co.hpsc.web.controllers`. These classes handle HTTP requests, validate input
-headers/parameters, and delegate to the service layer.
-
-- `ImageController`: Handles image gallery data requests.
-- `AwardController`: Manages award-related information.
-
-### 2. Service Layer (Business Logic)
-
-Located in `za.co.hpsc.web.services`. This layer contains the core business rules.
-
-- **ImageService**: Orchestrates the parsing and transformation of CSV data into structured `ImageResponse`
+- Contains the core business logic.
+- Orchestrates data flow between the controllers and the data processing components.
+- Implementation of the **CSV Processing Engine**, which transforms raw flat-file data into structured domain
   objects.
-- **CSV Processing**: Uses Jackson CSV for high-performance parsing with custom logic for MIME type detection
-  and tag extraction.
 
-### 3. Model Layer (Data Transfer)
+### 3. Model Layer (`za.co.hpsc.web.models`)
 
-Located in `za.co.hpsc.web.models`.
+- Defines the data structures used throughout the application.
+- Includes **DTOs** (Data Transfer Objects) for external communication and internal domain representations for
+  data processing.
 
-- Defines the contract between the front-end and back-end.
-- Uses `ImageResponseHolder` as a wrapper for bulk data transfers.
+### 4. Exception & Error Handling (`za.co.hpsc.web.exceptions`)
 
-### 4. Cross-Cutting Concerns
+- Global exception handling mechanism using `@ControllerAdvice`.
+- Translates internal processing errors and validation failures into standardised, user-friendly JSON
+  responses.
 
-- **Error Handling**: Centralized in `ApiControllerAdvice`, providing consistent JSON error responses for
-  `ValidationException`, `FatalException`, and `CsvReadException`.
-- **Validation**: Leverages `spring-boot-starter-validation` for declarative bean validation.
+## Key Design Patterns
 
-## Data Flow: CSV to API
+- **Strategy Pattern**: Used in CSV parsing to handle different column ordering and data formats dynamically.
+- **Inference Logic**: The system includes a MIME-type inference engine to automatically classify media based
+  on file extensions or metadata.
+- **Global Error Handling**: Centralised management of application state and error feedback.
 
-1. **Request**: The client sends a request (optionally containing CSV data or triggering a CSV read).
-2. **Parsing**: `ImageService` parses the raw CSV string. It handles variations in column order and missing
-   data gracefully.
-3. **Transformation**: The service maps CSV rows to `ImageResponse` DTOs, inferring MIME types based on file
-   extensions.
-4. **Response**: The `ImageController` wraps the result in an `ImageResponseHolder` and returns it as JSON.
+## Data Flow
 
-## Design Principles
+1. **Request**: A client makes a request to a REST endpoint (e.g., `/api/gallery`).
+2. **Processing**: The Controller delegates to the Service. If data is sourced from CSV, the Service invokes
+   the CSV Parser.
+3. **Transformation**: The CSV Parser reads the source, applies mapping rules, and produces Model objects.
+4. **Response**: The Service returns the processed data to the Controller, which sends a JSON response to the
+   client.
 
-- **Fail-Fast**: Strict validation ensures that malformed data is caught early with clear error messages.
-- **Maintainability**: Clear separation between parsing logic, business rules, and API definitions.
-- **Extensibility**: The service-interface pattern allows for easy replacement or extension of data processing
-  logic.
+## Quality Attributes
+
+- **Scalability**: Stateless service design allows for horizontal scaling.
+- **Maintainability**: Strict package naming conventions and separation of business logic from transport
+  protocols.
+- **Robustness**: Detailed validation at the entry point and during data parsing prevents malformed data from
+  propagating through the system.
 
 ```
