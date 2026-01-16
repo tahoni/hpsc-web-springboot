@@ -4,8 +4,30 @@
 
 ### Table of Contents
 
+- [Version 1.1.1](#version-111--_2026-01-16_)
 - [Version 1.1.0](#version-110--_2026-01-14_)
 - [Version 1.0.0](#version-100--_2026-01-04_)
+
+### [Version 1.1.1](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-1.1.1) -_2026-01-16_
+
+Improves code maintainability and API clarity by standardising Javadoc documentation across several key
+components.
+
+#### Licence and Documentation
+
+- Refined class-level documentation of `AwardController` to better describe its role in CSV processing.
+  Improved method documentation for `@PostMapping` endpoints, specifically detailing input requirements and
+  return types.
+- Enhanced parameter descriptions of `ImageController` for CSV processing, ensuring consistent documentation
+  with the `AwardController`.
+- Standardised Javadoc comments for `FatalException` and `NonFatalException` to match Java's core exception
+  patterns. Removed unnecessary imports.
+- Improved Javadoc annotations, validation constraints, and standardized nullability descriptions across the
+  model layer to improve IDE assistance and API documentation generation.
+
+#### Changes by
+
+@tahoni
 
 ### [Version 1.1.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-1.1.0) -_2026-01-14_
 
