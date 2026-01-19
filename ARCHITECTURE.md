@@ -1,6 +1,72 @@
-# Architecture Documentation
+# HPSC Website Back-end Architecture
 
-This document outlines the architectural design of the HPSC Back-end application.
+This document describes the architectural design, directory structure, and core concepts
+of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot back-end.
+
+## Table of Contents
+
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [System Overview](#system-overview)
+- [Layered Structure](#layered-structure)
+    - [Presentation Layer](#1-presentation-layer-zacohpscwebcontrollers)
+    - [Service Layer](#2-service-layer-zacohpscwebservices)
+    - [Model Layer](#3-model-layer-zacohpscwebmodels)
+    - [Exception and Error Handling](#4-exception-and-error-handling-zacohpscwebexceptions)
+- [Key Design Patterns](#key-design-patterns)
+- [Data Flow](#data-flow)
+- [Quality Attributes](#quality-attributes)
+- [Development Guidelines](#development-guidelines)
+
+## Technology Stack
+
+The application is built using modern technologies:
+
+- **Framework**: [Spring Boot 4](https://spring.io/projects/spring-boot)
+- **Build Tool**: [Maven 3.9](https://maven.apache.org/)
+- **Language**: [Java 25](https://www.oracle.com/java/)
+
+## Project Structure
+
+The project follows a modular structure, separating entry points, business logic, and data processing layers.
+
+[//]: # (TODO: describe tree structure)
+
+```text
+├───.github
+│   └───workflows
+├───.mvn
+│   └───wrapper
+├───documentation
+│   └───templates
+├───src
+│   ├───main
+│   │   ├───java
+│   │   │   └───za
+│   │   │       └───co
+│   │   │           └───hpsc
+│   │   │               └───web
+│   │   │                   ├───configs
+│   │   │                   ├───constants
+│   │   │                   ├───controllers
+│   │   │                   ├───exceptions
+│   │   │                   ├───models
+│   │   │                   ├───services
+│   │   │                   │   └───impl
+│   │   │                   └───utils
+│   │   └───resources
+│   │       └───static
+│   └───test
+│       └───java
+│           └───za
+│               └───co
+│                   └───hpsc
+│                       └───web
+│                           ├───models
+│                           ├───services
+│                           │   └───impl
+│                           └───utils
+```
 
 ## System Overview
 
@@ -28,7 +94,7 @@ between the entry points, business logic, and data processing layers.
 - Includes **DTOs** (Data Transfer Objects) for external communication and internal domain representations for
   data processing.
 
-### 4. Exception & Error Handling (`za.co.hpsc.web.exceptions`)
+### 4. Exception and Error Handling (`za.co.hpsc.web.exceptions`)
 
 - Global exception handling mechanism using `@ControllerAdvice`.
 - Translates internal processing errors and validation failures into standardised, user-friendly JSON
@@ -58,4 +124,7 @@ between the entry points, business logic, and data processing layers.
 - **Robustness**: Detailed validation at the entry point and during data parsing prevents malformed data from
   propagating through the system.
 
-```
+## Development Guidelines
+
+Refer to the [README.md](./README.md) for detailed instructions on local setup, commands, and
+coding standards.
