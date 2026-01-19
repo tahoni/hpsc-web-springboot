@@ -4,9 +4,24 @@
 
 ### Table of Contents
 
+- [Version 1.1.2](#version-112--_2026-01-20_)
 - [Version 1.1.1](#version-111--_2026-01-16_)
 - [Version 1.1.0](#version-110--_2026-01-14_)
 - [Version 1.0.0](#version-100--_2026-01-04_)
+
+### [Version 1.1.2](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-1.1.2) -_2026-01-20_
+
+Adds or updates project documentation and onboarding material.
+Documents development, build, test and deploy workflows for the project.
+
+#### Licence and Documentation
+
+- Created the `README.md` file describing the project overall.
+- Created the `ARCHITCETURE.md` file describing the architecture of the project.
+
+#### Changes by
+
+@tahoni
 
 ### [Version 1.1.1](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-1.1.1) -_2026-01-16_
 
