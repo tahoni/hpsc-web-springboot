@@ -28,44 +28,43 @@ The application is built using modern technologies:
 
 ## Project Structure
 
-The project follows a modular structure, separating entry points, business logic, and data processing layers.
-
-[//]: # (TODO: describe tree structure)
+The project follows a conventional Maven and Spring Boot layout, and separates presentation (`controllers`),
+business (`services`), and data/DTOs (`models`) for clear layering and testability.
 
 ```text
-├───.github
-│   └───workflows
-├───.mvn
-│   └───wrapper
-├───documentation
-│   └───templates
-├───src
-│   ├───main
-│   │   ├───java
-│   │   │   └───za
-│   │   │       └───co
-│   │   │           └───hpsc
-│   │   │               └───web
-│   │   │                   ├───configs
-│   │   │                   ├───constants
-│   │   │                   ├───controllers
-│   │   │                   ├───exceptions
-│   │   │                   ├───models
-│   │   │                   ├───services
-│   │   │                   │   └───impl
-│   │   │                   └───utils
-│   │   └───resources
-│   │       └───static
-│   └───test
-│       └───java
-│           └───za
-│               └───co
-│                   └───hpsc
-│                       └───web
-│                           ├───models
-│                           ├───services
-│                           │   └───impl
-│                           └───utils
+├───.github                                     # CI/CD workflows (GitHub Actions)
+│   └───workflows                               # GitHub Actions workflow definitions
+├───.mvn                                        # Maven wrapper files
+│   └───wrapper                                 # Maven wrapper jar and properties
+├───documentation                               # Project documents and templates
+│   └───templates                               # Documentation templates          
+├───src                                         # Source code
+│   ├───main                                    # Main application source
+│   │   ├───java                                # Java source files
+│   │   │   └───za                              # Root package
+│   │   │       └───co                          # Company domain
+│   │   │           └───hpsc                    # Project namespace
+│   │   │               └───web                 # Application packages
+│   │   │                   ├───configs         # Spring configuration classes
+│   │   │                   ├───constants       # Application-wide constant values
+│   │   │                   ├───controllers     # REST controllers / HTTP endpoints
+│   │   │                   ├───exceptions      # Global and domain-specific error handlers
+│   │   │                   ├───models          # DTOs and domain models used across layers
+│   │   │                   ├───services        # Service interfaces and business logic
+│   │   │                   │   └───impl        # Concrete service implementations
+│   │   │                   └───utils           # Helper utilities and common functions
+│   │   └───resources                           # Application resources
+│   │       └───static                          # Static assets served by the application.
+│   └───test                                    # Unit/integration tests source 
+│       └───java                                # Java test source files
+│           └───za                              # Root package
+│               └───co                          # Company domain
+│                   └───hpsc                    # Project namespace
+│                       └───web                 # Application test packages
+│                           ├───models          # Tests of DTOs and domain models used across layers
+│                           ├───services        # Tests of service interfaces and business logic
+│                           │   └───impl        # Tests of concrete service implementations
+│                           └───utils           # Tests of helper utilities and common functions
 ```
 
 ## System Overview
