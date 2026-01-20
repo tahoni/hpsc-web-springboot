@@ -1,4 +1,4 @@
-# HPSC website back-end
+# HPSC Website Backend
 
 ## Release Notes
 
