@@ -1,7 +1,7 @@
 # HPSC Website Backend Architecture
 
 This document describes the architectural design, directory structure, and core concepts
-of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot back-end.
+of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## Table of Contents
 

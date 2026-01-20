@@ -14,7 +14,7 @@
     <artifactId>hpsc-web</artifactId>
     <version>1.1.2</version>
     <name>hpsc-web</name>
-    <description>HPSC website back-end</description>
+    <description>HPSC website backend</description>
 
     <!-- Overwrite default configuration -->
     <url/>
