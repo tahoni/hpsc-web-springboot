@@ -1,9 +1,10 @@
-package za.co.hpsc.web.models;
+package za.co.hpsc.web.models.award;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import za.co.hpsc.web.models.Request;
 
 import java.util.ArrayList;
 import java.util.List;

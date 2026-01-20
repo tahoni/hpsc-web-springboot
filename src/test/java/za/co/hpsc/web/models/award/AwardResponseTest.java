@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models;
+package za.co.hpsc.web.models.award;
 
 import org.junit.jupiter.api.Test;
 

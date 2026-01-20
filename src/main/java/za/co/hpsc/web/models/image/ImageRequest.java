@@ -1,10 +1,11 @@
-package za.co.hpsc.web.models;
+package za.co.hpsc.web.models.image;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.Request;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;

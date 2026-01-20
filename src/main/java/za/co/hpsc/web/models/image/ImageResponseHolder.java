@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models;
+package za.co.hpsc.web.models.image;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

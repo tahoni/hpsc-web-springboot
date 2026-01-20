@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
-import za.co.hpsc.web.models.AwardRequest;
+import za.co.hpsc.web.models.award.AwardCeremonyResponseHolder;
+import za.co.hpsc.web.models.award.AwardRequest;
 import za.co.hpsc.web.services.AwardService;
 
 /**

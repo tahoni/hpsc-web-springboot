@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models;
+package za.co.hpsc.web.models.award;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

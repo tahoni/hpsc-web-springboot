@@ -6,9 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.AwardCeremonyResponse;
-import za.co.hpsc.web.models.AwardRequest;
-import za.co.hpsc.web.models.AwardResponse;
+import za.co.hpsc.web.models.award.AwardCeremonyResponse;
+import za.co.hpsc.web.models.award.AwardRequest;
+import za.co.hpsc.web.models.award.AwardResponse;
 
 import java.util.ArrayList;
 import java.util.List;

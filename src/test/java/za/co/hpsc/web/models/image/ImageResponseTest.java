@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models;
+package za.co.hpsc.web.models.image;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
