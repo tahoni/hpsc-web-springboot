@@ -3,7 +3,6 @@ package za.co.hpsc.web.models;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.utils.ValueUtil;
 
@@ -25,7 +24,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 public class Request {
     @NotNull
     @NotBlank
@@ -34,7 +32,18 @@ public class Request {
     private String description;
 
     private String category;
-    private List<String> tags = new ArrayList<>();
+    private List<String> tags;
+
+    /**
+     * Constructs a new {@code Request} object with default values
+     *
+     * <p>
+     * Ensures that the list of tags is not null by initialising it to an empty list.
+     * </p>.
+     */
+    public Request() {
+        this.tags = new ArrayList<>();
+    }
 
     /**
      * Constructs a new {@code Request} object with the specified title.
@@ -42,6 +51,7 @@ public class Request {
      * @param title the title of the request. Must not be null or blank.
      */
     public Request(@NotNull @NotBlank String title) {
+        this();
         this.title = title;
     }
 

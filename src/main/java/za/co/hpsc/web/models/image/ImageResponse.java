@@ -35,7 +35,24 @@ public class ImageResponse extends Response {
 
     @Getter
     @NotNull
-    private String mimeType = "";
+    private String mimeType;
+
+    /**
+     * Constructs a new {@code ImageResponse} object with default values.
+     *
+     * <p>
+     * This constructor initialises the fields and ensures that the
+     * file path and file name are not null by setting them to empty strings.
+     * A randomly generated UUID is assigned through the superclass constructor.
+     * The MIME type is also set to an empty string.
+     * </p>
+     */
+    public ImageResponse() {
+        super();
+        this.filePath = "";
+        this.fileName = "";
+        this.mimeType = "";
+    }
 
     /**
      * Constructs a new {@code ImageResponse} object with specified UUID, title,

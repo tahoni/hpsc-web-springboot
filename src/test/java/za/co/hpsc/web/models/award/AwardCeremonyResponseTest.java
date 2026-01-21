@@ -15,9 +15,9 @@ class AwardCeremonyResponseTest {
 
     private final String now = DateTimeFormatter.ofPattern(HpscConstants.HPSC_DATE_FORMAT).format(LocalDateTime.now());
     private final List<AwardResponse> sampleAwards = List.of(
-            new AwardResponse(new AwardResponse.AwardPlace(1, "A", "a.png"),
-                    new AwardResponse.AwardPlace(2, "B", "b.png"),
-                    new AwardResponse.AwardPlace(3, "C", "c.png"))
+            new AwardResponse(new AwardPlacing(1, "A", "a.png"),
+                    new AwardPlacing(2, "B", "b.png"),
+                    new AwardPlacing(3, "C", "c.png"))
     );
 
     @Test

@@ -2,9 +2,7 @@ package za.co.hpsc.web.models.award;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.Response;
 
@@ -29,19 +27,9 @@ import java.util.UUID;
 @Setter
 public class AwardResponse extends Response {
     @NotNull
-    private AwardPlace firstPlace;
-    private AwardPlace secondPlace;
-    private AwardPlace thirdPlace;
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AwardPlace {
-        private int place;
-        private String name;
-        private String imageFilePath;
-    }
+    private AwardPlacing firstPlace;
+    private AwardPlacing secondPlace;
+    private AwardPlacing thirdPlace;
 
     /**
      * Constructs a new {@code AwardResponse} object with the specified award places for
@@ -55,7 +43,8 @@ public class AwardResponse extends Response {
      * @param secondPlace the award place representing the second position. Can be null.
      * @param thirdPlace  the award place representing the third position. Can be null.
      */
-    public AwardResponse(@NotNull AwardPlace firstPlace, AwardPlace secondPlace, AwardPlace thirdPlace) {
+    public AwardResponse(@NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
+                         AwardPlacing thirdPlace) {
         super();
         this.firstPlace = firstPlace;
         this.secondPlace = secondPlace;
@@ -76,8 +65,8 @@ public class AwardResponse extends Response {
      * @param secondPlace the award place representing the second position. Can be null.
      * @param thirdPlace  the award place representing the third position. Can be null.
      */
-    public AwardResponse(UUID uuid, @NotNull AwardPlace firstPlace, AwardPlace secondPlace,
-                         AwardPlace thirdPlace) {
+    public AwardResponse(UUID uuid, @NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
+                         AwardPlacing thirdPlace) {
         super(uuid);
         this.firstPlace = firstPlace;
         this.secondPlace = secondPlace;
@@ -100,8 +89,8 @@ public class AwardResponse extends Response {
      * @param secondPlace the award place representing the second position. Can be null.
      * @param thirdPlace  the award place representing the third position. Can be null.
      */
-    public AwardResponse(UUID uuid, @NotNull @NotBlank String title, @NotNull AwardPlace firstPlace,
-                         AwardPlace secondPlace, AwardPlace thirdPlace) {
+    public AwardResponse(UUID uuid, @NotNull @NotBlank String title, @NotNull AwardPlacing firstPlace,
+                         AwardPlacing secondPlace, AwardPlacing thirdPlace) {
         super(uuid, title);
         this.firstPlace = firstPlace;
         this.secondPlace = secondPlace;
@@ -131,9 +120,8 @@ public class AwardResponse extends Response {
      * @param thirdPlace  the award place representing the third position. Can be null.
      */
     public AwardResponse(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
-                         String category,
-                         List<String> tags, AwardPlace firstPlace, AwardPlace secondPlace,
-                         AwardPlace thirdPlace) {
+                         String category, List<String> tags, AwardPlacing firstPlace,
+                         AwardPlacing secondPlace, AwardPlacing thirdPlace) {
         super(uuid, title, summary, description, category, tags);
         this.firstPlace = firstPlace;
         this.secondPlace = secondPlace;
@@ -159,8 +147,8 @@ public class AwardResponse extends Response {
      * @param thirdPlace  the award place representing the third position. Can be null.
      */
     public AwardResponse(@NotNull @NotBlank String title, String summary, String description,
-                         String category, List<String> tags, @NotNull AwardPlace firstPlace,
-                         AwardPlace secondPlace, AwardPlace thirdPlace) {
+                         String category, List<String> tags, @NotNull AwardPlacing firstPlace,
+                         AwardPlacing secondPlace, AwardPlacing thirdPlace) {
         super(title, summary, description, category, tags);
         this.firstPlace = firstPlace;
         this.secondPlace = secondPlace;
@@ -174,7 +162,7 @@ public class AwardResponse extends Response {
      *
      * <p>
      * This constructor allows setting of award place details for first, second, and third
-     * place by creating {@link AwardPlace} objects using the provided parameters
+     * place by creating {@link AwardPlacing} objects using the provided parameters
      * of names and image file paths.
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>
@@ -201,9 +189,9 @@ public class AwardResponse extends Response {
                          String secondPlaceName, String thirdPlaceName, String firstPlaceImageFileName,
                          String secondPlaceImageFileName, String thirdPlaceImageFileName) {
         super(title, summary, description, category, tags);
-        this.firstPlace = new AwardPlace(1, firstPlaceName, firstPlaceImageFileName);
-        this.secondPlace = new AwardPlace(2, secondPlaceName, secondPlaceImageFileName);
-        this.thirdPlace = new AwardPlace(3, thirdPlaceName, thirdPlaceImageFileName);
+        this.firstPlace = new AwardPlacing(1, firstPlaceName, firstPlaceImageFileName);
+        this.secondPlace = new AwardPlacing(2, secondPlaceName, secondPlaceImageFileName);
+        this.thirdPlace = new AwardPlacing(3, thirdPlaceName, thirdPlaceImageFileName);
     }
 
     /**

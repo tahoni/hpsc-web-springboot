@@ -26,8 +26,11 @@ public class Response extends Request {
     private UUID uuid = UUID.randomUUID();
 
     /**
-     * Constructs a new {@code Response} with a unique identifier (UUID).
+     * Constructs a new {@code Response} object with a unique identifier (UUID).
+     *
+     * <p>
      * As no UUID is provided, a random UUID is generated.
+     * </p>
      */
     public Response() {
         this.uuid = ValueUtil.nullAsRandomUuid(null);
@@ -35,7 +38,10 @@ public class Response extends Request {
 
     /**
      * Constructs a new {@code Response} object with a specified UUID.
+     *
+     * <p>
      * If the provided UUID is null, a random UUID is generated.
+     * </p>
      *
      * @param uuid the unique identifier for the response. If null, a random UUID is generated.
      */
@@ -45,9 +51,12 @@ public class Response extends Request {
 
     /**
      * Constructs a new {@code Response} object with the specified UUID and title.
+     *
+     * <p>
      * Extends functionality from the {@link Request} class and ensures that
      * a unique identifier (UUID) is assigned to every response.
      * If the provided UUID is null, a random UUID is generated.
+     * </p>
      *
      * @param uuid  the unique identifier for the response. If null, a random UUID is generated.
      * @param title the title of the response. Must not be null or blank.
@@ -59,9 +68,12 @@ public class Response extends Request {
 
     /**
      * Constructs a new {@code Response} object with the specified details.
+     *
+     * <p>
      * Extends functionality from the {@link Request} class and ensures that
      * a unique identifier (UUID) is assigned to every response.
      * If the provided UUID is null, a random UUID is generated.
+     * </p>
      *
      * @param uuid        the unique identifier for the response. If null, a random UUID
      *                    is generated.
@@ -79,9 +91,12 @@ public class Response extends Request {
 
     /**
      * Constructs a new {@code Response} object with the specified details.
+     *
+     * <p>
      * Extends functionality from the {@link Request} class and ensures that
      * a unique identifier (UUID) is assigned to every response.
      * As no UUID is provided, a random UUID is generated.
+     * </p>
      *
      * @param title       the title of the response. Must not be null or blank.
      * @param summary     a brief summary of the response. Can be null.

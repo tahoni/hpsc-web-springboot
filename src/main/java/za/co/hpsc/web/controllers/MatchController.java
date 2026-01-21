@@ -14,26 +14,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.image.ImageRequest;
-import za.co.hpsc.web.models.ipsc.IpscResultLogResponseHolder;
+import za.co.hpsc.web.models.match.MatchResultLogResponseHolder;
+
+import java.util.ArrayList;
 
 @Controller("/ipsc")
 @RequestMapping("/ipsc")
 @Tag(name = "IPSC", description = "API for IPSC specific functionality.")
-public class IpscController {
+public class MatchController {
     @PostMapping(value = "/processWinMssCab")
     @Operation(summary = "Process a WinMSS.cab file", description = "Convert the WinMSS.cab file to JSON.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation =
-                            IpscResultLogResponseHolder.class)))
+                            MatchResultLogResponseHolder.class)))
     })
-    ResponseEntity<IpscResultLogResponseHolder> processWinMssCab(
+    ResponseEntity<MatchResultLogResponseHolder> processWinMssCab(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
                     "application/json",
                     schema = @Schema(implementation = ImageRequest.class)
             ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {
-        return ResponseEntity.ok(new IpscResultLogResponseHolder());
+        return ResponseEntity.ok(new MatchResultLogResponseHolder(new ArrayList<>()));
     }
 }

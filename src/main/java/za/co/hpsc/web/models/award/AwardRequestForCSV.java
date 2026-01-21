@@ -56,7 +56,7 @@ public abstract class AwardRequestForCSV {
     private String thirdPlaceImageFileName;
 
     /**
-     * Constructs an instance of {@code AwardRequestForCSV} with the specified title,
+     * Constructs an instance of {@code AwardRequestForCSV} object with the specified title,
      * ceremony title, and award details for first, second, and third places.
      *
      * <p>

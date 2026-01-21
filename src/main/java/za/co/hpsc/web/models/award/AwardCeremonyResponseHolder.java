@@ -3,7 +3,6 @@ package za.co.hpsc.web.models.award;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class AwardCeremonyResponseHolder {
     @NotNull
