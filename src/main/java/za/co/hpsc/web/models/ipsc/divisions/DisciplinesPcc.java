@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.combos;
+package za.co.hpsc.web.models.ipsc.divisions;
 
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;

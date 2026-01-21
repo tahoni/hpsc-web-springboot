@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AwardCeremonyResponseTest {
 
-    private final String now = DateTimeFormatter.ofPattern(HpscConstants.HPSC_DATE_FORMAT).format(LocalDateTime.now());
+    private final String now = DateTimeFormatter.ofPattern(HpscConstants.HPSC_ISO_DATE_FORMAT).format(LocalDateTime.now());
     private final List<AwardResponse> sampleAwards = List.of(
             new AwardResponse(new AwardPlacing(1, "A", "a.png"),
                     new AwardPlacing(2, "B", "b.png"),
