@@ -2,6 +2,10 @@ package za.co.hpsc.web.models.award;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.constants.HpscConstants;
+import za.co.hpsc.web.models.awards.AwardCeremonyResponse;
+import za.co.hpsc.web.models.awards.AwardPlacing;
+import za.co.hpsc.web.models.awards.AwardRequest;
+import za.co.hpsc.web.models.awards.AwardResponse;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

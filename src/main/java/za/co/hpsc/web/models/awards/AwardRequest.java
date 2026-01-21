@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.award;
+package za.co.hpsc.web.models.awards;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,9 @@
 package za.co.hpsc.web.models.award;
 
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.models.awards.AwardPlacing;
+import za.co.hpsc.web.models.awards.AwardRequest;
+import za.co.hpsc.web.models.awards.AwardResponse;
 
 import java.util.List;
 import java.util.UUID;

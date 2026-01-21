@@ -10,10 +10,10 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.award.AwardCeremonyResponse;
-import za.co.hpsc.web.models.award.AwardCeremonyResponseHolder;
-import za.co.hpsc.web.models.award.AwardRequest;
-import za.co.hpsc.web.models.award.AwardRequestForCSV;
+import za.co.hpsc.web.models.awards.AwardCeremonyResponse;
+import za.co.hpsc.web.models.awards.AwardCeremonyResponseHolder;
+import za.co.hpsc.web.models.awards.AwardRequest;
+import za.co.hpsc.web.models.awards.AwardRequestForCSV;
 import za.co.hpsc.web.services.AwardService;
 
 import java.io.IOException;

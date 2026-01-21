@@ -23,6 +23,14 @@ public class ValueUtil {
         return (value != null ? value : "");
     }
 
+    public static int nullAsZero(Integer value) {
+        return (value != null ? value : 0);
+    }
+
+    public static long nullAsZero(Long value) {
+        return (value != null ? value : 0L);
+    }
+
     /**
      * Returns the provided UUID value if it is not null; otherwise, generates
      * and returns a random UUID.

@@ -1,17 +1,13 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.matches;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
-public class MatchResultResponse extends MatchResponse {
-    private BigDecimal score;
-
+public class MatchLogResponse extends MatchResponse {
     /**
-     * Constructs a new {@code MatchResultResponse} object with default values.
+     * Constructs a new {@code MatchLogResponse} object with default values.
      *
      * <p>
      * A randomly generated UUID is assigned through the superclass constructor.
@@ -19,6 +15,7 @@ public class MatchResultResponse extends MatchResponse {
      * by initialising it to an empty list.
      * </p>
      */
-    public MatchResultResponse() {
+    public MatchLogResponse() {
+        super();
     }
 }
