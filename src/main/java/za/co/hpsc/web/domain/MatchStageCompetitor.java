@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
@@ -13,9 +15,16 @@ public class MatchStageCompetitor {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "competitor_id")
-    private Competitor competitor;
+    @JoinColumn(name = "match_competitor_id")
+    private MatchCompetitor matchCompetitor;
     @ManyToOne
     @JoinColumn(name = "match_stage_id")
     private MatchStage matchStage;
+
+    private Integer points;
+    private Integer penalties;
+    private BigDecimal time;
+    private BigDecimal hitFactor;
+    private BigDecimal stagePoints;
+    private BigDecimal stagePercentage;
 }

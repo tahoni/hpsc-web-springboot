@@ -16,11 +16,9 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.images.ImageRequest;
 import za.co.hpsc.web.models.matches.MatchResultLogResponseHolder;
 
-import java.util.ArrayList;
-
-@Controller("/ipsc")
-@RequestMapping("/ipsc")
-@Tag(name = "IPSC", description = "API for IPSC specific functionality.")
+@Controller
+@RequestMapping("/match")
+@Tag(name = "Match", description = "API for match-relate functionality.")
 public class MatchController {
     @PostMapping(value = "/processWinMssCab")
     @Operation(summary = "Process a WinMSS.cab file", description = "Convert the WinMSS.cab file to JSON.")
@@ -29,13 +27,13 @@ public class MatchController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation =
                             MatchResultLogResponseHolder.class)))
     })
-    ResponseEntity<MatchResultLogResponseHolder> processWinMssCab(
+    ResponseEntity processWinMssCab(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
                     "application/json",
                     schema = @Schema(implementation = ImageRequest.class)
             ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {
-        return ResponseEntity.ok(new MatchResultLogResponseHolder(new ArrayList<>()));
+        return ResponseEntity.ok().build();
     }
 }

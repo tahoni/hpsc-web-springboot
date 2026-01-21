@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
@@ -21,4 +23,7 @@ public class MatchCompetitor {
     @ManyToOne
     @JoinColumn(name = "match_id")
     private Match match;
+
+    private BigDecimal matchPoints = BigDecimal.ZERO;
+    private BigDecimal matchPercentage = BigDecimal.ZERO;
 }

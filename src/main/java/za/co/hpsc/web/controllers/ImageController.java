@@ -28,7 +28,7 @@ import za.co.hpsc.web.services.ImageService;
  * to designate it as a Spring MVC controller and map requests with the "/image" base URI.
  * </p>
  */
-@Controller("/image")
+@Controller
 @RequestMapping("/image")
 @Tag(name = "Image", description = "API for image-related functionality.")
 public class ImageController {

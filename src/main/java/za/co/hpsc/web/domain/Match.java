@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Lazy;
-import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.utils.StringUtil;
@@ -47,7 +47,7 @@ public class Match {
     public String toString() {
         // Prepare date formatters
         DateTimeFormatter longDateFormatter =
-                DateTimeFormatter.ofPattern(IpscConstants.MATCH_LONG_DATE_FORMAT);
+                DateTimeFormatter.ofPattern(MatchConstants.MATCH_LONG_DATE_FORMAT);
 
         // Prepare parameters for formatting
         Map<String, String> parameters = Map.of(
@@ -58,7 +58,7 @@ public class Match {
         );
 
         // Format and return match name
-        return StringUtil.formatStringWithNamedParameters(IpscConstants.SCHEDULED_MATCH_NAME_FORMAT,
+        return StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_NAME_FORMAT,
                 parameters);
     }
 }

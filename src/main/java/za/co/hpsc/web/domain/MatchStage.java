@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.utils.StringUtil;
 
 import java.time.format.DateTimeFormatter;
@@ -36,7 +36,7 @@ public class MatchStage {
     public String toString() {
         // Prepare date formatters
         DateTimeFormatter isoDateFormatter =
-                DateTimeFormatter.ofPattern(IpscConstants.MATCH_ISO_DATE_FORMAT);
+                DateTimeFormatter.ofPattern(MatchConstants.MATCH_ISO_DATE_FORMAT);
 
         // Prepare parameters for formatting
         Map<String, String> parameters = Map.of(
@@ -47,7 +47,7 @@ public class MatchStage {
         );
 
         // Format and return stage match name
-        return StringUtil.formatStringWithNamedParameters(IpscConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT,
+        return StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT,
                 parameters);
     }
 }

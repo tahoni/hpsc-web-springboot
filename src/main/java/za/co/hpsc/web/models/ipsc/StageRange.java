@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.utils.StringUtil;
 import za.co.hpsc.web.utils.ValueUtil;
 
@@ -26,14 +26,14 @@ public class StageRange {
     @Override
     public String toString() {
         // Prepare parameters for formatting
-        String stageName = IpscConstants.STAGE_NAME_PREFIX + " " + this.stageNumber;
-        String rangeName = IpscConstants.RANGE_NAME_PREFIX + " " + this.rangeNumber;
+        String stageName = MatchConstants.STAGE_NAME_PREFIX + " " + this.stageNumber;
+        String rangeName = MatchConstants.RANGE_NAME_PREFIX + " " + this.rangeNumber;
         Map<String, String> parameters = Map.of(
                 "stageName", stageName,
                 "rangeName", rangeName
         );
 
         // Format and return stage name
-        return StringUtil.formatStringWithNamedParameters(IpscConstants.STAGE_RANGE_NAME_FORMAT, parameters);
+        return StringUtil.formatStringWithNamedParameters(MatchConstants.STAGE_RANGE_NAME_FORMAT, parameters);
     }
 }
