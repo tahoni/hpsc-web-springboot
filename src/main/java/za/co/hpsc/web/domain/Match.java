@@ -2,63 +2,50 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Lazy;
-import za.co.hpsc.web.constants.MatchConstants;
+import za.co.hpsc.web.constants.DomainConstants;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.utils.StringUtil;
+import za.co.hpsc.web.helpers.MatchHelpers;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "club_id")
+    private Club club;
 
     @NotNull
+    @Column(unique = true, nullable = false, length = DomainConstants.DEFAULT_STRING_COLUMN_LENGTH)
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "club_id")
     @NotNull
-    private Club club;
-    @NotNull
+    @Column(nullable = false)
     private LocalDate scheduledDate;
 
     private Division matchDivision;
     private MatchCategory matchCategory;
 
-    @Lazy
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStage> matchStages;
-
-    @Lazy
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> matchCompetitors;
 
     @Override
     public String toString() {
-        // Prepare date formatters
-        DateTimeFormatter longDateFormatter =
-                DateTimeFormatter.ofPattern(MatchConstants.MATCH_LONG_DATE_FORMAT);
-
-        // Prepare parameters for formatting
-        Map<String, String> parameters = Map.of(
-                "clubName", club.toString(),
-                "divisionName", (matchDivision != null ? matchDivision.getDisplayName() : ""),
-                "categoryName", (matchCategory != null ? matchCategory.getDisplayName() : ""),
-                "longDate", longDateFormatter.format(scheduledDate)
-        );
-
-        // Format and return match name
-        return StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_NAME_FORMAT,
-                parameters);
+        return MatchHelpers.getMatchDisplayName(this);
     }
 }

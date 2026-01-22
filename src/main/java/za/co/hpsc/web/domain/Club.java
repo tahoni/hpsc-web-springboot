@@ -2,29 +2,31 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Lazy;
+import za.co.hpsc.web.constants.DomainConstants;
 import za.co.hpsc.web.utils.ValueUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Club {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // TODO: add size of column
     @NotNull
+    @Column(nullable = false, unique = true, length = DomainConstants.DEFAULT_STRING_COLUMN_LENGTH)
     private String name;
 
-    @Lazy
-    @OneToMany
-    private List<Match> matches = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Match> matches;
 
     public Club(String name) {
         this.name = ValueUtil.nullAsEmptyString(name);

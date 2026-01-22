@@ -3,6 +3,7 @@ package za.co.hpsc.web.models.images;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
@@ -23,36 +24,20 @@ import java.util.UUID;
  * creating instances with varying levels of details and integrates
  * MIME type detection based on file names when not explicitly provided.
  */
+@NoArgsConstructor
 public class ImageResponse extends Response {
     @Getter
     @Setter
     @NotNull
-    private String filePath;
+    private String filePath = "";
     @Getter
     @Setter
     @NotNull
-    private String fileName;
+    private String fileName = "";
 
     @Getter
     @NotNull
-    private String mimeType;
-
-    /**
-     * Constructs a new {@code ImageResponse} object with default values.
-     *
-     * <p>
-     * This constructor initialises the fields and ensures that the
-     * file path and file name are not null by setting them to empty strings.
-     * A randomly generated UUID is assigned through the superclass constructor.
-     * The MIME type is also set to an empty string.
-     * </p>
-     */
-    public ImageResponse() {
-        super();
-        this.filePath = "";
-        this.fileName = "";
-        this.mimeType = "";
-    }
+    private String mimeType = "";
 
     /**
      * Constructs a new {@code ImageResponse} object with specified UUID, title,
@@ -188,8 +173,7 @@ public class ImageResponse extends Response {
                 // Infer MIME type from the file name
                 Optional<MediaType> optionalMediaType =
                         MediaTypeFactory.getMediaType(this.fileName);
-                optionalMediaType.ifPresent(mediaType ->
-                        this.mimeType = mediaType.toString());
+                this.mimeType = optionalMediaType.map(MediaType::toString).orElse(this.mimeType);
             }
         }
     }

@@ -2,6 +2,7 @@ package za.co.hpsc.web.models.awards;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -24,30 +25,14 @@ import java.util.UUID;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class AwardCeremonyResponse extends Response {
     private String date;
     @NotNull
-    private String imageFilePath;
+    private String imageFilePath = "";
 
     @NotNull
-    private List<AwardResponse> awards;
-
-    /**
-     * Constructs a new {@code AwardCeremonyResponse} object with default values.
-     *
-     * <p>
-     * This constructor initialises the fields and ensures that the file path is not null
-     * by initialising it to an empty string.
-     * Also ensures that the list of awards is not null by initialising it to an empty list.
-     * A randomly generated UUID is assigned through the superclass constructor.
-     * </p>
-     */
-    public AwardCeremonyResponse() {
-        super();
-        this.date = null;
-        this.imageFilePath = "";
-        this.awards = new ArrayList<>();
-    }
+    private List<AwardResponse> awards = new ArrayList<>();
 
     /**
      * Constructs a new {@code AwardCeremonyResponse} object with the specified date,
@@ -219,7 +204,7 @@ public class AwardCeremonyResponse extends Response {
      *                         will be initialised with default values.
      */
     public AwardCeremonyResponse(List<AwardRequest> awardRequestList) {
-        this();
+        super();
         if ((awardRequestList == null) || (awardRequestList.isEmpty())) {
             return;
         }

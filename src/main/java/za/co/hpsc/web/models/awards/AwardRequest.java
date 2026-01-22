@@ -27,14 +27,14 @@ public class AwardRequest extends Request {
     private String imageFilePath;
 
     @NotNull
-    private String ceremonyTitle;
+    private String ceremonyTitle = "";
     private String ceremonySummary;
     private String ceremonyDescription;
     private String ceremonyCategory;
     private List<String> ceremonyTags = new ArrayList<>();
 
     @NotNull
-    private String firstPlaceName;
+    private String firstPlaceName = "";
     private String secondPlaceName;
     private String thirdPlaceName;
 
@@ -51,12 +51,12 @@ public class AwardRequest extends Request {
      * </p
      *
      * @param title           the title of the award. Must not be null or blank.
-     * @param ceremonyTitle   the title of the ceremony associated with the award. Can be null.
-     * @param firstPlaceName  the name of the first-place recipient. Must not be null or blank.
+     * @param ceremonyTitle   the title of the ceremony associated with the award. Must not be null.
+     * @param firstPlaceName  the name of the first-place recipient. Must not be null.
      * @param secondPlaceName the name of the second-place recipient. Can be null.
      * @param thirdPlaceName  the name of the third-place recipient. Can be null.
      */
-    public AwardRequest(@NotNull @NotBlank String title, String ceremonyTitle,
+    public AwardRequest(@NotNull @NotBlank String title, @NotNull String ceremonyTitle,
                         @NotNull String firstPlaceName, String secondPlaceName, String thirdPlaceName) {
         super(title);
         this.firstPlaceName = firstPlaceName;

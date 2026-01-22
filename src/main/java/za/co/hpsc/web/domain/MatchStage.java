@@ -2,29 +2,36 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.MatchConstants;
-import za.co.hpsc.web.utils.StringUtil;
+import za.co.hpsc.web.helpers.MatchHelpers;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
+import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class MatchStage {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "match_id")
     private Match match;
 
     @NotNull
+    @Column(nullable = false)
     private Integer stageNumber;
     private Integer rangeNumber;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MatchStageCompetitor> matchStageCompetitors;
 
     public MatchStage(Match match, Integer stageNumber, Integer rangeNumber) {
         this.stageNumber = stageNumber;
@@ -34,20 +41,6 @@ public class MatchStage {
 
     @Override
     public String toString() {
-        // Prepare date formatters
-        DateTimeFormatter isoDateFormatter =
-                DateTimeFormatter.ofPattern(MatchConstants.MATCH_ISO_DATE_FORMAT);
-
-        // Prepare parameters for formatting
-        Map<String, String> parameters = Map.of(
-                "matchName", match.toString(),
-                "stageNumber", stageNumber.toString(),
-                "rangeNumber", rangeNumber.toString(),
-                "isoDate", isoDateFormatter.format(getMatch().getScheduledDate())
-        );
-
-        // Format and return stage match name
-        return StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT,
-                parameters);
+        return MatchHelpers.getMatchStageDisplayName(this);
     }
 }

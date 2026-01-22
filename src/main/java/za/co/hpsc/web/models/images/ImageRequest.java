@@ -3,6 +3,7 @@ package za.co.hpsc.web.models.images;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.Request;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -21,25 +22,12 @@ import java.util.List;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class ImageRequest extends Request {
     @NotNull
-    private String filePath;
+    private String filePath = "";
     @NotNull
-    private String fileName;
-
-    /**
-     * Constructs a new {@code ImagRequest} object with default values.
-     *
-     * <p>
-     * This constructor initialises the fields and ensures that the
-     * file path and file name are not null by setting them to empty strings.
-     * </p>
-     */
-    public ImageRequest() {
-        super();
-        this.filePath = "";
-        this.fileName = "";
-    }
+    private String fileName = "";
 
     /**
      * Constructs a new {@code ImageRequest} object with the specified title,
