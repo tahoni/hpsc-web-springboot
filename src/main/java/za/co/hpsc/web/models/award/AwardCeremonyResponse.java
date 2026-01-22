@@ -7,6 +7,7 @@ import lombok.Setter;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.utils.ValueUtil;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class AwardCeremonyResponse extends Response {
-    private String date;
+    private LocalDate date;
     @NotNull
     private String imageFilePath = "";
 
@@ -52,7 +53,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards. If null, it defaults to an empty list.
      */
-    public AwardCeremonyResponse(String date, String imageFilePath, List<AwardResponse> awards) {
+    public AwardCeremonyResponse(LocalDate date, String imageFilePath, List<AwardResponse> awards) {
         this.date = date;
         this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
         this.awards = ValueUtil.nullAsEmptyList(awards);
@@ -80,7 +81,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards. If null, it defaults to an empty list.
      */
-    public AwardCeremonyResponse(UUID uuid, String date, String imageFilePath, List<AwardResponse> awards) {
+    public AwardCeremonyResponse(UUID uuid, LocalDate date, String imageFilePath, List<AwardResponse> awards) {
         super(uuid);
         this.date = date;
         this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
@@ -110,7 +111,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards. If null, it defaults to an empty list.
      */
-    public AwardCeremonyResponse(UUID uuid, String title, String date, String imageFilePath,
+    public AwardCeremonyResponse(UUID uuid, String title, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {
         super(uuid, title);
         this.date = date;
@@ -146,7 +147,7 @@ public class AwardCeremonyResponse extends Response {
      *                      individual awards. If null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(UUID uuid, String title, String summary, String description,
-                                 String category, List<String> tags, String date, String imageFilePath,
+                                 String category, List<String> tags, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {
         super(uuid, title, summary, description, category, tags);
         this.date = date;
@@ -179,7 +180,7 @@ public class AwardCeremonyResponse extends Response {
      *                      individual awards. If null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(String title, String summary, String description, String category,
-                                 List<String> tags, String date, String imageFilePath,
+                                 List<String> tags, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {
         super(title, summary, description, category, tags);
         this.date = date;

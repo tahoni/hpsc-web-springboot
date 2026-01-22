@@ -1,7 +1,7 @@
 package za.co.hpsc.web.repositories;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import za.co.hpsc.web.domain.Competitor;
 
-public interface CompetitorRepository extends CrudRepository<Competitor, Long> {
+public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
 }

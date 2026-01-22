@@ -1,10 +1,8 @@
 package za.co.hpsc.web.models.award;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.constants.HpscConstants;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AwardCeremonyResponseTest {
 
-    private final String now = DateTimeFormatter.ofPattern(HpscConstants.HPSC_ISO_DATE_FORMAT).format(LocalDateTime.now());
+    private final LocalDate now = LocalDate.now();
     private final List<AwardResponse> sampleAwards = List.of(
             new AwardResponse(new AwardPlacing(1, "A", "a.png"),
                     new AwardPlacing(2, "B", "b.png"),
@@ -153,7 +151,7 @@ class AwardCeremonyResponseTest {
         request1.setCeremonySummary("Summary 2024");
         request1.setCeremonyCategory("General");
         request1.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request1.setDate("2024-01-01");
+        request1.setDate(LocalDate.of(2024, 1, 1));
         request1.setImageFilePath("/path/to/img");
 
         request1.setDescription("Ceremony 2024 Award 1");
@@ -182,7 +180,7 @@ class AwardCeremonyResponseTest {
 
         // Assert basic data
         assertNotNull(response.getUuid());
-        assertEquals("2024-01-01", response.getDate());
+        assertEquals(LocalDate.of(2024, 1, 1), response.getDate());
         assertEquals("/path/to/img", response.getImageFilePath());
         // Assert meta-data
         assertEquals("Ceremony 2024", response.getTitle());
@@ -241,7 +239,7 @@ class AwardCeremonyResponseTest {
         request1.setCeremonySummary("Summary 2024");
         request1.setCeremonyCategory("General");
         request1.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request1.setDate("2024-01-01");
+        request1.setDate(LocalDate.of(2024, 1, 1));
         request1.setImageFilePath("/path/to/img1");
 
         request1.setFirstPlaceImageFileName("imga.png");
@@ -254,7 +252,7 @@ class AwardCeremonyResponseTest {
         request2.setCeremonySummary("Summary 2025");
         request2.setCeremonyCategory("General");
         request2.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request2.setDate("2025-01-01");
+        request2.setDate(LocalDate.of(2025, 1, 1));
         request2.setImageFilePath("/path/to/img2");
 
         request2.setFirstPlaceImageFileName("imgx.png");
@@ -269,7 +267,7 @@ class AwardCeremonyResponseTest {
 
         // Assert basic data
         assertNotNull(response.getUuid());
-        assertEquals("2024-01-01", response.getDate());
+        assertEquals(LocalDate.of(2024, 1, 1), response.getDate());
         assertEquals("/path/to/img1", response.getImageFilePath());
         // Assert meta-data
         assertEquals("Ceremony 2024", response.getTitle());

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,7 @@ public class HpscAwardService implements AwardService {
             throws ValidationException, FatalException {
         // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
+        csvMapper.registerModule(new JavaTimeModule());
         CsvSchema csvSchema = csvMapper
                 .schemaFor(AwardRequestForCSV.class)
                 .withArrayElementSeparator("|")

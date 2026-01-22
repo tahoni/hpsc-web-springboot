@@ -1,10 +1,13 @@
 package za.co.hpsc.web.models.award;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import za.co.hpsc.web.constants.DateConstants;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +40,8 @@ public abstract class AwardRequestForCSV {
     private String ceremonyCategory;
     private List<String> ceremonyTags = new ArrayList<>();
 
-    private String date;
+    @JsonFormat(pattern = DateConstants.ISO_DATE_FORMAT)
+    private LocalDate date;
     private String imageFilePath;
 
     @JsonProperty(required = true)

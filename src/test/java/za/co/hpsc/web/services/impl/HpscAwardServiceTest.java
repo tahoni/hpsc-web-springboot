@@ -10,6 +10,7 @@ import za.co.hpsc.web.models.award.AwardCeremonyResponse;
 import za.co.hpsc.web.models.award.AwardRequest;
 import za.co.hpsc.web.models.award.AwardResponse;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class HpscAwardServiceTest {
 
         // Assert the first award (meta-data)
         AwardRequest firstAward = awardRequests.getFirst();
-        assertEquals("2023-10-10", firstAward.getDate());
+        assertEquals(LocalDate.of(2023, 10, 10), firstAward.getDate());
         assertEquals("/path/to", firstAward.getImageFilePath());
         assertEquals("Ceremony 1", firstAward.getCeremonyTitle());
         assertEquals("Ceremony Summary 1", firstAward.getCeremonySummary());
@@ -63,7 +64,7 @@ public class HpscAwardServiceTest {
 
         // Assert the second award (meta-data)
         AwardRequest secondAward = awardRequests.get(1);
-        assertEquals("2023-10-10", secondAward.getDate());
+        assertEquals(LocalDate.of(2023, 10, 10), secondAward.getDate());
         assertEquals("/path/to", secondAward.getImageFilePath());
         assertEquals("Ceremony 1", secondAward.getCeremonyTitle());
         assertEquals("Ceremony Summary 1", secondAward.getCeremonySummary());
@@ -105,7 +106,7 @@ public class HpscAwardServiceTest {
 
         // Assert the first award (meta-data)
         AwardRequest firstAward = awardRequests.getFirst();
-        assertEquals("2023-10-10", firstAward.getDate());
+        assertEquals(LocalDate.of(2023, 10, 10), firstAward.getDate());
         assertEquals("/path/to", firstAward.getImageFilePath());
         assertEquals("Ceremony 1", firstAward.getCeremonyTitle());
         assertEquals("Ceremony Summary 1", firstAward.getCeremonySummary());
@@ -128,7 +129,7 @@ public class HpscAwardServiceTest {
 
         // Assert the second award (meta-data)
         AwardRequest secondAward = awardRequests.get(1);
-        assertEquals("2023-10-10", secondAward.getDate());
+        assertEquals(LocalDate.of(2023, 10, 10), secondAward.getDate());
         assertEquals("/path/to", secondAward.getImageFilePath());
         assertEquals("Ceremony 1", secondAward.getCeremonyTitle());
         assertEquals("Ceremony Summary 1", secondAward.getCeremonySummary());
@@ -188,7 +189,7 @@ public class HpscAwardServiceTest {
         assertEquals("Tag0", awardRequests.get(800).getTags().getFirst());
 
         // Assert last award (ceremony data)
-        assertEquals("2023-10-10", awardRequests.get(999).getDate());
+        assertEquals(LocalDate.of(2023, 10, 10), awardRequests.get(999).getDate());
         assertEquals("/path/to/image999", awardRequests.get(999).getImageFilePath());
         assertEquals("Ceremony Title 999", awardRequests.get(999).getCeremonyTitle());
         assertEquals("Ceremony Summary 999", awardRequests.get(999).getCeremonySummary());

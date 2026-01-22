@@ -9,6 +9,7 @@ import za.co.hpsc.web.models.award.AwardCeremonyResponse;
 import za.co.hpsc.web.models.award.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.models.award.AwardResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +40,7 @@ class AwardServiceTest {
         // Assert first and only ceremony
         AwardCeremonyResponse ceremonyResponse = awardCeremonies.getFirst();
         assertNotNull(ceremonyResponse.getUuid());
-        assertEquals("2023-10-10", ceremonyResponse.getDate());
+        assertEquals(LocalDate.of(2023, 10, 10), ceremonyResponse.getDate());
         assertEquals("/path/to", ceremonyResponse.getImageFilePath());
         assertEquals("Ceremony 1", ceremonyResponse.getTitle());
         assertEquals("Ceremony Summary 1", ceremonyResponse.getSummary());

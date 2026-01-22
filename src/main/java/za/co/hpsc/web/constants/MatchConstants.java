@@ -17,4 +17,5 @@ public final class MatchConstants {
 
     public static final String MATCH_ISO_DATE_FORMAT = DateConstants.ISO_DATE_FORMAT;
     public static final String MATCH_LONG_DATE_FORMAT = DateConstants.LONG_DATE_FORMAT;
+    public static final String MATCH_INPUT_XML_DATE_TIME_FORMAT = DateConstants.XML_DATE_TIME_FORMAT;
 }

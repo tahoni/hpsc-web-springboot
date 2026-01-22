@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import za.co.hpsc.web.models.Request;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
 @Getter
 @Setter
 public class AwardRequest extends Request {
-    private String date;
+    private LocalDate date;
     private String imageFilePath;
 
     @NotNull

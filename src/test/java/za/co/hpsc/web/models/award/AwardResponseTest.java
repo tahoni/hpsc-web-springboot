@@ -2,6 +2,7 @@ package za.co.hpsc.web.models.award;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -146,7 +147,7 @@ class AwardResponseTest {
         request.setCategory("Request Cat");
         request.setTags(List.of("Request-tag"));
         request.setImageFilePath("/path/to/img");
-        request.setDate("2023-10-10");
+        request.setDate(LocalDate.of(2023, 10, 10));
         request.setCeremonyDescription("Ceremony Desc");
         request.setCeremonySummary("Ceremony Sum");
         request.setCeremonyCategory("Ceremony Cat");
