@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,10 +30,10 @@ public class MatchStageCompetitor {
 
     private Integer points;
     private Integer penalties;
-    private Double time;
-    private Double hitFactor;
-    private Double stagePoints;
-    private Double stagePercentage;
+    private BigDecimal time;
+    private BigDecimal hitFactor;
+    private BigDecimal stagePoints;
+    private BigDecimal stagePercentage;
 
     @Override
     public String toString() {

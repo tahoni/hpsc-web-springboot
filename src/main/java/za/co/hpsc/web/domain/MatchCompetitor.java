@@ -6,6 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.Discipline;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.PowerFactor;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -26,8 +31,15 @@ public class MatchCompetitor {
     @JoinColumn(name = "match_id")
     private Match match;
 
-    private Double matchPoints;
-    private Double matchPercentage;
+    @Enumerated(EnumType.STRING)
+    private Division division;
+    @Enumerated(EnumType.STRING)
+    private Discipline discipline;
+    @Enumerated(EnumType.STRING)
+    private PowerFactor powerFactor;
+
+    private BigDecimal matchPoints;
+    private BigDecimal matchPercentage;
 
     public String toString() {
         return match.toString() + ": " + competitor.toString();

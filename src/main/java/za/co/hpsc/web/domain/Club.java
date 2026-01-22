@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.DomainConstants;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;
@@ -22,8 +21,10 @@ public class Club {
     private Long id;
 
     @NotNull
-    @Column(nullable = false, unique = true, length = DomainConstants.DEFAULT_STRING_COLUMN_LENGTH)
+    @Column(nullable = false, unique = true)
     private String name;
+
+    private String abbreviation;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Match> matches;

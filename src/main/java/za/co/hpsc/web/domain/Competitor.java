@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.DomainConstants;
 import za.co.hpsc.web.enums.CompetitorCategory;
 
 import java.util.List;
@@ -22,18 +21,18 @@ public class Competitor {
     private Long id;
 
     @NotNull
-    @Column(nullable = false, length = DomainConstants.DEFAULT_STRING_COLUMN_LENGTH)
+    @Column(nullable = false)
     private String firsName;
     @NotNull
-    @Column(nullable = false, length = DomainConstants.DEFAULT_STRING_COLUMN_LENGTH)
+    @Column(nullable = false)
     private String lastName;
-
-    @Column(length = DomainConstants.DEFAULT_STRING_COLUMN_LENGTH)
-    private String middleNames;
-    @Column(length = DomainConstants.CODE_STRING_COLUMN_LENGTH)
+    @NotNull
+    @Column(nullable = false)
     private String competitorNumber;
 
+    private String middleNames;
     private Integer sapsaNumber;
+    @Enumerated(EnumType.STRING)
     private CompetitorCategory category = CompetitorCategory.NONE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -33,12 +33,6 @@ public class MatchStage {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> matchStageCompetitors;
 
-    public MatchStage(Match match, Integer stageNumber, Integer rangeNumber) {
-        this.stageNumber = stageNumber;
-        this.rangeNumber = rangeNumber;
-        this.match = match;
-    }
-
     @Override
     public String toString() {
         return MatchHelpers.getMatchStageDisplayName(this);

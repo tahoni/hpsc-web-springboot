@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.DomainConstants;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
@@ -23,20 +22,22 @@ public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "club_id")
     private Club club;
 
     @NotNull
-    @Column(unique = true, nullable = false, length = DomainConstants.DEFAULT_STRING_COLUMN_LENGTH)
+    @Column(unique = true, nullable = false)
     private String name;
     @NotNull
     @Column(nullable = false)
     private LocalDate scheduledDate;
 
+    @Enumerated(EnumType.STRING)
     private Division matchDivision;
+    @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
