@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.images;
+package za.co.hpsc.web.models.image;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

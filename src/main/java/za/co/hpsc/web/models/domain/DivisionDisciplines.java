@@ -1,7 +1,7 @@
-package za.co.hpsc.web.models.ipsc;
+package za.co.hpsc.web.models.domain;
 
 import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.models.ipsc.divisions.*;
+import za.co.hpsc.web.models.domain.divisions.*;
 
 import java.util.Map;
 import java.util.Optional;

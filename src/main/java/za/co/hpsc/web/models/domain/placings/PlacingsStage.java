@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.placings;
+package za.co.hpsc.web.models.domain.placings;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

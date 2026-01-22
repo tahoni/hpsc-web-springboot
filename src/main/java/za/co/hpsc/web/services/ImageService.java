@@ -3,7 +3,7 @@ package za.co.hpsc.web.services;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.images.ImageResponseHolder;
+import za.co.hpsc.web.models.image.ImageResponseHolder;
 
 /**
  * The {@code ImageService} interface provides methods for processing image-related data

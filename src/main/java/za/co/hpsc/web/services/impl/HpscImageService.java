@@ -10,10 +10,10 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.images.ImageRequest;
-import za.co.hpsc.web.models.images.ImageRequestForCsv;
-import za.co.hpsc.web.models.images.ImageResponse;
-import za.co.hpsc.web.models.images.ImageResponseHolder;
+import za.co.hpsc.web.models.image.ImageRequest;
+import za.co.hpsc.web.models.image.ImageRequestForCsv;
+import za.co.hpsc.web.models.image.ImageResponse;
+import za.co.hpsc.web.models.image.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
 import java.io.IOException;
