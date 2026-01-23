@@ -55,22 +55,34 @@ public enum Discipline {
         this.abbreviation = abbreviation;
     }
 
-    public static Optional<Discipline> findByName(String name) {
+    public static Optional<Discipline> getByName(String name) {
+        if ((name == null) || (name.isBlank())) {
+            return Optional.empty();
+        }
+
         return Arrays.stream(Discipline.values())
                 .filter(discipline -> discipline.isNameMatch(name))
                 .findFirst();
     }
 
-    public static Optional<Discipline> findByAbbreviation(String abbreviation) {
+    public static Optional<Discipline> getByAbbreviation(String abbreviation) {
+        if ((abbreviation == null) || (abbreviation.isBlank())) {
+            return Optional.empty();
+        }
+
         return Arrays.stream(Discipline.values())
                 .filter(discipline -> discipline.isAbbreviationMatch(abbreviation))
                 .findFirst();
     }
 
-    public static Optional<Discipline> findByAbbreviationOrName(String name) {
+    public static Optional<Discipline> getByAbbreviationOrName(String value) {
+        if ((value == null) || (value.isBlank())) {
+            return Optional.empty();
+        }
+
         return Arrays.stream(Discipline.values())
-                .filter(discipline -> discipline.isNameMatch(name) ||
-                        discipline.isAbbreviationMatch(name))
+                .filter(discipline -> discipline.isNameMatch(value) ||
+                        discipline.isAbbreviationMatch(value))
                 .findFirst();
     }
 
@@ -79,10 +91,6 @@ public enum Discipline {
     }
 
     private boolean isNameMatch(String name) {
-        // Checks for null or blank input
-        if (name == null || name.isBlank()) {
-            return false;
-        }
         // Checks for exact match
         if (this.name.equalsIgnoreCase(name)) {
             return true;
@@ -92,10 +100,6 @@ public enum Discipline {
     }
 
     private boolean isAbbreviationMatch(String abbreviation) {
-        // Checks for null or blank input
-        if (abbreviation == null || abbreviation.isBlank()) {
-            return false;
-        }
         // Checks for exact match
         return this.abbreviation.equalsIgnoreCase(abbreviation);
     }

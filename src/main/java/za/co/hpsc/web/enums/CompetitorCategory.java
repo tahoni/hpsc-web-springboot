@@ -25,7 +25,11 @@ public enum CompetitorCategory {
         this.name = name;
     }
 
-    public static CompetitorCategory findByName(String name) {
+    public static CompetitorCategory getByName(String name) {
+        if ((name == null) || (name.isBlank())) {
+            return NONE;
+        }
+
         return Arrays.stream(CompetitorCategory.values())
                 .filter(category -> category.getName().equalsIgnoreCase(name))
                 .findFirst()
@@ -38,10 +42,6 @@ public enum CompetitorCategory {
     }
 
     private boolean isNameMatch(String name) {
-        // Checks for null or blank input
-        if (name == null || name.isBlank()) {
-            return false;
-        }
         // Checks for exact match without any separators
         return trimName(this.name).equalsIgnoreCase(trimName(name));
     }

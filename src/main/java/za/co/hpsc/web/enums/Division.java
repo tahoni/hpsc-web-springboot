@@ -28,7 +28,11 @@ public enum Division {
         this.names = names;
     }
 
-    public static Optional<Division> findByName(String name) {
+    public static Optional<Division> getByName(String name) {
+        if ((name == null) || (name.isBlank())) {
+            return Optional.empty();
+        }
+
         return Stream.of(Division.values())
                 .filter(division -> division.isNameMatch(name))
                 .findFirst();
@@ -39,10 +43,6 @@ public enum Division {
     }
 
     private boolean isNameMatch(String name) {
-        // Checks for null or blank input
-        if (name == null || name.isBlank()) {
-            return false;
-        }
         // Checks for match without separators
         return this.names.stream()
                 .anyMatch(divisionName -> divisionName.equalsIgnoreCase(normaliseName(name)));

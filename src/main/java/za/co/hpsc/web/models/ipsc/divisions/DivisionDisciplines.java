@@ -32,7 +32,7 @@ public class DivisionDisciplines {
 
     public static Optional<Class<? extends DisciplinesInDivision>> getDivisionByName(String divisionName) {
         // Get the division enum by name
-        Optional<Division> division = Division.findByName(divisionName);
+        Optional<Division> division = Division.getByName(divisionName);
         // Get the division discipline class if the division enum is present
         return division.flatMap(DivisionDisciplines::getDivisionByEnum);
     }
