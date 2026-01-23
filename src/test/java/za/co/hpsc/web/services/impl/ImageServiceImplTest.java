@@ -13,10 +13,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class HpscImageServiceTest {
+class ImageServiceImplTest {
 
     @InjectMocks
-    private HpscImageService hpscImageService;
+    private ImageServiceImpl imageService;
 
     @Test
     void testReadImages_withValidCsv_thenReturnsImageRequestList() {
@@ -29,7 +29,7 @@ class HpscImageServiceTest {
 
         // Act
         List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
-                hpscImageService.readImages(csvData));
+                imageService.readImages(csvData));
 
         // Assert
         assertNotNull(imageRequests);
@@ -71,7 +71,7 @@ class HpscImageServiceTest {
 
         // Act
         List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
-                hpscImageService.readImages(csvData));
+                imageService.readImages(csvData));
 
         // Assert
         assertNotNull(imageRequests);
@@ -117,7 +117,7 @@ class HpscImageServiceTest {
 
         // Act
         List<ImageRequest> awardRequests = assertDoesNotThrow(() ->
-                hpscImageService.readImages(largeCsv.toString()));
+                imageService.readImages(largeCsv.toString()));
 
         // Assert
         assertNotNull(awardRequests);
@@ -149,7 +149,7 @@ class HpscImageServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.readImages(csvData));
+                imageService.readImages(csvData));
     }
 
     @Test
@@ -162,7 +162,7 @@ class HpscImageServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.readImages(invalidCsvData));
+                imageService.readImages(invalidCsvData));
     }
 
     @Test
@@ -172,7 +172,7 @@ class HpscImageServiceTest {
 
         // Act
         List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
-                hpscImageService.readImages(emptyCsvData));
+                imageService.readImages(emptyCsvData));
 
         // Assert
         assertNotNull(imageRequests);
@@ -189,7 +189,7 @@ class HpscImageServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.readImages(invalidCsvStructure));
+                imageService.readImages(invalidCsvStructure));
     }
 
     @Test
@@ -201,28 +201,28 @@ class HpscImageServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.readImages(invalidCsv));
+                imageService.readImages(invalidCsv));
     }
 
     @Test
     void testReadImages_withBlankCsv_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.readImages("    "));
+                imageService.readImages("    "));
     }
 
     @Test
     void testReadImages_withEmptyCsv_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.readImages(""));
+                imageService.readImages(""));
     }
 
     @Test
     void testReadImages_withNullCsv_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.readImages(null));
+                imageService.readImages(null));
     }
 
     @Test
@@ -236,7 +236,7 @@ class HpscImageServiceTest {
 
         // Act
         List<ImageResponse> imageResponseList =
-                hpscImageService.mapImages(imageRequestList);
+                imageService.mapImages(imageRequestList);
 
         // Assert
         assertNotNull(imageResponseList);
@@ -265,7 +265,7 @@ class HpscImageServiceTest {
     void testMapImages_withEmptyImageRequestList_thenReturnsEmptyList() {
         // Act
         List<ImageResponse> imageResponseList =
-                hpscImageService.mapImages(List.of());
+                imageService.mapImages(List.of());
 
         // Assert
         assertNotNull(imageResponseList);
@@ -276,6 +276,6 @@ class HpscImageServiceTest {
     void testMapImages_withNullImageRequestList_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.mapImages(null));
+                imageService.mapImages(null));
     }
 }

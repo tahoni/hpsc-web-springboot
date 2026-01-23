@@ -17,10 +17,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class HpscAwardServiceTest {
+public class AwardServiceImplTest {
 
     @InjectMocks
-    private HpscAwardService hpscAwardService;
+    private AwardServiceImpl awardService;
 
     @Test
     public void testReadAwards_wihValidCsv_thenReturnsAwardRequestList() {
@@ -33,7 +33,7 @@ public class HpscAwardServiceTest {
 
         // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
-                hpscAwardService.readAwards(csvData));
+                awardService.readAwards(csvData));
 
         // Assert
         assertNotNull(awardRequests);
@@ -97,7 +97,7 @@ public class HpscAwardServiceTest {
 
         // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
-                hpscAwardService.readAwards(csvData));
+                awardService.readAwards(csvData));
 
 
         // Assert
@@ -170,7 +170,7 @@ public class HpscAwardServiceTest {
         }
 
         // Act
-        List<AwardRequest> awardRequests = hpscAwardService.readAwards(largeCsv.toString());
+        List<AwardRequest> awardRequests = awardService.readAwards(largeCsv.toString());
 
         // Assert
         assertNotNull(awardRequests);
@@ -222,7 +222,7 @@ public class HpscAwardServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscAwardService.readAwards(csvData));
+                awardService.readAwards(csvData));
     }
 
     @Test
@@ -235,7 +235,7 @@ public class HpscAwardServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscAwardService.readAwards(invalidCsvData));
+                awardService.readAwards(invalidCsvData));
     }
 
     @Test
@@ -245,7 +245,7 @@ public class HpscAwardServiceTest {
 
         // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
-                hpscAwardService.readAwards(emptyCsvData));
+                awardService.readAwards(emptyCsvData));
 
         // Assert
         assertNotNull(awardRequests);
@@ -262,7 +262,7 @@ public class HpscAwardServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscAwardService.readAwards(invalidCsvStructure));
+                awardService.readAwards(invalidCsvStructure));
     }
 
     @Test
@@ -274,25 +274,25 @@ public class HpscAwardServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscAwardService.readAwards(invalidCsv));
+                awardService.readAwards(invalidCsv));
     }
 
     @Test
     public void testReadAwards_withBlankCsv_thenThrowsException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.readAwards("  "));
+        assertThrows(ValidationException.class, () -> awardService.readAwards("  "));
     }
 
     @Test
     public void testReadAwards_withEmptyCsv_thenThrowsException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.readAwards(""));
+        assertThrows(ValidationException.class, () -> awardService.readAwards(""));
     }
 
     @Test
     public void testReadAwards_withNullCsv_thenThrowsException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.readAwards(null));
+        assertThrows(ValidationException.class, () -> awardService.readAwards(null));
     }
 
     @Test
@@ -310,7 +310,7 @@ public class HpscAwardServiceTest {
         List<AwardRequest> awardRequests = List.of(request1, request2, request3);
 
         // Act
-        List<AwardCeremonyResponse> responses = hpscAwardService.mapAwards(awardRequests);
+        List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
 
         // Assert
         assertEquals(2, responses.size());
@@ -353,7 +353,7 @@ public class HpscAwardServiceTest {
         List<AwardRequest> awardRequests = new ArrayList<>();
 
         // Act
-        List<AwardCeremonyResponse> responses = hpscAwardService.mapAwards(awardRequests);
+        List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
 
         // Assert
         assertTrue(responses.isEmpty());
@@ -362,6 +362,6 @@ public class HpscAwardServiceTest {
     @Test
     void testMapAwards_withNullAwardRequestList_thenThrowsException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.mapAwards(null));
+        assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
     }
 }

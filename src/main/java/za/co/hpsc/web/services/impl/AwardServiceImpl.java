@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class HpscAwardService implements AwardService {
+public class AwardServiceImpl implements AwardService {
     @Override
     public AwardCeremonyResponseHolder processCsv(String csvData) throws ValidationException, FatalException {
         if (csvData == null || csvData.isBlank()) {

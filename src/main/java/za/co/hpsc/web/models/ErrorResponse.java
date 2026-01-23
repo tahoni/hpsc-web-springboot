@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorResponse extends Response {
+public class ErrorResponse {
     private LocalDateTime timestamp;
     private String message;
     private String error;

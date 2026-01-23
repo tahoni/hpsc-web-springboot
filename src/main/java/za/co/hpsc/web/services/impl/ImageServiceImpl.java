@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class HpscImageService implements ImageService {
+public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResponseHolder processCsv(String csvData)
             throws ValidationException, FatalException {
