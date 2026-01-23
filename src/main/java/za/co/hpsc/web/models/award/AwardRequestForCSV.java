@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import za.co.hpsc.web.constants.DateConstants;
+import za.co.hpsc.web.constants.HpscConstants;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public abstract class AwardRequestForCSV {
     private String ceremonyCategory;
     private List<String> ceremonyTags = new ArrayList<>();
 
-    @JsonFormat(pattern = DateConstants.ISO_DATE_FORMAT)
+    @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
     private LocalDate date;
     private String imageFilePath;
 

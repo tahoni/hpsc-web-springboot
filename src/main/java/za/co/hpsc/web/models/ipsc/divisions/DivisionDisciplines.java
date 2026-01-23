@@ -1,11 +1,16 @@
-package za.co.hpsc.web.models.ipsc;
+package za.co.hpsc.web.models.ipsc.divisions;
 
 import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.models.ipsc.divisions.*;
+import za.co.hpsc.web.models.ipsc.divisions.disciplines.*;
 
 import java.util.Map;
 import java.util.Optional;
 
+// TODO: consider using a dependency injection framework for better scalability
+// TODO: consider using a factory pattern if more complex logic is needed in the future
+// TODO: consider caching the results if performance becomes an issue
+// TODO: consider adding logging for better traceability
+// TODO: consider adding unit tests for this class
 public class DivisionDisciplines {
     private static final Map<String, Class<? extends DisciplinesInDivision>> divisionDisciplines;
 

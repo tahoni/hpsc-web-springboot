@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.divisions;
+package za.co.hpsc.web.models.ipsc.divisions.disciplines;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
