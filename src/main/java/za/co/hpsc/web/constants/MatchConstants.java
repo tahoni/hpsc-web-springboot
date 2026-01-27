@@ -22,7 +22,7 @@ public final class MatchConstants {
     public static final String STAGE_RANGE_NAME_FORMAT = "Stage ${stageNumber} Range ${rangeNumber}";
 
     public static final String SCHEDULED_MATCH_NAME_FORMAT =
-            MATCH_NAME_FORMAT + " - ${longDate|";
+            MATCH_NAME_FORMAT + " - ${longDate}";
     public static final String SCHEDULED_MATCH_STAGE_NAME_FORMAT =
             "${matchName} - " + STAGE_RANGE_NAME_FORMAT + " - ${isoDate}";
     public static final String SCHEDULED_MATCH_OVERALL_NAME_FORMAT =

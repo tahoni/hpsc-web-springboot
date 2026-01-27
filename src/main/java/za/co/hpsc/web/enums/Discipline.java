@@ -7,11 +7,13 @@ import java.util.Optional;
 
 /**
  * Enum representing different disciplines in sports shooting.
+ *
+ * <p>
  * A discipline defines a specific type of competition or category
  * in which participants can compete.
- * <p>
  * Each discipline is associated with a name and may optionally include
  * an abbreviation for easier reference.
+ * </p>
  */
 @Getter
 public enum Discipline {
@@ -63,6 +65,18 @@ public enum Discipline {
         this.abbreviation = abbreviation;
     }
 
+    /**
+     * Retrieves an optional {@code Discipline} instance based on the provided name.
+     *
+     * <p>
+     * The method performs a case-insensitive match to find a discipline with the given name.
+     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param name the name of the discipline to search for. Can be null or empty
+     * @return an {@code Optional} containing the matching {@code Discipline} if found,
+     * or empty otherwise
+     */
     public static Optional<Discipline> getByName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
@@ -73,6 +87,19 @@ public enum Discipline {
                 .findFirst();
     }
 
+    /**
+     * Retrieves an optional {@code Discipline} instance based on the provided abbreviation.
+     *
+     * <p>
+     * The method performs a case-insensitive match to find a discipline that matches
+     * the given abbreviation.
+     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param abbreviation the abbreviation of the discipline to search for. Can be null or empty
+     * @return an {@code Optional} containing the matching {@code Discipline} if found,
+     * or empty otherwise
+     */
     public static Optional<Discipline> getByAbbreviation(String abbreviation) {
         if ((abbreviation == null) || (abbreviation.isBlank())) {
             return Optional.empty();
@@ -83,6 +110,20 @@ public enum Discipline {
                 .findFirst();
     }
 
+    /**
+     * Retrieves an optional {@code Discipline} instance based on the provided abbreviation or name.
+     *
+     * <p>
+     * The method attempts to find a discipline where the provided value matches either the name
+     * or the abbreviation of the discipline. The matching is case-insensitive. If no match is
+     * found or if the input is null/blank, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param value the value to search for, which can either be a discipline's name or abbreviation.
+     *              Can be null or empty.
+     * @return an {@code Optional} containing the matching {@code Discipline} if found,
+     * or empty if no match is found.
+     */
     public static Optional<Discipline> getByAbbreviationOrName(String value) {
         if ((value == null) || (value.isBlank())) {
             return Optional.empty();
@@ -94,21 +135,26 @@ public enum Discipline {
                 .findFirst();
     }
 
+    /**
+     * Retrieves the display name of the discipline.
+     *
+     * @return the display name associated with this discipline
+     */
     public String getDisplayName() {
         return this.name;
     }
 
     private boolean isNameMatch(String name) {
-        // Checks for exact match
+        // Checks for an exact match
         if (this.name.equalsIgnoreCase(name)) {
             return true;
         }
-        // Checks for starts with match
+        // Checks for a match starting with
         return this.name.startsWith(name);
     }
 
     private boolean isAbbreviationMatch(String abbreviation) {
-        // Checks for exact match
+        // Checks for an exact match
         return this.abbreviation.equalsIgnoreCase(abbreviation);
     }
 }

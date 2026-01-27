@@ -8,11 +8,12 @@ import java.util.stream.Stream;
 
 /**
  * Enum representing different divisions in the sport of shooting.
- * A division categorizes a specific type of firearm or shooting discipline,
- * enabling classification of participants based on their equipment.
+ *
  * <p>
+ * A division categorises a specific type of firearm or shooting discipline,
+ * enabling classification of participants based on their equipment.
  * Each division is associated with one or more names that can be used
- * to identify it. The names are normalized during comparison to ensure
+ * to identify it. The names are normalised during comparison to ensure
  * case- and separator-insensitive matching.
  */
 @Getter
@@ -37,6 +38,18 @@ public enum Division {
         this.names = names;
     }
 
+    /**
+     * Retrieves an optional {@code Division} instance based on the provided name.
+     *
+     * <p>
+     * The method performs a case-insensitive match to find a division with the given name.
+     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param name the name of the division to search for. Can be null or empty.
+     * @return an {@code Optional} containing the matching {@code Division} if found,
+     * or empty otherwise.
+     */
     public static Optional<Division> getByName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
@@ -47,17 +60,23 @@ public enum Division {
                 .findFirst();
     }
 
+    /**
+     * Retrieves the primary display name associated with this division.
+     *
+     * @return the first name in the list of names representing the division
+     */
     public String getDisplayName() {
         return this.names.getFirst();
     }
 
     private boolean isNameMatch(String name) {
-        // Checks for match without separators
+        // Checks for a match without separators
         return this.names.stream()
                 .anyMatch(divisionName -> divisionName.equalsIgnoreCase(normaliseName(name)));
     }
 
     private String normaliseName(String name) {
+        // Normalises the name by replacing any separator characters with a space
         return name.replace(ALTERNATE_SEPARATOR, DEFAULT_SEPARATOR);
     }
 }

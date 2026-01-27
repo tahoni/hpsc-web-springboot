@@ -46,15 +46,16 @@ public final class MatchHelpers {
         Map<String, String> parameters = Map.of(
                 "clubName", match.getClub().getName(),
                 "divisionName", (match.getMatchDivision() != null ?
-                        match.getMatchDivision().getDisplayName() : ""),
+                        match.getMatchDivision().getDisplayName().toUpperCase() : ""),
                 "categoryName", (match.getMatchCategory() != null ?
                         match.getMatchCategory().getDisplayName() : ""),
                 "longDate", longDateFormatter.format(match.getScheduledDate())
         );
 
         // Format and return match name
-        return StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_NAME_FORMAT,
+        String result = StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_NAME_FORMAT,
                 parameters);
+        return result.replaceAll("\\s+", " ");
     }
 
     /**
@@ -84,8 +85,10 @@ public final class MatchHelpers {
         );
 
         // Format and return stage match name
-        return StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_OVERALL_NAME_FORMAT,
-                parameters);
+        String result =
+                StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_OVERALL_NAME_FORMAT,
+                        parameters);
+        return result.replaceAll("\\s+", " ");
     }
 
     /**
@@ -118,7 +121,9 @@ public final class MatchHelpers {
         );
 
         // Format and return stage match name
-        return StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT,
-                parameters);
+        String result =
+                StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT,
+                        parameters);
+        return result.replaceAll("\\s+", " ");
     }
 }
