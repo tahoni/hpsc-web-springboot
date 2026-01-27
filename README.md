@@ -1,6 +1,6 @@
-# HPSC Website Back-end
+# HPSC Website Backend
 
-The official repository for the Spring Boot back-end of the Hartbeespoortdam Practical Shooting Club
+The official repository for the Spring Boot backend of the Hartbeespoortdam Practical Shooting Club
 (HPSC) platform.
 
 ## Table of Contents
@@ -20,7 +20,7 @@ The official repository for the Spring Boot back-end of the Hartbeespoortdam Pra
 
 ## Introduction
 
-The HPSC Website back-end is a high-performance Spring Boot application designed to manage and serve data for
+The HPSC Website backend is a high-performance Spring Boot application designed to manage and serve data for
 the HPSC platform. It provides a robust set of RESTful APIs for handling image galleries, award information,
 and more, with a focus on structured data processing and validation.
 
@@ -85,11 +85,11 @@ Execute the test suite (including unit and integration tests) using:
 
 ## Architecture
 
-A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md`](./ARCHITECTURE.md) file.
+A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md`](ARCHITECTURE.md) file.
 
 ## License
 
-The copyright licence can be found in the [`LICENSE.md`](./LICENSE.md) file.
+The copyright licence can be found in the [`LICENSE.md`](LICENSE.md) file.
 
 ## Author
 

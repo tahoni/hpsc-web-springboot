@@ -14,21 +14,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ImageRequest;
-import za.co.hpsc.web.models.ImageResponseHolder;
+import za.co.hpsc.web.models.image.request.ImageRequest;
+import za.co.hpsc.web.models.image.response.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
 /**
- * Controller responsible for managing and processing image-related API endpoints.
- * Provides endpoints for handling operations such as parsing and processing CSV
- * data containing image metadata.
+ * Controller responsible for handling image-related API endpoints.
  *
  * <p>
- * This class is annotated with {@code @Controller} and {@code @RequestMapping}
- * to designate it as a Spring MVC controller and map requests with the "/image" base URI.
+ * Provides endpoints for handling operations such as parsing and processing CSV
+ * data containing image metadata.
  * </p>
  */
-@Controller("/image")
+@Controller
 @RequestMapping("/image")
 @Tag(name = "Image", description = "API for image-related functionality.")
 public class ImageController {
@@ -45,18 +43,23 @@ public class ImageController {
      * @param csvData The CSV content as a string containing details about images,
      *                formatted according to the expected schema. This parameter
      *                is required and cannot be null.
-     * @return an {@link ImageResponseHolder} containing a list of image responses which
+     * @return an {@link ImageResponseHolder} object containing a list of image responses which
      * encapsulates the JSON representation of the processed image data.
      * @throws ValidationException If the provided CSV data does not meet validation requirements
      *                             or contains invalid structures.
      * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
-    @PostMapping(value = "/processCsv")
+    @PostMapping(value = "/processCsv", consumes = "text/csv", produces = "application/json")
     @Operation(summary = "Process image CSV", description = "Convert CSV data about images to JSON.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ImageResponseHolder.class)))
+            @ApiResponse(responseCode = "200", description = "Successfully converted the CSV data to JSON.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
+                            ImageResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while " +
+                    "processing the CSV data.", content = @Content(mediaType = "application/json"))
     })
     ResponseEntity<ImageResponseHolder> processCsv(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "text/csv",

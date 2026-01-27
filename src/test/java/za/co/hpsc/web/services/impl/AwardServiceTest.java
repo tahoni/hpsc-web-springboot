@@ -5,10 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.AwardCeremonyResponse;
-import za.co.hpsc.web.models.AwardCeremonyResponseHolder;
-import za.co.hpsc.web.models.AwardResponse;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponse;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
+import za.co.hpsc.web.models.award.response.AwardResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AwardServiceTest {
 
     @InjectMocks
-    private HpscAwardService hpscAwardService;
+    private AwardServiceImpl awardService;
 
     @Test
     void testProcessCsv_withValidCsvData_thenReturnsListOfAwards() {
@@ -29,7 +30,7 @@ class AwardServiceTest {
                 """;
 
         // Act
-        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> hpscAwardService.processCsv(csvData));
+        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.processCsv(csvData));
 
         // Assert
         assertNotNull(responseHolder);
@@ -39,7 +40,7 @@ class AwardServiceTest {
         // Assert first and only ceremony
         AwardCeremonyResponse ceremonyResponse = awardCeremonies.getFirst();
         assertNotNull(ceremonyResponse.getUuid());
-        assertEquals("2023-10-10", ceremonyResponse.getDate());
+        assertEquals(LocalDate.of(2023, 10, 10), ceremonyResponse.getDate());
         assertEquals("/path/to", ceremonyResponse.getImageFilePath());
         assertEquals("Ceremony 1", ceremonyResponse.getTitle());
         assertEquals("Ceremony Summary 1", ceremonyResponse.getSummary());
@@ -86,19 +87,19 @@ class AwardServiceTest {
                 """; // This is an intentionally incomplete row.
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.processCsv(csvData));
+        assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
     @Test
     void testProcessCsv_withEmptyCsvData_thenThrowsException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.processCsv(""));
+        assertThrows(ValidationException.class, () -> awardService.processCsv(""));
     }
 
     @Test
     void testProcessCsv_withNullCsvData_thenThrowsException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.processCsv(null));
+        assertThrows(ValidationException.class, () -> awardService.processCsv(null));
     }
 
     @Test
@@ -107,6 +108,6 @@ class AwardServiceTest {
         String csvData = "Invalid CSV Format";
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscAwardService.processCsv(csvData));
+        assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 }

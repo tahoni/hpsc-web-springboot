@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ImageResponse;
-import za.co.hpsc.web.models.ImageResponseHolder;
+import za.co.hpsc.web.models.image.response.ImageResponse;
+import za.co.hpsc.web.models.image.response.ImageResponseHolder;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImageServiceTest {
 
     @InjectMocks
-    private HpscImageService hpscImageService;
+    private ImageServiceImpl imageService;
 
     @Test
     void testProcessCsv_withValidCsvData_thenReturnsListOfImages() {
@@ -29,7 +29,7 @@ class ImageServiceTest {
 
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
-                hpscImageService.processCsv(csvData));
+                imageService.processCsv(csvData));
 
         // Assert
         List<ImageResponse> responses = responseHolder.getImages();
@@ -66,7 +66,7 @@ class ImageServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.processCsv(invalidCsvData));
+                imageService.processCsv(invalidCsvData));
     }
 
     @Test
@@ -76,7 +76,7 @@ class ImageServiceTest {
 
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
-                hpscImageService.processCsv(emptyCsvData));
+                imageService.processCsv(emptyCsvData));
 
         // Assert
         List<ImageResponse> responses = responseHolder.getImages();
@@ -87,7 +87,7 @@ class ImageServiceTest {
     void testProcessCsv_withNullCsvData_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                hpscImageService.processCsv(null));
+                imageService.processCsv(null));
     }
 
     @Test
@@ -96,6 +96,6 @@ class ImageServiceTest {
         String csvData = "Invalid CSV Format";
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> hpscImageService.processCsv(csvData));
+        assertThrows(ValidationException.class, () -> imageService.processCsv(csvData));
     }
 }
