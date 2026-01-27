@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.match.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -25,10 +25,11 @@ public abstract class ClubRequestForXml {
     private String postalCode;
 
     @JsonProperty(value = "Phone")
-    private String phoneOffice;
+    private String officePhoneNumber;
     @JsonProperty(value = "PhoneAlt")
-    private String phoneAlternate;
-    private String phoneFax;
+    private String alternativePhoneNumber;
+    @JsonProperty(value = "PhoneFax")
+    private String faxNumber;
     private String email;
 
     @JsonProperty(value = "WebSite")

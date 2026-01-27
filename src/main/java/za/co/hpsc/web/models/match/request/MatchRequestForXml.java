@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.match.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,7 +24,6 @@ public abstract class MatchRequestForXml {
     private Integer squadCount;
     private Integer firearmTypeId;
     @JsonProperty(value = "Level")
-
     private Integer matchLevel;
     @JsonProperty(required = true)
     private Boolean chrono;

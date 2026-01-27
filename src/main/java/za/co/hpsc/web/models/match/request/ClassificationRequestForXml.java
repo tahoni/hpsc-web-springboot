@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.match.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public abstract class ClassifyRequestForXml {
+public abstract class ClassificationRequestForXml {
     @JsonProperty(required = true)
     private Integer memberId;
     @JsonProperty(required = true)
