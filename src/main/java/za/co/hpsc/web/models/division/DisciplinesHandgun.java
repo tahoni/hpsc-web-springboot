@@ -5,6 +5,21 @@ import za.co.hpsc.web.enums.Division;
 
 import java.util.List;
 
+/**
+ * Represents the disciplines associated with the Handgun division in the sport
+ * of practical shooting.
+ *
+ * <p>
+ * This is a singleton class that provides a thread-safe, single instance for managing
+ * the Handgun division and its disciplines. The supported disciplines for the Handgun division
+ * are predefined during the initialisation of the class.
+ * This class extends the abstract {@code DisciplinesInDivision} class, inheriting
+ * its functionality for managing divisions and their respective disciplines. The Handgun
+ * division and its associated disciplines are statically defined, ensuring a consistent
+ * set of disciplines for this division.
+ * Usage of this class provides a central access point for retrieving the Handgun division
+ * and its associated disciplines.
+ */
 public final class DisciplinesHandgun extends DisciplinesInDivision {
     private static DisciplinesHandgun instance;
 

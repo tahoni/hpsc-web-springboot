@@ -23,6 +23,10 @@ import java.util.Map;
  * </p>
  */
 public final class MatchHelpers {
+    private MatchHelpers() {
+        // Utility class
+    }
+
     /**
      * Generates a formatted display name for a given match using its associated club, division,
      * category, and scheduled date information.

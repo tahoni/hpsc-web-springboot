@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  *
  * <p>
  * The {@code MatchStageCompetitor} class serves as an entity in the persistence layer,
- * linking a competitor ({@code MatchCompetitor}) and a match stage ({@code MatchStage})
+ * linking a competitor ({@link MatchCompetitor}) and a match stage ({@link MatchStage})
  * while storing detailed performance data for the competitor in the stage.
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to provide a human-readable string

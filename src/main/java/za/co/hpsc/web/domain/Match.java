@@ -20,7 +20,7 @@ import java.util.List;
  * <p>
  * The {@code Match} class is an entity in the persistence layer, used to store and
  * retrieve match-related data. It enables associations with other entities such as
- * {@code Club}, {@code MatchStage}, and {@code MatchCompetitor}.
+ * {@link Club}, {@link MatchStage}, and {@link MatchCompetitor}.
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to return a context-specific
  * representation of the match's display name.

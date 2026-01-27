@@ -10,7 +10,11 @@ import java.util.Map;
  * are designed to handle various use cases where string manipulation is required.
  * </p>
  */
-public class StringUtil {
+public final class StringUtil {
+    private StringUtil() {
+        // Utility class
+    }
+
     /**
      * Formats a template string by replacing placeholders with corresponding values from a map.
      *

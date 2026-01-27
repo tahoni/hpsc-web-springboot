@@ -23,12 +23,17 @@ public enum Division {
     SHOTGUN("Shotgun"),
     RIFLE("Rifle"),
     HANDGUN_22(List.of("Handgun .22", "Handgun .22LR", "22", ".22LR")),
-    MINI_RIFLE("Mini Rifle");
+    MINI_RIFLE("Mini Rifle"),
+    NONE;
 
     private final List<String> names;
 
     private static final String DEFAULT_SEPARATOR = " ";
     private static final String ALTERNATE_SEPARATOR = "-";
+
+    Division() {
+        this.names = List.of();
+    }
 
     Division(String name) {
         this.names = List.of(name);

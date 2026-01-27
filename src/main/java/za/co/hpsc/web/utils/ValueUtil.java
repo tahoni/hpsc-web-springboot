@@ -14,7 +14,11 @@ import java.util.UUID;
  * Strings, UUIDs, and collections.
  * </p>
  */
-public class ValueUtil {
+public final class ValueUtil {
+    private ValueUtil() {
+        // Utility class
+    }
+
     /**
      * Returns the provided string if it is not null; otherwise, returns an empty string.
      *

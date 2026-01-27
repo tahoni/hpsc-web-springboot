@@ -13,7 +13,11 @@ import java.math.RoundingMode;
  * are designed to handle various use cases where numerical computations are required.
  * </p>
  */
-public class NumberUtil {
+public final class NumberUtil {
+    private NumberUtil() {
+        // Utility class
+    }
+
     /**
      * Calculates the percentage of a part relative to a total.
      *

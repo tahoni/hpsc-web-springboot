@@ -17,8 +17,8 @@ import java.math.BigDecimal;
  * along with specific details about the competitor's performance in the match.
  *
  * <p>
- * This class serves as an entity in the persistence layer, linking the {@code Competitor}
- * and {@code Match} entities while storing additional data such as the competitor's
+ * The {@code MatchCompetitor} class serves as an entity in the persistence layer, linking the
+ * {@link Competitor} and {@link Match} entities while storing additional data such as the competitor's
  * division, discipline, power factor, and performance metrics (e.g., match points and percentage).
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to provide a concise string representation
