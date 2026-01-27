@@ -48,9 +48,8 @@ public class IpscController {
      * </p>
      *
      * @param cabFileContent the JSON-formatted content of the WinMSS.cab file to be processed.
-     *                       Cannot be null or empty.
-     * @return a {@code ResponseEntity} containing a {@code MatchResultLogResponseHolder} object
-     * if the processing is successful.
+     *                       Must not be null or empty.
+     * @return a {@code MatchResultLogResponseHolder} object if the processing is successful.
      */
     @PostMapping(value = "/importWinMssCabData", consumes = "application/json",
             produces = "application/json")
@@ -68,6 +67,6 @@ public class IpscController {
                     "application/json", schema = @Schema(implementation = IpscRequest.class)
             ))
             @RequestBody String cabFileContent) {
-        return ResponseEntity.ok(ipscService.processWinMssCabFile(cabFileContent));
+        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
     }
 }

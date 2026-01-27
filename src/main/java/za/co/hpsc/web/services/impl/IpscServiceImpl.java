@@ -12,8 +12,8 @@ import java.util.ArrayList;
 @Service
 public class IpscServiceImpl implements IpscService {
     @Override
-    public MatchResultLogResponseHolder processWinMssCabFile(String cabFileContent) {
-        if ((cabFile == null) || (cabFile.isEmpty())) {
+    public MatchResultLogResponseHolder importWinMssCabFile(String cabFileContent) {
+        if ((cabFileContent == null) || (cabFileContent.isBlank())) {
             throw new ValidationException("The provided CAB file is null or empty.");
         }
 

@@ -1,9 +1,8 @@
-package za.co.hpsc.web.models.image;
+package za.co.hpsc.web.models.image.response;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import za.co.hpsc.web.models.image.request.ImageRequest;
-import za.co.hpsc.web.models.image.response.ImageResponse;
 
 import java.util.List;
 import java.util.UUID;
