@@ -17,7 +17,7 @@ Documents development, build, test and deploy workflows for the project.
 #### Licence and Documentation
 
 - Created the `README.md` file describing the project overall.
-- Created the `ARCHITCETURE.md` file describing the architecture of the project.
+- Created the `ARCHITECTURE.md` file describing the architecture of the project.
 
 #### Changes by
 

@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match.request;
+package za.co.hpsc.web.models.ipsc.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

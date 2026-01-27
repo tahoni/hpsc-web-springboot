@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match.request;
+package za.co.hpsc.web.models.ipsc.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

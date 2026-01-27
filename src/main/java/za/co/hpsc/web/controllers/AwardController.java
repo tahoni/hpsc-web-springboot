@@ -19,9 +19,13 @@ import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.services.AwardService;
 
 /**
- * Controller class responsible for handling award-related API endpoints.
+ * Controller responsible for handling award-related API endpoints.
+ *
+ * <p>
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing award metadata.
+ * </p>
+ *
  * <p>
  * This class is annotated with {@code @Controller} and {@code @RequestMapping}
  * to designate it as a Spring MVC controller and map requests with the "/award" base URI.
@@ -44,8 +48,8 @@ public class AwardController {
      * @param csvData The CSV content as a string containing details about awards,
      *                formatted according to the expected schema. This parameter
      *                is required and cannot be null.
-     * @return an {@link AwardCeremonyResponseHolder} containing a list of image responses which
-     * encapsulates the JSON representation of the processed awards data.
+     * @return an {@link AwardCeremonyResponseHolder} object containing a list of award responses
+     * which encapsulates the JSON representation of the processed awards data.
      * @throws ValidationException If the provided CSV data does not meet validation requirements
      *                             or contains invalid structures.
      * @throws FatalException      If a critical error occurs during processing, that prevents

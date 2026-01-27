@@ -1,5 +1,26 @@
 package za.co.hpsc.web.constants;
 
+/**
+ * Defines constant values used throughout the application for formatting and naming
+ * matches, stages, ranges, and associated schedule details.
+ *
+ * <p>
+ * This class provides standardized naming conventions and date formats for matches
+ * and their components, ensuring consistency across different parts of the application.
+ * These constants include general prefixes, formatting templates, and references to
+ * date format patterns from {@link DateConstants}.
+ * </p>
+ *
+ * <p>
+ * The constants defined here support the creation of user-friendly and properly formatted
+ * strings for display purposes, including match names, stage and range identifiers, and
+ * detailed scheduled match names.
+ * </p>
+ *
+ * <p>
+ * This class is immutable and cannot be instantiated.
+ * </p>
+ */
 // TODO: Javadoc
 public final class MatchConstants {
     public static final String STAGE_NAME_PREFIX = "Stage";

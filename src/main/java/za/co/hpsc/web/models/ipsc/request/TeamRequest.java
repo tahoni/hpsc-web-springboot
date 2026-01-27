@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match.request;
+package za.co.hpsc.web.models.ipsc.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagRequest {
+public class TeamRequest {
     @NotNull
-    private Integer tagId;
+    private Integer matchId;
     @NotNull
-    private String tagName;
+    private Integer teamId;
+    private String teamName;
+
+    private Integer divisionId;
+    private Integer nonTeamCategoryId;
 }

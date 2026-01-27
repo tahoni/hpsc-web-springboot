@@ -1,6 +1,5 @@
 package za.co.hpsc.web.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,16 +8,26 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ControllerResponse;
+import za.co.hpsc.web.models.ipsc.request.IpscRequest;
 import za.co.hpsc.web.models.matches.MatchResultLogResponseHolder;
 import za.co.hpsc.web.services.IpscService;
 
-import java.io.IOException;
-
+/**
+ * Controller responsible for handling IPSC-related API endpoints.
+ *
+ * <p>
+ * This class provides the necessary operations to process and store data related
+ * to IPSC, e.g. data provided in WinMSS.cab files.
+ * </p>
+ *
+ * <p>
+ * This class is annotated with {@code @Controller} and {@code @RequestMapping}
+ * to designate it as a Spring MVC controller and map requests with the "/ipsc" base URI.
+ * </p>
+ */
 @Controller
 @RequestMapping("/ipsc")
 @Tag(name = "IPSC", description = "API for functionality related to IPSC directly.")
@@ -29,25 +38,36 @@ public class IpscController {
         this.ipscService = ipscService;
     }
 
-    @PostMapping(value = "/processWinMssCab", consumes = "multipart/form-data",
+    /**
+     * Processes the content of a WinMSS.cab file contained in a JSON structure and saves the data.
+     *
+     * <p>
+     * This method is exposed as a POST endpoint that accepts raw WinMSS.cab file content
+     * in JSON format. It validates and processes the provided data and returns an appropriate
+     * response indicating success, validation errors, or server errors.
+     * </p>
+     *
+     * @param cabFileContent the JSON-formatted content of the WinMSS.cab file to be processed.
+     *                       Cannot be null or empty.
+     * @return a {@code ResponseEntity} containing a {@code MatchResultLogResponseHolder} object
+     * if the processing is successful.
+     */
+    @PostMapping(value = "/importWinMssCabData", consumes = "application/json",
             produces = "application/json")
-    @Operation(summary = "Process a WinMSS.cab file", description = "Save the data in the WinMSS.cab file " +
-            "to the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully saved the WinMSS.cab file data.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
-                            MatchResultLogResponseHolder.class))),
-            @ApiResponse(responseCode = "400", description = "Not a valid WinMSS.cab file.",
+            @ApiResponse(responseCode = "200", description = "Successfully imported the WinMSS.cab file " +
+                    "data.", content = @Content(mediaType = "application/json", schema =
+            @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid WinMSS.cab file data.",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "An internal server error occurred processing " +
-                    "the WinMSS.cab file.", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "500", description = "An internal server error occurred importing " +
+                    "the WinMSS.cab file data.", content = @Content(mediaType = "application/json"))
     })
-    ResponseEntity<MatchResultLogResponseHolder> processWinMssCab(
+    ResponseEntity<MatchResultLogResponseHolder> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
-                    "multipart/form-data"
+                    "application/json", schema = @Schema(implementation = IpscRequest.class)
             ))
-            @RequestParam("file") MultipartFile cabFile)
-            throws ValidationException, FatalException, IOException {
-        return ResponseEntity.ok(ipscService.processWinMssCabFile(cabFile));
+            @RequestBody String cabFileContent) {
+        return ResponseEntity.ok(ipscService.processWinMssCabFile(cabFileContent));
     }
 }

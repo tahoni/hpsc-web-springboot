@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import za.co.hpsc.web.models.ErrorResponse;
+import za.co.hpsc.web.models.ControllerResponse;
 
 import java.time.LocalDateTime;
 
@@ -42,8 +42,8 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ControllerResponse> handleGeneralException(Exception ex, WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -60,8 +60,8 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ControllerResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -78,8 +78,8 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -96,8 +96,8 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MismatchedInputException.class)
-    public ResponseEntity<ErrorResponse> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -114,8 +114,8 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CsvReadException.class)
-    public ResponseEntity<ErrorResponse> handleCsvReadException(CsvReadException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleCsvReadException(CsvReadException ex, WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

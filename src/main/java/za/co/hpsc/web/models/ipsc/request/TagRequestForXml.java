@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match.request;
+package za.co.hpsc.web.models.ipsc.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public abstract class SquadRequestForXml {
-    private Integer matchId;
-    private Integer squadId;
-    @JsonProperty(value = "Squad")
-    private String squadName;
+public abstract class TagRequestForXml {
+    @JsonProperty(required = true)
+    private Integer tagId;
+    @JsonProperty(value = "Tag")
+    private String tagName;
 }

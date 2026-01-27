@@ -19,9 +19,12 @@ import za.co.hpsc.web.models.image.response.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
 /**
- * Controller responsible for managing and processing image-related API endpoints.
+ * Controller responsible for handling image-related API endpoints.
+ *
+ * <p>
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing image metadata.
+ * </p>
  *
  * <p>
  * This class is annotated with {@code @Controller} and {@code @RequestMapping}
@@ -45,7 +48,7 @@ public class ImageController {
      * @param csvData The CSV content as a string containing details about images,
      *                formatted according to the expected schema. This parameter
      *                is required and cannot be null.
-     * @return an {@link ImageResponseHolder} containing a list of image responses which
+     * @return an {@link ImageResponseHolder} object containing a list of image responses which
      * encapsulates the JSON representation of the processed image data.
      * @throws ValidationException If the provided CSV data does not meet validation requirements
      *                             or contains invalid structures.

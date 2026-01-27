@@ -93,12 +93,6 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.20.2</version>
         </dependency>
-        <!-- File handling -->
-        <dependency>
-            <groupId>de.morihofi.cab4j</groupId>
-            <artifactId>cab4j</artifactId>
-            <version>0.1.3</version>
-        </dependency>
         <!-- Developer Tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
