@@ -36,11 +36,8 @@ class MatchCategoryTest {
 
     @Test
     void testGetByName_withNullInput_thenReturnsEmptyOptional() {
-        // Arrange
-        String inputName = null;
-
         // Act
-        Optional<MatchCategory> result = MatchCategory.getByName(inputName);
+        Optional<MatchCategory> result = MatchCategory.getByName(null);
 
         // Assert
         assertFalse(result.isPresent());

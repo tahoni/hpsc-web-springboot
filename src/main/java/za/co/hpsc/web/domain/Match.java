@@ -23,7 +23,7 @@ import java.util.List;
  * <p>
  * Key attributes include:
  * - A unique identifier for the match.
- * - The associated club where the match is organized.
+ * - The associated club where the match is organised.
  * - The name of the match, which is mandatory and unique.
  * - The scheduled date of the match, which is mandatory.
  * - The division and category of the match, represented as enumerations.

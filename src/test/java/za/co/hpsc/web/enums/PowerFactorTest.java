@@ -22,7 +22,7 @@ class PowerFactorTest {
     }
 
     @Test
-    void testGetByName_withCaseInsenstivieMatch_thenReturnsCorrectPowerFactor() {
+    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
         // Arrange
         String validName = "mAJor";
 

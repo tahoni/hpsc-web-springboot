@@ -62,11 +62,8 @@ class DivisionTest {
 
     @Test
     void testGetByName_withNullInput_thenReturnsEmptyOptional() {
-        // Arrange
-        String inputName = null;
-
         // Act
-        Optional<Division> result = Division.getByName(inputName);
+        Optional<Division> result = Division.getByName(null);
 
         // Assert
         assertFalse(result.isPresent());
