@@ -125,5 +125,5 @@ between the entry points, business logic, and data processing layers.
 
 ## Development Guidelines
 
-Refer to the [README.md](./README.md) for detailed instructions on local setup, commands, and
+Refer to the [README.md](README.md) for detailed instructions on local setup, commands, and
 coding standards.

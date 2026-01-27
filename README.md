@@ -85,11 +85,11 @@ Execute the test suite (including unit and integration tests) using:
 
 ## Architecture
 
-A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md`](./ARCHITECTURE.md) file.
+A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md`](ARCHITECTURE.md) file.
 
 ## License
 
-The copyright licence can be found in the [`LICENSE.md`](./LICENSE.md) file.
+The copyright licence can be found in the [`LICENSE.md`](LICENSE.md) file.
 
 ## Author
 
