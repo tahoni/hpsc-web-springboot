@@ -13,6 +13,7 @@ public enum CompetitorCategory {
     JUNIOR_LADY("Lady, Junior"),
     SENIOR("Senior"),
     SUPER_SENIOR("Super Senior"),
+    GRAND_SENIOR("Grand Senior"),
     NONE;
 
     private final String name;

@@ -55,8 +55,13 @@ public class ImageController {
     @PostMapping(value = "/processCsv", consumes = "text/csv", produces = "application/json")
     @Operation(summary = "Process image CSV", description = "Convert CSV data about images to JSON.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ImageResponseHolder.class)))
+            @ApiResponse(responseCode = "200", description = "Successfully converted the CSV data to JSON.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
+                            ImageResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while " +
+                    "processing the CSV data.", content = @Content(mediaType = "application/json"))
     })
     ResponseEntity<ImageResponseHolder> processCsv(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "text/csv",

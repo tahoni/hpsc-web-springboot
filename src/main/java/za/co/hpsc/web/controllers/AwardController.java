@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.models.award.request.AwardRequest;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.services.AwardService;
 
 /**
@@ -54,15 +54,20 @@ public class AwardController {
     @PostMapping(value = "/processCsv", consumes = "text/csv", produces = "application/json")
     @Operation(summary = "Process award CSV", description = "Convert CSV data about awards to JSON.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AwardCeremonyResponseHolder.class)))
+            @ApiResponse(responseCode = "200", description = "Successfully converted the CSV data to JSON.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
+                            AwardCeremonyResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while " +
+                    "processing the CSV data.", content = @Content(mediaType = "application/json"))
     })
     ResponseEntity<AwardCeremonyResponseHolder> processCsv(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "text/csv",
                     schema = @Schema(implementation = AwardRequest.class),
                     examples = @ExampleObject("""
-                            
-                            
+                            title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
+                            string,string,string,string,string|string,2023-10-10,string,string,string,string,string,string,string,string,string,string,string,string
                             """)))
             @RequestBody String csvData)
             throws ValidationException, FatalException {
