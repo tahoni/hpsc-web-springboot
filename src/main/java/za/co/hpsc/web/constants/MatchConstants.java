@@ -9,9 +9,6 @@ package za.co.hpsc.web.constants;
  * and their components, ensuring consistency across different parts of the application.
  * These constants include general prefixes, formatting templates, and references to
  * date format patterns from {@link SystemConstants}.
- * </p>
- *
- * <p>
  * The constants defined here support the creation of user-friendly and properly formatted
  * strings for display purposes, including match names, stage and range identifiers, and
  * detailed scheduled match names.

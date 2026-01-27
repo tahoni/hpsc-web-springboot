@@ -6,6 +6,13 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Enum representing different power factors in the context of shooting sports.
+ * A power factor defines the level of energy a bullet carries, which is used
+ * to categorize participants based on the caliber and velocity of ammunition used.
+ * <p>
+ * Each power factor has a `name` and an `abbreviation` for easy reference and presentation.
+ */
 @Getter
 @AllArgsConstructor
 public enum PowerFactor {

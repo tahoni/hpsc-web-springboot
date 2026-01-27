@@ -12,6 +12,25 @@ import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
 
+/**
+ * The MatchCompetitor class represents the association between a competitor and a match,
+ * along with specific details about the competitor's performance in the match.
+ * <p>
+ * This class serves as an entity in the persistence layer, linking the {@code Competitor}
+ * and {@code Match} entities while storing additional data such as the competitor's
+ * division, discipline, power factor, and performance metrics (e.g., match points and percentage).
+ * <p>
+ * Key attributes include:
+ * - A unique identifier for the MatchCompetitor instance.
+ * - The associated {@code Competitor} participating in the match.
+ * - The associated {@code Match} in which the competitor is competing.
+ * - The division, discipline, and power factor applicable to the competitor for the match.
+ * - Performance metrics such as match points and match percentage.
+ * <p>
+ * Instances of this class are uniquely identified by their auto-generated identifier
+ * and managed within the persistence layer. The toString method is overridden to provide a
+ * concise string representation that includes the match and competitor details.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

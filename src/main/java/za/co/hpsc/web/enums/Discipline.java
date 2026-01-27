@@ -5,6 +5,14 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Enum representing different disciplines in sports shooting.
+ * A discipline defines a specific type of competition or category
+ * in which participants can compete.
+ * <p>
+ * Each discipline is associated with a name and may optionally include
+ * an abbreviation for easier reference.
+ */
 @Getter
 public enum Discipline {
 

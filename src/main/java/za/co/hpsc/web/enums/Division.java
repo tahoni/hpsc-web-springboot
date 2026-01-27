@@ -6,6 +6,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Enum representing different divisions in the sport of shooting.
+ * A division categorizes a specific type of firearm or shooting discipline,
+ * enabling classification of participants based on their equipment.
+ * <p>
+ * Each division is associated with one or more names that can be used
+ * to identify it. The names are normalized during comparison to ensure
+ * case- and separator-insensitive matching.
+ */
 @Getter
 public enum Division {
     HANDGUN("Handgun"),

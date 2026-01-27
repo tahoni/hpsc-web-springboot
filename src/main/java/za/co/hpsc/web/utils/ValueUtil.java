@@ -6,11 +6,13 @@ import java.util.UUID;
 
 /**
  * Utility class providing methods to handle nullable values by substituting default values.
+ *
  * <p>
  * The {@code ValueUtil} class offers static methods that help in replacing null references with
  * suitable defaults. These methods are designed to simplify null-handling by providing
  * straightforward alternatives when encountering nulls in common scenarios, such as
  * Strings, UUIDs, and collections.
+ * </p>
  */
 public class ValueUtil {
     /**

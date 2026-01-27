@@ -3,8 +3,11 @@ package za.co.hpsc.web.exceptions;
 /**
  * Represents a non-fatal exception that indicates an error condition which does not
  * necessarily prevent the application from continuing its operation.
+ *
+ * <p>
  * This class extends {@link RuntimeException} and is typically used in scenarios where
  * an issue needs to be handled but does not terminate the application.
+ * </p>
  */
 public class NonFatalException extends RuntimeException {
     /**
@@ -52,6 +55,7 @@ public class NonFatalException extends RuntimeException {
      * Constructs a new {@code NonFatalException} exception with the specified cause and a
      * detail message of {@code (cause == null ? null : cause.toString())} (which typically
      * contains the class and detail message of {@code cause}).
+     *
      * <p>
      * This constructor is useful for exceptions that are little more than
      * wrappers for other throwable objets.

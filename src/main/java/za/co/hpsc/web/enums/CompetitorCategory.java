@@ -4,6 +4,12 @@ import lombok.Getter;
 
 import java.util.Arrays;
 
+/**
+ * Enum representing various categories of competitors.
+ * Each category is associated with a display name that represents its descriptive value.
+ * The enum provides utility methods for retrieving a specific category by its name.
+ * If no match is found, the default category is {@code NONE}.
+ */
 @Getter
 public enum CompetitorCategory {
     JUNIOR("Junior"),

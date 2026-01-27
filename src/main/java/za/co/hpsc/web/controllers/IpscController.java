@@ -22,11 +22,6 @@ import za.co.hpsc.web.services.IpscService;
  * This class provides the necessary operations to process and store data related
  * to IPSC, e.g. data provided in WinMSS.cab files.
  * </p>
- *
- * <p>
- * This class is annotated with {@code @Controller} and {@code @RequestMapping}
- * to designate it as a Spring MVC controller and map requests with the "/ipsc" base URI.
- * </p>
  */
 @Controller
 @RequestMapping("/ipsc")
@@ -49,7 +44,7 @@ public class IpscController {
      *
      * @param cabFileContent the JSON-formatted content of the WinMSS.cab file to be processed.
      *                       Must not be null or empty.
-     * @return a {@code MatchResultLogResponseHolder} object if the processing is successful.
+     * @return a {@link MatchResultLogResponseHolder} object if the processing is successful.
      */
     @PostMapping(value = "/importWinMssCabData", consumes = "application/json",
             produces = "application/json")

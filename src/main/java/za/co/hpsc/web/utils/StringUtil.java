@@ -4,10 +4,11 @@ import java.util.Map;
 
 /**
  * Utility class for string operations.
+ *
  * <p>
- * The {@code StringUtil} class provides a method to format strings using named
- * parameters. Placeholders in the template string, denoted by ${parameterName},
- * are replaced with corresponding values from the provided map.
+ * The {@code StringUtil} class offers static methods for common string-related tasks. These methods
+ * are designed to handle various use cases where string manipulation is required.
+ * </p>
  */
 public class StringUtil {
     /**

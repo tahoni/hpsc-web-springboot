@@ -15,7 +15,7 @@ public class MatchResultResponse extends MatchResponse {
      *
      * <p>
      * A randomly generated UUID is assigned through the superclass constructor.
-     * The superclass constructors also ensures that the list of placings is not null
+     * The superclass constructors also ensure that the list of placings is not null
      * by initialising it to an empty list.
      * </p>
      */

@@ -25,11 +25,6 @@ import za.co.hpsc.web.services.ImageService;
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing image metadata.
  * </p>
- *
- * <p>
- * This class is annotated with {@code @Controller} and {@code @RequestMapping}
- * to designate it as a Spring MVC controller and map requests with the "/image" base URI.
- * </p>
  */
 @Controller
 @RequestMapping("/image")

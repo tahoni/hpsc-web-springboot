@@ -38,7 +38,7 @@ public class ControllerResponse {
      * and sets the {@code success} field to {@code false}.
      *
      * @param timestamp the timestamp of the response, specifying when it was created.
-     *                  Cannot be null.
+     *                  Must not be null.
      * @param message   a message providing additional information about the response.
      *                  Can be null.
      * @param error     a description of any error associated with the response.

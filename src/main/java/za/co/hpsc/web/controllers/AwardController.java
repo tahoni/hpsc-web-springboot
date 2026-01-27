@@ -25,11 +25,6 @@ import za.co.hpsc.web.services.AwardService;
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing award metadata.
  * </p>
- *
- * <p>
- * This class is annotated with {@code @Controller} and {@code @RequestMapping}
- * to designate it as a Spring MVC controller and map requests with the "/award" base URI.
- * </p>
  */
 @Controller
 @RequestMapping("/award")

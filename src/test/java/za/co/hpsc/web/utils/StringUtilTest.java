@@ -124,13 +124,12 @@ public class StringUtilTest {
     @Test
     void testFormatStringWithNamedParameters_withNullTemplate_thenThrowsException() {
         // Arrange
-        String template = null;
         Map<String, String> parameters = new HashMap<>();
         parameters.put("key", "value");
 
         // Act & Assert
         assertThrows(NullPointerException.class, () ->
-                StringUtil.formatStringWithNamedParameters(template, parameters));
+                StringUtil.formatStringWithNamedParameters(null, parameters));
     }
 
     @Test
