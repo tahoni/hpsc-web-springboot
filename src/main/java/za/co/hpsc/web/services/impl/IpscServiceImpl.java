@@ -13,10 +13,17 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class IpscServiceImpl implements IpscService {
     @Override
-    public MatchResultLogResponseHolder processWinMssCabFile(MultipartFile cabFile) {
+    public MatchResultLogResponseHolder processWinMssCabFile(MultipartFile cabFile) throws IOException {
+        if ((cabFile == null) || (cabFile.isEmpty())) {
+            throw new ValidationException("The provided CAB file is null or empty.");
+        }
+
+        Map<String, ByteBuffer> content = CabExtractor.extract(ByteBuffer.wrap(cabFile.getBytes()));
+
         return new MatchResultLogResponseHolder(new ArrayList<>());
     }
 }
