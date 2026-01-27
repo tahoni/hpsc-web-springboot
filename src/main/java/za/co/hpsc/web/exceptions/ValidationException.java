@@ -3,8 +3,11 @@ package za.co.hpsc.web.exceptions;
 /**
  * Represents a validation exception used to indicate that an input validation error
  * has occurred.
+ *
+ * <p>
  * This class extends {@link IllegalArgumentException}, allowing it to be used in scenarios
  * where invalid arguments are encountered.
+ * </p>
  */
 public class ValidationException extends IllegalArgumentException {
     /**

@@ -3,8 +3,11 @@ package za.co.hpsc.web.exceptions;
 /**
  * Represents a fatal exception that generally indicates an unrecoverable error condition
  * within an application.
+ *
+ * <p>
  * This class extends {@link Exception} and is typically used in scenarios where an
  * operation cannot proceed due to a critical failure.
+ * </p>
  */
 public class FatalException extends Exception {
     /**
@@ -52,6 +55,7 @@ public class FatalException extends Exception {
      * Constructs a new {@code FatalException} exception with the specified cause and a
      * detail message of {@code (cause == null ? null : cause.toString())} (which typically
      * contains the class and detail message of {@code cause}).
+     *
      * <p>
      * This constructor is useful for exceptions that are little more than
      * wrappers for other throwable objets.
