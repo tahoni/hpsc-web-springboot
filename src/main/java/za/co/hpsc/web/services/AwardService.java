@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.award.AwardCeremonyResponseHolder;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
 
 /**
  * The {@code AwardService} interface provides methods for processing award-related data

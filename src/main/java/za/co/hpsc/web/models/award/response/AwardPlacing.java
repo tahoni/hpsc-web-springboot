@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.award;
+package za.co.hpsc.web.models.award.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

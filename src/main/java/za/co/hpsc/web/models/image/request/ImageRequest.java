@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.image;
+package za.co.hpsc.web.models.image.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

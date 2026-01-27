@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.image;
+package za.co.hpsc.web.models.image.response;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import za.co.hpsc.web.models.Response;
+import za.co.hpsc.web.models.image.request.ImageRequest;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;

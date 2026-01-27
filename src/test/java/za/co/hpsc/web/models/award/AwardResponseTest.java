@@ -1,6 +1,9 @@
 package za.co.hpsc.web.models.award;
 
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.models.award.request.AwardRequest;
+import za.co.hpsc.web.models.award.response.AwardPlacing;
+import za.co.hpsc.web.models.award.response.AwardResponse;
 
 import java.time.LocalDate;
 import java.util.List;

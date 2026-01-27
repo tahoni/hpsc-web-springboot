@@ -1,10 +1,11 @@
-package za.co.hpsc.web.models.award;
+package za.co.hpsc.web.models.award.response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.Response;
+import za.co.hpsc.web.models.award.request.AwardRequest;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDate;

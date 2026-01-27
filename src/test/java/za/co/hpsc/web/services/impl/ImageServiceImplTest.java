@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.image.ImageRequest;
-import za.co.hpsc.web.models.image.ImageResponse;
+import za.co.hpsc.web.models.image.request.ImageRequest;
+import za.co.hpsc.web.models.image.response.ImageResponse;
 
 import java.util.List;
 

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.image.ImageRequest;
-import za.co.hpsc.web.models.image.ImageResponseHolder;
+import za.co.hpsc.web.models.image.request.ImageRequest;
+import za.co.hpsc.web.models.image.response.ImageResponseHolder;
 import za.co.hpsc.web.services.ImageService;
 
 /**

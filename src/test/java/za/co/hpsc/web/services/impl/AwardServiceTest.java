@@ -5,9 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.award.AwardCeremonyResponse;
-import za.co.hpsc.web.models.award.AwardCeremonyResponseHolder;
-import za.co.hpsc.web.models.award.AwardResponse;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponse;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
+import za.co.hpsc.web.models.award.response.AwardResponse;
 
 import java.time.LocalDate;
 import java.util.List;
