@@ -13,17 +13,14 @@ import java.util.List;
 /**
  * Represents a club within the system, which maintains details about its name, abbreviation,
  * and associated matches.
+ *
  * <p>
  * The {@code Club} class serves as an entity in the persistence layer and is used to
  * encapsulate data related to a club, including its unique identifier, name, and a list of matches.
  * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to return the club's name as a string representation.
- * <p>
- * Key attributes include:
- * - A unique identifier for the club.
- * - The club's name, which is mandatory and unique.
- * - An abbreviation for the club's name, if applicable.
- * - A list of matches associated with the club.
+ * Additionally, it overrides the {@code toString} method to return the club's name as a
+ * string representation.
+ * </p>
  */
 @Getter
 @Setter

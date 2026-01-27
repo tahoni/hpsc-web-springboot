@@ -11,23 +11,18 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import java.util.List;
 
 /**
- * Represents a competitor in the system.
+ * Represents a competitor in the system, which maintains details about its name,
+ * competitor number, category, and associated matches.
+ *
  * <p>
  * The {@code Competitor} class serves as an entity in the persistence layer and is used to
  * encapsulate data related to a competitor, such as their name, unique identifier,
  * competitor number, category, and other details. It also maintains a list of matches
  * associated with the competitor.
- * <p>
- * Key attributes include:
- * - A unique identifier for the competitor.
- * - The competitor's first name, last name, middle names (if applicable), and identifier number.
- * - The competitor's SAPSA number, which may be optional.
- * - The competitor's category, represented as an enumeration.
- * - A list of matches in which the competitor has participated.
- * <p>
- * This class provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to provide a formatted string representation
- * of the competitor's name, including middle names if available.
+ * It provides constructors for creating instances with specific details or using default values.
+ * Additionally, it overrides the {@code toString} method to provide a formatted string
+ * representation of the competitor's name, including middle names if available.
+ * </p>
  */
 @Getter
 @Setter
