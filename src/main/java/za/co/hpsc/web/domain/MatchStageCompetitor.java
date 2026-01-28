@@ -41,12 +41,25 @@ public class MatchStageCompetitor {
     @JoinColumn(name = "match_stage_id")
     private MatchStage matchStage;
 
+    private Integer scoreA;
+    private Integer scoreB;
+    private Integer scoreC;
+    private Integer scoreD;
+
     private Integer points;
+    private Integer misses;
     private Integer penalties;
+    private Integer procedurals;
+
+    private Integer deduction;
+    private BigDecimal deductionPercentage;
+
     private BigDecimal time;
     private BigDecimal hitFactor;
     private BigDecimal stagePoints;
     private BigDecimal stagePercentage;
+
+    private Boolean isDisqualified;
 
     @Override
     public String toString() {

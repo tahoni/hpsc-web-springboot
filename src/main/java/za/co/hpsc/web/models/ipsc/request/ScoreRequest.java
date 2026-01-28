@@ -49,5 +49,5 @@ public class ScoreRequest {
 
     private Boolean scoreNotVerified;
     private Boolean removeFromScoring;
-    private boolean flagForDeletion;
+    private Boolean flagForDeletion;
 }

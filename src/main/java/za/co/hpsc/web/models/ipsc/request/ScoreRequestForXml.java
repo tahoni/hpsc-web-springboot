@@ -54,5 +54,5 @@ public abstract class ScoreRequestForXml {
     @JsonProperty(value = "Remove", required = true)
     private Boolean removeFromScoring;
     @JsonProperty(value = "FlagDelete", required = true)
-    private boolean flagForDeletion;
+    private Boolean flagForDeletion;
 }
