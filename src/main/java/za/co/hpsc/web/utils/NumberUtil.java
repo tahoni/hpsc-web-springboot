@@ -27,16 +27,15 @@ public final class NumberUtil {
      * </p>
      *
      * @param part  the portion or subset of the total to calculate percentage for. Must not be null.
-     * @param total the whole or total value. Can be null or zero.
+     * @param whole the whole or total value. Can be null or zero.
      * @return the percentage of {@code part} relative to {@code total}, scaled to the default scale.
      * If {@code total} is null or zero, returns zero.
      */
-    public static BigDecimal calculatePercentage(BigDecimal part, BigDecimal total) {
-        if (total == null || total.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
+    public static BigDecimal calculatePercentage(BigDecimal part, BigDecimal whole) {
+        BigDecimal result = BigDecimal.ZERO;
+        if ((whole != null) && (whole.compareTo(BigDecimal.ZERO) != 0)) {
+            result = part.divide(whole).multiply(BigDecimal.valueOf(100));
         }
-        return part.multiply(BigDecimal.valueOf(100))
-                .setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP)
-                .divide(total, RoundingMode.HALF_UP);
+        return result.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 }
