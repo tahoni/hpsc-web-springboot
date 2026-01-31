@@ -424,6 +424,7 @@ public class IpscServiceImplTest {
         String xmlData = """
                     <xml>
                         <data>
+                            <row ClubId="1" ClubCode="ABC" Club="Alpha Club" Contact="John Doe"/>
                         </data>
                     </xml>
                 """;
@@ -434,7 +435,14 @@ public class IpscServiceImplTest {
 
         // Assert
         assertNotNull(requestList);
-        assertEquals(0, requestList.size());
+        assertEquals(1, requestList.size());
+
+        // Assert the first row
+        ClubRequest clubRequest = requestList.getFirst();
+        assertEquals(1, clubRequest.getClubId());
+        assertEquals("ABC", clubRequest.getClubCode());
+        assertEquals("Alpha Club", clubRequest.getClubName());
+        assertEquals("John Doe", clubRequest.getContact());
     }
 
     @Test
@@ -548,6 +556,7 @@ public class IpscServiceImplTest {
         String xmlData = """
                     <xml>
                         <data>
+                            <row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/>
                         </data>
                     </xml>
                 """;
@@ -558,7 +567,14 @@ public class IpscServiceImplTest {
 
         // Assert
         assertNotNull(requestList);
-        assertEquals(0, requestList.size());
+        assertEquals(1, requestList.size());
+
+        // Assert the first row
+        ClassificationRequest classificationRequest = requestList.getFirst();
+        assertEquals(50, classificationRequest.getMemberId());
+        assertEquals(1, classificationRequest.getDivisionId());
+        assertEquals(5000, classificationRequest.getInternationalClassificationId());
+        assertEquals(500, classificationRequest.getNationalClassificationId());
     }
 
     @Test
@@ -613,13 +629,13 @@ public class IpscServiceImplTest {
         assertEquals("4", firstRequest.getSquadName());
     }
 
-
     @Test
     void testReadRequests_withValidTeamXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
                         <data>
+                            <row MatchId='2' TeamId='10' Team='Test Team'/> 
                         </data>
                     </xml>
                 """;
@@ -630,7 +646,13 @@ public class IpscServiceImplTest {
 
         // Assert
         assertNotNull(requestList);
-        assertEquals(0, requestList.size());
+        assertEquals(1, requestList.size());
+
+        // Assert the first row
+        TeamRequest firstRequest = requestList.getFirst();
+        assertEquals(2, firstRequest.getMatchId());
+        assertEquals(10, firstRequest.getTeamId());
+        assertEquals("Test Team", firstRequest.getTeamName());
     }
 
     @Test
