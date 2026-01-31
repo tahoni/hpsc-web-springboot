@@ -60,8 +60,10 @@ public class IpscServiceImpl implements IpscService {
             ipscRequestHolder.setStages(readRequests(ipscRequest.getStage(), StageRequest.class));
             ipscRequestHolder.setTags(readRequests(ipscRequest.getTag(), TagRequest.class));
             ipscRequestHolder.setMembers(readRequests(ipscRequest.getMember(), MemberRequest.class));
+            ipscRequestHolder.setClassifications(readRequests(ipscRequest.getClassification(), ClassificationRequest.class));
             ipscRequestHolder.setEnrolledMembers(readRequests(ipscRequest.getEnrolled(), EnrolledRequest.class));
             ipscRequestHolder.setSquads(readRequests(ipscRequest.getSquad(), SquadRequest.class));
+            ipscRequestHolder.setTeams(readRequests(ipscRequest.getTeam(), TeamRequest.class));
             ipscRequestHolder.setScores(readRequests(ipscRequest.getScore(), ScoreRequest.class));
 
             return ipscRequestHolder;

@@ -9,6 +9,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.request.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +20,237 @@ public class IpscServiceImplTest {
 
     @InjectMocks
     private IpscServiceImpl ipscService;
+
+    @Test
+    void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() throws JsonProcessingException {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Test Match'/></data></xml>",
+                    "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
+                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00'/></data></xml>",
+                    "classification": "<xml><data><row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100'/></data></xml>",
+                    "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='100'/></data></xml>",
+                    "team": "<xml><data><row TeamId='20' Team='Team A' MatchId='100'/></data></xml>",
+                    "score": "<xml><data><row MemberId='50' StageId='200' MatchId='100' HitFactor='6.08433734939759' FinalScore='101'/></data></xml>"
+                }
+                """;
+
+        // Act
+        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getClubs().size());
+        assertEquals("ABC", result.getClubs().getFirst().getClubCode());
+        assertEquals(1, result.getMatches().size());
+        assertEquals(1, result.getStages().size());
+        assertEquals(1, result.getTags().size());
+        assertEquals(1, result.getMembers().size());
+        assertEquals(1, result.getClassifications().size());
+        assertEquals(1, result.getEnrolledMembers().size());
+        assertEquals(1, result.getEnrolledMembers().size());
+        assertEquals(1, result.getTeams().size());
+        assertEquals(1, result.getScores().size());
+
+        // Assert the club section
+        ClubRequest clubRequest = result.getClubs().getFirst();
+        assertEquals(1, clubRequest.getClubId());
+        assertEquals("ABC", clubRequest.getClubCode());
+        assertEquals("Test Club", clubRequest.getClubName());
+        // Assert the match section
+        MatchRequest matchRequest = result.getMatches().getFirst();
+        assertEquals(100, matchRequest.getMatchId());
+        assertEquals("Test Match", matchRequest.getMatchName());
+        // Assert the stage section
+        StageRequest stageRequest = result.getStages().getFirst();
+        assertEquals(200, stageRequest.getStageId());
+        assertEquals("Test Stage", stageRequest.getStageName());
+        assertEquals(100, stageRequest.getMatchId());
+        // Assert the tag section
+        TagRequest tagRequest = result.getTags().getFirst();
+        assertEquals(10, tagRequest.getTagId());
+        assertEquals("Test Tag", tagRequest.getTagName());
+        // Assert the member section
+        MemberRequest memberRequest = result.getMembers().getFirst();
+        assertEquals(50, memberRequest.getMemberId());
+        assertEquals("John", memberRequest.getFirstName());
+        assertEquals("Doe", memberRequest.getLastName());
+        assertEquals(true, memberRequest.getIsRegisteredForMatch());
+        assertEquals(LocalDateTime.of(1973, 2, 17, 0, 0, 0), memberRequest.getDateOfBirth());
+        // Assert the enrolled section
+        EnrolledRequest enrolledRequest = result.getEnrolledMembers().getFirst();
+        assertEquals(50, enrolledRequest.getMemberId());
+        assertEquals(500, enrolledRequest.getCompetitorId());
+        assertEquals(100, enrolledRequest.getMatchId());
+        // Assert the classification section
+        ClassificationRequest classificationRequest = result.getClassifications().getFirst();
+        assertEquals(50, classificationRequest.getMemberId());
+        assertEquals(1, classificationRequest.getDivisionId());
+        assertEquals(5000, classificationRequest.getInternationalClassificationId());
+        assertEquals(500, classificationRequest.getNationalClassificationId());
+        // Assert the squad section
+        SquadRequest squadRequest = result.getSquads().getFirst();
+        assertEquals(20, squadRequest.getSquadId());
+        assertEquals("Squad A", squadRequest.getSquadName());
+        assertEquals(100, squadRequest.getMatchId());
+        // Assert the team section
+        TeamRequest teamRequest = result.getTeams().getFirst();
+        assertEquals(20, teamRequest.getTeamId());
+        assertEquals("Team A", teamRequest.getTeamName());
+        assertEquals(100, teamRequest.getMatchId());
+        // Assert the score section
+        ScoreRequest scoreRequest = result.getScores().getFirst();
+        assertEquals(100, scoreRequest.getMatchId());
+        assertEquals(200, scoreRequest.getStageId());
+        assertEquals(50, scoreRequest.getMemberId());
+        assertEquals(101, scoreRequest.getFinalScore());
+        assertEquals(BigDecimal.valueOf(6.08433734939759), scoreRequest.getHitFactor());
+    }
+
+    @Test
+    void testReadIpscRequests_withEmptyXmlSectionData_thenReturnsEmptyLists() throws JsonProcessingException {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data></data></xml>",
+                    "stage": "<xml><data></data></xml>",
+                    "match": "<xml><data></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "score": "<xml><data></data></xml>"
+                }
+                """;
+
+        // Act
+        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.getClubs().isEmpty());
+        assertTrue(result.getMatches().isEmpty());
+        assertTrue(result.getStages().isEmpty());
+        assertTrue(result.getTags().isEmpty());
+        assertTrue(result.getMembers().isEmpty());
+        assertTrue(result.getClassifications().isEmpty());
+        assertTrue(result.getEnrolledMembers().isEmpty());
+        assertTrue(result.getSquads().isEmpty());
+        assertTrue(result.getTeams().isEmpty());
+        assertTrue(result.getScores().isEmpty());
+    }
+
+    @Test
+    void testReadIpscRequests_withEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() throws JsonProcessingException {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Test Match'/></data></xml>",
+                    "stage": "<xml><data></data></xml>",
+                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
+                    "member": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row CompId='5' MemberId='50' MatchId='2' SquadId='4'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "score": "<xml><data><row MatchId='2' StageId='5' MemberId='50'/></data></xml>"
+                }
+                """;
+
+        // Act
+        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(0, result.getClubs().size());
+        assertEquals(1, result.getMatches().size());
+        assertEquals(0, result.getStages().size());
+        assertEquals(1, result.getTags().size());
+        assertEquals(0, result.getMembers().size());
+        assertEquals(1, result.getEnrolledMembers().size());
+        assertEquals(1, result.getScores().size());
+
+        assertEquals(0, result.getClassifications().size());
+        assertEquals(0, result.getTeams().size());
+        assertEquals(0, result.getSquads().size());
+
+        // Assert the match section
+        MatchRequest matchRequest = result.getMatches().getFirst();
+        assertEquals(100, matchRequest.getMatchId());
+        assertEquals("Test Match", matchRequest.getMatchName());
+        // Assert the tag section
+        TagRequest tagRequest = result.getTags().getFirst();
+        assertEquals(10, tagRequest.getTagId());
+        assertEquals("Test Tag", tagRequest.getTagName());
+        // Assert the enrolled section
+        EnrolledRequest enrolledRequest = result.getEnrolledMembers().getFirst();
+        assertEquals(5, enrolledRequest.getCompetitorId());
+        assertEquals(50, enrolledRequest.getMemberId());
+        assertEquals(2, enrolledRequest.getMatchId());
+        assertEquals(4, enrolledRequest.getSquadId());
+        // Assert the score section
+        ScoreRequest scoreRequest = result.getScores().getFirst();
+        assertEquals(2, scoreRequest.getMatchId());
+        assertEquals(5, scoreRequest.getStageId());
+        assertEquals(50, scoreRequest.getMemberId());
+    }
+
+    @Test
+    void testReadIpscRequests_withEmptyXmlSections_thenReturnsEmptyLists() throws JsonProcessingException {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "",
+                    "stage": "",
+                    "match": "",
+                    "tag": "",
+                    "member": "",
+                    "classification": "",
+                    "enrolled": "",
+                    "squad": "",
+                    "team": "",
+                    "score": ""
+                }
+                """;
+
+        // Act
+        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.getClubs().isEmpty());
+        assertTrue(result.getMatches().isEmpty());
+        assertTrue(result.getStages().isEmpty());
+        assertTrue(result.getTags().isEmpty());
+        assertTrue(result.getMembers().isEmpty());
+        assertTrue(result.getClassifications().isEmpty());
+        assertTrue(result.getEnrolledMembers().isEmpty());
+        assertTrue(result.getTeams().isEmpty());
+        assertTrue(result.getSquads().isEmpty());
+        assertTrue(result.getScores().isEmpty());
+    }
+
+    @Test
+    void testReadIpscRequests_withInvalidJson_thenThrowsException() {
+        // Arrange
+        String cabFileContent = "Invalid JSON Content";
+
+        // Act & Assert
+        assertThrows(FatalException.class, () ->
+                ipscService.readIpscRequests(cabFileContent)
+        );
+    }
+
+    @Test
+    void testReadIpscRequests_withNullContent_thenThrowsException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () ->
+                ipscService.readIpscRequests(null)
+        );
+    }
 
     @Test
     void testReadRequests_withValidXml_thenReturnsRequests() {
@@ -184,150 +416,6 @@ public class IpscServiceImplTest {
         // Assert
         assertNotNull(clubs);
         assertTrue(clubs.isEmpty());
-    }
-
-    @Test
-    void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() throws JsonProcessingException {
-        // Arrange
-        String cabFileContent = """
-                {
-                    "club": "<xml><data><row clubId='100' clubCode='ABC'/></data></xml>",
-                    "match": "<xml><data><row matchId='100' matchName='Test Match'/></data></xml>",
-                    "stage": "<xml><data><row stageId='200' stageName='Test Stage'/></data></xml>",
-                    "tag": "<xml><data><row tagId='10' tag='Test Tag'/></data></xml>",
-                    "member": "<xml><data><row memberId='50' firstName='John' lastName='Doe'/></data></xml>",
-                    "enrolled": "<xml><data><row enrolledId='5' memberId='50'/></data></xml>",
-                    "squad": "<xml><data><row squadId='20' squadName='Squad A'/></data></xml>",
-                    "score": "<xml><data><row scoreId='30' memberId='50'/></data></xml>"
-                }
-                """;
-
-        // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
-
-        // TODO: test values
-        // Assert
-        assertNotNull(result);
-        assertNotNull(result.getClubs());
-        assertNotNull(result.getMatches());
-        assertNotNull(result.getStages());
-        assertNotNull(result.getTags());
-        assertNotNull(result.getMembers());
-        assertNotNull(result.getEnrolledMembers());
-        assertNotNull(result.getSquads());
-        assertNotNull(result.getScores());
-    }
-
-    @Test
-    void testReadIpscRequests_withEmptyXmlSectionData_thenReturnsEmptyLists() throws JsonProcessingException {
-        // Arrange
-        String cabFileContent = """
-                {
-                    "club": "<xml><data></data></xml>",
-                    "stage": "<xml><data></data></xml>",
-                    "match": "<xml><data></data></xml>",
-                    "tag": "<xml><data></data></xml>",
-                    "member": "<xml><data></data></xml>",
-                    "enrolled": "<xml><data></data></xml>",
-                    "squad": "<xml><data></data></xml>",
-                    "score": "<xml><data></data></xml>"
-                }
-                """;
-
-        // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.getClubs().isEmpty());
-        assertTrue(result.getMatches().isEmpty());
-        assertTrue(result.getStages().isEmpty());
-        assertTrue(result.getTags().isEmpty());
-        assertTrue(result.getMembers().isEmpty());
-        assertTrue(result.getEnrolledMembers().isEmpty());
-        assertTrue(result.getSquads().isEmpty());
-        assertTrue(result.getScores().isEmpty());
-    }
-
-    @Test
-    void testReadIpscRequests_withEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() throws JsonProcessingException {
-        // Arrange
-        String cabFileContent = """
-                {
-                    "club": "<xml><data></data></xml>",
-                    "match": "<xml><data><row MatchId='100' MatchName='Test Match'/></data></xml>",
-                    "stage": "<xml><data></data></xml>",
-                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
-                    "member": "<xml><data></data></xml>",
-                    "enrolled": "<xml><data><row CompId='5' MemberId='50'/>",
-                    "squad": "<xml><data></data></xml>",
-                    "score": "<xml><data><row ScoreId='30' MemberId='50'/></data></xml>"
-                }
-                """;
-
-        // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(0, result.getClubs().size());
-        assertEquals(1, result.getMatches().size());
-        assertEquals(0, result.getStages().size());
-        assertEquals(1, result.getTags().size());
-        assertEquals(0, result.getMembers().size());
-        assertEquals(1, result.getEnrolledMembers().size());
-        assertEquals(0, result.getSquads().size());
-        assertEquals(1, result.getScores().size());
-    }
-
-    @Test
-    void testReadIpscRequests_withEmptyXmlSections_thenReturnsEmptyLists() throws JsonProcessingException {
-        // Arrange
-        String cabFileContent = """
-                {
-                    "club": "<xml><data></data></xml>",
-                    "stage": "<xml><data></data></xml>",
-                    "match": "<xml><data></data></xml>",
-                    "tag": "<xml><data></data></xml>",
-                    "member": "<xml><data></data></xml>",
-                    "enrolled": "<xml><data></data></xml>",
-                    "squad": "<xml><data></data></xml>",
-                    "score": "<xml><data></data></xml>"
-                }
-                """;
-
-        // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.getClubs().isEmpty());
-        assertTrue(result.getMatches().isEmpty());
-        assertTrue(result.getStages().isEmpty());
-        assertTrue(result.getTags().isEmpty());
-        assertTrue(result.getMembers().isEmpty());
-        assertTrue(result.getEnrolledMembers().isEmpty());
-        assertTrue(result.getSquads().isEmpty());
-        assertTrue(result.getScores().isEmpty());
-    }
-
-    @Test
-    void testReadIpscRequests_withInvalidJson_thenThrowsException() {
-        // Arrange
-        String cabFileContent = "Invalid JSON Content";
-
-        // Act & Assert
-        assertThrows(FatalException.class, () ->
-                ipscService.readIpscRequests(cabFileContent)
-        );
-    }
-
-    @Test
-    void testReadIpscRequests_withNullContent_thenThrowsException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () ->
-                ipscService.readIpscRequests(null)
-        );
     }
 
     @Test

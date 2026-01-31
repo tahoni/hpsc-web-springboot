@@ -24,19 +24,19 @@ public class ClassificationRequest {
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "MemberId", required = true)
     private Integer memberId;
-    @JacksonXmlProperty(isAttribute = true)
     @NotNull
+    @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DivisionId", required = true)
     private Integer divisionId;
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "IntlId", required = true)
-    private String internationalClassificationId;
+    private Integer internationalClassificationId;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "NatlId", required = true)
-    private String nationalClassificationId;
+    private Integer nationalClassificationId;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "ClassId")
     private String scoreClassificationId;
