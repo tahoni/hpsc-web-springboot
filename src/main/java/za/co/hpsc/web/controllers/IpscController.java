@@ -1,6 +1,5 @@
 package za.co.hpsc.web.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -63,7 +62,7 @@ public class IpscController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
                     "application/json", schema = @Schema(implementation = IpscRequest.class)
             ))
-            @RequestBody String cabFileContent) throws JsonProcessingException {
+            @RequestBody String cabFileContent) {
         try {
             return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
         } catch (za.co.hpsc.web.exceptions.FatalException e) {

@@ -30,6 +30,6 @@ public class IpscResponse {
     }
 
     public void setMembers(List<MemberRequest> memberRequests) {
-        memberRequests.stream().map(MemberResponse::new).toList();
+        this.members = memberRequests.stream().map(MemberResponse::new).toList();
     }
 }

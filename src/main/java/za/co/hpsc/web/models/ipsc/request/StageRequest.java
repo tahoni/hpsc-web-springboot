@@ -3,6 +3,7 @@ package za.co.hpsc.web.models.ipsc.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,10 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StageRequest {
-/*
     @JacksonXmlText
     String value;
-*/
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
