@@ -331,6 +331,25 @@ public class IpscServiceImplTest {
     }
 
     @Test
+    void testReadRequests_withValidClubXml_thenReturnsRequests() {
+        // Arrange
+        String xmlData = """
+                    <xml>
+                        <data>
+                        </data>
+                    </xml>
+                """;
+
+        // Act
+        List<ClubRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+                ClubRequest.class));
+
+        // Assert
+        assertNotNull(requestList);
+        assertEquals(0, requestList.size());
+    }
+
+    @Test
     void testReadRequests_withValidMatchXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
@@ -436,6 +455,25 @@ public class IpscServiceImplTest {
     }
 
     @Test
+    void testReadRequests_withValidClassificationXml_thenReturnsRequests() {
+        // Arrange
+        String xmlData = """
+                    <xml>
+                        <data>
+                        </data>
+                    </xml>
+                """;
+
+        // Act
+        List<ClassificationRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+                ClassificationRequest.class));
+
+        // Assert
+        assertNotNull(requestList);
+        assertEquals(0, requestList.size());
+    }
+
+    @Test
     void testReadRequests_withValidEnrolledXml_thenReturnsRequest() {
         // Arrange
         String xmlData = """
@@ -485,6 +523,26 @@ public class IpscServiceImplTest {
         assertEquals(1, firstRequest.getMatchId());
         assertEquals(4, firstRequest.getSquadId());
         assertEquals("4", firstRequest.getSquadName());
+    }
+
+
+    @Test
+    void testReadRequests_withValidTeamXml_thenReturnsRequests() {
+        // Arrange
+        String xmlData = """
+                    <xml>
+                        <data>
+                        </data>
+                    </xml>
+                """;
+
+        // Act
+        List<TeamRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+                TeamRequest.class));
+
+        // Assert
+        assertNotNull(requestList);
+        assertEquals(0, requestList.size());
     }
 
     @Test
