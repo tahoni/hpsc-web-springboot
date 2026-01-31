@@ -64,6 +64,10 @@ public class IpscController {
                     "application/json", schema = @Schema(implementation = IpscRequest.class)
             ))
             @RequestBody String cabFileContent) throws JsonProcessingException {
-        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
+        try {
+            return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
+        } catch (za.co.hpsc.web.exceptions.FatalException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

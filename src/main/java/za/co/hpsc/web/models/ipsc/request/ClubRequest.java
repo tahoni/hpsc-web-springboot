@@ -3,7 +3,6 @@ package za.co.hpsc.web.models.ipsc.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,54 +17,74 @@ import java.util.List;
 @AllArgsConstructor
 public class ClubRequest {
     @NotNull
-    @JacksonXmlProperty(isAttribute = true, localName = "clubId")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ClubId", required = true)
     private Integer clubId;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "clubCode")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ClubCode")
     private String clubCode;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "Club")
+    @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "Club")
     private String clubName;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "contact")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Contact")
     private String contact;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "address1")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Address1")
     private String address1;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "address2")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Address2")
     private String address2;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "city")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "City")
     private String city;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "province")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Province")
     private String province;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "countryId")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "CountryId")
     private String countryId;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "PostCode")
+    @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "PostCode")
     private String postalCode;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "Phone")
+    @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "Phone")
     private String officePhoneNumber;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "PhoneAlt")
+    @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "PhoneAlt")
     private String alternativePhoneNumber;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "PhoneFax")
+    @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "PhoneFax")
     private String faxNumber;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "email")
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Email")
     private String email;
 
-    @JacksonXmlProperty(isAttribute = true, localName = "WebSite")
+    @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "WebSite")
     private String website;
+
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DataWrapper {
+        @JacksonXmlProperty(localName = "row")
+        @JacksonXmlElementWrapper(useWrapping = false)
+        private List<ClubRequest> row;
+    }
 }

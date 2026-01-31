@@ -26,26 +26,35 @@ public class ScoreRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "MatchId", required = true)
     private Integer matchId;
-    @JacksonXmlProperty(isAttribute = true)
     @NotNull
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "StageId", required = true)
     private Integer stageId;
-    @JacksonXmlProperty(isAttribute = true)
     @NotNull
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "MemberId", required = true)
     private Integer memberId;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ScoreA")
     private Integer scoreA;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ScoreB")
     private Integer scoreB;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ScoreC")
     private Integer scoreC;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ScoreD")
     private Integer scoreD;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Misses")
     private Integer misses;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Penalties")
     private Integer penalties;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "ProcError")
@@ -55,26 +64,30 @@ public class ScoreRequest {
     private BigDecimal time;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
-    private Integer deduction;
+    @JsonProperty(value = "Deduction", required = true)
+    private Boolean deduction;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DedPctg")
     private Integer deductionPercentage;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ExtraShot")
     private Integer extraShot;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "OverTime")
     private BigDecimal overTime;
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "HitFactor", required = true)
     private BigDecimal hitFactor;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "FinalScore", required = true)
     private Integer finalScore;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "IsDisq", required = true)
+    @JsonProperty(value = "IsDisq")
     private Boolean isDisqualified;
 
     @JacksonXmlProperty(isAttribute = true)
@@ -83,13 +96,13 @@ public class ScoreRequest {
     private LocalDateTime lastModified;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "NoVerify", required = true)
+    @JsonProperty(value = "NoVerify")
     private Boolean scoreNotVerified;
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "Remove", required = true)
+    @JsonProperty(value = "Remove")
     private Boolean removeFromScoring;
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "FlagDelete", required = true)
+    @JsonProperty(value = "FlagDelete")
     private Boolean flagForDeletion;
 
 

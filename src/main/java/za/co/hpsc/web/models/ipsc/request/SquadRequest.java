@@ -22,9 +22,11 @@ public class SquadRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "MatchId", required = true)
     private Integer matchId;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "SquadId", required = true)
     private Integer squadId;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "Squad")

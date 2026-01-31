@@ -15,7 +15,9 @@ public class IpscRequest {
     private String stage;
     private String tag;
     private String member;
+    private String classification;
     private String enrolled;
     private String squad;
+    private String team;
     private String score;
 }

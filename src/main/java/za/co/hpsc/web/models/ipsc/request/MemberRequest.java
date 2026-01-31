@@ -23,11 +23,13 @@ public class MemberRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "MemberId", required = true)
     private Integer memberId;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Lastname")
     private String lastName;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Firstname")
     private String firstName;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "Init")
@@ -35,16 +37,18 @@ public class MemberRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "Female", required = true)
     private Boolean female;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "DOB")
+    @JsonProperty(value = "DOB", required = true)
     private LocalDateTime dateOfBirth;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "IcsAlias")
     private String icsAlias;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "RefNo")
     private String refNo;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "InActive", required = true)
@@ -72,14 +76,19 @@ public class MemberRequest {
     private Integer defaultNonTeamCategoryId;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "RegionId")
     private String regionId;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Address1")
     private String address1;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Address2")
     private String address2;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "City")
     private String city;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Province")
     private String province;
     @JacksonXmlProperty(isAttribute = true)
     private String countryId;
@@ -97,10 +106,11 @@ public class MemberRequest {
     @JsonProperty(value = "PhoneFax")
     private String faxNumber;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Email")
     private String email;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "PrintLabel", required = true)
     private Boolean printLabel;
 
 

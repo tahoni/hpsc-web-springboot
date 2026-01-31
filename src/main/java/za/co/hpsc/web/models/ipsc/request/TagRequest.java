@@ -22,7 +22,7 @@ public class TagRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "TagId", required = true)
     private Integer tagId;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)

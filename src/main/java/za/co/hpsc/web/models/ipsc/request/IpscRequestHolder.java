@@ -17,7 +17,9 @@ public class IpscRequestHolder {
     private List<StageRequest> stages;
     private List<TagRequest> tags;
     private List<MemberRequest> members;
+    private List<ClassificationRequest> classifications;
     private List<EnrolledRequest> enrolledMembers;
     private List<SquadRequest> squads;
+    private List<TeamRequest> teams;
     private List<ScoreRequest> scores;
 }

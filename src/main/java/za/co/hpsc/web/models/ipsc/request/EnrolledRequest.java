@@ -23,23 +23,30 @@ public class EnrolledRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "MemberId", required = true)
     private Integer memberId;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "CompId")
     private Integer competitorId;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "MatchId")
     private Integer matchId;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "SquadId")
     private Integer squadId;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "TeamId")
     private Integer teamId;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "DivId")
     private Integer divisionId;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "RefNo")
     private String refNo;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "TagId")
     private Integer tagId;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "CatId")

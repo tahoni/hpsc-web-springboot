@@ -7,6 +7,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -19,8 +20,12 @@ import za.co.hpsc.web.services.ImageService;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ImageServiceImpl implements ImageService {
+    /**
+     * Processes CSV data; returns image response holder
+     */
     @Override
     public ImageResponseHolder processCsv(String csvData)
             throws ValidationException, FatalException {
@@ -71,8 +76,10 @@ public class ImageServiceImpl implements ImageService {
             return requestMappingIterator.readAll();
 
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
+            log.error("Error parsing CSV data: {}", e.getMessage(), e);
             throw new ValidationException("Invalid CSV data format.", e);
         } catch (IOException e) {
+            log.error("Error reading CSV data: {}", e.getMessage(), e);
             throw new FatalException("Error reading CSV data.", e);
         }
     }

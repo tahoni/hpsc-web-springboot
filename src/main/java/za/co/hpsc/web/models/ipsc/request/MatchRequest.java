@@ -25,9 +25,10 @@ public class MatchRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "MatchId", required = true)
     private Integer matchId;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "MatchName")
     private String matchName;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "MatchDt")
@@ -35,22 +36,27 @@ public class MatchRequest {
     private LocalDateTime matchDate;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "SquadCount")
     private Integer squadCount;
     @JacksonXmlProperty(isAttribute = true)
-    private Integer firearmTypeId;
+    @JsonProperty(value = "FirearmId")
+    private Integer firearmId;
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "Level")
+    @JsonProperty(value = "MatchLevel")
     private Integer matchLevel;
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "Chrono")
     private Boolean chrono;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "Location")
     private String location;
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "CountryId")
     private String countryId;
 
     @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty("MD")
     private String matchDirector;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty("RM")

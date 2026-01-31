@@ -22,11 +22,11 @@ public class ClassificationRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "MemberId", required = true)
     private Integer memberId;
     @JacksonXmlProperty(isAttribute = true)
     @NotNull
-    @JsonProperty(required = true)
+    @JsonProperty(value = "DivisionId", required = true)
     private Integer divisionId;
 
     @NotNull
