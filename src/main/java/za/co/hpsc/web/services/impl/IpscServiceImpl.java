@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.request.*;
+import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.services.IpscService;
 
 import java.io.IOException;
@@ -21,15 +23,13 @@ import java.util.List;
 @Slf4j
 @Service
 public class IpscServiceImpl implements IpscService {
-    /**
-     * Imports CAB file; maps, saves, and returns responses
-     */
     @Override
     public IpscResponseHolder importWinMssCabFile(String cabFileContent) throws ValidationException, FatalException {
         if ((cabFileContent == null) || (cabFileContent.isBlank())) {
             throw new ValidationException("The provided CAB file is null or empty.");
         }
 
+        // Imports CAB file; maps, saves, and returns responses
         IpscRequestHolder ipscRequestHolder = readIpscRequests(cabFileContent);
         List<IpscResponse> ipscResponses = mapIpscRequests(ipscRequestHolder);
         saveIpscResponse(ipscResponses);
@@ -76,11 +76,65 @@ public class IpscServiceImpl implements IpscService {
         }
     }
 
+    /**
+     * Maps IPSC requests to a list of IPSC responses. This method processes the matches, stages,
+     * enrolled members, scores, tags, and clubs from the given {@link IpscRequestHolder}, groups
+     * them based on match IDs, and constructs corresponding {@link IpscResponse} objects.
+     *
+     * @param ipscRequestHolder A holder object that contains lists of matches, stages, enrolled
+     *                          members, scores, tags, members, and clubs to be processed.
+     * @return A list of {@link IpscResponse} objects that encapsulate the mapped data, including
+     * match details, associated tags, stages, enrolled members, scores, members, and club
+     * information.
+     */
     protected List<IpscResponse> mapIpscRequests(IpscRequestHolder ipscRequestHolder) {
-        return null;
+        List<IpscResponse> ipscResponses = new ArrayList<>();
+        // Maps IPSC requests to responses by match ID
+        ipscRequestHolder.getMatches().forEach(match -> {
+            MatchResponse matchResponse = new MatchResponse(match);
+            Integer matchId = matchResponse.getMatchId();
+
+            List<TagRequest> tagRequests = ipscRequestHolder.getTags();
+
+            List<StageRequest> stageRequests = ipscRequestHolder.getStages().stream()
+                    .filter(stage -> stage.getMatchId()
+                            .equals(matchId)).toList();
+            List<EnrolledRequest> enrolledRequests = ipscRequestHolder.getEnrolledMembers().stream()
+                    .filter(enrolled -> enrolled.getMatchId()
+                            .equals(matchId)).toList();
+            List<ScoreRequest> scoreRequests = ipscRequestHolder.getScores().stream()
+                    .filter(score -> score.getMatchId()
+                            .equals(matchId)).toList();
+
+            ipscResponses.add(new IpscResponse(tagRequests, matchResponse, stageRequests,
+                    enrolledRequests, scoreRequests));
+        });
+
+        ipscResponses.forEach(ipscResponse -> {
+            // Filters members by score request member ID
+            ipscRequestHolder.getScores().forEach(scoreRequest -> {
+                List<MemberRequest> memberRequests =
+                        ipscRequestHolder.getMembers().stream().filter(memberRequest ->
+                                        scoreRequest.getMemberId().equals(memberRequest.getMemberId()))
+                                .toList();
+
+                ipscResponse.setMembers(memberRequests);
+            });
+        });
+
+        ipscResponses.forEach(ipscResponse -> {
+            Integer clubId = ipscResponse.getMatch().getClubId();
+            // Finds club matching ID or provides default
+            ClubRequest club = ipscRequestHolder.getClubs().stream()
+                    .filter(clubRequest -> clubRequest.getClubId()
+                            .equals(clubId)).findFirst().orElse(null);
+            ipscResponse.setClub((club != null) ? new ClubResponse(club) : new ClubResponse(clubId));
+        });
+
+        return ipscResponses;
     }
 
-    protected void saveIpscResponse(List<IpscResponse> ipscResponse) {
+    protected void saveIpscResponse(List<IpscResponse> ipscResponses) {
     }
 
     /**

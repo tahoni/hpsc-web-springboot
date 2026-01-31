@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.request.*;
 
 import java.util.List;
 
@@ -14,10 +15,21 @@ import java.util.List;
 public class IpscResponse {
     private ClubResponse club;
     private MatchResponse match;
-    private List<StageResponse> stage;
-    private List<TagResponse> tag;
-    private List<MemberResponse> member;
-    private List<EnrolledResponse> enrolled;
-    private List<SquadResponse> squad;
-    private List<ScoreResponse> score;
+    private List<StageResponse> stages;
+    private List<TagResponse> tags;
+    private List<MemberResponse> members;
+    private List<EnrolledResponse> enrolledMembers;
+    private List<ScoreResponse> scores;
+
+    public IpscResponse(List<TagRequest> tagRequests, MatchResponse matchResponse, List<StageRequest> stageRequests, List<EnrolledRequest> enrolledRequests, List<ScoreRequest> scoreRequests) {
+        this.match = matchResponse;
+        this.tags = tagRequests.stream().map(TagResponse::new).toList();
+        this.stages = stageRequests.stream().map(StageResponse::new).toList();
+        this.enrolledMembers = enrolledRequests.stream().map(EnrolledResponse::new).toList();
+        this.scores = scoreRequests.stream().map(ScoreResponse::new).toList();
+    }
+
+    public void setMembers(List<MemberRequest> memberRequests) {
+        memberRequests.stream().map(MemberResponse::new).toList();
+    }
 }

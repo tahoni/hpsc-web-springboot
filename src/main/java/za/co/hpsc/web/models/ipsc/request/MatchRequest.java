@@ -34,6 +34,9 @@ public class MatchRequest {
     @JsonProperty(value = "MatchDt")
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
     private LocalDateTime matchDate;
+    @JacksonXmlProperty(isAttribute = true)
+    @JsonProperty(value = "ClubId")
+    Integer clubId;
 
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "SquadCount")

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.request.TagRequest;
 
 @Getter
 @Setter
@@ -15,4 +16,9 @@ public class TagResponse {
     private Integer tagId;
     @NotNull
     private String tagName;
+
+    public TagResponse(TagRequest tag) {
+        this.tagId = tag.getTagId();
+        this.tagName = tag.getTagName();
+    }
 }
