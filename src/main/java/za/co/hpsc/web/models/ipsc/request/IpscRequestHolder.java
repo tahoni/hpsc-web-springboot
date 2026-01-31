@@ -5,16 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class IpscRequestHolder {
-    private MatchRequest match;
-    private StageRequest stage;
-    private TagRequest tag;
-    private MemberRequest member;
-    private EnrolledRequest enrolled;
-    private SquadRequest squad;
-    private ScoreRequest score;
+    private List<ClubRequest> clubs;
+    private List<MatchRequest> matches;
+    private List<StageRequest> stages;
+    private List<TagRequest> tags;
+    private List<MemberRequest> members;
+    private List<EnrolledRequest> enrolledMembers;
+    private List<SquadRequest> squads;
+    private List<ScoreRequest> scores;
 }

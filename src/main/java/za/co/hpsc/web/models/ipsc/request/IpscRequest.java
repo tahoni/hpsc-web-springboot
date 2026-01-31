@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class IpscRequest {
+public class IpscRequest {
+    private String club;
     private String match;
     private String stage;
     private String tag;

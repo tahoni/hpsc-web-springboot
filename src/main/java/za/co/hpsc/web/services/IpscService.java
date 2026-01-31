@@ -1,7 +1,8 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.matches.MatchResultLogResponseHolder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
 public interface IpscService {
-    MatchResultLogResponseHolder importWinMssCabFile(String cabFileContent);
+    IpscResponseHolder importWinMssCabFile(String cabFileContent) throws JsonProcessingException;
 }

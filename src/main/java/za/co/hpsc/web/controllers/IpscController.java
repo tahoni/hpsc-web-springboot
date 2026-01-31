@@ -1,5 +1,6 @@
 package za.co.hpsc.web.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.request.IpscRequest;
+import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.models.matches.MatchResultLogResponseHolder;
 import za.co.hpsc.web.services.IpscService;
 
@@ -57,11 +59,11 @@ public class IpscController {
             @ApiResponse(responseCode = "500", description = "An internal server error occurred importing " +
                     "the WinMSS.cab file data.", content = @Content(mediaType = "application/json"))
     })
-    ResponseEntity<MatchResultLogResponseHolder> importWinMssCabData(
+    ResponseEntity<IpscResponseHolder> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
                     "application/json", schema = @Schema(implementation = IpscRequest.class)
             ))
-            @RequestBody String cabFileContent) {
+            @RequestBody String cabFileContent) throws JsonProcessingException {
         return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
     }
 }
