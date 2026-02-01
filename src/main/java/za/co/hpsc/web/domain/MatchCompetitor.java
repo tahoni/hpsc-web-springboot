@@ -11,6 +11,7 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Represents the relationship between a competitor and a specific match,
@@ -53,6 +54,9 @@ public class MatchCompetitor {
 
     private BigDecimal matchPoints;
     private BigDecimal matchPercentage;
+
+    @NotNull
+    private LocalDateTime lastUpdated;
 
     public String toString() {
         return match.toString() + ": " + competitor.toString();

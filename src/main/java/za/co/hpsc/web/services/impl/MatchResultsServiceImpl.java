@@ -9,6 +9,7 @@ import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.services.MatchResultsService;
+import za.co.hpsc.web.services.TransactionService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,17 @@ import java.util.List;
 @Slf4j
 @Service
 public class MatchResultsServiceImpl implements MatchResultsService {
+    protected final TransactionService transactionService;
+
+    public MatchResultsServiceImpl(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
+
     @Override
     public IpscResponseHolder calculateMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException {
+
+        // Validate input
         if (ipscRequestHolder == null) {
             log.error("IPSC request holder is null.");
             throw new ValidationException("IPSC request holder can not be null");
@@ -26,9 +35,8 @@ public class MatchResultsServiceImpl implements MatchResultsService {
 
         List<IpscResponse> ipscResponses = new ArrayList<>();
         // Maps IPSC requests to responses by match ID
-        ipscRequestHolder.getMatches().forEach(match -> {
-            ipscResponses.add(createBasicMatch(ipscRequestHolder, match));
-        });
+        ipscRequestHolder.getMatches().forEach(match ->
+                ipscResponses.add(createBasicMatch(ipscRequestHolder, match)));
 
         // Add members to each match
         ipscResponses.forEach(ipscResponse -> addMembersToMatch(ipscResponse, ipscRequestHolder));
@@ -40,7 +48,7 @@ public class MatchResultsServiceImpl implements MatchResultsService {
 
     @Override
     public void saveMatchResults(IpscResponseHolder ipscResponseHolder) {
-
+        ipscResponseHolder.getIpscList().forEach(transactionService::saveMatchResults);
     }
 
     /**

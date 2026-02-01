@@ -18,6 +18,7 @@ public class MatchResponse {
     @NotNull
     private Integer matchId = 0;
     private String matchName = "";
+    @NotNull
     private LocalDateTime matchDate = LocalDate.now().atStartOfDay();
     private Integer clubId = 0;
 

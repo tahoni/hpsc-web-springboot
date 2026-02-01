@@ -76,7 +76,14 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
-        <!-- Developer Tools -->
+        <!-- Apache commons libraries -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.19.0</version>
+        </dependency>
+
+        <!-- Developer tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Represents the relationship between a competitor and a specific match stage,
@@ -60,6 +61,9 @@ public class MatchStageCompetitor {
     private BigDecimal stagePercentage;
 
     private Boolean isDisqualified;
+
+    @NotNull
+    private LocalDateTime updated;
 
     @Override
     public String toString() {

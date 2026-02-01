@@ -11,6 +11,7 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -56,6 +57,9 @@ public class Match {
     private List<MatchStage> matchStages;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> matchCompetitors;
+
+    @NotNull
+    private LocalDateTime lastUpdated;
 
     @Override
     public String toString() {

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.enums.CompetitorCategory;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -36,13 +37,14 @@ public class Competitor {
 
     @NotNull
     @Column(nullable = false)
-    private String firsName;
+    private String firstName;
     @NotNull
     @Column(nullable = false)
     private String lastName;
     @NotNull
     @Column(nullable = false)
     private String competitorNumber;
+    private LocalDate dateOfBirth;
 
     private String middleNames;
     private Integer sapsaNumber;
@@ -55,9 +57,9 @@ public class Competitor {
     @Override
     public String toString() {
         if ((middleNames != null) && (!middleNames.isBlank())) {
-            return firsName + " " + middleNames + " " + lastName;
+            return firstName + " " + middleNames + " " + lastName;
         } else {
-            return firsName + " " + lastName;
+            return firstName + " " + lastName;
         }
     }
 }
