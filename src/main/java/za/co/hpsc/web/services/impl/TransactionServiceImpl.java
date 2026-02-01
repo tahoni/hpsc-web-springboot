@@ -6,6 +6,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.TransactionService;
 
 @Slf4j
@@ -18,7 +19,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void saveMatchResults() {
+    public void saveMatchResults(IpscResponseHolder ipscResponseHolder) {
+
         TransactionStatus transaction = transactionManager.getTransaction(
                 new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
 
@@ -45,18 +47,3 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 }
-
-/*
-        TransactionStatus transaction =
-                transactionManager.getTransaction(
-                        new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
-        try {
-            member.setPartyId(partyId);
-            memberRepository.save(member);
-            transactionManager.commit(transaction);
-            return member;
-        } catch (Exception e) {
-            transactionManager.rollback(transaction);
-            throw e;
-        }
- */
