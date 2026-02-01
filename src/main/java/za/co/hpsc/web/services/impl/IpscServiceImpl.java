@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 public class IpscServiceImpl implements IpscService {
 
-    private final MatchResultsService matchResultsService;
+    protected final MatchResultsService matchResultsService;
 
     public IpscServiceImpl(MatchResultsService matchResultsService) {
         this.matchResultsService = matchResultsService;

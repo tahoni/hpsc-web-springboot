@@ -36,7 +36,6 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "club_id")
     private Club club;
