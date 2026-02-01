@@ -16,34 +16,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ScoreResponse {
     @NotNull
-    private Integer matchId;
+    private Integer matchId = 0;
     @NotNull
-    private Integer stageId;
+    private Integer stageId = 0;
     @NotNull
-    private Integer memberId;
+    private Integer memberId = 0;
 
-    private Integer scoreA;
-    private Integer scoreB;
-    private Integer scoreC;
-    private Integer scoreD;
+    private Integer scoreA = 0;
+    private Integer scoreB = 0;
+    private Integer scoreC = 0;
+    private Integer scoreD = 0;
 
-    private Integer misses;
-    private Integer penalties;
-    private Integer procedurals;
-    private BigDecimal time;
+    private Integer misses = 0;
+    private Integer penalties = 0;
+    private Integer procedurals = 0;
+    private BigDecimal time = BigDecimal.ZERO;
 
-    private Boolean deduction;
-    private Integer deductionPercentage;
+    private Boolean deduction = false;
+    private Integer deductionPercentage = 0;
 
-    private Integer extraShot;
-    private BigDecimal overTime;
+    private Integer extraShot = 0;
+    private BigDecimal overTime = BigDecimal.ZERO;
 
-    private BigDecimal hitFactor;
-    private Integer finalScore;
+    private BigDecimal hitFactor = BigDecimal.ZERO;
+    private Integer finalScore = 0;
 
-    private Boolean isDisqualified;
+    private Boolean isDisqualified = false;
 
-    private LocalDateTime lastModified;
+    private LocalDateTime lastModified = LocalDateTime.now();
 
     /**
      * Initializes response from request; copies all fields

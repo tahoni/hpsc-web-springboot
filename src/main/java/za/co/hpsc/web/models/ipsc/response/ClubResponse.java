@@ -13,9 +13,9 @@ import za.co.hpsc.web.models.ipsc.request.ClubRequest;
 @AllArgsConstructor
 public class ClubResponse {
     @NotNull
-    private Integer clubId;
-    private String clubCode;
-    private String clubName;
+    private Integer clubId = 0;
+    private String clubCode = "";
+    private String clubName = "";
 
     public ClubResponse(ClubRequest clubRequest) {
         this.clubId = clubRequest.getClubId();

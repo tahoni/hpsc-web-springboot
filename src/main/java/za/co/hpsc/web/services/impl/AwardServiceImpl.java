@@ -29,8 +29,11 @@ public class AwardServiceImpl implements AwardService {
      * Processes CSV data; returns award ceremony responses
      */
     @Override
-    public AwardCeremonyResponseHolder processCsv(String csvData) throws ValidationException, FatalException {
+    public AwardCeremonyResponseHolder processCsv(String csvData)
+            throws ValidationException, FatalException {
+
         if (csvData == null || csvData.isBlank()) {
+            log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
@@ -102,6 +105,7 @@ public class AwardServiceImpl implements AwardService {
      */
     protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
+            log.error("Image request list is null.");
             throw new ValidationException("Image request list cannot be null.");
         }
 

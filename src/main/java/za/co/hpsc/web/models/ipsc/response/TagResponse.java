@@ -13,9 +13,9 @@ import za.co.hpsc.web.models.ipsc.request.TagRequest;
 @AllArgsConstructor
 public class TagResponse {
     @NotNull
-    private Integer tagId;
+    private Integer tagId = 0;
     @NotNull
-    private String tagName;
+    private String tagName = "";
 
     public TagResponse(TagRequest tag) {
         this.tagId = tag.getTagId();

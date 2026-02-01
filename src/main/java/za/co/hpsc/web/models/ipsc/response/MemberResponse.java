@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.MemberRequest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,23 +16,23 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MemberResponse {
     @NotNull
-    private Integer memberId;
-    private String lastName;
-    private String firstName;
-    private String comment;
+    private Integer memberId = 0;
+    private String lastName = "";
+    private String firstName = "";
+    private String comment = "";
 
-    private Boolean female;
-    private LocalDateTime dateOfBirth;
+    private Boolean female = false;
+    private LocalDateTime dateOfBirth = LocalDate.now().atStartOfDay();
 
-    private String icsAlias;
-    private String refNo;
+    private String icsAlias = "";
+    private String refNo = "";
     @NotNull
-    private Boolean isRegisteredForMatch;
+    private Boolean isRegisteredForMatch = false;
 
-    private Integer qualificationId;
-    private String scoreClassificationId;
+    private Integer qualificationId = 0;
+    private String scoreClassificationId = "";
 
-    private String email;
+    private String email = "";
 
     public MemberResponse(MemberRequest memberRequest) {
         this.memberId = memberRequest.getMemberId();

@@ -29,7 +29,9 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResponseHolder processCsv(String csvData)
             throws ValidationException, FatalException {
+
         if (csvData == null || csvData.isBlank()) {
+            log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
@@ -59,6 +61,7 @@ public class ImageServiceImpl implements ImageService {
      */
     protected List<ImageRequest> readImages(@NotNull @NotBlank String csvData)
             throws ValidationException, FatalException {
+
         // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = csvMapper
@@ -98,6 +101,7 @@ public class ImageServiceImpl implements ImageService {
      */
     protected List<ImageResponse> mapImages(List<ImageRequest> imageRequestList)
             throws ValidationException {
+
         if (imageRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");
         }

@@ -1,6 +1,5 @@
 package za.co.hpsc.web.services.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,7 +23,7 @@ public class IpscServiceImplTest {
     private IpscServiceImpl ipscService;
 
     @Test
-    void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() throws JsonProcessingException {
+    void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -114,7 +113,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withEmptyXmlSectionData_thenReturnsEmptyLists() throws JsonProcessingException {
+    void testReadIpscRequests_withEmptyXmlSectionData_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -147,7 +146,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() throws JsonProcessingException {
+    void testReadIpscRequests_withEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -201,7 +200,41 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withEmptyXmlSections_thenReturnsEmptyLists() throws JsonProcessingException {
+    void testReadIpscRequests_withMissingXml_thenReturnsIpscRequestHolder() {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Test Match'/></data></xml>",
+                    "stage": "<xml><data></data></xml>",
+                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
+                    "member": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row CompId='5' MemberId='50' MatchId='2' SquadId='4'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "score": "<xml><data><row MatchId='2' StageId='5' MemberId='50'/></data></xml>"
+                }
+                """;
+
+        // Act
+        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(0, result.getClubs().size());
+        assertEquals(1, result.getMatches().size());
+        assertEquals(0, result.getStages().size());
+        assertEquals(1, result.getTags().size());
+        assertEquals(0, result.getMembers().size());
+        assertEquals(1, result.getEnrolledMembers().size());
+        assertEquals(1, result.getScores().size());
+
+        assertEquals(0, result.getClassifications().size());
+        assertEquals(0, result.getTeams().size());
+        assertEquals(0, result.getSquads().size());
+    }
+
+    @Test
+    void testReadIpscRequests_withEmptyXmlSections_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -236,6 +269,41 @@ public class IpscServiceImplTest {
     }
 
     @Test
+    void testReadIpscRequests_withNullXmlSections_thenReturnsEmptyLists() {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": null,
+                    "stage": null,
+                    "match": null,
+                    "tag": null,
+                    "member": null,
+                    "classification": null,
+                    "enrolled": null,
+                    "squad": null,
+                    "team": null,
+                    "score": null
+                }
+                """;
+
+        // Act
+        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.getClubs().isEmpty());
+        assertTrue(result.getMatches().isEmpty());
+        assertTrue(result.getStages().isEmpty());
+        assertTrue(result.getTags().isEmpty());
+        assertTrue(result.getMembers().isEmpty());
+        assertTrue(result.getClassifications().isEmpty());
+        assertTrue(result.getEnrolledMembers().isEmpty());
+        assertTrue(result.getTeams().isEmpty());
+        assertTrue(result.getSquads().isEmpty());
+        assertTrue(result.getScores().isEmpty());
+    }
+
+    @Test
     void testReadIpscRequests_withInvalidJson_thenThrowsException() {
         // Arrange
         String cabFileContent = "Invalid JSON Content";
@@ -247,7 +315,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withNullContent_thenThrowsException() {
+    void testReadIpscRequests_withNullJson_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.readIpscRequests(null)
@@ -364,7 +432,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withEmptyXmlData_thenReturnsEmptyList() throws JsonProcessingException {
+    void testReadRequests_withEmptyXmlData_thenReturnsEmptyList() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -396,7 +464,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withEmptyXml_thenReturnsEmptyList() throws JsonProcessingException {
+    void testReadRequests_withEmptyXml_thenReturnsEmptyList() {
         // Arrange
         String xmlData = "";
 
@@ -859,7 +927,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    void testMapIpscRequests_withEmptyRequestHolder_thenReturnsEmptyList() {
+    void testMapIpscRequests_withEmptyRequestHolderLists_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setClubs(new ArrayList<>());
@@ -914,5 +982,24 @@ public class IpscServiceImplTest {
         IpscResponse response = responses.getFirst();
         assertNotNull(response.getMembers());
         assertTrue(response.getMembers().isEmpty());
+    }
+
+    @Test
+    void testMapIpscRequests_withEmptyRequestHolder_thenReturnsEmptyList() {
+        // Arrange
+        IpscRequestHolder holder = new IpscRequestHolder();
+
+        // Act
+        List<IpscResponse> responses = ipscService.mapIpscRequests(holder);
+
+        // Assert
+        assertNotNull(responses);
+        assertTrue(responses.isEmpty());
+    }
+
+    @Test
+    void testMapIpscRequests_withNullRequestHolder_thenThrowsException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscService.mapIpscRequests(null));
     }
 }

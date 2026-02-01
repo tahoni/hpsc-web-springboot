@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,13 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IpscResponse {
-    private ClubResponse club;
-    private MatchResponse match;
-    private List<StageResponse> stages;
-    private List<TagResponse> tags;
-    private List<MemberResponse> members;
-    private List<EnrolledResponse> enrolledMembers;
-    private List<ScoreResponse> scores;
+    private ClubResponse club = new ClubResponse();
+    private MatchResponse match = new MatchResponse();
+    private List<StageResponse> stages = new ArrayList<>();
+    private List<TagResponse> tags = new ArrayList<>();
+    private List<MemberResponse> members = new ArrayList<>();
+    private List<EnrolledResponse> enrolledMembers = new ArrayList<>();
+    private List<ScoreResponse> scores = new ArrayList<>();
 
     public IpscResponse(List<TagRequest> tagRequests, MatchResponse matchResponse, List<StageRequest> stageRequests, List<EnrolledRequest> enrolledRequests, List<ScoreRequest> scoreRequests) {
         this.match = matchResponse;

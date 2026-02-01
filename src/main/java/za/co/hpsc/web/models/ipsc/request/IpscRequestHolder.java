@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -12,14 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IpscRequestHolder {
-    private List<ClubRequest> clubs;
-    private List<MatchRequest> matches;
-    private List<StageRequest> stages;
-    private List<TagRequest> tags;
-    private List<MemberRequest> members;
-    private List<ClassificationRequest> classifications;
-    private List<EnrolledRequest> enrolledMembers;
-    private List<SquadRequest> squads;
-    private List<TeamRequest> teams;
-    private List<ScoreRequest> scores;
+    private List<ClubRequest> clubs = new ArrayList<>();
+    private List<MatchRequest> matches = new ArrayList<>();
+    private List<StageRequest> stages = new ArrayList<>();
+    private List<TagRequest> tags = new ArrayList<>();
+    private List<MemberRequest> members = new ArrayList<>();
+    private List<ClassificationRequest> classifications = new ArrayList<>();
+    private List<EnrolledRequest> enrolledMembers = new ArrayList<>();
+    private List<SquadRequest> squads = new ArrayList<>();
+    private List<TeamRequest> teams = new ArrayList<>();
+    private List<ScoreRequest> scores = new ArrayList<>();
 }

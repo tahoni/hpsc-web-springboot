@@ -15,25 +15,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EnrolledResponse {
     @NotNull
-    private Integer memberId;
-    private Integer competitorId;
+    private Integer memberId = 0;
+    private Integer competitorId = 0;
 
-    private Integer matchId;
-    private Integer squadId;
-    private Integer divisionId;
+    private Integer matchId = 0;
+    private Integer squadId = 0;
+    private Integer divisionId = 0;
 
-    private String refNo;
-    private Integer tagId;
-    private Integer nonTeamCategoryId;
+    private String refNo = "";
+    private Integer tagId = 0;
+    private Integer nonTeamCategoryId = 0;
 
-    private Boolean majorPowerFactor;
-    private Boolean scoreClassificationId;
+    private Boolean majorPowerFactor = false;
+    private Boolean scoreClassificationId = false;
 
-    private Boolean isDisqualified;
-    private Integer disqualificationRuleId;
-    private Boolean stageDisqualification;
-    private LocalDateTime disqualifiedDate;
-    private String disqualifiedNote;
+    private Boolean isDisqualified = false;
+    private Integer disqualificationRuleId = 0;
+    private Boolean stageDisqualification = false;
+    private LocalDateTime disqualifiedDate = LocalDateTime.now();
+    private String disqualifiedNote = "";
 
     public EnrolledResponse(EnrolledRequest enrolledRequest) {
         this.memberId = enrolledRequest.getMemberId();

@@ -24,8 +24,11 @@ import java.util.List;
 @Service
 public class IpscServiceImpl implements IpscService {
     @Override
-    public IpscResponseHolder importWinMssCabFile(String cabFileContent) throws ValidationException, FatalException {
+    public IpscResponseHolder importWinMssCabFile(String cabFileContent)
+            throws ValidationException, FatalException {
+
         if ((cabFileContent == null) || (cabFileContent.isBlank())) {
+            log.error("The provided cab file is null or empty.");
             throw new ValidationException("The provided CAB file is null or empty.");
         }
 
@@ -47,7 +50,14 @@ public class IpscServiceImpl implements IpscService {
      * @throws ValidationException If the provided CAB file content is invalid or missing.
      * @throws FatalException      If an I/O error occurs while reading the CAB file.
      */
-    protected IpscRequestHolder readIpscRequests(String cabFileContent) throws ValidationException, FatalException {
+    protected IpscRequestHolder readIpscRequests(String cabFileContent)
+            throws ValidationException, FatalException {
+
+        if ((cabFileContent == null) || (cabFileContent.isBlank())) {
+            log.error("The provided CAB file is null or empty.");
+            throw new ValidationException("The provided CAB file is null or empty.");
+        }
+
         try {
             // Deserializes CAB file content into typed IPSC requests
             ObjectMapper objectMapper = new ObjectMapper();
@@ -87,7 +97,25 @@ public class IpscServiceImpl implements IpscService {
      * match details, associated tags, stages, enrolled members, scores, members, and club
      * information.
      */
-    protected List<IpscResponse> mapIpscRequests(IpscRequestHolder ipscRequestHolder) {
+    protected List<IpscResponse> mapIpscRequests(IpscRequestHolder ipscRequestHolder)
+            throws ValidationException {
+
+        if (ipscRequestHolder == null) {
+            log.error("IPSC request holder is null.");
+            throw new ValidationException("IPSC request holder can not be null");
+        }
+
+/*
+        if ((ipscRequestHolder.getClubs() == null) || (ipscRequestHolder.getMatches() == null) ||
+                (ipscRequestHolder.getStages() == null) || (ipscRequestHolder.getTags() == null) ||
+                (ipscRequestHolder.getMembers() == null) || (ipscRequestHolder.getEnrolledMembers() == null) ||
+                (ipscRequestHolder.getScores() == null)) {
+
+            log.error("IPSC request data is null.");
+            throw new ValidationException("IPSC request data can not be null.");
+        }
+*/
+
         List<IpscResponse> ipscResponses = new ArrayList<>();
         // Maps IPSC requests to responses by match ID
         ipscRequestHolder.getMatches().forEach(match -> {
@@ -146,6 +174,7 @@ public class IpscServiceImpl implements IpscService {
      * @return List of parsed request objects
      */
     protected <T> List<T> readRequests(String xmlContent, Class<T> clazz) {
+        // Returns an empty list when the content is null or blank
         if ((xmlContent == null) || xmlContent.isBlank()) {
             return new ArrayList<>();
         }
