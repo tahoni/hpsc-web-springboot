@@ -12,4 +12,6 @@ package za.co.hpsc.web.constants;
 public final class IpscConstants {
     public static final String IPSC_INPUT_DATE_TIME_FORMAT =
             SystemConstants.T_SEPARATED_DATE_TIME_FORMAT;
+
+    public static long[] EXCLUDE_ICS_ALIAS = {15000, 16000};
 }
