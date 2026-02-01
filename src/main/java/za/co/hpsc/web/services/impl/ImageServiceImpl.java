@@ -23,9 +23,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class ImageServiceImpl implements ImageService {
-    /**
-     * Processes CSV data; returns image response holder
-     */
     @Override
     public ImageResponseHolder processCsv(String csvData)
             throws ValidationException, FatalException {
@@ -35,6 +32,7 @@ public class ImageServiceImpl implements ImageService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
+        // Processes CSV data; returns image response holder
         List<ImageRequest> imageRequestList = readImages(csvData);
         List<ImageResponse> imageResponseList = mapImages(imageRequestList);
         return new ImageResponseHolder(imageResponseList);

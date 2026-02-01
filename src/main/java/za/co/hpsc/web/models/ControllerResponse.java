@@ -1,7 +1,6 @@
 package za.co.hpsc.web.models;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ControllerResponse {
     @NotNull
     private LocalDateTime timestamp;
@@ -49,5 +47,24 @@ public class ControllerResponse {
         this.message = message;
         this.error = error;
         this.success = false;
+    }
+
+    /**
+     * Constructs a new {@code ControllerResponse} object with the specified timestamp,
+     * success status, message, and error details.
+     *
+     * @param timestamp the timestamp of the response, specifying when it was created.
+     *                  Must not be null.
+     * @param success   a boolean indicating whether the operation was successful.
+     * @param message   a message providing additional information about the response.
+     *                  Can be null.
+     * @param error     a description of any error associated with the response.
+     *                  Can be null.
+     */
+    public ControllerResponse(@NotNull LocalDateTime timestamp, boolean success, String message, String error) {
+        this.timestamp = timestamp;
+        this.success = success;
+        this.message = message;
+        this.error = error;
     }
 }

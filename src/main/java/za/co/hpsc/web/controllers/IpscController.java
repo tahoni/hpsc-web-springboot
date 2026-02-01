@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.models.ipsc.request.IpscRequest;
-import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.models.matches.MatchResultLogResponseHolder;
 import za.co.hpsc.web.services.IpscService;
 
@@ -58,9 +56,9 @@ public class IpscController {
             @ApiResponse(responseCode = "500", description = "An internal server error occurred importing " +
                     "the WinMSS.cab file data.", content = @Content(mediaType = "application/json"))
     })
-    ResponseEntity<IpscResponseHolder> importWinMssCabData(
+    ResponseEntity<ControllerResponse> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
-                    "application/json", schema = @Schema(implementation = IpscRequest.class)
+                    "application/json", schema = @Schema(implementation = ControllerResponse.class)
             ))
             @RequestBody String cabFileContent) {
         try {

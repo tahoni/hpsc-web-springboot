@@ -25,9 +25,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class AwardServiceImpl implements AwardService {
-    /**
-     * Processes CSV data; returns award ceremony responses
-     */
     @Override
     public AwardCeremonyResponseHolder processCsv(String csvData)
             throws ValidationException, FatalException {
@@ -37,6 +34,7 @@ public class AwardServiceImpl implements AwardService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
+        // Processes CSV data; returns award ceremony responses
         List<AwardRequest> awardRequestList = readAwards(csvData);
         List<AwardCeremonyResponse> awardCeremonyResponseList = mapAwards(awardRequestList);
         return new AwardCeremonyResponseHolder(awardCeremonyResponseList);
