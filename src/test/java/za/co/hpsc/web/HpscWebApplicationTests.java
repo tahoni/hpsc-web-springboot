@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import za.co.hpsc.web.services.TransactionService;
 
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @ActiveProfiles("test")
@@ -19,6 +20,9 @@ class HpscWebApplicationTests {
     private TestEntityManager testEntityManager;
     @MockitoBean
     private PlatformTransactionManager transactionManager;
+
+    @MockitoBean
+    private TransactionService transactionService;
 
     @SuppressWarnings("EmptyMethod")
     @Test

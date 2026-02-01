@@ -4,27 +4,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.request.*;
-import za.co.hpsc.web.models.ipsc.response.ClubResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
-import za.co.hpsc.web.services.MatchResultsService;
+import za.co.hpsc.web.models.ipsc.response.*;
+import za.co.hpsc.web.services.MatchService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
-public class MatchResultsServiceImpl implements MatchResultsService {
+public class MatchServiceImpl implements MatchService {
     protected final TransactionService transactionService;
 
-    public MatchResultsServiceImpl(TransactionService transactionService) {
+    public MatchServiceImpl(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
 
     @Override
-    public IpscResponseHolder calculateMatchResults(IpscRequestHolder ipscRequestHolder)
+    public IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException {
 
         // Validate input
@@ -47,8 +45,27 @@ public class MatchResultsServiceImpl implements MatchResultsService {
     }
 
     @Override
-    public void saveMatchResults(IpscResponseHolder ipscResponseHolder) {
-        ipscResponseHolder.getIpscList().forEach(transactionService::saveMatchResults);
+    public void calculateMatchResultsSummary(IpscResponse ipscResponse) {
+        List<ScoreResponse> scores = ipscResponse.getScores();
+        List<MemberResponse> members = ipscResponse.getMembers();
+
+        // Summarises member scores by accumulating final scores for all stages
+        members.forEach(member -> {
+            List<ScoreResponse> memberScores = scores.stream()
+                    .filter(sc -> member.getMemberId().equals(sc.getMemberId()))
+                    .toList();
+
+            ScoreResponse memberSummaryScore = new ScoreResponse();
+            memberSummaryScore.setStageId(0);
+
+            AtomicInteger memberTotalScore = new AtomicInteger();
+            memberScores.forEach(scoreResponse -> {
+                memberTotalScore.set(memberTotalScore.get() + scoreResponse.getFinalScore());
+            });
+
+            memberSummaryScore.setFinalScore(memberTotalScore.get());
+            ipscResponse.getScores().add(memberSummaryScore);
+        });
     }
 
     /**

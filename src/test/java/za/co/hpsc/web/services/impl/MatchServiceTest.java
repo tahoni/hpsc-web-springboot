@@ -15,13 +15,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MatchResultServiceTest {
+public class MatchServiceTest {
 
     @InjectMocks
-    private MatchResultsServiceImpl matchResultService;
+    private MatchServiceImpl matchService;
 
     @Test
-    void testCalculateMatchResults_withValidData_thenReturnsIpscResponses() {
+    void testMapMatchResults_withValidData_thenReturnsIpscResponses() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -72,7 +72,7 @@ public class MatchResultServiceTest {
         holder.setTeams(new ArrayList<>());
 
         // Act
-        IpscResponseHolder responseHolder = matchResultService.calculateMatchResults(holder);
+        IpscResponseHolder responseHolder = matchService.mapMatchResults(holder);
 
         // Assert
         List<IpscResponse> responses = responseHolder.getIpscList();
@@ -110,7 +110,7 @@ public class MatchResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchResults_withMultipleMatches_thenReturnsMultipleResponses() {
+    void testMapMatchResults_withMultipleMatches_thenReturnsMultipleResponses() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -148,7 +148,7 @@ public class MatchResultServiceTest {
         holder.setScores(new ArrayList<>());
 
         // Act
-        IpscResponseHolder responseHolder = matchResultService.calculateMatchResults(holder);
+        IpscResponseHolder responseHolder = matchService.mapMatchResults(holder);
 
         // Assert
         List<IpscResponse> responses = responseHolder.getIpscList();
@@ -165,7 +165,7 @@ public class MatchResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchResults_withNoMatchingClub_thenCreatesClubWithIdOnly() {
+    void testMapMatchResults_withNoMatchingClub_thenCreatesClubWithIdOnly() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -186,7 +186,7 @@ public class MatchResultServiceTest {
         holder.setScores(new ArrayList<>());
 
         // Act
-        IpscResponseHolder responseHolder = matchResultService.calculateMatchResults(holder);
+        IpscResponseHolder responseHolder = matchService.mapMatchResults(holder);
 
         // Assert
         List<IpscResponse> responses = responseHolder.getIpscList();
@@ -199,7 +199,7 @@ public class MatchResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchResults_withEmptyRequestHolderLists_thenReturnsEmptyList() {
+    void testMapMatchResults_withEmptyRequestHolderLists_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setClubs(new ArrayList<>());
@@ -214,7 +214,7 @@ public class MatchResultServiceTest {
         holder.setScores(new ArrayList<>());
 
         // Act
-        IpscResponseHolder responseHolder = matchResultService.calculateMatchResults(holder);
+        IpscResponseHolder responseHolder = matchService.mapMatchResults(holder);
 
         // Assert
         List<IpscResponse> responses = responseHolder.getIpscList();
@@ -223,7 +223,7 @@ public class MatchResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchResults_withMatchButNoMembers_thenReturnsResponseWithEmptyMembers() {
+    void testMapMatchResults_withMatchButNoMembers_thenReturnsResponseWithEmptyMembers() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -246,7 +246,7 @@ public class MatchResultServiceTest {
         holder.setScores(new ArrayList<>());
 
         // Act
-        IpscResponseHolder responseHolder = matchResultService.calculateMatchResults(holder);
+        IpscResponseHolder responseHolder = matchService.mapMatchResults(holder);
 
         // Assert
         List<IpscResponse> responses = responseHolder.getIpscList();
@@ -259,12 +259,12 @@ public class MatchResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchResults_withEmptyRequestHolder_thenReturnsEmptyList() {
+    void testMapMatchResults_withEmptyRequestHolder_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
         // Act
-        IpscResponseHolder responseHolder = matchResultService.calculateMatchResults(holder);
+        IpscResponseHolder responseHolder = matchService.mapMatchResults(holder);
 
         // Assert
         List<IpscResponse> responses = responseHolder.getIpscList();
@@ -273,8 +273,8 @@ public class MatchResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchResults_withNullRequestHolder_thenThrowsException() {
+    void testMapMatchResults_withNullRequestHolder_thenThrowsException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchResultService.calculateMatchResults(null));
+        assertThrows(ValidationException.class, () -> matchService.mapMatchResults(null));
     }
 }

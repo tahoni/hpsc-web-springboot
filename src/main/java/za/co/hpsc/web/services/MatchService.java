@@ -5,7 +5,7 @@ import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
-public interface MatchResultsService {
+public interface MatchService {
     /**
      * Maps IPSC requests to a list of IPSC responses. This method processes the matches, stages,
      * enrolled members, scores, tags, and clubs from the given {@link IpscRequestHolder}, groups
@@ -17,8 +17,18 @@ public interface MatchResultsService {
      * match details, associated tags, stages, enrolled members, scores, members, and club
      * information.
      */
-    IpscResponseHolder calculateMatchResults(IpscRequestHolder ipscRequestHolder)
+    IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
 
-    void saveMatchResults(IpscResponseHolder ipscResponseHolder);
+    /**
+     * Calculates and updates the summary of match results based on the data provided in the
+     * {@code ipscResponse} object. This operation may involve aggregating scores, processing
+     * enrolled members, and summarizing stage results to provide a comprehensive overview
+     * of the match.
+     *
+     * @param ipscResponse The {@link IpscResponse} object containing data such as match details,
+     *                     stage responses, enrolled members, tags, scores, and associated club
+     *                     information required for summary calculation.
+     */
+    void calculateMatchResultsSummary(IpscResponse ipscResponse);
 }

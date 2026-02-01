@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
@@ -13,7 +15,8 @@ import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.IpscService;
-import za.co.hpsc.web.services.MatchResultsService;
+import za.co.hpsc.web.services.MatchService;
+import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,10 +27,12 @@ import java.util.List;
 @Service
 public class IpscServiceImpl implements IpscService {
 
-    protected final MatchResultsService matchResultsService;
+    protected final MatchService matchService;
+    protected final TransactionService transactionService;
 
-    public IpscServiceImpl(MatchResultsService matchResultsService) {
-        this.matchResultsService = matchResultsService;
+    public IpscServiceImpl(MatchService matchService, TransactionService transactionService) {
+        this.matchService = matchService;
+        this.transactionService = transactionService;
     }
 
     @Override
@@ -36,16 +41,26 @@ public class IpscServiceImpl implements IpscService {
 
         if ((cabFileContent == null) || (cabFileContent.isBlank())) {
             log.error("The provided cab file is null or empty.");
-            throw new ValidationException("The provided CAB file is null or empty.");
+            throw new ValidationException("The provided CAB file can not be null or empty.");
         }
 
-        // Imports WinMSS cab file; calculates, saves results and logs
+        // Imports WinMSS cab file
         IpscRequestHolder ipscRequestHolder = readIpscRequests(cabFileContent);
+        if (ipscRequestHolder == null) {
+            log.error("IPSC request holder is null.");
+            throw new ValidationException("IPSC request holder can not be null.");
+        }
 
-        IpscResponseHolder ipscResponseHolder =
-                matchResultsService.calculateMatchResults(ipscRequestHolder);
-        matchResultsService.saveMatchResults(ipscResponseHolder);
+        // Calculates, saves results and logs
+        IpscResponseHolder ipscResponseHolder = matchService.mapMatchResults(ipscRequestHolder);
+        if (ipscResponseHolder == null) {
+            log.error("IPSC response holder is null.");
+            throw new ValidationException("IPSC response holder can not be null.");
+        }
+        ipscResponseHolder.getIpscList().forEach(matchService::calculateMatchResultsSummary);
+        ipscResponseHolder.getIpscList().forEach(transactionService::saveMatchResults);
 
+        // Returns a success message
         return new ControllerResponse(LocalDateTime.now(), true,
                 "Successfully imported the WinMSS.cab file data", "");
     }
@@ -60,13 +75,8 @@ public class IpscServiceImpl implements IpscService {
      * @throws ValidationException If the provided CAB file content is invalid or missing.
      * @throws FatalException      If an I/O error occurs while reading the CAB file.
      */
-    protected IpscRequestHolder readIpscRequests(String cabFileContent)
+    protected IpscRequestHolder readIpscRequests(@NotNull @NotBlank String cabFileContent)
             throws ValidationException, FatalException {
-
-        if ((cabFileContent == null) || (cabFileContent.isBlank())) {
-            log.error("The provided CAB file is null or empty.");
-            throw new ValidationException("The provided CAB file is null or empty.");
-        }
 
         try {
             // Deserializes CAB file content into typed IPSC requests
