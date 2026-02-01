@@ -23,7 +23,7 @@ public interface MatchService {
     /**
      * Calculates and updates the summary of match results based on the data provided in the
      * {@code ipscResponse} object. This operation may involve aggregating scores, processing
-     * enrolled members, and summarizing stage results to provide a comprehensive overview
+     * enrolled members, and summarising stage results to provide a comprehensive overview
      * of the match.
      *
      * @param ipscResponse The {@link IpscResponse} object containing data such as match details,
