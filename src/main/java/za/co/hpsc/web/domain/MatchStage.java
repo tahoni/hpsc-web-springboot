@@ -41,6 +41,7 @@ public class MatchStage {
     @NotNull
     @Column(nullable = false)
     private Integer stageNumber;
+    private String stageName;
     private Integer rangeNumber;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

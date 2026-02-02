@@ -45,7 +45,8 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public void calculateMatchResultsSummary(IpscResponse ipscResponse) {
+    public void calculateMatchResultsSummary(IpscResponse ipscResponse)
+            throws ValidationException {
 
         // Validate input
         if (ipscResponse == null) {

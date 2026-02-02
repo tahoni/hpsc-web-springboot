@@ -51,7 +51,7 @@ public class IpscServiceImpl implements IpscService {
             throw new ValidationException("IPSC request holder can not be null.");
         }
 
-        // Calculates, saves results and logs
+        // Calculates and saves results
         IpscResponseHolder ipscResponseHolder = matchService.mapMatchResults(ipscRequestHolder);
         if (ipscResponseHolder == null) {
             log.error("IPSC response holder is null.");

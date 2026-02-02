@@ -16,6 +16,7 @@ public interface MatchService {
      * @return A list of {@link IpscResponse} objects that encapsulate the mapped data, including
      * match details, associated tags, stages, enrolled members, scores, members, and club
      * information.
+     * @throws ValidationException if the input data is invalid or cannot be processed
      */
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
@@ -29,6 +30,8 @@ public interface MatchService {
      * @param ipscResponse The {@link IpscResponse} object containing data such as match details,
      *                     stage responses, enrolled members, tags, scores, and associated club
      *                     information required for summary calculation.
+     * @throws ValidationException if the input data is invalid or cannot be processed
      */
-    void calculateMatchResultsSummary(IpscResponse ipscResponse);
+    void calculateMatchResultsSummary(IpscResponse ipscResponse)
+            throws ValidationException;
 }
