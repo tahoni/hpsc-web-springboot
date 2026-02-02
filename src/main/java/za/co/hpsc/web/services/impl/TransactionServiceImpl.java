@@ -60,16 +60,16 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            // Persists the match
-            Optional<Match> optionalMatch = persistMatch(ipscResponse);
+            Optional<Match> optionalMatch = modifyMatch(ipscResponse);
             if (optionalMatch.isEmpty()) {
                 return;
             }
 
             Match match = optionalMatch.get();
-            persistMatchStages(match, ipscResponse.getStages());
-            match.setLastUpdated(LocalDateTime.now());
+            List<MatchStage> matchStages = modifyMatchStages(match, ipscResponse.getStages());
+            List<ScoreResponse> scoreResponses = ipscResponse.getScores();
 
+            match.setLastUpdated(LocalDateTime.now());
             matchRepository.save(match);
             transactionManager.commit(transaction);
 
@@ -94,21 +94,16 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Persists or updates a match based on the provided IPSC response.
+     * Modifies or updates a match entity based on the provided IPSC response. If the match exists in the
+     * database and there are no newer scores in the IPSC response, the existing match is returned without
+     * modifications. Otherwise, the match is updated or created if it does not exist.
      *
-     * <p>
-     * If the match already exists in the database and the scores in the response
-     * are not newer, no updates are made, and the existing match is returned.
-     * If the match does not exist or newer scores are available, the match is
-     * updated or created, then persisted to the database.
-     * </p>
-     *
-     * @param ipscResponse the {@link IpscResponse} containing match and score data
-     *                     to persist. Must not be null.
-     * @return an {@code Optional} containing the persisted or updated {@link Match},
-     * an empty {@code Optional} if the match cannot be persisted.
+     * @param ipscResponse the IPSC response containing match details, club information, and scores.
+     *                     Must not be null.
+     * @return an {@code Optional} containing the updated or newly created {@code Match} object,
+     * or an empty {@code Optional} if the match could not be created or updated.
      */
-    protected Optional<Match> persistMatch(@NotNull IpscResponse ipscResponse) {
+    protected Optional<Match> modifyMatch(@NotNull IpscResponse ipscResponse) {
         // Get the match from the database if it exists
         Match match = findMatch(ipscResponse.getMatch()).orElse(null);
         boolean ipscMatchExists = match != null;
@@ -127,7 +122,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Updates the match name, club and scheduled date
         match.setName(ipscResponse.getMatch().getMatchName());
-        match.setClub(persistClub(ipscResponse.getClub()).orElse(null));
+        match.setClub(modifyClub(ipscResponse.getClub()).orElse(null));
         match.setScheduledDate(ipscResponse.getMatch().getMatchDate().toLocalDate());
 
         // TODO: update division and category based on IPSC response
@@ -136,13 +131,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Persists a club based on the provided club response. If the club already exists,
-     * updates its name and abbreviation using the data from the given club response.
+     * Modifies the attributes of an existing club based on the provided club response data.
      *
-     * @param clubResponse the response containing club information; may be null
-     * @return an optional containing the updated or existing club, or an empty optional if the input is null
+     * @param clubResponse the response object containing updated club information; if null, no modification is performed
+     * @return an {@code Optional} containing the modified club if it exists, or {@code Optional.empty()} if the input is null or the club is not found
      */
-    protected Optional<Club> persistClub(ClubResponse clubResponse) {
+    protected Optional<Club> modifyClub(ClubResponse clubResponse) {
         if (clubResponse == null) {
             return Optional.empty();
         }
@@ -158,19 +152,19 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Persists and returns a list of {@link MatchStage} objects based on the provided {@link Match} and stage responses.
-     * If the input stageResponses is null, an empty list is returned.
-     * This method processes the {@link StageResponse} objects, setting properties for each {@link MatchStage},
-     * without persisting changes to the repository.
+     * Modifies and returns a list of match stages based on the given stage responses.
+     * If the provided stageResponses list is null, returns an empty list.
      *
-     * @param match          the {@link Match} object associated with the stages; must not be null.
-     * @param stageResponses a {@link List} of {@link StageResponse} objects containing stage details; can be null.
+     * @param match          the match entity for which the stages are being modified; must not be null
+     * @param stageResponses a list of stage responses containing data for updating or creating stages
+     * @return a list of {@code MatchStage} objects updated or created based on the provided stage responses
      */
-    protected void persistMatchStages(@NotNull Match match, List<StageResponse> stageResponses) {
+    protected List<MatchStage> modifyMatchStages(@NotNull Match match, List<StageResponse> stageResponses) {
         if (stageResponses == null) {
-            return;
+            return new ArrayList<>();
         }
 
+        List<MatchStage> matchStages = new ArrayList<>();
         // Sets stage properties; does not persist changes
         stageResponses.forEach(stageResponse -> {
             MatchStage matchStage = matchStageRepository.findByMatchAndStageNumber(match,
@@ -178,7 +172,9 @@ public class TransactionServiceImpl implements TransactionService {
             matchStage.setMatch(match);
             matchStage.setStageNumber(stageResponse.getStageId());
             matchStage.setStageName(stageResponse.getStageName());
+            matchStages.add(matchStage);
         });
+        return matchStages;
     }
 
     /**
