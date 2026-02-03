@@ -34,6 +34,13 @@ public class MemberResponse {
 
     private String email = "";
 
+    /**
+     * Constructs a new {@code MemberResponse} object by initialising its fields using the values
+     * from a given {@link MemberRequest} object.
+     *
+     * @param memberRequest the {@link MemberRequest}object containing data to initialise
+     *                      the {@code MemberResponse} instance.
+     */
     public MemberResponse(MemberRequest memberRequest) {
         this.memberId = memberRequest.getMemberId();
         this.lastName = memberRequest.getLastName();

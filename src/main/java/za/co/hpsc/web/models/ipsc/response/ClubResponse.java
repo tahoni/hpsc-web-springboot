@@ -17,6 +17,13 @@ public class ClubResponse {
     private String clubCode = "";
     private String clubName = "";
 
+    /**
+     * Constructs a new {@code ClubResponse} object by initialising its fields using the values
+     * from a given {@link ClubRequest} object.
+     *
+     * @param clubRequest the {@link ClubRequest} object containing data to initialise
+     *                    the {@code ClubResponse} instance.
+     */
     public ClubResponse(ClubRequest clubRequest) {
         this.clubId = clubRequest.getClubId();
         this.clubCode = clubRequest.getClubCode();

@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.math.NumberUtils;
 import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,6 +55,31 @@ public class Competitor {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> competitorMatches;
+
+    /**
+     * Initialises the competitor's details based on the provided {@code MemberResponse}.
+     *
+     * <p>
+     * It updates the first name, last name, date of birth, competitor number, and SAPSA number.
+     * </p>
+     *
+     * @param memberResponse the source object containing the member's information, including
+     *                       first name, last name, date of birth, reference number, and ICS alias.
+     */
+    public void init(MemberResponse memberResponse) {
+        this.firstName = memberResponse.getFirstName();
+        this.lastName = memberResponse.getLastName();
+        this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
+
+        // Initialises competitor number and SAPSA number based on the member's
+        // reference number and ICS alias'
+        this.competitorNumber = memberResponse.getIcsAlias();
+        if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
+            this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+        }
+
+        // TODO: populate category
+    }
 
     @Override
     public String toString() {

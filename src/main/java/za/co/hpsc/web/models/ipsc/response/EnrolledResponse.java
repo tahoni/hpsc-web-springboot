@@ -35,6 +35,13 @@ public class EnrolledResponse {
     private LocalDateTime disqualifiedDate = LocalDateTime.now();
     private String disqualifiedNote = "";
 
+    /**
+     * Constructs a new {@code EnrolledResponse} object by initialising its fields using
+     * the values from a given {@link EnrolledRequest} object.
+     *
+     * @param enrolledRequest the {@link EnrolledRequest} object containing data to initialise
+     *                        the {@code EnrolledResponse} instance.
+     */
     public EnrolledResponse(EnrolledRequest enrolledRequest) {
         this.memberId = enrolledRequest.getMemberId();
         this.competitorId = enrolledRequest.getCompetitorId();

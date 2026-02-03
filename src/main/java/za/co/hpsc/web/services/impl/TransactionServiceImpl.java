@@ -8,6 +8,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.Match;
@@ -24,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -60,14 +63,16 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            Optional<Match> optionalMatch = modifyMatch(ipscResponse);
+            Optional<Club> optionalClub = modifyClub(ipscResponse.getClub());
+            Optional<Match> optionalMatch = modifyMatch(ipscResponse, optionalClub.orElse(null));
             if (optionalMatch.isEmpty()) {
                 return;
             }
 
             Match match = optionalMatch.get();
-            List<MatchStage> matchStages = modifyMatchStages(match, ipscResponse.getStages());
-            List<ScoreResponse> scoreResponses = ipscResponse.getScores();
+            List<MatchStage> matchStages = modifyStages(match, ipscResponse.getStages());
+            List<ScoreResponse> scoreResponses = filterScores(ipscResponse.getScores(), match.getLastUpdated());
+            modifyScores(match, matchStages, scoreResponses, ipscResponse.getMembers());
 
             match.setLastUpdated(LocalDateTime.now());
             matchRepository.save(match);
@@ -94,22 +99,47 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Modifies or updates a match entity based on the provided IPSC response. If the match exists in the
-     * database and there are no newer scores in the IPSC response, the existing match is returned without
-     * modifications. Otherwise, the match is updated or created if it does not exist.
+     * Modifies the attributes of an existing club based on the provided club response data.
      *
-     * @param ipscResponse the IPSC response containing match details, club information, and scores.
-     *                     Must not be null.
-     * @return an {@code Optional} containing the updated or newly created {@code Match} object,
-     * or an empty {@code Optional} if the match could not be created or updated.
+     * @param clubResponse the {@link ClubResponse} object containing updated club information.
+     *                     If null, no modification is performed
+     * @return an {@code Optional} containing the modified {@link Club} if it exists,
+     * or {@code Optional.empty()} if the input is null or the club is not found
      */
-    protected Optional<Match> modifyMatch(@NotNull IpscResponse ipscResponse) {
+    protected Optional<Club> modifyClub(ClubResponse clubResponse) {
+        if (clubResponse == null) {
+            return Optional.empty();
+        }
+
+        Optional<Club> optionalClub = findClub(clubResponse);
+        // Initialises club attributes if found
+        optionalClub.ifPresent(club -> club.init(clubResponse));
+        return optionalClub;
+    }
+
+    /**
+     * Modifies or creates a {@link Match} based on the provided IPSC response and club.
+     *
+     * <p>
+     * If a {@link Match} already exists in the database and there are no newer scores
+     * in the IPSC response, the existing {@link Match} is returned without modification.
+     * Otherwise, a new or updated {@link Match} is initialised with the provided data and returned.
+     * </p>
+     *
+     * @param ipscResponse The {@link IpscResponse} containing information about the match and scores.
+     *                     Must not be null.
+     * @param club         The {@link Club} associated with the match. Must not be null.
+     * @return An {@code Optional} containing the modified or newly created {@link Match}.
+     * The {@code Optional} returns the existing match as-is if no modification is required.
+     */
+    protected Optional<Match> modifyMatch(@NotNull IpscResponse ipscResponse, @NotNull Club club) {
         // Get the match from the database if it exists
         Match match = findMatch(ipscResponse.getMatch()).orElse(null);
-        boolean ipscMatchExists = match != null;
+        boolean ipscMatchExists = (match != null);
         boolean ipscResponseHasNewerScore = false;
         LocalDateTime matchLastUpdated = (match != null ? match.getLastUpdated() : LocalDateTime.now());
-        // Skips persistence if the match exists and no newer scores were updated
+
+        // Skips update if no newer score; otherwise creates match
         if (ipscMatchExists) {
             ipscResponseHasNewerScore = ipscResponse.getScores().stream()
                     .anyMatch(sr -> matchLastUpdated.isBefore(sr.getLastModified()));
@@ -120,61 +150,61 @@ public class TransactionServiceImpl implements TransactionService {
             match = new Match();
         }
 
-        // Updates the match name, club and scheduled date
-        match.setName(ipscResponse.getMatch().getMatchName());
-        match.setClub(modifyClub(ipscResponse.getClub()).orElse(null));
-        match.setScheduledDate(ipscResponse.getMatch().getMatchDate().toLocalDate());
-
-        // TODO: update division and category based on IPSC response
-
+        // Initialise match attributes
+        match.init(club, ipscResponse.getMatch());
         return Optional.of(match);
     }
 
     /**
-     * Modifies the attributes of an existing club based on the provided club response data.
+     * Modifies the list of {@link MatchStage} based on the provided stage responses and
+     * initialises their attributes.
      *
-     * @param clubResponse the response object containing updated club information; if null, no modification is performed
-     * @return an {@code Optional} containing the modified club if it exists, or {@code Optional.empty()} if the input is null or the club is not found
+     * @param match          the {@link MatchResponse} object with which the stages are associated.
+     *                       Must not be null.
+     * @param stageResponses the list of {@link MatchResponse} containing stage details.
+     *                       Can be null.
+     * @return a list of {@link MatchStage} initialized with the provided stage responses,
+     * or an empty list if {@code stageResponses} is null.
      */
-    protected Optional<Club> modifyClub(ClubResponse clubResponse) {
-        if (clubResponse == null) {
-            return Optional.empty();
-        }
-
-        Optional<Club> optionalClub = findClub(clubResponse);
-        // Updates club name and abbreviation if present
-        if (optionalClub.isPresent()) {
-            Club club = optionalClub.get();
-            club.setName(clubResponse.getClubName());
-            club.setAbbreviation(clubResponse.getClubCode());
-        }
-        return optionalClub;
-    }
-
-    /**
-     * Modifies and returns a list of match stages based on the given stage responses.
-     * If the provided stageResponses list is null, returns an empty list.
-     *
-     * @param match          the match entity for which the stages are being modified; must not be null
-     * @param stageResponses a list of stage responses containing data for updating or creating stages
-     * @return a list of {@code MatchStage} objects updated or created based on the provided stage responses
-     */
-    protected List<MatchStage> modifyMatchStages(@NotNull Match match, List<StageResponse> stageResponses) {
+    protected List<MatchStage> modifyStages(@NotNull Match match, List<StageResponse> stageResponses) {
         if (stageResponses == null) {
             return new ArrayList<>();
         }
 
         List<MatchStage> matchStages = new ArrayList<>();
-        // Sets stage properties; does not persist changes
+        // Initialises stage attributes
         stageResponses.forEach(stageResponse -> {
             MatchStage matchStage = matchStageRepository.findByMatchAndStageNumber(match,
                     stageResponse.getStageId()).orElse(new MatchStage());
-            matchStage.setMatch(match);
-            matchStage.setStageNumber(stageResponse.getStageId());
-            matchStage.setStageName(stageResponse.getStageName());
+            matchStage.init(match, stageResponse);
             matchStages.add(matchStage);
         });
         return matchStages;
+    }
+
+    /**
+     * Optionally modifies scores by mapping responses to competitors
+     */
+    protected void modifyScores(Match match, List<MatchStage> matchStages, List<ScoreResponse> scoreResponses, List<MemberResponse> memberResponses) {
+        if ((scoreResponses == null) || (memberResponses == null)) {
+            return;
+        }
+
+        // Maps score responses to corresponding member responses
+        Set<Integer> memberIdsWithScores = scoreResponses.stream()
+                .map(ScoreResponse::getMemberId)
+                .collect(Collectors.toSet());
+        List<MemberResponse> scoreMembers = memberResponses.stream()
+                .filter(memberResponse -> memberIdsWithScores.contains(memberResponse.getMemberId()))
+                .toList();
+
+        // Initialises competitor attributes
+        List<Competitor> competitors = new ArrayList<>();
+        scoreMembers.forEach(memberResponse -> {
+            Competitor competitor = findCompetitor(memberResponse).orElse(new Competitor());
+            competitor.init(memberResponse);
+            competitors.add(competitor);
+        });
     }
 
     /**
@@ -198,7 +228,6 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Optional<Match> match = Optional.empty();
-
         // Filters matches by date
         List<Match> matchList = matchRepository.findAllByScheduledDate(matchResponse.getMatchDate().toLocalDate());
         // Filters matches by name when present
@@ -230,10 +259,13 @@ public class TransactionServiceImpl implements TransactionService {
             return Optional.empty();
         }
 
+        Optional<Club> club = Optional.empty();
         // Attempt to find the club by name
-        Optional<Club> club = clubRepository.findByName(clubResponse.getClubName());
-        // If the club was not found by name
-        if (club.isEmpty()) {
+        if ((clubResponse.getClubName() != null) && (!clubResponse.getClubName().isBlank())) {
+            club = clubRepository.findByName(clubResponse.getClubName());
+        }
+        // If no club with the name was found
+        if (club.isEmpty() && (clubResponse.getClubCode() != null) && (!clubResponse.getClubCode().isBlank())) {
             // Attempt to find the club by abbreviation
             club = clubRepository.findByAbbreviation(clubResponse.getClubCode());
         }
@@ -265,12 +297,15 @@ public class TransactionServiceImpl implements TransactionService {
         Optional<Competitor> competitor = Optional.empty();
         String icsAlias = memberResponse.getIcsAlias();
 
-        // Attempt to find the competitor by SAPSA number
-        if ((icsAlias != null) && (!icsAlias.isBlank()) && (NumberUtils.isCreatable(icsAlias))) {
-            competitor = competitorRepository.findBySapsaNumber(Integer.parseInt(icsAlias));
+        // Attempts competitor lookup by SAPSA number or alias
+        if ((icsAlias != null) && (!icsAlias.isBlank()) && (NumberUtils.isCreatable((icsAlias)))) {
+            Integer sapsaNumber = Integer.parseInt(icsAlias);
+            if (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(sapsaNumber)) {
+                competitor = competitorRepository.findBySapsaNumber(sapsaNumber);
+            }
         }
 
-        // If the competitor was not found by SAPSA number
+        // If the competitor was not found
         if (competitor.isEmpty()) {
             List<Competitor> competitorList = new ArrayList<>();
             // Attempt to find the competitor by first and last name
@@ -287,8 +322,10 @@ public class TransactionServiceImpl implements TransactionService {
                         .toList();
             }
 
-            // Returns the first matching competitor
-            competitor = competitorList.stream().findFirst();
+            // Returns the first matching competitor without a SAPSA number
+            competitor = competitorList.stream()
+                    .filter(c -> c.getSapsaNumber() == null)
+                    .findFirst();
         }
 
         return competitor;
@@ -308,6 +345,7 @@ public class TransactionServiceImpl implements TransactionService {
      *                          used to filter the scores. Can be null.
      * @return a filtered list of {@link ScoreResponse} objects or an empty list if the input is null
      */
+    // TODO: use
     protected List<ScoreResponse> filterScores(List<ScoreResponse> scoreResponseList,
                                                LocalDateTime matchLastUpdated) {
 

@@ -25,12 +25,19 @@ public class MatchResponse {
     private Integer squadCount = 0;
     private Integer firearmId = 0;
 
-    public MatchResponse(MatchRequest match) {
-        this.matchId = match.getMatchId();
-        this.matchName = match.getMatchName();
-        this.matchDate = match.getMatchDate();
-        this.clubId = match.getClubId();
-        this.squadCount = match.getSquadCount();
-        this.firearmId = match.getFirearmId();
+    /**
+     * Constructs a new {@code MatchResponse} object by initialising its fields using
+     * the values from a given {@link MatchRequest} object.
+     *
+     * @param matchRequest the {@link MatchRequest} object containing data to initialise
+     *                     the {@code MatchResponse} instance.
+     */
+    public MatchResponse(MatchRequest matchRequest) {
+        this.matchId = matchRequest.getMatchId();
+        this.matchName = matchRequest.getMatchName();
+        this.matchDate = matchRequest.getMatchDate();
+        this.clubId = matchRequest.getClubId();
+        this.squadCount = matchRequest.getSquadCount();
+        this.firearmId = matchRequest.getFirearmId();
     }
 }

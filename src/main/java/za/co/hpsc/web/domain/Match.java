@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -60,6 +61,14 @@ public class Match {
 
     @NotNull
     private LocalDateTime lastUpdated;
+
+    public void init(Club club, MatchResponse matchResponse) {
+        this.club = club;
+        this.name = matchResponse.getMatchName();
+        this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
+
+        // TODO: populate division and category
+    }
 
     @Override
     public String toString() {

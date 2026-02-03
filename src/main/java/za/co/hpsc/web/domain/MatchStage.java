@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.helpers.MatchHelpers;
+import za.co.hpsc.web.models.ipsc.response.StageResponse;
 
 import java.util.List;
 
@@ -46,6 +47,12 @@ public class MatchStage {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> matchStageCompetitors;
+
+    public void init(@NotNull Match match, @NotNull StageResponse stageResponse) {
+        this.match = match;
+        this.stageNumber = stageResponse.getStageId();
+        this.stageName = stageResponse.getStageName();
+    }
 
     @Override
     public String toString() {

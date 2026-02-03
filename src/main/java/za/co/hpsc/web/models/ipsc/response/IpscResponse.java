@@ -22,7 +22,25 @@ public class IpscResponse {
     private List<EnrolledResponse> enrolledMembers = new ArrayList<>();
     private List<ScoreResponse> scores = new ArrayList<>();
 
-    public IpscResponse(List<TagRequest> tagRequests, MatchResponse matchResponse, List<StageRequest> stageRequests, List<EnrolledRequest> enrolledRequests, List<ScoreRequest> scoreRequests) {
+    /**
+     * Constructs a new {@code IpscResponse} instance by transforming and initializing the various
+     * data components from the provided request objects.
+     *
+     * @param tagRequests      a list of {@link TagRequest} objects, representing tag data
+     *                         to initialise the {@code tags} field.
+     * @param matchResponse    a {@link MatchResponse} object containing match details
+     *                         to initialise the {@code match} field.
+     * @param stageRequests    a list of {@link StageRequest} objects, representing stage data
+     *                         to initialise the {@code stages} field.
+     * @param enrolledRequests a list of {@link EnrolledRequest} objects, representing enrolled member
+     *                         data to initialise the {@code enrolledMembers} field.
+     * @param scoreRequests    a list of {@link ScoreRequest} objects, representing scoring data
+     *                         to initialise the {@code scores} field.
+     */
+    public IpscResponse(List<TagRequest> tagRequests, MatchResponse matchResponse,
+                        List<StageRequest> stageRequests, List<EnrolledRequest> enrolledRequests,
+                        List<ScoreRequest> scoreRequests) {
+
         this.match = matchResponse;
         this.tags = tagRequests.stream().map(TagResponse::new).toList();
         this.stages = stageRequests.stream().map(StageResponse::new).toList();
@@ -30,6 +48,13 @@ public class IpscResponse {
         this.scores = scoreRequests.stream().map(ScoreResponse::new).toList();
     }
 
+    /**
+     * Updates the list of members by transforming each {@link MemberRequest} object in the
+     * provided list into a {@link MemberResponse} object and storing the results.
+     *
+     * @param memberRequests a list of {@link MemberRequest} objects representing the members
+     *                       to be updated and initialised as {@link MemberResponse} objects.
+     */
     public void setMembers(List<MemberRequest> memberRequests) {
         this.members = memberRequests.stream().map(MemberResponse::new).toList();
     }

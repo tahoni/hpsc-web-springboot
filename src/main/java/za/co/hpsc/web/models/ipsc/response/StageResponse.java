@@ -35,7 +35,11 @@ public class StageResponse {
     private Integer startOn = 0;
 
     /**
-     * Initializes response from request; copies stage properties
+     * Constructs a new {@code StageResponse} object by initialising its fields using the values
+     * from a given {@link StageRequest} object.
+     *
+     * @param stageRequest the {@link StageRequest}object containing data to initialise
+     *                     the {@code StageResponse} instance.
      */
     public StageResponse(StageRequest stageRequest) {
         this.matchId = stageRequest.getMatchId();

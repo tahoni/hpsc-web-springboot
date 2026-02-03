@@ -17,8 +17,15 @@ public class TagResponse {
     @NotNull
     private String tagName = "";
 
-    public TagResponse(TagRequest tag) {
-        this.tagId = tag.getTagId();
-        this.tagName = tag.getTagName();
+    /**
+     * Constructs a new {@code TagResponse} object by initialising its fields using the values
+     * from a given {@link TagRequest} object.
+     *
+     * @param tagRequest the {@link TagRequest}object containing data to initialise
+     *                   the {@code TagResponse} instance.
+     */
+    public TagResponse(TagRequest tagRequest) {
+        this.tagId = tagRequest.getTagId();
+        this.tagName = tagRequest.getTagName();
     }
 }

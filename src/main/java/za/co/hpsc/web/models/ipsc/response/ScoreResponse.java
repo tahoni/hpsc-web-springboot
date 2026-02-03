@@ -46,7 +46,11 @@ public class ScoreResponse {
     private LocalDateTime lastModified = LocalDateTime.now();
 
     /**
-     * Initializes response from request; copies all fields
+     * Constructs a new {@code ScoreResponse} object by initialising its fields using the values
+     * from a given {@link ScoreRequest} object.
+     *
+     * @param scoreRequest the {@link ScoreRequest}object containing data to initialise
+     *                     the {@code ScoreResponse} instance.
      */
     public ScoreResponse(ScoreRequest scoreRequest) {
         this.matchId = scoreRequest.getMatchId();
