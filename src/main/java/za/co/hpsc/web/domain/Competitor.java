@@ -56,16 +56,6 @@ public class Competitor {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> competitorMatches;
 
-    /**
-     * Initialises the competitor's details based on the provided {@code MemberResponse}.
-     *
-     * <p>
-     * It updates the first name, last name, date of birth, competitor number, and SAPSA number.
-     * </p>
-     *
-     * @param memberResponse the source object containing the member's information, including
-     *                       first name, last name, date of birth, reference number, and ICS alias.
-     */
     public void init(MemberResponse memberResponse) {
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();

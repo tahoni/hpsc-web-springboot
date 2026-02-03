@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,7 +53,7 @@ public class MatchStageCompetitor {
     private Integer penalties;
     private Integer procedurals;
 
-    private Integer deduction;
+    private Boolean hasDeduction;
     private BigDecimal deductionPercentage;
 
     private BigDecimal time;
@@ -62,8 +63,44 @@ public class MatchStageCompetitor {
 
     private Boolean isDisqualified;
 
-    @NotNull
-    private LocalDateTime updated;
+    private LocalDateTime dateUpdated;
+
+    /**
+     * Constructs a new instance of the {@code MatchStageCompetitor} class, representing
+     * the association between a specific match competitor and a match stage.
+     *
+     * @param matchCompetitor the competitor participating in the match stage.
+     *                        Must not be null.
+     * @param matchStage      the match stage in which the competitor is participating.
+     *                        Must not be null.
+     */
+    public MatchStageCompetitor(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchStage matchStage) {
+        this.matchCompetitor = matchCompetitor;
+        this.matchStage = matchStage;
+    }
+
+    void init(ScoreResponse scoreResponse) {
+        this.scoreA = scoreResponse.getScoreA();
+        this.scoreB = scoreResponse.getScoreB();
+        this.scoreC = scoreResponse.getScoreC();
+        this.scoreD = scoreResponse.getScoreD();
+
+        this.points = scoreResponse.getFinalScore();
+        this.misses = scoreResponse.getMisses();
+        this.penalties = scoreResponse.getPenalties();
+        this.procedurals = scoreResponse.getProcedurals();
+
+        this.hasDeduction = scoreResponse.getDeduction();
+        this.deductionPercentage = BigDecimal.valueOf(scoreResponse.getDeductionPercentage());
+
+        this.time = scoreResponse.getTime();
+        this.hitFactor = scoreResponse.getHitFactor();
+        this.stagePoints = BigDecimal.valueOf(scoreResponse.getFinalScore());
+
+        this.isDisqualified = scoreResponse.getIsDisqualified();
+
+        this.dateUpdated = scoreResponse.getLastModified();
+    }
 
     @Override
     public String toString() {

@@ -9,10 +9,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import za.co.hpsc.web.constants.IpscConstants;
-import za.co.hpsc.web.domain.Club;
-import za.co.hpsc.web.domain.Competitor;
-import za.co.hpsc.web.domain.Match;
-import za.co.hpsc.web.domain.MatchStage;
+import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -22,10 +19,7 @@ import za.co.hpsc.web.repositories.MatchStageRepository;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -71,10 +65,10 @@ public class TransactionServiceImpl implements TransactionService {
 
             Match match = optionalMatch.get();
             List<MatchStage> matchStages = modifyStages(match, ipscResponse.getStages());
-            List<ScoreResponse> scoreResponses = filterScores(ipscResponse.getScores(), match.getLastUpdated());
+            List<ScoreResponse> scoreResponses = filterScores(ipscResponse.getScores(), match.getDateUpdated());
             modifyScores(match, matchStages, scoreResponses, ipscResponse.getMembers());
 
-            match.setLastUpdated(LocalDateTime.now());
+            match.setDateUpdated(LocalDateTime.now());
             matchRepository.save(match);
             transactionManager.commit(transaction);
 
@@ -137,7 +131,7 @@ public class TransactionServiceImpl implements TransactionService {
         Match match = findMatch(ipscResponse.getMatch()).orElse(null);
         boolean ipscMatchExists = (match != null);
         boolean ipscResponseHasNewerScore = false;
-        LocalDateTime matchLastUpdated = (match != null ? match.getLastUpdated() : LocalDateTime.now());
+        LocalDateTime matchLastUpdated = (match != null ? match.getDateUpdated() : LocalDateTime.now());
 
         // Skips update if no newer score; otherwise creates match
         if (ipscMatchExists) {
@@ -199,11 +193,25 @@ public class TransactionServiceImpl implements TransactionService {
                 .toList();
 
         // Initialises competitor attributes
-        List<Competitor> competitors = new ArrayList<>();
+        Map<Integer, Competitor> competitorMap = new HashMap<>();
         scoreMembers.forEach(memberResponse -> {
             Competitor competitor = findCompetitor(memberResponse).orElse(new Competitor());
             competitor.init(memberResponse);
-            competitors.add(competitor);
+            competitorMap.put(memberResponse.getMemberId(), competitor);
+        });
+
+        // Find the match overall and stage results
+        competitorMap.keySet().forEach(memberId -> {
+            Competitor competitor = competitorMap.get(memberId);
+            List<ScoreResponse> scores = scoreResponses.stream()
+                    .filter(sr -> sr.getMemberId().equals(memberId))
+                    .toList();
+
+
+            MatchCompetitor matchCompetitor = new MatchCompetitor(competitor, match);
+            matchStages.forEach(matchStage -> {
+                MatchStageCompetitor matchStageCompetitor = new MatchStageCompetitor(matchCompetitor, matchStage);
+            });
         });
     }
 

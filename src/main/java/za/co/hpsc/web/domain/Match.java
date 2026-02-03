@@ -60,12 +60,15 @@ public class Match {
     private List<MatchCompetitor> matchCompetitors;
 
     @NotNull
-    private LocalDateTime lastUpdated;
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
 
     public void init(Club club, MatchResponse matchResponse) {
         this.club = club;
         this.name = matchResponse.getMatchName();
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
+
+        this.dateCreated = LocalDateTime.now();
 
         // TODO: populate division and category
     }
