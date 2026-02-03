@@ -14,8 +14,8 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.IpscService;
-import za.co.hpsc.web.services.MatchService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
@@ -27,11 +27,11 @@ import java.util.List;
 @Service
 public class IpscServiceImpl implements IpscService {
 
-    protected final MatchService matchService;
+    protected final IpscMatchService ipscMatchService;
     protected final TransactionService transactionService;
 
-    public IpscServiceImpl(MatchService matchService, TransactionService transactionService) {
-        this.matchService = matchService;
+    public IpscServiceImpl(IpscMatchService ipscMatchService, TransactionService transactionService) {
+        this.ipscMatchService = ipscMatchService;
         this.transactionService = transactionService;
     }
 
@@ -52,12 +52,12 @@ public class IpscServiceImpl implements IpscService {
         }
 
         // Calculates and saves results
-        IpscResponseHolder ipscResponseHolder = matchService.mapMatchResults(ipscRequestHolder);
+        IpscResponseHolder ipscResponseHolder = ipscMatchService.mapMatchResults(ipscRequestHolder);
         if (ipscResponseHolder == null) {
             log.error("IPSC response holder is null.");
             throw new ValidationException("IPSC response holder can not be null.");
         }
-        ipscResponseHolder.getIpscList().forEach(matchService::calculateMatchResultsSummary);
+        ipscResponseHolder.getIpscList().forEach(ipscMatchService::calculateMatchResultsSummary);
         ipscResponseHolder.getIpscList().forEach(transactionService::saveMatchResults);
 
         // Returns a success message

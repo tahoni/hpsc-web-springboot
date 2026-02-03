@@ -1,6 +1,5 @@
-package za.co.hpsc.web.domain;
+package za.co.hpsc.web.models.match;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +8,7 @@ import lombok.Setter;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
  *
  * <p>
  * The {@code MatchCompetitor} class serves as an entity in the persistence layer, linking the
- * {@link Competitor} and {@link Match} entities while storing additional data such as the competitor's
+ * {@link CompetitorDto} and {@link MatchDto} entities while storing additional data such as the competitor's
  * division, discipline, power factor, and performance metrics (e.g., match points and percentage).
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to provide a concise string representation
@@ -30,26 +30,17 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class MatchCompetitor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+// TOOO: fix Javadoc
+public class MatchCompetitorDto {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "competitor_id")
-    private Competitor competitor;
+    private CompetitorDto competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "match_id")
-    private Match match;
+    private MatchDto match;
 
-    @Enumerated(EnumType.STRING)
     private Division division;
-    @Enumerated(EnumType.STRING)
     private Discipline discipline;
-    @Enumerated(EnumType.STRING)
     private PowerFactor powerFactor;
 
     private BigDecimal matchPoints;
@@ -64,9 +55,16 @@ public class MatchCompetitor {
      * @param competitor the competitor participating in the match. Must not be null
      * @param match      the match in which the competitor is participating. Must not be null
      */
-    public MatchCompetitor(@NotNull Competitor competitor, @NotNull Match match) {
+    public MatchCompetitorDto(@NotNull CompetitorDto competitor, @NotNull MatchDto match) {
         this.competitor = competitor;
         this.match = match;
+    }
+
+    public void init(ScoreResponse scoreResponse) {
+        this.matchPoints = BigDecimal.valueOf(scoreResponse.getFinalScore());
+        this.dateUpdated = scoreResponse.getLastModified();
+
+        // TODO: populate category, division, discipline, power factor
     }
 
     public String toString() {

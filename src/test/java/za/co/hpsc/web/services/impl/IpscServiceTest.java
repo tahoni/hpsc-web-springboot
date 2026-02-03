@@ -10,7 +10,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
-import za.co.hpsc.web.services.MatchService;
+import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +23,7 @@ public class IpscServiceTest {
     @Mock
     private TransactionService transactionService;
     @Mock
-    private MatchService matchService;
+    private IpscMatchService ipscMatchService;
 
     @InjectMocks
     private IpscServiceImpl ipscService;
@@ -51,7 +51,7 @@ public class IpscServiceTest {
                 """;
 
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder();
-        when(matchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
 
         // Act
@@ -84,7 +84,7 @@ public class IpscServiceTest {
                 }
                 """;
 
-        when(matchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(null);
 
         // Act & Assert

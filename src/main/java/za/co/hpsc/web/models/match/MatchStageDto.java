@@ -1,14 +1,12 @@
-package za.co.hpsc.web.domain;
+package za.co.hpsc.web.models.match;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.helpers.MatchHelpers;
-
-import java.util.List;
+import za.co.hpsc.web.domain.MatchStage;
+import za.co.hpsc.web.models.ipsc.response.StageResponse;
 
 /**
  * Represents a stage within a match, encompassing details about its associated match,
@@ -27,28 +25,33 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class MatchStage {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+// TOOO: fix Javadoc
+public class MatchStageDto {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "match_id")
-    private Match match;
+    private MatchDto match;
 
     @NotNull
-    @Column(nullable = false)
     private Integer stageNumber;
     private String stageName;
     private Integer rangeNumber;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MatchStageCompetitor> matchStageCompetitors;
+    public MatchStageDto(MatchStage matchStage, MatchDto matchDto) {
+        this.id = matchStage.getId();
+        this.match = matchDto;
+        this.stageNumber = matchStage.getStageNumber();
+        this.stageName = matchStage.getStageName();
+    }
+
+    public void init(@NotNull MatchDto match, @NotNull StageResponse stageResponse) {
+        this.match = match;
+        this.stageNumber = stageResponse.getStageId();
+        this.stageName = stageResponse.getStageName();
+    }
 
     @Override
     public String toString() {
-        return MatchHelpers.getMatchStageDisplayName(this);
+        return stageNumber + " for " + match.toString();
     }
 }

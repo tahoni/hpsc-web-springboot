@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.response.ClubResponse;
-import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;
 
@@ -41,17 +39,6 @@ public class Club {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Match> matches;
-
-    /**
-     * Initialises the club entity with details from a given {@code ClubResponse} object.
-     *
-     * @param clubResponse the {@code ClubResponse} object containing the club's name
-     *                     and abbreviation. Must not be null.
-     */
-    public void init(@NotNull ClubResponse clubResponse) {
-        this.name = ValueUtil.nullAsEmptyString(clubResponse.getClubName());
-        this.abbreviation = clubResponse.getClubCode();
-    }
 
     @Override
     public String toString() {

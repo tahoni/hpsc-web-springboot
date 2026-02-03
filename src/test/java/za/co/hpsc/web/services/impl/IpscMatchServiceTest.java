@@ -18,10 +18,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MatchServiceTest {
+public class IpscMatchServiceTest {
 
     @InjectMocks
-    private MatchServiceImpl matchService;
+    private IpscMatchServiceImpl matchService;
 
     @Test
     void testMapMatchResults_withValidData_thenReturnsIpscResponses() {

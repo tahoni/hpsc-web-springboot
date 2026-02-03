@@ -1,15 +1,16 @@
-package za.co.hpsc.web.domain;
+package za.co.hpsc.web.models.match;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.math.NumberUtils;
+import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Represents a competitor in the system, which maintains details about its name,
@@ -29,30 +30,46 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class Competitor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+// TOOO: fix Javadoc
+public class CompetitorDto {
     private Long id;
 
     @NotNull
-    @Column(nullable = false)
     private String firstName;
     @NotNull
-    @Column(nullable = false)
     private String lastName;
     private String middleNames;
     private Integer sapsaNumber;
     @NotNull
-    @Column(nullable = false)
     private String competitorNumber;
     private LocalDate dateOfBirth;
 
-    @Enumerated(EnumType.STRING)
     private CompetitorCategory category = CompetitorCategory.NONE;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MatchCompetitor> competitorMatches;
+    public CompetitorDto(Competitor competitor) {
+        this.id = competitor.getId();
+        this.firstName = competitor.getFirstName();
+        this.lastName = competitor.getLastName();
+        this.middleNames = competitor.getMiddleNames();
+        this.competitorNumber = competitor.getCompetitorNumber();
+        this.dateOfBirth = competitor.getDateOfBirth();
+        this.category = competitor.getCategory();
+    }
+
+    public void init(MemberResponse memberResponse) {
+        this.firstName = memberResponse.getFirstName();
+        this.lastName = memberResponse.getLastName();
+        this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
+
+        // Initialises competitor number and SAPSA number based on the member's
+        // reference number and ICS alias'
+        this.competitorNumber = memberResponse.getIcsAlias();
+        if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
+            this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+        }
+
+        // TODO: populate category
+    }
 
     @Override
     public String toString() {
