@@ -6,5 +6,6 @@ import java.util.Optional;
 
 // TODO: Javadoc
 public interface MatchStageCompetitorService {
-    Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchId, Long matchStageId, Long competitorId);
+    Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchId, Long matchStageId,
+                                                            Long competitorId);
 }

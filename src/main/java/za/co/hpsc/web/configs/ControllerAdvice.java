@@ -42,14 +42,17 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ControllerResponse> handleGeneralException(Exception ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ControllerResponse> handleGeneralException(Exception ex,
+                                                                     WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
     /**
-     * Handles exceptions of type {@link RuntimeException} that occur during the processing of requests.
+     * Handles exceptions of type {@link RuntimeException} that occur during the
+     * processing of requests.
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to provide feedback to the client.
      *
@@ -60,8 +63,10 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ControllerResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ControllerResponse> handleRuntimeException(RuntimeException ex,
+                                                                     WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -78,8 +83,10 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ControllerResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleIllegalArgumentException(IllegalArgumentException ex,
+                                                                             WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -96,8 +103,10 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MismatchedInputException.class)
-    public ResponseEntity<ControllerResponse> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleMismatchedInputException(MismatchedInputException ex,
+                                                                             WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -114,8 +123,10 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CsvReadException.class)
-    public ResponseEntity<ControllerResponse> handleCsvReadException(CsvReadException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleCsvReadException(CsvReadException ex,
+                                                                     WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

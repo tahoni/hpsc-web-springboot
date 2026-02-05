@@ -82,7 +82,8 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards. If null, it defaults to an empty list.
      */
-    public AwardCeremonyResponse(UUID uuid, LocalDate date, String imageFilePath, List<AwardResponse> awards) {
+    public AwardCeremonyResponse(UUID uuid, LocalDate date, String imageFilePath,
+                                 List<AwardResponse> awards) {
         super(uuid);
         this.date = date;
         this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);

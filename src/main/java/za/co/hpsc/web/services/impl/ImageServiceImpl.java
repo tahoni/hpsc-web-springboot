@@ -86,7 +86,9 @@ public class ImageServiceImpl implements ImageService {
     }
 
     /**
-     * Maps a list of {@link ImageRequest} objects to a list of {@link ImageResponse} objects.     * Each {@link ImageRequest} object in the input list is transformed into a corresponding
+     * Maps a list of {@link ImageRequest} objects to a list of {@link ImageResponse} objects.
+     * Each {@link ImageRequest} object in the input list is transformed into a corresponding
+     * {@link ImageResponse} object.
      *
      * <p>
      * If the input list is null, an empty list is returned.

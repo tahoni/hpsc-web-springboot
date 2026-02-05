@@ -52,8 +52,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *
      * @param ipscRequestHolder the container for all IPSC-related input requests, including
      *                          stages, tags, scores, enrolled members, and more
-     * @param match             the match data used to identify and extract the corresponding subsets of stages,
-     *                          tags, scores, and enrolled members
+     * @param match             the match data used to identify and extract the corresponding subsets
+     *                          of stages, tags, scores, and enrolled members
      * @return an {@link IpscResponse} object containing the filtered data associated with the
      * provided match
      */

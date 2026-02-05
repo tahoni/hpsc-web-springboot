@@ -61,7 +61,8 @@ public class ControllerResponse {
      * @param error     a description of any error associated with the response.
      *                  Can be null.
      */
-    public ControllerResponse(@NotNull LocalDateTime timestamp, boolean success, String message, String error) {
+    public ControllerResponse(@NotNull LocalDateTime timestamp, boolean success, String message,
+                              String error) {
         this.timestamp = timestamp;
         this.success = success;
         this.message = message;

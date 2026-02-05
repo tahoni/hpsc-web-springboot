@@ -14,7 +14,7 @@ public final class DivisionToDisciplinesInDivisionMapper {
     private static final Map<Division, DisciplinesInDivision> MAPPING = buildMapping();
 
     private DivisionToDisciplinesInDivisionMapper() {
-        // Utility class
+        // Utility class, not be instantiated
     }
 
     /**
@@ -34,7 +34,8 @@ public final class DivisionToDisciplinesInDivisionMapper {
 
         DisciplinesInDivision result = MAPPING.get(division);
         if (result == null) {
-            throw new IllegalStateException("No DisciplinesInDivision mapping found for division: " + division);
+            throw new IllegalStateException("No DisciplinesInDivision mapping found for division: " +
+                    division);
         }
 
         return result;

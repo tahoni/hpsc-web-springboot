@@ -11,7 +11,8 @@ import java.util.Optional;
 @Service
 public class MatchStageCompetitorServiceImpl implements MatchStageCompetitorService {
     @Override
-    public Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchId, Long matchStageId, Long competitorId) {
+    public Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchId, Long matchStageId,
+                                                                   Long competitorId) {
         return Optional.empty();
     }
 }

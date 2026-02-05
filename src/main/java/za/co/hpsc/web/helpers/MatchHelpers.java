@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public final class MatchHelpers {
     private MatchHelpers() {
-        // Utility class
+        // Utility class, not to be instantiated
     }
 
     /**
