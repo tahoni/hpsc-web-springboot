@@ -49,7 +49,7 @@ public enum MatchCategory {
     /**
      * Retrieves the display name associated with this match category.
      *
-     * @return the display name of the match category
+     * @return the display name of the match category.
      */
     public String getDisplayName() {
         return this.name;

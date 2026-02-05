@@ -23,9 +23,9 @@ public class AwardPlacing extends Placing {
      * Constructs an {@code AwardPlacing} instance with the specified place, name,
      * and image file path.
      *
-     * @param place         the ordinal position or rank for this award placement
-     * @param name          the name or title associated with this award placement
-     * @param imageFilePath the file path of the image associated with this award placement
+     * @param place         the ordinal position or rank for this award placement.
+     * @param name          the name or title associated with this award placement.
+     * @param imageFilePath the file path of the image associated with this award placement.
      */
     public AwardPlacing(int place, String name, String imageFilePath) {
         super(place, name);

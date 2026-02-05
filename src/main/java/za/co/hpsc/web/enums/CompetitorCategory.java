@@ -40,9 +40,9 @@ public enum CompetitorCategory {
      * If the provided name is null, blank, or does not match any category,
      * the method returns {@code NONE}.
      *
-     * @param name the name of the category to retrieve, case-insensitive
+     * @param name the name of the category to retrieve, case-insensitive.
      * @return the {@code CompetitorCategory} matching the given name, or {@code NONE}
-     * if no match is found
+     * if no match is found.
      */
     public static CompetitorCategory getByName(String name) {
         if ((name == null) || (name.isBlank())) {
@@ -60,7 +60,7 @@ public enum CompetitorCategory {
      * Retrieves the display name associated with the current enum constant.
      * If the display name is not explicitly defined, an empty string will be returned.
      *
-     * @return the display name of the enum constant, or an empty string if not defined
+     * @return the display name of the enum constant, or an empty string if not defined.
      */
     public String getDisplayName() {
         return this.name;

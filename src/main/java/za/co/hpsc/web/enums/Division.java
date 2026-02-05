@@ -68,7 +68,7 @@ public enum Division {
     /**
      * Retrieves the primary display name associated with this division.
      *
-     * @return the first name in the list of names representing the division
+     * @return the first name in the list of names representing the division.
      */
     public String getDisplayName() {
         return this.names.getFirst();

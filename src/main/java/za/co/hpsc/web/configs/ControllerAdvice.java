@@ -35,10 +35,10 @@ public class ControllerAdvice {
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to provide comprehensive feedback to the client.
      *
-     * @param ex      the exception that was thrown
-     * @param request the current web request context
+     * @param ex      the exception that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 500 (Internal Server Error)
+     * with HTTP status 500 (Internal Server Error).
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
@@ -56,10 +56,10 @@ public class ControllerAdvice {
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to provide feedback to the client.
      *
-     * @param ex      the runtime exception that was thrown
-     * @param request the current web request context
+     * @param ex      the runtime exception that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 500 (Internal Server Error)
+     * with HTTP status 500 (Internal Server Error).
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
@@ -76,10 +76,10 @@ public class ControllerAdvice {
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to notify the client of a bad request.
      *
-     * @param ex      the {@link IllegalArgumentException} that was thrown
-     * @param request the current web request context
+     * @param ex      the {@link IllegalArgumentException} that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request)
+     * with HTTP status 400 (Bad Request).
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
@@ -96,10 +96,10 @@ public class ControllerAdvice {
      * message, a timestamp, and details about the mismatched input, providing feedback
      * to the client about the bad request.
      *
-     * @param ex      the {@link MismatchedInputException}, that was thrown
-     * @param request the current web request context
+     * @param ex      the {@link MismatchedInputException}, that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request)
+     * with HTTP status 400 (Bad Request).
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MismatchedInputException.class)
@@ -116,10 +116,10 @@ public class ControllerAdvice {
      * error message, a timestamp, and additional error details to notify the
      * client of a bad request.
      *
-     * @param ex      the {@link CsvReadException} that was thrown
-     * @param request the current web request context
+     * @param ex      the {@link CsvReadException} that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request)
+     * with HTTP status 400 (Bad Request).
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CsvReadException.class)

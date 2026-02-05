@@ -25,7 +25,7 @@ public interface IpscMatchService {
      * @return A list of {@link IpscResponse} objects that encapsulate the mapped data, including
      * match details, associated tags, stages, enrolled members, scores, members, and club
      * information.
-     * @throws ValidationException if the input data is invalid or cannot be processed
+     * @throws ValidationException if the input data is invalid or cannot be processed.
      */
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;

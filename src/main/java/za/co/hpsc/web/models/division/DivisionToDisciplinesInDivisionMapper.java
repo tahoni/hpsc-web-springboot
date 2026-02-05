@@ -46,7 +46,7 @@ public final class DivisionToDisciplinesInDivisionMapper {
     }
 
     /**
-     * Builds immutable division‑to‑disciplines mapping
+     * Builds immutable division‑to‑disciplines mapping.
      */
     private static Map<Division, DisciplinesInDivision> buildMapping() {
         EnumMap<Division, DisciplinesInDivision> map = new EnumMap<>(Division.class);

@@ -51,11 +51,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * request holder based on the given match details.
      *
      * @param ipscRequestHolder the container for all IPSC-related input requests, including
-     *                          stages, tags, scores, enrolled members, and more
+     *                          stages, tags, scores, enrolled members, and more.
      * @param match             the match data used to identify and extract the corresponding subsets
-     *                          of stages, tags, scores, and enrolled members
+     *                          of stages, tags, scores, and enrolled members.
      * @return an {@link IpscResponse} object containing the filtered data associated with the
-     * provided match
+     * provided match.
      */
     protected IpscResponse createBasicMatch(IpscRequestHolder ipscRequestHolder, MatchRequest match) {
         // Create the match response
@@ -90,9 +90,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * </p>
      *
      * @param ipscResponse      the IPSC response object to which the filtered members
-     *                          will be assigned
+     *                          will be assigned.
      * @param ipscRequestHolder the request holder containing scores and members to be
-     *                          filtered and matched
+     *                          filtered and matched.
      */
     protected void addMembersToMatch(IpscResponse ipscResponse, IpscRequestHolder ipscRequestHolder) {
         // Filters members by members with scores
@@ -117,9 +117,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * </p>
      *
      * @param ipscResponse      the IPSC response containing the match details, including the club ID
-     *                          to match against the provided club data
+     *                          to match against the provided club data.
      * @param ipscRequestHolder the request holder that contains the list of clubs to be searched
-     *                          for a match
+     *                          for a match.
      */
     protected void addClubToMatch(IpscResponse ipscResponse, IpscRequestHolder ipscRequestHolder) {
         Integer clubId = ipscResponse.getMatch().getClubId();
