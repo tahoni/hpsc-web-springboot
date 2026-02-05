@@ -15,10 +15,11 @@ import java.util.List;
  *
  * <p>
  * This class aggregates various components such as club details, match information, stages, tags,
- * members, enrolled members, and scores. It acts as a single response object to encapsulate all data
- * related to matches and participants in an IPSC event.
+ * members, enrolled members, and scores. It acts as a single response object to encapsulate all
+ * data related to matches and participants in an IPSC event.
  * The class provides constructors to transform and initialise the encapsulated data from
- * request objects. Additionally, it includes functionality to update the list of members dynamically.
+ * request objects. Additionally, it includes functionality to update the list of members
+ * dynamically.
  * </p>
  */
 @Getter
@@ -44,8 +45,8 @@ public class IpscResponse {
      *                         to initialise the {@code match} field.
      * @param stageRequests    a list of {@link StageRequest} objects, representing stage data
      *                         to initialise the {@code stages} field.
-     * @param enrolledRequests a list of {@link EnrolledRequest} objects, representing enrolled member
-     *                         data to initialise the {@code enrolledMembers} field.
+     * @param enrolledRequests a list of {@link EnrolledRequest} objects, representing enrolled
+     *                         member data to initialise the {@code enrolledMembers} field.
      * @param scoreRequests    a list of {@link ScoreRequest} objects, representing scoring data
      *                         to initialise the {@code scores} field.
      */

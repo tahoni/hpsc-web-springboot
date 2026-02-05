@@ -126,7 +126,8 @@ public class MatchResultServiceImpl implements MatchResultService {
                 .map(ScoreResponse::getMemberId)
                 .collect(Collectors.toSet());
         List<MemberResponse> scoreMembers = memberResponses.stream()
-                .filter(memberResponse -> memberIdsWithScores.contains(memberResponse.getMemberId()))
+                .filter(memberResponse -> memberIdsWithScores
+                        .contains(memberResponse.getMemberId()))
                 .toList();
 
         // Initialises competitor attributes
@@ -160,7 +161,8 @@ public class MatchResultServiceImpl implements MatchResultService {
             // Find the stage results
             matchResultsDto.getStages().forEach(stageDto -> {
                 Optional<ScoreResponse> optionalStageScoreResponse = scores.stream()
-                        .filter(scoreResponse -> stageDto.getStageNumber().equals(scoreResponse.getStageId()))
+                        .filter(scoreResponse -> stageDto.getStageNumber()
+                                .equals(scoreResponse.getStageId()))
                         .findFirst();
                 if (optionalStageScoreResponse.isPresent()) {
                     MatchStageCompetitorDto matchStageCompetitorDto =

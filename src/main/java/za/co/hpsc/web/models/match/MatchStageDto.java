@@ -35,8 +35,8 @@ public class MatchStageDto {
     private Integer rangeNumber;
 
     /**
-     * Constructs a new {@code MatchStageDto} instance using the provided {@link MatchStage} entity
-     * and {@link MatchDto} object.
+     * Constructs a new {@code MatchStageDto} instance using the provided
+     * {@link MatchStage} entity and {@link MatchDto} object.
      *
      * @param matchStage the {@link MatchStage} entity containing stage-related information,
      *                   such as the unique identifier, stage number, and stage name.
@@ -52,8 +52,8 @@ public class MatchStageDto {
     }
 
     /**
-     * Initialises the current {@code MatchStageDto} instance using the provided {@link MatchDto} object
-     * and {@link StageResponse} object.
+     * Initialises the current {@code MatchStageDto} instance using the provided
+     * {@link MatchDto} object and {@link StageResponse} object.
      *
      * @param match         the {@link MatchDto} object representing the associated match.
      *                      Must not be null.
