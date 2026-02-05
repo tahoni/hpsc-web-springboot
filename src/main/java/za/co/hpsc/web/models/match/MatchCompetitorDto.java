@@ -15,23 +15,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Represents the relationship between a competitor and a specific match,
- * along with specific details about the competitor's performance in the match.
+ * Data Transfer Object (DTO) representing the association between a competitor and a match.
  *
  * <p>
- * The {@code MatchCompetitor} class serves as an entity in the persistence layer, linking the
- * {@link CompetitorDto} and {@link MatchDto} entities while storing additional data such as the competitor's
- * division, discipline, power factor, and performance metrics (e.g., match points and percentage).
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to provide a concise string representation
- * that includes the match and competitor details.
+ * The {@code MatchCompetitorDto} class encapsulates data related to a competitor's
+ * participation in a specific match.
+ * It includes division, discipline, power factor, and scoring details.
+ * Additionally, it holds references to the associated competitor and match entities.
+ * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// TOOO: fix Javadoc
 public class MatchCompetitorDto {
     private Long id;
 
@@ -50,20 +47,19 @@ public class MatchCompetitorDto {
     private LocalDateTime dateUpdated;
 
     /**
-     * Constructs a new instance of the MatchCompetitor class, linking a competitor
-     * to a specific match.
+     * Constructs a new {@code MatchCompetitorDto} instance, associating a competitor with a match.
      *
-     * @param competitor the competitor participating in the match. Must not be null
-     * @param match      the match in which the competitor is participating. Must not be null
+     * @param competitor the {@link CompetitorDto} representing the competitor in the match.
+     *                   Must not be null.
+     * @param match      the {@link MatchDto} representing the match in which the
+     *                   competitor participates. Must not be null.
      */
     public MatchCompetitorDto(@NotNull CompetitorDto competitor, @NotNull MatchDto match) {
         this.competitor = competitor;
         this.match = match;
     }
 
-    /**
-     * Initializes aggregate score from multiple score responses
-     */
+    // TODO: Javadoc
     public void init(List<ScoreResponse> scoreResponses) {
         // Initializes aggregate score from multiple score responses
         this.matchPoints = BigDecimal.valueOf(scoreResponses.stream()

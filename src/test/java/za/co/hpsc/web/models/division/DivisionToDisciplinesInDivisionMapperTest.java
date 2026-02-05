@@ -2,9 +2,6 @@ package za.co.hpsc.web.models.division;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.models.ipsc.division.DisciplinesHandgun;
-import za.co.hpsc.web.models.ipsc.division.DisciplinesInDivision;
-import za.co.hpsc.web.models.ipsc.division.DivisionToDisciplinesInDivisionMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 

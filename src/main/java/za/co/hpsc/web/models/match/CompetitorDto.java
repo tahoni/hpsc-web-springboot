@@ -13,24 +13,20 @@ import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 import java.time.LocalDate;
 
 /**
- * Represents a competitor in the system, which maintains details about its name,
- * competitor number, category, and associated matches.
+ * Data Transfer Object (DTO) representing a competitor's information.
  *
  * <p>
- * The {@code Competitor} class serves as an entity in the persistence layer and is used to
- * encapsulate data related to a competitor, such as their name, unique identifier,
- * competitor number, category, and other details. It also maintains a list of matches
- * associated with the competitor.
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to provide a formatted string
- * representation of the competitor's name, including middle names if available.
+ * The {@code CompetitorDto} class is used to transfer competitor-related data between various layers
+ * of the application.
+ * It encapsulates details such as the competitor's name, unique identifiers, date of birth,
+ * and competitor category.
+ * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// TOOO: fix Javadoc
 public class CompetitorDto {
     private Long id;
 
@@ -46,11 +42,20 @@ public class CompetitorDto {
 
     private CompetitorCategory category = CompetitorCategory.NONE;
 
-    public CompetitorDto(Competitor competitor) {
+    /**
+     * Constructs a new {@code CompetitorDto} instance with data from the provided
+     * {@link Competitor} entity.
+     *
+     * @param competitor the {@link Competitor} entity containing the competitor's information,
+     *                   such as unique identifier, first name, last name, middle names,
+     *                   competitor number, date of birth, and category. Must not be null.
+     */
+    public CompetitorDto(@NotNull Competitor competitor) {
         this.id = competitor.getId();
         this.firstName = competitor.getFirstName();
         this.lastName = competitor.getLastName();
         this.middleNames = competitor.getMiddleNames();
+        this.sapsaNumber = competitor.getSapsaNumber();
         this.competitorNumber = competitor.getCompetitorNumber();
         this.dateOfBirth = competitor.getDateOfBirth();
         this.category = competitor.getCategory();

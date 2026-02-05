@@ -9,23 +9,20 @@ import za.co.hpsc.web.domain.MatchStage;
 import za.co.hpsc.web.models.ipsc.response.StageResponse;
 
 /**
- * Represents a stage within a match, encompassing details about its associated match,
- * stage number, range number, and the competitors within the stage.
+ * Data Transfer Object (DTO) representing a specific stage in a shooting match.
  *
  * <p>
- * The {@code MatchStage} class is an entity in the persistence layer, used to store and
- * retrieve information regarding individual stages of a match. Each stage is uniquely
- * identified and linked to a specific match.
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to return a context-specific
- * representation of the stage.
+ * The {@code MatchStageDto} class encapsulates data related to an individual stage
+ * in a shooting match.
+ * It includes details such as the stage's unique identifier, associated match, stage number,
+ * stage name, and range number.
+ * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// TOOO: fix Javadoc
 public class MatchStageDto {
     private Long id;
 
@@ -37,13 +34,32 @@ public class MatchStageDto {
     private String stageName;
     private Integer rangeNumber;
 
-    public MatchStageDto(MatchStage matchStage, MatchDto matchDto) {
+    /**
+     * Constructs a new {@code MatchStageDto} instance using the provided {@link MatchStage} entity
+     * and {@link MatchDto} object.
+     *
+     * @param matchStage the {@link MatchStage} entity containing stage-related information,
+     *                   such as the unique identifier, stage number, and stage name.
+     *                   Must not be null.
+     * @param matchDto   the {@link  MatchDto} object representing the associated match.
+     *                   Must not be null.
+     */
+    public MatchStageDto(@NotNull MatchStage matchStage, @NotNull MatchDto matchDto) {
         this.id = matchStage.getId();
         this.match = matchDto;
         this.stageNumber = matchStage.getStageNumber();
         this.stageName = matchStage.getStageName();
     }
 
+    /**
+     * Initialises the current {@code MatchStageDto} instance using the provided {@link MatchDto} object
+     * and {@link StageResponse} object.
+     *
+     * @param match         the {@link MatchDto} object representing the associated match.
+     *                      Must not be null.
+     * @param stageResponse the {@link StageResponse} object containing stage-related
+     *                      data, including stage ID and stage name. Must not be null.
+     */
     public void init(@NotNull MatchDto match, @NotNull StageResponse stageResponse) {
         this.match = match;
         this.stageNumber = stageResponse.getStageId();

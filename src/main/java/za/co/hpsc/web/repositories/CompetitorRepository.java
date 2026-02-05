@@ -10,6 +10,4 @@ public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
     Optional<Competitor> findBySapsaNumber(Integer icsAlias);
 
     List<Competitor> findAllByFirstNameAndLastName(String firstName, String lastName);
-
-    Optional<Competitor> findByCompetitorNumber(String icsAlias);
 }

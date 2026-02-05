@@ -11,23 +11,21 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Represents the relationship between a competitor and a specific match stage,
- * along with performance metrics specific to that stage.
+ * Data Transfer Object (DTO) representing the association between a competitor and a match stage,
+ * along with performance metrics and scoring details.
  *
  * <p>
- * The {@code MatchStageCompetitor} class serves as an entity in the persistence layer,
- * linking a competitor ({@link MatchCompetitorDto}) and a match stage ({@link MatchStageDto})
- * while storing detailed performance data for the competitor in the stage.
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to provide a human-readable string
- * representation containing details about the match stage and competitor involved.
+ * The {@code MatchStageCompetitorDto} class encapsulates data related to a competitor's
+ * performance on a specific stage of a match.
+ * It includes scores, penalties, points, time, hit factor, and other related performance metrics.
+ * Additionally, it holds references to the associated competitor and match stage entities.
+ * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// TOOO: fix Javadoc
 public class MatchStageCompetitorDto {
     private Long id;
 
@@ -59,20 +57,27 @@ public class MatchStageCompetitorDto {
     private LocalDateTime dateUpdated;
 
     /**
-     * Constructs a new instance of the {@code MatchStageCompetitor} class, representing
-     * the association between a specific match competitor and a match stage.
+     * Constructs a new {@code MatchStageCompetitorDto} instance, associating a competitor
+     * with a match stage.
      *
-     * @param competitor the competitor participating in the match stage.
+     * @param competitor the {@link  CompetitorDto} representing the competitor in the match stage.
      *                   Must not be null.
-     * @param matchStage the match stage in which the competitor is participating.
-     *                   Must not be null.
+     * @param matchStage the {@link MatchStageDto} representing the match stage in which
+     *                   the competitor participates. Must not be null.
      */
     public MatchStageCompetitorDto(@NotNull CompetitorDto competitor, @NotNull MatchStageDto matchStage) {
         this.competitor = competitor;
         this.matchStage = matchStage;
     }
 
-    public void init(ScoreResponse scoreResponse) {
+    /**
+     * Initialises the current {@code MatchStageDto} instance with data from the provided
+     * {@link ScoreResponse} object.
+     *
+     * @param scoreResponse the {@link ScoreResponse} object containing performance metrics
+     *                      and detailed scoring information. Must not be null.
+     */
+    public void init(@NotNull ScoreResponse scoreResponse) {
         this.scoreA = scoreResponse.getScoreA();
         this.scoreB = scoreResponse.getScoreB();
         this.scoreC = scoreResponse.getScoreC();

@@ -17,7 +17,7 @@ import java.util.List;
  * Represents a member request within the system.
  *
  * <p>
- * The class maps to the `MEMBERS.XML` content in the `WinMSS.cab` file.
+ * The class maps to the `MEMBER.XML` content in the `WinMSS.cab` file.
  * It stores information about members in the system.
  * </p>
  */

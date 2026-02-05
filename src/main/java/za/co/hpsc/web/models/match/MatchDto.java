@@ -14,23 +14,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Represents a match within the system, encapsulating details about the match's
- * associated club, name, scheduled date, division, category, stages, and competitors.
+ * Data Transfer Object (DTO) representing a shooting match.
  *
  * <p>
- * The {@code Match} class is an entity in the persistence layer, used to store and
- * retrieve match-related data. It enables associations with other entities such as
- * {@link ClubDto}, {@link MatchStageDto}, and {@link MatchCompetitorDto}.
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to return a context-specific
- * representation of the match's display name.
+ * The {@code MatchDto} class is used to transfer match-related data between various layers
+ * of the application.
+ * It encapsulates details such as the match's unique identifier, associated club, name,
+ * scheduled date, division, category, and timestamps for creation and updates.
+ * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// TOOO: fix Javadoc
 public class MatchDto {
     private Long id;
 
@@ -48,7 +45,17 @@ public class MatchDto {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    public MatchDto(Match match, ClubDto club) {
+    /**
+     * Constructs a new {@code MatchDto} instance using the provided {@link Match} entity
+     * and {@link ClubDto} object.
+     *
+     * @param match the {@link Match} entity containing match-related information such as
+     *              the unique identifier, name, scheduled date, division, category,
+     *              creation timestamp, and update timestamp. Must not be null.
+     * @param club  the {@link ClubDto} instance representing the club associated with the match.
+     *              Must not be null.
+     */
+    public MatchDto(@NotNull Match match, @NotNull ClubDto club) {
         this.id = match.getId();
         this.club = club;
         this.name = match.getName();
@@ -59,6 +66,7 @@ public class MatchDto {
         this.dateUpdated = match.getDateUpdated();
     }
 
+    // TODO: Javadoc
     public void init(MatchResponse matchResponse, ClubDto club) {
         this.club = club;
         this.name = matchResponse.getMatchName();

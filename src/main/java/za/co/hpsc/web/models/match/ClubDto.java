@@ -10,22 +10,19 @@ import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 import za.co.hpsc.web.utils.ValueUtil;
 
 /**
- * Represents a club within the system, which maintains details about its name, abbreviation,
- * and associated matches.
+ * Data Transfer Object (DTO) representing a club's information.
  *
  * <p>
- * The {@code Club} class serves as an entity in the persistence layer and is used to
- * encapsulate data related to a club, including its unique identifier, name, and a list of matches.
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to return the club's name as a
- * string representation.
+ * The {@code ClubDto} class is used to transfer club-related data between various layers
+ * of the application.
+ * It encapsulates details such as the club's unique identifier, name, and abbreviation.
+ * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// TOOO: fix Javadoc
 public class ClubDto {
     private Long id;
 
@@ -33,17 +30,26 @@ public class ClubDto {
     private String name;
     private String abbreviation;
 
-    public ClubDto(Club clubEntity) {
+    /**
+     * Constructs a new {@code ClubDto} instance with data from the provided
+     * {@link Club} entity.
+     *
+     * @param clubEntity the {@link Club} entity containing the club's information
+     *                   such as its unique identifier, name, and abbreviation.
+     *                   Must not be null.
+     */
+    public ClubDto(@NotNull Club clubEntity) {
         this.id = clubEntity.getId();
         this.name = clubEntity.getName();
         this.abbreviation = clubEntity.getAbbreviation();
     }
 
     /**
-     * Initialises the club entity with details from a given {@code ClubResponse} object.
+     * Initialises the current {@code ClubDto} instance with data from the provided
+     * {@link ClubResponse} object.
      *
-     * @param clubResponse the {@code ClubResponse} object containing the club's name
-     *                     and abbreviation. Must not be null.
+     * @param clubResponse the {@link ClubResponse} containing the club's name and abbreviation.
+     *                     Must not be null.
      */
     public void init(@NotNull ClubResponse clubResponse) {
         this.name = ValueUtil.nullAsEmptyString(clubResponse.getClubName());
