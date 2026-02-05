@@ -7,6 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.ClubRequest;
 
+/**
+ * Represents a response model for club-related data in the system.
+ *
+ * <p>
+ * This class encapsulates details such as name and other relevant fields. It provides
+ * functionality to populate its fields directly from an {@link ClubRequest} object.
+ * <.p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

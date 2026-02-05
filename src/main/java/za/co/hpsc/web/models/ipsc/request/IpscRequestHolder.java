@@ -8,6 +8,14 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents an IPSC request within the system.
+ *
+ * <p>
+ * It contains the contents of each XML file in the `WinMSS.cab` file as a request object,
+ * parsed from the raw string content.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

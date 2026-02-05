@@ -9,6 +9,18 @@ import za.co.hpsc.web.models.ipsc.request.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a comprehensive response model for IPSC (International Practical Shooting
+ * Confederation)-related data.
+ *
+ * <p>
+ * This class aggregates various components such as club details, match information, stages, tags,
+ * members, enrolled members, and scores. It acts as a single response object to encapsulate all data
+ * related to matches and participants in an IPSC event.
+ * The class provides constructors to transform and initialise the encapsulated data from
+ * request objects. Additionally, it includes functionality to update the list of members dynamically.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,7 +35,7 @@ public class IpscResponse {
     private List<ScoreResponse> scores = new ArrayList<>();
 
     /**
-     * Constructs a new {@code IpscResponse} instance by transforming and initializing the various
+     * Constructs a new {@code IpscResponse} instance by transforming and initialising the various
      * data components from the provided request objects.
      *
      * @param tagRequests      a list of {@link TagRequest} objects, representing tag data

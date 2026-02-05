@@ -12,6 +12,14 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Represents a team request within the system.
+ *
+ * <p>
+ * The class maps to the `TEAM.XML` content in the `WinMSS.cab` file.
+ * It stores data of all teams in a match.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

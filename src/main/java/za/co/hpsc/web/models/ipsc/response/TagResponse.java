@@ -7,6 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.TagRequest;
 
+/**
+ * Represents a response model for tag-related data in the system.
+ *
+ * <p>
+ * This class encapsulates details of a tag, such as its ID and name. It provides functionality
+ * to populate its fields directly from a {@link TagRequest} object.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

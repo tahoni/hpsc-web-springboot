@@ -12,6 +12,14 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Represents a classification request within the system.
+ *
+ * <p>
+ * The class maps to the `CLASSIFY.XML` content in the `WinMSS.cab` file.
+ * It stores meta-data about members in the system, classifying them into divisions, etc.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

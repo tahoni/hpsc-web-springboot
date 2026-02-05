@@ -12,6 +12,14 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Represents a squad request within the system.
+ *
+ * <p>
+ * The class maps to the `SQUAD.XML` content in the `WinMSS.cab` file.
+ * It stores minimal data about all squads in the system.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

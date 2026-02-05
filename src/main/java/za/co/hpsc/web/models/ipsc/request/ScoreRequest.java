@@ -16,6 +16,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Represents a score request within the system.
+ *
+ * <p>
+ * The class maps to the `SCORE.XML` content in the `WinMSS.cab` file.
+ * It stores meta-data about members in the system, namely their scores for each stage
+ * of a match, including detailed and summarised performance data.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

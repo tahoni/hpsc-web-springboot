@@ -5,6 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Represents an IPSC request within the system.
+ *
+ * <p>
+ * It contains the contents of each XML file in the `WinMSS.cab` file as a raw string.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

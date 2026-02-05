@@ -9,6 +9,16 @@ import za.co.hpsc.web.models.ipsc.request.EnrolledRequest;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a response model for an enrolled member, typically used to transfer data
+ * within the system regarding a member's enrollment status and associated attributes.
+ *
+ * <p>
+ * This class encapsulates details such as member information, match details, category
+ * information, disqualification status, and other relevant fields. It provides
+ * functionality to populate its fields directly from an {@link EnrolledRequest} object.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

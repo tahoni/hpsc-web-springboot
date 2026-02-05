@@ -13,6 +13,14 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Represents a member request within the system.
+ *
+ * <p>
+ * The class maps to the `MEMBERS.XML` content in the `WinMSS.cab` file.
+ * It stores information about members in the system.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

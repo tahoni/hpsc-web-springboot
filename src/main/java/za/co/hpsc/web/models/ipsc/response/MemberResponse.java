@@ -10,6 +10,14 @@ import za.co.hpsc.web.models.ipsc.request.MemberRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Represents a response model for member-related data used within the system.
+ *
+ * <p>
+ * This class is intended to hold information about a member's profile and other details.
+ * It provides functionality to populate its fields directly from a {@link MemberRequest} object.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

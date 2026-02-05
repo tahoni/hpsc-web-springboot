@@ -10,6 +10,16 @@ import za.co.hpsc.web.models.ipsc.request.ScoreRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Represents a response model for score-related data in the system.
+ *
+ * <p>
+ * This class encapsulates detailed and summarised performance metrics for participants,
+ * such as match, stage, and member identifiers, scores for their specific categories, penalties,
+ * shooting time, deductions, and final evaluations. It provides functionality to populate
+ * its fields directly from a {@link ScoreRequest} object.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

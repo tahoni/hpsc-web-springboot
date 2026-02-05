@@ -15,6 +15,14 @@ import za.co.hpsc.web.constants.IpscConstants;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Represents a match request within the system.
+ *
+ * <p>
+ * The class maps to the `THEMATCH.XML` content in the `WinMSS.cab` file.
+ * It stores data about matches in the system.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

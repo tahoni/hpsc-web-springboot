@@ -10,6 +10,15 @@ import za.co.hpsc.web.models.ipsc.request.MatchRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Represents a response model for match-related data within the system.
+ *
+ * <p>
+ * This class encapsulates details of a match, such as its ID, name, date,
+ * associated club, squad count, and firearm information. It provides
+ * functionality to populate its fields directly from a {@link MatchRequest} object.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

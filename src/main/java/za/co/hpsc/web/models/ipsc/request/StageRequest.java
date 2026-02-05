@@ -12,6 +12,14 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Represents a stage request within the system.
+ *
+ * <p>
+ * The class maps to the `STAGE.XML` content in the `WinMSS.cab` file.
+ * It stores extensive data about all stages of a match.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

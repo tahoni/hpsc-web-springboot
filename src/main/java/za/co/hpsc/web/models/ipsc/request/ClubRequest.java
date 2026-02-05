@@ -11,6 +11,14 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Represents a club request within the system.
+ *
+ * <p>
+ * The class maps to the `CLUB.XML` content in the `WinMSS.cab` file.
+ * It stores data about clubs in the system.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

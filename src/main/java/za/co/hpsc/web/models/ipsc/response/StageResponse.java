@@ -7,6 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.StageRequest;
 
+/**
+ * Represents the response data for a stage in a match.
+ *
+ * <p>
+ * This class encapsulates details such as match identifier, stage identifier,
+ * stage name, description, firearm information, scoring classification,
+ * target details, and other parameters relevant to a stage. It provides functionality to populate
+ * its fields directly from a {@link StageRequest} object.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

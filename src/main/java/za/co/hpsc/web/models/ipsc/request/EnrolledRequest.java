@@ -13,6 +13,14 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Represents a classification request within the system.
+ *
+ * <p>
+ * The class maps to the `ENROLLED.XML` content in the `WinMSS.cab` file.
+ * It stores meta-data about members in the system, namely the members enrolled in a match.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

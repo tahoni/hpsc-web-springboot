@@ -12,6 +12,14 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Represents a tag request within the system.
+ *
+ * <p>
+ * The class maps to the `TAG.XML` content in the `WinMSS.cab` file.
+ * It stores data about tags in the system that can be used to classify members.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor
