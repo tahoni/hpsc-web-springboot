@@ -3,7 +3,6 @@ package za.co.hpsc.web.services.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.Club;
-import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.services.ClubService;
 
@@ -20,20 +19,20 @@ public class ClubServiceImpl implements ClubService {
 
     // TODO: Javadoc
     @Override
-    public Optional<Club> findClub(ClubResponse clubResponse) {
-        if (clubResponse == null) {
-            return Optional.empty();
+    public Optional<Club> findClub(String name, String abbreviation) {
+        Optional<Club> club = Optional.empty();
+
+        // Attempt to find the club by name
+        if ((name != null) && (!name.isBlank())) {
+            club = clubRepository.findByName(name);
         }
 
-        Optional<Club> club = Optional.empty();
-        // Attempt to find the club by name
-        if ((clubResponse.getClubName() != null) && (!clubResponse.getClubName().isBlank())) {
-            club = clubRepository.findByName(clubResponse.getClubName());
-        }
-        // If no club with the name was found
-        if (club.isEmpty() && (clubResponse.getClubCode() != null) && (!clubResponse.getClubCode().isBlank())) {
-            // Attempt to find the club by abbreviation
-            club = clubRepository.findByAbbreviation(clubResponse.getClubCode());
+        // If the club was not found
+        if (club.isEmpty()) {
+            if ((abbreviation != null) && (!abbreviation.isBlank())) {
+                // Attempt to find the club by abbreviation
+                club = clubRepository.findByAbbreviation(abbreviation);
+            }
         }
 
         return club;

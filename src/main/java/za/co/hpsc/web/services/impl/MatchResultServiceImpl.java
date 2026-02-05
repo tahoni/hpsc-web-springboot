@@ -55,7 +55,8 @@ public class MatchResultServiceImpl implements MatchResultService {
             return Optional.empty();
         }
 
-        Optional<Club> optionalClub = clubService.findClub(clubResponse);
+        Optional<Club> optionalClub = clubService.findClub(clubResponse.getClubName(),
+                clubResponse.getClubCode());
         ClubDto clubDto = null;
         clubDto = optionalClub.map(ClubDto::new).orElseGet(ClubDto::new);
         return Optional.of(clubDto);
@@ -64,7 +65,7 @@ public class MatchResultServiceImpl implements MatchResultService {
     // TODO: Javadoc
     protected Optional<MatchDto> initMatch(@NotNull IpscResponse ipscResponse, ClubDto clubDto) {
         // Get the match from the database if it exists
-        Optional<Match> optionalMatch = matchService.findMatch(ipscResponse.getMatch());
+        Optional<Match> optionalMatch = matchService.findMatch(, );
         boolean ipscMatchExists = optionalMatch.isPresent();
         boolean ipscResponseHasNewerScore = false;
         LocalDateTime matchLastUpdated = (optionalMatch.isPresent() ?
@@ -127,7 +128,10 @@ public class MatchResultServiceImpl implements MatchResultService {
         // Initialises competitor attributes
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
         scoreMembers.forEach(memberResponse -> {
-            Optional<Competitor> optionalCompetitor = competitorService.findCompetitor(memberResponse);
+            Optional<Competitor> optionalCompetitor =
+                    competitorService.findCompetitor(memberResponse.getIcsAlias(),
+                            memberResponse.getFirstName(), memberResponse.getLastName(),
+                            memberResponse.getDateOfBirth());
             CompetitorDto competitorDto =
                     optionalCompetitor.map(CompetitorDto::new).orElseGet(CompetitorDto::new);
             competitorDto.init(memberResponse);

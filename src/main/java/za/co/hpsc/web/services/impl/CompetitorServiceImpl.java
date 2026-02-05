@@ -5,10 +5,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
-import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.services.CompetitorService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,15 +22,11 @@ public class CompetitorServiceImpl implements CompetitorService {
         this.competitorRepository = competitorRepository;
     }
 
-    // TODO: Javadoc
     @Override
-    public Optional<Competitor> findCompetitor(MemberResponse memberResponse) {
-        if (memberResponse == null) {
-            return Optional.empty();
-        }
+    public Optional<Competitor> findCompetitor(String icsAlias, String firstName, String lastName,
+                                               LocalDateTime dateTimeOfBirth) {
 
         Optional<Competitor> competitor = Optional.empty();
-        String icsAlias = memberResponse.getIcsAlias();
 
         // Attempts competitor lookup by SAPSA number or alias
         if ((icsAlias != null) && (!icsAlias.isBlank()) && (NumberUtils.isCreatable((icsAlias)))) {
@@ -44,23 +40,33 @@ public class CompetitorServiceImpl implements CompetitorService {
         if (competitor.isEmpty()) {
             List<Competitor> competitorList = new ArrayList<>();
             // Attempt to find the competitor by first and last name
-            competitorList = competitorRepository.findAllByFirstNameAndLastName(memberResponse.getFirstName(),
-                    memberResponse.getLastName());
+            competitorList = competitorRepository.findAllByFirstNameAndLastName(firstName, lastName);
             if (competitorList.isEmpty()) {
                 return Optional.empty();
             }
 
             // Filters list by date of birth if present
-            if (memberResponse.getDateOfBirth() != null) {
-                competitorList = competitorList.stream()
-                        .filter(c -> memberResponse.getDateOfBirth().toLocalDate().equals(c.getDateOfBirth()))
+            List<Competitor> filteredCompetitorList = new ArrayList<>();
+            if (dateTimeOfBirth != null) {
+                // Filters list to matching dates of birth
+                filteredCompetitorList = competitorList.stream()
+                        .filter(c -> dateTimeOfBirth.toLocalDate().equals(c.getDateOfBirth()))
                         .toList();
             }
 
-            // Returns the first matching competitor without a SAPSA number
-            competitor = competitorList.stream()
+            // If no matching dates of birth were found, return the first matching competitor
+            if (filteredCompetitorList.isEmpty()) {
+                return competitorList.stream().findFirst();
+            }
+
+            // Finds the first matching competitor without a SAPSA number
+            Optional<Competitor> filteredCompetitor = competitorList.stream()
                     .filter(c -> c.getSapsaNumber() == null)
                     .findFirst();
+            if (filteredCompetitor.isEmpty()) {
+                // Finds the first matching competitor with a SAPSA number
+                return filteredCompetitorList.stream().findFirst();
+            }
         }
 
         return competitor;

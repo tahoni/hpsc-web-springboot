@@ -15,7 +15,7 @@ import java.math.RoundingMode;
  */
 public final class NumberUtil {
     private NumberUtil() {
-        // Utility class
+        // Utility class, not to be instantiated
     }
 
     /**
@@ -33,9 +33,13 @@ public final class NumberUtil {
      */
     public static BigDecimal calculatePercentage(BigDecimal part, BigDecimal whole) {
         BigDecimal result = BigDecimal.ZERO;
+        // Calculates percentage to double the default scale, then multiplies by 100
         if ((whole != null) && (whole.compareTo(BigDecimal.ZERO) != 0)) {
-            result = part.divide(whole).multiply(BigDecimal.valueOf(100));
+            result =
+                    part.divide(whole, SystemConstants.DEFAULT_SCALE * 2, RoundingMode.HALF_UP)
+                            .multiply(BigDecimal.valueOf(100));
         }
+        // Scales the result to the default scale
         return result.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 }
