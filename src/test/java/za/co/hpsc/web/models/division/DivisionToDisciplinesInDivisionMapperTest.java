@@ -13,7 +13,8 @@ class DivisionToDisciplinesInDivisionMapperTest {
         Division division = Division.HANDGUN;
 
         // Act
-        DisciplinesInDivision result = DivisionToDisciplinesInDivisionMapper.getDisciplinesForDivision(division);
+        DisciplinesInDivision result =
+                DivisionToDisciplinesInDivisionMapper.getDisciplinesForDivision(division);
 
         // Assert
         assertNotNull(result);

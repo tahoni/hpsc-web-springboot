@@ -57,8 +57,8 @@ public final class MatchHelpers {
         );
 
         // Format and return match name
-        String result = StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_NAME_FORMAT,
-                parameters);
+        String result = StringUtil.formatStringWithNamedParameters(
+                MatchConstants.SCHEDULED_MATCH_NAME_FORMAT, parameters);
         return result.replaceAll("\\s+", " ");
     }
 
@@ -90,8 +90,8 @@ public final class MatchHelpers {
 
         // Format and return stage match name
         String result =
-                StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_OVERALL_NAME_FORMAT,
-                        parameters);
+                StringUtil.formatStringWithNamedParameters(
+                        MatchConstants.SCHEDULED_MATCH_OVERALL_NAME_FORMAT, parameters);
         return result.replaceAll("\\s+", " ");
     }
 
@@ -126,8 +126,8 @@ public final class MatchHelpers {
 
         // Format and return stage match name
         String result =
-                StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT,
-                        parameters);
+                StringUtil.formatStringWithNamedParameters(
+                        MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT, parameters);
         return result.replaceAll("\\s+", " ");
     }
 }

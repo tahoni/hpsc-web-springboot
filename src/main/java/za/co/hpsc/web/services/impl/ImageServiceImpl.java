@@ -50,8 +50,8 @@ public class ImageServiceImpl implements ImageService {
      *
      * @param csvData the CSV data containing information about image requests.
      *                Each row in the CSV should represent an image request with fields
-     *                such as title, ceremony title, first place recipient, second place recipient, and
-     *                third place recipient, and optional meta-data.
+     *                such as title, ceremony title, first place recipient, second place recipient,
+     *                and third place recipient, and optional meta-data.
      *                Must not be null or blank.
      * @return a list of {@link ImageRequest} objects parsed from the provided CSV data.
      * @throws ValidationException if the CSV data format is invalid or contains mismatched input.
