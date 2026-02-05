@@ -164,7 +164,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                         .findFirst();
                 if (optionalStageScoreResponse.isPresent()) {
                     MatchStageCompetitorDto matchStageCompetitorDto =
-                            new MatchStageCompetitorDto(matchCompetitorDto, stageDto);
+                            new MatchStageCompetitorDto(competitor, stageDto);
                     matchStageCompetitorDto.init(optionalStageScoreResponse.get());
                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
                 }

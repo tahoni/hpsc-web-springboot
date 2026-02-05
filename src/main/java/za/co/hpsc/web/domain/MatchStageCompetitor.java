@@ -35,8 +35,8 @@ public class MatchStageCompetitor {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "match_competitor_id")
-    private MatchCompetitor matchCompetitor;
+    @JoinColumn(name = "competitor_id")
+    private Competitor competitor;
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "match_stage_id")
@@ -64,22 +64,8 @@ public class MatchStageCompetitor {
 
     private LocalDateTime dateUpdated;
 
-    /**
-     * Constructs a new instance of the {@code MatchStageCompetitor} class, representing
-     * the association between a specific match competitor and a match stage.
-     *
-     * @param matchCompetitor the competitor participating in the match stage.
-     *                        Must not be null.
-     * @param matchStage      the match stage in which the competitor is participating.
-     *                        Must not be null.
-     */
-    public MatchStageCompetitor(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchStage matchStage) {
-        this.matchCompetitor = matchCompetitor;
-        this.matchStage = matchStage;
-    }
-
     @Override
     public String toString() {
-        return matchStage.toString() + ": " + matchCompetitor.toString();
+        return matchStage.toString() + ": " + competitor.toString();
     }
 }

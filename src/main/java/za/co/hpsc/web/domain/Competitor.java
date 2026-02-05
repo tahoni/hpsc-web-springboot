@@ -53,6 +53,8 @@ public class Competitor {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> competitorMatches;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MatchStageCompetitor> competitorStageMatches;
 
     @Override
     public String toString() {

@@ -32,7 +32,7 @@ public class MatchStageCompetitorDto {
     private Long id;
 
     @NotNull
-    private MatchCompetitorDto matchCompetitor;
+    private CompetitorDto competitor;
     @NotNull
     private MatchStageDto matchStage;
 
@@ -62,14 +62,13 @@ public class MatchStageCompetitorDto {
      * Constructs a new instance of the {@code MatchStageCompetitor} class, representing
      * the association between a specific match competitor and a match stage.
      *
-     * @param matchCompetitor the competitor participating in the match stage.
-     *                        Must not be null.
-     * @param matchStage      the match stage in which the competitor is participating.
-     *                        Must not be null.
+     * @param competitor the competitor participating in the match stage.
+     *                   Must not be null.
+     * @param matchStage the match stage in which the competitor is participating.
+     *                   Must not be null.
      */
-    public MatchStageCompetitorDto(@NotNull MatchCompetitorDto matchCompetitor,
-                                   @NotNull MatchStageDto matchStage) {
-        this.matchCompetitor = matchCompetitor;
+    public MatchStageCompetitorDto(@NotNull CompetitorDto competitor, @NotNull MatchStageDto matchStage) {
+        this.competitor = competitor;
         this.matchStage = matchStage;
     }
 
@@ -98,6 +97,6 @@ public class MatchStageCompetitorDto {
 
     @Override
     public String toString() {
-        return matchStage.toString() + ": " + matchCompetitor.toString();
+        return matchStage.toString() + ": " + competitor.toString();
     }
 }

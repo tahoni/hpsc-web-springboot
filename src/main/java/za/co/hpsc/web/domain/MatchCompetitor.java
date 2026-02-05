@@ -57,18 +57,6 @@ public class MatchCompetitor {
 
     private LocalDateTime dateUpdated;
 
-    /**
-     * Constructs a new instance of the MatchCompetitor class, linking a competitor
-     * to a specific match.
-     *
-     * @param competitor the competitor participating in the match. Must not be null
-     * @param match      the match in which the competitor is participating. Must not be null
-     */
-    public MatchCompetitor(@NotNull Competitor competitor, @NotNull Match match) {
-        this.competitor = competitor;
-        this.match = match;
-    }
-
     public String toString() {
         return match.toString() + ": " + competitor.toString();
     }
