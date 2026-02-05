@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO: format
+// TODO: Javadoc
 @Slf4j
 @Service
 public class MatchResultServiceImpl implements MatchResultService {
@@ -65,7 +67,8 @@ public class MatchResultServiceImpl implements MatchResultService {
     // TODO: Javadoc
     protected Optional<MatchDto> initMatch(@NotNull IpscResponse ipscResponse, ClubDto clubDto) {
         // Get the match from the database if it exists
-        Optional<Match> optionalMatch = matchService.findMatch(, );
+        Optional<Match> optionalMatch = matchService.findMatch(ipscResponse.getMatch().getMatchName(),
+                ipscResponse.getMatch().getMatchDate());
         boolean ipscMatchExists = optionalMatch.isPresent();
         boolean ipscResponseHasNewerScore = false;
         LocalDateTime matchLastUpdated = (optionalMatch.isPresent() ?
@@ -81,7 +84,8 @@ public class MatchResultServiceImpl implements MatchResultService {
         }
 
 
-        MatchDto matchDto = optionalMatch.map(match -> new MatchDto(match, clubDto)).orElseGet(MatchDto::new);
+        MatchDto matchDto = optionalMatch.map(match -> new MatchDto(match, clubDto))
+                .orElseGet(MatchDto::new);
 
         // Initialise match attributes
         matchDto.init(ipscResponse.getMatch(), clubDto);
@@ -139,7 +143,7 @@ public class MatchResultServiceImpl implements MatchResultService {
         });
         matchResultsDto.setCompetitors(new ArrayList<>(competitorDtoMap.values()));
 
-        List<MatchCompetitorDto> matchCompetitorDtos = matchResultsDto.getMatchCompetitors();
+        List<MatchCompetitorDto> matchCompetitorDtoList = matchResultsDto.getMatchCompetitors();
         // Find the match overall result
         competitorDtoMap.keySet().forEach(memberId -> {
             CompetitorDto competitor = competitorDtoMap.get(memberId);
@@ -149,9 +153,10 @@ public class MatchResultServiceImpl implements MatchResultService {
             MatchCompetitorDto matchCompetitorDto =
                     new MatchCompetitorDto(competitor, matchResultsDto.getMatch());
             matchCompetitorDto.init(scores);
-            matchCompetitorDtos.add(matchCompetitorDto);
+            matchCompetitorDtoList.add(matchCompetitorDto);
 
-            List<MatchStageCompetitorDto> matchStageCompetitorDtos = matchResultsDto.getMatchStageCompetitors();
+            List<MatchStageCompetitorDto> matchStageCompetitorDtoList =
+                    matchResultsDto.getMatchStageCompetitors();
             // Find the stage results
             matchResultsDto.getStages().forEach(stageDto -> {
                 Optional<ScoreResponse> optionalStageScoreResponse = scores.stream()
@@ -161,7 +166,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                     MatchStageCompetitorDto matchStageCompetitorDto =
                             new MatchStageCompetitorDto(matchCompetitorDto, stageDto);
                     matchStageCompetitorDto.init(optionalStageScoreResponse.get());
-                    matchStageCompetitorDtos.add(matchStageCompetitorDto);
+                    matchStageCompetitorDtoList.add(matchStageCompetitorDto);
                 }
             });
         });
