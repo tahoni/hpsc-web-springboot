@@ -67,12 +67,13 @@ public class MatchStageCompetitorDto {
      * @param matchStage      the match stage in which the competitor is participating.
      *                        Must not be null.
      */
-    public MatchStageCompetitorDto(@NotNull MatchCompetitorDto matchCompetitor, @NotNull MatchStageDto matchStage) {
+    public MatchStageCompetitorDto(@NotNull MatchCompetitorDto matchCompetitor,
+                                   @NotNull MatchStageDto matchStage) {
         this.matchCompetitor = matchCompetitor;
         this.matchStage = matchStage;
     }
 
-    void init(ScoreResponse scoreResponse) {
+    public void init(ScoreResponse scoreResponse) {
         this.scoreA = scoreResponse.getScoreA();
         this.scoreB = scoreResponse.getScoreB();
         this.scoreC = scoreResponse.getScoreC();

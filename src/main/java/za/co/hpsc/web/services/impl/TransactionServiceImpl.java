@@ -6,8 +6,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.response.IpscResponse;
+import za.co.hpsc.web.models.match.MatchResultsDto;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchRepository;
@@ -38,12 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void saveMatchResults(IpscResponse ipscResponse) {
-        if (ipscResponse == null) {
-            log.error("IPSC response is null.");
-            throw new ValidationException("IPSC response can not be null.");
-        }
-
+    public void saveMatchResults(MatchResultsDto matchResults) {
         TransactionStatus transaction = transactionManager.getTransaction(
                 new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
 

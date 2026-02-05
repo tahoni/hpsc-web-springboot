@@ -8,10 +8,7 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.domain.MatchStage;
 import za.co.hpsc.web.models.ipsc.response.*;
-import za.co.hpsc.web.models.match.ClubDto;
-import za.co.hpsc.web.models.match.CompetitorDto;
-import za.co.hpsc.web.models.match.MatchDto;
-import za.co.hpsc.web.models.match.MatchStageDto;
+import za.co.hpsc.web.models.match.*;
 import za.co.hpsc.web.services.*;
 
 import java.time.LocalDateTime;
@@ -36,19 +33,21 @@ public class MatchResultServiceImpl implements MatchResultService {
     }
 
     @Override
-    public void initMatchResults(IpscResponse ipscResponse) {
+    public Optional<MatchResultsDto> initMatchResults(IpscResponse ipscResponse) {
         Optional<ClubDto> optionalClub = initClub(ipscResponse.getClub());
         Optional<MatchDto> optionalMatch = initMatch(ipscResponse, optionalClub.orElse(null));
         if (optionalMatch.isEmpty()) {
-            return;
+            return Optional.empty();
         }
 
         MatchDto match = optionalMatch.get();
-        List<MatchStageDto> matchStages = initStages(match, ipscResponse.getStages());
-        List<ScoreResponse> scoreResponses = filterScores(ipscResponse.getScores(), match.getDateUpdated());
-        initScores(match, matchStages, scoreResponses, ipscResponse.getMembers());
+        MatchResultsDto matchResultsDto = new MatchResultsDto(match);
+        matchResultsDto.setStages(initStages(match, ipscResponse.getStages()));
+        initScores(matchResultsDto, ipscResponse);
 
         match.setDateUpdated(LocalDateTime.now());
+
+        return Optional.of(matchResultsDto);
     }
 
     protected Optional<ClubDto> initClub(ClubResponse clubResponse) {
@@ -109,12 +108,14 @@ public class MatchResultServiceImpl implements MatchResultService {
     }
 
     // TODO: Javadoc
-    protected void initScores(MatchDto matchDto, List<MatchStageDto> matchStageDtoList,
-                              List<ScoreResponse> scoreResponses, List<MemberResponse> memberResponses) {
-        if ((scoreResponses == null) || (memberResponses == null)) {
+    protected void initScores(MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
+        if ((matchResultsDto == null) || (ipscResponse == null) ||
+                (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
             return;
         }
 
+        List<ScoreResponse> scoreResponses = ipscResponse.getScores();
+        List<MemberResponse> memberResponses = ipscResponse.getMembers();
         // Maps score responses to corresponding member responses
         Set<Integer> memberIdsWithScores = scoreResponses.stream()
                 .map(ScoreResponse::getMemberId)
@@ -132,44 +133,35 @@ public class MatchResultServiceImpl implements MatchResultService {
             competitorDto.init(memberResponse);
             competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
         });
+        matchResultsDto.setCompetitors(new ArrayList<>(competitorDtoMap.values()));
 
-        // Find the match overall and stage results
+        List<MatchCompetitorDto> matchCompetitorDtos = matchResultsDto.getMatchCompetitors();
+        // Find the match overall result
         competitorDtoMap.keySet().forEach(memberId -> {
             CompetitorDto competitor = competitorDtoMap.get(memberId);
             List<ScoreResponse> scores = scoreResponses.stream()
                     .filter(sr -> sr.getMemberId().equals(memberId))
                     .toList();
+            MatchCompetitorDto matchCompetitorDto =
+                    new MatchCompetitorDto(competitor, matchResultsDto.getMatch());
+            matchCompetitorDto.init(scores);
+            matchCompetitorDtos.add(matchCompetitorDto);
+
+            List<MatchStageCompetitorDto> matchStageCompetitorDtos = matchResultsDto.getMatchStageCompetitors();
+            // Find the stage results
+            matchResultsDto.getStages().forEach(stageDto -> {
+                Optional<ScoreResponse> optionalStageScoreResponse = scores.stream()
+                        .filter(scoreResponse -> stageDto.getStageNumber().equals(scoreResponse.getStageId()))
+                        .findFirst();
+                if (optionalStageScoreResponse.isPresent()) {
+                    MatchStageCompetitorDto matchStageCompetitorDto =
+                            new MatchStageCompetitorDto(matchCompetitorDto, stageDto);
+                    matchStageCompetitorDto.init(optionalStageScoreResponse.get());
+                    matchStageCompetitorDtos.add(matchStageCompetitorDto);
+                }
+            });
         });
-    }
 
-    /**
-     * Filters a list of ScoreResponse objects based on specific criteria.
-     *
-     * <p>
-     * The method filters out any {@link ScoreResponse} objects whose last modified timestamp
-     * is not after the provided {@code matchLastUpdated} timestamp.
-     * If the input list is null, an empty list is returned.
-     * </p>
-     *
-     * @param scoreResponseList the list of {@link ScoreResponse} objects to filter. Can be null
-     * @param matchLastUpdated  the timestamp representing the last updated time of the match,
-     *                          used to filter the scores. Can be null.
-     * @return a filtered list of {@link ScoreResponse} objects or an empty list if the input is null
-     */
-    protected List<ScoreResponse> filterScores(List<ScoreResponse> scoreResponseList,
-                                               LocalDateTime matchLastUpdated) {
-
-        if (scoreResponseList == null) {
-            return new ArrayList<>();
-        }
-
-        // Filters scores updated after the time the match was last updated
-        if (matchLastUpdated != null) {
-            scoreResponseList = scoreResponseList.stream()
-                    .filter(sr -> matchLastUpdated.isBefore(sr.getLastModified()))
-                    .toList();
-        }
-
-        return scoreResponseList;
+        matchResultsDto.setCompetitors(new ArrayList<>(competitorDtoMap.values()));
     }
 }

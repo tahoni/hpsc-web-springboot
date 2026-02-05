@@ -4,13 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.request.*;
-import za.co.hpsc.web.models.ipsc.response.*;
+import za.co.hpsc.web.models.ipsc.response.ClubResponse;
+import za.co.hpsc.web.models.ipsc.response.IpscResponse;
+import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -42,42 +44,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         ipscResponses.forEach(ipscResponse -> addClubToMatch(ipscResponse, ipscRequestHolder));
 
         return new IpscResponseHolder(ipscResponses);
-    }
-
-    @Override
-    public void calculateMatchResultsSummary(IpscResponse ipscResponse)
-            throws ValidationException {
-
-        // Validate input
-        if (ipscResponse == null) {
-            log.error("IPSC request holder is null while calculating match results summary.");
-            throw new ValidationException("IPSC request holder can not be null");
-        }
-
-        List<ScoreResponse> scores = ipscResponse.getScores();
-        List<MemberResponse> members = ipscResponse.getMembers();
-
-        // Summarises member scores by accumulating final scores for all stages
-        members.forEach(member -> {
-            if (member.getMemberId() == null) {
-                return;
-            }
-
-            List<ScoreResponse> memberScores = scores.stream()
-                    .filter(sc -> member.getMemberId().equals(sc.getMemberId()))
-                    .toList();
-
-            ScoreResponse memberSummaryScore = new ScoreResponse();
-            memberSummaryScore.setMemberId(member.getMemberId());
-            memberSummaryScore.setStageId(0);
-
-            AtomicInteger memberTotalScore = new AtomicInteger();
-            memberScores.forEach(scoreResponse ->
-                    memberTotalScore.set(memberTotalScore.get() + scoreResponse.getFinalScore()));
-
-            memberSummaryScore.setFinalScore(memberTotalScore.get());
-            ipscResponse.getScores().add(memberSummaryScore);
-        });
     }
 
     /**

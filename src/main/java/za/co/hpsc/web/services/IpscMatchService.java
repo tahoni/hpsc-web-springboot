@@ -5,7 +5,15 @@ import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
-// TODO: javadoc
+/**
+ * Service interface for managing and processing IPSC (International Practical
+ * Shooting Confederation) match data.
+ *
+ * <p>
+ * Provides functionality to map input requests into structured responses, encapsulating match
+ * details, scores, stages, enrolled members, tags, and related club information.
+ * </p>
+ */
 public interface IpscMatchService {
     /**
      * Maps IPSC requests to a list of IPSC responses. This method processes the matches, stages,
@@ -20,19 +28,5 @@ public interface IpscMatchService {
      * @throws ValidationException if the input data is invalid or cannot be processed
      */
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
-            throws ValidationException;
-
-    /**
-     * Calculates and updates the summary of match results based on the data provided in the
-     * {@code ipscResponse} object. This operation may involve aggregating scores, processing
-     * enrolled members, and summarising stage results to provide a comprehensive overview
-     * of the match.
-     *
-     * @param ipscResponse The {@link IpscResponse} object containing data such as match details,
-     *                     stage responses, enrolled members, tags, scores, and associated club
-     *                     information required for summary calculation.
-     * @throws ValidationException if the input data is invalid or cannot be processed
-     */
-    void calculateMatchResultsSummary(IpscResponse ipscResponse)
             throws ValidationException;
 }

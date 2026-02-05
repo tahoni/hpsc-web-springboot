@@ -14,24 +14,30 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+import za.co.hpsc.web.models.match.MatchResultsDto;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.IpscService;
+import za.co.hpsc.web.services.MatchResultService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class IpscServiceImpl implements IpscService {
 
     protected final IpscMatchService ipscMatchService;
+    protected final MatchResultService matchResultService;
     protected final TransactionService transactionService;
 
-    public IpscServiceImpl(IpscMatchService ipscMatchService, TransactionService transactionService) {
+    public IpscServiceImpl(IpscMatchService ipscMatchService, MatchResultService matchResultService,
+                           TransactionService transactionService) {
         this.ipscMatchService = ipscMatchService;
+        this.matchResultService = matchResultService;
         this.transactionService = transactionService;
     }
 
@@ -51,14 +57,18 @@ public class IpscServiceImpl implements IpscService {
             throw new ValidationException("IPSC request holder can not be null.");
         }
 
-        // Calculates and saves results
+        // Maps the results of each match
         IpscResponseHolder ipscResponseHolder = ipscMatchService.mapMatchResults(ipscRequestHolder);
         if (ipscResponseHolder == null) {
             log.error("IPSC response holder is null.");
             throw new ValidationException("IPSC response holder can not be null.");
         }
-        ipscResponseHolder.getIpscList().forEach(ipscMatchService::calculateMatchResultsSummary);
-        ipscResponseHolder.getIpscList().forEach(transactionService::saveMatchResults);
+
+        // Persists the match results
+        ipscResponseHolder.getIpscList().forEach(ipscResponse -> {
+            Optional<MatchResultsDto> matchResults = matchResultService.initMatchResults(ipscResponse);
+            matchResults.ifPresent(transactionService::saveMatchResults);
+        });
 
         // Returns a success message
         return new ControllerResponse(LocalDateTime.now(), true,

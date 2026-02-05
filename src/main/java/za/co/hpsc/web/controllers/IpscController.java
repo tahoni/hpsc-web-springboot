@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.models.matches.MatchResultLogResponseHolder;
 import za.co.hpsc.web.services.IpscService;
 
 /**
@@ -43,7 +42,7 @@ public class IpscController {
      *
      * @param cabFileContent the JSON-formatted content of the WinMSS.cab file to be processed.
      *                       Must not be null or empty.
-     * @return a {@link MatchResultLogResponseHolder} object if the processing is successful.
+     * @return a {@link ControllerResponse} object if the processing is successful.
      */
     @PostMapping(value = "/importWinMssCabData", consumes = "application/json",
             produces = "application/json")

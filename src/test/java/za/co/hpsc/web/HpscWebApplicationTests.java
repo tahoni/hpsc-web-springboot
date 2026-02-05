@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.TransactionService;
 
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
@@ -23,6 +24,19 @@ class HpscWebApplicationTests {
 
     @MockitoBean
     private TransactionService transactionService;
+
+    @MockitoBean
+    private ClubRepository clubRepository;
+    @MockitoBean
+    private MatchRepository matchRepository;
+    @MockitoBean
+    private CompetitorRepository competitorRepository;
+    @MockitoBean
+    private MatchStageRepository matchStageRepository;
+    @MockitoBean
+    private MatchCompetitorRepository matchCompetitorRepository;
+    @MockitoBean
+    private MatchStageCompetitorRepository matchStageCompetitorRepository;
 
     @SuppressWarnings("EmptyMethod")
     @Test

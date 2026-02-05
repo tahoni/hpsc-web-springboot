@@ -12,6 +12,7 @@ import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Represents the relationship between a competitor and a specific match,
@@ -60,9 +61,20 @@ public class MatchCompetitorDto {
         this.match = match;
     }
 
-    public void init(ScoreResponse scoreResponse) {
-        this.matchPoints = BigDecimal.valueOf(scoreResponse.getFinalScore());
-        this.dateUpdated = scoreResponse.getLastModified();
+    /**
+     * Initializes aggregate score from multiple score responses
+     */
+    public void init(List<ScoreResponse> scoreResponses) {
+        // Initializes aggregate score from multiple score responses
+        this.matchPoints = BigDecimal.valueOf(scoreResponses.stream()
+                .mapToDouble(ScoreResponse::getFinalScore)
+                .sum());
+        // Initialises the date updated from the latest score response's date updated
+        this.dateUpdated =
+                scoreResponses.stream()
+                        .map(ScoreResponse::getLastModified)
+                        .max(LocalDateTime::compareTo)
+                        .orElse(LocalDateTime.now());
 
         // TODO: populate category, division, discipline, power factor
     }
