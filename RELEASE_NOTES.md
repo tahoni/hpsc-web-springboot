@@ -2,7 +2,7 @@
 
 ## Release Notes
 
-### Version 1.2.0 - _2026-01-28_
+### Version 2.0.0 - _2026-02-08_
 
 Comprehensive refactoring of the IPSC/WinMSS match result processing system, introducing modular service
 architecture, improved data models, and enhanced transactional support.
