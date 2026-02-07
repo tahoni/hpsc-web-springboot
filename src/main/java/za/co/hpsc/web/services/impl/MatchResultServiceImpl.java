@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.*;
+import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.response.*;
-import za.co.hpsc.web.models.match.*;
 import za.co.hpsc.web.services.*;
 
 import java.time.LocalDateTime;
@@ -75,7 +75,7 @@ public class MatchResultServiceImpl implements MatchResultService {
         // Creates a new club DTO, from either the found entity or the club response
         ClubDto clubDto = optionalClub
                 .map(ClubDto::new)
-                .orElseGet(() -> new ClubDto(null, clubResponse.getClubName(), clubResponse.getClubCode()));
+                .orElseGet(() -> new ClubDto(clubResponse.getClubName(), clubResponse.getClubCode()));
 
         return Optional.of(clubDto);
     }

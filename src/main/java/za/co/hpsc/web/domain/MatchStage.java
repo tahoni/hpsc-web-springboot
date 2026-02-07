@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.helpers.MatchHelpers;
-import za.co.hpsc.web.models.match.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 
 import java.util.List;
 

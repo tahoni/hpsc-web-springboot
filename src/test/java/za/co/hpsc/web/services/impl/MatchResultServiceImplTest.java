@@ -5,25 +5,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import za.co.hpsc.web.domain.Club;
-import za.co.hpsc.web.domain.Match;
-import za.co.hpsc.web.models.ipsc.response.ClubResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.match.ClubDto;
-import za.co.hpsc.web.models.match.MatchDto;
+import za.co.hpsc.web.domain.*;
+import za.co.hpsc.web.models.ipsc.dto.ClubDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.request.MemberRequest;
+import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Tests for the {@link MatchResultServiceImpl} class.
- * This class focuses on testing the business logic related to initializing match results,
- * specifically the {@code initClub} method.
- */
 @ExtendWith(MockitoExtension.class)
 public class MatchResultServiceImplTest {
 
@@ -48,10 +46,6 @@ public class MatchResultServiceImplTest {
     @InjectMocks
     private MatchResultServiceImpl matchResultService;
 
-    /**
-     * Test case to verify that the {@code initClub} method returns an empty {@link Optional}
-     * when the provided {@link ClubResponse} is null.
-     */
     @Test
     public void testInitClub_withNullResponse_thenReturnsEmptyOptional() {
         // Arrange - No additional setup needed as we pass null directly
@@ -64,10 +58,6 @@ public class MatchResultServiceImplTest {
         verifyNoInteractions(clubService);
     }
 
-    /**
-     * Test case to verify that the {@code initClub} method returns a {@link ClubDto} populated
-     * with information from an existing {@link Club} when the club is found by the {@link ClubService}.
-     */
     @Test
     public void testInitClub_withExistingClub_thenReturnsPopulatedClubDto() {
         // Arrange
@@ -94,10 +84,6 @@ public class MatchResultServiceImplTest {
         verify(clubService, times(1)).findClub("Test Club", "TC");
     }
 
-    /**
-     * Test case to verify that the {@code initClub} method returns a {@link ClubDto} populated
-     * with information from the {@link ClubResponse} when the club is not found by the {@link ClubService}.
-     */
     @Test
     public void testInitClub_withNonExistingClub_thenReturnsClubDtoFromResponse() {
         // Arrange
@@ -119,67 +105,59 @@ public class MatchResultServiceImplTest {
         verify(clubService, times(1)).findClub("Non-existent Club", "NC");
     }
 
-    /**
-     * Test case to verify that the {@code initMatch} method returns an empty {@link Optional}
-     * when the match exists but there are no newer scores in the {@link IpscResponse}.
-     */
     @Test
     public void testInitMatch_withExistingMatchAndNoNewerScores_thenReturnsEmptyOptional() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
-        za.co.hpsc.web.models.ipsc.response.MatchResponse matchResponse = new za.co.hpsc.web.models.ipsc.response.MatchResponse();
+        MatchResponse matchResponse = new MatchResponse();
         matchResponse.setMatchName("Existing Match");
-//        matchResponse.setMatchDate(java.time.LocalDate.of(2025, 1, 15));
+        matchResponse.setMatchDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         ipscResponse.setMatch(matchResponse);
 
-        za.co.hpsc.web.models.ipsc.response.ScoreResponse scoreResponse = new za.co.hpsc.web.models.ipsc.response.ScoreResponse();
+        ScoreResponse scoreResponse = new ScoreResponse();
         scoreResponse.setLastModified(LocalDateTime.of(2025, 1, 10, 10, 0));
-        ipscResponse.setScores(java.util.List.of(scoreResponse));
+        ipscResponse.setScores(List.of(scoreResponse));
 
         Match existingMatch = new Match();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
-        existingMatch.setScheduledDate(java.time.LocalDate.of(2025, 1, 15));
+        existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-//        when(matchService.findMatch("Existing Match", java.time.LocalDate.of(2025, 1, 15)))
-//                .thenReturn(Optional.of(existingMatch));
+        when(matchService.findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay()))
+                .thenReturn(Optional.of(existingMatch));
 
-        ClubDto clubDto = new ClubDto(null, "Test Club", "TC");
+        ClubDto clubDto = new ClubDto("Test Club", "TC");
 
         // Act
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
         assertTrue(result.isEmpty(), "Result should be empty when match exists but has no newer scores");
-//        verify(matchService, times(1)).findMatch("Existing Match", java.time.LocalDate.of(2025, 1, 15));
+        verify(matchService, times(1)).findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay());
     }
 
-    /**
-     * Test case to verify that the {@code initMatch} method returns a populated {@link MatchDto}
-     * when the match exists and there are newer scores in the {@link IpscResponse}.
-     */
     @Test
     public void testInitMatch_withExistingMatchAndNewerScores_thenReturnsPopulatedMatchDto() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
-        za.co.hpsc.web.models.ipsc.response.MatchResponse matchResponse = new za.co.hpsc.web.models.ipsc.response.MatchResponse();
+        MatchResponse matchResponse = new MatchResponse();
         matchResponse.setMatchName("Existing Match");
-//        matchResponse.setMatchDate(java.time.LocalDate.of(2025, 1, 15));
+        matchResponse.setMatchDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         ipscResponse.setMatch(matchResponse);
 
-        za.co.hpsc.web.models.ipsc.response.ScoreResponse scoreResponse = new za.co.hpsc.web.models.ipsc.response.ScoreResponse();
+        ScoreResponse scoreResponse = new ScoreResponse();
         scoreResponse.setLastModified(LocalDateTime.of(2025, 1, 25, 10, 0));
-        ipscResponse.setScores(java.util.List.of(scoreResponse));
+        ipscResponse.setScores(List.of(scoreResponse));
 
         Match existingMatch = new Match();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
-        existingMatch.setScheduledDate(java.time.LocalDate.of(2025, 1, 15));
+        existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-//        when(matchService.findMatch("Existing Match", java.time.LocalDate.of(2025, 1, 15)))
-//                .thenReturn(Optional.of(existingMatch));
+        when(matchService.findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay()))
+                .thenReturn(Optional.of(existingMatch));
 
         ClubDto clubDto = new ClubDto(1L, "Test Club", "TC");
 
@@ -191,28 +169,24 @@ public class MatchResultServiceImplTest {
         MatchDto matchDto = result.get();
         assertEquals(1L, matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
-//        verify(matchService, times(1)).findMatch("Existing Match", java.time.LocalDate.of(2025, 1, 15));
+        verify(matchService, times(1)).findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay());
     }
 
-    /**
-     * Test case to verify that the {@code initMatch} method returns a new {@link MatchDto}
-     * when the match does not exist in the database.
-     */
     @Test
     public void testInitMatch_withNonExistingMatch_thenReturnsNewMatchDto() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
-        za.co.hpsc.web.models.ipsc.response.MatchResponse matchResponse = new za.co.hpsc.web.models.ipsc.response.MatchResponse();
+        MatchResponse matchResponse = new MatchResponse();
         matchResponse.setMatchName("New Match");
-//        matchResponse.setMatchDate(java.time.LocalDate.of(2025, 2, 1));
+        matchResponse.setMatchDate(LocalDate.of(2025, 2, 1).atStartOfDay());
         ipscResponse.setMatch(matchResponse);
 
-        za.co.hpsc.web.models.ipsc.response.ScoreResponse scoreResponse = new za.co.hpsc.web.models.ipsc.response.ScoreResponse();
+        ScoreResponse scoreResponse = new ScoreResponse();
         scoreResponse.setLastModified(LocalDateTime.of(2025, 2, 1, 10, 0));
-        ipscResponse.setScores(java.util.List.of(scoreResponse));
+        ipscResponse.setScores(List.of(scoreResponse));
 
-//        when(matchService.findMatch("New Match", java.time.LocalDate.of(2025, 2, 1)))
-//                .thenReturn(Optional.empty());
+        when(matchService.findMatch("New Match", LocalDate.of(2025, 2, 1).atStartOfDay()))
+                .thenReturn(Optional.empty());
 
         ClubDto clubDto = new ClubDto(null, "New Club", "NC");
 
@@ -224,13 +198,9 @@ public class MatchResultServiceImplTest {
         MatchDto matchDto = result.get();
         assertNull(matchDto.getId(), "ID should be null for a new match");
         assertEquals(clubDto, matchDto.getClub());
-//        verify(matchService, times(1)).findMatch("New Match", java.time.LocalDate.of(2025, 2, 1));
+        verify(matchService, times(1)).findMatch("New Match", LocalDate.of(2025, 2, 1).atStartOfDay());
     }
 
-    /**
-     * Test case to verify that the {@code initStages} method returns an empty list
-     * when the provided stage responses list is null.
-     */
     @Test
     public void testInitStages_withNullStageResponses_thenReturnsEmptyList() {
         // Arrange
@@ -238,7 +208,7 @@ public class MatchResultServiceImplTest {
         matchDto.setId(1L);
 
         // Act
-        java.util.List<za.co.hpsc.web.models.match.MatchStageDto> result = matchResultService.initStages(matchDto, null);
+        List<MatchStageDto> result = matchResultService.initStages(matchDto, null);
 
         // Assert
         assertNotNull(result, "Result should not be null");
@@ -246,10 +216,6 @@ public class MatchResultServiceImplTest {
         verifyNoInteractions(matchStageService);
     }
 
-    /**
-     * Test case to verify that the {@code initStages} method returns an empty list
-     * when the provided stage responses list is empty.
-     */
     @Test
     public void testInitStages_withEmptyStageResponses_thenReturnsEmptyList() {
         // Arrange
@@ -257,7 +223,7 @@ public class MatchResultServiceImplTest {
         matchDto.setId(1L);
 
         // Act
-        java.util.List<za.co.hpsc.web.models.match.MatchStageDto> result = matchResultService.initStages(matchDto, java.util.List.of());
+        List<MatchStageDto> result = matchResultService.initStages(matchDto, List.of());
 
         // Assert
         assertNotNull(result, "Result should not be null");
@@ -265,25 +231,21 @@ public class MatchResultServiceImplTest {
         verifyNoInteractions(matchStageService);
     }
 
-    /**
-     * Test case to verify that the {@code initStages} method returns a list of {@link za.co.hpsc.web.models.match.MatchStageDto}
-     * with existing match stages when stages are found by the {@link MatchStageService}.
-     */
     @Test
     public void testInitStages_withExistingMatchStages_thenReturnsPopulatedMatchStageDtoList() {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setId(1L);
 
-        za.co.hpsc.web.models.ipsc.response.StageResponse stageResponse1 = new za.co.hpsc.web.models.ipsc.response.StageResponse();
+        StageResponse stageResponse1 = new StageResponse();
         stageResponse1.setStageId(1);
         stageResponse1.setStageName("Stage 1");
 
-        za.co.hpsc.web.models.ipsc.response.StageResponse stageResponse2 = new za.co.hpsc.web.models.ipsc.response.StageResponse();
+        StageResponse stageResponse2 = new StageResponse();
         stageResponse2.setStageId(2);
         stageResponse2.setStageName("Stage 2");
 
-        java.util.List<za.co.hpsc.web.models.ipsc.response.StageResponse> stageResponses = java.util.List.of(stageResponse1, stageResponse2);
+        List<StageResponse> stageResponses = List.of(stageResponse1, stageResponse2);
 
         Match match = new Match();
         match.setId(1L);
@@ -302,7 +264,7 @@ public class MatchResultServiceImplTest {
         when(matchStageService.findMatchStage(1L, 2)).thenReturn(Optional.of(matchStage2));
 
         // Act
-        java.util.List<za.co.hpsc.web.models.match.MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result, "Result should not be null");
@@ -313,31 +275,27 @@ public class MatchResultServiceImplTest {
         verify(matchStageService, times(1)).findMatchStage(1L, 2);
     }
 
-    /**
-     * Test case to verify that the {@code initStages} method returns a list of {@link za.co.hpsc.web.models.match.MatchStageDto}
-     * with new match stages when stages are not found by the {@link MatchStageService}.
-     */
     @Test
     public void testInitStages_withNonExistingMatchStages_thenReturnsNewMatchStageDtoList() {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setId(1L);
 
-        za.co.hpsc.web.models.ipsc.response.StageResponse stageResponse1 = new za.co.hpsc.web.models.ipsc.response.StageResponse();
+        StageResponse stageResponse1 = new StageResponse();
         stageResponse1.setStageId(1);
         stageResponse1.setStageName("New Stage 1");
 
-        za.co.hpsc.web.models.ipsc.response.StageResponse stageResponse2 = new za.co.hpsc.web.models.ipsc.response.StageResponse();
+        StageResponse stageResponse2 = new StageResponse();
         stageResponse2.setStageId(2);
         stageResponse2.setStageName("New Stage 2");
 
-        java.util.List<za.co.hpsc.web.models.ipsc.response.StageResponse> stageResponses = java.util.List.of(stageResponse1, stageResponse2);
+        List<StageResponse> stageResponses = List.of(stageResponse1, stageResponse2);
 
         when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
         when(matchStageService.findMatchStage(1L, 2)).thenReturn(Optional.empty());
 
         // Act
-        java.util.List<za.co.hpsc.web.models.match.MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result, "Result should not be null");
@@ -346,5 +304,223 @@ public class MatchResultServiceImplTest {
         assertNull(result.get(1).getId(), "Second stage ID should be null for new stage");
         verify(matchStageService, times(1)).findMatchStage(1L, 1);
         verify(matchStageService, times(1)).findMatchStage(1L, 2);
+    }
+
+    @Test
+    public void testInitScores_withNullMatchResultsDto_thenReturnsEarly() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        // Act
+        matchResultService.initScores(null, ipscResponse);
+
+        // Assert
+        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+    }
+
+    @Test
+    public void testInitScores_withNullIpscResponse_thenReturnsEarly() {
+        // Arrange
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+
+        // Act
+        matchResultService.initScores(matchResultsDto, null);
+
+        // Assert
+        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+    }
+
+    @Test
+    public void testInitScores_withNullScores_thenReturnsEarly() {
+        // Arrange
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setScores(null);
+
+        // Act
+        matchResultService.initScores(matchResultsDto, ipscResponse);
+
+        // Assert
+        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+    }
+
+    @Test
+    public void testInitScores_withNullMembers_thenReturnsEarly() {
+        // Arrange
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setScores(List.of());
+        ipscResponse.setMembers(null);
+
+        // Act
+        matchResultService.initScores(matchResultsDto, ipscResponse);
+
+        // Assert
+        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+    }
+
+    @Test
+    public void testInitScores_withNoMembersWithScores_thenInitializesEmptyCompetitorsList() {
+        // Arrange
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
+
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ScoreResponse scoreResponse = new ScoreResponse();
+        scoreResponse.setMemberId(100);
+        ipscResponse.setScores(List.of(scoreResponse));
+
+        MemberRequest memberResponse = new MemberRequest();
+        memberResponse.setMemberId(200);
+        ipscResponse.setMembers(List.of(memberResponse));
+
+        // Act
+        matchResultService.initScores(matchResultsDto, ipscResponse);
+
+        // Assert
+        assertNotNull(matchResultsDto.getCompetitors());
+        assertTrue(matchResultsDto.getCompetitors().isEmpty(), "Competitors list should be empty");
+        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+    }
+
+    @Test
+    public void testInitScores_withExistingCompetitorsAndMatchCompetitors_thenInitializesCorrectly() {
+        // Arrange
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
+
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ScoreResponse scoreResponse = new ScoreResponse();
+        scoreResponse.setMemberId(100);
+        scoreResponse.setStageId(1);
+        ipscResponse.setScores(List.of(scoreResponse));
+
+        MemberRequest memberResponse = new MemberRequest();
+        memberResponse.setMemberId(100);
+        memberResponse.setIcsAlias("ALIAS100");
+        memberResponse.setFirstName("John");
+        memberResponse.setLastName("Doe");
+        ipscResponse.setMembers(List.of(memberResponse));
+
+        Competitor existingCompetitor = new Competitor();
+        existingCompetitor.setId(10L);
+        existingCompetitor.setCompetitorNumber("ALIAS100");
+
+        MatchCompetitor existingMatchCompetitor = new MatchCompetitor();
+        existingMatchCompetitor.setId(20L);
+
+        when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
+                .thenReturn(Optional.of(existingCompetitor));
+        when(matchCompetitorService.findMatchCompetitor(1L, 10L))
+                .thenReturn(Optional.of(existingMatchCompetitor));
+
+        // Act
+        matchResultService.initScores(matchResultsDto, ipscResponse);
+
+        // Assert
+        assertNotNull(matchResultsDto.getCompetitors());
+        assertEquals(1, matchResultsDto.getCompetitors().size());
+        assertEquals(10L, matchResultsDto.getCompetitors().getFirst().getId());
+        assertEquals(1, matchResultsDto.getMatchCompetitors().size());
+        verify(competitorService, times(1)).findCompetitor("ALIAS100", "John", "Doe", null);
+        verify(matchCompetitorService, times(1)).findMatchCompetitor(1L, 10L);
+    }
+
+    @Test
+    public void testInitScores_withNonExistingCompetitorsAndMatchCompetitors_thenCreatesNew() {
+        // Arrange
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
+
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ScoreResponse scoreResponse = new ScoreResponse();
+        scoreResponse.setMemberId(100);
+        scoreResponse.setStageId(1);
+        ipscResponse.setScores(List.of(scoreResponse));
+
+        MemberRequest memberResponse = new MemberRequest();
+        memberResponse.setMemberId(100);
+        memberResponse.setIcsAlias("ALIAS100");
+        memberResponse.setFirstName("John");
+        memberResponse.setLastName("Doe");
+        ipscResponse.setMembers(List.of(memberResponse));
+
+        when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
+                .thenReturn(Optional.empty());
+        when(matchCompetitorService.findMatchCompetitor(1L, null))
+                .thenReturn(Optional.empty());
+
+        // Act
+        matchResultService.initScores(matchResultsDto, ipscResponse);
+
+        // Assert
+        assertNotNull(matchResultsDto.getCompetitors());
+        assertEquals(1, matchResultsDto.getCompetitors().size());
+        assertNull(matchResultsDto.getCompetitors().getFirst().getId());
+        assertEquals(1, matchResultsDto.getMatchCompetitors().size());
+        verify(competitorService, times(1)).findCompetitor("ALIAS100", "John", "Doe", null);
+        verify(matchCompetitorService, times(1)).findMatchCompetitor(1L, null);
+    }
+
+    @Test
+    public void testInitScores_withMatchStageCompetitorsScores_thenInitializesCorrectly() {
+        // Arrange
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setId(50L);
+        stageDto.setStageNumber(1);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
+        matchResultsDto.setStages(List.of(stageDto));
+
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ScoreResponse scoreResponse = new ScoreResponse();
+        scoreResponse.setMemberId(100);
+        scoreResponse.setStageId(1);
+        ipscResponse.setScores(List.of(scoreResponse));
+
+        MemberRequest memberResponse = new MemberRequest();
+        memberResponse.setMemberId(100);
+        memberResponse.setIcsAlias("ALIAS100");
+        memberResponse.setFirstName("John");
+        memberResponse.setLastName("Doe");
+        ipscResponse.setMembers(List.of(memberResponse));
+
+        Competitor existingCompetitor = new Competitor();
+        existingCompetitor.setId(10L);
+
+        MatchCompetitor existingMatchCompetitor = new MatchCompetitor();
+        existingMatchCompetitor.setId(20L);
+
+        MatchStageCompetitor existingMatchStageCompetitor = new MatchStageCompetitor();
+        existingMatchStageCompetitor.setId(30L);
+
+        when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
+                .thenReturn(Optional.of(existingCompetitor));
+        when(matchCompetitorService.findMatchCompetitor(1L, 10L))
+                .thenReturn(Optional.of(existingMatchCompetitor));
+        when(matchStageCompetitorService.findMatchStageCompetitor(50L, 10L))
+                .thenReturn(Optional.of(existingMatchStageCompetitor));
+
+        // Act
+        matchResultService.initScores(matchResultsDto, ipscResponse);
+
+        // Assert
+        assertNotNull(matchResultsDto.getMatchStageCompetitors());
+        assertEquals(1, matchResultsDto.getMatchStageCompetitors().size());
+        assertEquals(30L, matchResultsDto.getMatchStageCompetitors().getFirst().getId());
+        verify(matchStageCompetitorService, times(1)).findMatchStageCompetitor(50L, 10L);
     }
 }

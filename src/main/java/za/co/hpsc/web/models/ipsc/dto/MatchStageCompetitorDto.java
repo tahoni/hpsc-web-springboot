@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.ipsc.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,6 +10,7 @@ import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Data Transfer Object (DTO) representing the association between a competitor and a match stage,
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatchStageCompetitorDto {
+    private UUID uuid = UUID.randomUUID();
     private Long id;
 
     @NotNull

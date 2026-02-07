@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.match.ClubDto;
+import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 
 import java.util.List;
 

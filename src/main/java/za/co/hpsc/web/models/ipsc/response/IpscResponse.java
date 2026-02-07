@@ -69,6 +69,9 @@ public class IpscResponse {
      *                       to be updated and initialised as {@link MemberResponse} objects.
      */
     public void setMembers(List<MemberRequest> memberRequests) {
+        if (memberRequests == null) {
+            return;
+        }
         this.members = memberRequests.stream().map(MemberResponse::new).toList();
     }
 }

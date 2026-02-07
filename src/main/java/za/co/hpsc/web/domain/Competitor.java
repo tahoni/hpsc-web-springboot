@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.models.match.CompetitorDto;
+import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
 
 import java.time.LocalDate;
 import java.util.List;

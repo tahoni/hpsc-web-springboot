@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -63,6 +64,36 @@ public class MatchStageCompetitor {
     private Boolean isDisqualified;
 
     private LocalDateTime dateUpdated;
+
+    // TODO: Javadoc
+    public void init(MatchStageCompetitorDto matchStageCompetitorDto, MatchStage matchStageEntity,
+                     Competitor competitorEntity) {
+
+        this.matchStage = matchStageEntity;
+        this.competitor = competitorEntity;
+
+        this.scoreA = matchStageCompetitorDto.getScoreA();
+        this.scoreB = matchStageCompetitorDto.getScoreB();
+        this.scoreC = matchStageCompetitorDto.getScoreC();
+        this.scoreD = matchStageCompetitorDto.getScoreD();
+
+        this.points = matchStageCompetitorDto.getPoints();
+        this.misses = matchStageCompetitorDto.getMisses();
+        this.penalties = matchStageCompetitorDto.getPenalties();
+        this.procedurals = matchStageCompetitorDto.getProcedurals();
+
+        this.hasDeduction = matchStageCompetitorDto.getHasDeduction();
+        this.deductionPercentage = matchStageCompetitorDto.getDeductionPercentage();
+
+        this.time = matchStageCompetitorDto.getTime();
+        this.hitFactor = matchStageCompetitorDto.getHitFactor();
+        this.stagePoints = matchStageCompetitorDto.getStagePoints();
+        this.stagePercentage = matchStageCompetitorDto.getStagePercentage();
+
+        this.isDisqualified = matchStageCompetitorDto.getIsDisqualified();
+
+        this.dateUpdated = LocalDateTime.now();
+    }
 
     @Override
     public String toString() {

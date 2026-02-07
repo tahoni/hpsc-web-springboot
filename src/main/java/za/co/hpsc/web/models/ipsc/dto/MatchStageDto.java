@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.ipsc.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStage;
 import za.co.hpsc.web.models.ipsc.response.StageResponse;
+
+import java.util.UUID;
 
 /**
  * Data Transfer Object (DTO) representing a specific stage in a shooting match.
@@ -24,6 +26,7 @@ import za.co.hpsc.web.models.ipsc.response.StageResponse;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatchStageDto {
+    private UUID uuid = UUID.randomUUID();
     private Long id;
 
     @NotNull
@@ -43,6 +46,10 @@ public class MatchStageDto {
      *                         Must not be null.
      */
     public MatchStageDto(@NotNull MatchStage matchStageEntity) {
+        if (matchStageEntity == null) {
+            return;
+        }
+        
         this.id = matchStageEntity.getId();
         this.match = new MatchDto(matchStageEntity.getMatch());
         this.stageNumber = matchStageEntity.getStageNumber();

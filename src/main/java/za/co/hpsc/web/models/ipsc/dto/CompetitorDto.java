@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.ipsc.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,6 +11,7 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * Data Transfer Object (DTO) representing a competitor's information.
@@ -28,6 +29,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompetitorDto {
+    private UUID uuid = UUID.randomUUID();
     private Long id;
 
     @NotNull
@@ -52,6 +54,10 @@ public class CompetitorDto {
      *                         Must not be null.
      */
     public CompetitorDto(@NotNull Competitor competitorEntity) {
+        if (competitorEntity == null) {
+            return;
+        }
+
         this.id = competitorEntity.getId();
         this.firstName = competitorEntity.getFirstName();
         this.lastName = competitorEntity.getLastName();
@@ -66,7 +72,9 @@ public class CompetitorDto {
     public void init(MemberResponse memberResponse) {
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();
-        this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
+        if (memberResponse.getDateOfBirth() != null) {
+            this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
+        }
 
         // Initialises competitor number and SAPSA number based on the member's
         // reference number and ICS alias'

@@ -1,6 +1,6 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.match.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 
 // TODO: Javadoc (not yet ready)
 public interface TransactionService {

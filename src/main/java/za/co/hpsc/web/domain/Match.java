@@ -9,7 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
-import za.co.hpsc.web.models.match.MatchDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

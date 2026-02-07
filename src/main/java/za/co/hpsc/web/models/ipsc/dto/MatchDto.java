@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.match;
+package za.co.hpsc.web.models.ipsc.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,7 @@ import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Data Transfer Object (DTO) representing a shooting match.
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatchDto {
+    private UUID uuid = UUID.randomUUID();
     private Long id;
 
     private ClubDto club;
@@ -55,6 +57,10 @@ public class MatchDto {
      *                    Must not be null.
      */
     public MatchDto(@NotNull Match matchEntity) {
+        if (matchEntity == null) {
+            return;
+        }
+        
         this.id = matchEntity.getId();
         this.club = new ClubDto(matchEntity.getClub());
         this.name = matchEntity.getName();
