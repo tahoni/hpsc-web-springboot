@@ -19,6 +19,9 @@ public class MatchStageServiceImpl implements MatchStageService {
 
     @Override
     public Optional<MatchStage> findMatchStage(Long matchId, Integer stageNumber) {
+        if ((matchId == null) || (stageNumber == null)) {
+            return Optional.empty();
+        }
         return matchStageRepository.findByMatchIdAndStageNumber(matchId, stageNumber);
     }
 }

@@ -7,6 +7,7 @@ import za.co.hpsc.web.repositories.MatchRepository;
 import za.co.hpsc.web.services.MatchService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,12 @@ public class MatchServiceImpl implements MatchService {
         Optional<Match> match = Optional.empty();
 
         // Filters matches by date
-        List<Match> matchList = matchRepository.findAllByScheduledDate(scheduledDateTime.toLocalDate());
+        List<Match> matchList = new ArrayList<>();
+        if (scheduledDateTime != null) {
+            matchList = matchRepository.findAllByScheduledDate(scheduledDateTime.toLocalDate());
+        } else {
+            matchList = matchRepository.findAll();
+        }
 
         // Filters matches by name when present
         if (!name.isBlank()) {

@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.match.MatchCompetitorDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -56,6 +57,19 @@ public class MatchCompetitor {
     private BigDecimal matchPercentage;
 
     private LocalDateTime dateUpdated;
+
+    // TODO: Javadoc
+    public void init(MatchCompetitorDto matchCompetitorDto, Match matchEntity, Competitor competitorEntity) {
+        this.match = matchEntity;
+        this.competitor = competitorEntity;
+
+        this.division = matchCompetitorDto.getDivision();
+        this.discipline = matchCompetitorDto.getDiscipline();
+        this.powerFactor = matchCompetitorDto.getPowerFactor();
+
+        this.matchPoints = matchCompetitorDto.getMatchPoints();
+        this.matchPercentage = matchCompetitorDto.getMatchPercentage();
+    }
 
     public String toString() {
         return match.toString() + ": " + competitor.toString();

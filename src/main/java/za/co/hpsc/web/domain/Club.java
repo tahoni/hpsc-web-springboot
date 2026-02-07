@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.match.ClubDto;
 
 import java.util.List;
 
@@ -39,6 +40,12 @@ public class Club {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Match> matches;
+
+    // TODO: Javadoc
+    public void init(ClubDto clubDto) {
+        this.name = clubDto.getName();
+        this.abbreviation = clubDto.getAbbreviation();
+    }
 
     @Override
     public String toString() {

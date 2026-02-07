@@ -18,8 +18,10 @@ public class MatchStageCompetitorServiceImpl implements MatchStageCompetitorServ
     }
 
     @Override
-    public Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchStageId,
-                                                                   Long competitorId) {
+    public Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchStageId, Long competitorId) {
+        if ((matchStageId == null) || (competitorId == null)) {
+            return Optional.empty();
+        }
         return matchStageCompetitorRepository.findByMatchStageIdAndCompetitorId(matchStageId, competitorId);
     }
 }

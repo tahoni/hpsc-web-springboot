@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
+import za.co.hpsc.web.models.match.MatchDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -61,6 +62,22 @@ public class Match {
     @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
+
+    // TODO: Javadoc
+    public void init(MatchDto matchDto, Club clubEntity) {
+        this.club = clubEntity;
+
+        this.name = matchDto.getName();
+        this.scheduledDate = matchDto.getScheduledDate();
+
+        this.matchDivision = matchDto.getMatchDivision();
+        this.matchCategory = matchDto.getMatchCategory();
+
+        if (dateCreated == null) {
+            dateCreated = LocalDateTime.now();
+        }
+        dateUpdated = LocalDateTime.now();
+    }
 
     @Override
     public String toString() {
