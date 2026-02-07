@@ -120,7 +120,14 @@ public class MatchResultServiceImpl implements MatchResultService {
         return Optional.of(matchDto);
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a list of {@link MatchStageDto} objects based on the given match details
+     * and stage response data. If no stage responses are provided, an empty list is returned.
+     *
+     * @param matchDto       the match details. Must not be null.
+     * @param stageResponses a list of stage response objects. Can be null.
+     * @return a list of initialized {@link MatchStageDto} objects based on the input parameters.
+     */
     protected List<MatchStageDto> initStages(@NotNull MatchDto matchDto, List<StageResponse> stageResponses) {
         if (stageResponses == null) {
             return new ArrayList<>();
@@ -145,7 +152,16 @@ public class MatchResultServiceImpl implements MatchResultService {
         return matchStageDtoList;
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises the scores and competitors information for a given match results DTO
+     * based on the data from the IPSC response. It processes score and member responses,
+     * matches them to existing competitors or creates new ones, and updates the match results DTO
+     * with the complete competitor and scoring information.
+     *
+     * @param matchResultsDto the data transfer object for match results to be initialised with
+     *                        scores and competitors.
+     * @param ipscResponse    the response containing score and member data from an IPSC source.
+     */
     protected void initScores(MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
         if ((matchResultsDto == null) || (ipscResponse == null) ||
                 (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
@@ -221,7 +237,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                     // Attempts to find the match stage competitor by competitor ID, stage ID,
                     // and match ID
                     Optional<MatchStageCompetitor> optionalMatchStageCompetitor =
-                            matchStageCompetitorService.findMatchStageCompetitor(matchResultsDto.getMatch().getId(), stageDto.getId(), competitorDto.getId());
+                            matchStageCompetitorService.findMatchStageCompetitor(stageDto.getId(), competitorDto.getId());
                     // Creates a new match stage competitor DTO, from either the found entity or the competitor DTO
                     MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
                             .map(MatchStageCompetitorDto::new)

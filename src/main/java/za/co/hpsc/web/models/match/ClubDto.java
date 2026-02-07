@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.Club;
-import za.co.hpsc.web.models.ipsc.response.ClubResponse;
-import za.co.hpsc.web.utils.ValueUtil;
 
 /**
  * Data Transfer Object (DTO) representing a club's information.
@@ -42,18 +40,6 @@ public class ClubDto {
         this.id = clubEntity.getId();
         this.name = clubEntity.getName();
         this.abbreviation = clubEntity.getAbbreviation();
-    }
-
-    /**
-     * Initialises the current {@code ClubDto} instance with data from the provided
-     * {@link ClubResponse} object.
-     *
-     * @param clubResponse the {@link ClubResponse} containing the club's name and abbreviation.
-     *                     Must not be null.
-     */
-    public void init(@NotNull ClubResponse clubResponse) {
-        this.name = ValueUtil.nullAsEmptyString(clubResponse.getClubName());
-        this.abbreviation = clubResponse.getClubCode();
     }
 
     @Override
