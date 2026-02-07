@@ -10,15 +10,15 @@ A summary of the main changes.
 
 #### Bug Fixes
 
-#### Tests and Quality Assurance
-
 #### General Code Improvements
-
-#### Licence and Documentation
 
 #### General Technical Changes
 
+#### Licence and Documentation
+
 #### Dependencies
+
+#### Tests and Quality Assurance
 
 #### Changes by
 

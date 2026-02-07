@@ -2,44 +2,48 @@
 
 ## Release Notes
 
-### Version 1.1.3 - _2026-01-28_
+### Version 1.2.0 - _2026-01-28_
 
-Improved maintainability and clarity by expanding Javadoc coverage across the codebase.
-Introduced a central `Division` → `DisciplinesInDivision` mapping.
+Comprehensive refactoring of the IPSC/WinMSS match result processing system, introducing modular service
+architecture, improved data models, and enhanced transactional support.
 
 #### Enhancements and Updates
 
-- Introduced a central mapper that resolves each `Division` enum to its corresponding
-  `DisciplinesInDivision` singleton implementation.
-- `Division` now includes an additional value: `NONE`.
-
-#### Tests and Quality Assurance
-
-- Added and updated unit tests to validate the mapping behaviour.
-- Simplified test setup, fixed grammar issues in test code/docs, and added coverage for validation-oriented
-  methods.
+- **Service Refactoring**: Renamed and restructured `IpscService` to `WinMssService`, introduced new service
+  layers including `MatchResultsService`, `TransactionService`, and modularised service implementations.
+- **Data Model Enhancements**:
+    - Updated domain models (`Match`, `Competitor`, `MatchCompetitor`, `MatchStageCompetitor`) with new fields
+      including timestamps (`dateCreated`, `dateUpdated`), additional scoring details, and deduction support
+    - Added relationship between `Competitor` and `MatchStageCompetitor` directly.
+    - Introduced `CompetitorConstants` and updated `IpscConstants` with exclusion lists.
+- **DTO Restructuring**: Removed legacy response models and introduced modular DTOs for matches, clubs,
+  stages, and competitors.
 
 #### General Code Improvements
 
-- Ensured utility classes cannot be instantiated (e.g. via private constructors).
-- Improved string formatting and readability in match helper utilities.
-- Removed unused constants in `MatchConstants`.
-
-#### Licence and Documentation
-
-- Expanded and refined Javadoc across multiple areas including:
-    - Domain entities (e.g., match-related entities)
-    - Enums (improved descriptions/clarity)
-    - Division discipline model classes (`Disciplines*` classes)
+- **Code Quality**: Standardised line wrapping at 110 characters, enhanced null safety, and improved error
+  handling.
 
 #### General Technical Changes
 
-- Removed an unnecessary IDE file: `.idea/data_source_mapping.xml`
-- Updated `.gitignore` to prevent committing similar IDE metadata in future.
+- **Configuration Updates**: Updated `.gitignore`, fixed changelog template, and minor documentation
+  improvements.
+
+#### Licence and Documentation
+
+- **Improved Documentation**: Added comprehensive Javadoc comments across services, models, enums, and
+  controllers.
 
 #### Dependencies
 
-- Bumped spring-boot-starter-parent to version 4.0.2 to address security vulnerabilities.
+- **Dependency Management**: Cleaned up `pom.xml` to use Spring Boot BOM-managed versions for Jackson
+  dependencies, added Apache Commons Lang3.
+
+#### Tests and Quality Assurance
+
+- Added comprehensive unit tests for `WinMssServiceImpl` and `WinMssService` covering
+  XML/JSON parsing scenarios.
+- Added tests for match results calculation in `MatchResultServiceImpl`.
 
 #### Changes by
 

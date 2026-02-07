@@ -71,11 +71,12 @@ public class MatchResultServiceImpl implements MatchResultService {
         // Attempts to find the club by name and abbreviation in the database
         Optional<Club> optionalClub =
                 clubService.findClub(clubResponse.getClubName(), clubResponse.getClubCode());
+
         // Creates a new club DTO, from either the found entity or the club response
-        ClubDto clubDto = null;
-        clubDto = optionalClub
+        ClubDto clubDto = optionalClub
                 .map(ClubDto::new)
-                .orElseGet(ClubDto::new);
+                .orElseGet(() -> new ClubDto(null, clubResponse.getClubName(), clubResponse.getClubCode()));
+
         return Optional.of(clubDto);
     }
 
