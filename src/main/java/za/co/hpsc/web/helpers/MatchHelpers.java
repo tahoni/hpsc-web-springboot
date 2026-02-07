@@ -1,5 +1,6 @@
 package za.co.hpsc.web.helpers;
 
+import jakarta.validation.constraints.NotNull;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.domain.MatchStage;
@@ -41,7 +42,7 @@ public final class MatchHelpers {
      * @return a formatted string representing the display name of the match, including its name,
      * division, category, and scheduled date.
      */
-    public static String getMatchDisplayName(Match match) {
+    public static String getMatchDisplayName(@NotNull Match match) {
         // Prepare date formatters
         DateTimeFormatter longDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_LONG_DATE_FORMAT);
@@ -77,7 +78,7 @@ public final class MatchHelpers {
      * @return a formatted string representing the overall display name of the match,
      * combining its name and ISO-formatted scheduled date.
      */
-    public static String getMatchOverallDisplayName(Match match) {
+    public static String getMatchOverallDisplayName(@NotNull Match match) {
         // Prepare date formatters
         DateTimeFormatter isoDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_ISO_DATE_FORMAT);
@@ -111,7 +112,7 @@ public final class MatchHelpers {
      * @return a formatted string representing the display name of the match stage, including
      * the match name, stage and range numbers, and the scheduled date in ISO format.
      */
-    public static String getMatchStageDisplayName(MatchStage matchStage) {
+    public static String getMatchStageDisplayName(@NotNull MatchStage matchStage) {
         // Prepare date formatters
         DateTimeFormatter isoDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_ISO_DATE_FORMAT);

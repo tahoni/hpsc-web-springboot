@@ -46,29 +46,49 @@ public class MatchDto {
     private LocalDateTime dateUpdated;
 
     /**
+     * Constructs a new {@code MatchDto} instance with data from the provided
+     * {@link Match} entity.
+     *
+     * @param matchEntity the {@link Match} entity containing match-related information, such as
+     *                    the unique identifier, associated club, name, scheduled date, match division,
+     *                    match category, creation timestamp, and update timestamp.
+     *                    Must not be null.
+     */
+    public MatchDto(@NotNull Match matchEntity) {
+        this.id = matchEntity.getId();
+        this.club = new ClubDto(matchEntity.getClub());
+        this.name = matchEntity.getName();
+        this.scheduledDate = matchEntity.getScheduledDate();
+        this.matchDivision = matchEntity.getMatchDivision();
+        this.matchCategory = matchEntity.getMatchCategory();
+        this.dateCreated = matchEntity.getDateCreated();
+        this.dateUpdated = matchEntity.getDateUpdated();
+    }
+
+    /**
      * Constructs a new {@code MatchDto} instance using the provided {@link Match} entity
      * and {@link ClubDto} object.
      *
-     * @param match the {@link Match} entity containing match-related information such as
-     *              the unique identifier, name, scheduled date, division, category,
-     *              creation timestamp, and update timestamp. Must not be null.
-     * @param club  the {@link ClubDto} instance representing the club associated with the match.
-     *              Must not be null.
+     * @param matchEntity the {@link Match} entity containing match-related information such as
+     *                    the unique identifier, name, scheduled date, division, category,
+     *                    creation timestamp, and update timestamp. Must not be null.
+     * @param clubDto     the {@link ClubDto} instance representing the club associated with the match.
+     *                    Must not be null.
      */
-    public MatchDto(@NotNull Match match, @NotNull ClubDto club) {
-        this.id = match.getId();
-        this.club = club;
-        this.name = match.getName();
-        this.scheduledDate = match.getScheduledDate();
-        this.matchDivision = match.getMatchDivision();
-        this.matchCategory = match.getMatchCategory();
-        this.dateCreated = match.getDateCreated();
-        this.dateUpdated = match.getDateUpdated();
+    public MatchDto(@NotNull Match matchEntity, @NotNull ClubDto clubDto) {
+        this.id = matchEntity.getId();
+        this.club = clubDto;
+        this.name = matchEntity.getName();
+        this.scheduledDate = matchEntity.getScheduledDate();
+        this.matchDivision = matchEntity.getMatchDivision();
+        this.matchCategory = matchEntity.getMatchCategory();
+        this.dateCreated = matchEntity.getDateCreated();
+        this.dateUpdated = matchEntity.getDateUpdated();
     }
 
-    // TODO: Javadoc
-    public void init(MatchResponse matchResponse, ClubDto club) {
-        this.club = club;
+    // TODO: Javadoc (not yet ready)
+    public void init(MatchResponse matchResponse, ClubDto clubDto) {
+        this.club = clubDto;
         this.name = matchResponse.getMatchName();
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
 

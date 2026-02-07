@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.services.IpscService;
+import za.co.hpsc.web.services.WinMssService;
 
 /**
  * Controller responsible for handling IPSC-related API endpoints.
@@ -25,10 +25,10 @@ import za.co.hpsc.web.services.IpscService;
 @RequestMapping("/ipsc")
 @Tag(name = "IPSC", description = "API for functionality related to IPSC directly.")
 public class IpscController {
-    private final IpscService ipscService;
+    private final WinMssService winMssService;
 
-    public IpscController(IpscService ipscService) {
-        this.ipscService = ipscService;
+    public IpscController(WinMssService winMssService) {
+        this.winMssService = winMssService;
     }
 
     /**
@@ -61,7 +61,7 @@ public class IpscController {
             ))
             @RequestBody String cabFileContent) {
         try {
-            return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
+            return ResponseEntity.ok(winMssService.importWinMssCabFile(cabFileContent));
         } catch (za.co.hpsc.web.exceptions.FatalException e) {
             throw new RuntimeException(e);
         }

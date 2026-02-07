@@ -13,6 +13,7 @@ public class MatchStageCompetitorServiceImpl implements MatchStageCompetitorServ
     @Override
     public Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchId, Long matchStageId,
                                                                    Long competitorId) {
+        // TODO: add logic to find match stage competitor by matchId, matchStageId and competitorId
         return Optional.empty();
     }
 }

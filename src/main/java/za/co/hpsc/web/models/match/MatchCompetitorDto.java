@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
@@ -47,19 +48,39 @@ public class MatchCompetitorDto {
     private LocalDateTime dateUpdated;
 
     /**
-     * Constructs a new {@code MatchCompetitorDto} instance, associating a competitor with a match.
+     * Constructs a new {@code MatchCompetitorDto} instance with data from the
+     * provided {@link MatchCompetitor} entity.
      *
-     * @param competitor the {@link CompetitorDto} representing the competitor in the match.
-     *                   Must not be null.
-     * @param match      the {@link MatchDto} representing the match in which the
-     *                   competitor participates. Must not be null.
+     * @param matchCompetitorEntity the {@link MatchCompetitor} entity containing information
+     *                              about a competitor's participation in a specific match.
+     *                              Must not be null.
      */
-    public MatchCompetitorDto(@NotNull CompetitorDto competitor, @NotNull MatchDto match) {
-        this.competitor = competitor;
-        this.match = match;
+    public MatchCompetitorDto(MatchCompetitor matchCompetitorEntity) {
+        this.id = matchCompetitorEntity.getId();
+        this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
+        this.match = new MatchDto(matchCompetitorEntity.getMatch());
+        this.division = matchCompetitorEntity.getDivision();
+        this.discipline = matchCompetitorEntity.getDiscipline();
+        this.powerFactor = matchCompetitorEntity.getPowerFactor();
+        this.matchPoints = matchCompetitorEntity.getMatchPoints();
+        this.matchPercentage = matchCompetitorEntity.getMatchPercentage();
+        this.dateUpdated = matchCompetitorEntity.getDateUpdated();
     }
 
-    // TODO: Javadoc
+    /**
+     * Constructs a new {@code MatchCompetitorDto} instance, associating a competitor with a match.
+     *
+     * @param competitorDto the {@link CompetitorDto} representing the competitor in the match.
+     *                      Must not be null.
+     * @param matchDto      the {@link MatchDto} representing the match in which the
+     *                      competitor participates. Must not be null.
+     */
+    public MatchCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchDto matchDto) {
+        this.competitor = competitorDto;
+        this.match = matchDto;
+    }
+
+    // TODO: Javadoc (not yet ready)
     public void init(List<ScoreResponse> scoreResponses) {
         // Initializes aggregate score from multiple score responses
         this.matchPoints = BigDecimal.valueOf(scoreResponses.stream()

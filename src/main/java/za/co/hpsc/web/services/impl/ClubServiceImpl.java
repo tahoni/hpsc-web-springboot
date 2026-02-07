@@ -17,7 +17,6 @@ public class ClubServiceImpl implements ClubService {
         this.clubRepository = clubRepository;
     }
 
-    // TODO: Javadoc
     @Override
     public Optional<Club> findClub(String name, String abbreviation) {
         Optional<Club> club = Optional.empty();

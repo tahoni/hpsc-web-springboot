@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-// TODO: Javadoc
 public class MatchServiceImpl implements MatchService {
     protected final MatchRepository matchRepository;
 

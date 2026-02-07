@@ -35,33 +35,47 @@ public class MatchStageDto {
     private Integer rangeNumber;
 
     /**
+     * Constructs a new {@code MatchStageDto} instance with ata from the
+     * provided {@link MatchStage} entity.
+     *
+     * @param matchStageEntity the {@link MatchStage} entity containing stage-related information,
+     *                         such as the unique identifier, associated match, and stage number.
+     *                         Must not be null.
+     */
+    public MatchStageDto(@NotNull MatchStage matchStageEntity) {
+        this.id = matchStageEntity.getId();
+        this.match = new MatchDto(matchStageEntity.getMatch());
+        this.stageNumber = matchStageEntity.getStageNumber();
+    }
+
+    /**
      * Constructs a new {@code MatchStageDto} instance using the provided
      * {@link MatchStage} entity and {@link MatchDto} object.
      *
-     * @param matchStage the {@link MatchStage} entity containing stage-related information,
-     *                   such as the unique identifier, stage number, and stage name.
-     *                   Must not be null.
-     * @param matchDto   the {@link  MatchDto} object representing the associated match.
-     *                   Must not be null.
+     * @param matchStageEntity the {@link MatchStage} entity containing stage-related information,
+     *                         such as the unique identifier, stage number, and stage name.
+     *                         Must not be null.
+     * @param matchDto         the {@link  MatchDto} object representing the associated match.
+     *                         Must not be null.
      */
-    public MatchStageDto(@NotNull MatchStage matchStage, @NotNull MatchDto matchDto) {
-        this.id = matchStage.getId();
+    public MatchStageDto(@NotNull MatchStage matchStageEntity, @NotNull MatchDto matchDto) {
+        this.id = matchStageEntity.getId();
         this.match = matchDto;
-        this.stageNumber = matchStage.getStageNumber();
-        this.stageName = matchStage.getStageName();
+        this.stageNumber = matchStageEntity.getStageNumber();
+        this.stageName = matchStageEntity.getStageName();
     }
 
     /**
      * Initialises the current {@code MatchStageDto} instance using the provided
      * {@link MatchDto} object and {@link StageResponse} object.
      *
-     * @param match         the {@link MatchDto} object representing the associated match.
+     * @param matchDto      the {@link MatchDto} object representing the associated match.
      *                      Must not be null.
      * @param stageResponse the {@link StageResponse} object containing stage-related
      *                      data, including stage ID and stage name. Must not be null.
      */
-    public void init(@NotNull MatchDto match, @NotNull StageResponse stageResponse) {
-        this.match = match;
+    public void init(@NotNull MatchDto matchDto, @NotNull StageResponse stageResponse) {
+        this.match = matchDto;
         this.stageNumber = stageResponse.getStageId();
         this.stageName = stageResponse.getStageName();
     }

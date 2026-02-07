@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class IpscServiceTest {
+public class WinMssServiceTest {
 
     @Mock
     private TransactionService transactionService;
@@ -26,7 +26,7 @@ public class IpscServiceTest {
     private IpscMatchService ipscMatchService;
 
     @InjectMocks
-    private IpscServiceImpl ipscService;
+    private WinMssServiceImpl winMssService;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +56,7 @@ public class IpscServiceTest {
 
         // Act
         ControllerResponse response = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent));
+                winMssService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(response);
@@ -89,27 +89,27 @@ public class IpscServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(cabFileContent));
+                winMssService.importWinMssCabFile(cabFileContent));
     }
 
     @Test
     void testImportWinMssCabFile_withNullCabFile_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(null));
+                winMssService.importWinMssCabFile(null));
     }
 
     @Test
     void testImportWinMssCabFile_withEmptyCabFile_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(""));
+                winMssService.importWinMssCabFile(""));
     }
 
     @Test
     void testImportWinMssCabFile_withBlankCabFile_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile("   "));
+                winMssService.importWinMssCabFile("   "));
     }
 }

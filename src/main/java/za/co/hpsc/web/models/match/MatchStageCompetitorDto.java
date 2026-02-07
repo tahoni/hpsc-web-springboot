@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.math.BigDecimal;
@@ -57,17 +58,32 @@ public class MatchStageCompetitorDto {
     private LocalDateTime dateUpdated;
 
     /**
+     * Constructs a new {@code MatchStageCompetitorDto} instance with data from the
+     * provided {@link MatchStageCompetitor} entity.
+     *
+     * @param matchStageCompetitorEntity the {@link MatchStageCompetitor} entity containing information
+     *                                   about a competitor's participation in a specific match stage,
+     *                                   such as the competitor, match stage, and associated identifier.
+     *                                   Must not be null.
+     */
+    public MatchStageCompetitorDto(@NotNull MatchStageCompetitor matchStageCompetitorEntity) {
+        this.id = matchStageCompetitorEntity.getId();
+        this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
+        this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
+    }
+
+    /**
      * Constructs a new {@code MatchStageCompetitorDto} instance, associating a competitor
      * with a match stage.
      *
-     * @param competitor the {@link  CompetitorDto} representing the competitor in the match stage.
-     *                   Must not be null.
-     * @param matchStage the {@link MatchStageDto} representing the match stage in which
-     *                   the competitor participates. Must not be null.
+     * @param competitorDto the {@link  CompetitorDto} representing the competitor in the match stage.
+     *                      Must not be null.
+     * @param matchStageDto the {@link MatchStageDto} representing the match stage in which
+     *                      the competitor participates. Must not be null.
      */
-    public MatchStageCompetitorDto(@NotNull CompetitorDto competitor, @NotNull MatchStageDto matchStage) {
-        this.competitor = competitor;
-        this.matchStage = matchStage;
+    public MatchStageCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchStageDto matchStageDto) {
+        this.competitor = competitorDto;
+        this.matchStage = matchStageDto;
     }
 
     /**

@@ -46,21 +46,23 @@ public class CompetitorDto {
      * Constructs a new {@code CompetitorDto} instance with data from the provided
      * {@link Competitor} entity.
      *
-     * @param competitor the {@link Competitor} entity containing the competitor's information,
-     *                   such as unique identifier, first name, last name, middle names,
-     *                   competitor number, date of birth, and category. Must not be null.
+     * @param competitorEntity the {@link Competitor} entity containing the competitor's information,
+     *                         such as unique identifier, first name, last name, middle names,
+     *                         competitor number, date of birth, and category.
+     *                         Must not be null.
      */
-    public CompetitorDto(@NotNull Competitor competitor) {
-        this.id = competitor.getId();
-        this.firstName = competitor.getFirstName();
-        this.lastName = competitor.getLastName();
-        this.middleNames = competitor.getMiddleNames();
-        this.sapsaNumber = competitor.getSapsaNumber();
-        this.competitorNumber = competitor.getCompetitorNumber();
-        this.dateOfBirth = competitor.getDateOfBirth();
-        this.category = competitor.getCategory();
+    public CompetitorDto(@NotNull Competitor competitorEntity) {
+        this.id = competitorEntity.getId();
+        this.firstName = competitorEntity.getFirstName();
+        this.lastName = competitorEntity.getLastName();
+        this.middleNames = competitorEntity.getMiddleNames();
+        this.sapsaNumber = competitorEntity.getSapsaNumber();
+        this.competitorNumber = competitorEntity.getCompetitorNumber();
+        this.dateOfBirth = competitorEntity.getDateOfBirth();
+        this.category = competitorEntity.getCategory();
     }
 
+    // TOOD: Javadoc (not yet ready)
     public void init(MemberResponse memberResponse) {
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();

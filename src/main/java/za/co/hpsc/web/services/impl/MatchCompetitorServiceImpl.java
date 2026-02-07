@@ -12,6 +12,7 @@ import java.util.Optional;
 public class MatchCompetitorServiceImpl implements MatchCompetitorService {
     @Override
     public Optional<MatchCompetitor> findMatchCompetitor(Long competitorId, Long matchId) {
+        // TODO: add logic to find match competitor by competitorId and matchId
         return Optional.empty();
     }
 }

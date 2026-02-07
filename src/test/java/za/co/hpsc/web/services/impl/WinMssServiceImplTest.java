@@ -15,10 +15,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IpscServiceImplTest {
+public class WinMssServiceImplTest {
 
     @InjectMocks
-    private IpscServiceImpl ipscService;
+    private WinMssServiceImpl winMssService;
 
     @Test
     void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() {
@@ -39,7 +39,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+        var result = assertDoesNotThrow(() -> winMssService.readIpscRequests(cabFileContent));
 
         // Assert
         assertNotNull(result);
@@ -127,7 +127,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+        var result = assertDoesNotThrow(() -> winMssService.readIpscRequests(cabFileContent));
 
         // Assert
         assertNotNull(result);
@@ -160,7 +160,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+        var result = assertDoesNotThrow(() -> winMssService.readIpscRequests(cabFileContent));
 
         // Assert
         assertNotNull(result);
@@ -214,7 +214,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+        var result = assertDoesNotThrow(() -> winMssService.readIpscRequests(cabFileContent));
 
         // Assert
         assertNotNull(result);
@@ -250,7 +250,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+        var result = assertDoesNotThrow(() -> winMssService.readIpscRequests(cabFileContent));
 
         // Assert
         assertNotNull(result);
@@ -285,7 +285,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+        var result = assertDoesNotThrow(() -> winMssService.readIpscRequests(cabFileContent));
 
         // Assert
         assertNotNull(result);
@@ -308,7 +308,7 @@ public class IpscServiceImplTest {
 
         // Act & Assert
         assertThrows(FatalException.class, () ->
-                ipscService.readIpscRequests(cabFileContent)
+                winMssService.readIpscRequests(cabFileContent)
         );
     }
 
@@ -316,7 +316,7 @@ public class IpscServiceImplTest {
     void testReadIpscRequests_withNullJson_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.readIpscRequests(null)
+                winMssService.readIpscRequests(null)
         );
     }
 
@@ -341,7 +341,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
@@ -397,7 +397,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
@@ -439,7 +439,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
@@ -453,7 +453,7 @@ public class IpscServiceImplTest {
         String xmlData = "Invalid XML Content";
 
         // Act & Assert
-        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
@@ -467,7 +467,7 @@ public class IpscServiceImplTest {
         String xmlData = "";
 
         // Act
-        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
@@ -478,7 +478,7 @@ public class IpscServiceImplTest {
     @Test
     void testReadRequests_withNullXml_thenReturnsEmptyList() {
         // Act
-        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(null,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> winMssService.readRequests(null,
                 ClubRequest.class));
 
         // Assert
@@ -498,7 +498,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<ClubRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClubRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
@@ -525,7 +525,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<MatchRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<MatchRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 MatchRequest.class));
 
         // Assert
@@ -552,7 +552,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<StageRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<StageRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 StageRequest.class));
 
         // Assert
@@ -578,7 +578,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<TagRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<TagRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 TagRequest.class));
 
         // Assert
@@ -603,7 +603,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<MemberRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<MemberRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 MemberRequest.class));
 
         // Assert
@@ -630,7 +630,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<ClassificationRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClassificationRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ClassificationRequest.class));
 
         // Assert
@@ -657,7 +657,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<EnrolledRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<EnrolledRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 EnrolledRequest.class));
 
         // Assert
@@ -683,7 +683,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<SquadRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<SquadRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 SquadRequest.class));
 
         // Assert
@@ -709,7 +709,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<TeamRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<TeamRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 TeamRequest.class));
 
         // Assert
@@ -735,7 +735,7 @@ public class IpscServiceImplTest {
                 """;
 
         // Act
-        List<ScoreRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ScoreRequest> requestList = assertDoesNotThrow(() -> winMssService.readRequests(xmlData,
                 ScoreRequest.class));
 
         // Assert
