@@ -81,7 +81,7 @@ public class MemberRequest {
     private Integer defaultDivisionId;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DfltCatId")
-    private Integer defaultNonTeamCategoryId;
+    private Integer defaultCompetitorCategoryId;
 
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "RegionId")

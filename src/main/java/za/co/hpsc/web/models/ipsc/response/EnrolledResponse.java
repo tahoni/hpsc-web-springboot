@@ -34,7 +34,7 @@ public class EnrolledResponse {
 
     private String refNo = "";
     private Integer tagId = 0;
-    private Integer nonTeamCategoryId = 0;
+    private Integer competitorCategoryId = 0;
 
     private Boolean majorPowerFactor = false;
     private Boolean scoreClassificationId = false;
@@ -60,7 +60,7 @@ public class EnrolledResponse {
         this.divisionId = enrolledRequest.getDivisionId();
         this.refNo = enrolledRequest.getRefNo();
         this.tagId = enrolledRequest.getTagId();
-        this.nonTeamCategoryId = enrolledRequest.getNonTeamCategoryId();
+        this.competitorCategoryId = enrolledRequest.getCompetitorCategoryId();
         this.majorPowerFactor = enrolledRequest.getMajorPowerFactor();
         this.scoreClassificationId = enrolledRequest.getScoreClassificationId();
         this.isDisqualified = enrolledRequest.getIsDisqualified();

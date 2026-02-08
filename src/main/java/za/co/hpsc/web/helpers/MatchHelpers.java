@@ -49,11 +49,12 @@ public final class MatchHelpers {
 
         // Prepare parameters for formatting
         Map<String, String> parameters = Map.of(
-                "clubName", match.getClub().getName(),
+                "clubName", (match.getClub() != null ?
+                        match.getClub() : ""),
                 "divisionName", (match.getMatchDivision() != null ?
-                        match.getMatchDivision().getDisplayName().toUpperCase() : ""),
+                        match.getMatchDivision().toString().toUpperCase() : ""),
                 "categoryName", (match.getMatchCategory() != null ?
-                        match.getMatchCategory().getDisplayName() : ""),
+                        match.getMatchCategory().toString() : ""),
                 "longDate", longDateFormatter.format(match.getScheduledDate())
         );
 

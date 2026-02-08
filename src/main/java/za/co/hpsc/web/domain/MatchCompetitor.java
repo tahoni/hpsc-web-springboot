@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
@@ -47,6 +48,8 @@ public class MatchCompetitor {
     private Match match;
 
     @Enumerated(EnumType.STRING)
+    private ClubReference club;
+    @Enumerated(EnumType.STRING)
     private Division division;
     @Enumerated(EnumType.STRING)
     private Discipline discipline;
@@ -67,6 +70,7 @@ public class MatchCompetitor {
         this.match = matchEntity;
         this.competitor = competitorEntity;
 
+        this.club = matchCompetitorDto.getClub();
         this.division = matchCompetitorDto.getDivision();
         this.discipline = matchCompetitorDto.getDiscipline();
         this.powerFactor = matchCompetitorDto.getPowerFactor();

@@ -15,19 +15,17 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class MatchResultServiceImpl implements MatchResultService {
-    protected final ClubService clubService;
     protected final MatchService matchService;
     protected final CompetitorService competitorService;
     protected final MatchStageService matchStageService;
     protected final MatchCompetitorService matchCompetitorService;
     protected final MatchStageCompetitorService matchStageCompetitorService;
 
-    public MatchResultServiceImpl(ClubService clubService, MatchService matchService,
-                                  CompetitorService competitorService, MatchStageService matchStageService,
+    public MatchResultServiceImpl(MatchService matchService, CompetitorService competitorService,
+                                  MatchStageService matchStageService,
                                   MatchCompetitorService matchCompetitorService,
                                   MatchStageCompetitorService matchStageCompetitorService) {
 
-        this.clubService = clubService;
         this.matchService = matchService;
         this.competitorService = competitorService;
         this.matchStageService = matchStageService;
@@ -38,8 +36,7 @@ public class MatchResultServiceImpl implements MatchResultService {
     @Override
     public Optional<MatchResultsDto> initMatchResults(IpscResponse ipscResponse) {
         // Initialises club and match
-        Optional<ClubDto> optionalClub = initClub(ipscResponse.getClub());
-        Optional<MatchDto> optionalMatch = initMatch(ipscResponse, optionalClub.orElse(null));
+        Optional<MatchDto> optionalMatch = initMatch(ipscResponse);
         if (optionalMatch.isEmpty()) {
             return Optional.empty();
         }
@@ -57,30 +54,6 @@ public class MatchResultServiceImpl implements MatchResultService {
     }
 
     /**
-     * Initialises a club based on the given club information.
-     *
-     * @param clubResponse the {@link ClubResponse} object containing club information.
-     * @return an {@code Optional} containing the initialized {@link ClubDto},
-     * or an empty {@code Optional} if the club response is null.
-     */
-    protected Optional<ClubDto> initClub(ClubResponse clubResponse) {
-        if (clubResponse == null) {
-            return Optional.empty();
-        }
-
-        // Attempts to find the club by name and abbreviation in the database
-        Optional<Club> optionalClub =
-                clubService.findClub(clubResponse.getClubName(), clubResponse.getClubCode());
-
-        // Creates a new club DTO, from either the found entity or the club response
-        ClubDto clubDto = optionalClub
-                .map(ClubDto::new)
-                .orElseGet(() -> new ClubDto(clubResponse.getClubName(), clubResponse.getClubCode()));
-
-        return Optional.of(clubDto);
-    }
-
-    /**
      * Initialises or updates a match based on the provided IPSC response and club information.
      * If the match already exists in the database and no newer scores are present, the method
      * skips the update and returns an empty {@code Optional}. Otherwise, it creates or updates
@@ -88,11 +61,10 @@ public class MatchResultServiceImpl implements MatchResultService {
      *
      * @param ipscResponse the {@link IpscResponse} object containing match and score information.
      *                     Must not be null.
-     * @param clubDto      the club details associated with the match.
      * @return an {@code Optional} containing the initialised or updated {@link MatchDto},
      * or an empty {@code Optional} if the match exists but no newer scores are present.
      */
-    protected Optional<MatchDto> initMatch(@NotNull IpscResponse ipscResponse, ClubDto clubDto) {
+    protected Optional<MatchDto> initMatch(@NotNull IpscResponse ipscResponse) {
         // Attempts to find the match by name and date in the database
         Optional<Match> optionalMatch =
                 matchService.findMatch(ipscResponse.getMatch().getMatchName(), ipscResponse.getMatch().getMatchDate());
@@ -113,11 +85,11 @@ public class MatchResultServiceImpl implements MatchResultService {
 
         // Creates a new match DTO, from either the found entity or the match response
         MatchDto matchDto = optionalMatch
-                .map(match -> new MatchDto(match, clubDto))
+                .map(MatchDto::new)
                 .orElseGet(MatchDto::new);
 
         // Initialises match attributes
-        matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
+        matchDto.init(ipscResponse.getMatch(), ipscResponse.getScores());
         return Optional.of(matchDto);
     }
 

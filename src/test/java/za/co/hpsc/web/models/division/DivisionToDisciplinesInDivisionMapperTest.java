@@ -3,6 +3,8 @@ package za.co.hpsc.web.models.division;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.Division;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DivisionToDisciplinesInDivisionMapperTest {
@@ -35,7 +37,7 @@ class DivisionToDisciplinesInDivisionMapperTest {
         Division unmappedDivision = Division.NONE;
 
         // Act & Assert
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(NoSuchElementException.class, () ->
                 DivisionToDisciplinesInDivisionMapper.getDisciplinesForDivision(unmappedDivision));
     }
 }

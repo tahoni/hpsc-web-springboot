@@ -27,7 +27,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IpscResponse {
-    private ClubResponse club = new ClubResponse();
     private MatchResponse match = new MatchResponse();
     private List<StageResponse> stages = new ArrayList<>();
     private List<TagResponse> tags = new ArrayList<>();

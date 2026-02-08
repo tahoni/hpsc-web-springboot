@@ -19,14 +19,12 @@ public class TransactionServiceImpl implements TransactionService {
     protected final PlatformTransactionManager transactionManager;
 
     protected final MatchRepository matchRepository;
-    protected final ClubRepository clubRepository;
     protected final MatchStageRepository matchStageRepository;
     protected final CompetitorRepository competitorRepository;
 
     protected final MatchCompetitorRepository matchCompetitorRepository;
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
-    protected final Map<UUID, Club> clubMap = new HashMap<>();
     protected final Map<UUID, Match> matchMap = new HashMap<>();
     protected final Map<UUID, Competitor> competitorMap = new HashMap<>();
     protected final Map<UUID, MatchStage> matchStageMap = new HashMap<>();
@@ -34,8 +32,7 @@ public class TransactionServiceImpl implements TransactionService {
     protected final Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
 
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
-                                  MatchRepository matchRepository, ClubRepository clubRepository,
-                                  MatchStageRepository matchStageRepository,
+                                  MatchRepository matchRepository, MatchStageRepository matchStageRepository,
                                   CompetitorRepository competitorRepository,
                                   MatchCompetitorRepository matchCompetitorRepository,
                                   MatchStageCompetitorRepository matchStageCompetitorRepository) {
@@ -43,7 +40,6 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionManager = transactionManager;
 
         this.matchRepository = matchRepository;
-        this.clubRepository = clubRepository;
         this.matchStageRepository = matchStageRepository;
         this.competitorRepository = competitorRepository;
 
@@ -58,7 +54,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            initClubEntity(matchResults.getClub());
             Match match = initMatchEntity(matchResults.getMatch());
             initCompetitorEntities(matchResults.getCompetitors());
             initMatchStageEntities(matchResults.getStages());
@@ -90,29 +85,14 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    protected void initClubEntity(ClubDto clubDto) {
-        // Initialises the club entity from the DTO or creates a new entity
-        Optional<Club> optionalClubEntity = ((clubDto.getId() != null) ?
-                clubRepository.findById(clubDto.getId()) : Optional.empty());
-        Club clubEntity = optionalClubEntity.orElseGet(Club::new);
-        clubEntity.init(clubDto);
-
-        // Update the map of clubs
-        clubMap.put(clubDto.getUuid(), clubEntity);
-    }
-
     protected Match initMatchEntity(MatchDto matchDto) {
-        // Find the club entity
-        Club clubEntity = null;
-        if (matchDto.getClub() != null) {
-            clubEntity = clubMap.get(matchDto.getClub().getUuid());
-        }
+        // TODO: club enum
 
         // Initialises the match entity from DTO or creates a new entity
         Optional<Match> optionalMatchEntity = ((matchDto.getId() != null) ?
                 matchRepository.findById(matchDto.getId()) : Optional.empty());
         Match matchEntity = optionalMatchEntity.orElseGet(Match::new);
-        matchEntity.init(matchDto, clubEntity);
+        matchEntity.init(matchDto);
 
         // Update the map of matches
         matchMap.put(matchDto.getUuid(), matchEntity);

@@ -54,15 +54,24 @@ public enum Discipline {
 
     private final String name;
     private final String abbreviation;
+    private final String code;
 
     Discipline(String name) {
         this.name = name;
         this.abbreviation = "";
+        this.code = "";
     }
 
     Discipline(String name, String abbreviation) {
         this.name = name;
         this.abbreviation = abbreviation;
+        this.code = "";
+    }
+
+    Discipline(String name, String abbreviation, String code) {
+        this.name = name;
+        this.abbreviation = abbreviation;
+        this.code = code;
     }
 
     /**
@@ -135,12 +144,8 @@ public enum Discipline {
                 .findFirst();
     }
 
-    /**
-     * Retrieves the display name of the discipline.
-     *
-     * @return the display name associated with this discipline.
-     */
-    public String getDisplayName() {
+    @Override
+    public String toString() {
         return this.name;
     }
 

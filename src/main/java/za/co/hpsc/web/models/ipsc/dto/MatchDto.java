@@ -35,12 +35,11 @@ public class MatchDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
 
-    private ClubDto club;
-
     @NotNull
     private String name;
     @NotNull
     private LocalDate scheduledDate;
+    private String club;
 
     private Division matchDivision;
     private MatchCategory matchCategory;
@@ -65,7 +64,7 @@ public class MatchDto {
         }
 
         this.id = matchEntity.getId();
-        this.club = new ClubDto(matchEntity.getClub());
+        this.club = matchEntity.getClub();
 
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
@@ -74,37 +73,13 @@ public class MatchDto {
 
         this.dateCreated = matchEntity.getDateCreated();
         this.dateUpdated = LocalDateTime.now();
-    }
-
-    /**
-     * Constructs a new {@code MatchDto} instance using the provided {@link Match} entity
-     * and {@link ClubDto} object.
-     *
-     * @param matchEntity the {@link Match} entity containing match-related information such as
-     *                    the unique identifier, name, scheduled date, division, category,
-     *                    creation timestamp, and update timestamp. Must not be null.
-     * @param clubDto     the {@link ClubDto} instance representing the club associated with the match.
-     *                    Must not be null.
-     */
-    public MatchDto(@NotNull Match matchEntity, @NotNull ClubDto clubDto) {
-        this.id = matchEntity.getId();
-        this.club = clubDto;
-
-        this.name = matchEntity.getName();
-        this.scheduledDate = matchEntity.getScheduledDate();
-        this.matchDivision = matchEntity.getMatchDivision();
-        this.matchCategory = matchEntity.getMatchCategory();
-
-        this.dateCreated = matchEntity.getDateCreated();
-        this.dateUpdated = LocalDateTime.now();
-        this.dateEdited = matchEntity.getDateEdited();
     }
 
     // TODO: Javadoc (not yet ready)
-    public void init(MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
-        this.club = clubDto;
+    public void init(MatchResponse matchResponse, List<ScoreResponse> scoreResponses) {
         this.name = matchResponse.getMatchName();
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
+        this.club = "";
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
@@ -125,6 +100,10 @@ public class MatchDto {
 
     @Override
     public String toString() {
-        return name + " @ " + club.toString();
+        if ((club != null) && (!club.isBlank())) {
+            return name + " @ " + club;
+        } else {
+            return name;
+        }
     }
 }

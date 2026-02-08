@@ -46,19 +46,26 @@ public class EnrolledRequest {
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "TeamId")
     private Integer teamId;
+    // 29
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DivId")
     private Integer divisionId;
 
+    // AAA, BBB, CCC, UUU (= BBB)
+    // CCC = 'SOSC'
+    // BBB = 'HPSC'
+    // CCC = 'PMPSC'
+    // UUU = 'VISITOR'
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "RefNo")
     private String refNo;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "TagId")
     private Integer tagId;
+    // 0, 1, 2, 3, 4, 5, 6, 7 (=1)
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "CatId")
-    private Integer nonTeamCategoryId;
+    private Integer competitorCategoryId;
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)

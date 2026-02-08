@@ -26,8 +26,6 @@ class HpscWebApplicationTests {
     private TransactionService transactionService;
 
     @MockitoBean
-    private ClubRepository clubRepository;
-    @MockitoBean
     private MatchRepository matchRepository;
     @MockitoBean
     private CompetitorRepository competitorRepository;

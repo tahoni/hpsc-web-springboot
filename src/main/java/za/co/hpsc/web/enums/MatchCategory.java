@@ -46,12 +46,8 @@ public enum MatchCategory {
                 .findFirst();
     }
 
-    /**
-     * Retrieves the display name associated with this match category.
-     *
-     * @return the display name of the match category.
-     */
-    public String getDisplayName() {
+    @Override
+    public String toString() {
         return this.name;
     }
 }

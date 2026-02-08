@@ -26,13 +26,21 @@ public enum CompetitorCategory {
     NONE;
 
     private final String name;
+    private final String code;
 
     CompetitorCategory() {
         this.name = "";
+        this.code = "";
     }
 
     CompetitorCategory(String name) {
         this.name = name;
+        this.code = "";
+    }
+
+    CompetitorCategory(String name, String code) {
+        this.name = name;
+        this.code = code;
     }
 
     /**
@@ -56,13 +64,8 @@ public enum CompetitorCategory {
     }
 
 
-    /**
-     * Retrieves the display name associated with the current enum constant.
-     * If the display name is not explicitly defined, an empty string will be returned.
-     *
-     * @return the display name of the enum constant, or an empty string if not defined.
-     */
-    public String getDisplayName() {
+    @Override
+    public String toString() {
         return this.name;
     }
 

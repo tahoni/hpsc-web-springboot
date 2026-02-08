@@ -5,13 +5,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.models.ipsc.dto.ClubDto;
+import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.domain.Match;
+import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 import za.co.hpsc.web.models.ipsc.request.MemberRequest;
-import za.co.hpsc.web.models.ipsc.response.*;
+import za.co.hpsc.web.models.ipsc.response.IpscResponse;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.models.ipsc.response.StageResponse;
 import za.co.hpsc.web.services.*;
 
 import java.time.LocalDate;
@@ -24,9 +29,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MatchResultServiceImplTest {
-
-    @Mock
-    private ClubService clubService;
 
     @Mock
     private MatchService matchService;
@@ -45,65 +47,6 @@ public class MatchResultServiceImplTest {
 
     @InjectMocks
     private MatchResultServiceImpl matchResultService;
-
-    @Test
-    public void testInitClub_withNullResponse_thenReturnsEmptyOptional() {
-        // Arrange - No additional setup needed as we pass null directly
-
-        // Act
-        Optional<ClubDto> result = matchResultService.initClub(null);
-
-        // Assert
-        assertTrue(result.isEmpty(), "Result should be empty when ClubResponse is null");
-        verifyNoInteractions(clubService);
-    }
-
-    @Test
-    public void testInitClub_withExistingClub_thenReturnsPopulatedClubDto() {
-        // Arrange
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubName("Test Club");
-        clubResponse.setClubCode("TC");
-
-        Club existingClub = new Club();
-        existingClub.setId(101L);
-        existingClub.setName("Test Club");
-        existingClub.setAbbreviation("TC");
-
-        when(clubService.findClub("Test Club", "TC")).thenReturn(Optional.of(existingClub));
-
-        // Act
-        Optional<ClubDto> result = matchResultService.initClub(clubResponse);
-
-        // Assert
-        assertTrue(result.isPresent(), "Result should be present when club exists");
-        ClubDto clubDto = result.get();
-        assertEquals(101L, clubDto.getId());
-        assertEquals("Test Club", clubDto.getName());
-        assertEquals("TC", clubDto.getAbbreviation());
-        verify(clubService, times(1)).findClub("Test Club", "TC");
-    }
-
-    @Test
-    public void testInitClub_withNonExistingClub_thenReturnsClubDtoFromResponse() {
-        // Arrange
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubName("Non-existent Club");
-        clubResponse.setClubCode("NC");
-
-        when(clubService.findClub("Non-existent Club", "NC")).thenReturn(Optional.empty());
-
-        // Act
-        Optional<ClubDto> result = matchResultService.initClub(clubResponse);
-
-        // Assert
-        assertTrue(result.isPresent(), "Result should be present with a ClubDto");
-        ClubDto clubDto = result.get();
-        assertNull(clubDto.getId(), "ID should be null for a new ClubDto");
-        assertEquals("Non-existent Club", clubDto.getName(), "Name should be populated from response");
-        assertEquals("NC", clubDto.getAbbreviation(), "Abbreviation should be populated from response");
-        verify(clubService, times(1)).findClub("Non-existent Club", "NC");
-    }
 
     @Test
     public void testInitMatch_withExistingMatchAndNoNewerScores_thenReturnsEmptyOptional() {
@@ -127,10 +70,8 @@ public class MatchResultServiceImplTest {
         when(matchService.findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay()))
                 .thenReturn(Optional.of(existingMatch));
 
-        ClubDto clubDto = new ClubDto("Test Club", "TC");
-
         // Act
-        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
+        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse);
 
         // Assert
         assertTrue(result.isEmpty(), "Result should be empty when match exists but has no newer scores");
@@ -159,16 +100,13 @@ public class MatchResultServiceImplTest {
         when(matchService.findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay()))
                 .thenReturn(Optional.of(existingMatch));
 
-        ClubDto clubDto = new ClubDto(1L, "Test Club", "TC");
-
         // Act
-        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
+        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse);
 
         // Assert
         assertTrue(result.isPresent(), "Result should be present when match exists with newer scores");
         MatchDto matchDto = result.get();
         assertEquals(1L, matchDto.getId());
-        assertEquals(clubDto, matchDto.getClub());
         verify(matchService, times(1)).findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay());
     }
 
@@ -188,16 +126,13 @@ public class MatchResultServiceImplTest {
         when(matchService.findMatch("New Match", LocalDate.of(2025, 2, 1).atStartOfDay()))
                 .thenReturn(Optional.empty());
 
-        ClubDto clubDto = new ClubDto(null, "New Club", "NC");
-
         // Act
-        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
+        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse);
 
         // Assert
         assertTrue(result.isPresent(), "Result should be present for a new match");
         MatchDto matchDto = result.get();
         assertNull(matchDto.getId(), "ID should be null for a new match");
-        assertEquals(clubDto, matchDto.getClub());
         verify(matchService, times(1)).findMatch("New Match", LocalDate.of(2025, 2, 1).atStartOfDay());
     }
 

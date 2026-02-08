@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
@@ -42,6 +43,7 @@ public class MatchCompetitorDto {
     @NotNull
     private MatchDto match;
 
+    private ClubReference club;
     private Division division;
     private Discipline discipline;
     private PowerFactor powerFactor;
@@ -68,6 +70,7 @@ public class MatchCompetitorDto {
         this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
         this.match = new MatchDto(matchCompetitorEntity.getMatch());
 
+        this.club = matchCompetitorEntity.getClub();
         this.division = matchCompetitorEntity.getDivision();
         this.discipline = matchCompetitorEntity.getDiscipline();
         this.powerFactor = matchCompetitorEntity.getPowerFactor();
@@ -124,6 +127,8 @@ public class MatchCompetitorDto {
         if (enrolledResponse != null) {
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
+            // Determines the club based on the club reference number
+            this.club = ClubReference.getByCode(enrolledResponse.getRefNo());
             // TODO: populate category, division, discipline
         }
     }

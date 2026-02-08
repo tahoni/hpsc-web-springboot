@@ -45,7 +45,7 @@ public class TeamRequest {
     private Integer divisionId;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "CatId")
-    private Integer nonTeamCategoryId;
+    private Integer competitorCategoryId;
 
 
     @Getter
