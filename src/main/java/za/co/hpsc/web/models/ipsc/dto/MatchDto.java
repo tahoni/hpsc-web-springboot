@@ -9,9 +9,12 @@ import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.utils.DateUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -46,6 +49,7 @@ public class MatchDto {
     @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
 
     /**
      * Constructs a new {@code MatchDto} instance with data from the provided
@@ -60,15 +64,17 @@ public class MatchDto {
         if (matchEntity == null) {
             return;
         }
-        
+
         this.id = matchEntity.getId();
         this.club = new ClubDto(matchEntity.getClub());
+
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
         this.matchDivision = matchEntity.getMatchDivision();
         this.matchCategory = matchEntity.getMatchCategory();
+
         this.dateCreated = matchEntity.getDateCreated();
-        this.dateUpdated = matchEntity.getDateUpdated();
+        this.dateUpdated = LocalDateTime.now();
     }
 
     /**
@@ -84,21 +90,36 @@ public class MatchDto {
     public MatchDto(@NotNull Match matchEntity, @NotNull ClubDto clubDto) {
         this.id = matchEntity.getId();
         this.club = clubDto;
+
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
         this.matchDivision = matchEntity.getMatchDivision();
         this.matchCategory = matchEntity.getMatchCategory();
+
         this.dateCreated = matchEntity.getDateCreated();
-        this.dateUpdated = matchEntity.getDateUpdated();
+        this.dateUpdated = LocalDateTime.now();
+        this.dateEdited = matchEntity.getDateEdited();
     }
 
     // TODO: Javadoc (not yet ready)
-    public void init(MatchResponse matchResponse, ClubDto clubDto) {
+    public void init(MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
         this.club = clubDto;
         this.name = matchResponse.getMatchName();
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
 
-        this.dateCreated = (this.dateCreated != null) ? this.dateCreated : LocalDateTime.now();
+        // Don't overwrite an existing date creation timestamp
+        this.dateCreated = DateUtil.calculateDateCreated(this.dateCreated);
+        // Initialises the date updated
+        this.dateUpdated = LocalDateTime.now();
+        // Sets the date edited to the latest score update timestamp
+        if (scoreResponses != null) {
+            this.dateEdited = scoreResponses.stream()
+                    .map(ScoreResponse::getLastModified)
+                    .max(LocalDateTime::compareTo)
+                    .orElse(LocalDateTime.now());
+        } else {
+            this.dateEdited = LocalDateTime.now();
+        }
 
         // TODO: populate division and category
     }

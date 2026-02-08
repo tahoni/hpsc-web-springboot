@@ -62,6 +62,7 @@ public class Match {
     @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
 
     // TODO: Javadoc
     public void init(MatchDto matchDto, Club clubEntity) {
@@ -73,10 +74,9 @@ public class Match {
         this.matchDivision = matchDto.getMatchDivision();
         this.matchCategory = matchDto.getMatchCategory();
 
-        if (dateCreated == null) {
-            dateCreated = LocalDateTime.now();
-        }
-        dateUpdated = LocalDateTime.now();
+        this.dateCreated = matchDto.getDateCreated();
+        this.dateUpdated = matchDto.getDateUpdated();
+        this.dateEdited = matchDto.getDateEdited();
     }
 
     @Override

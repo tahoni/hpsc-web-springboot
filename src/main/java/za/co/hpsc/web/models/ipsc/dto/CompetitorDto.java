@@ -76,8 +76,7 @@ public class CompetitorDto {
             this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
         }
 
-        // Initialises competitor number and SAPSA number based on the member's
-        // reference number and ICS alias'
+        // Initialises competitor number and SAPSA number based on the member's ICS alias.
         this.competitorNumber = memberResponse.getIcsAlias();
         if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
             this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());

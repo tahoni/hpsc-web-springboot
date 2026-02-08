@@ -9,7 +9,10 @@ import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.utils.DateUtil;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,8 +49,12 @@ public class MatchCompetitorDto {
 
     private BigDecimal matchPoints;
     private BigDecimal matchPercentage;
+    private BigDecimal matchRanking;
 
+    @NotNull
+    private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
 
     /**
      * Constructs a new {@code MatchCompetitorDto} instance with data from the
@@ -61,12 +68,17 @@ public class MatchCompetitorDto {
         this.id = matchCompetitorEntity.getId();
         this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
         this.match = new MatchDto(matchCompetitorEntity.getMatch());
+
         this.division = matchCompetitorEntity.getDivision();
         this.discipline = matchCompetitorEntity.getDiscipline();
         this.powerFactor = matchCompetitorEntity.getPowerFactor();
+
         this.matchPoints = matchCompetitorEntity.getMatchPoints();
         this.matchPercentage = matchCompetitorEntity.getMatchPercentage();
-        this.dateUpdated = matchCompetitorEntity.getDateUpdated();
+        this.matchRanking = matchCompetitorEntity.getMatchRanking();
+
+        this.dateCreated = matchCompetitorEntity.getDateCreated();
+        this.dateUpdated = LocalDateTime.now();
     }
 
     /**
@@ -80,22 +92,41 @@ public class MatchCompetitorDto {
     public MatchCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchDto matchDto) {
         this.competitor = competitorDto;
         this.match = matchDto;
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = LocalDateTime.now();
+        this.dateEdited = LocalDateTime.now();
     }
 
     // TODO: Javadoc (not yet ready)
-    public void init(List<ScoreResponse> scoreResponses) {
+    public void init(List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
         // Initializes aggregate score from multiple score responses
-        this.matchPoints = BigDecimal.valueOf(scoreResponses.stream()
-                .mapToDouble(ScoreResponse::getFinalScore)
-                .sum());
-        // Initialises the date updated from the latest score response's date updated
-        this.dateUpdated =
-                scoreResponses.stream()
-                        .map(ScoreResponse::getLastModified)
-                        .max(LocalDateTime::compareTo)
-                        .orElse(LocalDateTime.now());
+        this.matchPoints = BigDecimal.ZERO;
+        scoreResponses.forEach(scoreResponse -> {
+            matchPoints =
+                    matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore())));
+        });
+        // TODO: Initialises match percentage
+        // TODO: Initialises match ranking
 
-        // TODO: populate category, division, discipline, power factor
+        // Don't overwrite an existing date creation timestamp
+        this.dateCreated = DateUtil.calculateDateCreated(this.dateCreated);
+        // Initialises the date updated
+        this.dateUpdated = LocalDateTime.now();
+        // Sets the date edited to the latest score update timestamp
+        if (scoreResponses != null) {
+            this.dateEdited = scoreResponses.stream()
+                    .map(ScoreResponse::getLastModified)
+                    .max(LocalDateTime::compareTo)
+                    .orElse(LocalDateTime.now());
+        } else {
+            this.dateEdited = LocalDateTime.now();
+        }
+
+        if (enrolledResponse != null) {
+            // Determines the power factor based on the major power factor flag
+            this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
+            // TODO: populate category, division, discipline
+        }
     }
 
     public String toString() {

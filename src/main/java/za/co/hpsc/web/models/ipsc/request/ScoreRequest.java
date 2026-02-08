@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -70,26 +69,26 @@ public class ScoreRequest {
     private Integer procedurals;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "ShootTime")
-    private BigDecimal time;
+    private String time;
 
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "Deduction", required = true)
     private Boolean deduction;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DedPctg")
-    private Integer deductionPercentage;
+    private String deductionPercentage;
 
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "ExtraShot")
     private Integer extraShot;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "OverTime")
-    private BigDecimal overTime;
+    private String overTime;
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "HitFactor", required = true)
-    private BigDecimal hitFactor;
+    private String hitFactor;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "FinalScore", required = true)

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.ScoreRequest;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -40,15 +39,15 @@ public class ScoreResponse {
     private Integer misses = 0;
     private Integer penalties = 0;
     private Integer procedurals = 0;
-    private BigDecimal time = BigDecimal.ZERO;
+    private String time = "";
 
     private Boolean deduction = false;
-    private Integer deductionPercentage = 0;
+    private String deductionPercentage = "";
 
     private Integer extraShot = 0;
-    private BigDecimal overTime = BigDecimal.ZERO;
+    private String overTime = "";
 
-    private BigDecimal hitFactor = BigDecimal.ZERO;
+    private String hitFactor = "";
     private Integer finalScore = 0;
 
     private Boolean isDisqualified = false;

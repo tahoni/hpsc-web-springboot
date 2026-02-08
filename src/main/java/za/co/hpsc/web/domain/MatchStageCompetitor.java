@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.Discipline;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
@@ -43,6 +46,10 @@ public class MatchStageCompetitor {
     @JoinColumn(name = "match_stage_id")
     private MatchStage matchStage;
 
+    private Division division;
+    private Discipline discipline;
+    private PowerFactor powerFactor;
+
     private Integer scoreA;
     private Integer scoreB;
     private Integer scoreC;
@@ -58,12 +65,17 @@ public class MatchStageCompetitor {
 
     private BigDecimal time;
     private BigDecimal hitFactor;
+
     private BigDecimal stagePoints;
     private BigDecimal stagePercentage;
+    private BigDecimal stageRanking;
 
     private Boolean isDisqualified;
 
+    @NotNull
+    private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
 
     // TODO: Javadoc
     public void init(MatchStageCompetitorDto matchStageCompetitorDto, MatchStage matchStageEntity,
@@ -71,6 +83,10 @@ public class MatchStageCompetitor {
 
         this.matchStage = matchStageEntity;
         this.competitor = competitorEntity;
+
+        this.division = matchStageCompetitorDto.getDivision();
+        this.discipline = matchStageCompetitorDto.getDiscipline();
+        this.powerFactor = matchStageCompetitorDto.getPowerFactor();
 
         this.scoreA = matchStageCompetitorDto.getScoreA();
         this.scoreB = matchStageCompetitorDto.getScoreB();
@@ -87,12 +103,16 @@ public class MatchStageCompetitor {
 
         this.time = matchStageCompetitorDto.getTime();
         this.hitFactor = matchStageCompetitorDto.getHitFactor();
+
         this.stagePoints = matchStageCompetitorDto.getStagePoints();
         this.stagePercentage = matchStageCompetitorDto.getStagePercentage();
+        this.stageRanking = matchStageCompetitorDto.getStageRanking();
 
         this.isDisqualified = matchStageCompetitorDto.getIsDisqualified();
 
-        this.dateUpdated = LocalDateTime.now();
+        this.dateCreated = matchStageCompetitorDto.getDateCreated();
+        this.dateUpdated = matchStageCompetitorDto.getDateUpdated();
+        this.dateEdited = matchStageCompetitorDto.getDateEdited();
     }
 
     @Override

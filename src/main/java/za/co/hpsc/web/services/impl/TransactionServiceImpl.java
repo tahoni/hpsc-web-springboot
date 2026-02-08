@@ -103,8 +103,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     protected Match initMatchEntity(MatchDto matchDto) {
         // Find the club entity
-        Club clubEntity = ((matchDto.getClub() != null) ?
-                clubMap.get(matchDto.getClub().getUuid()) : null);
+        Club clubEntity = null;
+        if (matchDto.getClub() != null) {
+            clubEntity = clubMap.get(matchDto.getClub().getUuid());
+        }
 
         // Initialises the match entity from DTO or creates a new entity
         Optional<Match> optionalMatchEntity = ((matchDto.getId() != null) ?

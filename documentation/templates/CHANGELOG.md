@@ -14,6 +14,8 @@ A summary of the main changes.
 
 #### Bug Fixes
 
+#### Tests and Quality Assurance
+
 #### General Code Improvements
 
 #### General Technical Changes
@@ -22,7 +24,9 @@ A summary of the main changes.
 
 #### Dependencies
 
-#### Tests and Quality Assurance
+#### Migration Notes
+
+#### Test Plan
 
 #### Changes by
 

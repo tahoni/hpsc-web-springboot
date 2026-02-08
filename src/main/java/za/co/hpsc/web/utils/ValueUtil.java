@@ -1,5 +1,6 @@
 package za.co.hpsc.web.utils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,19 +23,51 @@ public final class ValueUtil {
     /**
      * Returns the provided string if it is not null; otherwise, returns an empty string.
      *
-     * @param value the string to be checked; may be null.
+     * @param value the string value to be checked; may be null.
      * @return the original string if it is not null, or an empty string if it is null.
      */
     public static String nullAsEmptyString(String value) {
         return (value != null ? value : "");
     }
 
+    /**
+     * Returns the given integer value if it is not null; otherwise, returns zero.
+     *
+     * @param value the integer value to be checked; may be null.
+     * @return the original integer value if it is not null, or zero if it is null.
+     */
     public static int nullAsZero(Integer value) {
         return (value != null ? value : 0);
     }
 
+    /**
+     * Returns the given long value if it is not null; otherwise, returns zero.
+     *
+     * @param value the long value to be checked; may be null.
+     * @return the original long value if it is not null, or zero if it is null.
+     */
     public static long nullAsZero(Long value) {
         return (value != null ? value : 0L);
+    }
+
+    /**
+     * Converts a nullable string representation of a number to a {@code BigDecimal},
+     * returning {@code BigDecimal.ZERO} if the input string is {@code null}.or not a number
+     *
+     * @param value the string representation of the number to be converted; may be null.
+     * @return a {@code BigDecimal} representing the input string,
+     * or {@code BigDecimal.ZERO} if the input is null or not a number.
+     */
+    public static BigDecimal nullAsZeroBigDecimal(String value) {
+        if (value == null) {
+            return BigDecimal.ZERO;
+        }
+
+        try {
+            return new BigDecimal(value);
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO;
+        }
     }
 
     /**

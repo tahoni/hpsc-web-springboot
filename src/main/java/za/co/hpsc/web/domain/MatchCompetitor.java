@@ -55,8 +55,12 @@ public class MatchCompetitor {
 
     private BigDecimal matchPoints;
     private BigDecimal matchPercentage;
+    private BigDecimal matchRanking;
 
+    @NotNull
+    private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
 
     // TODO: Javadoc
     public void init(MatchCompetitorDto matchCompetitorDto, Match matchEntity, Competitor competitorEntity) {
@@ -69,6 +73,11 @@ public class MatchCompetitor {
 
         this.matchPoints = matchCompetitorDto.getMatchPoints();
         this.matchPercentage = matchCompetitorDto.getMatchPercentage();
+        this.matchRanking = matchCompetitorDto.getMatchRanking();
+
+        this.dateCreated = matchCompetitorDto.getDateCreated();
+        this.dateUpdated = matchCompetitorDto.getDateUpdated();
+        this.dateEdited = matchCompetitorDto.getDateEdited();
     }
 
     public String toString() {

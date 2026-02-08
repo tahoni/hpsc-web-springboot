@@ -117,7 +117,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                 .orElseGet(MatchDto::new);
 
         // Initialises match attributes
-        matchDto.init(ipscResponse.getMatch(), clubDto);
+        matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
         return Optional.of(matchDto);
     }
 
@@ -181,6 +181,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                 .toList();
 
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
+        Map<Integer, EnrolledResponse> enrolledMap = new HashMap<>();
         // Iterates through each member response
         scoreMembers.forEach(memberResponse -> {
             // Attempts to find the competitor by ICS alias, first name, last name, and date of birth
@@ -197,6 +198,14 @@ public class MatchResultServiceImpl implements MatchResultService {
             // Initialises competitor attributes
             competitorDto.init(memberResponse);
             competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
+
+            // Initialises the enrolled response to use to initialise the scores for each competitor
+            // per match and stage
+            EnrolledResponse enrolledResponse = ipscResponse.getEnrolledMembers().stream()
+                    .filter(er -> er.getMemberId().equals(memberResponse.getMemberId()))
+                    .findFirst()
+                    .orElse(null);
+            enrolledMap.put(memberResponse.getMemberId(), enrolledResponse);
         });
         // Collects all competitors in the match results DTO
         matchResultsDto.setCompetitors(new ArrayList<>(competitorDtoMap.values()));
@@ -221,7 +230,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                     .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch()));
 
             // Initialises match competitor attributes
-            matchCompetitorDto.init(scores);
+            matchCompetitorDto.init(scores, enrolledMap.get(memberId));
             matchCompetitorDtoList.add(matchCompetitorDto);
 
             // Gets the match stage competitors from the match results DTO
@@ -245,7 +254,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                             .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
 
                     // Initialises the match stage attributes
-                    matchStageCompetitorDto.init(optionalStageScoreResponse.get());
+                    matchStageCompetitorDto.init(optionalStageScoreResponse.get(), enrolledMap.get(memberId));
                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
                 }
             });

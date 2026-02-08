@@ -8,7 +8,6 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.request.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -107,7 +106,7 @@ public class WinMssServiceImplTest {
         assertEquals(200, scoreRequest.getStageId());
         assertEquals(50, scoreRequest.getMemberId());
         assertEquals(101, scoreRequest.getFinalScore());
-        assertEquals(BigDecimal.valueOf(6.08433734939759), scoreRequest.getHitFactor());
+        assertEquals("6.08433734939759", scoreRequest.getHitFactor());
     }
 
     @Test

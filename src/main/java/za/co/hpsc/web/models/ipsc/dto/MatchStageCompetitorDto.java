@@ -6,7 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
+import za.co.hpsc.web.enums.Discipline;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,6 +42,10 @@ public class MatchStageCompetitorDto {
     @NotNull
     private MatchStageDto matchStage;
 
+    private Division division;
+    private Discipline discipline;
+    private PowerFactor powerFactor;
+
     private Integer scoreA;
     private Integer scoreB;
     private Integer scoreC;
@@ -52,12 +61,17 @@ public class MatchStageCompetitorDto {
 
     private BigDecimal time;
     private BigDecimal hitFactor;
+
     private BigDecimal stagePoints;
     private BigDecimal stagePercentage;
+    private BigDecimal stageRanking;
 
     private Boolean isDisqualified;
 
+    @NotNull
+    private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
 
     /**
      * Constructs a new {@code MatchStageCompetitorDto} instance with data from the
@@ -72,6 +86,36 @@ public class MatchStageCompetitorDto {
         this.id = matchStageCompetitorEntity.getId();
         this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
         this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
+
+        this.division = matchStageCompetitorEntity.getDivision();
+        this.discipline = matchStageCompetitorEntity.getDiscipline();
+        this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
+
+        this.scoreA = matchStageCompetitorEntity.getScoreA();
+        this.scoreB = matchStageCompetitorEntity.getScoreB();
+        this.scoreC = matchStageCompetitorEntity.getScoreC();
+        this.scoreD = matchStageCompetitorEntity.getScoreD();
+
+        this.points = matchStageCompetitorEntity.getPoints();
+        this.misses = matchStageCompetitorEntity.getMisses();
+        this.penalties = matchStageCompetitorEntity.getPenalties();
+        this.procedurals = matchStageCompetitorEntity.getProcedurals();
+
+        this.hasDeduction = matchStageCompetitorEntity.getHasDeduction();
+        this.deductionPercentage = matchStageCompetitorEntity.getDeductionPercentage();
+
+        this.time = matchStageCompetitorEntity.getTime();
+        this.hitFactor = matchStageCompetitorEntity.getHitFactor();
+
+        this.stagePoints = matchStageCompetitorEntity.getStagePoints();
+        this.stagePercentage = matchStageCompetitorEntity.getStagePercentage();
+        this.stageRanking = matchStageCompetitorEntity.getStageRanking();
+
+        this.isDisqualified = matchStageCompetitorEntity.getIsDisqualified();
+
+        this.dateCreated = matchStageCompetitorEntity.getDateCreated();
+        this.dateUpdated = LocalDateTime.now();
+        this.dateEdited = matchStageCompetitorEntity.getDateEdited();
     }
 
     /**
@@ -86,16 +130,22 @@ public class MatchStageCompetitorDto {
     public MatchStageCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchStageDto matchStageDto) {
         this.competitor = competitorDto;
         this.matchStage = matchStageDto;
+
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = LocalDateTime.now();
+        this.dateEdited = LocalDateTime.now();
     }
 
     /**
      * Initialises the current {@code MatchStageDto} instance with data from the provided
      * {@link ScoreResponse} object.
      *
-     * @param scoreResponse the {@link ScoreResponse} object containing performance metrics
-     *                      and detailed scoring information. Must not be null.
+     * @param scoreResponse    the {@link ScoreResponse} object containing performance metrics
+     *                         and detailed scoring information. Must not be null.
+     * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
+     *                         competitor information in the match stage. Can be null.
      */
-    public void init(@NotNull ScoreResponse scoreResponse) {
+    public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse) {
         this.scoreA = scoreResponse.getScoreA();
         this.scoreB = scoreResponse.getScoreB();
         this.scoreC = scoreResponse.getScoreC();
@@ -107,15 +157,28 @@ public class MatchStageCompetitorDto {
         this.procedurals = scoreResponse.getProcedurals();
 
         this.hasDeduction = scoreResponse.getDeduction();
-        this.deductionPercentage = BigDecimal.valueOf(scoreResponse.getDeductionPercentage());
+        this.deductionPercentage = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getDeductionPercentage());
 
-        this.time = scoreResponse.getTime();
-        this.hitFactor = scoreResponse.getHitFactor();
-        this.stagePoints = BigDecimal.valueOf(scoreResponse.getFinalScore());
+        this.time = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getTime());
+        this.hitFactor = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getHitFactor());
+
+        this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
+        // TODO: Initialises match percentage
+        // TODO: Initialises match ranking
 
         this.isDisqualified = scoreResponse.getIsDisqualified();
 
-        this.dateUpdated = scoreResponse.getLastModified();
+        // Don't overwrite an existing date creation timestamp
+        this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
+        // Initialises the date updated
+        this.dateUpdated = LocalDateTime.now();
+        // Sets the date edited to the latest score update timestamp
+        this.dateEdited = scoreResponse.getLastModified();
+
+        if (enrolledResponse != null) {
+            this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
+            // TODO: populate category, division, discipline
+        }
     }
 
     @Override
