@@ -10,7 +10,6 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
-import za.co.hpsc.web.utils.DateUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -108,7 +107,7 @@ public class MatchDto {
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
 
         // Don't overwrite an existing date creation timestamp
-        this.dateCreated = DateUtil.calculateDateCreated(this.dateCreated);
+        this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
         // Initialises the date updated
         this.dateUpdated = LocalDateTime.now();
         // Sets the date edited to the latest score update timestamp

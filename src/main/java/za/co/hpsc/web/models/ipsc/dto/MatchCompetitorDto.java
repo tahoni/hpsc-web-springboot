@@ -11,7 +11,6 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
-import za.co.hpsc.web.utils.DateUtil;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.math.BigDecimal;
@@ -101,15 +100,15 @@ public class MatchCompetitorDto {
     public void init(List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
         // Initializes aggregate score from multiple score responses
         this.matchPoints = BigDecimal.ZERO;
-        scoreResponses.forEach(scoreResponse -> {
-            matchPoints =
-                    matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore())));
-        });
+        if (scoreResponses != null) {
+            scoreResponses.forEach(scoreResponse -> matchPoints =
+                    matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()))));
+        }
         // TODO: Initialises match percentage
         // TODO: Initialises match ranking
 
         // Don't overwrite an existing date creation timestamp
-        this.dateCreated = DateUtil.calculateDateCreated(this.dateCreated);
+        this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
         // Initialises the date updated
         this.dateUpdated = LocalDateTime.now();
         // Sets the date edited to the latest score update timestamp
