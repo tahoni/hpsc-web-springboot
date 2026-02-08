@@ -65,12 +65,8 @@ public enum Division {
                 .findFirst();
     }
 
-    /**
-     * Retrieves the primary display name associated with this division.
-     *
-     * @return the first name in the list of names representing the division
-     */
-    public String getDisplayName() {
+    @Override
+    public String toString() {
         return this.names.getFirst();
     }
 

@@ -6,8 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.award.response.AwardCeremonyResponse;
 import za.co.hpsc.web.models.award.request.AwardRequest;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponse;
 import za.co.hpsc.web.models.award.response.AwardResponse;
 
 import java.time.LocalDate;
@@ -162,11 +162,13 @@ public class AwardServiceImplTest {
                     .append(",Category ").append(i % 10).append(",Tag").append(i % 10);
             largeCsv.append(",2023-10-10").append(",/path/to/image").append(i);
             // Appends ceremony data to CSV string builder
-            largeCsv.append(",Ceremony Title ").append(i).append(",Ceremony Summary ").append(i).append(",Ceremony Description ").append(i)
-                    .append(",Ceremony Category ").append(i % 10).append(",ceremonyTag").append(i % 10);
+            largeCsv.append(",Ceremony Title ").append(i).append(",Ceremony Summary ").append(i)
+                    .append(",Ceremony Description ").append(i).append(",Ceremony Category ").append(i % 10)
+                    .append(",ceremonyTag").append(i % 10);
             // Appends winners and image filenames to CSV string builder
             largeCsv.append(",First ").append(i).append(",Second ").append(i).append(",Third ").append(i)
-                    .append(",imgA").append(i).append(".png").append(",imgB").append(i).append(".png").append(",imgC").append(i).append(".png\n");
+                    .append(",imgA").append(i).append(".png").append(",imgB").append(i).append(".png")
+                    .append(",imgC").append(i).append(".png\n");
         }
 
         // Act

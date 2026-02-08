@@ -6,8 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.Discipline;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Represents the relationship between a competitor and a specific match stage,
@@ -34,22 +39,84 @@ public class MatchStageCompetitor {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "match_competitor_id")
-    private MatchCompetitor matchCompetitor;
+    @JoinColumn(name = "competitor_id")
+    private Competitor competitor;
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "match_stage_id")
     private MatchStage matchStage;
 
+    private Division division;
+    private Discipline discipline;
+    private PowerFactor powerFactor;
+
+    private Integer scoreA;
+    private Integer scoreB;
+    private Integer scoreC;
+    private Integer scoreD;
+
     private Integer points;
+    private Integer misses;
     private Integer penalties;
+    private Integer procedurals;
+
+    private Boolean hasDeduction;
+    private BigDecimal deductionPercentage;
+
     private BigDecimal time;
     private BigDecimal hitFactor;
+
     private BigDecimal stagePoints;
     private BigDecimal stagePercentage;
+    private BigDecimal stageRanking;
+
+    private Boolean isDisqualified;
+
+    @NotNull
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
+
+    // TODO: Javadoc
+    public void init(MatchStageCompetitorDto matchStageCompetitorDto, MatchStage matchStageEntity,
+                     Competitor competitorEntity) {
+
+        this.matchStage = matchStageEntity;
+        this.competitor = competitorEntity;
+
+        this.division = matchStageCompetitorDto.getDivision();
+        this.discipline = matchStageCompetitorDto.getDiscipline();
+        this.powerFactor = matchStageCompetitorDto.getPowerFactor();
+
+        this.scoreA = matchStageCompetitorDto.getScoreA();
+        this.scoreB = matchStageCompetitorDto.getScoreB();
+        this.scoreC = matchStageCompetitorDto.getScoreC();
+        this.scoreD = matchStageCompetitorDto.getScoreD();
+
+        this.points = matchStageCompetitorDto.getPoints();
+        this.misses = matchStageCompetitorDto.getMisses();
+        this.penalties = matchStageCompetitorDto.getPenalties();
+        this.procedurals = matchStageCompetitorDto.getProcedurals();
+
+        this.hasDeduction = matchStageCompetitorDto.getHasDeduction();
+        this.deductionPercentage = matchStageCompetitorDto.getDeductionPercentage();
+
+        this.time = matchStageCompetitorDto.getTime();
+        this.hitFactor = matchStageCompetitorDto.getHitFactor();
+
+        this.stagePoints = matchStageCompetitorDto.getStagePoints();
+        this.stagePercentage = matchStageCompetitorDto.getStagePercentage();
+        this.stageRanking = matchStageCompetitorDto.getStageRanking();
+
+        this.isDisqualified = matchStageCompetitorDto.getIsDisqualified();
+
+        this.dateCreated = matchStageCompetitorDto.getDateCreated();
+        this.dateUpdated = matchStageCompetitorDto.getDateUpdated();
+        this.dateEdited = matchStageCompetitorDto.getDateEdited();
+    }
 
     @Override
     public String toString() {
-        return matchStage.toString() + ": " + matchCompetitor.toString();
+        return matchStage.toString() + ": " + competitor.toString();
     }
 }

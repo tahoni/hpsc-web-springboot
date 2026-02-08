@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.models.ipsc.request.IpscRequest;
-import za.co.hpsc.web.models.matches.MatchResultLogResponseHolder;
-import za.co.hpsc.web.services.IpscService;
+import za.co.hpsc.web.services.WinMssService;
 
 /**
  * Controller responsible for handling IPSC-related API endpoints.
@@ -27,10 +25,10 @@ import za.co.hpsc.web.services.IpscService;
 @RequestMapping("/ipsc")
 @Tag(name = "IPSC", description = "API for functionality related to IPSC directly.")
 public class IpscController {
-    private final IpscService ipscService;
+    private final WinMssService winMssService;
 
-    public IpscController(IpscService ipscService) {
-        this.ipscService = ipscService;
+    public IpscController(WinMssService winMssService) {
+        this.winMssService = winMssService;
     }
 
     /**
@@ -44,7 +42,7 @@ public class IpscController {
      *
      * @param cabFileContent the JSON-formatted content of the WinMSS.cab file to be processed.
      *                       Must not be null or empty.
-     * @return a {@link MatchResultLogResponseHolder} object if the processing is successful.
+     * @return a {@link ControllerResponse} object if the processing is successful.
      */
     @PostMapping(value = "/importWinMssCabData", consumes = "application/json",
             produces = "application/json")
@@ -57,11 +55,15 @@ public class IpscController {
             @ApiResponse(responseCode = "500", description = "An internal server error occurred importing " +
                     "the WinMSS.cab file data.", content = @Content(mediaType = "application/json"))
     })
-    ResponseEntity<MatchResultLogResponseHolder> importWinMssCabData(
+    ResponseEntity<ControllerResponse> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
-                    "application/json", schema = @Schema(implementation = IpscRequest.class)
+                    "application/json", schema = @Schema(implementation = ControllerResponse.class)
             ))
             @RequestBody String cabFileContent) {
-        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
+        try {
+            return ResponseEntity.ok(winMssService.importWinMssCabFile(cabFileContent));
+        } catch (za.co.hpsc.web.exceptions.FatalException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

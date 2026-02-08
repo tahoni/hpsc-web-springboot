@@ -1,0 +1,66 @@
+package za.co.hpsc.web.models.ipsc.response;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.request.MemberRequest;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+/**
+ * Represents a response model for member-related data used within the system.
+ *
+ * <p>
+ * This class is intended to hold information about a member's profile and other details.
+ * It provides functionality to populate its fields directly from a {@link MemberRequest} object.
+ * </p>
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberResponse {
+    @NotNull
+    private Integer memberId = 0;
+    private String lastName = "";
+    private String firstName = "";
+    private String comment = "";
+
+    private Boolean female = false;
+    private LocalDateTime dateOfBirth = LocalDate.now().atStartOfDay();
+
+    private String icsAlias = "";
+    private String refNo = "";
+    @NotNull
+    private Boolean isRegisteredForMatch = false;
+
+    private Integer qualificationId = 0;
+    private String scoreClassificationId = "";
+
+    private String email = "";
+
+    /**
+     * Constructs a new {@code MemberResponse} object by initialising its fields using the values
+     * from a given {@link MemberRequest} object.
+     *
+     * @param memberRequest the {@link MemberRequest}object containing data to initialise
+     *                      the {@code MemberResponse} instance.
+     */
+    public MemberResponse(MemberRequest memberRequest) {
+        this.memberId = memberRequest.getMemberId();
+        this.lastName = memberRequest.getLastName();
+        this.firstName = memberRequest.getFirstName();
+        this.comment = memberRequest.getComment();
+        this.female = memberRequest.getFemale();
+        this.dateOfBirth = memberRequest.getDateOfBirth();
+        this.icsAlias = memberRequest.getIcsAlias();
+        this.refNo = memberRequest.getRefNo();
+        this.isRegisteredForMatch = memberRequest.getIsRegisteredForMatch();
+        this.qualificationId = memberRequest.getQualificationId();
+        this.scoreClassificationId = memberRequest.getScoreClassificationId();
+        this.email = memberRequest.getEmail();
+    }
+}

@@ -80,7 +80,8 @@ public class FatalException extends Exception {
      * @param writableStackTrace whether the stack trace should be writable.
      * @since 1.7
      */
-    public FatalException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public FatalException(String message, Throwable cause, boolean enableSuppression,
+                          boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

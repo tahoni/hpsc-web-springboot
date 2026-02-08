@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -36,28 +38,44 @@ public class Competitor {
 
     @NotNull
     @Column(nullable = false)
-    private String firsName;
+    private String firstName;
     @NotNull
     @Column(nullable = false)
     private String lastName;
+    private String middleNames;
+    private Integer sapsaNumber;
     @NotNull
     @Column(nullable = false)
     private String competitorNumber;
+    private LocalDate dateOfBirth;
 
-    private String middleNames;
-    private Integer sapsaNumber;
     @Enumerated(EnumType.STRING)
     private CompetitorCategory category = CompetitorCategory.NONE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> competitorMatches;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MatchStageCompetitor> competitorStageMatches;
+
+    // TODO: Javadoc
+    public void init(CompetitorDto competitorDto) {
+        this.firstName = competitorDto.getFirstName();
+        this.lastName = competitorDto.getLastName();
+        this.middleNames = competitorDto.getMiddleNames();
+
+        this.sapsaNumber = competitorDto.getSapsaNumber();
+        this.competitorNumber = competitorDto.getCompetitorNumber();
+        this.dateOfBirth = competitorDto.getDateOfBirth();
+
+        this.category = competitorDto.getCategory();
+    }
 
     @Override
     public String toString() {
         if ((middleNames != null) && (!middleNames.isBlank())) {
-            return firsName + " " + middleNames + " " + lastName;
+            return firstName + " " + middleNames + " " + lastName;
         } else {
-            return firsName + " " + lastName;
+            return firstName + " " + lastName;
         }
     }
 }

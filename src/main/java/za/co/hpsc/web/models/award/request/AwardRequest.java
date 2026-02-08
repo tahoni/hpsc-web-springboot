@@ -49,7 +49,7 @@ public class AwardRequest extends Request {
      * <p>
      * This constructor initialises fields specific to an award, such as the title of the award,
      * the ceremony title, and the names of recipients for first, second, and third places.
-     * </p
+     * </p>
      *
      * @param title           the title of the award. Must not be null or blank.
      * @param ceremonyTitle   the title of the ceremony associated with the award. Must not be null.

@@ -2,44 +2,76 @@
 
 ## Release Notes
 
-### Version 1.1.3 - _2026-01-28_
+### Version 2.0.0 - _2026-02-08_
 
-Improved maintainability and clarity by expanding Javadoc coverage across the codebase.
-Introduced a central `Division` → `DisciplinesInDivision` mapping.
+Major refactoring of the IPSC match results processing system to improve modularity, maintainability, and
+testability. Introduces a service-oriented architecture with dedicated DTOs, removes legacy code, and
+enhances documentation throughout the codebase.
 
 #### Enhancements and Updates
 
-- Introduced a central mapper that resolves each `Division` enum to its corresponding
-  `DisciplinesInDivision` singleton implementation.
-- `Division` now includes an additional value: `NONE`.
+**_Architecture & Services_**
+
+- _New Service Layer_: Introduced `WinMssService` (replacing `IpscService`), `MatchResultService`,
+  `TransactionService`, `IpscMatchService`, and specialised services for `Competitor`, `MatchCompetitor`,
+  `MatchStage`, and `MatchStageCompetitor`.
+- _Modular Processing_: Broke down monolithic match processing logic into discrete, testable methods for
+  initialisation, persistence, and mapping.
+- _Transaction Management_: Added transactional support with dedicated `TransactionService` for safe match
+  result persistence.
+
+**_Domain Model Improvements_**
+
+- _Entity Removal_: Removed `Club` entity and `ClubRepository`, replacing with `ClubReference` enum for
+  simpler club management.
+- _Enhanced Models_: Added new fields for timestamps, scoring, ranking, and competitor categories across
+  domain models.
+- _DTO Layer_: Introduced comprehensive DTOs (`MatchDto`, `MatchResultsDto`, `CompetitorDto`,
+  `MatchStageDto`, `MatchStageCompetitorDto`, `MatchCompetitorDto`) for better separation of concerns.
+- _UUID Mapping_: Implemented UUID-based mapping between requests and domain objects.
+
+**_Request/Response Refactoring_**
+
+- _Unified Models_: Consolidated XML and JSON request models by removing `-ForXml` variants and introducing
+  `XmlDataWrapper` for generic XML parsing.
+- _Modular Responses_: Replaced monolithic response objects with specialised responses for matches, clubs,
+  stages, and competitors.
+- _Enhanced Mapping_: Added constructors for request-to-response mappings with improved field coverage.
 
 #### Tests and Quality Assurance
 
-- Added and updated unit tests to validate the mapping behaviour.
-- Simplified test setup, fixed grammar issues in test code/docs, and added coverage for validation-oriented
-  methods.
+- _Comprehensive Test Coverage_: Added tests for `WinMssServiceImpl`, `MatchResultServiceImpl`,
+  and `IpscMatchService`.
+- _Test Scenarios_: Cover XML/JSON parsing, null handling, initialisation logic, transactional behaviour,
+  and edge cases.
 
 #### General Code Improvements
 
-- Ensured utility classes cannot be instantiated (e.g. via private constructors).
-- Improved string formatting and readability in match helper utilities.
-- Removed unused constants in `MatchConstants`.
+- _Documentation_: Added comprehensive Javadoc comments across services, models, and DTOs.
+- _Code Style_: Enforced 110-character line wrapping for improved readability.
+- _Null Safety_: Introduced null checks in service layer `find` methods and domain class `init` methods.
+- _Constants_: Renamed `CompetitorConstants` to `MatchLogConstants` and added `IpscConstants`.
+- _Utility Cleanup_: Removed `DateUtil` class and inlined its functionality; enhanced `NumberUtil`,
+  `ValueUtil`, and `StringUtil`.
 
-#### Licence and Documentation
+#### Configuration Changes
 
-- Expanded and refined Javadoc across multiple areas including:
-    - Domain entities (e.g., match-related entities)
-    - Enums (improved descriptions/clarity)
-    - Division discipline model classes (`Disciplines*` classes)
+- _Application Config_: Added case-insensitivity for JSON property names.
 
-#### General Technical Changes
+#### Documentation
 
-- Removed an unnecessary IDE file: `.idea/data_source_mapping.xml`
-- Updated `.gitignore` to prevent committing similar IDE metadata in future.
+- _Documentation Updates_: Updated CHANGELOG.md, RELEASE_NOTES.md, and documentation templates.
 
 #### Dependencies
 
-- Bumped spring-boot-starter-parent to version 4.0.2 to address security vulnerabilities.
+- _Dependency Updates_: Updated `pom.xml` with required dependencies for enhanced XML/JSON processing.
+
+#### Migration Notes
+
+- `Club` entity replaced with `ClubReference` enum - update any code referencing club entities.
+- `IpscService` renamed to `WinMssService` - update service references.
+- Legacy response models (`MatchLogResponse`, `MatchResultResponse`) removed in favour of modular DTOs.
+- `DateUtil` removed - date handling now inline or in existing utilities.
 
 #### Changes by
 

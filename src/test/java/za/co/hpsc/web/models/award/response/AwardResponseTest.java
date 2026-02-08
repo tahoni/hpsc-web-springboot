@@ -142,7 +142,8 @@ class AwardResponseTest {
     @Test
     void testConstructor_withAwardRequest_thenInitialisesAllFields() {
         // Arrange
-        AwardRequest request = new AwardRequest("Request Title", "Request Ceremony", "Winner 1", "Winner 2", "Winner 3");
+        AwardRequest request = new AwardRequest("Request Title", "Request Ceremony",
+                "Winner 1", "Winner 2", "Winner 3");
         request.setSummary("Request Sum");
         request.setDescription("Request Desc");
         request.setCategory("Request Cat");
