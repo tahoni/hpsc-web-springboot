@@ -107,7 +107,6 @@ public class MatchCompetitorDto {
             scoreResponses.forEach(scoreResponse -> matchPoints =
                     matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()))));
         }
-        // TODO: Initialises match percentage
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());

@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.image.request.ImageRequest;
 import za.co.hpsc.web.utils.ValueUtil;
 
+import java.net.URLConnection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -178,13 +177,19 @@ public class ImageResponse extends Response {
         if ((mimeType != null) && (!mimeType.isBlank())) {
             // Set the MIME type directly
             this.mimeType = mimeType;
+
         } else {
-            if (this.fileName != null) {
+            if ((this.fileName != null) && (!this.fileName.isBlank())) {
                 // Infer MIME type from the file name
-                Optional<MediaType> optionalMediaType =
-                        MediaTypeFactory.getMediaType(this.fileName);
-                this.mimeType = optionalMediaType.map(MediaType::toString).orElse(this.mimeType);
+                String fileNameMimeType = URLConnection.guessContentTypeFromName(this.fileName);
+                if ((fileNameMimeType != null) && (!fileNameMimeType.isEmpty())) {
+                    this.mimeType = fileNameMimeType;
+                }
             }
+        }
+
+        if (this.mimeType == null) {
+            this.mimeType = "";
         }
     }
 
