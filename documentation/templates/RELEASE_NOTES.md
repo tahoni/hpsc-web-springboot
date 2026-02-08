@@ -14,15 +14,15 @@ A summary of the main changes.
 
 #### General Code Improvements
 
-#### General Technical Changes
+#### Configuration Changes
 
-#### Licence and Documentation
+#### Documentation Changes
 
 #### Dependencies
 
 #### Migration Notes
 
-#### Test Plan
+#### License
 
 #### Changes by
 

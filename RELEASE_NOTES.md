@@ -2,88 +2,76 @@
 
 ## Release Notes
 
-### Version 2.0.0 - _2026-02-10_
+### Version 2.0.0 - _2026-02-08_
 
-Comprehensive refactoring of the IPSC/WinMSS match result processing system, introducing modular
-service architecture, improved data models, and enhanced transactional support for better maintainability
-and extensibility.
+Major refactoring of the IPSC match results processing system to improve modularity, maintainability, and
+testability. Introduces a service-oriented architecture with dedicated DTOs, removes legacy code, and
+enhances documentation throughout the codebase.
 
 #### Enhancements and Updates
 
-**Service Layer Refactoring**
+**_Architecture & Services_**
 
-- Renamed `IpscService` to `WinMssService` to better reflect its purpose.
-- Introduced new modular services:
-    - `MatchResultService` - Handles match result initialisation and mapping.
-    - `TransactionService` - Manages transactional persistence operations.
-    - `ClubService`, `CompetitorService`, `MatchService`, `MatchCompetitorService`, `MatchStageService`,
-      `MatchStageCompetitorService` - Dedicated service layers for each domain entity.
-- Modularised match processing logic with dedicated methods for finding, initialising, and persisting
-  entities.
+- _New Service Layer_: Introduced `WinMssService` (replacing `IpscService`), `MatchResultService`,
+  `TransactionService`, `IpscMatchService`, and specialised services for `Competitor`, `MatchCompetitor`,
+  `MatchStage`, and `MatchStageCompetitor`.
+- _Modular Processing_: Broke down monolithic match processing logic into discrete, testable methods for
+  initialisation, persistence, and mapping.
+- _Transaction Management_: Added transactional support with dedicated `TransactionService` for safe match
+  result persistence.
 
-**Data Model Enhancements**
+**_Domain Model Improvements_**
 
-- Added timestamps (`dateCreated`, `dateUpdated`) to `Match`, `MatchCompetitor`, and `MatchStageCompetitor`.
-- Enhanced `MatchStageCompetitor` with additional scoring fields:
-    - Deduction support.
-    - More granular scoring breakdown.
-    - Direct relationship with `Competitor` entity.
-- Updated constructors across domain classes with `init()` methods for DTO-based initialisation.
-- Renamed `CompetitorConstants` to `MatchLogConstants` for clarity.
+- _Entity Removal_: Removed `Club` entity and `ClubRepository`, replacing with `ClubReference` enum for
+  simpler club management.
+- _Enhanced Models_: Added new fields for timestamps, scoring, ranking, and competitor categories across
+  domain models.
+- _DTO Layer_: Introduced comprehensive DTOs (`MatchDto`, `MatchResultsDto`, `CompetitorDto`,
+  `MatchStageDto`, `MatchStageCompetitorDto`, `MatchCompetitorDto`) for better separation of concerns.
+- _UUID Mapping_: Implemented UUID-based mapping between requests and domain objects.
 
-**DTO Restructuring**
+**_Request/Response Refactoring_**
 
-- Removed legacy response models (`MatchLogResponse`, `MatchResultResponse`, etc.).
-- Introduced comprehensive DTO package structure:
-    - `ClubDto`, `CompetitorDto`, `MatchDto`, `MatchCompetitorDto`, `MatchStageDto`,
-      `MatchStageCompetitorDto`.
-    - `MatchResultsDto` as the primary response model.
-    - Request/Response models for WinMSS data import.
-- Removed XML-specific request classes, consolidated to unified request models with XML wrapper support.
+- _Unified Models_: Consolidated XML and JSON request models by removing `-ForXml` variants and introducing
+  `XmlDataWrapper` for generic XML parsing.
+- _Modular Responses_: Replaced monolithic response objects with specialised responses for matches, clubs,
+  stages, and competitors.
+- _Enhanced Mapping_: Added constructors for request-to-response mappings with improved field coverage.
 
 #### Tests and Quality Assurance
 
-- Added comprehensive unit tests for `WinMssServiceImpl` covering XML/JSON parsing scenarios.
-- Added extensive unit tests for `MatchResultServiceImpl`:
-    - Testing `initClub`, `initMatch`, `initStages` methods.
-    - Coverage for existing, non-existing, and null data handling.
-- Added tests for `IpscMatchService` functionality.
+- _Comprehensive Test Coverage_: Added tests for `WinMssServiceImpl`, `MatchResultServiceImpl`,
+  and `IpscMatchService`.
+- _Test Scenarios_: Cover XML/JSON parsing, null handling, initialisation logic, transactional behaviour,
+  and edge cases.
 
 #### General Code Improvements
 
-- Enhanced null safety with explicit null checks in service layer `find` methods.
-- Improved error handling throughout the application.
-- Refactored utility methods in `NumberUtil` for consistency.
+- _Documentation_: Added comprehensive Javadoc comments across services, models, and DTOs.
+- _Code Style_: Enforced 110-character line wrapping for improved readability.
+- _Null Safety_: Introduced null checks in service layer `find` methods and domain class `init` methods.
+- _Constants_: Renamed `CompetitorConstants` to `MatchLogConstants` and added `IpscConstants`.
+- _Utility Cleanup_: Removed `DateUtil` class and inlined its functionality; enhanced `NumberUtil`,
+  `ValueUtil`, and `StringUtil`.
 
-#### General Technical Changes
+#### Configuration Changes
 
-- Standardised line wrapping at 110 characters for improved readability.
-- Updated `.gitignore` to exclude `tsdocs/` directory and improved VS Code comment.
+- _Application Config_: Added case-insensitivity for JSON property names.
 
-#### Licence and Documentation
+#### Documentation
 
-- Expanded Javadoc coverage across services, models, enums, and controllers.
+- _Documentation Updates_: Updated CHANGELOG.md, RELEASE_NOTES.md, and documentation templates.
 
 #### Dependencies
 
-- Cleaned up `pom.xml`:
-    - Leveraged Spring Boot BOM for Jackson dependency management.
-    - Added Apache Commons Lang3 (3.19.0).
-    - Removed redundant version specifications.
+- _Dependency Updates_: Updated `pom.xml` with required dependencies for enhanced XML/JSON processing.
 
 #### Migration Notes
 
-- **Breaking Changes**: `IpscService` interface and implementation have been replaced with `WinMssService`.
-- Legacy response models (`MatchLogResponseHolder`, `MatchResultLogResponseHolder`) have been removed.
-- Controllers now return `ControllerResponse` instead of specialised response holders.
-
-#### Test Plan
-
-- [x] All existing unit tests pass.
-- [x] New unit tests are added for refactored services.
-- [x] WinMSS data import functionality validated.
-- [x] Match result initialisation logic tested with various scenarios.
-- [x] Build completes successfully without errors.
+- `Club` entity replaced with `ClubReference` enum - update any code referencing club entities.
+- `IpscService` renamed to `WinMssService` - update service references.
+- Legacy response models (`MatchLogResponse`, `MatchResultResponse`) removed in favour of modular DTOs.
+- `DateUtil` removed - date handling now inline or in existing utilities.
 
 #### Changes by
 
