@@ -1,5 +1,6 @@
 package za.co.hpsc.web.helpers;
 
+import jakarta.validation.constraints.NotNull;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.domain.MatchStage;
@@ -24,7 +25,7 @@ import java.util.Map;
  */
 public final class MatchHelpers {
     private MatchHelpers() {
-        // Utility class
+        // Utility class, not to be instantiated
     }
 
     /**
@@ -41,24 +42,25 @@ public final class MatchHelpers {
      * @return a formatted string representing the display name of the match, including its name,
      * division, category, and scheduled date.
      */
-    public static String getMatchDisplayName(Match match) {
+    public static String getMatchDisplayName(@NotNull Match match) {
         // Prepare date formatters
         DateTimeFormatter longDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_LONG_DATE_FORMAT);
 
         // Prepare parameters for formatting
         Map<String, String> parameters = Map.of(
-                "clubName", match.getClub().getName(),
+                "clubName", (match.getClub() != null ?
+                        match.getClub() : ""),
                 "divisionName", (match.getMatchDivision() != null ?
-                        match.getMatchDivision().getDisplayName().toUpperCase() : ""),
+                        match.getMatchDivision().toString().toUpperCase() : ""),
                 "categoryName", (match.getMatchCategory() != null ?
-                        match.getMatchCategory().getDisplayName() : ""),
+                        match.getMatchCategory().toString() : ""),
                 "longDate", longDateFormatter.format(match.getScheduledDate())
         );
 
         // Format and return match name
-        String result = StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_NAME_FORMAT,
-                parameters);
+        String result = StringUtil.formatStringWithNamedParameters(
+                MatchConstants.SCHEDULED_MATCH_NAME_FORMAT, parameters);
         return result.replaceAll("\\s+", " ");
     }
 
@@ -77,7 +79,7 @@ public final class MatchHelpers {
      * @return a formatted string representing the overall display name of the match,
      * combining its name and ISO-formatted scheduled date.
      */
-    public static String getMatchOverallDisplayName(Match match) {
+    public static String getMatchOverallDisplayName(@NotNull Match match) {
         // Prepare date formatters
         DateTimeFormatter isoDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_ISO_DATE_FORMAT);
@@ -90,8 +92,8 @@ public final class MatchHelpers {
 
         // Format and return stage match name
         String result =
-                StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_OVERALL_NAME_FORMAT,
-                        parameters);
+                StringUtil.formatStringWithNamedParameters(
+                        MatchConstants.SCHEDULED_MATCH_OVERALL_NAME_FORMAT, parameters);
         return result.replaceAll("\\s+", " ");
     }
 
@@ -111,7 +113,7 @@ public final class MatchHelpers {
      * @return a formatted string representing the display name of the match stage, including
      * the match name, stage and range numbers, and the scheduled date in ISO format.
      */
-    public static String getMatchStageDisplayName(MatchStage matchStage) {
+    public static String getMatchStageDisplayName(@NotNull MatchStage matchStage) {
         // Prepare date formatters
         DateTimeFormatter isoDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_ISO_DATE_FORMAT);
@@ -126,8 +128,8 @@ public final class MatchHelpers {
 
         // Format and return stage match name
         String result =
-                StringUtil.formatStringWithNamedParameters(MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT,
-                        parameters);
+                StringUtil.formatStringWithNamedParameters(
+                        MatchConstants.SCHEDULED_MATCH_STAGE_NAME_FORMAT, parameters);
         return result.replaceAll("\\s+", " ");
     }
 }

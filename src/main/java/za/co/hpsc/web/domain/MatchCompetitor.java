@@ -6,11 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Represents the relationship between a competitor and a specific match,
@@ -45,6 +48,8 @@ public class MatchCompetitor {
     private Match match;
 
     @Enumerated(EnumType.STRING)
+    private ClubReference club;
+    @Enumerated(EnumType.STRING)
     private Division division;
     @Enumerated(EnumType.STRING)
     private Discipline discipline;
@@ -53,6 +58,31 @@ public class MatchCompetitor {
 
     private BigDecimal matchPoints;
     private BigDecimal matchPercentage;
+    private BigDecimal matchRanking;
+
+    @NotNull
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
+
+    // TODO: Javadoc
+    public void init(MatchCompetitorDto matchCompetitorDto, Match matchEntity, Competitor competitorEntity) {
+        this.match = matchEntity;
+        this.competitor = competitorEntity;
+
+        this.club = matchCompetitorDto.getClub();
+        this.division = matchCompetitorDto.getDivision();
+        this.discipline = matchCompetitorDto.getDiscipline();
+        this.powerFactor = matchCompetitorDto.getPowerFactor();
+
+        this.matchPoints = matchCompetitorDto.getMatchPoints();
+        this.matchPercentage = matchCompetitorDto.getMatchPercentage();
+        this.matchRanking = matchCompetitorDto.getMatchRanking();
+
+        this.dateCreated = matchCompetitorDto.getDateCreated();
+        this.dateUpdated = matchCompetitorDto.getDateUpdated();
+        this.dateEdited = matchCompetitorDto.getDateEdited();
+    }
 
     public String toString() {
         return match.toString() + ": " + competitor.toString();

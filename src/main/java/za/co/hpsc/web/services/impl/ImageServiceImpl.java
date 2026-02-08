@@ -7,6 +7,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -19,15 +20,19 @@ import za.co.hpsc.web.services.ImageService;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResponseHolder processCsv(String csvData)
             throws ValidationException, FatalException {
+
         if (csvData == null || csvData.isBlank()) {
+            log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
+        // Processes CSV data; returns image response holder
         List<ImageRequest> imageRequestList = readImages(csvData);
         List<ImageResponse> imageResponseList = mapImages(imageRequestList);
         return new ImageResponseHolder(imageResponseList);
@@ -45,8 +50,8 @@ public class ImageServiceImpl implements ImageService {
      *
      * @param csvData the CSV data containing information about image requests.
      *                Each row in the CSV should represent an image request with fields
-     *                such as title, ceremony title, first place recipient, second place recipient, and
-     *                third place recipient, and optional meta-data.
+     *                such as title, ceremony title, first place recipient, second place recipient,
+     *                and third place recipient, and optional meta-data.
      *                Must not be null or blank.
      * @return a list of {@link ImageRequest} objects parsed from the provided CSV data.
      * @throws ValidationException if the CSV data format is invalid or contains mismatched input.
@@ -54,6 +59,7 @@ public class ImageServiceImpl implements ImageService {
      */
     protected List<ImageRequest> readImages(@NotNull @NotBlank String csvData)
             throws ValidationException, FatalException {
+
         // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = csvMapper
@@ -71,14 +77,18 @@ public class ImageServiceImpl implements ImageService {
             return requestMappingIterator.readAll();
 
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
+            log.error("Error parsing CSV data: {}", e.getMessage(), e);
             throw new ValidationException("Invalid CSV data format.", e);
         } catch (IOException e) {
+            log.error("Error reading CSV data: {}", e.getMessage(), e);
             throw new FatalException("Error reading CSV data.", e);
         }
     }
 
     /**
-     * Maps a list of {@link ImageRequest} objects to a list of {@link ImageResponse} objects.     * Each {@link ImageRequest} object in the input list is transformed into a corresponding
+     * Maps a list of {@link ImageRequest} objects to a list of {@link ImageResponse} objects.
+     * Each {@link ImageRequest} object in the input list is transformed into a corresponding
+     * {@link ImageResponse} object.
      *
      * <p>
      * If the input list is null, an empty list is returned.
@@ -91,6 +101,7 @@ public class ImageServiceImpl implements ImageService {
      */
     protected List<ImageResponse> mapImages(List<ImageRequest> imageRequestList)
             throws ValidationException {
+
         if (imageRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");
         }

@@ -35,11 +35,11 @@ public class Request {
     private List<String> tags;
 
     /**
-     * Constructs a new {@code Request} object with default values
+     * Constructs a new {@code Request} object with default values.
      *
      * <p>
      * Ensures that the list of tags is not null by initialising it to an empty list.
-     * </p>.
+     * </p>
      */
     public Request() {
         this.tags = new ArrayList<>();

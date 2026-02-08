@@ -20,7 +20,7 @@ public class ValidationException extends IllegalArgumentException {
     }
 
     /**
-     * Constructs new a {@code ValidationException} exception with the specified detail message.
+     * Constructs a new {@code ValidationException} exception with the specified detail message.
      * The cause is not initialised, and may subsequently be initialised by a call
      * to {@link #initCause}.
      *

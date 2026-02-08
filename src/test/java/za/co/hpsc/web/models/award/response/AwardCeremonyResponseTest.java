@@ -123,8 +123,7 @@ class AwardCeremonyResponseTest {
     void testConstructorWithoutUuidButWithMetadata_thenInitialisesUuidAndMetadata() {
         // Act
         AwardCeremonyResponse response = new AwardCeremonyResponse(
-                "Title", "Sum", "Desc", "Cat", List.of("T"), now, "/path/to/img",
-                sampleAwards
+                "Title", "Sum", "Desc", "Cat", List.of("T"), now, "/path/to/img", sampleAwards
         );
 
         // Assert basic data
@@ -147,7 +146,8 @@ class AwardCeremonyResponseTest {
     @Test
     void testConstructor_withValidAwardRequestList_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
-        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
+        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony 2024",
+                "Winner A", "Winner B", "Winner C");
         request1.setCeremonyDescription("Annual Awards");
         request1.setCeremonySummary("Summary 2024");
         request1.setCeremonyCategory("General");
@@ -164,7 +164,8 @@ class AwardCeremonyResponseTest {
         request1.setThirdPlaceImageFileName("imgc.png");
 
         // Arrange second award request
-        AwardRequest request2 = new AwardRequest("Award 2", "Ceremony 2025", "Winner X", "Winner Y", "Winner Z");
+        AwardRequest request2 = new AwardRequest("Award 2", "Ceremony 2025",
+                "Winner X", "Winner Y", "Winner Z");
         request2.setDescription("Ceremony 2024 Award 2");
         request2.setSummary("Summary 2024 Award 2");
         request2.setCategory("Category 2");
@@ -235,7 +236,8 @@ class AwardCeremonyResponseTest {
     @Test
     void testConstructor_withValidAwardRequestListPrecedence_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
-        AwardRequest request1 = new AwardRequest("Award 1 Title", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
+        AwardRequest request1 = new AwardRequest("Award 1 Title", "Ceremony 2024",
+                "Winner A", "Winner B", "Winner C");
         request1.setCeremonyDescription("Annual Awards");
         request1.setCeremonySummary("Summary 2024");
         request1.setCeremonyCategory("General");
@@ -248,7 +250,8 @@ class AwardCeremonyResponseTest {
         request1.setThirdPlaceImageFileName("imgc.png");
 
         // Arrange second award request
-        AwardRequest request2 = new AwardRequest("Award 2 Title", "Ceremony 2025", "Winner X", "Winner Y", "Winner Z");
+        AwardRequest request2 = new AwardRequest("Award 2 Title", "Ceremony 2025",
+                "Winner X", "Winner Y", "Winner Z");
         request2.setCeremonyDescription("Annual Awards");
         request2.setCeremonySummary("Summary 2025");
         request2.setCeremonyCategory("General");

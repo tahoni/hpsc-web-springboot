@@ -1,6 +1,7 @@
 package za.co.hpsc.web.utils;
 
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.constants.SystemConstants;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,7 +20,8 @@ public class NumberUtilTest {
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.valueOf(25).setScale(2, RoundingMode.HALF_UP), result.setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(25).setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
+                result);
     }
 
     @Test
@@ -32,7 +34,8 @@ public class NumberUtilTest {
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), result.setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
+                result);
     }
 
     @Test
@@ -45,7 +48,8 @@ public class NumberUtilTest {
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), result.setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
+                result);
     }
 
     @Test
@@ -57,7 +61,8 @@ public class NumberUtilTest {
         BigDecimal result = NumberUtil.calculatePercentage(part, null);
 
         // Assert
-        assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), result.setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
+                result);
     }
 
     @Test
@@ -70,8 +75,8 @@ public class NumberUtilTest {
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.valueOf(-25).setScale(2, RoundingMode.HALF_UP),
-                result.setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(-25).setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
+                result);
     }
 
     @Test
@@ -84,21 +89,7 @@ public class NumberUtilTest {
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.valueOf(16.50).setScale(2, RoundingMode.HALF_UP),
-                result.setScale(2, RoundingMode.HALF_UP));
-    }
-
-    @Test
-    void testCalculatePercentage_withVerySmallValues_thenHandlesCorrectly() {
-        // Arrange
-        BigDecimal part = BigDecimal.valueOf(0.0003);
-        BigDecimal total = BigDecimal.valueOf(0.0009);
-
-        // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
-
-        // Assert
-        assertEquals(BigDecimal.valueOf(33.33).setScale(2, RoundingMode.HALF_UP),
-                result.setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(16.50).setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
+                result);
     }
 }

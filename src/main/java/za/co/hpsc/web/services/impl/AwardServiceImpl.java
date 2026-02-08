@@ -8,27 +8,33 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.award.response.AwardCeremonyResponse;
-import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.models.award.request.AwardRequest;
 import za.co.hpsc.web.models.award.request.AwardRequestForCSV;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponse;
+import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
 import za.co.hpsc.web.services.AwardService;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AwardServiceImpl implements AwardService {
     @Override
-    public AwardCeremonyResponseHolder processCsv(String csvData) throws ValidationException, FatalException {
+    public AwardCeremonyResponseHolder processCsv(String csvData)
+            throws ValidationException, FatalException {
+
         if (csvData == null || csvData.isBlank()) {
+            log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
+        // Processes CSV data; returns award ceremony responses
         List<AwardRequest> awardRequestList = readAwards(csvData);
         List<AwardCeremonyResponse> awardCeremonyResponseList = mapAwards(awardRequestList);
         return new AwardCeremonyResponseHolder(awardCeremonyResponseList);
@@ -72,8 +78,10 @@ public class AwardServiceImpl implements AwardService {
             return requestMappingIterator.readAll();
 
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
+            log.error("Error parsing CSV data: {}", e.getMessage(), e);
             throw new ValidationException("Invalid CSV data format.", e);
         } catch (IOException e) {
+            log.error("Error reading CSV data: {}", e.getMessage(), e);
             throw new FatalException("Error reading CSV data.", e);
         }
     }
@@ -95,6 +103,7 @@ public class AwardServiceImpl implements AwardService {
      */
     protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
+            log.error("Image request list is null.");
             throw new ValidationException("Image request list cannot be null.");
         }
 

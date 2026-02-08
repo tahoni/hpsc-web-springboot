@@ -35,33 +35,38 @@ public class ControllerAdvice {
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to provide comprehensive feedback to the client.
      *
-     * @param ex      the exception that was thrown
-     * @param request the current web request context
+     * @param ex      the exception that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 500 (Internal Server Error)
+     * with HTTP status 500 (Internal Server Error).
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ControllerResponse> handleGeneralException(Exception ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ControllerResponse> handleGeneralException(Exception ex,
+                                                                     WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
     /**
-     * Handles exceptions of type {@link RuntimeException} that occur during the processing of requests.
+     * Handles exceptions of type {@link RuntimeException} that occur during the
+     * processing of requests.
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to provide feedback to the client.
      *
-     * @param ex      the runtime exception that was thrown
-     * @param request the current web request context
+     * @param ex      the runtime exception that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 500 (Internal Server Error)
+     * with HTTP status 500 (Internal Server Error).
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ControllerResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Internal Server Error");
+    public ResponseEntity<ControllerResponse> handleRuntimeException(RuntimeException ex,
+                                                                     WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Internal Server Error");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -71,15 +76,17 @@ public class ControllerAdvice {
      * Constructs a response entity containing an error message, a timestamp,
      * and additional error details to notify the client of a bad request.
      *
-     * @param ex      the {@link IllegalArgumentException} that was thrown
-     * @param request the current web request context
+     * @param ex      the {@link IllegalArgumentException} that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request)
+     * with HTTP status 400 (Bad Request).
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ControllerResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleIllegalArgumentException(IllegalArgumentException ex,
+                                                                             WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -89,15 +96,17 @@ public class ControllerAdvice {
      * message, a timestamp, and details about the mismatched input, providing feedback
      * to the client about the bad request.
      *
-     * @param ex      the {@link MismatchedInputException}, that was thrown
-     * @param request the current web request context
+     * @param ex      the {@link MismatchedInputException}, that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request)
+     * with HTTP status 400 (Bad Request).
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MismatchedInputException.class)
-    public ResponseEntity<ControllerResponse> handleMismatchedInputException(MismatchedInputException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleMismatchedInputException(MismatchedInputException ex,
+                                                                             WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -107,15 +116,17 @@ public class ControllerAdvice {
      * error message, a timestamp, and additional error details to notify the
      * client of a bad request.
      *
-     * @param ex      the {@link CsvReadException} that was thrown
-     * @param request the current web request context
+     * @param ex      the {@link CsvReadException} that was thrown.
+     * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request)
+     * with HTTP status 400 (Bad Request).
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CsvReadException.class)
-    public ResponseEntity<ControllerResponse> handleCsvReadException(CsvReadException ex, WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(), "Bad Request");
+    public ResponseEntity<ControllerResponse> handleCsvReadException(CsvReadException ex,
+                                                                     WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

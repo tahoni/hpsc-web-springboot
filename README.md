@@ -28,7 +28,7 @@ and more, with a focus on structured data processing and validation.
 
 The repository for this project is located at [GitHub](https://github.com/tahoni/hpsc-web-springboot).
 
-Feature requests, suggestions for improvements and bugs can be logged using the project's
+Feature requests, suggestions for improvements, and bugs can be logged using the project's
 [Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
 
 ## Technology

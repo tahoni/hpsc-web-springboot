@@ -71,12 +71,8 @@ public enum PowerFactor {
                 .findFirst();
     }
 
-    /**
-     * Retrieves the display name associated with this power factor.
-     *
-     * @return the name of the power factor.
-     */
-    public String getDisplayName() {
+    @Override
+    public String toString() {
         return this.name;
     }
 }

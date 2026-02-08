@@ -72,7 +72,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 
-## VISUAL STUDIO
+## VISUAL STUDIO CODE
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -295,6 +295,7 @@ hs_err_pid*
 build/
 dist/
 target/
+tsdocs/
 .idea/*_theme_*.xml
 .idea/**/jpa-buddy.xml
 .idea/**/jpa.xml

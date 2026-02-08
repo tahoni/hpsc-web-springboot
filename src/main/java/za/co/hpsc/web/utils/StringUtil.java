@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public final class StringUtil {
     private StringUtil() {
-        // Utility class
+        // Utility class, not to be instantiated
     }
 
     /**

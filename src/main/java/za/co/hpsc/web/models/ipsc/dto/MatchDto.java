@@ -1,0 +1,109 @@
+package za.co.hpsc.web.models.ipsc.dto;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import za.co.hpsc.web.domain.Match;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.MatchCategory;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Data Transfer Object (DTO) representing a shooting match.
+ *
+ * <p>
+ * The {@code MatchDto} class is used to transfer match-related data between various layers
+ * of the application.
+ * It encapsulates details such as the match's unique identifier, associated club, name,
+ * scheduled date, division, category, and timestamps for creation and updates.
+ * It also provides utility methods for mapping data from entity and response models.
+ * </p>
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MatchDto {
+    private UUID uuid = UUID.randomUUID();
+    private Long id;
+
+    @NotNull
+    private String name;
+    @NotNull
+    private LocalDate scheduledDate;
+    private String club;
+
+    private Division matchDivision;
+    private MatchCategory matchCategory;
+
+    @NotNull
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
+    private LocalDateTime dateEdited;
+
+    /**
+     * Constructs a new {@code MatchDto} instance with data from the provided
+     * {@link Match} entity.
+     *
+     * @param matchEntity the {@link Match} entity containing match-related information, such as
+     *                    the unique identifier, associated club, name, scheduled date, match division,
+     *                    match category, creation timestamp, and update timestamp.
+     *                    Must not be null.
+     */
+    public MatchDto(@NotNull Match matchEntity) {
+        if (matchEntity == null) {
+            return;
+        }
+
+        this.id = matchEntity.getId();
+        this.club = matchEntity.getClub();
+
+        this.name = matchEntity.getName();
+        this.scheduledDate = matchEntity.getScheduledDate();
+        this.matchDivision = matchEntity.getMatchDivision();
+        this.matchCategory = matchEntity.getMatchCategory();
+
+        this.dateCreated = matchEntity.getDateCreated();
+        this.dateUpdated = LocalDateTime.now();
+    }
+
+    // TODO: Javadoc (not yet ready)
+    public void init(MatchResponse matchResponse, List<ScoreResponse> scoreResponses) {
+        this.name = matchResponse.getMatchName();
+        this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
+        this.club = "";
+
+        // Don't overwrite an existing date creation timestamp
+        this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
+        // Initialises the date updated
+        this.dateUpdated = LocalDateTime.now();
+        // Sets the date edited to the latest score update timestamp
+        if (scoreResponses != null) {
+            this.dateEdited = scoreResponses.stream()
+                    .map(ScoreResponse::getLastModified)
+                    .max(LocalDateTime::compareTo)
+                    .orElse(LocalDateTime.now());
+        } else {
+            this.dateEdited = LocalDateTime.now();
+        }
+
+        // TODO: populate division and category
+    }
+
+    @Override
+    public String toString() {
+        if ((club != null) && (!club.isBlank())) {
+            return name + " @ " + club;
+        } else {
+            return name;
+        }
+    }
+}

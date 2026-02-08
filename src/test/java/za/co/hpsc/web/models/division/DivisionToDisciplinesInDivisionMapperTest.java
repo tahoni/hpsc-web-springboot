@@ -2,9 +2,8 @@ package za.co.hpsc.web.models.division;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.models.ipsc.division.DisciplinesHandgun;
-import za.co.hpsc.web.models.ipsc.division.DisciplinesInDivision;
-import za.co.hpsc.web.models.ipsc.division.DivisionToDisciplinesInDivisionMapper;
+
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +15,8 @@ class DivisionToDisciplinesInDivisionMapperTest {
         Division division = Division.HANDGUN;
 
         // Act
-        DisciplinesInDivision result = DivisionToDisciplinesInDivisionMapper.getDisciplinesForDivision(division);
+        DisciplinesInDivision result =
+                DivisionToDisciplinesInDivisionMapper.getDisciplinesForDivision(division);
 
         // Assert
         assertNotNull(result);
@@ -37,7 +37,7 @@ class DivisionToDisciplinesInDivisionMapperTest {
         Division unmappedDivision = Division.NONE;
 
         // Act & Assert
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(NoSuchElementException.class, () ->
                 DivisionToDisciplinesInDivisionMapper.getDisciplinesForDivision(unmappedDivision));
     }
 }

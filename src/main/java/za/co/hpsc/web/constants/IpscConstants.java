@@ -1,5 +1,7 @@
 package za.co.hpsc.web.constants;
 
+import java.util.List;
+
 /**
  * Defines constants specific to the IPSC module.
  *
@@ -12,4 +14,7 @@ package za.co.hpsc.web.constants;
 public final class IpscConstants {
     public static final String IPSC_INPUT_DATE_TIME_FORMAT =
             SystemConstants.T_SEPARATED_DATE_TIME_FORMAT;
+
+    public static final List<Integer> EXCLUDE_ICS_ALIAS =
+            List.of(15000, 16000);
 }
