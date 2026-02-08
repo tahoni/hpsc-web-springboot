@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.domain.MatchStage;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.utils.StringUtil;
 
@@ -13,7 +13,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-// TODO: review tests againts standards
 class MatchHelpersTest {
 
     @Test
@@ -21,7 +20,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Lions Club");
-        match.setMatchDivision(Division.HANDGUN);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match.setScheduledDate(LocalDate.of(2023, 5, 20));
 
@@ -30,7 +29,7 @@ class MatchHelpersTest {
                 MatchConstants.SCHEDULED_MATCH_NAME_FORMAT,
                 Map.of(
                         "clubName", "Lions Club",
-                        "divisionName", Division.HANDGUN.toString().toUpperCase(),
+                        "divisionName", FirearmType.HANDGUN.toString().toUpperCase(),
                         "categoryName", MatchCategory.CLUB_SHOOT.toString(),
                         "longDate", "20 May 2023"
                 )
@@ -46,7 +45,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Tigers Club");
-        match.setMatchDivision(null);
+        match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2024, 3, 15));
 
@@ -71,7 +70,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Phoenix Club");
-        match.setMatchDivision(null);
+        match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2025, 11, 12));
 
@@ -96,7 +95,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Lions Club");
-        match.setMatchDivision(Division.PCC);
+        match.setMatchFirearmType(FirearmType.PCC);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setScheduledDate(LocalDate.of(2023, 5, 20));
 
@@ -119,7 +118,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Tigers Club");
-        match.setMatchDivision(null);
+        match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2024, 3, 15));
 
@@ -142,7 +141,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Phoenix Club");
-        match.setMatchDivision(null);
+        match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2025, 11, 12));
 
@@ -165,7 +164,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Eagles Club");
-        match.setMatchDivision(Division.HANDGUN_22);
+        match.setMatchFirearmType(FirearmType.HANDGUN_22);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2026, 8, 3));
 
@@ -188,7 +187,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Lions Club");
-        match.setMatchDivision(Division.SHOTGUN);
+        match.setMatchFirearmType(FirearmType.SHOTGUN);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setScheduledDate(LocalDate.of(2023, 5, 20));
 
@@ -218,7 +217,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Tigers Club");
-        match.setMatchDivision(null);
+        match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2024, 3, 15));
 
@@ -248,7 +247,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Match match = new Match();
         match.setClub("Phoenix Club");
-        match.setMatchDivision(null);
+        match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2025, 11, 12));
 

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -42,7 +42,7 @@ public class MatchStageCompetitorDto {
     @NotNull
     private MatchStageDto matchStage;
 
-    private Division division;
+    private FirearmType firearmType;
     private Discipline discipline;
     private PowerFactor powerFactor;
 
@@ -87,7 +87,7 @@ public class MatchStageCompetitorDto {
         this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
         this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
-        this.division = matchStageCompetitorEntity.getDivision();
+        this.firearmType = matchStageCompetitorEntity.getFirearmType();
         this.discipline = matchStageCompetitorEntity.getDiscipline();
         this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
 

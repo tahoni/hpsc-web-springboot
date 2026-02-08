@@ -3,6 +3,7 @@ package za.co.hpsc.web.enums;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 // TODO: Javadoc (not yet ready)
 @Getter
@@ -26,15 +27,15 @@ public enum ClubReference {
         this.code = code;
     }
 
-    public static ClubReference getByCode(String code) {
+    // TODO: Javadoc
+    public static Optional<ClubReference> getByCode(String code) {
         if ((code == null) || (code.isBlank())) {
-            return UNKNOWN;
+            return Optional.empty();
         }
 
         return Arrays.stream(ClubReference.values())
                 .filter(clubReference -> clubReference.code.equalsIgnoreCase(code))
-                .findFirst()
-                .orElse(UNKNOWN);
+                .findFirst();
     }
 
     @Override

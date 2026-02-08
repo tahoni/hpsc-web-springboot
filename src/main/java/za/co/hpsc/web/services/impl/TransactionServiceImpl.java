@@ -86,8 +86,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     protected Match initMatchEntity(MatchDto matchDto) {
-        // TODO: club enum
-
         // Initialises the match entity from DTO or creates a new entity
         Optional<Match> optionalMatchEntity = ((matchDto.getId() != null) ?
                 matchRepository.findById(matchDto.getId()) : Optional.empty());

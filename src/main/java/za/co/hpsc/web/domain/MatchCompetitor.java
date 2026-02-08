@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
 
@@ -50,7 +50,7 @@ public class MatchCompetitor {
     @Enumerated(EnumType.STRING)
     private ClubReference club;
     @Enumerated(EnumType.STRING)
-    private Division division;
+    private FirearmType firearmType;
     @Enumerated(EnumType.STRING)
     private Discipline discipline;
     @Enumerated(EnumType.STRING)
@@ -71,7 +71,7 @@ public class MatchCompetitor {
         this.competitor = competitorEntity;
 
         this.club = matchCompetitorDto.getClub();
-        this.division = matchCompetitorDto.getDivision();
+        this.firearmType = matchCompetitorDto.getFirearmType();
         this.discipline = matchCompetitorDto.getDiscipline();
         this.powerFactor = matchCompetitorDto.getPowerFactor();
 

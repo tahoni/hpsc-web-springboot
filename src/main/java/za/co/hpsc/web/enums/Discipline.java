@@ -17,15 +17,17 @@ import java.util.Optional;
  */
 @Getter
 public enum Discipline {
-
+    // TODO: get codes
     // Handgun Disciplines
-    OPEN("Open Division", "O"),
-    STANDARD("Standard Division", "S"),
-    CLASSIC("Classic Division", "C"),
-    PRODUCTION("Production Division", "P"),
-    PRODUCTION_OPTICS("Production Optics Division", "PO"),
-    PRODUCTION_OPTICS_LIGHT("Production Optics Light Division", "POL"),
-    REVOLVER("Revolver Division"),
+    OPEN("Open Division", "O", 1),
+    STANDARD("Standard Division", "S", 2),
+    MODIFIED("Modified Division", "", 3),
+    CLASSIC("Classic Division", "C", 18),
+    PRODUCTION("Production Division", "P", 4),
+    PRODUCTION_OPTICS("Production Optics Division", "PO", 24),
+    PRODUCTION_OPTICS_LIGHT("Production Optics Light Division", "POL", 28),
+    OPTICS("Optics Division", "", 50),
+    REVOLVER("Revolver Division", "", 5),
 
     // Rifle Disciplines
     RIFLE_SEMI_AUTO_OPEN("Semi Auto Open Division"),
@@ -54,21 +56,21 @@ public enum Discipline {
 
     private final String name;
     private final String abbreviation;
-    private final String code;
+    private final int code;
 
     Discipline(String name) {
         this.name = name;
         this.abbreviation = "";
-        this.code = "";
+        this.code = 0;
     }
 
     Discipline(String name, String abbreviation) {
         this.name = name;
         this.abbreviation = abbreviation;
-        this.code = "";
+        this.code = 0;
     }
 
-    Discipline(String name, String abbreviation, String code) {
+    Discipline(String name, String abbreviation, int code) {
         this.name = name;
         this.abbreviation = abbreviation;
         this.code = code;

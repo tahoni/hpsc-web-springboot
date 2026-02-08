@@ -51,8 +51,8 @@ public final class MatchHelpers {
         Map<String, String> parameters = Map.of(
                 "clubName", (match.getClub() != null ?
                         match.getClub() : ""),
-                "divisionName", (match.getMatchDivision() != null ?
-                        match.getMatchDivision().toString().toUpperCase() : ""),
+                "divisionName", (match.getMatchFirearmType() != null ?
+                        match.getMatchFirearmType().toString().toUpperCase() : ""),
                 "categoryName", (match.getMatchCategory() != null ?
                         match.getMatchCategory().toString() : ""),
                 "longDate", longDateFormatter.format(match.getScheduledDate())

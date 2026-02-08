@@ -2,70 +2,77 @@ package za.co.hpsc.web.enums;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CompetitorCategoryTest {
 
     @Test
     void testGetByName_withExactMatch_thenReturnsCorrectCategory() {
         // Act
-        CompetitorCategory category = CompetitorCategory.getByName("Junior");
+        Optional<CompetitorCategory> category = CompetitorCategory.getByName("Junior");
 
         // Assert
-        assertEquals(CompetitorCategory.JUNIOR, category);
+        assertTrue(category.isPresent());
+        assertEquals(CompetitorCategory.JUNIOR, category.get());
     }
 
     @Test
     void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectCategory() {
         // Act
-        CompetitorCategory category = CompetitorCategory.getByName("junior");
+        Optional<CompetitorCategory> category = CompetitorCategory.getByName("junior");
 
         // Assert
-        assertEquals(CompetitorCategory.JUNIOR, category);
+        assertTrue(category.isPresent());
+        assertEquals(CompetitorCategory.JUNIOR, category.get());
     }
 
     @Test
     void testGetByName_withWhitespace_thenReturnsCorrectCategory() {
         // Act
-        CompetitorCategory category = CompetitorCategory.getByName("  Junior  ");
+        Optional<CompetitorCategory> category = CompetitorCategory.getByName("  Junior  ");
 
         // Assert
-        assertEquals(CompetitorCategory.JUNIOR, category);
+        assertTrue(category.isPresent());
+        assertEquals(CompetitorCategory.JUNIOR, category.get());
     }
 
     @Test
-    void testGetByName_withNullInput_thenReturnsNone() {
+    void testGetByName_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        CompetitorCategory category = CompetitorCategory.getByName(null);
+        Optional<CompetitorCategory> category = CompetitorCategory.getByName(null);
 
         // Assert
-        assertEquals(CompetitorCategory.NONE, category);
+        assertTrue(category.isEmpty());
     }
 
     @Test
-    void testGetByName_withBlankInput_thenReturnsNone() {
+    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
         // Act
-        CompetitorCategory category = CompetitorCategory.getByName("   ");
+        Optional<CompetitorCategory> category = CompetitorCategory.getByName("   ");
 
         // Assert
-        assertEquals(CompetitorCategory.NONE, category);
+        assertTrue(category.isEmpty());
     }
 
     @Test
-    void testGetByName_withNoMatch_returnsNone() {
+    void testGetByName_withNoMatch_returnsEmptyOptional() {
         // Act
-        CompetitorCategory category = CompetitorCategory.getByName("Nonexistent Category");
+        Optional<CompetitorCategory> category = CompetitorCategory.getByName("Nonexistent Category");
 
         // Assert
-        assertEquals(CompetitorCategory.NONE, category);
+        assertTrue(category.isEmpty());
     }
 
     @Test
     void testGetByName_withMatchWithSpecialCharacters_thenReturnsCorrectCategory() {
         // Act
-        CompetitorCategory category = CompetitorCategory.getByName("Lady, Senior");
+        Optional<CompetitorCategory> category = CompetitorCategory.getByName("Lady, Senior");
 
         // Assert
-        assertEquals(CompetitorCategory.SUPER_LADY, category);
+        assertTrue(category.isPresent());
+        assertEquals(CompetitorCategory.SUPER_LADY, category.get());
     }
 }

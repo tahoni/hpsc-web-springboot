@@ -11,7 +11,7 @@ import java.util.Optional;
  *
  * <p>
  * A power factor defines the level of energy a bullet carries, which is used
- * to categorise participants based on the caliber and velocity of ammunition used.
+ * to categorise participants based on the calibre and velocity of ammunition used.
  * Each power factor is associated with a name and an abbreviation for easy reference and
  * presentation.
  * </p>

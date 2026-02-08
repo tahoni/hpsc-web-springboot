@@ -3,6 +3,7 @@ package za.co.hpsc.web.enums;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Enum representing various categories of competitors.
@@ -15,6 +16,7 @@ import java.util.Arrays;
  */
 @Getter
 public enum CompetitorCategory {
+    // TODO: get codes
     JUNIOR("Junior"),
     SUPER_JUNIOR("Super Junior"),
     LADY("Lady"),
@@ -52,15 +54,15 @@ public enum CompetitorCategory {
      * @return the {@code CompetitorCategory} matching the given name, or {@code NONE}
      * if no match is found.
      */
-    public static CompetitorCategory getByName(String name) {
+    // TODO: Javadoc
+    public static Optional<CompetitorCategory> getByName(String name) {
         if ((name == null) || (name.isBlank())) {
-            return NONE;
+            return Optional.empty();
         }
 
         return Arrays.stream(CompetitorCategory.values())
                 .filter(category -> category.isNameMatch(name))
-                .findFirst()
-                .orElse(NONE);
+                .findFirst();
     }
 
 

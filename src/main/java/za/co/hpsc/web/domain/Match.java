@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
@@ -47,7 +47,7 @@ public class Match {
     private String club;
 
     @Enumerated(EnumType.STRING)
-    private Division matchDivision;
+    private FirearmType matchFirearmType;
     @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
@@ -67,7 +67,7 @@ public class Match {
         this.scheduledDate = matchDto.getScheduledDate();
         this.club = matchDto.getClub();
 
-        this.matchDivision = matchDto.getMatchDivision();
+        this.matchFirearmType = matchDto.getFirearmType();
         this.matchCategory = matchDto.getMatchCategory();
 
         this.dateCreated = matchDto.getDateCreated();

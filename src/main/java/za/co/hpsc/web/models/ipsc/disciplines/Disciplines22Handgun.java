@@ -1,7 +1,7 @@
-package za.co.hpsc.web.models.division;
+package za.co.hpsc.web.models.ipsc.disciplines;
 
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import java.util.List;
  * and its associated disciplines.
  * </p>
  */
-public final class Disciplines22Handgun extends DisciplinesInDivision {
+public final class Disciplines22Handgun extends DisciplinesForFirearmType {
     private static Disciplines22Handgun instance;
 
     public static Disciplines22Handgun getInstance() {
@@ -34,7 +34,7 @@ public final class Disciplines22Handgun extends DisciplinesInDivision {
     }
 
     private Disciplines22Handgun() {
-        super(Division.HANDGUN_22, List.of(
+        super(FirearmType.HANDGUN_22, List.of(
                 Discipline.OPEN_22,
                 Discipline.STANDARD_22,
                 Discipline.CLASSIC_22

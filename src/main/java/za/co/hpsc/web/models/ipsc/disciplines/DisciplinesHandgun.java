@@ -1,7 +1,7 @@
-package za.co.hpsc.web.models.division;
+package za.co.hpsc.web.models.ipsc.disciplines;
 
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  * Usage of this class provides a central access point for retrieving the Handgun division
  * and its associated disciplines.
  */
-public final class DisciplinesHandgun extends DisciplinesInDivision {
+public final class DisciplinesHandgun extends DisciplinesForFirearmType {
     private static DisciplinesHandgun instance;
 
     public static DisciplinesHandgun getInstance() {
@@ -31,12 +31,14 @@ public final class DisciplinesHandgun extends DisciplinesInDivision {
     }
 
     private DisciplinesHandgun() {
-        super(Division.HANDGUN, List.of(
+        super(FirearmType.HANDGUN, List.of(
                 Discipline.OPEN,
                 Discipline.STANDARD,
+                Discipline.MODIFIED,
                 Discipline.CLASSIC,
                 Discipline.PRODUCTION,
                 Discipline.PRODUCTION_OPTICS,
+                Discipline.OPTICS,
                 Discipline.REVOLVER
         ));
     }

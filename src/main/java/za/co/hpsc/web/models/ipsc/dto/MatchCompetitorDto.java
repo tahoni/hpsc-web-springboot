@@ -8,7 +8,7 @@ import lombok.Setter;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -25,7 +25,7 @@ import java.util.UUID;
  * <p>
  * The {@code MatchCompetitorDto} class encapsulates data related to a competitor's
  * participation in a specific match.
- * It includes division, discipline, power factor, and scoring details.
+ * It includes firearm type, discipline, power factor, and scoring details.
  * Additionally, it holds references to the associated competitor and match entities.
  * It also provides utility methods for mapping data from entity and response models.
  * </p>
@@ -44,7 +44,7 @@ public class MatchCompetitorDto {
     private MatchDto match;
 
     private ClubReference club;
-    private Division division;
+    private FirearmType firearmType;
     private Discipline discipline;
     private PowerFactor powerFactor;
 
@@ -71,7 +71,7 @@ public class MatchCompetitorDto {
         this.match = new MatchDto(matchCompetitorEntity.getMatch());
 
         this.club = matchCompetitorEntity.getClub();
-        this.division = matchCompetitorEntity.getDivision();
+        this.firearmType = matchCompetitorEntity.getFirearmType();
         this.discipline = matchCompetitorEntity.getDiscipline();
         this.powerFactor = matchCompetitorEntity.getPowerFactor();
 
@@ -108,7 +108,6 @@ public class MatchCompetitorDto {
                     matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()))));
         }
         // TODO: Initialises match percentage
-        // TODO: Initialises match ranking
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
@@ -128,8 +127,10 @@ public class MatchCompetitorDto {
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
             // Determines the club based on the club reference number
-            this.club = ClubReference.getByCode(enrolledResponse.getRefNo());
-            // TODO: populate category, division, discipline
+            this.club = ClubReference.getByCode(enrolledResponse.getRefNo()).orElse(ClubReference.UNKNOWN);
+            // Determines the firearm type based on the division ID
+            this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // TODO: populate category and discipline
         }
     }
 

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.Match;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -23,7 +23,7 @@ import java.util.UUID;
  * The {@code MatchDto} class is used to transfer match-related data between various layers
  * of the application.
  * It encapsulates details such as the match's unique identifier, associated club, name,
- * scheduled date, division, category, and timestamps for creation and updates.
+ * scheduled date, firearm type, category, and timestamps for creation and updates.
  * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
@@ -41,7 +41,7 @@ public class MatchDto {
     private LocalDate scheduledDate;
     private String club;
 
-    private Division matchDivision;
+    private FirearmType firearmType;
     private MatchCategory matchCategory;
 
     @NotNull
@@ -68,7 +68,7 @@ public class MatchDto {
 
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.matchDivision = matchEntity.getMatchDivision();
+        this.firearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
         this.dateCreated = matchEntity.getDateCreated();

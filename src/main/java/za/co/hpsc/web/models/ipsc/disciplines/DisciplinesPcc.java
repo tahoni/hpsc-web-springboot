@@ -1,7 +1,7 @@
-package za.co.hpsc.web.models.division;
+package za.co.hpsc.web.models.ipsc.disciplines;
 
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
  * and its associated disciplines.
  * </p>
  */
-public final class DisciplinesPcc extends DisciplinesInDivision {
+public final class DisciplinesPcc extends DisciplinesForFirearmType {
     private static DisciplinesPcc instance;
 
     public static DisciplinesPcc getInstance() {
@@ -32,7 +32,7 @@ public final class DisciplinesPcc extends DisciplinesInDivision {
     }
 
     private DisciplinesPcc() {
-        super(Division.PCC, List.of(
+        super(FirearmType.PCC, List.of(
                 Discipline.PCC_OPTICS,
                 Discipline.PCC_IRON
         ));

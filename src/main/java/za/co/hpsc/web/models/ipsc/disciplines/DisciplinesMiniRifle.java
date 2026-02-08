@@ -1,7 +1,7 @@
-package za.co.hpsc.web.models.division;
+package za.co.hpsc.web.models.ipsc.disciplines;
 
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
  * and its associated disciplines.
  * </p>
  */
-public final class DisciplinesMiniRifle extends DisciplinesInDivision {
+public final class DisciplinesMiniRifle extends DisciplinesForFirearmType {
     private static DisciplinesMiniRifle instance;
 
     public static DisciplinesMiniRifle getInstance() {
@@ -32,7 +32,7 @@ public final class DisciplinesMiniRifle extends DisciplinesInDivision {
     }
 
     private DisciplinesMiniRifle() {
-        super(Division.MINI_RIFLE, List.of(
+        super(FirearmType.MINI_RIFLE, List.of(
                 Discipline.MINI_RIFLE_OPEN,
                 Discipline.MINI_RIFLE_STANDARD
         ));

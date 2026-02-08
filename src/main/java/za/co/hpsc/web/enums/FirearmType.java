@@ -17,30 +17,33 @@ import java.util.stream.Stream;
  * case- and separator-insensitive matching.
  */
 @Getter
-public enum Division {
-    HANDGUN("Handgun"),
-    PCC(List.of("PCC", "Pistol Caliber Carbine")),
-    SHOTGUN("Shotgun"),
-    RIFLE("Rifle"),
-    HANDGUN_22(List.of("Handgun .22", "Handgun .22LR", "22", ".22LR")),
-    MINI_RIFLE("Mini Rifle"),
-    NONE;
+public enum FirearmType {
+    HANDGUN("Handgun", 1),
+    PCC(List.of("PCC", "Pistol Caliber Carbine"), 7),
+    SHOTGUN("Shotgun", 3),
+    RIFLE("Rifle", 2),
+    HANDGUN_22(List.of("Handgun .22", "Handgun .22LR", "22", ".22LR"), 10),
+    MINI_RIFLE("Mini Rifle", 6);
 
     private final List<String> names;
+    private final int code;
 
     private static final String DEFAULT_SEPARATOR = " ";
     private static final String ALTERNATE_SEPARATOR = "-";
 
-    Division() {
+    FirearmType() {
         this.names = List.of();
+        this.code = 0;
     }
 
-    Division(String name) {
+    FirearmType(String name, int code) {
         this.names = List.of(name);
+        this.code = code;
     }
 
-    Division(List<String> names) {
+    FirearmType(List<String> names, int code) {
         this.names = names;
+        this.code = code;
     }
 
     /**
@@ -55,13 +58,23 @@ public enum Division {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
      */
-    public static Optional<Division> getByName(String name) {
+    public static Optional<FirearmType> getByName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
 
-        return Stream.of(Division.values())
+        return Stream.of(FirearmType.values())
                 .filter(division -> division.isNameMatch(name))
+                .findFirst();
+    }
+
+    public static Optional<FirearmType> getByCode(int code) {
+        if (code == 0) {
+            return Optional.empty();
+        }
+
+        return Stream.of(FirearmType.values())
+                .filter(division -> division.getCode() == code)
                 .findFirst();
     }
 

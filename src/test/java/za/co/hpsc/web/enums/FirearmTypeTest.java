@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DivisionTest {
+class FirearmTypeTest {
 
     @Test
     void testGetByName_withExactMatch_thenReturnsCorrectDivision() {
@@ -14,11 +14,11 @@ class DivisionTest {
         String inputName = "Handgun";
 
         // Act
-        Optional<Division> result = Division.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.getByName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Division.HANDGUN, result.get());
+        assertEquals(FirearmType.HANDGUN, result.get());
     }
 
     @Test
@@ -27,11 +27,11 @@ class DivisionTest {
         String inputName = "pcc";
 
         // Act
-        Optional<Division> result = Division.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.getByName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Division.PCC, result.get());
+        assertEquals(FirearmType.PCC, result.get());
     }
 
     @Test
@@ -40,11 +40,11 @@ class DivisionTest {
         String inputName = "Pistol-Caliber-Carbine";
 
         // Act
-        Optional<Division> result = Division.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.getByName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Division.PCC, result.get());
+        assertEquals(FirearmType.PCC, result.get());
     }
 
     @Test
@@ -53,17 +53,17 @@ class DivisionTest {
         String inputName = ".22LR";
 
         // Act
-        Optional<Division> result = Division.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.getByName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Division.HANDGUN_22, result.get());
+        assertEquals(FirearmType.HANDGUN_22, result.get());
     }
 
     @Test
     void testGetByName_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<Division> result = Division.getByName(null);
+        Optional<FirearmType> result = FirearmType.getByName(null);
 
         // Assert
         assertFalse(result.isPresent());
@@ -75,7 +75,7 @@ class DivisionTest {
         String inputName = "   ";
 
         // Act
-        Optional<Division> result = Division.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.getByName(inputName);
 
         // Assert
         assertFalse(result.isPresent());
@@ -87,7 +87,7 @@ class DivisionTest {
         String inputName = "NonExistentDivision";
 
         // Act
-        Optional<Division> result = Division.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.getByName(inputName);
 
         // Assert
         assertFalse(result.isPresent());

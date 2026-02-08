@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
@@ -46,7 +46,7 @@ public class MatchStageCompetitor {
     @JoinColumn(name = "match_stage_id")
     private MatchStage matchStage;
 
-    private Division division;
+    private FirearmType firearmType;
     private Discipline discipline;
     private PowerFactor powerFactor;
 
@@ -84,7 +84,7 @@ public class MatchStageCompetitor {
         this.matchStage = matchStageEntity;
         this.competitor = competitorEntity;
 
-        this.division = matchStageCompetitorDto.getDivision();
+        this.firearmType = matchStageCompetitorDto.getFirearmType();
         this.discipline = matchStageCompetitorDto.getDiscipline();
         this.powerFactor = matchStageCompetitorDto.getPowerFactor();
 
