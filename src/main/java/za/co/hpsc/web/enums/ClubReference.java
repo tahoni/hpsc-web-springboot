@@ -5,7 +5,6 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
-// TODO: Javadoc (not yet ready)
 @Getter
 public enum ClubReference {
     SOSC("SOSC", "AAA"),

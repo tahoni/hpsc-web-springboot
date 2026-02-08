@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.disciplines;
 
+import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.ValidationException;
 
@@ -41,6 +42,23 @@ public final class FirearmTypeToDisciplinesForFirearmType {
         }
 
         return result;
+    }
+
+    // TODO: Javadoc
+    public static FirearmType getFirearmTypeFromDiscipline(Discipline discipline)
+            throws ValidationException {
+
+        if (discipline == null) {
+            throw new ValidationException("Discipline cannot be null");
+        }
+
+        for (Map.Entry<FirearmType, DisciplinesForFirearmType> entry : MAPPING.entrySet()) {
+            if (entry.getValue().getDisciplines().contains(discipline)) {
+                return entry.getKey();
+            }
+        }
+
+        throw new ValidationException("No FirearmType mapping found for discipline: " + discipline);
     }
 
     public static Map<FirearmType, DisciplinesForFirearmType> getAll() {

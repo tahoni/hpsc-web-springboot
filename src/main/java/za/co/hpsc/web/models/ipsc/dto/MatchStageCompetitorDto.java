@@ -9,6 +9,7 @@ import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.disciplines.FirearmTypeToDisciplinesForFirearmType;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -164,7 +165,6 @@ public class MatchStageCompetitorDto {
 
         this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
         // TODO: Initialises match percentage
-        // TODO: Initialises match ranking
 
         this.isDisqualified = scoreResponse.getIsDisqualified();
 
@@ -176,8 +176,15 @@ public class MatchStageCompetitorDto {
         this.dateEdited = scoreResponse.getLastModified();
 
         if (enrolledResponse != null) {
+            // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
-            // TODO: populate category, division, discipline
+            this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the discipline based on the division ID
+            this.discipline = Discipline.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the firearm type from the discipline
+            this.firearmType =
+                    FirearmTypeToDisciplinesForFirearmType.getFirearmTypeFromDiscipline(this.discipline);
+            // TODO: populate category
         }
     }
 

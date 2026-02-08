@@ -10,6 +10,7 @@ import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.Discipline;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.disciplines.FirearmTypeToDisciplinesForFirearmType;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -128,9 +129,12 @@ public class MatchCompetitorDto {
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
             // Determines the club based on the club reference number
             this.club = ClubReference.getByCode(enrolledResponse.getRefNo()).orElse(ClubReference.UNKNOWN);
-            // Determines the firearm type based on the division ID
-            this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
-            // TODO: populate category and discipline
+            // Determines the discipline based on the division ID
+            this.discipline = Discipline.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the firearm type from the discipline
+            this.firearmType =
+                    FirearmTypeToDisciplinesForFirearmType.getFirearmTypeFromDiscipline(this.discipline);
+            // TODO: populate category
         }
     }
 

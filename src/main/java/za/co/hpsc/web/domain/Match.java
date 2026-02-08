@@ -67,7 +67,7 @@ public class Match {
         this.scheduledDate = matchDto.getScheduledDate();
         this.club = matchDto.getClub();
 
-        this.matchFirearmType = matchDto.getFirearmType();
+        this.matchFirearmType = matchDto.getMatchFirearmType();
         this.matchCategory = matchDto.getMatchCategory();
 
         this.dateCreated = matchDto.getDateCreated();

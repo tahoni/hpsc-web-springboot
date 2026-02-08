@@ -48,7 +48,8 @@ public class Request {
     /**
      * Constructs a new {@code Request} object with the specified title.
      *
-     * @param title the title of the request. Must not be null or blank.
+     * @param title the title of the request.
+     *              Must not be null or blank.
      */
     public Request(@NotNull @NotBlank String title) {
         this();
@@ -63,10 +64,14 @@ public class Request {
      * category, and tags.
      * </p>
      *
-     * @param title       the title of the request. Must not be null or blank.
-     * @param summary     a brief summary of the request. Can be null.
-     * @param description a detailed description of the request. Can be null.
-     * @param category    the category under which the request is classified. Can be null.
+     * @param title       the title of the request.
+     *                    Must not be null or blank.
+     * @param summary     a brief summary of the request.
+     *                    Can be null.
+     * @param description a detailed description of the request.
+     *                    Can be null.
+     * @param category    the category under which the request is classified.
+     *                    Can be null.
      * @param tags        a list of tags associated with the request. If null,
      *                    an empty list is assigned.
      */

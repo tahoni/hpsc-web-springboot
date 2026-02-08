@@ -146,6 +146,13 @@ public enum Discipline {
                 .findFirst();
     }
 
+    // TODO: Javadoc
+    public static Optional<Discipline> getByCode(int code) {
+        return Arrays.stream(Discipline.values())
+                .filter(discipline -> discipline.getCode() == code)
+                .findFirst();
+    }
+
     @Override
     public String toString() {
         return this.name;

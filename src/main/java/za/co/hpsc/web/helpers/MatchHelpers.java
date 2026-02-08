@@ -75,7 +75,8 @@ public final class MatchHelpers {
      * {@link MatchConstants#SCHEDULED_MATCH_OVERALL_NAME_FORMAT}.
      *
      * @param match the {@link Match} object containing the details used to construct
-     *              the overall display name. Must not be null.
+     *              the overall display name.
+     *              Must not be null.
      * @return a formatted string representing the overall display name of the match,
      * combining its name and ISO-formatted scheduled date.
      */
@@ -109,7 +110,8 @@ public final class MatchHelpers {
      * {@link MatchConstants#SCHEDULED_MATCH_STAGE_NAME_FORMAT}.
      *
      * @param matchStage the {@link MatchStage} object containing the details used to construct
-     *                   the display name. Must not be null.
+     *                   the display name.
+     *                   Must not be null.
      * @return a formatted string representing the display name of the match stage, including
      * the match name, stage and range numbers, and the scheduled date in ISO format.
      */

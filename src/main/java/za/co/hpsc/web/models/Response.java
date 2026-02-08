@@ -59,7 +59,8 @@ public class Response extends Request {
      * </p>
      *
      * @param uuid  the unique identifier for the response. If null, a random UUID is generated.
-     * @param title the title of the response. Must not be null or blank.
+     * @param title the title of the response.
+     *              Must not be null or blank.
      */
     public Response(UUID uuid, @NotNull @NotBlank String title) {
         super(title);
@@ -77,11 +78,16 @@ public class Response extends Request {
      *
      * @param uuid        the unique identifier for the response. If null, a random UUID
      *                    is generated.
-     * @param title       the title of the response. Must not be null or blank.
-     * @param summary     a brief summary of the response. Can be null.
-     * @param description a detailed description of the response. Can be null.
-     * @param category    the category under which the response is classified. Can be null.
+     * @param title       the title of the response.
+     *                    Must not be null or blank.
+     * @param summary     a brief summary of the response.
+     *                    Can be null.
+     * @param description a detailed description of the response.
+     *                    Can be null.
+     * @param category    the category under which the response is classified.
+     *                    Can be null.
      * @param tags        a list of tags associated with the response.
+     *                    Can be null.
      */
     public Response(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {
@@ -98,11 +104,16 @@ public class Response extends Request {
      * As no UUID is provided, a random UUID is generated.
      * </p>
      *
-     * @param title       the title of the response. Must not be null or blank.
-     * @param summary     a brief summary of the response. Can be null.
-     * @param description a detailed description of the response. Can be null.
-     * @param category    the category under which the response is classified. Can be null.
+     * @param title       the title of the response.
+     *                    Must not be null or blank.
+     * @param summary     a brief summary of the response.
+     *                    Can be null.
+     * @param description a detailed description of the response.
+     *                    Can be null.
+     * @param category    the category under which the response is classified.
+     *                    Can be null.
      * @param tags        a list of tags associated with the response.
+     *                    Can be null.
      */
     public Response(@NotNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {

@@ -41,7 +41,7 @@ public class MatchDto {
     private LocalDate scheduledDate;
     private String club;
 
-    private FirearmType firearmType;
+    private FirearmType matchFirearmType;
     private MatchCategory matchCategory;
 
     @NotNull
@@ -54,8 +54,8 @@ public class MatchDto {
      * {@link Match} entity.
      *
      * @param matchEntity the {@link Match} entity containing match-related information, such as
-     *                    the unique identifier, associated club, name, scheduled date, match division,
-     *                    match category, creation timestamp, and update timestamp.
+     *                    the unique identifier, associated club, name, scheduled date, match
+     *                    firearm type, match category, creation timestamp, and update timestamp.
      *                    Must not be null.
      */
     public MatchDto(@NotNull Match matchEntity) {
@@ -68,7 +68,7 @@ public class MatchDto {
 
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.firearmType = matchEntity.getMatchFirearmType();
+        this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
         this.dateCreated = matchEntity.getDateCreated();
@@ -95,7 +95,7 @@ public class MatchDto {
             this.dateEdited = LocalDateTime.now();
         }
 
-        // TODO: populate division and category
+        // TODO: populate firearm type and category
     }
 
     @Override
