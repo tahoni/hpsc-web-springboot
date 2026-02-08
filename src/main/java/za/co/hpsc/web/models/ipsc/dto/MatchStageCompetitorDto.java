@@ -12,6 +12,7 @@ import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.disciplines.FirearmTypeToDisciplinesForFirearmType;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.utils.NumberUtil;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.math.BigDecimal;
@@ -126,7 +127,8 @@ public class MatchStageCompetitorDto {
      * @param competitorDto the {@link  CompetitorDto} representing the competitor in the match stage.
      *                      Must not be null.
      * @param matchStageDto the {@link MatchStageDto} representing the match stage in which
-     *                      the competitor participates. Must not be null.
+     *                      the competitor participates.
+     *                      Must not be null.
      */
     public MatchStageCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchStageDto matchStageDto) {
         this.competitor = competitorDto;
@@ -142,11 +144,17 @@ public class MatchStageCompetitorDto {
      * {@link ScoreResponse} object.
      *
      * @param scoreResponse    the {@link ScoreResponse} object containing performance metrics
-     *                         and detailed scoring information. Must not be null.
+     *                         and detailed scoring information.
+     *                         Must not be null.
      * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
-     *                         competitor information in the match stage. Can be null.
+     *                         competitor information in the match stage.
+     *                         Can be null.
+     * @param matchStageDto    the {@link MatchStageDto} object containing stage-related information,
+     *                         Can be null.
      */
-    public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse) {
+    // TODO: Javadoc
+    public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
+                     MatchStageDto matchStageDto) {
         this.scoreA = scoreResponse.getScoreA();
         this.scoreB = scoreResponse.getScoreB();
         this.scoreC = scoreResponse.getScoreC();
@@ -164,7 +172,8 @@ public class MatchStageCompetitorDto {
         this.hitFactor = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getHitFactor());
 
         this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
-        // TODO: Initialises match percentage
+        this.stagePercentage =
+                NumberUtil.calculatePercentage(this.stagePoints, matchStageDto.getMaxPoints());
 
         this.isDisqualified = scoreResponse.getIsDisqualified();
 

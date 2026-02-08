@@ -24,7 +24,8 @@ public final class FirearmTypeToDisciplinesForFirearmType {
      * specified {@link FirearmType}.
      *
      * @param firearmType the {@link FirearmType} for which the corresponding {@link DisciplinesForFirearmType}
-     *                    is to be returned. Must not be null.
+     *                    is to be returned.
+     *                    Must not be null.
      * @return the {@link DisciplinesForFirearmType} associated with the provided {@link FirearmType}.
      * @throws ValidationException if the {@code firearmType} is null or if no mapping exists
      *                             for the provided {@code FirearmType}.

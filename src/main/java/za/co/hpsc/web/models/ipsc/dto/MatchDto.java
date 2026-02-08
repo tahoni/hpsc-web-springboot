@@ -81,6 +81,9 @@ public class MatchDto {
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
         this.club = "";
 
+        // Determines the firearm type based on the firearm ID
+        this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
+
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
         // Initialises the date updated
@@ -94,8 +97,6 @@ public class MatchDto {
         } else {
             this.dateEdited = LocalDateTime.now();
         }
-
-        // TODO: populate firearm type and category
     }
 
     @Override

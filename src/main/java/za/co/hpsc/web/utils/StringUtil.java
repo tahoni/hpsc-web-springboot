@@ -28,7 +28,8 @@ public final class StringUtil {
      * @param template   the template string containing placeholders in the format ${parameterName}.
      *                   Must not be null.
      * @param parameters a map containing key-value pairs where keys correspond to placeholder names
-     *                   and values correspond to their replacements. Can be null.
+     *                   and values correspond to their replacements.
+     *                   Can be null.
      * @return a formatted string with placeholders replaced by corresponding values from the map, or
      * the original template if no replacements are made.
      */

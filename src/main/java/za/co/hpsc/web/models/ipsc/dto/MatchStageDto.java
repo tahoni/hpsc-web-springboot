@@ -8,6 +8,7 @@ import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStage;
 import za.co.hpsc.web.models.ipsc.response.StageResponse;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -37,6 +38,8 @@ public class MatchStageDto {
     private String stageName;
     private Integer rangeNumber;
 
+    private BigDecimal maxPoints;
+
     /**
      * Constructs a new {@code MatchStageDto} instance with ata from the
      * provided {@link MatchStage} entity.
@@ -49,10 +52,11 @@ public class MatchStageDto {
         if (matchStageEntity == null) {
             return;
         }
-        
+
         this.id = matchStageEntity.getId();
         this.match = new MatchDto(matchStageEntity.getMatch());
         this.stageNumber = matchStageEntity.getStageNumber();
+        this.maxPoints = matchStageEntity.getMaxPoints();
     }
 
     /**
@@ -70,6 +74,7 @@ public class MatchStageDto {
         this.match = matchDto;
         this.stageNumber = matchStageEntity.getStageNumber();
         this.stageName = matchStageEntity.getStageName();
+        this.maxPoints = matchStageEntity.getMaxPoints();
     }
 
     /**
@@ -79,12 +84,14 @@ public class MatchStageDto {
      * @param matchDto      the {@link MatchDto} object representing the associated match.
      *                      Must not be null.
      * @param stageResponse the {@link StageResponse} object containing stage-related
-     *                      data, including stage ID and stage name. Must not be null.
+     *                      data, including stage ID and stage name.
+     *                      Must not be null.
      */
     public void init(@NotNull MatchDto matchDto, @NotNull StageResponse stageResponse) {
         this.match = matchDto;
         this.stageNumber = stageResponse.getStageId();
         this.stageName = stageResponse.getStageName();
+        this.maxPoints = BigDecimal.valueOf(stageResponse.getMaxPoints());
     }
 
     @Override

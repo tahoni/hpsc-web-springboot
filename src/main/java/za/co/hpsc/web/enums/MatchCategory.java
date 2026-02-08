@@ -33,7 +33,8 @@ public enum MatchCategory {
      * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
      * </p>
      *
-     * @param name the name of the match category to search for. Can be null or empty.
+     * @param name the name of the match category to search for.
+     *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code MatchCategory} if found,
      * or empty otherwise.
      */

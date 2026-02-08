@@ -57,7 +57,6 @@ public class MatchCompetitor {
     private PowerFactor powerFactor;
 
     private BigDecimal matchPoints;
-    private BigDecimal matchPercentage;
     private BigDecimal matchRanking;
 
     @NotNull
@@ -76,7 +75,6 @@ public class MatchCompetitor {
         this.powerFactor = matchCompetitorDto.getPowerFactor();
 
         this.matchPoints = matchCompetitorDto.getMatchPoints();
-        this.matchPercentage = matchCompetitorDto.getMatchPercentage();
         this.matchRanking = matchCompetitorDto.getMatchRanking();
 
         this.dateCreated = matchCompetitorDto.getDateCreated();

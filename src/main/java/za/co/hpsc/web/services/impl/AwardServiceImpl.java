@@ -96,7 +96,8 @@ public class AwardServiceImpl implements AwardService {
      * </p>
      *
      * @param awardRequestList the list of {@link AwardRequest} objects to be grouped
-     *                         and mapped into responses. Must not be null.
+     *                         and mapped into responses.
+     *                         Must not be null.
      * @return a list of {@link AwardCeremonyResponse} objects, each representing a group
      * of awards associated with the same ceremony. It will never be null, but it may be empty.
      * @throws ValidationException if the input list is null.

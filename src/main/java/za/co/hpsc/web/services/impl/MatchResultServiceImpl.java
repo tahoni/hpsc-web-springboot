@@ -97,8 +97,10 @@ public class MatchResultServiceImpl implements MatchResultService {
      * Initialises a list of {@link MatchStageDto} objects based on the given match details
      * and stage response data. If no stage responses are provided, an empty list is returned.
      *
-     * @param matchDto       the match details. Must not be null.
-     * @param stageResponses a list of stage response objects. Can be null.
+     * @param matchDto       the match details.
+     *                       Must not be null.
+     * @param stageResponses a list of stage response objects.
+     *                       Can be null.
      * @return a list of initialized {@link MatchStageDto} objects based on the input parameters.
      */
     protected List<MatchStageDto> initStages(@NotNull MatchDto matchDto, List<StageResponse> stageResponses) {
@@ -226,7 +228,8 @@ public class MatchResultServiceImpl implements MatchResultService {
                             .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
 
                     // Initialises the match stage attributes
-                    matchStageCompetitorDto.init(optionalStageScoreResponse.get(), enrolledMap.get(memberId));
+                    matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
+                            enrolledMap.get(memberId), stageDto);
                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
                 }
             });

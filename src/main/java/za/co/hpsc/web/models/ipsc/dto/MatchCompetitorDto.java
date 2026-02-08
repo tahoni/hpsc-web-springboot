@@ -50,7 +50,6 @@ public class MatchCompetitorDto {
     private PowerFactor powerFactor;
 
     private BigDecimal matchPoints;
-    private BigDecimal matchPercentage;
     private BigDecimal matchRanking;
 
     @NotNull
@@ -77,7 +76,6 @@ public class MatchCompetitorDto {
         this.powerFactor = matchCompetitorEntity.getPowerFactor();
 
         this.matchPoints = matchCompetitorEntity.getMatchPoints();
-        this.matchPercentage = matchCompetitorEntity.getMatchPercentage();
         this.matchRanking = matchCompetitorEntity.getMatchRanking();
 
         this.dateCreated = matchCompetitorEntity.getDateCreated();
@@ -90,7 +88,8 @@ public class MatchCompetitorDto {
      * @param competitorDto the {@link CompetitorDto} representing the competitor in the match.
      *                      Must not be null.
      * @param matchDto      the {@link MatchDto} representing the match in which the
-     *                      competitor participates. Must not be null.
+     *                      competitor participates.
+     *                      Must not be null.
      */
     public MatchCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchDto matchDto) {
         this.competitor = competitorDto;

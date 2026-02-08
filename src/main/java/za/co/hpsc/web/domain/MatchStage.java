@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -45,6 +46,8 @@ public class MatchStage {
     private String stageName;
     private Integer rangeNumber;
 
+    private BigDecimal maxPoints;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> matchStageCompetitors;
 
@@ -55,6 +58,8 @@ public class MatchStage {
         this.stageNumber = stage.getStageNumber();
         this.stageName = stage.getStageName();
         this.rangeNumber = stage.getRangeNumber();
+
+        this.maxPoints = stage.getMaxPoints();
     }
 
     @Override

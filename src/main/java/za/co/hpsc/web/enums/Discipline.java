@@ -84,7 +84,8 @@ public enum Discipline {
      * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
      * </p>
      *
-     * @param name the name of the discipline to search for. Can be null or empty.
+     * @param name the name of the discipline to search for.
+     *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code Discipline} if found,
      * or empty otherwise.
      */
@@ -107,7 +108,8 @@ public enum Discipline {
      * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
      * </p>
      *
-     * @param abbreviation the abbreviation of the discipline to search for. Can be null or empty.
+     * @param abbreviation the abbreviation of the discipline to search for.
+     *                     Can be null or empty.
      * @return an {@code Optional} containing the matching {@code Discipline} if found,
      * or empty otherwise.
      */
