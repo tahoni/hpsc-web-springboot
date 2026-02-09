@@ -43,11 +43,12 @@ public class Competitor {
     @Column(nullable = false)
     private String lastName;
     private String middleNames;
+    private LocalDate dateOfBirth;
+
     private Integer sapsaNumber;
     @NotNull
     @Column(nullable = false)
     private String competitorNumber;
-    private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     private CompetitorCategory category = CompetitorCategory.NONE;
@@ -59,14 +60,20 @@ public class Competitor {
 
     // TODO: Javadoc
     public void init(CompetitorDto competitorDto) {
+        // Initialises competitor details
+        this.id = competitorDto.getId();
+
+        // Initialises competitor attributes
         this.firstName = competitorDto.getFirstName();
         this.lastName = competitorDto.getLastName();
         this.middleNames = competitorDto.getMiddleNames();
 
+        // Initialises competitor number and SAPSA number
         this.sapsaNumber = competitorDto.getSapsaNumber();
         this.competitorNumber = competitorDto.getCompetitorNumber();
         this.dateOfBirth = competitorDto.getDateOfBirth();
 
+        // Initialises competitor category
         this.category = competitorDto.getCategory();
     }
 

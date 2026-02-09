@@ -66,18 +66,22 @@ public class MatchCompetitorDto {
      *                              Must not be null.
      */
     public MatchCompetitorDto(MatchCompetitor matchCompetitorEntity) {
+        // Initialises the match competitor details
         this.id = matchCompetitorEntity.getId();
         this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
         this.match = new MatchDto(matchCompetitorEntity.getMatch());
 
+        // Initialises the competitor attributes
         this.club = matchCompetitorEntity.getClub();
         this.firearmType = matchCompetitorEntity.getFirearmType();
         this.discipline = matchCompetitorEntity.getDiscipline();
         this.powerFactor = matchCompetitorEntity.getPowerFactor();
 
+        // Initialises the competitor scoring details
         this.matchPoints = matchCompetitorEntity.getMatchPoints();
         this.matchRanking = matchCompetitorEntity.getMatchRanking();
 
+        // Initialises the date fields
         this.dateCreated = matchCompetitorEntity.getDateCreated();
         this.dateUpdated = LocalDateTime.now();
     }
@@ -92,8 +96,11 @@ public class MatchCompetitorDto {
      *                      Must not be null.
      */
     public MatchCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchDto matchDto) {
+        // Initialises the match competitor details
         this.competitor = competitorDto;
         this.match = matchDto;
+
+        // Initialises the date fields
         this.dateCreated = LocalDateTime.now();
         this.dateUpdated = LocalDateTime.now();
         this.dateEdited = LocalDateTime.now();
@@ -122,6 +129,7 @@ public class MatchCompetitorDto {
             this.dateEdited = LocalDateTime.now();
         }
 
+        // Initialises the competitor attributes
         if (enrolledResponse != null) {
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);

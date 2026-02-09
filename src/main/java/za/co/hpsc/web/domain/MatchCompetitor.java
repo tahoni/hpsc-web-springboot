@@ -66,17 +66,22 @@ public class MatchCompetitor {
 
     // TODO: Javadoc
     public void init(MatchCompetitorDto matchCompetitorDto, Match matchEntity, Competitor competitorEntity) {
+        // Initialises the competitor details
+        this.id = matchCompetitorDto.getId();
         this.match = matchEntity;
         this.competitor = competitorEntity;
 
+        // Initialises the competitor attributes
         this.club = matchCompetitorDto.getClub();
         this.firearmType = matchCompetitorDto.getFirearmType();
         this.discipline = matchCompetitorDto.getDiscipline();
         this.powerFactor = matchCompetitorDto.getPowerFactor();
 
+        // Initialises the match scoring attributes
         this.matchPoints = matchCompetitorDto.getMatchPoints();
         this.matchRanking = matchCompetitorDto.getMatchRanking();
 
+        // Initialises the date fields
         this.dateCreated = matchCompetitorDto.getDateCreated();
         this.dateUpdated = matchCompetitorDto.getDateUpdated();
         this.dateEdited = matchCompetitorDto.getDateEdited();

@@ -172,7 +172,6 @@ public class ImageResponse extends Response {
      * @param mimeType the MIME type to be set; if null or blank, an attempt will be made
      *                 to infer it from the file name.
      */
-    // TODO: only accept valid MIME types
     public void setMimeType(String mimeType) {
         if ((mimeType != null) && (!mimeType.isBlank())) {
             // Set the MIME type directly

@@ -37,10 +37,11 @@ public class CompetitorDto {
     @NotNull
     private String lastName;
     private String middleNames;
+    private LocalDate dateOfBirth;
+
     private Integer sapsaNumber;
     @NotNull
     private String competitorNumber;
-    private LocalDate dateOfBirth;
 
     private CompetitorCategory category = CompetitorCategory.NONE;
 
@@ -58,30 +59,39 @@ public class CompetitorDto {
             return;
         }
 
+        // Initialises competitor details
         this.id = competitorEntity.getId();
+
+        // Initialises competitor attributes
         this.firstName = competitorEntity.getFirstName();
         this.lastName = competitorEntity.getLastName();
         this.middleNames = competitorEntity.getMiddleNames();
+        this.dateOfBirth = competitorEntity.getDateOfBirth();
+
+        // Initialises competitor number and SAPSA number
         this.sapsaNumber = competitorEntity.getSapsaNumber();
         this.competitorNumber = competitorEntity.getCompetitorNumber();
-        this.dateOfBirth = competitorEntity.getDateOfBirth();
+
+        // Initialises competitor category
         this.category = competitorEntity.getCategory();
     }
 
     // TOOD: Javadoc (not yet ready)
     public void init(MemberResponse memberResponse) {
+        // Initialises competitor attributes
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();
         if (memberResponse.getDateOfBirth() != null) {
             this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
         }
 
-        // Initialises competitor number and SAPSA number based on the member's ICS alias.
+        // Initialises competitor number and SAPSA number based on the member's ICS alias
         this.competitorNumber = memberResponse.getIcsAlias();
         if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
             this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
         }
 
+        // Initialises competitor category based on the member's category code'
         // TODO: populate category
     }
 

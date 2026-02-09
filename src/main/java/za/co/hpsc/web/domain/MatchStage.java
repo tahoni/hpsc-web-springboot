@@ -9,7 +9,6 @@ import lombok.Setter;
 import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -46,19 +45,38 @@ public class MatchStage {
     private String stageName;
     private Integer rangeNumber;
 
-    private BigDecimal maxPoints;
+    private Integer targetPaper;
+    private Integer targetPopper;
+    private Integer targetPlates;
+    private Integer targetDisappear;
+    private Integer targetPenalty;
+
+    private Integer minRounds;
+    private Integer maxPoints;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> matchStageCompetitors;
 
     // TODO: Javadoc
     public void init(MatchStageDto stage, Match matchEntity) {
+        // Initialises the stage details
+        this.id = stage.getId();
         this.match = matchEntity;
 
+        // Initialises the stage attributes
         this.stageNumber = stage.getStageNumber();
         this.stageName = stage.getStageName();
         this.rangeNumber = stage.getRangeNumber();
 
+        // Initialises the target details
+        this.targetPaper = stage.getTargetPaper();
+        this.targetPopper = stage.getTargetPopper();
+        this.targetPlates = stage.getTargetPlates();
+        this.targetDisappear = stage.getTargetDisappear();
+        this.targetPenalty = stage.getTargetPenalty();
+
+        // Initialises the possible points details
+        this.minRounds = stage.getMinRounds();
         this.maxPoints = stage.getMaxPoints();
     }
 

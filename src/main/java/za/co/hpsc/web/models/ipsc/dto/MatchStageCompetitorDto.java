@@ -85,36 +85,45 @@ public class MatchStageCompetitorDto {
      *                                   Must not be null.
      */
     public MatchStageCompetitorDto(@NotNull MatchStageCompetitor matchStageCompetitorEntity) {
+        // Initialises the competitor and stage details
         this.id = matchStageCompetitorEntity.getId();
         this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
         this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
+        // Initialises the competitor and stage attributes
         this.firearmType = matchStageCompetitorEntity.getFirearmType();
         this.discipline = matchStageCompetitorEntity.getDiscipline();
         this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
 
+        // Initialises the detailed breakdown of the score
         this.scoreA = matchStageCompetitorEntity.getScoreA();
         this.scoreB = matchStageCompetitorEntity.getScoreB();
         this.scoreC = matchStageCompetitorEntity.getScoreC();
         this.scoreD = matchStageCompetitorEntity.getScoreD();
 
+        // Initialises the overall performance metrics
         this.points = matchStageCompetitorEntity.getPoints();
         this.misses = matchStageCompetitorEntity.getMisses();
         this.penalties = matchStageCompetitorEntity.getPenalties();
         this.procedurals = matchStageCompetitorEntity.getProcedurals();
 
+        // Initialises the deduction details, if applicable
         this.hasDeduction = matchStageCompetitorEntity.getHasDeduction();
         this.deductionPercentage = matchStageCompetitorEntity.getDeductionPercentage();
 
+        // Initialises whether the competitor is disqualified
+        this.isDisqualified = matchStageCompetitorEntity.getIsDisqualified();
+
+        // Initialises the time and hit factor details
         this.time = matchStageCompetitorEntity.getTime();
         this.hitFactor = matchStageCompetitorEntity.getHitFactor();
 
+        // Initialises the stage ranking and percentage
         this.stagePoints = matchStageCompetitorEntity.getStagePoints();
         this.stagePercentage = matchStageCompetitorEntity.getStagePercentage();
         this.stageRanking = matchStageCompetitorEntity.getStageRanking();
 
-        this.isDisqualified = matchStageCompetitorEntity.getIsDisqualified();
-
+        // Initialises the date fields
         this.dateCreated = matchStageCompetitorEntity.getDateCreated();
         this.dateUpdated = LocalDateTime.now();
         this.dateEdited = matchStageCompetitorEntity.getDateEdited();
@@ -131,9 +140,11 @@ public class MatchStageCompetitorDto {
      *                      Must not be null.
      */
     public MatchStageCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchStageDto matchStageDto) {
+        // Initialises the competitor and stage details
         this.competitor = competitorDto;
         this.matchStage = matchStageDto;
 
+        // Initialises the date fields
         this.dateCreated = LocalDateTime.now();
         this.dateUpdated = LocalDateTime.now();
         this.dateEdited = LocalDateTime.now();
@@ -155,27 +166,36 @@ public class MatchStageCompetitorDto {
     // TODO: Javadoc
     public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
                      MatchStageDto matchStageDto) {
+
+        // Initialises the detailed breakdown of the score
         this.scoreA = scoreResponse.getScoreA();
         this.scoreB = scoreResponse.getScoreB();
         this.scoreC = scoreResponse.getScoreC();
         this.scoreD = scoreResponse.getScoreD();
 
+        // Initialises the overall performance metrics
         this.points = scoreResponse.getFinalScore();
         this.misses = scoreResponse.getMisses();
         this.penalties = scoreResponse.getPenalties();
         this.procedurals = scoreResponse.getProcedurals();
 
+        // Initialises the deduction details, if applicable
         this.hasDeduction = scoreResponse.getDeduction();
         this.deductionPercentage = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getDeductionPercentage());
 
+        // Initialises whether the competitor is disqualified
+        this.isDisqualified = scoreResponse.getIsDisqualified();
+
+        // Initialises the time and hit factor details
         this.time = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getTime());
         this.hitFactor = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getHitFactor());
 
+        // Calculates the stage points and percentage based on the final score
         this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
-        this.stagePercentage =
-                NumberUtil.calculatePercentage(this.stagePoints, matchStageDto.getMaxPoints());
-
-        this.isDisqualified = scoreResponse.getIsDisqualified();
+        if (matchStageDto.getMaxPoints() != null) {
+            this.stagePercentage = NumberUtil.calculatePercentage(this.stagePoints,
+                    BigDecimal.valueOf(matchStageDto.getMaxPoints()));
+        }
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
@@ -184,6 +204,7 @@ public class MatchStageCompetitorDto {
         // Sets the date edited to the latest score update timestamp
         this.dateEdited = scoreResponse.getLastModified();
 
+        // Initialises competitor attributes
         if (enrolledResponse != null) {
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);

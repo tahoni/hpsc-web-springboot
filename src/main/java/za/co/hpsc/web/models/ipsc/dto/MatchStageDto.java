@@ -8,7 +8,6 @@ import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStage;
 import za.co.hpsc.web.models.ipsc.response.StageResponse;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -18,7 +17,7 @@ import java.util.UUID;
  * The {@code MatchStageDto} class encapsulates data related to an individual stage
  * in a shooting match.
  * It includes details such as the stage's unique identifier, associated match, stage number,
- * stage name, and range number.
+ * stage name, and rangeS number.
  * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
@@ -38,7 +37,14 @@ public class MatchStageDto {
     private String stageName;
     private Integer rangeNumber;
 
-    private BigDecimal maxPoints;
+    private Integer targetPaper;
+    private Integer targetPopper;
+    private Integer targetPlates;
+    private Integer targetDisappear;
+    private Integer targetPenalty;
+
+    private Integer minRounds;
+    private Integer maxPoints;
 
     /**
      * Constructs a new {@code MatchStageDto} instance with ata from the
@@ -53,9 +59,23 @@ public class MatchStageDto {
             return;
         }
 
+        // Initialises the stage details
         this.id = matchStageEntity.getId();
         this.match = new MatchDto(matchStageEntity.getMatch());
+
+        // Initialises the stage attributes
         this.stageNumber = matchStageEntity.getStageNumber();
+        this.rangeNumber = matchStageEntity.getRangeNumber();
+
+        // Initialises the target details
+        this.targetPaper = matchStageEntity.getTargetPaper();
+        this.targetPopper = matchStageEntity.getTargetPopper();
+        this.targetPlates = matchStageEntity.getTargetPlates();
+        this.targetDisappear = matchStageEntity.getTargetDisappear();
+        this.targetPenalty = matchStageEntity.getTargetPenalty();
+
+        // Initialises the max rounds and max points details
+        this.minRounds = matchStageEntity.getMinRounds();
         this.maxPoints = matchStageEntity.getMaxPoints();
     }
 
@@ -70,10 +90,24 @@ public class MatchStageDto {
      *                         Must not be null.
      */
     public MatchStageDto(@NotNull MatchStage matchStageEntity, @NotNull MatchDto matchDto) {
+        // Initialises the stage details
         this.id = matchStageEntity.getId();
         this.match = matchDto;
+
+        // Initialises the stage attributes
         this.stageNumber = matchStageEntity.getStageNumber();
         this.stageName = matchStageEntity.getStageName();
+        this.rangeNumber = matchStageEntity.getRangeNumber();
+
+        // Initialises the target details
+        this.targetPaper = matchStageEntity.getTargetPaper();
+        this.targetPopper = matchStageEntity.getTargetPopper();
+        this.targetPlates = matchStageEntity.getTargetPlates();
+        this.targetDisappear = matchStageEntity.getTargetDisappear();
+        this.targetPenalty = matchStageEntity.getTargetPenalty();
+
+        // Initialises the max rounds and max points details
+        this.minRounds = matchStageEntity.getMinRounds();
         this.maxPoints = matchStageEntity.getMaxPoints();
     }
 
@@ -88,10 +122,24 @@ public class MatchStageDto {
      *                      Must not be null.
      */
     public void init(@NotNull MatchDto matchDto, @NotNull StageResponse stageResponse) {
+        // Initialises the stage details
         this.match = matchDto;
+
+        // Initialises the stage attributes
         this.stageNumber = stageResponse.getStageId();
         this.stageName = stageResponse.getStageName();
-        this.maxPoints = BigDecimal.valueOf(stageResponse.getMaxPoints());
+        this.rangeNumber = 0;
+
+        // Initialises the target details
+        this.targetPaper = stageResponse.getTargetPaper();
+        this.targetPopper = stageResponse.getTargetPopper();
+        this.targetPlates = stageResponse.getTargetPlates();
+        this.targetDisappear = stageResponse.getTargetDisappear();
+        this.targetPenalty = stageResponse.getTargetPenalty();
+
+        // Initialises the possible points details
+        this.minRounds = stageResponse.getMinRounds();
+        this.maxPoints = stageResponse.getMaxPoints();
     }
 
     @Override

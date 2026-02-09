@@ -63,26 +63,33 @@ public class MatchDto {
             return;
         }
 
+        // Initialises match details
         this.id = matchEntity.getId();
         this.club = matchEntity.getClub();
 
+        // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
+        // Initialises the date fields
         this.dateCreated = matchEntity.getDateCreated();
         this.dateUpdated = LocalDateTime.now();
     }
 
     // TODO: Javadoc (not yet ready)
     public void init(MatchResponse matchResponse, List<ScoreResponse> scoreResponses) {
+        // Initialises match details
+        this.club = "";
+
+        // Initialises the match attributes
         this.name = matchResponse.getMatchName();
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
-        this.club = "";
 
         // Determines the firearm type based on the firearm ID
         this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
+        // TODO: initialise match category
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());

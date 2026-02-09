@@ -63,13 +63,17 @@ public class Match {
 
     // TODO: Javadoc
     public void init(MatchDto matchDto) {
-        this.name = matchDto.getName();
-        this.scheduledDate = matchDto.getScheduledDate();
+        // Initialises match details
+        this.id = matchDto.getId();
         this.club = matchDto.getClub();
 
+        // Initialises the match attributes
+        this.name = matchDto.getName();
+        this.scheduledDate = matchDto.getScheduledDate();
         this.matchFirearmType = matchDto.getMatchFirearmType();
         this.matchCategory = matchDto.getMatchCategory();
 
+        // Initialises the date fields
         this.dateCreated = matchDto.getDateCreated();
         this.dateUpdated = matchDto.getDateUpdated();
         this.dateEdited = matchDto.getDateEdited();

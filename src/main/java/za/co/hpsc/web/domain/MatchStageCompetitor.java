@@ -81,35 +81,45 @@ public class MatchStageCompetitor {
     public void init(MatchStageCompetitorDto matchStageCompetitorDto, MatchStage matchStageEntity,
                      Competitor competitorEntity) {
 
+        // Initialises the match stage and competitor details
+        this.id = matchStageCompetitorDto.getId();
         this.matchStage = matchStageEntity;
         this.competitor = competitorEntity;
 
+        // Initialises the match stage and competitor attributes
         this.firearmType = matchStageCompetitorDto.getFirearmType();
         this.discipline = matchStageCompetitorDto.getDiscipline();
         this.powerFactor = matchStageCompetitorDto.getPowerFactor();
 
+        // Initialises the detailed breakdown of the score
         this.scoreA = matchStageCompetitorDto.getScoreA();
         this.scoreB = matchStageCompetitorDto.getScoreB();
         this.scoreC = matchStageCompetitorDto.getScoreC();
         this.scoreD = matchStageCompetitorDto.getScoreD();
 
+        // Initialises the overall performance metrics
         this.points = matchStageCompetitorDto.getPoints();
         this.misses = matchStageCompetitorDto.getMisses();
         this.penalties = matchStageCompetitorDto.getPenalties();
         this.procedurals = matchStageCompetitorDto.getProcedurals();
 
+        // Initialises the deduction details, if applicable
         this.hasDeduction = matchStageCompetitorDto.getHasDeduction();
         this.deductionPercentage = matchStageCompetitorDto.getDeductionPercentage();
 
+        // Initialises whether the competitor is disqualified
+        this.isDisqualified = matchStageCompetitorDto.getIsDisqualified();
+
+        // Initialises the time and hit factor details
         this.time = matchStageCompetitorDto.getTime();
         this.hitFactor = matchStageCompetitorDto.getHitFactor();
 
+        // Initialises the stage ranking and percentage
         this.stagePoints = matchStageCompetitorDto.getStagePoints();
         this.stagePercentage = matchStageCompetitorDto.getStagePercentage();
         this.stageRanking = matchStageCompetitorDto.getStageRanking();
 
-        this.isDisqualified = matchStageCompetitorDto.getIsDisqualified();
-
+        // Initialises the date fields
         this.dateCreated = matchStageCompetitorDto.getDateCreated();
         this.dateUpdated = matchStageCompetitorDto.getDateUpdated();
         this.dateEdited = matchStageCompetitorDto.getDateEdited();
