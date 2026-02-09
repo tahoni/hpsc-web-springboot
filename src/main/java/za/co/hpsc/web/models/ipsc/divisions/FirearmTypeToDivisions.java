@@ -60,8 +60,6 @@ public final class FirearmTypeToDivisions {
      * @throws ValidationException if the {@code division} is null or if no mapping exists
      *                             for the provided {@link Division}.
      */
-    // TODO: Javadoc review
-    // TODO: add tests
     public static FirearmType getFirearmTypeFromDivision(Division division)
             throws ValidationException {
 
