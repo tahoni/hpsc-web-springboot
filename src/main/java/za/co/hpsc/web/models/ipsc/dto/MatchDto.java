@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.Match;
+import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
@@ -40,7 +41,7 @@ public class MatchDto {
     private String name;
     @NotNull
     private LocalDate scheduledDate;
-    private String clubName;
+    private ClubReference clubName;
 
     private FirearmType matchFirearmType;
     private MatchCategory matchCategory;
@@ -91,11 +92,17 @@ public class MatchDto {
      *                    Must not be null.
      */
     public MatchDto(@NotNull Match matchEntity, @NotNull ClubDto clubDto) {
+        // Initialises match details
         this.id = matchEntity.getId();
         this.club = clubDto;
+
+        // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
+        this.clubName = matchEntity.getClubName();
         this.matchCategory = matchEntity.getMatchCategory();
+
+        // Initialises the date fields
         this.dateCreated = matchEntity.getDateCreated();
         this.dateUpdated = matchEntity.getDateUpdated();
     }
@@ -107,9 +114,8 @@ public class MatchDto {
 
         // Initialises the match attributes
         this.name = matchResponse.getMatchName();
-        if (clubDto != null) {
-            this.clubName = clubDto.getName();
-        }
+        this.clubName = ((clubDto != null) ?
+                ClubReference.getByName(clubDto.getName()).orElse(null) : null);
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
 
         // Determines the firearm type based on the firearm ID
@@ -135,9 +141,11 @@ public class MatchDto {
     // TODO: add tests
     @Override
     public String toString() {
-        String clubString = this.clubName;
-        if ((club != null) && (clubString != null) && (!clubString.isBlank())) {
+        String clubString = "";
+        if (this.club != null) {
             clubString = club.toString();
+        } else {
+            clubString = clubName.toString();
         }
 
         // Returns name, optionally with club if available

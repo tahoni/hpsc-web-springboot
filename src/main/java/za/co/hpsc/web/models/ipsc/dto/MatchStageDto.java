@@ -144,6 +144,6 @@ public class MatchStageDto {
 
     @Override
     public String toString() {
-        return stageNumber + " for " + match.toString();
+        return this.stageNumber + " for " + this.match.toString();
     }
 }

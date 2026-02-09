@@ -33,7 +33,10 @@ public class ClubDto {
 
     // TODO: Javadoc
     public ClubDto(Long id, String name, String abbreviation) {
+        // Initialises club details
         this.id = id;
+
+        // Initialises club attributes
         this.name = name;
         this.abbreviation = abbreviation;
     }
@@ -47,13 +50,17 @@ public class ClubDto {
      *                   Must not be null.
      */
     public ClubDto(@NotNull Club clubEntity) {
+        // Initialises club details
         this.id = clubEntity.getId();
+
+        // Initialises club attributes
         this.name = clubEntity.getName();
         this.abbreviation = clubEntity.getAbbreviation();
     }
 
     // TODO: Javadoc
     public ClubDto(String name, String abbreviation) {
+        // Initialises club attributes
         this.name = name;
         this.abbreviation = abbreviation;
     }

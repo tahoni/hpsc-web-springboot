@@ -1,6 +1,7 @@
 package za.co.hpsc.web.helpers;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.domain.MatchStage;
@@ -23,6 +24,7 @@ import java.util.Map;
  * in the system.
  * </p>
  */
+@Slf4j
 public final class MatchHelpers {
     private MatchHelpers() {
         // Utility class, not to be instantiated
@@ -47,15 +49,23 @@ public final class MatchHelpers {
         DateTimeFormatter longDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_LONG_DATE_FORMAT);
 
+        // Retrieve match details
+        String clubName = (match.getClub() != null ? match.getClub().toString() : "");
+        if (clubName.isEmpty()) {
+            clubName = match.getClubName().toString();
+        }
+        String divisionName = (match.getMatchFirearmType() != null ?
+                match.getMatchFirearmType().toString().toUpperCase() : "");
+        String categoryName = (match.getMatchCategory() != null ?
+                match.getMatchCategory().toString() : "");
+        String longDate = longDateFormatter.format(match.getScheduledDate());
+
         // Prepare parameters for formatting
         Map<String, String> parameters = Map.of(
-                "clubName", (match.getClub() != null ?
-                        match.getClub().getName() : match.getClubName()),
-                "divisionName", (match.getMatchFirearmType() != null ?
-                        match.getMatchFirearmType().toString().toUpperCase() : ""),
-                "categoryName", (match.getMatchCategory() != null ?
-                        match.getMatchCategory().toString() : ""),
-                "longDate", longDateFormatter.format(match.getScheduledDate())
+                "clubName", clubName,
+                "divisionName", divisionName,
+                "categoryName", categoryName,
+                "longDate", longDate
         );
 
         // Format and return match name

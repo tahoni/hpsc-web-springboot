@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
@@ -48,7 +49,8 @@ public class Match {
     @NotNull
     @Column(nullable = false)
     private LocalDate scheduledDate;
-    private String clubName;
+    @Enumerated(EnumType.STRING)
+    private ClubReference clubName;
 
     @Enumerated(EnumType.STRING)
     private FirearmType matchFirearmType;
@@ -72,7 +74,8 @@ public class Match {
         this.club = clubEntity;
 
         // Initialises the match attributes
-        this.clubName = clubEntity.getName();
+        this.clubName = (matchDto.getClubName() != null) ?
+                matchDto.getClubName() : ClubReference.getByName(clubEntity.getName()).orElse(null);
         this.name = matchDto.getName();
         this.scheduledDate = matchDto.getScheduledDate();
         this.matchFirearmType = matchDto.getMatchFirearmType();

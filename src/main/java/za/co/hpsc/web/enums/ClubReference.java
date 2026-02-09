@@ -38,6 +38,18 @@ public enum ClubReference {
                 .findFirst();
     }
 
+    // TODO: Javadoc
+    // TODO: add tests
+    public static Optional<ClubReference> getByName(String name) {
+        if ((name == null) || (name.isBlank())) {
+            return Optional.empty();
+        }
+
+        return Arrays.stream(ClubReference.values())
+                .filter(clubReference -> clubReference.name.equalsIgnoreCase(name))
+                .findFirst();
+    }
+
     @Override
     public String toString() {
         return this.name;

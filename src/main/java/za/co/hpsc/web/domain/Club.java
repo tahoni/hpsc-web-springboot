@@ -41,6 +41,14 @@ public class Club {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Match> matches;
 
+    public Club(String name, String abbreviation) {
+        // Initialises club details
+        this.name = name;
+
+        // Initialises club attributes
+        this.abbreviation = abbreviation;
+    }
+
     // TODO: Javadoc
     public void init(ClubDto clubDto) {
         // Initialises club details

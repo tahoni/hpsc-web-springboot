@@ -97,10 +97,10 @@ public class CompetitorDto {
 
     @Override
     public String toString() {
-        if ((middleNames != null) && (!middleNames.isBlank())) {
-            return firstName + " " + middleNames + " " + lastName;
+        if ((this.middleNames != null) && (!this.middleNames.isBlank())) {
+            return this.firstName + " " + this.middleNames + " " + this.lastName;
         } else {
-            return firstName + " " + lastName;
+            return this.firstName + " " + this.lastName;
         }
     }
 }

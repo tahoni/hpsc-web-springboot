@@ -1,7 +1,6 @@
 package za.co.hpsc.web.helpers;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Match;
@@ -20,11 +19,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchDisplayName_withFullDetails_thenReturnsFormattedString() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Lions Club");
+        Club club = new Club("Lions Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(FirearmType.HANDGUN);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match.setScheduledDate(LocalDate.of(2023, 5, 20));
@@ -48,11 +46,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchDisplayName_withNullDivisionAndCategory_thenReturnsFormattedStringWithPartialData() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Tigers Club");
+        Club club = new Club("Tigers Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2024, 3, 15));
@@ -76,11 +73,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchDisplayName_withMinimalClubOnly_thenReturnsFormattedStringWithPartialData() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Phoenix Club");
+        Club club = new Club("Phoenix Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2025, 11, 12));
@@ -104,11 +100,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchOverallDisplayName_withFullDetails_thenReturnsFormattedString() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Lions Club");
+        Club club = new Club("Lions Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(FirearmType.PCC);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setScheduledDate(LocalDate.of(2023, 5, 20));
@@ -130,11 +125,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchOverallDisplayName_withNullFirearmTypeAndCategory_thenReturnsFormattedStringWithPartialData() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Tigers Club");
+        Club club = new Club("Tigers Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2024, 3, 15));
@@ -156,11 +150,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchOverallDisplayName_withMinimalClubOnly_thenReturnsFormattedStringWithPartialData() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Phoenix Club");
+        Club club = new Club("Phoenix Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2025, 11, 12));
@@ -182,11 +175,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchOverallDisplayName_withPartialDetails_thenReturnsFormattedStringWithPartialData() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Eagles Club");
+        Club club = new Club("Eagles Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(FirearmType.HANDGUN_22);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2026, 8, 3));
@@ -208,11 +200,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchStageDisplayName_withFullDetails_thenReturnsFormattedString() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Lions Club");
+        Club club = new Club("Lions Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(FirearmType.SHOTGUN);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setScheduledDate(LocalDate.of(2023, 5, 20));
@@ -241,11 +232,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchStageDisplayName_withPartialDetails_thenReturnsFormattedStringWithPartialData() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Tigers Club");
+        Club club = new Club("Tigers Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2024, 3, 15));
@@ -274,11 +264,10 @@ class MatchHelpersTest {
     @Test
     void testGetMatchStageDisplayName_withMinimalDetails_thenReturnsFormattedStringWithPartialData() {
         // Prepare a mock match object
-        Club mockClub = Mockito.mock(Club.class);
-        Mockito.when(mockClub.getName()).thenReturn("Phoenix Club");
+        Club club = new Club("Phoenix Club", "");
 
         Match match = new Match();
-        match.setClub(mockClub);
+        match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2025, 11, 12));
