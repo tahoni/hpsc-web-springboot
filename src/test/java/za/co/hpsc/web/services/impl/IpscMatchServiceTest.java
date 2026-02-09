@@ -84,6 +84,10 @@ public class IpscMatchServiceTest {
         assertEquals(100, response.getMatch().getMatchId());
         assertEquals("Test Match", response.getMatch().getMatchName());
 
+        assertNotNull(response.getClub());
+        assertEquals(1, response.getClub().getClubId());
+        assertEquals("ABC", response.getClub().getClubCode());
+
         assertNotNull(response.getStages());
         assertEquals(1, response.getStages().size());
         assertEquals(200, response.getStages().getFirst().getStageId());
@@ -161,6 +165,40 @@ public class IpscMatchServiceTest {
     }
 
     @Test
+    void testMapMatchResults_withNoMatchingClub_thenCreatesClubWithIdOnly() {
+        // Arrange
+        IpscRequestHolder holder = new IpscRequestHolder();
+
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setMatchName("Test Match");
+        matchRequest.setClubId(999);
+        holder.setMatches(List.of(matchRequest));
+
+        holder.setClubs(new ArrayList<>());
+        holder.setStages(new ArrayList<>());
+        holder.setTags(new ArrayList<>());
+        holder.setMembers(new ArrayList<>());
+        holder.setClassifications(new ArrayList<>());
+        holder.setEnrolledMembers(new ArrayList<>());
+        holder.setSquads(new ArrayList<>());
+        holder.setTeams(new ArrayList<>());
+        holder.setScores(new ArrayList<>());
+
+        // Act
+        IpscResponseHolder responseHolder = matchService.mapMatchResults(holder);
+
+        // Assert
+        List<IpscResponse> responses = responseHolder.getIpscList();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+
+        IpscResponse response = responses.getFirst();
+        assertNotNull(response.getClub());
+        assertEquals(999, response.getClub().getClubId());
+    }
+
+    @Test
     void testMapMatchResults_withEmptyRequestHolderLists_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
@@ -188,6 +226,10 @@ public class IpscMatchServiceTest {
     void testMapMatchResults_withMatchButNoMembers_thenReturnsResponseWithEmptyMembers() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        holder.setClubs(List.of(clubRequest));
 
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);

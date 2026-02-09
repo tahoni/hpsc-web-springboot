@@ -28,6 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 public class IpscResponse {
     private MatchResponse match = new MatchResponse();
+    private ClubResponse club = new ClubResponse();
     private List<StageResponse> stages = new ArrayList<>();
     private List<TagResponse> tags = new ArrayList<>();
     private List<MemberResponse> members = new ArrayList<>();
@@ -54,6 +55,7 @@ public class IpscResponse {
                         List<ScoreRequest> scoreRequests) {
 
         this.match = matchResponse;
+        this.club = new ClubResponse(matchResponse.getClubId());
         this.tags = tagRequests.stream().map(TagResponse::new).toList();
         this.stages = stageRequests.stream().map(StageResponse::new).toList();
         this.enrolledMembers = enrolledRequests.stream().map(EnrolledResponse::new).toList();

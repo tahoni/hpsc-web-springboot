@@ -50,7 +50,7 @@ public final class MatchHelpers {
         // Prepare parameters for formatting
         Map<String, String> parameters = Map.of(
                 "clubName", (match.getClub() != null ?
-                        match.getClub() : ""),
+                        match.getClub().getName() : match.getClubName()),
                 "divisionName", (match.getMatchFirearmType() != null ?
                         match.getMatchFirearmType().toString().toUpperCase() : ""),
                 "categoryName", (match.getMatchCategory() != null ?

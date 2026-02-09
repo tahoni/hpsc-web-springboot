@@ -22,7 +22,7 @@ import java.util.List;
  * <p>
  * The {@code Match} class is an entity in the persistence layer, used to store and
  * retrieve match-related data. It enables associations with other entities such as
- * {@link MatchStage}, and {@link MatchCompetitor}.
+ * {@link Club}, {@link MatchStage}, and {@link MatchCompetitor}.
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to return a context-specific
  * representation of the match's display name.
@@ -38,13 +38,17 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "club_id")
+    private Club club;
+
     @NotNull
     @Column(unique = true, nullable = false)
     private String name;
     @NotNull
     @Column(nullable = false)
     private LocalDate scheduledDate;
-    private String club;
+    private String clubName;
 
     @Enumerated(EnumType.STRING)
     private FirearmType matchFirearmType;
@@ -62,12 +66,13 @@ public class Match {
     private LocalDateTime dateEdited;
 
     // TODO: Javadoc
-    public void init(MatchDto matchDto) {
-        // Initialises match details
+    public void init(MatchDto matchDto, Club clubEntity) {
+        // Initialises the match details
         this.id = matchDto.getId();
-        this.club = matchDto.getClub();
+        this.club = clubEntity;
 
         // Initialises the match attributes
+        this.clubName = clubEntity.getName();
         this.name = matchDto.getName();
         this.scheduledDate = matchDto.getScheduledDate();
         this.matchFirearmType = matchDto.getMatchFirearmType();

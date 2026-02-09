@@ -17,7 +17,7 @@ import java.util.UUID;
  * The {@code MatchStageDto} class encapsulates data related to an individual stage
  * in a shooting match.
  * It includes details such as the stage's unique identifier, associated match, stage number,
- * stage name, and rangeS number.
+ * stage name, and range number.
  * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
