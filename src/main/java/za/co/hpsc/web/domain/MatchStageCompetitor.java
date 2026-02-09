@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
@@ -72,6 +73,9 @@ public class MatchStageCompetitor {
 
     private Boolean isDisqualified;
 
+    @Enumerated(EnumType.STRING)
+    private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
+
     @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
@@ -87,6 +91,7 @@ public class MatchStageCompetitor {
         this.competitor = competitorEntity;
 
         // Initialises the match stage and competitor attributes
+        this.competitorCategory = matchStageCompetitorDto.getCompetitorCategory();
         this.firearmType = matchStageCompetitorDto.getFirearmType();
         this.division = matchStageCompetitorDto.getDivision();
         this.powerFactor = matchStageCompetitorDto.getPowerFactor();

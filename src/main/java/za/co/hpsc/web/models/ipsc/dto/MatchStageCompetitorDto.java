@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
+import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
@@ -43,6 +44,7 @@ public class MatchStageCompetitorDto {
     private CompetitorDto competitor;
     @NotNull
     private MatchStageDto matchStage;
+    private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
     private FirearmType firearmType;
     private Division division;
@@ -91,6 +93,7 @@ public class MatchStageCompetitorDto {
         this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
         // Initialises the competitor and stage attributes
+        this.competitorCategory = matchStageCompetitorEntity.getCompetitorCategory();
         this.firearmType = matchStageCompetitorEntity.getFirearmType();
         this.division = matchStageCompetitorEntity.getDivision();
         this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
@@ -143,6 +146,9 @@ public class MatchStageCompetitorDto {
         // Initialises the competitor and stage details
         this.competitor = competitorDto;
         this.matchStage = matchStageDto;
+
+        // Initialises the competitor and stage attributes
+        this.competitorCategory = competitorDto.getDefaultCompetitorCategory();
 
         // Initialises the date fields
         this.dateCreated = LocalDateTime.now();
@@ -205,6 +211,7 @@ public class MatchStageCompetitorDto {
         this.dateEdited = scoreResponse.getLastModified();
 
         // Initialises competitor attributes
+        this.competitorCategory = CompetitorCategory.NONE;
         if (enrolledResponse != null) {
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
@@ -214,7 +221,10 @@ public class MatchStageCompetitorDto {
             // Determines the firearm type from the discipline
             this.firearmType =
                     FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
-            // TODO: populate category
+            // Determines the competitor category based on the competitor category ID
+            this.competitorCategory =
+                    CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                            .orElse(CompetitorCategory.NONE);
         }
     }
 

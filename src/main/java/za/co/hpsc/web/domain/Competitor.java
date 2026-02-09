@@ -51,7 +51,7 @@ public class Competitor {
     private String competitorNumber;
 
     @Enumerated(EnumType.STRING)
-    private CompetitorCategory category = CompetitorCategory.NONE;
+    private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> competitorMatches;
@@ -74,7 +74,7 @@ public class Competitor {
         this.dateOfBirth = competitorDto.getDateOfBirth();
 
         // Initialises competitor category
-        this.category = competitorDto.getCategory();
+        this.defaultCompetitorCategory = competitorDto.getDefaultCompetitorCategory();
     }
 
     @Override

@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.enums.ClubReference;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -43,6 +40,7 @@ public class MatchCompetitorDto {
     private CompetitorDto competitor;
     @NotNull
     private MatchDto match;
+    private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
     private ClubReference club;
     private FirearmType firearmType;
@@ -73,6 +71,7 @@ public class MatchCompetitorDto {
 
         // Initialises the competitor attributes
         this.club = matchCompetitorEntity.getClub();
+        this.competitorCategory = matchCompetitorEntity.getCompetitorCategory();
         this.firearmType = matchCompetitorEntity.getFirearmType();
         this.division = matchCompetitorEntity.getDivision();
         this.powerFactor = matchCompetitorEntity.getPowerFactor();
@@ -130,6 +129,7 @@ public class MatchCompetitorDto {
         }
 
         // Initialises the competitor attributes
+        this.competitorCategory = CompetitorCategory.NONE;
         if (enrolledResponse != null) {
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
@@ -140,7 +140,10 @@ public class MatchCompetitorDto {
             // Determines the firearm type from the discipline
             this.firearmType =
                     FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
-            // TODO: populate category
+            // Determines the competitor category based on the competitor category ID
+            this.competitorCategory =
+                    CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                            .orElse(CompetitorCategory.NONE);
         }
     }
 

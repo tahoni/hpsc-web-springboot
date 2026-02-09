@@ -44,7 +44,7 @@ public class CompetitorDto {
     @NotNull
     private String competitorNumber;
 
-    private CompetitorCategory category = CompetitorCategory.NONE;
+    private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
     /**
      * Constructs a new {@code CompetitorDto} instance with data from the provided
@@ -75,7 +75,7 @@ public class CompetitorDto {
         this.competitorNumber = competitorEntity.getCompetitorNumber();
 
         // Initialises competitor category
-        this.category = competitorEntity.getCategory();
+        this.defaultCompetitorCategory = competitorEntity.getDefaultCompetitorCategory();
     }
 
     // TOOD: Javadoc (not yet ready)
@@ -95,10 +95,10 @@ public class CompetitorDto {
 
         // Initialises competitor category based on the member's category code'
         if (enrolledResponse != null) {
-            this.category = CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+            this.defaultCompetitorCategory = CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
                     .orElse(CompetitorCategory.NONE);
         } else {
-            this.category = CompetitorCategory.NONE;
+            this.defaultCompetitorCategory = CompetitorCategory.NONE;
         }
     }
 
