@@ -168,6 +168,7 @@ public class MatchCompetitorDto {
      *
      * @return a string combining the match and the competitor associated with this object.
      */
+    // TODO: test
     public String toString() {
         return this.match.toString() + ": " + this.competitor.toString();
     }

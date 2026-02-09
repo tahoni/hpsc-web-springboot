@@ -27,6 +27,30 @@ public enum ClubReference {
     }
 
     /**
+     * Retrieves an optional {@code ClubReference} instance based on the provided name.
+     *
+     * <p>
+     * The method performs a case-insensitive match to find a club reference with the given name.
+     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param name the name of the club reference to search for.
+     *             Can be null or blank.
+     * @return an {@code Optional} containing the matching {@code ClubReference} if found,
+     * or empty otherwise.
+     */
+    // TODO: test
+    public static Optional<ClubReference> getByName(String name) {
+        if ((name == null) || (name.isBlank())) {
+            return Optional.empty();
+        }
+
+        return Arrays.stream(ClubReference.values())
+                .filter(clubReference -> clubReference.name.equalsIgnoreCase(name))
+                .findFirst();
+    }
+
+    /**
      * Retrieves an optional {@code ClubReference} instance based on the provided code.
      *
      * <p>
@@ -40,6 +64,7 @@ public enum ClubReference {
      * @return an {@code Optional} containing the matching {@code ClubReference} if found,
      * or empty otherwise.
      */
+    // TODO: test
     public static Optional<ClubReference> getByCode(String code) {
         if ((code == null) || (code.isBlank())) {
             return Optional.empty();
@@ -47,29 +72,6 @@ public enum ClubReference {
 
         return Arrays.stream(ClubReference.values())
                 .filter(clubReference -> clubReference.code.equalsIgnoreCase(code))
-                .findFirst();
-    }
-
-    /**
-     * Retrieves an optional {@code ClubReference} instance based on the provided name.
-     *
-     * <p>
-     * The method performs a case-insensitive match to find a club reference with the given name.
-     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
-     * </p>
-     *
-     * @param name the name of the club reference to search for.
-     *             Can be null or blank.
-     * @return an {@code Optional} containing the matching {@code ClubReference} if found,
-     * or empty otherwise.
-     */
-    public static Optional<ClubReference> getByName(String name) {
-        if ((name == null) || (name.isBlank())) {
-            return Optional.empty();
-        }
-
-        return Arrays.stream(ClubReference.values())
-                .filter(clubReference -> clubReference.name.equalsIgnoreCase(name))
                 .findFirst();
     }
 

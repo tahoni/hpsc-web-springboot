@@ -151,6 +151,7 @@ public class MatchStageDto {
      *
      * @return a string combining the stage number and the associated match information.
      */
+    // TODO: test
     @Override
     public String toString() {
         return this.stageNumber + " for " + this.match.toString();

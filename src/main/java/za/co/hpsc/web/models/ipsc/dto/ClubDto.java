@@ -31,16 +31,6 @@ public class ClubDto {
     private String name;
     private String abbreviation;
 
-    // TODO: Javadoc
-    public ClubDto(Long id, String name, String abbreviation) {
-        // Initialises club details
-        this.id = id;
-
-        // Initialises club attributes
-        this.name = name;
-        this.abbreviation = abbreviation;
-    }
-
     /**
      * Constructs a new {@code ClubDto} instance with data from the provided
      * {@link Club} entity.
@@ -58,7 +48,28 @@ public class ClubDto {
         this.abbreviation = clubEntity.getAbbreviation();
     }
 
-    // TODO: Javadoc
+    /**
+     * Constructs a new {@code ClubDto} instance with the provided details.
+     *
+     * @param id           the club's unique identifier.
+     * @param name         the club's name.
+     * @param abbreviation the club's abbreviation.
+     */
+    public ClubDto(Long id, String name, String abbreviation) {
+        // Initialises club details
+        this.id = id;
+
+        // Initialises club attributes
+        this.name = name;
+        this.abbreviation = abbreviation;
+    }
+
+    /**
+     * Constructs a new {@code ClubDto} instance with the provided details.
+     *
+     * @param name         the club's name.
+     * @param abbreviation the club's abbreviation.
+     */
     public ClubDto(String name, String abbreviation) {
         // Initialises club attributes
         this.name = name;
@@ -75,7 +86,7 @@ public class ClubDto {
      * @return a string containing the club's name, optionally followed by its abbreviation,
      * or just the name if no abbreviation is specified.
      */
-    // TODO: add tests
+    // TODO: test
     @Override
     public String toString() {
         if ((abbreviation != null) && (!abbreviation.isBlank())) {

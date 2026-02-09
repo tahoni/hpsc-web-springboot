@@ -78,6 +78,7 @@ public enum FirearmType {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
      */
+    // TODO: test
     public static Optional<FirearmType> getByCode(Integer code) {
         if ((code == null) || (code <= 0)) {
             return Optional.empty();

@@ -124,6 +124,7 @@ public class CompetitorDto {
      * @return a string representation of the competitor's full name,
      * which may include middle names if available and non-blank.
      */
+    // TODO: test
     @Override
     public String toString() {
         if ((this.middleNames != null) && (!this.middleNames.isBlank())) {

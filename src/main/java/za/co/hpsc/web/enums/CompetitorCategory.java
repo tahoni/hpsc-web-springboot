@@ -76,6 +76,7 @@ public enum CompetitorCategory {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or {@link CompetitorCategory#NONE} otherwise.
      */
+    // TODO: test
     public static Optional<CompetitorCategory> getByCode(Integer code) {
         if ((code == null) || (code == 0)) {
             return Optional.of(NONE);
