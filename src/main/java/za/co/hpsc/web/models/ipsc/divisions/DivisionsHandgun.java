@@ -39,6 +39,7 @@ public final class DivisionsHandgun extends DivisionsForFirearmType {
                 Division.CLASSIC,
                 Division.PRODUCTION,
                 Division.PRODUCTION_OPTICS,
+                Division.PRODUCTION_OPTICS_LIGHT,
                 Division.OPTICS,
                 Division.REVOLVER
         ));

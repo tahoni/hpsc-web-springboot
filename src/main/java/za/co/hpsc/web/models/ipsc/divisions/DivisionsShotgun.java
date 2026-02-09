@@ -36,7 +36,8 @@ public final class DivisionsShotgun extends DivisionsForFirearmType {
         super(FirearmType.SHOTGUN, List.of(
                 Division.SHOTGUN_OPEN,
                 Division.SHOTGUN_MODIFIED,
-                Division.SHOTGUN_STANDARD
+                Division.SHOTGUN_STANDARD,
+                Division.SHOTGUN_STANDARD_MANUAL
         ));
     }
 }

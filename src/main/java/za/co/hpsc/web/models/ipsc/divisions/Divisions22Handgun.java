@@ -38,7 +38,8 @@ public final class Divisions22Handgun extends DivisionsForFirearmType {
         super(FirearmType.HANDGUN_22, List.of(
                 Division.OPEN_22,
                 Division.STANDARD_22,
-                Division.CLASSIC_22
+                Division.CLASSIC_22,
+                Division.OPTICS_22
         ));
     }
 }
