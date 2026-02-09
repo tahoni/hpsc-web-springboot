@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 @Getter
 @AllArgsConstructor
 public enum MatchCategory {
-    // TODO: get codes
     CLUB_SHOOT("Club Shoot"),
     LEAGUE("League");
 

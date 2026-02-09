@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubReference;
-import za.co.hpsc.web.enums.Discipline;
+import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
-import za.co.hpsc.web.models.ipsc.disciplines.FirearmTypeToDisciplinesForFirearmType;
+import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -46,7 +46,7 @@ public class MatchCompetitorDto {
 
     private ClubReference club;
     private FirearmType firearmType;
-    private Discipline discipline;
+    private Division division;
     private PowerFactor powerFactor;
 
     private BigDecimal matchPoints;
@@ -74,7 +74,7 @@ public class MatchCompetitorDto {
         // Initialises the competitor attributes
         this.club = matchCompetitorEntity.getClub();
         this.firearmType = matchCompetitorEntity.getFirearmType();
-        this.discipline = matchCompetitorEntity.getDiscipline();
+        this.division = matchCompetitorEntity.getDivision();
         this.powerFactor = matchCompetitorEntity.getPowerFactor();
 
         // Initialises the competitor scoring details
@@ -136,10 +136,10 @@ public class MatchCompetitorDto {
             // Determines the club based on the club reference number
             this.club = ClubReference.getByCode(enrolledResponse.getRefNo()).orElse(ClubReference.UNKNOWN);
             // Determines the discipline based on the division ID
-            this.discipline = Discipline.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
             // Determines the firearm type from the discipline
             this.firearmType =
-                    FirearmTypeToDisciplinesForFirearmType.getFirearmTypeFromDiscipline(this.discipline);
+                    FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
             // TODO: populate category
         }
     }

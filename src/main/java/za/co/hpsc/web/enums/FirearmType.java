@@ -31,11 +31,6 @@ public enum FirearmType {
     private static final String DEFAULT_SEPARATOR = " ";
     private static final String ALTERNATE_SEPARATOR = "-";
 
-    FirearmType() {
-        this.names = List.of();
-        this.code = 0;
-    }
-
     FirearmType(String name, int code) {
         this.names = List.of(name);
         this.code = code;

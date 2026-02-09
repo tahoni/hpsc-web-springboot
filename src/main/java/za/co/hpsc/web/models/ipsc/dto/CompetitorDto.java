@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.math.NumberUtils;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
@@ -54,6 +55,7 @@ public class CompetitorDto {
      *                         competitor number, date of birth, and category.
      *                         Must not be null.
      */
+    // TODO: Javadoc review
     public CompetitorDto(@NotNull Competitor competitorEntity) {
         if (competitorEntity == null) {
             return;
@@ -77,7 +79,7 @@ public class CompetitorDto {
     }
 
     // TOOD: Javadoc (not yet ready)
-    public void init(MemberResponse memberResponse) {
+    public void init(MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
         // Initialises competitor attributes
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();
@@ -92,7 +94,12 @@ public class CompetitorDto {
         }
 
         // Initialises competitor category based on the member's category code'
-        // TODO: populate category
+        if (enrolledResponse != null) {
+            this.category = CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                    .orElse(CompetitorCategory.NONE);
+        } else {
+            this.category = CompetitorCategory.NONE;
+        }
     }
 
     /**

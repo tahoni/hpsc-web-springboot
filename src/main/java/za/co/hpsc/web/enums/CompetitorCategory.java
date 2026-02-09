@@ -16,31 +16,24 @@ import java.util.Optional;
  */
 @Getter
 public enum CompetitorCategory {
-    // TODO: get codes
-    JUNIOR("Junior"),
-    SUPER_JUNIOR("Super Junior"),
-    LADY("Lady"),
-    SUPER_LADY("Lady, Senior"),
-    JUNIOR_LADY("Lady, Junior"),
-    SENIOR("Senior"),
-    SUPER_SENIOR("Super Senior"),
-    GRAND_SENIOR("Grand Senior"),
+    JUNIOR("Junior", 2),
+    SUPER_JUNIOR("Super Junior", 5),
+    LADY("Lady", 1),
+    SUPER_LADY("Lady, Senior", 7),
+    SENIOR("Senior", 3),
+    SUPER_SENIOR("Super Senior", 4),
+    GRAND_SENIOR("Grand Senior", 6),
     NONE;
 
     private final String name;
-    private final String code;
+    private final int code;
 
     CompetitorCategory() {
         this.name = "";
-        this.code = "";
+        this.code = 0;
     }
 
-    CompetitorCategory(String name) {
-        this.name = name;
-        this.code = "";
-    }
-
-    CompetitorCategory(String name, String code) {
+    CompetitorCategory(String name, int code) {
         this.name = name;
         this.code = code;
     }
@@ -63,6 +56,21 @@ public enum CompetitorCategory {
 
         return Arrays.stream(CompetitorCategory.values())
                 .filter(category -> category.isNameMatch(name))
+                .findFirst();
+    }
+
+    /**
+     * Returns category matching code, if any
+     */
+    // TODO: Javadoc
+    // TODO: add tests
+    public static Optional<CompetitorCategory> getByCode(int code) {
+        if (code == 0) {
+            return Optional.empty();
+        }
+
+        return Arrays.stream(CompetitorCategory.values())
+                .filter(category -> category.getCode() == code)
                 .findFirst();
     }
 

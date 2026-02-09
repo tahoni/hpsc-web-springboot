@@ -197,16 +197,18 @@ public class MatchResultServiceImpl implements MatchResultService {
                     .map(CompetitorDto::new)
                     .orElseGet(CompetitorDto::new);
 
-            // Initialises competitor attributes
-            competitorDto.init(memberResponse);
-            competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
-
             // Initialises the enrolled response to use to initialise the scores for each competitor
             // per match and stage
             EnrolledResponse enrolledResponse = ipscResponse.getEnrolledMembers().stream()
                     .filter(er -> er.getMemberId().equals(memberResponse.getMemberId()))
                     .findFirst()
                     .orElse(null);
+
+            // Initialises competitor attributes
+            competitorDto.init(memberResponse, enrolledResponse);
+
+            // Caches the competitor and enrolled response for later use
+            competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
             enrolledMap.put(memberResponse.getMemberId(), enrolledResponse);
         });
         // Collects all competitors in the match results DTO

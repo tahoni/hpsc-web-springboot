@@ -6,48 +6,48 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DisciplineTest {
+class DivisionTest {
 
     @Test
     void testGetByName_withExactName_thenReturnsCorrectDiscipline() {
         // Arrange & Act
-        Optional<Discipline> result = Discipline.getByName("Open Division");
+        Optional<Division> result = Division.getByName("Open Division");
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.OPEN, result.get());
+        assertEquals(Division.OPEN, result.get());
     }
 
     @Test
-    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectDiscipline() {
+    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectDivision() {
         // Arrange
         String searchName = "open division";
 
         // Act
-        Optional<Discipline> result = Discipline.getByName(searchName);
+        Optional<Division> result = Division.getByName(searchName);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.OPEN, result.get());
+        assertEquals(Division.OPEN, result.get());
     }
 
     @Test
-    void testGetByName_withPartialMatch_thenReturnsCorrectDiscipline() {
+    void testGetByName_withPartialMatch_thenReturnsCorrectDivision() {
         // Arrange
         String searchName = "Open";
 
         // Act
-        Optional<Discipline> result = Discipline.getByName(searchName);
+        Optional<Division> result = Division.getByName(searchName);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.OPEN, result.get());
+        assertEquals(Division.OPEN, result.get());
     }
 
     @Test
     void testGetByName_withNulInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<Discipline> result = Discipline.getByName(null);
+        Optional<Division> result = Division.getByName(null);
 
         // Assert
         assertFalse(result.isPresent());
@@ -56,7 +56,7 @@ class DisciplineTest {
     @Test
     void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<Discipline> result = Discipline.getByName(" ");
+        Optional<Division> result = Division.getByName(" ");
 
         // Assert
         assertFalse(result.isPresent());
@@ -68,33 +68,33 @@ class DisciplineTest {
         String searchName = "Nonexistent Division";
 
         // Act
-        Optional<Discipline> result = Discipline.getByName(searchName);
+        Optional<Division> result = Division.getByName(searchName);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviation_withExactMatch_thenReturnsCorrectDiscipline() {
+    void testGetByAbbreviation_withExactMatch_thenReturnsCorrectDivision() {
         // Arrange & Act
-        Optional<Discipline> result = Discipline.getByAbbreviation("O");
+        Optional<Division> result = Division.getByAbbreviation("O");
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.OPEN, result.get());
+        assertEquals(Division.OPEN, result.get());
     }
 
     @Test
-    void testGetByAbbreviation_withCaseInsensitiveMatch_thenReturnsCorrectDiscipline() {
+    void testGetByAbbreviation_withCaseInsensitiveMatch_thenReturnsCorrectDivision() {
         // Arrange
         String abbreviation = "pCc";
 
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviation(abbreviation);
+        Optional<Division> result = Division.getByAbbreviation(abbreviation);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.PCC_OPTICS, result.get());
+        assertEquals(Division.PCC_OPTICS, result.get());
     }
 
     @Test
@@ -103,7 +103,7 @@ class DisciplineTest {
         String abbreviation = "ZZ";
 
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviation(abbreviation);
+        Optional<Division> result = Division.getByAbbreviation(abbreviation);
 
         // Assert
         assertFalse(result.isPresent());
@@ -112,7 +112,7 @@ class DisciplineTest {
     @Test
     void testGetByAbbreviation_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviation(null);
+        Optional<Division> result = Division.getByAbbreviation(null);
 
         // Assert
         assertFalse(result.isPresent());
@@ -121,53 +121,53 @@ class DisciplineTest {
     @Test
     void testGetByAbbreviation_withBlankInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviation(" ");
+        Optional<Division> result = Division.getByAbbreviation(" ");
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviationOrName_withExactName_thenReturnsCorrectDiscipline() {
+    void testGetByAbbreviationOrName_withExactName_thenReturnsCorrectDivision() {
         // Arrange & Act
-        Optional<Discipline> result = Discipline.getByAbbreviationOrName("Production Optics Division");
+        Optional<Division> result = Division.getByAbbreviationOrName("Production Optics Division");
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.PRODUCTION_OPTICS, result.get());
+        assertEquals(Division.PRODUCTION_OPTICS, result.get());
     }
 
     @Test
-    void testGetByAbbreviationOrName_withExactAbbreviation_thenReturnsCorrectDiscipline() {
+    void testGetByAbbreviationOrName_withExactAbbreviation_thenReturnsCorrectDivision() {
         // Arrange & Act
-        Optional<Discipline> result = Discipline.getByAbbreviationOrName("POL");
+        Optional<Division> result = Division.getByAbbreviationOrName("POL");
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.PRODUCTION_OPTICS_LIGHT, result.get());
+        assertEquals(Division.PRODUCTION_OPTICS_LIGHT, result.get());
     }
 
     @Test
-    void testGetByAbbreviationOrName_withPartialNameMatch_thenReturnsCorrectDiscipline() {
+    void testGetByAbbreviationOrName_withPartialNameMatch_thenReturnsCorrectDivision() {
         // Arrange & Act
-        Optional<Discipline> result = Discipline.getByAbbreviationOrName("Standard Manual");
+        Optional<Division> result = Division.getByAbbreviationOrName("Standard Manual");
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.SHOTGUN_STANDARD_MANUAL, result.get());
+        assertEquals(Division.SHOTGUN_STANDARD_MANUAL, result.get());
     }
 
     @Test
-    void testGetByAbbreviationOrName_withMixedCaseAbbreviation_thenReturnsCorrectDiscipline() {
+    void testGetByAbbreviationOrName_withMixedCaseAbbreviation_thenReturnsCorrectDivision() {
         // Arrange
         String searchValue = "pCC";
 
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviationOrName(searchValue);
+        Optional<Division> result = Division.getByAbbreviationOrName(searchValue);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Discipline.PCC_OPTICS, result.get());
+        assertEquals(Division.PCC_OPTICS, result.get());
     }
 
     @Test
@@ -176,7 +176,7 @@ class DisciplineTest {
         String searchValue = "Nonexistent";
 
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviationOrName(searchValue);
+        Optional<Division> result = Division.getByAbbreviationOrName(searchValue);
 
         // Assert
         assertFalse(result.isPresent());
@@ -185,7 +185,7 @@ class DisciplineTest {
     @Test
     void testGetByAbbreviationOrName_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviationOrName(null);
+        Optional<Division> result = Division.getByAbbreviationOrName(null);
 
         // Assert
         assertFalse(result.isPresent());
@@ -194,7 +194,7 @@ class DisciplineTest {
     @Test
     void testGetByAbbreviationOrName_withBlankInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<Discipline> result = Discipline.getByAbbreviationOrName(" ");
+        Optional<Division> result = Division.getByAbbreviationOrName(" ");
 
         // Assert
         assertFalse(result.isPresent());
