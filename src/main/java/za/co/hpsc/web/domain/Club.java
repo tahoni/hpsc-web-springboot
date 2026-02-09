@@ -49,7 +49,15 @@ public class Club {
         this.abbreviation = abbreviation;
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code Club} entity with data from a DTO.
+     *
+     * <p>
+     * This method sets the relevant fields in the entity, including name and abbreviation.
+     * </p>
+     *
+     * @param clubDto the DTO containing data needed to populate the entity fields.
+     */
     public void init(ClubDto clubDto) {
         // Initialises club details
         this.name = clubDto.getName();

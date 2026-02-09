@@ -40,30 +40,33 @@ class CompetitorCategoryTest {
     }
 
     @Test
-    void testGetByName_withNullInput_thenReturnsEmptyOptional() {
+    void testGetByName_withNullInput_thenReturnsNoneCategory() {
         // Act
         Optional<CompetitorCategory> category = CompetitorCategory.getByName(null);
 
         // Assert
-        assertTrue(category.isEmpty());
+        assertTrue(category.isPresent());
+        assertEquals(CompetitorCategory.NONE, category.get());
     }
 
     @Test
-    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
+    void testGetByName_withBlankInput_thenReturnsNoneCategory() {
         // Act
         Optional<CompetitorCategory> category = CompetitorCategory.getByName("   ");
 
         // Assert
-        assertTrue(category.isEmpty());
+        assertTrue(category.isPresent());
+        assertEquals(CompetitorCategory.NONE, category.get());
     }
 
     @Test
-    void testGetByName_withNoMatch_returnsEmptyOptional() {
+    void testGetByName_withNoMatch_returnsNoneCategory() {
         // Act
         Optional<CompetitorCategory> category = CompetitorCategory.getByName("Nonexistent Category");
 
         // Assert
-        assertTrue(category.isEmpty());
+        assertTrue(category.isPresent());
+        assertEquals(CompetitorCategory.NONE, category.get());
     }
 
     @Test

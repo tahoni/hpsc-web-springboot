@@ -57,7 +57,19 @@ public class MatchStage {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> matchStageCompetitors;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code MatchStage} entity with data from a DTO
+     * and associated entities.
+     *
+     * <p>
+     * This method sets the stage's unique identifier, match association, stage number,
+     * name, range number, target details, and point constraints based on the input data.
+     * </p>
+     *
+     * @param stage       The {@code MatchStageDto} containing stage details such as ID, stage number,
+     *                    range number, target metrics, and point constraints.
+     * @param matchEntity The {@code Match} entity representing the match associated with the stage.
+     */
     public void init(MatchStageDto stage, Match matchEntity) {
         // Initialises the stage details
         this.id = stage.getId();

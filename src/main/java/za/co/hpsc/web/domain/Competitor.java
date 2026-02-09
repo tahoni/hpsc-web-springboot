@@ -58,7 +58,16 @@ public class Competitor {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> competitorStageMatches;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code Competitor} entity with data from a DTO.
+     *
+     * <p>
+     * This method sets the relevant fields in the entity, including association with a stage,
+     * competitor information, performance metrics, and date attributes.
+     * </p>
+     *
+     * @param competitorDto the DTO containing data needed to populate the entity fields.
+     */
     public void init(CompetitorDto competitorDto) {
         // Initialises competitor details
         this.id = competitorDto.getId();

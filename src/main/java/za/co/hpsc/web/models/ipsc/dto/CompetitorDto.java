@@ -47,7 +47,7 @@ public class CompetitorDto {
     private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
     /**
-     * Constructs a new {@code CompetitorDto} instance with data from the provided
+     * Constructs a new {@code CompetitorDto} instance using the provided
      * {@link Competitor} entity.
      *
      * @param competitorEntity the {@link Competitor} entity containing the competitor's information,
@@ -55,7 +55,6 @@ public class CompetitorDto {
      *                         competitor number, date of birth, and category.
      *                         Must not be null.
      */
-    // TODO: Javadoc review
     public CompetitorDto(@NotNull Competitor competitorEntity) {
         if (competitorEntity == null) {
             return;
@@ -78,8 +77,19 @@ public class CompetitorDto {
         this.defaultCompetitorCategory = competitorEntity.getDefaultCompetitorCategory();
     }
 
-    // TOOD: Javadoc (not yet ready)
-    public void init(MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
+    /**
+     * Initialises the current {@code CompetitorDto} instance with data from the provided
+     * {@link MemberResponse} and {@link EnrolledResponse} objects.
+     *
+     * @param memberResponse   the {@link MemberResponse} object containing competitor-related
+     *                         information, such as the competitor's first name, last name,
+     *                         date of birth, and SAPSA number.
+     *                         Must not be null.
+     * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
+     *                         competitor category.
+     *                         Can be null.
+     */
+    public void init(@NotNull MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
         // Initialises competitor attributes
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();
@@ -114,7 +124,6 @@ public class CompetitorDto {
      * @return a string representation of the competitor's full name,
      * which may include middle names if available and non-blank.
      */
-    // TODO: add tests
     @Override
     public String toString() {
         if ((this.middleNames != null) && (!this.middleNames.isBlank())) {

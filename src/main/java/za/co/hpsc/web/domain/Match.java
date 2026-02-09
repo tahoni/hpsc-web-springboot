@@ -67,7 +67,18 @@ public class Match {
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code Match} entity with data from a DTO
+     * and associated entities.
+     *
+     * <p>
+     * This method sets the relevant fields in the entity, including association with a club,
+     * name, scheduled date, and match category.
+     * </p>
+     *
+     * @param matchDto   the DTO containing data needed to populate the entity fields.
+     * @param clubEntity the associated club entity.
+     */
     public void init(MatchDto matchDto, Club clubEntity) {
         // Initialises the match details
         this.id = matchDto.getId();

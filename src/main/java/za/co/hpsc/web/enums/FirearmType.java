@@ -64,13 +64,27 @@ public enum FirearmType {
                 .findFirst();
     }
 
-    public static Optional<FirearmType> getByCode(int code) {
-        if (code == 0) {
+    /**
+     * Retrieves an optional {@code FirearmType} instance based on the provided code.
+     *
+     * <p>
+     * The method searches for a firearm type with a code matching the provided input.
+     * If no match is found, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param code the code of the firearm typee to search for.
+     *             The code can be {@code null} or negative, in which case an
+     *             empty {@code Optional} is returned.
+     * @return an {@code Optional} containing the matching {@code Division} if found,
+     * or empty otherwise.
+     */
+    public static Optional<FirearmType> getByCode(Integer code) {
+        if ((code == null) || (code <= 0)) {
             return Optional.empty();
         }
 
         return Stream.of(FirearmType.values())
-                .filter(division -> division.getCode() == code)
+                .filter(division -> code.equals(division.getCode()))
                 .findFirst();
     }
 

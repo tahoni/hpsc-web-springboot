@@ -11,13 +11,13 @@ import za.co.hpsc.web.models.ipsc.response.StageResponse;
 import java.util.UUID;
 
 /**
- * Data Transfer Object (DTO) representing a specific stage in a shooting match.
+ * Data Transfer Object (DTO) that represents a stage in a shooting match.
  *
  * <p>
- * The {@code MatchStageDto} class encapsulates data related to an individual stage
- * in a shooting match.
- * It includes details such as the stage's unique identifier, associated match, stage number,
- * stage name, and range number.
+ * The {@code MatchstageDto} class is used to transfer stage-related data between various layers
+ * of the application.
+ * It encapsulates details such as the stage's unique identifier, associated match details,
+ * stage-specific attributes such as name and number, and target-related information.
  * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
@@ -112,13 +112,13 @@ public class MatchStageDto {
     }
 
     /**
-     * Initialises the current {@code MatchStageDto} instance using the provided
-     * {@link MatchDto} object and {@link StageResponse} object.
+     * Initialises the current {@code MatchStageDto} object using the provided
+     * {@link MatchDto} and {@link StageResponse} objects.
      *
-     * @param matchDto      the {@link MatchDto} object representing the associated match.
+     * @param matchDto      the {@link MatchDto} object representing match-related information.
      *                      Must not be null.
-     * @param stageResponse the {@link StageResponse} object containing stage-related
-     *                      data, including stage ID and stage name.
+     * @param stageResponse the {@link StageResponse} object containing stage-related information,
+     *                      such as stage number, targets, and possible points.
      *                      Must not be null.
      */
     public void init(@NotNull MatchDto matchDto, @NotNull StageResponse stageResponse) {

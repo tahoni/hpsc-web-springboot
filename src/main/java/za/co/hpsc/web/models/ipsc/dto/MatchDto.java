@@ -108,8 +108,27 @@ public class MatchDto {
         this.dateUpdated = matchEntity.getDateUpdated();
     }
 
-    // TODO: Javadoc
-    public void init(MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
+    /**
+     * Initialises the current {@code MatchDto} object using the provided
+     * {@link MatchResponse}, {@link ClubDto}, and a list of {@link ScoreResponse} objects.
+     *
+     * <p>
+     * The method sets various attributes of the match, including the name, associated club,
+     * scheduled date, firearm type, and other metadata such as creation and update timestamps.
+     * The last edited timestamp is determined either from the list of score responses or
+     * defaults to the current time.
+     * </p>
+     *
+     * @param matchResponse  the {@link MatchResponse} object containing information about the match,
+     *                       such as its name, date, and firearm type.
+     *                       Must not be null.
+     * @param clubDto        the {@link ClubDto} object representing the club associated with the match.
+     *                       Can be null if no club association is required.
+     * @param scoreResponses a list of {@link ScoreResponse} objects containing information about scores
+     *                       and their last modification times.
+     *                       Can be null if no score data is available.
+     */
+    public void init(@NotNull MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
         // Initialises match details
         this.club = clubDto;
 
@@ -150,7 +169,6 @@ public class MatchDto {
      *
      * @return a string combining the match name and the associated club information if available.
      */
-    // TODO: add tests
     @Override
     public String toString() {
         String clubString = "";

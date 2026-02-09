@@ -60,7 +60,8 @@ public class MatchCompetitorDto {
      * provided {@link MatchCompetitor} entity.
      *
      * @param matchCompetitorEntity the {@link MatchCompetitor} entity containing information
-     *                              about a competitor's participation in a specific match.
+     *                              about a competitor's participation in a specific match,
+     *                              such as the competitor, match, and associated identifier.
      *                              Must not be null.
      */
     public MatchCompetitorDto(MatchCompetitor matchCompetitorEntity) {
@@ -86,7 +87,8 @@ public class MatchCompetitorDto {
     }
 
     /**
-     * Constructs a new {@code MatchCompetitorDto} instance, associating a competitor with a match.
+     * Constructs a new {@code MatchCompetitorDto} instance with data from the provided
+     * {@link CompetitorDto} and {@link MatchDto} objects.
      *
      * @param competitorDto the {@link CompetitorDto} representing the competitor in the match.
      *                      Must not be null.
@@ -105,8 +107,18 @@ public class MatchCompetitorDto {
         this.dateEdited = LocalDateTime.now();
     }
 
-    // TODO: Javadoc
-    public void init(List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
+    /**
+     * Initialises the current {@code CompetitorDto} instance with data from the provided
+     * {@link EnrolledResponse} and a list of {@link ScoreResponse} objects.
+     *
+     * @param scoreResponses   a list of {@link ScoreResponse} objects containing performance metrics
+     *                         and detailed scoring information.
+     *                         Must not be null.
+     * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
+     *                         competitor information in the match.
+     *                         Can be null.
+     */
+    public void init(@NotNull List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
         // Initializes aggregate score from multiple score responses
         this.matchPoints = BigDecimal.ZERO;
         if (scoreResponses != null) {

@@ -133,8 +133,8 @@ public class MatchStageCompetitorDto {
     }
 
     /**
-     * Constructs a new {@code MatchStageCompetitorDto} instance, associating a competitor
-     * with a match stage.
+     * Constructs a new {@code MatchStageCompetitorDto} instance with data from the provided
+     * {@link CompetitorDto} and {@link MatchStageDto} objects.
      *
      * @param competitorDto the {@link  CompetitorDto} representing the competitor in the match stage.
      *                      Must not be null.
@@ -169,7 +169,6 @@ public class MatchStageCompetitorDto {
      * @param matchStageDto    the {@link MatchStageDto} object containing stage-related information,
      *                         Can be null.
      */
-    // TODO: Javadoc
     public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
                      MatchStageDto matchStageDto) {
 

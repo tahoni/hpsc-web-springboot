@@ -81,7 +81,19 @@ public class MatchStageCompetitor {
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code MatchStageCompetitor} entity with data from a DTO
+     * and associated entities.
+     *
+     * <p>
+     * This method sets the relevant fields in the entity, including association with a stage,
+     * competitor information, performance metrics, and date attributes.
+     * </p>
+     *
+     * @param matchStageCompetitorDto the DTO containing data needed to populate the entity fields.
+     * @param matchStageEntity        the associated match stage entity.
+     * @param competitorEntity        the associated competitor entity.
+     */
     public void init(MatchStageCompetitorDto matchStageCompetitorDto, MatchStage matchStageEntity,
                      Competitor competitorEntity) {
 

@@ -142,11 +142,27 @@ public enum Division {
                 .findFirst();
     }
 
-    // TODO: Javadoc
-    // TODO: add tests
-    public static Optional<Division> getByCode(int code) {
+    /**
+     * Retrieves an optional {@code Division} instance based on the provided code.
+     *
+     * <p>
+     * The method searches for a division with a code matching the provided input.
+     * If no match is found, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param code the code of the division to search for.
+     *             The code can be {@code null} or negative, in which case
+     *             an empty {@code Optional} is returned.
+     * @return an {@code Optional} containing the matching {@code Division} if found,
+     * or empty otherwise.
+     */
+    public static Optional<Division> getByCode(Integer code) {
+        if ((code == null) || (code <= 0)) {
+            return Optional.empty();
+        }
+
         return Arrays.stream(Division.values())
-                .filter(division -> division.getCode() == code)
+                .filter(division -> code.equals(division.getCode()))
                 .findFirst();
     }
 
