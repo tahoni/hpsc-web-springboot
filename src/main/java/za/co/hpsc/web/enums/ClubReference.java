@@ -27,6 +27,7 @@ public enum ClubReference {
     }
 
     // TODO: Javadoc
+    // TODO: add tests
     public static Optional<ClubReference> getByCode(String code) {
         if ((code == null) || (code.isBlank())) {
             return Optional.empty();

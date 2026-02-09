@@ -46,6 +46,7 @@ public final class FirearmTypeToDisciplinesForFirearmType {
     }
 
     // TODO: Javadoc
+    // TODO: add tests
     public static FirearmType getFirearmTypeFromDiscipline(Discipline discipline)
             throws ValidationException {
 

@@ -149,6 +149,7 @@ public enum Discipline {
     }
 
     // TODO: Javadoc
+    // TODO: add tests
     public static Optional<Discipline> getByCode(int code) {
         return Arrays.stream(Discipline.values())
                 .filter(discipline -> discipline.getCode() == code)

@@ -55,6 +55,7 @@ public enum CompetitorCategory {
      * if no match is found.
      */
     // TODO: Javadoc
+    // TODO: add tests
     public static Optional<CompetitorCategory> getByName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
