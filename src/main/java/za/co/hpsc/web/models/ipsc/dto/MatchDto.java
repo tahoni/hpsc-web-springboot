@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.FirearmType;
@@ -107,7 +108,7 @@ public class MatchDto {
         this.dateUpdated = matchEntity.getDateUpdated();
     }
 
-    // TODO: Javadoc (not yet ready)
+    // TODO: Javadoc
     public void init(MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
         // Initialises match details
         this.club = clubDto;
@@ -120,7 +121,7 @@ public class MatchDto {
 
         // Determines the firearm type based on the firearm ID
         this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
-        // TODO: initialise match category
+        this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
@@ -137,7 +138,18 @@ public class MatchDto {
         }
     }
 
-    // TODO: Javadoc
+    /**
+     * Returns a string representation of the match's information, including the name and,
+     * if available, information about the associated club.
+     *
+     * <p>
+     * If a club object is available, its string representation is included in the result.
+     * If a club object is not available, the value of the clubName field is used instead.
+     * If neither contains a value, only the name is returned.
+     * </p>
+     *
+     * @return a string combining the match name and the associated club information if available.
+     */
     // TODO: add tests
     @Override
     public String toString() {

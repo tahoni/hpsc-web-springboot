@@ -127,6 +127,6 @@ public class MatchStageCompetitor {
 
     @Override
     public String toString() {
-        return matchStage.toString() + ": " + competitor.toString();
+        return this.matchStage.toString() + ": " + this.competitor.toString();
     }
 }

@@ -106,7 +106,7 @@ public class MatchCompetitorDto {
         this.dateEdited = LocalDateTime.now();
     }
 
-    // TODO: Javadoc (not yet ready)
+    // TODO: Javadoc
     public void init(List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
         // Initializes aggregate score from multiple score responses
         this.matchPoints = BigDecimal.ZERO;
@@ -144,6 +144,15 @@ public class MatchCompetitorDto {
         }
     }
 
+    /**
+     * Returns a string representation of this {@code MatchCompetitorDto} object.
+     *
+     * <p>
+     * The returned string includes the match of the match and the competitor.
+     * </p>
+     *
+     * @return a string combining the match and the competitor associated with this object.
+     */
     public String toString() {
         return this.match.toString() + ": " + this.competitor.toString();
     }

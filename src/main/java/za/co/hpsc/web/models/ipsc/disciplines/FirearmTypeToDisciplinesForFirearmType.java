@@ -45,7 +45,22 @@ public final class FirearmTypeToDisciplinesForFirearmType {
         return result;
     }
 
-    // TODO: Javadoc
+    /**
+     * Determines the {@code FirearmType} associated with a given {@code Discipline}.
+     *
+     * <p>
+     * The method searches for a mapping between the provided {@code Discipline} and
+     * the {@code FirearmType} in the predefined mapping.
+     * If no valid mapping exists, or if the input is null, a {@code ValidationException} is thrown.
+     * </p>
+     *
+     * @param discipline the {@code Discipline} for which the corresponding {@code FirearmType}
+     *                   is to be determined. Must not be null.
+     * @return the {@code FirearmType} associated with the given {@code Discipline}.
+     * @throws ValidationException if the {@code discipline} is null or if no mapping exists
+     *                             for the provided {@code Discipline}.
+     */
+    // TODO: Javadoc review
     // TODO: add tests
     public static FirearmType getFirearmTypeFromDiscipline(Discipline discipline)
             throws ValidationException {

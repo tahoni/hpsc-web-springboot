@@ -142,6 +142,15 @@ public class MatchStageDto {
         this.maxPoints = stageResponse.getMaxPoints();
     }
 
+    /**
+     * Returns a string representation of the stage of the match.
+     *
+     * <p>
+     * The returned string includes the stage of the match, as well as the match itself.
+     * </p>
+     *
+     * @return a string combining the stage number and the associated match information.
+     */
     @Override
     public String toString() {
         return this.stageNumber + " for " + this.match.toString();

@@ -95,6 +95,19 @@ public class CompetitorDto {
         // TODO: populate category
     }
 
+    /**
+     * Returns a string representation of the competitor's full name.
+     *
+     * <p>
+     * If middle names are present and not blank, they are included
+     * between the first name and last name. Otherwise, only the
+     * first name and last name are included.
+     * </p>
+     *
+     * @return a string representation of the competitor's full name,
+     * which may include middle names if available and non-blank.
+     */
+    // TODO: add tests
     @Override
     public String toString() {
         if ((this.middleNames != null) && (!this.middleNames.isBlank())) {

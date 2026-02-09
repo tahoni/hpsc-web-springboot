@@ -218,6 +218,15 @@ public class MatchStageCompetitorDto {
         }
     }
 
+    /**
+     * Returns a string representation of this {@code MatchStageCompetitorDto} object.
+     *
+     * <p>
+     * The returned string includes the stage and the competitor.
+     * </p>
+     *
+     * @return a string combining the stage and the competitor associated with this object.
+     */
     @Override
     public String toString() {
         return this.matchStage.toString() + ": " + this.competitor.toString();

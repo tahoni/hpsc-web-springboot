@@ -88,6 +88,6 @@ public class MatchCompetitor {
     }
 
     public String toString() {
-        return match.toString() + ": " + competitor.toString();
+        return this.match.toString() + ": " + this.competitor.toString();
     }
 }

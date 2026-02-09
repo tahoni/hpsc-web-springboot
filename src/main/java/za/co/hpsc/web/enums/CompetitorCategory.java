@@ -54,7 +54,7 @@ public enum CompetitorCategory {
      * @return the {@code CompetitorCategory} matching the given name, or {@code NONE}
      * if no match is found.
      */
-    // TODO: Javadoc
+    // TODO: Javadoc review
     // TODO: add tests
     public static Optional<CompetitorCategory> getByName(String name) {
         if ((name == null) || (name.isBlank())) {

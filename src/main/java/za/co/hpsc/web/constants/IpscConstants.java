@@ -1,5 +1,7 @@
 package za.co.hpsc.web.constants;
 
+import za.co.hpsc.web.enums.MatchCategory;
+
 import java.util.List;
 
 /**
@@ -7,8 +9,7 @@ import java.util.List;
  *
  * <p>
  * This class provides a centralised location for settings and configurations
- * used within the IPSC domain. The constants defined here ensure standardised
- * formats for date and time handling specific to the IPSC context.
+ * used within the IPSC domain.
  * </p>
  */
 public final class IpscConstants {
@@ -17,4 +18,6 @@ public final class IpscConstants {
 
     public static final List<Integer> EXCLUDE_ICS_ALIAS =
             List.of(15000, 16000);
+
+    public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;
 }

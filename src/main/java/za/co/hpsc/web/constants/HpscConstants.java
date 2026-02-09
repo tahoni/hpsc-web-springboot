@@ -5,8 +5,7 @@ package za.co.hpsc.web.constants;
  *
  * <p>
  * This class provides a centralised location for settings and configurations
- * used within the HPSC domain. The constants defined here ensure standardised
- * formats for date and time handling specific to the HPSC context.
+ * used within the HPSC domain.
  * </p>
  */
 public final class HpscConstants {

@@ -65,8 +65,23 @@ public class ClubDto {
         this.abbreviation = abbreviation;
     }
 
+    /**
+     * Returns a string representation of the club's information.
+     *
+     * <p>
+     * The format includes the club name, and if available, the abbreviation.
+     * </p>
+     *
+     * @return a string containing the club's name, optionally followed by its abbreviation,
+     * or just the name if no abbreviation is specified.
+     */
+    // TODO: add tests
     @Override
     public String toString() {
-        return this.name + " (" + this.abbreviation + ")";
+        if ((abbreviation != null) && (!abbreviation.isBlank())) {
+            return this.name + " (" + this.abbreviation + ")";
+        } else {
+            return this.name;
+        }
     }
 }
