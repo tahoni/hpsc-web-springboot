@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FirearmTypeTest {
 
     @Test
-    void testGetByName_withExactMatch_thenReturnsCorrectDivision() {
+    void testGetByName_withExactMatch_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = "Handgun";
 
@@ -22,7 +22,7 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectDivision() {
+    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = "pcc";
 
@@ -35,7 +35,7 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByName_withAlternateSeparatorMatch_thenReturnsCorrectDivision() {
+    void testGetByName_withAlternateSeparatorMatch_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = "Pistol-Caliber-Carbine";
 
@@ -48,7 +48,7 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByName_withDot22_thenReturnsCorrectDivision() {
+    void testGetByName_withDot22_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = ".22LR";
 
@@ -84,12 +84,49 @@ class FirearmTypeTest {
     @Test
     void testGetByName_withNoMatch_thenReturnsEmptyOptional() {
         // Arrange
-        String inputName = "NonExistentDivision";
+        String inputName = "NonExistentFirearmType";
 
         // Act
         Optional<FirearmType> result = FirearmType.getByName(inputName);
 
         // Assert
         assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByCode_withMatch_thenReturnsCorrectFirearmType() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(7);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(FirearmType.PCC, result.get());
+    }
+
+    @Test
+    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(0);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withNoMatch_returnsEmptyOptional() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(100);
+
+        // Assert
+        assertTrue(result.isEmpty());
     }
 }

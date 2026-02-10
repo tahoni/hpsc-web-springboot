@@ -86,7 +86,6 @@ public class ClubDto {
      * @return a string containing the club's name, optionally followed by its abbreviation,
      * or just the name if no abbreviation is specified.
      */
-    // TODO: test
     @Override
     public String toString() {
         if ((abbreviation != null) && (!abbreviation.isBlank())) {

@@ -19,7 +19,7 @@ public enum CompetitorCategory {
     JUNIOR("Junior", 2),
     SUPER_JUNIOR("Super Junior", 5),
     LADY("Lady", 1),
-    SUPER_LADY("Lady, Senior", 7),
+    SENIOR_LADY("Lady, Senior", 7),
     SENIOR("Senior", 3),
     SUPER_SENIOR("Super Senior", 4),
     GRAND_SENIOR("Grand Senior", 6),
@@ -76,7 +76,6 @@ public enum CompetitorCategory {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or {@link CompetitorCategory#NONE} otherwise.
      */
-    // TODO: test
     public static Optional<CompetitorCategory> getByCode(Integer code) {
         if ((code == null) || (code == 0)) {
             return Optional.of(NONE);

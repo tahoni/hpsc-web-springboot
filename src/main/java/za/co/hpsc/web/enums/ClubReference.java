@@ -39,7 +39,6 @@ public enum ClubReference {
      * @return an {@code Optional} containing the matching {@code ClubReference} if found,
      * or empty otherwise.
      */
-    // TODO: test
     public static Optional<ClubReference> getByName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
@@ -64,7 +63,6 @@ public enum ClubReference {
      * @return an {@code Optional} containing the matching {@code ClubReference} if found,
      * or empty otherwise.
      */
-    // TODO: test
     public static Optional<ClubReference> getByCode(String code) {
         if ((code == null) || (code.isBlank())) {
             return Optional.empty();

@@ -169,13 +169,12 @@ public class MatchDto {
      *
      * @return a string combining the match name and the associated club information if available.
      */
-    // TODO: test
     @Override
     public String toString() {
         String clubString = "";
         if (this.club != null) {
             clubString = club.toString();
-        } else {
+        } else if (clubName != null) {
             clubString = clubName.toString();
         }
 

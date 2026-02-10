@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class FirearmTypeToDivisionsTest {
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsOpen() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsOpen() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.OPEN);
         // Assert
@@ -19,7 +19,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsStandard() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsStandard() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.STANDARD);
         // Assert
@@ -27,7 +27,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsModified() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsModified() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.MODIFIED);
         // Assert
@@ -35,7 +35,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsClassic() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsClassic() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.CLASSIC);
         // Assert
@@ -43,7 +43,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsProduction() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsProduction() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.PRODUCTION);
         // Assert
@@ -51,14 +51,14 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsProductionOptics() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsProductionOptics() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.PRODUCTION_OPTICS);
         assertEquals(FirearmType.HANDGUN, result);
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsProductionOpticsLight() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsProductionOpticsLight() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.PRODUCTION_OPTICS_LIGHT);
         // Assert
@@ -66,7 +66,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsOptics() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsOptics() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.OPTICS);
         // Assert
@@ -74,7 +74,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsRevolver() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnHandgun_whenDivisionIsRevolver() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.REVOLVER);
         // Assert
@@ -82,7 +82,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnPcc_whenDivisionIsPccOptics() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnPcc_whenDivisionIsPccOptics() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.PCC_OPTICS);
         // Assert
@@ -90,7 +90,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnPcc_whenDivisionIsPccIron() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnPcc_whenDivisionIsPccIron() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.PCC_IRON);
         // Assert
@@ -98,7 +98,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunOpen() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunOpen() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.SHOTGUN_OPEN);
         // Assert
@@ -106,7 +106,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunModified() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunModified() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.SHOTGUN_MODIFIED);
         // Assert
@@ -114,7 +114,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testTestGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunStandard() throws ValidationException {
+    void testTestGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunStandard() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.SHOTGUN_STANDARD);
         // Assert
@@ -122,7 +122,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunStandardManual() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnShotgun_whenDivisionIsShotgunStandardManual() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.SHOTGUN_STANDARD_MANUAL);
         // Assert
@@ -130,7 +130,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleSemiAutoOpen() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleSemiAutoOpen() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.RIFLE_SEMI_AUTO_OPEN);
         // Assert
@@ -138,7 +138,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleSemiAutoStandard() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleSemiAutoStandard() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.RIFLE_SEMI_AUTO_STANDARD);
         // Assert
@@ -146,7 +146,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleManualActionContemporary() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleManualActionContemporary() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.RIFLE_MANUAL_ACTION_CONTEMPORARY);
         // Assert
@@ -154,7 +154,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleManualActionBolt() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnRifle_whenDivisionIsRifleManualActionBolt() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.RIFLE_MANUAL_ACTION_BOLT);
         // Assert
@@ -162,7 +162,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsOpen22() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsOpen22() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.OPEN_22);
         // Assert
@@ -170,7 +170,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsStandard22() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsStandard22() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.STANDARD_22);
         // Assert
@@ -178,7 +178,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsClassic22() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsClassic22() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.CLASSIC_22);
         // Assert
@@ -186,7 +186,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsOptics22() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnHandgun22_whenDivisionIsOptics22() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.OPTICS_22);
         // Assert
@@ -194,7 +194,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnMiniRifle_whenDivisionIsMiniRifleOpen() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnMiniRifle_whenDivisionIsMiniRifleOpen() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.MINI_RIFLE_OPEN);
         // Assert
@@ -202,7 +202,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetFirearmTypeFromDivision_shouldReturnMiniRifle_whenDivisionIsMiniRifleStandard() throws ValidationException {
+    void testGetFirearmTypeFromDivision_shouldReturnMiniRifle_whenDivisionIsMiniRifleStandard() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.MINI_RIFLE_STANDARD);
         // Assert
@@ -220,7 +220,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetDivisionsForFirearmType_shouldReturnDivisionsHandgun_whenFirearmTypeIsHandgun() throws ValidationException {
+    void testGetDivisionsForFirearmType_shouldReturnDivisionsHandgun_whenFirearmTypeIsHandgun() {
         // Act
         DivisionsForFirearmType result = FirearmTypeToDivisions.getDivisionsForFirearmType(FirearmType.HANDGUN);
         // Assert
@@ -228,7 +228,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetDivisionsForFirearmType_shouldReturnDivisionsPcc_whenFirearmTypeIsPcc() throws ValidationException {
+    void testGetDivisionsForFirearmType_shouldReturnDivisionsPcc_whenFirearmTypeIsPcc() {
         // Act
         DivisionsForFirearmType result = FirearmTypeToDivisions.getDivisionsForFirearmType(FirearmType.PCC);
         // Assert
@@ -236,7 +236,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetDivisionsForFirearmType_shouldReturnDivisionsShotgun_whenFirearmTypeIsShotgun() throws ValidationException {
+    void testGetDivisionsForFirearmType_shouldReturnDivisionsShotgun_whenFirearmTypeIsShotgun() {
         // Act
         DivisionsForFirearmType result = FirearmTypeToDivisions.getDivisionsForFirearmType(FirearmType.SHOTGUN);
         // Assert
@@ -244,7 +244,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetDivisionsForFirearmType_shouldReturnDivisionsRifle_whenFirearmTypeIsRifle() throws ValidationException {
+    void testGetDivisionsForFirearmType_shouldReturnDivisionsRifle_whenFirearmTypeIsRifle() {
         // Act
         DivisionsForFirearmType result = FirearmTypeToDivisions.getDivisionsForFirearmType(FirearmType.RIFLE);
         // Assert
@@ -252,7 +252,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetDivisionsForFirearmType_shouldReturnDivisions22Handgun_whenFirearmTypeIsHandgun22() throws ValidationException {
+    void testGetDivisionsForFirearmType_shouldReturnDivisions22Handgun_whenFirearmTypeIsHandgun22() {
         // Act
         DivisionsForFirearmType result = FirearmTypeToDivisions.getDivisionsForFirearmType(FirearmType.HANDGUN_22);
         // Assert
@@ -260,7 +260,7 @@ class FirearmTypeToDivisionsTest {
     }
 
     @Test
-    void testGetDivisionsForFirearmType_shouldReturnDivisionsMiniRifle_whenFirearmTypeIsMiniRifle() throws ValidationException {
+    void testGetDivisionsForFirearmType_shouldReturnDivisionsMiniRifle_whenFirearmTypeIsMiniRifle() {
         // Act
         DivisionsForFirearmType result = FirearmTypeToDivisions.getDivisionsForFirearmType(FirearmType.MINI_RIFLE);
         // Assert

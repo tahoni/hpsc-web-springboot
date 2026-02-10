@@ -156,7 +156,6 @@ public enum Division {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
      */
-    // TODO: test
     public static Optional<Division> getByCode(Integer code) {
         if ((code == null) || (code <= 0)) {
             return Optional.empty();

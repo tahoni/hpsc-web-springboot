@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.award.request.AwardRequest;
 import za.co.hpsc.web.models.award.response.AwardCeremonyResponse;
@@ -152,7 +151,7 @@ public class AwardServiceImplTest {
     }
 
     @Test
-    public void testReadAwards_withLargeCsv_thenReturnsAwardRequestList() throws ValidationException, FatalException {
+    public void testReadAwards_withLargeCsv_thenReturnsAwardRequestList() {
         // Arrange
         StringBuilder largeCsv = new StringBuilder("title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n");
 
@@ -172,7 +171,8 @@ public class AwardServiceImplTest {
         }
 
         // Act
-        List<AwardRequest> awardRequests = awardService.readAwards(largeCsv.toString());
+        List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
+                awardService.readAwards(largeCsv.toString()));
 
         // Assert
         assertNotNull(awardRequests);

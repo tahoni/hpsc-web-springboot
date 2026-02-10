@@ -236,7 +236,6 @@ public class MatchStageCompetitorDto {
      *
      * @return a string combining the stage and the competitor associated with this object.
      */
-    // TODO: test
     @Override
     public String toString() {
         return this.matchStage.toString() + ": " + this.competitor.toString();
