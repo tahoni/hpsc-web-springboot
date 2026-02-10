@@ -2,7 +2,7 @@
 
 ## Release Notes
 
-### Version 2.0.0 - _2026-02-08_
+### Version 2.1.0 - _2026-02-10_
 
 Major refactoring of the IPSC match results processing system to improve modularity, maintainability, and
 testability. Introduces a service-oriented architecture with dedicated DTOs, removes legacy code, and
