@@ -1,6 +1,7 @@
 package za.co.hpsc.web.helpers;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.Match;
 import za.co.hpsc.web.domain.MatchStage;
@@ -23,6 +24,7 @@ import java.util.Map;
  * in the system.
  * </p>
  */
+@Slf4j
 public final class MatchHelpers {
     private MatchHelpers() {
         // Utility class, not to be instantiated
@@ -47,15 +49,23 @@ public final class MatchHelpers {
         DateTimeFormatter longDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_LONG_DATE_FORMAT);
 
+        // Retrieve match details
+        String clubName = (match.getClub() != null ? match.getClub().toString() : "");
+        if (clubName.isEmpty()) {
+            clubName = match.getClubName().toString();
+        }
+        String divisionName = (match.getMatchFirearmType() != null ?
+                match.getMatchFirearmType().toString().toUpperCase() : "");
+        String categoryName = (match.getMatchCategory() != null ?
+                match.getMatchCategory().toString() : "");
+        String longDate = longDateFormatter.format(match.getScheduledDate());
+
         // Prepare parameters for formatting
         Map<String, String> parameters = Map.of(
-                "clubName", (match.getClub() != null ?
-                        match.getClub() : ""),
-                "divisionName", (match.getMatchDivision() != null ?
-                        match.getMatchDivision().toString().toUpperCase() : ""),
-                "categoryName", (match.getMatchCategory() != null ?
-                        match.getMatchCategory().toString() : ""),
-                "longDate", longDateFormatter.format(match.getScheduledDate())
+                "clubName", clubName,
+                "divisionName", divisionName,
+                "categoryName", categoryName,
+                "longDate", longDate
         );
 
         // Format and return match name
@@ -75,7 +85,8 @@ public final class MatchHelpers {
      * {@link MatchConstants#SCHEDULED_MATCH_OVERALL_NAME_FORMAT}.
      *
      * @param match the {@link Match} object containing the details used to construct
-     *              the overall display name. Must not be null.
+     *              the overall display name.
+     *              Must not be null.
      * @return a formatted string representing the overall display name of the match,
      * combining its name and ISO-formatted scheduled date.
      */
@@ -109,7 +120,8 @@ public final class MatchHelpers {
      * {@link MatchConstants#SCHEDULED_MATCH_STAGE_NAME_FORMAT}.
      *
      * @param matchStage the {@link MatchStage} object containing the details used to construct
-     *                   the display name. Must not be null.
+     *                   the display name.
+     *                   Must not be null.
      * @return a formatted string representing the display name of the match stage, including
      * the match name, stage and range numbers, and the scheduled date in ISO format.
      */

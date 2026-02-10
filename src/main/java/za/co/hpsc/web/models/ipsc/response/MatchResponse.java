@@ -46,6 +46,7 @@ public class MatchResponse {
         this.matchName = matchRequest.getMatchName();
         this.matchDate = matchRequest.getMatchDate();
         this.clubId = matchRequest.getClubId();
+
         this.squadCount = matchRequest.getSquadCount();
         this.firearmId = matchRequest.getFirearmId();
     }

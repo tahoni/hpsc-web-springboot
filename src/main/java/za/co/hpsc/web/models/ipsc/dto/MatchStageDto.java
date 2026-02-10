@@ -11,13 +11,13 @@ import za.co.hpsc.web.models.ipsc.response.StageResponse;
 import java.util.UUID;
 
 /**
- * Data Transfer Object (DTO) representing a specific stage in a shooting match.
+ * Data Transfer Object (DTO) that represents a stage in a shooting match.
  *
  * <p>
- * The {@code MatchStageDto} class encapsulates data related to an individual stage
- * in a shooting match.
- * It includes details such as the stage's unique identifier, associated match, stage number,
- * stage name, and range number.
+ * The {@code MatchstageDto} class is used to transfer stage-related data between various layers
+ * of the application.
+ * It encapsulates details such as the stage's unique identifier, associated match details,
+ * stage-specific attributes such as name and number, and target-related information.
  * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
@@ -37,6 +37,15 @@ public class MatchStageDto {
     private String stageName;
     private Integer rangeNumber;
 
+    private Integer targetPaper;
+    private Integer targetPopper;
+    private Integer targetPlates;
+    private Integer targetDisappear;
+    private Integer targetPenalty;
+
+    private Integer minRounds;
+    private Integer maxPoints;
+
     /**
      * Constructs a new {@code MatchStageDto} instance with ata from the
      * provided {@link MatchStage} entity.
@@ -49,10 +58,25 @@ public class MatchStageDto {
         if (matchStageEntity == null) {
             return;
         }
-        
+
+        // Initialises the stage details
         this.id = matchStageEntity.getId();
         this.match = new MatchDto(matchStageEntity.getMatch());
+
+        // Initialises the stage attributes
         this.stageNumber = matchStageEntity.getStageNumber();
+        this.rangeNumber = matchStageEntity.getRangeNumber();
+
+        // Initialises the target details
+        this.targetPaper = matchStageEntity.getTargetPaper();
+        this.targetPopper = matchStageEntity.getTargetPopper();
+        this.targetPlates = matchStageEntity.getTargetPlates();
+        this.targetDisappear = matchStageEntity.getTargetDisappear();
+        this.targetPenalty = matchStageEntity.getTargetPenalty();
+
+        // Initialises the max rounds and max points details
+        this.minRounds = matchStageEntity.getMinRounds();
+        this.maxPoints = matchStageEntity.getMaxPoints();
     }
 
     /**
@@ -66,29 +90,69 @@ public class MatchStageDto {
      *                         Must not be null.
      */
     public MatchStageDto(@NotNull MatchStage matchStageEntity, @NotNull MatchDto matchDto) {
+        // Initialises the stage details
         this.id = matchStageEntity.getId();
         this.match = matchDto;
+
+        // Initialises the stage attributes
         this.stageNumber = matchStageEntity.getStageNumber();
         this.stageName = matchStageEntity.getStageName();
+        this.rangeNumber = matchStageEntity.getRangeNumber();
+
+        // Initialises the target details
+        this.targetPaper = matchStageEntity.getTargetPaper();
+        this.targetPopper = matchStageEntity.getTargetPopper();
+        this.targetPlates = matchStageEntity.getTargetPlates();
+        this.targetDisappear = matchStageEntity.getTargetDisappear();
+        this.targetPenalty = matchStageEntity.getTargetPenalty();
+
+        // Initialises the max rounds and max points details
+        this.minRounds = matchStageEntity.getMinRounds();
+        this.maxPoints = matchStageEntity.getMaxPoints();
     }
 
     /**
-     * Initialises the current {@code MatchStageDto} instance using the provided
-     * {@link MatchDto} object and {@link StageResponse} object.
+     * Initialises the current {@code MatchStageDto} object using the provided
+     * {@link MatchDto} and {@link StageResponse} objects.
      *
-     * @param matchDto      the {@link MatchDto} object representing the associated match.
+     * @param matchDto      the {@link MatchDto} object representing match-related information.
      *                      Must not be null.
-     * @param stageResponse the {@link StageResponse} object containing stage-related
-     *                      data, including stage ID and stage name. Must not be null.
+     * @param stageResponse the {@link StageResponse} object containing stage-related information,
+     *                      such as stage number, targets, and possible points.
+     *                      Must not be null.
      */
     public void init(@NotNull MatchDto matchDto, @NotNull StageResponse stageResponse) {
+        // Initialises the stage details
         this.match = matchDto;
+
+        // Initialises the stage attributes
         this.stageNumber = stageResponse.getStageId();
         this.stageName = stageResponse.getStageName();
+        this.rangeNumber = 0;
+
+        // Initialises the target details
+        this.targetPaper = stageResponse.getTargetPaper();
+        this.targetPopper = stageResponse.getTargetPopper();
+        this.targetPlates = stageResponse.getTargetPlates();
+        this.targetDisappear = stageResponse.getTargetDisappear();
+        this.targetPenalty = stageResponse.getTargetPenalty();
+
+        // Initialises the possible points details
+        this.minRounds = stageResponse.getMinRounds();
+        this.maxPoints = stageResponse.getMaxPoints();
     }
 
+    /**
+     * Returns a string representation of the stage of the match.
+     *
+     * <p>
+     * The returned string includes the stage of the match, as well as the match itself.
+     * </p>
+     *
+     * @return a string combining the stage number and the associated match information.
+     */
     @Override
     public String toString() {
-        return stageNumber + " for " + match.toString();
+        return ((this.stageNumber != null) ? this.stageNumber : "0") + " for " + this.match.toString();
     }
 }

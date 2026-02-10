@@ -11,7 +11,7 @@ import java.util.Optional;
  *
  * <p>
  * A power factor defines the level of energy a bullet carries, which is used
- * to categorise participants based on the caliber and velocity of ammunition used.
+ * to categorise participants based on the calibre and velocity of ammunition used.
  * Each power factor is associated with a name and an abbreviation for easy reference and
  * presentation.
  * </p>
@@ -34,7 +34,8 @@ public enum PowerFactor {
      * {@code Optional} is returned.
      * </p>
      *
-     * @param name the name of the power factor to search for. Can be null or empty.
+     * @param name the name of the power factor to search for.
+     *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
      */
@@ -57,7 +58,8 @@ public enum PowerFactor {
      * empty {@code Optional} is returned.
      * </p>
      *
-     * @param abbreviation the abbreviation of the power factor to search for. Can be null or empty.
+     * @param abbreviation the abbreviation of the power factor to search for.
+     *                     Can be null or empty.
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
      */

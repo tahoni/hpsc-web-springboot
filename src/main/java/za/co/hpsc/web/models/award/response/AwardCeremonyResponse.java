@@ -48,7 +48,8 @@ public class AwardCeremonyResponse extends Response {
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>
      *
-     * @param date          the date and time of the award ceremony. Must not be null.
+     * @param date          the date and time of the award ceremony.
+     *                      Must not be null.
      * @param imageFilePath the file path to the images associated with the award ceremony.
      *                      If null, it defaults to an empty string.
      * @param awards        the list of {@link AwardResponse} objects representing
@@ -76,7 +77,8 @@ public class AwardCeremonyResponse extends Response {
      * @param uuid          the unique identifier for the award ceremony. If null,
      *                      it defaults to a randomly generated UUID through
      *                      the superclass constructor.
-     * @param date          the date and time of the award ceremony. Must not be null.
+     * @param date          the date and time of the award ceremony.
+     *                      Must not be null.
      * @param imageFilePath the file path to the images associated with the award ceremony.
      *                      If null, it defaults to an empty string.
      * @param awards        the list of {@link AwardResponse} objects representing
@@ -106,12 +108,15 @@ public class AwardCeremonyResponse extends Response {
      * @param uuid          the unique identifier for the award ceremony. If null,
      *                      it defaults to a randomly generated UUID through
      *                      the superclass constructor.
-     * @param title         the title of the award ceremony. Must not be null or empty.
-     * @param date          the date and time of the award ceremony. Must not be null.
+     * @param title         the title of the award ceremony.
+     *                      Must not be null or empty.
+     * @param date          the date and time of the award ceremony.
+     *                      Must not be null.
      * @param imageFilePath the file path to the image associated with the award ceremony.
      *                      If null, it defaults to an empty string.
      * @param awards        the list of {@link AwardResponse} objects representing
-     *                      individual awards. If null, it defaults to an empty list.
+     *                      individual awards.
+     *                      If null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(UUID uuid, String title, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {
@@ -136,17 +141,23 @@ public class AwardCeremonyResponse extends Response {
      * @param uuid          the unique identifier for the award ceremony. If null,
      *                      it defaults to a randomly generated UUID through
      *                      the superclass constructor.
-     * @param title         the title of the award ceremony. Must not be null or empty.
-     * @param summary       a brief summary of the award ceremony. Can be null or empty.
-     * @param description   a detailed description of the award ceremony. Can be null or empty.
-     * @param category      the category associated with the award ceremony. Can be null or empty.
-     * @param tags          a list of tags relevant to the award ceremony. If null,
-     *                      it defaults to an empty list.
-     * @param date          the date and time of the award ceremony. Must not be null.
+     * @param title         the title of the award ceremony.
+     *                      Must not be null or empty.
+     * @param summary       a brief summary of the award ceremony.
+     *                      Can be null or empty.
+     * @param description   a detailed description of the award ceremony.
+     *                      Can be null or empty.
+     * @param category      the category associated with the award ceremony.
+     *                      Can be null or empty.
+     * @param tags          a list of tags relevant to the award ceremony.
+     *                      If null, it defaults to an empty list.
+     * @param date          the date and time of the award ceremony.
+     *                      Must not be null.
      * @param imageFilePath the file path to the images associated with the award ceremony.
      *                      If null, it defaults to an empty string.
      * @param awards        the list of {@link AwardResponse} objects representing
-     *                      individual awards. If null, it defaults to an empty list.
+     *                      individual awards.
+     *                      If null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(UUID uuid, String title, String summary, String description,
                                  String category, List<String> tags, LocalDate date, String imageFilePath,
@@ -169,17 +180,23 @@ public class AwardCeremonyResponse extends Response {
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>
      *
-     * @param title         the title of the award ceremony. Must not be null or empty.
-     * @param summary       a brief summary of the award ceremony. Can be null or empty.
-     * @param description   a detailed description of the award ceremony. Can be null or empty.
-     * @param category      the category associated with the award ceremony. Can be null or empty.
-     * @param tags          a list of tags relevant to the award ceremony. If null,
-     *                      it defaults to an empty list.
-     * @param date          the date and time of the award ceremony. Must not be null.
+     * @param title         the title of the award ceremony.
+     *                      Must not be null or empty.
+     * @param summary       a brief summary of the award ceremony.
+     *                      Can be null or empty.
+     * @param description   a detailed description of the award ceremony.
+     *                      Can be null or empty.
+     * @param category      the category associated with the award ceremony.
+     *                      Can be null or empty.
+     * @param tags          a list of tags relevant to the award ceremony.
+     *                      If null, it defaults to an empty list.
+     * @param date          the date and time of the award ceremony.
+     *                      Must not be null.
      * @param imageFilePath the file path to the images associated with the award ceremony.
      *                      If null, it defaults to an empty string.
      * @param awards        the list of {@link AwardResponse} objects representing
-     *                      individual awards. If null, it defaults to an empty list.
+     *                      individual awards.
+     *                      If null, it defaults to an empty list.
      */
     public AwardCeremonyResponse(String title, String summary, String description, String category,
                                  List<String> tags, LocalDate date, String imageFilePath,

@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Match;
-import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -23,7 +25,7 @@ import java.util.UUID;
  * The {@code MatchDto} class is used to transfer match-related data between various layers
  * of the application.
  * It encapsulates details such as the match's unique identifier, associated club, name,
- * scheduled date, division, category, and timestamps for creation and updates.
+ * scheduled date, firearm type, category, and timestamps for creation and updates.
  * It also provides utility methods for mapping data from entity and response models.
  * </p>
  */
@@ -34,14 +36,15 @@ import java.util.UUID;
 public class MatchDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
+    private ClubDto club;
 
     @NotNull
     private String name;
     @NotNull
     private LocalDate scheduledDate;
-    private String club;
+    private ClubReference clubName;
 
-    private Division matchDivision;
+    private FirearmType matchFirearmType;
     private MatchCategory matchCategory;
 
     @NotNull
@@ -54,8 +57,8 @@ public class MatchDto {
      * {@link Match} entity.
      *
      * @param matchEntity the {@link Match} entity containing match-related information, such as
-     *                    the unique identifier, associated club, name, scheduled date, match division,
-     *                    match category, creation timestamp, and update timestamp.
+     *                    the unique identifier, associated club, name, scheduled date, match
+     *                    firearm type, match category, creation timestamp, and update timestamp.
      *                    Must not be null.
      */
     public MatchDto(@NotNull Match matchEntity) {
@@ -63,23 +66,81 @@ public class MatchDto {
             return;
         }
 
+        // Initialises match details
         this.id = matchEntity.getId();
-        this.club = matchEntity.getClub();
+        this.club = new ClubDto(matchEntity.getClub());
 
+        // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.matchDivision = matchEntity.getMatchDivision();
+        this.clubName = matchEntity.getClubName();
+        this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
+        // Initialises the date fields
         this.dateCreated = matchEntity.getDateCreated();
         this.dateUpdated = LocalDateTime.now();
     }
 
-    // TODO: Javadoc (not yet ready)
-    public void init(MatchResponse matchResponse, List<ScoreResponse> scoreResponses) {
+    /**
+     * Constructs a new {@code MatchDto} instance using the provided {@link Match} entity
+     * and {@link ClubDto} object.
+     *
+     * @param matchEntity the {@link Match} entity containing match-related information such as
+     *                    the unique identifier, name, scheduled date, division, category,
+     *                    creation timestamp, and update timestamp. Must not be null.
+     * @param clubDto     the {@link ClubDto} instance representing the club associated with the match.
+     *                    Must not be null.
+     */
+    public MatchDto(@NotNull Match matchEntity, @NotNull ClubDto clubDto) {
+        // Initialises match details
+        this.id = matchEntity.getId();
+        this.club = clubDto;
+
+        // Initialises the match attributes
+        this.name = matchEntity.getName();
+        this.scheduledDate = matchEntity.getScheduledDate();
+        this.clubName = matchEntity.getClubName();
+        this.matchCategory = matchEntity.getMatchCategory();
+
+        // Initialises the date fields
+        this.dateCreated = matchEntity.getDateCreated();
+        this.dateUpdated = matchEntity.getDateUpdated();
+    }
+
+    /**
+     * Initialises the current {@code MatchDto} object using the provided
+     * {@link MatchResponse}, {@link ClubDto}, and a list of {@link ScoreResponse} objects.
+     *
+     * <p>
+     * The method sets various attributes of the match, including the name, associated club,
+     * scheduled date, firearm type, and other metadata such as creation and update timestamps.
+     * The last edited timestamp is determined either from the list of score responses or
+     * defaults to the current time.
+     * </p>
+     *
+     * @param matchResponse  the {@link MatchResponse} object containing information about the match,
+     *                       such as its name, date, and firearm type.
+     *                       Must not be null.
+     * @param clubDto        the {@link ClubDto} object representing the club associated with the match.
+     *                       Can be null if no club association is required.
+     * @param scoreResponses a list of {@link ScoreResponse} objects containing information about scores
+     *                       and their last modification times.
+     *                       Can be null if no score data is available.
+     */
+    public void init(@NotNull MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
+        // Initialises match details
+        this.club = clubDto;
+
+        // Initialises the match attributes
         this.name = matchResponse.getMatchName();
+        this.clubName = ((clubDto != null) ?
+                ClubReference.getByName(clubDto.getName()).orElse(null) : null);
         this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
-        this.club = "";
+
+        // Determines the firearm type based on the firearm ID
+        this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
+        this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
@@ -94,14 +155,32 @@ public class MatchDto {
         } else {
             this.dateEdited = LocalDateTime.now();
         }
-
-        // TODO: populate division and category
     }
 
+    /**
+     * Returns a string representation of the match's information, including the name and,
+     * if available, information about the associated club.
+     *
+     * <p>
+     * If a club object is available, its string representation is included in the result.
+     * If a club object is not available, the value of the clubName field is used instead.
+     * If neither contains a value, only the name is returned.
+     * </p>
+     *
+     * @return a string combining the match name and the associated club information if available.
+     */
     @Override
     public String toString() {
-        if ((club != null) && (!club.isBlank())) {
-            return name + " @ " + club;
+        String clubString = "";
+        if (this.club != null) {
+            clubString = club.toString();
+        } else if (clubName != null) {
+            clubString = clubName.toString();
+        }
+
+        // Returns name, optionally with club if available
+        if ((clubString != null) && (!clubString.isBlank())) {
+            return name + " @ " + clubString;
         } else {
             return name;
         }

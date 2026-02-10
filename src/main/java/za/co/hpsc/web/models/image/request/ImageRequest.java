@@ -38,11 +38,12 @@ public class ImageRequest extends Request {
      * with empty strings.
      * </p>
      *
-     * @param title    the title of the image request. Must not be null or blank.
-     * @param filePath the file path where the image is stored. If null,
-     *                 it will be replaced with an empty string.
-     * @param fileName the name of the file containing the image. If null,
-     *                 it will be replaced with an empty string.
+     * @param title    the title of the image request.
+     *                 Must not be null or blank.
+     * @param filePath the file path where the image is stored.
+     *                 If null, it will be replaced with an empty string.
+     * @param fileName the name of the file containing the image.
+     *                 If null, it will be replaced with an empty string.
      */
     public ImageRequest(@NotNull @NotBlank String title, String filePath, String fileName) {
         super(title);
@@ -59,16 +60,20 @@ public class ImageRequest extends Request {
      * values for image-specific properties using default substitutions.
      * </p>
      *
-     * @param title       the title of the image request. Must not be null or blank.
-     * @param summary     a brief summary of the request. Can be null.
-     * @param description a detailed description of the request. Can be null.
-     * @param category    the category under which the image request is classified. Can be null.
-     * @param tags        a list of tags associated with the image request. If null,
-     *                    an empty list is assigned.
-     * @param filePath    the file path where the image is stored. If null,
-     *                    it will be replaced with an empty string.
-     * @param fileName    the name of the file containing the image. If null,
-     *                    it will be replaced with an empty string.
+     * @param title       the title of the image request.
+     *                    Must not be null or blank.
+     * @param summary     a brief summary of the request.
+     *                    Can be null.
+     * @param description a detailed description of the request.
+     *                    Can be null.
+     * @param category    the category under which the image request is classified.
+     *                    Can be null.
+     * @param tags        a list of tags associated with the image request.
+     *                    If null, an empty list is assigned.
+     * @param filePath    the file path where the image is stored.
+     *                    If null, it will be replaced with an empty string.
+     * @param fileName    the name of the file containing the image.
+     *                    If null, it will be replaced with an empty string.
      */
     public ImageRequest(@NotNull @NotBlank String title, String summary, String description,
                         String category, List<String> tags, String filePath, String fileName) {

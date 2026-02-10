@@ -26,8 +26,10 @@ public final class NumberUtil {
      * rounded to the default scale defined in {@code SystemConstants.DEFAULT_SCALE}.
      * </p>
      *
-     * @param part  the portion or subset of the total to calculate percentage for. Must not be null.
-     * @param whole the whole or total value. Can be null or zero.
+     * @param part  the portion or subset of the total to calculate percentage for.
+     *              Must not be null.
+     * @param whole the whole or total value.
+     *              Can be null or zero.
      * @return the percentage of {@code part} relative to {@code total}, scaled to the default scale.
      * If {@code total} is null or zero, returns zero.
      */

@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
-import za.co.hpsc.web.enums.Discipline;
+import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.utils.NumberUtil;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.math.BigDecimal;
@@ -41,9 +44,10 @@ public class MatchStageCompetitorDto {
     private CompetitorDto competitor;
     @NotNull
     private MatchStageDto matchStage;
+    private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
+    private FirearmType firearmType;
     private Division division;
-    private Discipline discipline;
     private PowerFactor powerFactor;
 
     private Integer scoreA;
@@ -83,54 +87,70 @@ public class MatchStageCompetitorDto {
      *                                   Must not be null.
      */
     public MatchStageCompetitorDto(@NotNull MatchStageCompetitor matchStageCompetitorEntity) {
+        // Initialises the competitor and stage details
         this.id = matchStageCompetitorEntity.getId();
         this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
         this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
+        // Initialises the competitor and stage attributes
+        this.competitorCategory = matchStageCompetitorEntity.getCompetitorCategory();
+        this.firearmType = matchStageCompetitorEntity.getFirearmType();
         this.division = matchStageCompetitorEntity.getDivision();
-        this.discipline = matchStageCompetitorEntity.getDiscipline();
         this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
 
+        // Initialises the detailed breakdown of the score
         this.scoreA = matchStageCompetitorEntity.getScoreA();
         this.scoreB = matchStageCompetitorEntity.getScoreB();
         this.scoreC = matchStageCompetitorEntity.getScoreC();
         this.scoreD = matchStageCompetitorEntity.getScoreD();
 
+        // Initialises the overall performance metrics
         this.points = matchStageCompetitorEntity.getPoints();
         this.misses = matchStageCompetitorEntity.getMisses();
         this.penalties = matchStageCompetitorEntity.getPenalties();
         this.procedurals = matchStageCompetitorEntity.getProcedurals();
 
+        // Initialises the deduction details, if applicable
         this.hasDeduction = matchStageCompetitorEntity.getHasDeduction();
         this.deductionPercentage = matchStageCompetitorEntity.getDeductionPercentage();
 
+        // Initialises whether the competitor is disqualified
+        this.isDisqualified = matchStageCompetitorEntity.getIsDisqualified();
+
+        // Initialises the time and hit factor details
         this.time = matchStageCompetitorEntity.getTime();
         this.hitFactor = matchStageCompetitorEntity.getHitFactor();
 
+        // Initialises the stage ranking and percentage
         this.stagePoints = matchStageCompetitorEntity.getStagePoints();
         this.stagePercentage = matchStageCompetitorEntity.getStagePercentage();
         this.stageRanking = matchStageCompetitorEntity.getStageRanking();
 
-        this.isDisqualified = matchStageCompetitorEntity.getIsDisqualified();
-
+        // Initialises the date fields
         this.dateCreated = matchStageCompetitorEntity.getDateCreated();
         this.dateUpdated = LocalDateTime.now();
         this.dateEdited = matchStageCompetitorEntity.getDateEdited();
     }
 
     /**
-     * Constructs a new {@code MatchStageCompetitorDto} instance, associating a competitor
-     * with a match stage.
+     * Constructs a new {@code MatchStageCompetitorDto} instance with data from the provided
+     * {@link CompetitorDto} and {@link MatchStageDto} objects.
      *
      * @param competitorDto the {@link  CompetitorDto} representing the competitor in the match stage.
      *                      Must not be null.
      * @param matchStageDto the {@link MatchStageDto} representing the match stage in which
-     *                      the competitor participates. Must not be null.
+     *                      the competitor participates.
+     *                      Must not be null.
      */
     public MatchStageCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchStageDto matchStageDto) {
+        // Initialises the competitor and stage details
         this.competitor = competitorDto;
         this.matchStage = matchStageDto;
 
+        // Initialises the competitor and stage attributes
+        this.competitorCategory = competitorDto.getDefaultCompetitorCategory();
+
+        // Initialises the date fields
         this.dateCreated = LocalDateTime.now();
         this.dateUpdated = LocalDateTime.now();
         this.dateEdited = LocalDateTime.now();
@@ -141,32 +161,46 @@ public class MatchStageCompetitorDto {
      * {@link ScoreResponse} object.
      *
      * @param scoreResponse    the {@link ScoreResponse} object containing performance metrics
-     *                         and detailed scoring information. Must not be null.
+     *                         and detailed scoring information.
+     *                         Must not be null.
      * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
-     *                         competitor information in the match stage. Can be null.
+     *                         competitor information in the match stage.
+     *                         Can be null.
+     * @param matchStageDto    the {@link MatchStageDto} object containing stage-related information,
+     *                         Can be null.
      */
-    public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse) {
+    public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
+                     MatchStageDto matchStageDto) {
+
+        // Initialises the detailed breakdown of the score
         this.scoreA = scoreResponse.getScoreA();
         this.scoreB = scoreResponse.getScoreB();
         this.scoreC = scoreResponse.getScoreC();
         this.scoreD = scoreResponse.getScoreD();
 
+        // Initialises the overall performance metrics
         this.points = scoreResponse.getFinalScore();
         this.misses = scoreResponse.getMisses();
         this.penalties = scoreResponse.getPenalties();
         this.procedurals = scoreResponse.getProcedurals();
 
+        // Initialises the deduction details, if applicable
         this.hasDeduction = scoreResponse.getDeduction();
         this.deductionPercentage = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getDeductionPercentage());
 
+        // Initialises whether the competitor is disqualified
+        this.isDisqualified = scoreResponse.getIsDisqualified();
+
+        // Initialises the time and hit factor details
         this.time = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getTime());
         this.hitFactor = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getHitFactor());
 
+        // Calculates the stage points and percentage based on the final score
         this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
-        // TODO: Initialises match percentage
-        // TODO: Initialises match ranking
-
-        this.isDisqualified = scoreResponse.getIsDisqualified();
+        if (matchStageDto.getMaxPoints() != null) {
+            this.stagePercentage = NumberUtil.calculatePercentage(this.stagePoints,
+                    BigDecimal.valueOf(matchStageDto.getMaxPoints()));
+        }
 
         // Don't overwrite an existing date creation timestamp
         this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
@@ -175,14 +209,35 @@ public class MatchStageCompetitorDto {
         // Sets the date edited to the latest score update timestamp
         this.dateEdited = scoreResponse.getLastModified();
 
+        // Initialises competitor attributes
+        this.competitorCategory = CompetitorCategory.NONE;
         if (enrolledResponse != null) {
+            // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
-            // TODO: populate category, division, discipline
+            this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the discipline based on the division ID
+            this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the firearm type from the discipline
+            this.firearmType =
+                    FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
+            // Determines the competitor category based on the competitor category ID
+            this.competitorCategory =
+                    CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                            .orElse(CompetitorCategory.NONE);
         }
     }
 
+    /**
+     * Returns a string representation of this {@code MatchStageCompetitorDto} object.
+     *
+     * <p>
+     * The returned string includes the stage and the competitor.
+     * </p>
+     *
+     * @return a string combining the stage and the competitor associated with this object.
+     */
     @Override
     public String toString() {
-        return matchStage.toString() + ": " + competitor.toString();
+        return this.matchStage.toString() + ": " + this.competitor.toString();
     }
 }
