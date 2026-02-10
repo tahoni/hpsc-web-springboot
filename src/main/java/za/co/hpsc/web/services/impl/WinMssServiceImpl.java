@@ -119,6 +119,8 @@ public class WinMssServiceImpl implements WinMssService {
 
             return ipscRequestHolder;
 
+        } catch (ValidationException e) {
+            throw e;
         } catch (MismatchedInputException | IllegalArgumentException e) {
             log.error("Error parsing JSON data: {}", e.getMessage(), e);
             throw new ValidationException("Invalid JSON data format.", e);
@@ -159,8 +161,7 @@ public class WinMssServiceImpl implements WinMssService {
 
         } catch (JsonProcessingException e) {
             log.error("Error parsing XML content: {}", e.getMessage(), e);
+            throw new ValidationException("Invalid XML data format.", e);
         }
-
-        return new ArrayList<>();
     }
 }
