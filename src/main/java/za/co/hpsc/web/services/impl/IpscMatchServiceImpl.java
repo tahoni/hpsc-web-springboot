@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.request.*;
+import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
@@ -39,6 +40,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Add members to each match
         ipscResponses.forEach(ipscResponse -> addMembersToMatch(ipscResponse, ipscRequestHolder));
+        // Add a club to each match
+        ipscResponses.forEach(ipscResponse -> addClubToMatch(ipscResponse, ipscRequestHolder));
 
         return new IpscResponseHolder(ipscResponses);
     }
@@ -102,5 +105,28 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             // Sets members on the response
             ipscResponse.setMembers(memberRequests);
         });
+    }
+
+    /**
+     * Associates a club with the given match by matching the club ID from the provided
+     * IPSC response with the list of clubs in the request holder.
+     *
+     * <p>
+     * If a matching club is found, it is set on the response. Otherwise, a default
+     * club response is created using the club ID from the match.
+     * </p>
+     *
+     * @param ipscResponse      the IPSC response containing the match details, including the club ID
+     *                          to match against the provided club data.
+     * @param ipscRequestHolder the request holder that contains the list of clubs to be searched
+     *                          for a match.
+     */
+    protected void addClubToMatch(IpscResponse ipscResponse, IpscRequestHolder ipscRequestHolder) {
+        Integer clubId = ipscResponse.getMatch().getClubId();
+        // Finds club matching ID or provides default
+        ClubRequest club = ipscRequestHolder.getClubs().stream()
+                .filter(clubRequest -> clubRequest.getClubId()
+                        .equals(clubId)).findFirst().orElse(null);
+        ipscResponse.setClub((club != null) ? new ClubResponse(club) : new ClubResponse(clubId));
     }
 }

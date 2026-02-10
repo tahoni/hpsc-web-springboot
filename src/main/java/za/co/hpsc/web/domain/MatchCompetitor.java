@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.ClubReference;
-import za.co.hpsc.web.enums.Discipline;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
@@ -52,39 +49,58 @@ public class MatchCompetitor {
     @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
     @Enumerated(EnumType.STRING)
-    private Discipline discipline;
+    private Division division;
     @Enumerated(EnumType.STRING)
     private PowerFactor powerFactor;
 
     private BigDecimal matchPoints;
-    private BigDecimal matchPercentage;
     private BigDecimal matchRanking;
+
+    @Enumerated(EnumType.STRING)
+    private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
     @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code MatchStageCompetitor} entity with data from a DTO
+     * and associated entities.
+     *
+     * <p>
+     * This method sets the relevant fields in the entity, including association with a match,
+     * competitor information, performance metrics, and date attributes.
+     * </p>
+     *
+     * @param matchCompetitorDto the DTO containing data needed to populate the entity fields.
+     * @param matchEntity        the associated match entity.
+     * @param competitorEntity   the associated competitor entity.
+     */
     public void init(MatchCompetitorDto matchCompetitorDto, Match matchEntity, Competitor competitorEntity) {
+        // Initialises the competitor details
+        this.id = matchCompetitorDto.getId();
         this.match = matchEntity;
         this.competitor = competitorEntity;
 
+        // Initialises the competitor attributes
         this.club = matchCompetitorDto.getClub();
+        this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
         this.firearmType = matchCompetitorDto.getFirearmType();
-        this.discipline = matchCompetitorDto.getDiscipline();
+        this.division = matchCompetitorDto.getDivision();
         this.powerFactor = matchCompetitorDto.getPowerFactor();
 
+        // Initialises the match scoring attributes
         this.matchPoints = matchCompetitorDto.getMatchPoints();
-        this.matchPercentage = matchCompetitorDto.getMatchPercentage();
         this.matchRanking = matchCompetitorDto.getMatchRanking();
 
+        // Initialises the date fields
         this.dateCreated = matchCompetitorDto.getDateCreated();
         this.dateUpdated = matchCompetitorDto.getDateUpdated();
         this.dateEdited = matchCompetitorDto.getDateEdited();
     }
 
     public String toString() {
-        return match.toString() + ": " + competitor.toString();
+        return this.match.toString() + ": " + this.competitor.toString();
     }
 }

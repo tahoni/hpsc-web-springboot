@@ -51,18 +51,14 @@ public class EnrolledRequest {
     @JsonProperty(value = "DivId")
     private Integer divisionId;
 
-    // AAA, BBB, CCC, UUU (= BBB)
-    // CCC = 'SOSC'
-    // BBB = 'HPSC'
-    // CCC = 'PMPSC'
-    // UUU = 'VISITOR'
+    // Club
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "RefNo")
     private String refNo;
+
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "TagId")
     private Integer tagId;
-    // 0, 1, 2, 3, 4, 5, 6, 7 (=1)
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "CatId")
     private Integer competitorCategoryId;

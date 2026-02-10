@@ -17,7 +17,8 @@ public interface MatchStageService {
      *
      * @param matchId     the unique identifier of the match to which the stage belongs.
      *                    Must not be null.
-     * @param stageNumber the number representing the stage within the match. Must not be null.
+     * @param stageNumber the number representing the stage within the match.
+     *                    Must not be null.
      * @return an {@code Optional} containing the {@link MatchStage} if a matching stage is found,
      * or an empty {@code Optional} if no matching stage is found.
      */

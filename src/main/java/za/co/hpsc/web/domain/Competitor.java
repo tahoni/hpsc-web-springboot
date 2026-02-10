@@ -43,39 +43,55 @@ public class Competitor {
     @Column(nullable = false)
     private String lastName;
     private String middleNames;
+    private LocalDate dateOfBirth;
+
     private Integer sapsaNumber;
     @NotNull
     @Column(nullable = false)
     private String competitorNumber;
-    private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
-    private CompetitorCategory category = CompetitorCategory.NONE;
+    private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> competitorMatches;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> competitorStageMatches;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code Competitor} entity with data from a DTO.
+     *
+     * <p>
+     * This method sets the relevant fields in the entity, including association with a stage,
+     * competitor information, performance metrics, and date attributes.
+     * </p>
+     *
+     * @param competitorDto the DTO containing data needed to populate the entity fields.
+     */
     public void init(CompetitorDto competitorDto) {
+        // Initialises competitor details
+        this.id = competitorDto.getId();
+
+        // Initialises competitor attributes
         this.firstName = competitorDto.getFirstName();
         this.lastName = competitorDto.getLastName();
         this.middleNames = competitorDto.getMiddleNames();
 
+        // Initialises competitor number and SAPSA number
         this.sapsaNumber = competitorDto.getSapsaNumber();
         this.competitorNumber = competitorDto.getCompetitorNumber();
         this.dateOfBirth = competitorDto.getDateOfBirth();
 
-        this.category = competitorDto.getCategory();
+        // Initialises competitor category
+        this.defaultCompetitorCategory = competitorDto.getDefaultCompetitorCategory();
     }
 
     @Override
     public String toString() {
-        if ((middleNames != null) && (!middleNames.isBlank())) {
-            return firstName + " " + middleNames + " " + lastName;
+        if ((this.middleNames != null) && (!this.middleNames.isBlank())) {
+            return this.firstName + " " + this.middleNames + " " + this.lastName;
         } else {
-            return firstName + " " + lastName;
+            return this.firstName + " " + this.lastName;
         }
     }
 }

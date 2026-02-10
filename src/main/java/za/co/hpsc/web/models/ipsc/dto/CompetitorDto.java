@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.math.NumberUtils;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
@@ -37,15 +38,16 @@ public class CompetitorDto {
     @NotNull
     private String lastName;
     private String middleNames;
+    private LocalDate dateOfBirth;
+
     private Integer sapsaNumber;
     @NotNull
     private String competitorNumber;
-    private LocalDate dateOfBirth;
 
-    private CompetitorCategory category = CompetitorCategory.NONE;
+    private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
     /**
-     * Constructs a new {@code CompetitorDto} instance with data from the provided
+     * Constructs a new {@code CompetitorDto} instance using the provided
      * {@link Competitor} entity.
      *
      * @param competitorEntity the {@link Competitor} entity containing the competitor's information,
@@ -58,39 +60,76 @@ public class CompetitorDto {
             return;
         }
 
+        // Initialises competitor details
         this.id = competitorEntity.getId();
+
+        // Initialises competitor attributes
         this.firstName = competitorEntity.getFirstName();
         this.lastName = competitorEntity.getLastName();
         this.middleNames = competitorEntity.getMiddleNames();
+        this.dateOfBirth = competitorEntity.getDateOfBirth();
+
+        // Initialises competitor number and SAPSA number
         this.sapsaNumber = competitorEntity.getSapsaNumber();
         this.competitorNumber = competitorEntity.getCompetitorNumber();
-        this.dateOfBirth = competitorEntity.getDateOfBirth();
-        this.category = competitorEntity.getCategory();
+
+        // Initialises competitor category
+        this.defaultCompetitorCategory = competitorEntity.getDefaultCompetitorCategory();
     }
 
-    // TOOD: Javadoc (not yet ready)
-    public void init(MemberResponse memberResponse) {
+    /**
+     * Initialises the current {@code CompetitorDto} instance with data from the provided
+     * {@link MemberResponse} and {@link EnrolledResponse} objects.
+     *
+     * @param memberResponse   the {@link MemberResponse} object containing competitor-related
+     *                         information, such as the competitor's first name, last name,
+     *                         date of birth, and SAPSA number.
+     *                         Must not be null.
+     * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
+     *                         competitor category.
+     *                         Can be null.
+     */
+    public void init(@NotNull MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
+        // Initialises competitor attributes
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();
         if (memberResponse.getDateOfBirth() != null) {
             this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
         }
 
-        // Initialises competitor number and SAPSA number based on the member's ICS alias.
+        // Initialises competitor number and SAPSA number based on the member's ICS alias
         this.competitorNumber = memberResponse.getIcsAlias();
         if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
             this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
         }
 
-        // TODO: populate category
+        // Initialises competitor category based on the member's category code'
+        if (enrolledResponse != null) {
+            this.defaultCompetitorCategory = CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                    .orElse(CompetitorCategory.NONE);
+        } else {
+            this.defaultCompetitorCategory = CompetitorCategory.NONE;
+        }
     }
 
+    /**
+     * Returns a string representation of the competitor's full name.
+     *
+     * <p>
+     * If middle names are present and not blank, they are included
+     * between the first name and last name. Otherwise, only the
+     * first name and last name are included.
+     * </p>
+     *
+     * @return a string representation of the competitor's full name,
+     * which may include middle names if available and non-blank.
+     */
     @Override
     public String toString() {
-        if ((middleNames != null) && (!middleNames.isBlank())) {
-            return firstName + " " + middleNames + " " + lastName;
+        if ((this.middleNames != null) && (!this.middleNames.isBlank())) {
+            return this.firstName + " " + this.middleNames + " " + this.lastName;
         } else {
-            return firstName + " " + lastName;
+            return this.firstName + " " + this.lastName;
         }
     }
 }

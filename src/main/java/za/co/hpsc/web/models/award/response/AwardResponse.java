@@ -40,9 +40,12 @@ public class AwardResponse extends Response {
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>
      *
-     * @param firstPlace  the award place representing the first position. Must not be null.
-     * @param secondPlace the award place representing the second position. Can be null.
-     * @param thirdPlace  the award place representing the third position. Can be null.
+     * @param firstPlace  the award place representing the first position.
+     *                    Must not be null.
+     * @param secondPlace the award place representing the second position.
+     *                    Can be null.
+     * @param thirdPlace  the award place representing the third position.
+     *                    Can be null.
      */
     public AwardResponse(@NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
                          AwardPlacing thirdPlace) {
@@ -62,9 +65,12 @@ public class AwardResponse extends Response {
      * </p>
      *
      * @param uuid        the unique identifier for the response. If null, a random UUID is generated.
-     * @param firstPlace  the award place representing the first position. Must not be null.
-     * @param secondPlace the award place representing the second position. Can be null.
-     * @param thirdPlace  the award place representing the third position. Can be null.
+     * @param firstPlace  the award place representing the first position.
+     *                    Must not be null.
+     * @param secondPlace the award place representing the second position.
+     *                    Can be null.
+     * @param thirdPlace  the award place representing the third position.
+     *                    Can be null.
      */
     public AwardResponse(UUID uuid, @NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
                          AwardPlacing thirdPlace) {
@@ -85,10 +91,14 @@ public class AwardResponse extends Response {
      *
      * @param uuid        the unique identifier for the response. If null, a random UUID
      *                    is generated.
-     * @param title       the title of the award response. Must not be null or blank.
-     * @param firstPlace  the award place representing the first position. Must not be null.
-     * @param secondPlace the award place representing the second position. Can be null.
-     * @param thirdPlace  the award place representing the third position. Can be null.
+     * @param title       the title of the award response.
+     *                    Must not be null or blank.
+     * @param firstPlace  the award place representing the first position.
+     *                    Must not be null.
+     * @param secondPlace the award place representing the second position.
+     *                    Can be null.
+     * @param thirdPlace  the award place representing the third position.
+     *                    Can be null.
      */
     public AwardResponse(UUID uuid, @NotNull @NotBlank String title, @NotNull AwardPlacing firstPlace,
                          AwardPlacing secondPlace, AwardPlacing thirdPlace) {
@@ -110,15 +120,22 @@ public class AwardResponse extends Response {
      *
      * @param uuid        the unique identifier for the response. If null, a random UUID
      *                    is generated.
-     * @param title       the title of the award response. Must not be null or blank.
-     * @param summary     a brief summary of the award response. Can be null.
-     * @param description a detailed description of the award response. Can be null.
-     * @param category    the category under which the award response is classified. Can be null.
-     * @param tags        a list of tags associated with the award response. If null,
-     *                    an empty list is assigned.
-     * @param firstPlace  the award place representing the first position. Must not be null.
-     * @param secondPlace the award place representing the second position. Can be null.
-     * @param thirdPlace  the award place representing the third position. Can be null.
+     * @param title       the title of the award response.
+     *                    Must not be null or blank.
+     * @param summary     a brief summary of the award response.
+     *                    Can be null.
+     * @param description a detailed description of the award response.
+     *                    Can be null.
+     * @param category    the category under which the award response is classified.
+     *                    Can be null.
+     * @param tags        a list of tags associated with the award response.
+     *                    If null, an empty list is assigned.
+     * @param firstPlace  the award place representing the first position.
+     *                    Must not be null.
+     * @param secondPlace the award place representing the second position.
+     *                    Can be null.
+     * @param thirdPlace  the award place representing the third position.
+     *                    Can be null.
      */
     public AwardResponse(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, AwardPlacing firstPlace,
@@ -137,15 +154,22 @@ public class AwardResponse extends Response {
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>
      *
-     * @param title       the title of the award response. Must not be null or blank.
-     * @param summary     a brief summary of the award response. Can be null.
-     * @param description a detailed description of the award response. Can be null.
-     * @param category    the category under which the award response is classified. Can be null.
-     * @param tags        a list of tags associated with the award response. If null,
-     *                    an empty list is assigned.
-     * @param firstPlace  the award place representing the first position. Must not be null.
-     * @param secondPlace the award place representing the second position. Can be null.
-     * @param thirdPlace  the award place representing the third position. Can be null.
+     * @param title       the title of the award response.
+     *                    Must not be null or blank.
+     * @param summary     a brief summary of the award response.
+     *                    Can be null.
+     * @param description a detailed description of the award response.
+     *                    Can be null.
+     * @param category    the category under which the award response is classified.
+     *                    Can be null.
+     * @param tags        a list of tags associated with the award response.
+     *                    If null, an empty list is assigned.
+     * @param firstPlace  the award place representing the first position.
+     *                    Must not be null.
+     * @param secondPlace the award place representing the second position.
+     *                    Can be null.
+     * @param thirdPlace  the award place representing the third position.
+     *                    Can be null.
      */
     public AwardResponse(@NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, @NotNull AwardPlacing firstPlace,
@@ -168,16 +192,22 @@ public class AwardResponse extends Response {
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>
      *
-     * @param title                    the title of the award response. Must not be null or blank.
-     * @param summary                  a brief summary of the award response. Can be null.
-     * @param description              a detailed description of the award response. Can be null.
+     * @param title                    the title of the award response.
+     *                                 Must not be null or blank.
+     * @param summary                  a brief summary of the award response.
+     *                                 Can be null.
+     * @param description              a detailed description of the award response.
+     *                                 Can be null.
      * @param category                 the category under which the award response is classified.
      *                                 Can be null.
-     * @param tags                     a list of tags associated with the award response. If null,
-     *                                 an empty list is assigned.
-     * @param firstPlaceName           the name of the awardee for the first position. Can be null.
-     * @param secondPlaceName          the name of the awardee for the second position. Can be null.
-     * @param thirdPlaceName           the name of the awardee for the third position. Can be null.
+     * @param tags                     a list of tags associated with the award response.
+     *                                 If null, an empty list is assigned.
+     * @param firstPlaceName           the name of the awardee for the first position.
+     *                                 Can be null.
+     * @param secondPlaceName          the name of the awardee for the second position.
+     *                                 Can be null.
+     * @param thirdPlaceName           the name of the awardee for the third position.
+     *                                 Can be null.
      * @param firstPlaceImageFileName  the file name of the image associated with the first position.
      *                                 Can be null.
      * @param secondPlaceImageFileName the file name of the image associated with the second position.
@@ -210,7 +240,8 @@ public class AwardResponse extends Response {
      *
      * @param awardRequest the request object containing details such as title, summary,
      *                     description, category, tags, and award place details for first,
-     *                     second, and third positions. Must not be null.
+     *                     second, and third positions.
+     *                     Must not be null.
      */
     public AwardResponse(@NotNull AwardRequest awardRequest) {
         // Initialises response fields from request attributes

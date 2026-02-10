@@ -16,55 +16,76 @@ import java.util.Optional;
  */
 @Getter
 public enum CompetitorCategory {
-    // TODO: get codes
-    JUNIOR("Junior"),
-    SUPER_JUNIOR("Super Junior"),
-    LADY("Lady"),
-    SUPER_LADY("Lady, Senior"),
-    JUNIOR_LADY("Lady, Junior"),
-    SENIOR("Senior"),
-    SUPER_SENIOR("Super Senior"),
-    GRAND_SENIOR("Grand Senior"),
+    JUNIOR("Junior", 2),
+    SUPER_JUNIOR("Super Junior", 5),
+    LADY("Lady", 1),
+    SENIOR_LADY("Lady, Senior", 7),
+    SENIOR("Senior", 3),
+    SUPER_SENIOR("Super Senior", 4),
+    GRAND_SENIOR("Grand Senior", 6),
     NONE;
 
     private final String name;
-    private final String code;
+    private final int code;
 
     CompetitorCategory() {
         this.name = "";
-        this.code = "";
+        this.code = 0;
     }
 
-    CompetitorCategory(String name) {
-        this.name = name;
-        this.code = "";
-    }
-
-    CompetitorCategory(String name, String code) {
+    CompetitorCategory(String name, int code) {
         this.name = name;
         this.code = code;
     }
 
     /**
-     * Retrieves the corresponding {@code CompetitorCategory} for the given name.
-     * If the provided name is null, blank, or does not match any category,
-     * the method returns {@code NONE}.
+     * Retrieves an optional {@code CompetitorCategory} instance based on the provided name.
      *
-     * @param name the name of the category to retrieve, case-insensitive.
-     * @return the {@code CompetitorCategory} matching the given name, or {@code NONE}
-     * if no match is found.
+     * <p>
+     * The method performs a case-insensitive match to find a division with the given name.
+     * If no match is found or the input is null/blank, a {@link CompetitorCategory#NONE} is returned.
+     * </p>
+     *
+     * @param name the name of the division to search for.
+     *             Can be null or empty.
+     * @return an {@code Optional} containing the matching {@code CompetitorCategory} if found,
+     * or {@link CompetitorCategory#NONE} otherwise.
      */
-    // TODO: Javadoc
     public static Optional<CompetitorCategory> getByName(String name) {
         if ((name == null) || (name.isBlank())) {
-            return Optional.empty();
+            return Optional.of(NONE);
         }
 
-        return Arrays.stream(CompetitorCategory.values())
+        Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
                 .filter(category -> category.isNameMatch(name))
                 .findFirst();
+        return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
     }
 
+    /**
+     * Retrieves an optional {@code CompetitorCategory} instance based on the provided code.
+     *
+     * <p>
+     * The method searches for a category with a code matching the provided input.
+     * If no match is found, an {@link CompetitorCategory#NONE} is returned.
+     * </p>
+     *
+     * @param code the code of the division to search for.
+     *             The code can be {@code null} or negative, in which case
+     *             a {@link CompetitorCategory#NONE}} is returned.
+     * @return an {@code Optional} containing the matching {@code Division} if found,
+     * or {@link CompetitorCategory#NONE} otherwise.
+     */
+    public static Optional<CompetitorCategory> getByCode(Integer code) {
+        if ((code == null) || (code == 0)) {
+            return Optional.of(NONE);
+        }
+
+        Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
+                .filter(category -> code.equals(category.getCode()))
+                .findFirst();
+        return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
+    }
 
     @Override
     public String toString() {

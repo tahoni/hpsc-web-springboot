@@ -45,16 +45,51 @@ public class MatchStage {
     private String stageName;
     private Integer rangeNumber;
 
+    private Integer targetPaper;
+    private Integer targetPopper;
+    private Integer targetPlates;
+    private Integer targetDisappear;
+    private Integer targetPenalty;
+
+    private Integer minRounds;
+    private Integer maxPoints;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> matchStageCompetitors;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the current {@code MatchStage} entity with data from a DTO
+     * and associated entities.
+     *
+     * <p>
+     * This method sets the stage's unique identifier, match association, stage number,
+     * name, range number, target details, and point constraints based on the input data.
+     * </p>
+     *
+     * @param stage       The {@code MatchStageDto} containing stage details such as ID, stage number,
+     *                    range number, target metrics, and point constraints.
+     * @param matchEntity The {@code Match} entity representing the match associated with the stage.
+     */
     public void init(MatchStageDto stage, Match matchEntity) {
+        // Initialises the stage details
+        this.id = stage.getId();
         this.match = matchEntity;
 
+        // Initialises the stage attributes
         this.stageNumber = stage.getStageNumber();
         this.stageName = stage.getStageName();
         this.rangeNumber = stage.getRangeNumber();
+
+        // Initialises the target details
+        this.targetPaper = stage.getTargetPaper();
+        this.targetPopper = stage.getTargetPopper();
+        this.targetPlates = stage.getTargetPlates();
+        this.targetDisappear = stage.getTargetDisappear();
+        this.targetPenalty = stage.getTargetPenalty();
+
+        // Initialises the possible points details
+        this.minRounds = stage.getMinRounds();
+        this.maxPoints = stage.getMaxPoints();
     }
 
     @Override
