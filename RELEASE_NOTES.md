@@ -13,7 +13,7 @@ throughout the codebase.
 
 ⚠️ **This is a major version update with breaking changes:**
 
-- **`Discipline` enum removed** in favor of `FirearmType` enum
+- **`Discipline` enum removed** in favour of `FirearmType` enum
 - **`Division` enum restructured** to align with IPSC firearm-type-specific divisions
 - **Discipline-to-division mappings removed**: `DisciplinesInDivision`, `DisciplinesHandgun`,
   `DisciplinesPcc`, `DisciplinesRifle`, `DisciplinesShotgun`, `DisciplinesMiniRifle`, `Disciplines22Handgun`,
@@ -51,18 +51,18 @@ throughout the codebase.
 
 **_DTO Layer Enhancements_**
 
-- **`ClubDto` introduced**: New DTO for club data transfer with initialization methods
-- **`CompetitorDto` enhanced**: Added `defaultCompetitorCategory` field and improved initialization logic
+- **`ClubDto` introduced**: New DTO for club data transfer with initialisation methods
+- **`CompetitorDto` enhanced**: Added `defaultCompetitorCategory` field and improved initialisation logic
 - **`MatchDto` enhanced**: Added `Club` entity mapping, firearm type handling, and detailed Javadoc
-- **`MatchStageDto` enhanced**: Added `maxPoints` field and initialization logic
+- **`MatchStageDto` enhanced**: Added `maxPoints` field and initialisation logic
 - **`MatchStageCompetitorDto` enhanced**: Added percentage calculation based on stage max points, removed
   `matchPercentage`
-- **`MatchCompetitorDto` enhanced**: Added `CompetitorCategory` field and improved initialization
+- **`MatchCompetitorDto` enhanced**: Added `CompetitorCategory` field and improved initialisation
 
-**_Entity Initialization Methods_**
+**_Entity Initialisation Methods_**
 
 - Added comprehensive `init()` methods across all domain entities (`Club`, `Competitor`, `Match`,
-  `MatchCompetitor`, `MatchStage`, `MatchStageCompetitor`) with detailed Javadoc explaining initialization
+  `MatchCompetitor`, `MatchStage`, `MatchStageCompetitor`) with detailed Javadoc explaining initialisation
   logic
 - Enhanced null safety and graceful handling of invalid or missing data
 
@@ -94,14 +94,14 @@ throughout the codebase.
 **_Updated Test Coverage_**
 
 - **`DivisionTest`**: Expanded to cover new firearm-type-specific divisions (194+ lines, +194 additions)
-- **`CompetitorCategoryTest`**: Updated to test new null-safe behavior
+- **`CompetitorCategoryTest`**: Updated to test new null-safe behaviour
 - **`MatchHelpersTest`**: Updated to test firearm type inference logic
 - **`MatchResultServiceImplTest`**: Updated to test new club entity handling
 
 **_Removed Tests_**
 
-- **`DisciplineTest`**: Removed (202 lines) - discipline enum deprecated
-- **`DivisionToDisciplinesInDivisionMapperTest`**: Removed (43 lines) - mapper class deprecated
+- **`DisciplineTest`**: Removed (202 lines) – discipline enum deprecated
+- **`DivisionToDisciplinesInDivisionMapperTest`**: Removed (43 lines) – mapper class deprecated
 
 #### Documentation
 
@@ -109,9 +109,9 @@ throughout the codebase.
 
 - Expanded **Features** section with detailed descriptions of match management, competitor tracking, club
   operations, award ceremonies, image gallery, and IPSC integration
-- Added comprehensive **Technology** section listing all frameworks, libraries, and tools
+- Added a comprehensive **Technology** section listing all frameworks, libraries, and tools
 - Enhanced **Prerequisites** section with database configuration requirements
-- Added detailed **Testing** section with test categories, frameworks, and coverage areas
+- Added a detailed **Testing** section with test categories, frameworks, and coverage areas
 - Improved **Introduction** with feature highlights
 
 **_ARCHITECTURE.md Updates_**
