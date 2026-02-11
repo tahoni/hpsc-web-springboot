@@ -25,32 +25,32 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ScoreResponse {
     @NotNull
-    private Integer matchId = 0;
+    private Integer matchId;
     @NotNull
-    private Integer stageId = 0;
+    private Integer stageId;
     @NotNull
-    private Integer memberId = 0;
+    private Integer memberId;
 
-    private Integer scoreA = 0;
-    private Integer scoreB = 0;
-    private Integer scoreC = 0;
-    private Integer scoreD = 0;
+    private Integer scoreA;
+    private Integer scoreB;
+    private Integer scoreC;
+    private Integer scoreD;
 
-    private Integer misses = 0;
-    private Integer penalties = 0;
-    private Integer procedurals = 0;
-    private String time = "";
+    private Integer misses;
+    private Integer penalties;
+    private Integer procedurals;
+    private String time;
 
-    private Boolean deduction = false;
-    private String deductionPercentage = "";
+    private Boolean deduction;
+    private String deductionPercentage;
 
-    private Integer extraShot = 0;
-    private String overTime = "";
+    private Integer extraShot;
+    private String overTime;
 
-    private String hitFactor = "";
-    private Integer finalScore = 0;
+    private String hitFactor;
+    private Integer finalScore;
 
-    private Boolean isDisqualified = false;
+    private Boolean isDisqualified;
 
     private LocalDateTime lastModified = LocalDateTime.now();
 

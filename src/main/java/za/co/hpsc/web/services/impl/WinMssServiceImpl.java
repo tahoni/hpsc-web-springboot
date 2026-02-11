@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
@@ -21,7 +21,6 @@ import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.services.WinMssService;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +41,7 @@ public class WinMssServiceImpl implements WinMssService {
     }
 
     @Override
-    public ControllerResponse importWinMssCabFile(String cabFileContent)
+    public MatchResultsDtoHolder importWinMssCabFile(String cabFileContent)
             throws ValidationException, FatalException {
 
         if ((cabFileContent == null) || (cabFileContent.isBlank())) {
@@ -50,7 +49,7 @@ public class WinMssServiceImpl implements WinMssService {
             throw new ValidationException("The provided CAB file can not be null or empty.");
         }
 
-        // Imports WinMSS cab file
+        // Imports WinMSS cab file content
         IpscRequestHolder ipscRequestHolder = readIpscRequests(cabFileContent);
         if (ipscRequestHolder == null) {
             log.error("IPSC request holder is null.");
@@ -65,14 +64,17 @@ public class WinMssServiceImpl implements WinMssService {
         }
 
         // Persists the match results
+        List<MatchResultsDto> matchResultsList = new ArrayList<>();
+        // Iterates IPSC responses; persists present match results
         ipscResponseHolder.getIpscList().forEach(ipscResponse -> {
             Optional<MatchResultsDto> matchResults = matchResultService.initMatchResults(ipscResponse);
-            matchResults.ifPresent(transactionService::saveMatchResults);
+            if (matchResults.isPresent()) {
+                transactionService.saveMatchResults(matchResults.get());
+                matchResultsList.add(matchResults.get());
+            }
         });
 
-        // Returns a success message
-        return new ControllerResponse(LocalDateTime.now(), true,
-                "Successfully imported the WinMSS.cab file data", "");
+        return new MatchResultsDtoHolder(matchResultsList);
     }
 
     /**
@@ -106,7 +108,7 @@ public class WinMssServiceImpl implements WinMssService {
                     TagRequest.class));
             ipscRequestHolder.setMembers(readRequests(ipscRequest.getMember(),
                     MemberRequest.class));
-            ipscRequestHolder.setClassifications(readRequests(ipscRequest.getClassification(),
+            ipscRequestHolder.setClassifications(readRequests(ipscRequest.getClassify(),
                     ClassificationRequest.class));
             ipscRequestHolder.setEnrolledMembers(readRequests(ipscRequest.getEnrolled(),
                     EnrolledRequest.class));
@@ -119,6 +121,8 @@ public class WinMssServiceImpl implements WinMssService {
 
             return ipscRequestHolder;
 
+        } catch (ValidationException e) {
+            throw e;
         } catch (MismatchedInputException | IllegalArgumentException e) {
             log.error("Error parsing JSON data: {}", e.getMessage(), e);
             throw new ValidationException("Invalid JSON data format.", e);
@@ -159,8 +163,7 @@ public class WinMssServiceImpl implements WinMssService {
 
         } catch (JsonProcessingException e) {
             log.error("Error parsing XML content: {}", e.getMessage(), e);
+            throw new ValidationException("Invalid XML data format.", e);
         }
-
-        return new ArrayList<>();
     }
 }

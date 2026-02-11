@@ -3,8 +3,8 @@ package za.co.hpsc.web.helpers;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.Club;
-import za.co.hpsc.web.domain.Match;
-import za.co.hpsc.web.domain.MatchStage;
+import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.utils.StringUtil;
@@ -21,7 +21,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Lions Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.HANDGUN);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
@@ -48,7 +48,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Tigers Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
@@ -75,7 +75,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Phoenix Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
@@ -102,7 +102,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Lions Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.PCC);
         match.setMatchCategory(MatchCategory.LEAGUE);
@@ -127,7 +127,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Tigers Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
@@ -152,7 +152,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Phoenix Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
@@ -177,7 +177,7 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Eagles Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.HANDGUN_22);
         match.setMatchCategory(null);
@@ -202,13 +202,13 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Lions Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.SHOTGUN);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setScheduledDate(LocalDate.of(2023, 5, 20));
 
-        MatchStage matchStage = new MatchStage();
+        IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setMatch(match);
         matchStage.setStageNumber(3);
         matchStage.setRangeNumber(5);
@@ -234,13 +234,13 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Tigers Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2024, 3, 15));
 
-        MatchStage matchStage = new MatchStage();
+        IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setMatch(match);
         matchStage.setStageNumber(null);
         matchStage.setRangeNumber(2);
@@ -266,13 +266,13 @@ class MatchHelpersTest {
         // Prepare a mock match object
         Club club = new Club("Phoenix Club", "");
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setScheduledDate(LocalDate.of(2025, 11, 12));
 
-        MatchStage matchStage = new MatchStage();
+        IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setMatch(match);
         matchStage.setStageNumber(null);
         matchStage.setRangeNumber(null);

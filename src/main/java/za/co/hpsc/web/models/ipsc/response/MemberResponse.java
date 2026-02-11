@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.MemberRequest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -24,23 +23,23 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MemberResponse {
     @NotNull
-    private Integer memberId = 0;
-    private String lastName = "";
-    private String firstName = "";
-    private String comment = "";
+    private Integer memberId;
+    private String lastName;
+    private String firstName;
+    private String comment;
 
-    private Boolean female = false;
-    private LocalDateTime dateOfBirth = LocalDate.now().atStartOfDay();
+    private Boolean female;
+    private LocalDateTime dateOfBirth;
 
-    private String icsAlias = "";
-    private String refNo = "";
+    private String icsAlias;
+    private String refNo;
     @NotNull
-    private Boolean isRegisteredForMatch = false;
+    private Boolean isRegisteredForMatch;
 
-    private Integer qualificationId = 0;
-    private String scoreClassificationId = "";
+    private Integer qualificationId;
+    private String scoreClassificationId;
 
-    private String email = "";
+    private String email;
 
     /**
      * Constructs a new {@code MemberResponse} object by initialising its fields using the values

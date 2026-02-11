@@ -23,7 +23,7 @@ import java.util.List;
  * <p>
  * The {@code Match} class is an entity in the persistence layer, used to store and
  * retrieve match-related data. It enables associations with other entities such as
- * {@link Club}, {@link MatchStage}, and {@link MatchCompetitor}.
+ * {@link Club}, {@link IpscMatchStage}, and {@link MatchCompetitor}.
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to return a context-specific
  * representation of the match's display name.
@@ -34,9 +34,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Match {
+public class IpscMatch {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
@@ -58,7 +58,7 @@ public class Match {
     private MatchCategory matchCategory;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MatchStage> matchStages;
+    private List<IpscMatchStage> matchStages;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> matchCompetitors;
 
@@ -84,9 +84,14 @@ public class Match {
         this.id = matchDto.getId();
         this.club = clubEntity;
 
+        // Sets club name from DTO or associated entity
+        if (matchDto.getClubName() != null) {
+            this.clubName = matchDto.getClubName();
+        } else if (clubEntity != null) {
+            clubName = ClubReference.getByName(clubEntity.getName()).orElse(null);
+        }
+        
         // Initialises the match attributes
-        this.clubName = (matchDto.getClubName() != null) ?
-                matchDto.getClubName() : ClubReference.getByName(clubEntity.getName()).orElse(null);
         this.name = matchDto.getName();
         this.scheduledDate = matchDto.getScheduledDate();
         this.matchFirearmType = matchDto.getMatchFirearmType();

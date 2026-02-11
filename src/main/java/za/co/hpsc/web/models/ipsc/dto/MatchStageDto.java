@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.domain.MatchStage;
+import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.models.ipsc.response.StageResponse;
 
 import java.util.UUID;
@@ -48,13 +48,13 @@ public class MatchStageDto {
 
     /**
      * Constructs a new {@code MatchStageDto} instance with ata from the
-     * provided {@link MatchStage} entity.
+     * provided {@link IpscMatchStage} entity.
      *
-     * @param matchStageEntity the {@link MatchStage} entity containing stage-related information,
+     * @param matchStageEntity the {@link IpscMatchStage} entity containing stage-related information,
      *                         such as the unique identifier, associated match, and stage number.
      *                         Must not be null.
      */
-    public MatchStageDto(@NotNull MatchStage matchStageEntity) {
+    public MatchStageDto(@NotNull IpscMatchStage matchStageEntity) {
         if (matchStageEntity == null) {
             return;
         }
@@ -81,15 +81,15 @@ public class MatchStageDto {
 
     /**
      * Constructs a new {@code MatchStageDto} instance using the provided
-     * {@link MatchStage} entity and {@link MatchDto} object.
+     * {@link IpscMatchStage} entity and {@link MatchDto} object.
      *
-     * @param matchStageEntity the {@link MatchStage} entity containing stage-related information,
+     * @param matchStageEntity the {@link IpscMatchStage} entity containing stage-related information,
      *                         such as the unique identifier, stage number, and stage name.
      *                         Must not be null.
      * @param matchDto         the {@link  MatchDto} object representing the associated match.
      *                         Must not be null.
      */
-    public MatchStageDto(@NotNull MatchStage matchStageEntity, @NotNull MatchDto matchDto) {
+    public MatchStageDto(@NotNull IpscMatchStage matchStageEntity, @NotNull MatchDto matchDto) {
         // Initialises the stage details
         this.id = matchStageEntity.getId();
         this.match = matchDto;

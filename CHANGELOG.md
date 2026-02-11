@@ -4,6 +4,8 @@
 
 ### Table of Contents
 
+- [Version 4.0.0](#version-400---_2026-02-11_)
+- [Version 3.1.0](#version-310---_2026-02-10_)
 - [Version 3.0.0](#version-300---_2026-02-10_)
 - [Version 2.0.0](#version-200--_2026-02-08_)
 - [Version 1.1.3](#version-113--_2026-01-28_)
@@ -11,6 +13,181 @@
 - [Version 1.1.1](#version-111--_2026-01-16_)
 - [Version 1.1.0](#version-110--_2026-01-14_)
 - [Version 1.0.0](#version-100--_2026-01-04_)
+
+### [Version 4.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-4.0.0) - _2026-02-11_
+
+This release includes significant refactoring of the IPSC match system, enhanced input validation, improved
+exception handling, comprehensive test coverage, and bug fixes for XML parsing.
+
+#### Breaking Changes
+
+⚠️ **This is a major version update with breaking changes:**
+
+- **Renamed domain entities**: `Match` → `IpscMatch`, `MatchStage` → `IpscMatchStage`
+- **Renamed repository**: `MatchRepository` → `IpscMatchRepository`
+- **Removed**: `MatchStageRepository` (replaced with `IpscMatchStageRepository`)
+
+#### Enhancements and Updates
+
+**_IPSC System Refactoring_**
+
+- **Renamed domain entities**: Refactored `Match` to `IpscMatch` and `MatchStage` to `IpscMatchStage` for
+  improved naming clarity and consistency
+- **Repository consolidation**: Renamed `MatchRepository` to `IpscMatchRepository` and replaced
+  `MatchStageRepository` with `IpscMatchStageRepository`
+- **Updated dependencies**: Propagated entity name changes across all dependent services, controllers,
+  helpers, and repositories
+- **Domain model updates**: Updated entity relationships in `MatchCompetitor` and `MatchStageCompetitor` to
+  reference renamed entities
+
+**_Input Validation and Robustness_**
+
+- **Enhanced null safety**: Added `@NotNull` annotations to critical service methods in `WinMssService`,
+  `MatchService`, and `MatchStageService`
+- **Improved DTO validation**: Enhanced null checks and input validation in DTO processing throughout
+  `MatchDto`, `MatchStageDto`, and related models
+- **Request validation**: Added validation annotations to `IpscRequest` and `XmlDataWrapper` for improved data
+  integrity
+
+**_Match Processing Improvements_**
+
+- **Refactored match result processing**: Refined match and score processing logic in `MatchResultServiceImpl`
+  for better accuracy and maintainability
+- **Introduced DTO holder**: Added `MatchResultsDtoHolder` class to improve DTO management and encapsulation
+- **Enhanced CAB file import**: Improved `WinMssServiceImpl` modularity by refactoring CAB file import logic
+  into smaller, more focused methods
+- **Transaction handling**: Enhanced transaction processing and error recovery in `TransactionServiceImpl`
+
+**_API Documentation Enhancements_**
+
+- **Updated endpoint documentation**: Improved API documentation for image endpoints in `ImageController`
+- **Enhanced award endpoints**: Updated API documentation for award-related operations in `AwardController`
+- **Refined IPSC controller**: Enhanced documentation and endpoint definitions in `IpscController`
+
+**_Response Model Refinements_**
+
+- **Removed default values**: Cleaned up response model fields by removing default values in `ClubResponse`,
+  `EnrolledResponse`, `MemberResponse`, `ScoreResponse`, `StageResponse`, `MatchResponse`, `TagResponse`, and
+  `IpscResponse` for cleaner JSON serialization
+- **Consistent null handling**: Standardized nullable field handling across all response models
+
+**_Exception Handling Improvements_**
+
+- **Enhanced error responses**: Improved exception handling in `ControllerAdvice` for more consistent error
+  responses
+- **Better error propagation**: Enhanced exception propagation from service layer to controller layer
+
+#### Bug Fixes
+
+**_XML Parsing Error Handling_**
+
+- **Fixed XML parsing bugs**: Resolved critical issues in XML parsing logic within `WinMssServiceImpl`
+- **Improved error recovery**: Enhanced error handling and recovery mechanisms during XML data processing
+- **Consistent exception handling**: Aligned XML and JSON parsing error handling for uniform behaviour
+
+#### Testing Improvements
+
+**_Comprehensive Test Coverage_**
+
+- **Enhanced WinMssService testing**: Significantly expanded `WinMssServiceTest` with comprehensive test cases
+  covering CAB file import, XML parsing, and error scenarios
+- **New test suite**: Added complete test coverage with `IpscMatchServiceImplTest` (985 lines of new test
+  code)
+- **Improved existing tests**: Enhanced test coverage in `MatchResultServiceImplTest`,
+  `WinMssServiceImplTest`, and `MatchHelpersTest`
+- **Updated test fixtures**: Updated `HpscWebApplicationTests` and helper tests to reflect entity renames
+
+#### Code Quality Improvements
+
+- **Improved modularity**: Refactored service implementations for better separation of concerns and
+  testability
+- **Enhanced maintainability**: Simplified complex methods and improved code readability across multiple
+  services
+- **Better encapsulation**: Introduced helper classes and DTOs to improve data handling and reduce coupling
+
+#### Migration Notes
+
+This release includes breaking changes due to entity renaming. Migration steps required:
+
+- **Database schema updates**: If using JPA auto-DDL, table names will change from `match` to `ipsc_match` and
+  `match_stage` to `ipsc_match_stage`. Manual migration scripts may be required for production databases.
+- **API contracts**: Endpoint behaviour remains unchanged, but internal processing has been refactored
+- **Custom queries**: Any custom queries or native SQL referencing `Match` or `MatchStage` entities must be
+  updated to use `IpscMatch` and `IpscMatchStage`
+- **Repository references**: Update any direct repository references from `MatchRepository` to
+  `IpscMatchRepository`
+
+#### Changes by
+
+@tahoni
+
+### [Version 3.1.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-3.1.0) - _2026-02-10_
+
+A maintenance release focused on improving exception handling consistency, enhancing API documentation, and
+fixing critical bugs in XML parsing. This release simplifies the global exception handling architecture while
+maintaining backward compatibility.
+
+#### Enhancements and Updates
+
+**_Exception Handling Improvements_**
+
+- **Consolidated exception handlers**: Merged `Exception` and `RuntimeException` handlers in
+  `ControllerAdvice` into a single unified method for consistent error responses
+- **Simplified validation error handling**: Combined `IllegalArgumentException` and `MismatchedInputException`
+  handlers to reduce code duplication
+- **Removed redundant handlers**: Eliminated `CsvReadException` handler as it is now covered by the generic
+  exception handling mechanism
+- **Code reduction**: Streamlined `ControllerAdvice` from approximately 100 lines to 70 lines while
+  maintaining full functionality
+
+**_API Documentation Enhancements_**
+
+- **Enhanced OpenAPI annotations**: Added `@Operation` annotation to `importWinMssCabData` endpoint in
+  `IpscController` with clear summary and description
+- **Corrected request body schema**: Fixed `@RequestBody` schema reference from `ControllerResponse` to
+  `IpscRequest` for accurate API documentation
+- **Improved exception declaration**: Added explicit `throws ValidationException, FatalException` declarations
+  for better exception propagation and API contract clarity
+- **Simplified exception handling**: Removed unnecessary try-catch block in `IpscController`, allowing
+  exceptions to propagate naturally to global exception handler
+
+#### Bug Fixes
+
+**_XML Parsing Error Handling_**
+
+- **Fixed missing return statement**: Resolved critical bug in `WinMssServiceImpl` where XML parsing errors
+  could result in null return values
+- **Enhanced exception propagation**: Added proper `ValidationException` re-throwing to preserve exception
+  context and error details
+- **Improved error consistency**: Aligned XML parsing error handling with JSON parsing patterns for consistent
+  behaviour across data formats
+
+#### Configuration Changes
+
+- **Version updates**: Bumped an application version from 3.0.0 to 3.1.0 in `pom.xml` and
+  `HpscWebApplication.java`
+
+#### Code Quality Improvements
+
+- **Exception handling architecture**: Simplified and standardised exception handling patterns across the
+  application
+- **Error propagation**: Enhanced exception flow from service layer through controller layer to global
+  exception handler
+- **Documentation accuracy**: Improved alignment between code behaviour and API documentation
+
+#### Migration Notes
+
+This release is fully backward-compatible with version 3.0.0. No migration steps are required.
+
+- **API contracts unchanged**: All endpoint signatures and response formats remain consistent
+- **Exception responses unchanged**: Error response structure and HTTP status codes remain the same
+- **No database changes**: No schema updates or data migrations required
+
+#### Changes by
+
+@tahoni
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### [Version 3.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-3.0.0) - _2026-02-10_
 
@@ -136,7 +313,6 @@ throughout the codebase.
 
 #### Configuration Changes
 
-- **Version bumps**: Updated `pom.xml`, `HpscWebApplication.java`, and release notes to version 3.0.0
 - **Constants**: Added `DEFAULT_MATCH_CATEGORY` to `IpscConstants`
 
 #### Code Quality Improvements

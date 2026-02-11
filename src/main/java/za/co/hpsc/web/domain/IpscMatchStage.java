@@ -29,15 +29,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class MatchStage {
+public class IpscMatchStage {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "match_id")
-    private Match match;
+    private IpscMatch match;
 
     @NotNull
     @Column(nullable = false)
@@ -70,7 +70,7 @@ public class MatchStage {
      *                    range number, target metrics, and point constraints.
      * @param matchEntity The {@code Match} entity representing the match associated with the stage.
      */
-    public void init(MatchStageDto stage, Match matchEntity) {
+    public void init(MatchStageDto stage, IpscMatch matchEntity) {
         // Initialises the stage details
         this.id = stage.getId();
         this.match = matchEntity;
