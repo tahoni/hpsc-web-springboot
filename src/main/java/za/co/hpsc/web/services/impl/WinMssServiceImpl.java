@@ -51,6 +51,33 @@ public class WinMssServiceImpl implements WinMssService {
         }
 
         // Imports WinMSS cab file
+        if (!importWinMssCabFileContent(cabFileContent).isEmpty()) {
+            // Returns a success message
+            return new ControllerResponse(LocalDateTime.now(), true,
+                    "Successfully imported the WinMSS.cab file data", "");
+        } else {
+            // Returns an error message
+            return new ControllerResponse(LocalDateTime.now(), false,
+                    "An error occurred importing the WinMSS.cab file data", "");
+        }
+    }
+
+    /**
+     * Imports the content of a WinMSS CAB file, processes its match information, and persists
+     * the resulting match data.
+     *
+     * @param cabFileContent The string content of the CAB file to be imported.
+     *                       Must not be null or blank.
+     * @return A list of {@link MatchResultsDto} objects representing the match results
+     * that were successfully processed and saved.
+     * @throws ValidationException If the input CAB file content is invalid, missing, or results
+     *                             in invalid request or response processing.
+     * @throws FatalException      If a critical failure occurs during file processing or data mapping.
+     */
+    public List<MatchResultsDto> importWinMssCabFileContent(@NotNull @NotBlank String cabFileContent)
+            throws ValidationException, FatalException {
+
+        // Imports WinMSS cab file content
         IpscRequestHolder ipscRequestHolder = readIpscRequests(cabFileContent);
         if (ipscRequestHolder == null) {
             log.error("IPSC request holder is null.");
@@ -65,14 +92,17 @@ public class WinMssServiceImpl implements WinMssService {
         }
 
         // Persists the match results
+        List<MatchResultsDto> matchResultsList = new ArrayList<>();
+        // Iterates IPSC responses; persists present match results
         ipscResponseHolder.getIpscList().forEach(ipscResponse -> {
             Optional<MatchResultsDto> matchResults = matchResultService.initMatchResults(ipscResponse);
-            matchResults.ifPresent(transactionService::saveMatchResults);
+            if (matchResults.isPresent()) {
+                transactionService.saveMatchResults(matchResults.get());
+                matchResultsList.add(matchResults.get());
+            }
         });
 
-        // Returns a success message
-        return new ControllerResponse(LocalDateTime.now(), true,
-                "Successfully imported the WinMSS.cab file data", "");
+        return matchResultsList;
     }
 
     /**
