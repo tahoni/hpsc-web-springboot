@@ -1,6 +1,4 @@
-package za.co.hpsc.web.models.matchresults.response;
-
-import za.co.hpsc.web.domain.MatchStageCompetitor;
+package za.co.hpsc.web.models.ipsc.records;
 
 import java.util.List;
 
@@ -18,6 +16,6 @@ public record IpscMatchStageResponse(
         Integer minRounds,
         Integer maxPoints,
 
-        List<MatchStageCompetitor> matchStageCompetitors
+        List<MatchStageCompetitorResponse> matchStageCompetitors
 ) {
 }

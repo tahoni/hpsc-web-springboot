@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.matchresults.response;
+package za.co.hpsc.web.models.ipsc.records;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,9 +11,8 @@ public record IpscMatchResponse(
         String matchFirearmType,
         String matchCategory,
 
-        List<IpscMatchStageResponse> matchStages,
-        List<MatchCompetitorResponse> matchCompetitors,
+        String dateEdited,
 
-        String dateEdited
+        List<CompetitorResponse> competitors
 ) {
 }

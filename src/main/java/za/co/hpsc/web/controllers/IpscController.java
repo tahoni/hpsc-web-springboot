@@ -15,7 +15,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
-import za.co.hpsc.web.models.ipsc.request.IpscRequest;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchResponseHolder;
 import za.co.hpsc.web.services.WinMssService;
 
 /**
@@ -63,10 +63,10 @@ public class IpscController {
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     @Operation(summary = "Import WinMSS.cab file", description = "Import and persist WinMSS.cab content.")
-    ResponseEntity<MatchResultsDtoHolder> importWinMssCabData(
+    ResponseEntity<IpscMatchResponseHolder> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = IpscRequest.class)
+                            schema = @Schema(implementation = IpscMatchResponseHolder.class)
                     ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {

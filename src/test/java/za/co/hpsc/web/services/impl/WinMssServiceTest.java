@@ -37,7 +37,7 @@ public class WinMssServiceTest {
     private WinMssServiceImpl winMssService;
 
     @Test
-    void testImportWinMssCabFile_withValidCabFile_thenReturnsMatches() throws Exception {
+    void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -63,7 +63,7 @@ public class WinMssServiceTest {
         when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
         // Act
-        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFileContent(cabFileContent);
 
         // Assert
         assertNotNull(response);
@@ -76,7 +76,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withNullCabFileContent_thenThrowsValidationException() {
+    void testImportWinMssCabFileContent_withNullCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile(null)
@@ -89,7 +89,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withEmptyCabFileContent_thenThrowsValidationException() {
+    void testImportWinMssCabFileContent_withEmptyCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile("")
@@ -102,7 +102,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withBlankCabFileContent_thenThrowsValidationException() {
+    void testImportWinMssCabFileContent_withBlankCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile("   ")
@@ -114,7 +114,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withNullResponseHolder_thenThrowsValidationException() {
+    void testImportWinMssCabFileContent_withNullResponseHolder_thenThrowsValidationException() {
         // Arrange
         String cabFileContent = """
                 {
@@ -143,7 +143,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() throws Exception {
+    void testImportWinMssCabFileContent_withMultipleMatches_thenProcessesAllMatches() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -170,7 +170,7 @@ public class WinMssServiceTest {
         when(matchResultService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
 
         // Act
-        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFileContent(cabFileContent);
 
         // Assert
         assertNotNull(response);
@@ -185,7 +185,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withEmptyMatchResults_thenSkipsSaving() throws Exception {
+    void testImportWinMssCabFileContent_withEmptyMatchResults_thenSkipsSaving() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -207,7 +207,7 @@ public class WinMssServiceTest {
         when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
 
         // Act
-        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFileContent(cabFileContent);
 
         // Assert
         assertNotNull(response);
@@ -219,7 +219,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withInvalidJson_thenThrowsFatalException() {
+    void testImportWinMssCabFileContent_withInvalidJson_thenThrowsFatalException() {
         // Arrange
         String invalidCabFileContent = "This is not valid JSON content";
 
@@ -235,7 +235,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withInvalidXml_thenThrowsValidationException() {
+    void testImportWinMssCabFileContent_withInvalidXml_thenThrowsValidationException() {
         // Arrange
         String invalidCabFileContent = """
                 {
@@ -262,7 +262,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFile_withCabFile_thenReturnsMatch() throws Exception {
+    void testImportWinMssCabFileContent_withCabFile_thenReturnsMatch() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -288,7 +288,7 @@ public class WinMssServiceTest {
         when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
         // Act
-        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFileContent(cabFileContent);
 
         // Assert
         assertNotNull(response);

@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.matchresults.response;
+package za.co.hpsc.web.models.ipsc.records;
 
 public record MatchCompetitorResponse(
         String club,

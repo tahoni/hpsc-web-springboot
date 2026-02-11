@@ -72,6 +72,8 @@ public class TransactionServiceImpl implements TransactionService {
             initMatchCompetitorEntities(matchResults.getMatchCompetitors(), ClubReference.HPSC);
             initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(), ClubReference.HPSC);
 
+            finaliseMatchEntity(match);
+
             matchRepository.save(match);
             transactionManager.commit(transaction);
 
@@ -232,4 +234,32 @@ public class TransactionServiceImpl implements TransactionService {
             matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorEntity);
         });
     }
+
+    protected void finaliseMatchEntity(IpscMatch match) {
+        matchStageMap.values().forEach(matchStage -> matchStage.setMatch(match));
+        match.setMatchStages(matchStageMap.values().stream().toList());
+
+        // Associates competitors with their respective matches
+        matchCompetitorMap.values().forEach(matchCompetitor -> matchCompetitor.setMatch(match));
+        List<MatchCompetitor> matchCompetitorList = ((match.getMatchCompetitors() != null) ?
+                match.getMatchCompetitors() : new ArrayList<>());
+        matchCompetitorList.addAll(matchCompetitorMap.values().stream().toList());
+        match.setMatchCompetitors(matchCompetitorList);
+
+
+        // Associates competitors with their respective match stages
+        matchStageMap.values().forEach(matchStage -> {
+            List<MatchStageCompetitor> matchStageCompetitorList =
+                    ((matchStage.getMatchStageCompetitors() != null) ?
+                            matchStage.getMatchStageCompetitors() : new ArrayList<>());
+            matchStageCompetitorMap.values().stream()
+                    .filter(matchStageCompetitor ->
+                            matchStage.equals(matchStageCompetitor.getMatchStage()))
+                    .forEach(matchStageCompetitorList::add);
+            matchStage.setMatchStageCompetitors(matchStageCompetitorList);
+            matchStageCompetitorList.forEach(matchStageCompetitor ->
+                    matchStageCompetitor.setMatchStage(matchStage));
+        });
+    }
+
 }

@@ -1,15 +1,17 @@
-package za.co.hpsc.web.models.matchresults.response;
+package za.co.hpsc.web.models.ipsc.records;
 
-import java.time.LocalDate;
+import java.util.List;
 
 public record CompetitorResponse(
         String firstName,
         String lastName,
         String middleNames,
-        LocalDate dateOfBirth,
+        String dateOfBirth,
 
         Integer sapsaNumber,
         String competitorNumber,
-        String defaultCompetitorCategory
+
+        MatchCompetitorResponse overall,
+        List<MatchStageCompetitorResponse> stages
 ) {
 }
