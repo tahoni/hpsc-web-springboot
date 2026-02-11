@@ -248,12 +248,12 @@ public class MatchResultServiceImplTest {
         IpscMatch match = new IpscMatch();
         match.setId(1L);
 
-        za.co.hpsc.web.domain.MatchStage matchStage1 = new za.co.hpsc.web.domain.MatchStage();
+        IpscMatchStage matchStage1 = new IpscMatchStage();
         matchStage1.setId(10L);
         matchStage1.setMatch(match);
         matchStage1.setStageNumber(1);
 
-        za.co.hpsc.web.domain.MatchStage matchStage2 = new za.co.hpsc.web.domain.MatchStage();
+        IpscMatchStage matchStage2 = new IpscMatchStage();
         matchStage2.setId(20L);
         matchStage2.setMatch(match);
         matchStage2.setStageNumber(2);

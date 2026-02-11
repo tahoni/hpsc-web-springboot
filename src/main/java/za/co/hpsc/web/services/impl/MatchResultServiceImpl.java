@@ -140,7 +140,7 @@ public class MatchResultServiceImpl implements MatchResultService {
         // Iterates through each stage response
         stageResponses.forEach(stageResponse -> {
             // Attempts to find the match stage by match ID and stage ID in the database
-            Optional<MatchStage> optionalMatchStage = matchStageService.findMatchStage(matchDto.getId(),
+            Optional<IpscMatchStage> optionalMatchStage = matchStageService.findMatchStage(matchDto.getId(),
                     stageResponse.getStageId());
             // Creates a new stage DTO, from either the found entity or the stage response
             MatchStageDto matchStageDto = optionalMatchStage

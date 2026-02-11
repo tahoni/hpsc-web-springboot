@@ -29,7 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class MatchStage {
+public class IpscMatchStage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

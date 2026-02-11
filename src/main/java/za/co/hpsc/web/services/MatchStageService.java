@@ -1,6 +1,6 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.domain.MatchStage;
+import za.co.hpsc.web.domain.IpscMatchStage;
 
 import java.util.Optional;
 
@@ -19,8 +19,8 @@ public interface MatchStageService {
      *                    Must not be null.
      * @param stageNumber the number representing the stage within the match.
      *                    Must not be null.
-     * @return an {@code Optional} containing the {@link MatchStage} if a matching stage is found,
+     * @return an {@code Optional} containing the {@link IpscMatchStage} if a matching stage is found,
      * or an empty {@code Optional} if no matching stage is found.
      */
-    Optional<MatchStage> findMatchStage(Long matchId, Integer stageNumber);
+    Optional<IpscMatchStage> findMatchStage(Long matchId, Integer stageNumber);
 }

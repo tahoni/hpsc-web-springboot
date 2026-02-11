@@ -18,9 +18,9 @@ import java.util.*;
 public class TransactionServiceImpl implements TransactionService {
     protected final PlatformTransactionManager transactionManager;
 
-    protected final MatchRepository matchRepository;
+    protected final IpscMatchRepository matchRepository;
     protected final ClubRepository clubRepository;
-    protected final MatchStageRepository matchStageRepository;
+    protected final IpscMatchStageRepository matchStageRepository;
     protected final CompetitorRepository competitorRepository;
 
     protected final MatchCompetitorRepository matchCompetitorRepository;
@@ -29,13 +29,13 @@ public class TransactionServiceImpl implements TransactionService {
     protected final Map<UUID, Club> clubMap = new HashMap<>();
     protected final Map<UUID, IpscMatch> matchMap = new HashMap<>();
     protected final Map<UUID, Competitor> competitorMap = new HashMap<>();
-    protected final Map<UUID, MatchStage> matchStageMap = new HashMap<>();
+    protected final Map<UUID, IpscMatchStage> matchStageMap = new HashMap<>();
     protected final Map<UUID, MatchCompetitor> matchCompetitorMap = new HashMap<>();
     protected final Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
 
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
-                                  MatchRepository matchRepository, ClubRepository clubRepository,
-                                  MatchStageRepository matchStageRepository,
+                                  IpscMatchRepository matchRepository, ClubRepository clubRepository,
+                                  IpscMatchStageRepository matchStageRepository,
                                   CompetitorRepository competitorRepository,
                                   MatchCompetitorRepository matchCompetitorRepository,
                                   MatchStageCompetitorRepository matchStageCompetitorRepository) {
@@ -140,9 +140,9 @@ public class TransactionServiceImpl implements TransactionService {
             IpscMatch matchEntity = matchMap.get(stage.getMatch().getUuid());
 
             // Initialises the match stage entity from DTO or creates a new entity
-            Optional<MatchStage> optionalMatchStageEntity = ((stage.getId() != null) ?
+            Optional<IpscMatchStage> optionalMatchStageEntity = ((stage.getId() != null) ?
                     matchStageRepository.findById(stage.getId()) : Optional.empty());
-            MatchStage matchStageEntity = optionalMatchStageEntity.orElseGet(MatchStage::new);
+            IpscMatchStage matchStageEntity = optionalMatchStageEntity.orElseGet(IpscMatchStage::new);
             matchStageEntity.init(stage, matchEntity);
 
             // Update the map of match stages
@@ -180,7 +180,7 @@ public class TransactionServiceImpl implements TransactionService {
             // Find the competitor entity
             Competitor competitorEntity = competitorMap.get(matchStageCompetitorDto.getCompetitor().getUuid());
             // Find the match stage entity
-            MatchStage matchStageEntity = matchStageMap.get(matchStageCompetitorDto.getMatchStage().getUuid());
+            IpscMatchStage matchStageEntity = matchStageMap.get(matchStageCompetitorDto.getMatchStage().getUuid());
 
             // Initialises the match stage competitor entity from DTO or creates a new entity
             Optional<MatchStageCompetitor> optionalMatchStageCompetitorEntity =

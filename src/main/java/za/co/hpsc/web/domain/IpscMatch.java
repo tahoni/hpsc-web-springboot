@@ -23,7 +23,7 @@ import java.util.List;
  * <p>
  * The {@code Match} class is an entity in the persistence layer, used to store and
  * retrieve match-related data. It enables associations with other entities such as
- * {@link Club}, {@link MatchStage}, and {@link MatchCompetitor}.
+ * {@link Club}, {@link IpscMatchStage}, and {@link MatchCompetitor}.
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to return a context-specific
  * representation of the match's display name.
@@ -58,7 +58,7 @@ public class IpscMatch {
     private MatchCategory matchCategory;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MatchStage> matchStages;
+    private List<IpscMatchStage> matchStages;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchCompetitor> matchCompetitors;
 

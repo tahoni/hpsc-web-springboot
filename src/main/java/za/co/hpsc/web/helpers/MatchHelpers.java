@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import za.co.hpsc.web.constants.MatchConstants;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.MatchStage;
+import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.utils.StringUtil;
 import za.co.hpsc.web.utils.ValueUtil;
 
@@ -20,7 +20,7 @@ import java.util.Map;
  * application's established naming conventions and date formats. It makes use of constants
  * defined in {@link MatchConstants} for string templates and formatting rules.
  * The methods in this class expect various domain-specific inputs, such as {@link IpscMatch} and
- * {@link MatchStage}, and produce properly formatted strings for use in the UI or elsewhere
+ * {@link IpscMatchStage}, and produce properly formatted strings for use in the UI or elsewhere
  * in the system.
  * </p>
  */
@@ -119,13 +119,13 @@ public final class MatchHelpers {
      * assembled into a display string using the template defined in
      * {@link MatchConstants#SCHEDULED_MATCH_STAGE_NAME_FORMAT}.
      *
-     * @param matchStage the {@link MatchStage} object containing the details used to construct
+     * @param matchStage the {@link IpscMatchStage} object containing the details used to construct
      *                   the display name.
      *                   Must not be null.
      * @return a formatted string representing the display name of the match stage, including
      * the match name, stage and range numbers, and the scheduled date in ISO format.
      */
-    public static String getMatchStageDisplayName(@NotNull MatchStage matchStage) {
+    public static String getMatchStageDisplayName(@NotNull IpscMatchStage matchStage) {
         // Prepare date formatters
         DateTimeFormatter isoDateFormatter =
                 DateTimeFormatter.ofPattern(MatchConstants.MATCH_ISO_DATE_FORMAT);

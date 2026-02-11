@@ -7,6 +7,6 @@ import za.co.hpsc.web.domain.IpscMatch;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface MatchRepository extends JpaRepository<IpscMatch, Long> {
+public interface IpscMatchRepository extends JpaRepository<IpscMatch, Long> {
     List<IpscMatch> findAllByScheduledDate(@NotNull LocalDate matchDate);
 }
