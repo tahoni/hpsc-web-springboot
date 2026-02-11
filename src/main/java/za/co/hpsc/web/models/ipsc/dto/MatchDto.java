@@ -68,7 +68,9 @@ public class MatchDto {
 
         // Initialises match details
         this.id = matchEntity.getId();
-        this.club = new ClubDto(matchEntity.getClub());
+        if (matchEntity.getClub() != null) {
+            this.club = new ClubDto(matchEntity.getClub());
+        }
 
         // Initialises the match attributes
         this.name = matchEntity.getName();
@@ -90,9 +92,9 @@ public class MatchDto {
      *                    the unique identifier, name, scheduled date, division, category,
      *                    creation timestamp, and update timestamp. Must not be null.
      * @param clubDto     the {@link ClubDto} instance representing the club associated with the match.
-     *                    Must not be null.
+     *                    Can be null.
      */
-    public MatchDto(@NotNull IpscMatch matchEntity, @NotNull ClubDto clubDto) {
+    public MatchDto(@NotNull IpscMatch matchEntity, ClubDto clubDto) {
         // Initialises match details
         this.id = matchEntity.getId();
         this.club = clubDto;

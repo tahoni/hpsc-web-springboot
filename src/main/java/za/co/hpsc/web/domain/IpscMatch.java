@@ -84,9 +84,14 @@ public class IpscMatch {
         this.id = matchDto.getId();
         this.club = clubEntity;
 
+        // Sets club name from DTO or associated entity
+        if (matchDto.getClubName() != null) {
+            this.clubName = matchDto.getClubName();
+        } else if (clubEntity != null) {
+            clubName = ClubReference.getByName(clubEntity.getName()).orElse(null);
+        }
+        
         // Initialises the match attributes
-        this.clubName = (matchDto.getClubName() != null) ?
-                matchDto.getClubName() : ClubReference.getByName(clubEntity.getName()).orElse(null);
         this.name = matchDto.getName();
         this.scheduledDate = matchDto.getScheduledDate();
         this.matchFirearmType = matchDto.getMatchFirearmType();

@@ -1,5 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -53,6 +54,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void saveMatchResults(MatchResultsDto matchResults) {
+        if ((matchResults == null) || (matchResults.getMatch() == null)) {
+            return;
+        }
+
         TransactionStatus transaction = transactionManager.getTransaction(
                 new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
 
@@ -75,7 +80,6 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-
     @Override
     public void saveMatchLogs() {
         TransactionStatus transaction = transactionManager.getTransaction(
@@ -91,17 +95,19 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     protected void initClubEntity(ClubDto clubDto) {
-        // Initialises the club entity from the DTO or creates a new entity
-        Optional<Club> optionalClubEntity = ((clubDto.getId() != null) ?
-                clubRepository.findById(clubDto.getId()) : Optional.empty());
-        Club clubEntity = optionalClubEntity.orElseGet(Club::new);
-        clubEntity.init(clubDto);
+        if (clubDto != null) {
+            // Initialises the club entity from the DTO or creates a new entity
+            Optional<Club> optionalClubEntity = ((clubDto.getId() != null) ?
+                    clubRepository.findById(clubDto.getId()) : Optional.empty());
+            Club clubEntity = optionalClubEntity.orElseGet(Club::new);
+            clubEntity.init(clubDto);
 
-        // Update the map of clubs
-        clubMap.put(clubDto.getUuid(), clubEntity);
+            // Update the map of clubs
+            clubMap.put(clubDto.getUuid(), clubEntity);
+        }
     }
 
-    protected IpscMatch initMatchEntity(MatchDto matchDto) {
+    protected IpscMatch initMatchEntity(@NotNull MatchDto matchDto) {
         // Find the club entity
         Club clubEntity = null;
         if (matchDto.getClub() != null) {
@@ -119,7 +125,7 @@ public class TransactionServiceImpl implements TransactionService {
         return matchEntity;
     }
 
-    protected void initCompetitorEntities(List<CompetitorDto> competitorDtoList) {
+    protected void initCompetitorEntities(@NotNull List<CompetitorDto> competitorDtoList) {
         // Initialises and accumulates competitor entities from DTOs
         competitorDtoList.forEach(competitorDto -> {
             // Initialises the competitor entity from DTO or creates a new entity
@@ -133,7 +139,7 @@ public class TransactionServiceImpl implements TransactionService {
         });
     }
 
-    protected void initMatchStageEntities(List<MatchStageDto> matchStageDtoList) {
+    protected void initMatchStageEntities(@NotNull List<MatchStageDto> matchStageDtoList) {
         // Initialises and accumulates match stages from DTOs
         matchStageDtoList.forEach(stage -> {
             // Find the match entity
@@ -150,7 +156,7 @@ public class TransactionServiceImpl implements TransactionService {
         });
     }
 
-    protected void initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitors) {
+    protected void initMatchCompetitorEntities(@NotNull List<MatchCompetitorDto> matchCompetitors) {
         // Initialises and accumulates match competitors from DTOs
         matchCompetitors.forEach(matchCompetitorDto -> {
             // Find the competitor entity
@@ -172,8 +178,7 @@ public class TransactionServiceImpl implements TransactionService {
         });
     }
 
-
-    protected void initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors) {
+    protected void initMatchStageCompetitorEntities(@NotNull List<MatchStageCompetitorDto> matchStageCompetitors) {
 
         // Initialises and accumulates match stage competitors from DTOs
         matchStageCompetitors.forEach(matchStageCompetitorDto -> {
