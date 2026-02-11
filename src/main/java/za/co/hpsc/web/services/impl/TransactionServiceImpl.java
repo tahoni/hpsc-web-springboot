@@ -8,6 +8,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import za.co.hpsc.web.domain.*;
+import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.TransactionService;
@@ -53,9 +54,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void saveMatchResults(MatchResultsDto matchResults) {
+    public Optional<IpscMatch> saveMatchResults(MatchResultsDto matchResults) {
         if ((matchResults == null) || (matchResults.getMatch() == null)) {
-            return;
+            return Optional.empty();
         }
 
         TransactionStatus transaction = transactionManager.getTransaction(
@@ -68,11 +69,13 @@ public class TransactionServiceImpl implements TransactionService {
             initCompetitorEntities(matchResults.getCompetitors());
             initMatchStageEntities(matchResults.getStages());
 
-            initMatchCompetitorEntities(matchResults.getMatchCompetitors());
-            initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors());
+            initMatchCompetitorEntities(matchResults.getMatchCompetitors(), ClubReference.HPSC);
+            initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(), ClubReference.HPSC);
 
             matchRepository.save(match);
             transactionManager.commit(transaction);
+
+            return Optional.of(match);
 
         } catch (Exception e) {
             transactionManager.rollback(transaction);
@@ -126,6 +129,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     protected void initCompetitorEntities(@NotNull List<CompetitorDto> competitorDtoList) {
+
         // Initialises and accumulates competitor entities from DTOs
         competitorDtoList.forEach(competitorDto -> {
             // Initialises the competitor entity from DTO or creates a new entity
@@ -140,6 +144,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     protected void initMatchStageEntities(@NotNull List<MatchStageDto> matchStageDtoList) {
+
         // Initialises and accumulates match stages from DTOs
         matchStageDtoList.forEach(stage -> {
             // Find the match entity
@@ -156,7 +161,9 @@ public class TransactionServiceImpl implements TransactionService {
         });
     }
 
-    protected void initMatchCompetitorEntities(@NotNull List<MatchCompetitorDto> matchCompetitors) {
+    protected void initMatchCompetitorEntities(@NotNull List<MatchCompetitorDto> matchCompetitors,
+                                               ClubReference clubReference) {
+
         // Initialises and accumulates match competitors from DTOs
         matchCompetitors.forEach(matchCompetitorDto -> {
             // Find the competitor entity
@@ -165,12 +172,23 @@ public class TransactionServiceImpl implements TransactionService {
             // Find the match entity
             IpscMatch matchEntity = matchMap.get(matchCompetitorDto.getMatch().getUuid());
 
-            // Initialises the match competitor entity from DTO or creates a new entity
+            // Find the match competitor entity if present
             Optional<MatchCompetitor> optionalMatchCompetitorEntity =
                     ((matchCompetitorDto.getId() != null) ?
                             matchCompetitorRepository.findById(matchCompetitorDto.getId()) : Optional.empty());
-            MatchCompetitor matchCompetitorEntity =
-                    optionalMatchCompetitorEntity.orElseGet(MatchCompetitor::new);
+
+            // Filter by club reference if present
+            if (optionalMatchCompetitorEntity.isPresent()) {
+                // Checks club reference equality if present
+                if ((clubReference != null) && (!clubReference.equals(ClubReference.UNKNOWN))) {
+                    if (!clubReference.equals(matchCompetitorDto.getClub())) {
+                        return;
+                    }
+                }
+            }
+
+            // Initialises the match competitor entity from DTO or creates a new entity
+            MatchCompetitor matchCompetitorEntity = optionalMatchCompetitorEntity.orElseGet(MatchCompetitor::new);
             matchCompetitorEntity.init(matchCompetitorDto, matchEntity, competitorEntity);
 
             // Update the map of match competitors
@@ -178,20 +196,34 @@ public class TransactionServiceImpl implements TransactionService {
         });
     }
 
-    protected void initMatchStageCompetitorEntities(@NotNull List<MatchStageCompetitorDto> matchStageCompetitors) {
+    protected void initMatchStageCompetitorEntities(@NotNull List<MatchStageCompetitorDto> matchStageCompetitors,
+                                                    ClubReference clubReference) {
 
         // Initialises and accumulates match stage competitors from DTOs
         matchStageCompetitors.forEach(matchStageCompetitorDto -> {
             // Find the competitor entity
             Competitor competitorEntity = competitorMap.get(matchStageCompetitorDto.getCompetitor().getUuid());
             // Find the match stage entity
-            IpscMatchStage matchStageEntity = matchStageMap.get(matchStageCompetitorDto.getMatchStage().getUuid());
+            IpscMatchStage matchStageEntity =
+                    matchStageMap.get(matchStageCompetitorDto.getMatchStage().getUuid());
 
-            // Initialises the match stage competitor entity from DTO or creates a new entity
+            // Find the match stage competitor entity if present
             Optional<MatchStageCompetitor> optionalMatchStageCompetitorEntity =
                     ((matchStageCompetitorDto.getId() != null) ?
                             matchStageCompetitorRepository.findById(matchStageCompetitorDto.getId()) :
                             Optional.empty());
+
+            // Filter by club reference if present
+            if (optionalMatchStageCompetitorEntity.isPresent()) {
+                // Checks club reference equality if present
+                if ((clubReference != null) && (!clubReference.equals(ClubReference.UNKNOWN))) {
+                    if (!clubReference.equals(matchStageCompetitorDto.getClub())) {
+                        return;
+                    }
+                }
+            }
+
+            // Initialises the match stage competitor entity from DTO or creates a new entity
             MatchStageCompetitor matchStageCompetitorEntity =
                     optionalMatchStageCompetitorEntity.orElseGet(MatchStageCompetitor::new);
             matchStageCompetitorEntity.init(matchStageCompetitorDto, matchStageEntity, competitorEntity);

@@ -54,9 +54,8 @@ public class WinMssServiceTest {
                 }
                 """;
 
-        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder();
         IpscResponse ipscResponse = new IpscResponse();
-        ipscResponseHolder.setIpscList(List.of(ipscResponse));
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
 
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
@@ -161,8 +160,7 @@ public class WinMssServiceTest {
 
         IpscResponse ipscResponse1 = new IpscResponse();
         IpscResponse ipscResponse2 = new IpscResponse();
-        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder();
-        ipscResponseHolder.setIpscList(List.of(ipscResponse1, ipscResponse2));
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse1, ipscResponse2));
 
         MatchResultsDto matchResults1 = new MatchResultsDto();
         MatchResultsDto matchResults2 = new MatchResultsDto();
@@ -203,8 +201,7 @@ public class WinMssServiceTest {
                 """;
 
         IpscResponse ipscResponse = new IpscResponse();
-        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder();
-        ipscResponseHolder.setIpscList(List.of(ipscResponse));
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
 
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
@@ -282,9 +279,8 @@ public class WinMssServiceTest {
                 }
                 """;
 
-        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder();
         IpscResponse ipscResponse = new IpscResponse();
-        ipscResponseHolder.setIpscList(List.of(ipscResponse));
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
 
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 

@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -46,6 +43,7 @@ public class MatchStageCompetitorDto {
     private MatchStageDto matchStage;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
+    private ClubReference club;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
