@@ -27,7 +27,7 @@ public class TransactionServiceImpl implements TransactionService {
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
     protected final Map<UUID, Club> clubMap = new HashMap<>();
-    protected final Map<UUID, Match> matchMap = new HashMap<>();
+    protected final Map<UUID, IpscMatch> matchMap = new HashMap<>();
     protected final Map<UUID, Competitor> competitorMap = new HashMap<>();
     protected final Map<UUID, MatchStage> matchStageMap = new HashMap<>();
     protected final Map<UUID, MatchCompetitor> matchCompetitorMap = new HashMap<>();
@@ -59,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
         // Executes transactional match result persistence; rolls back on failure
         try {
             initClubEntity(matchResults.getClub());
-            Match match = initMatchEntity(matchResults.getMatch());
+            IpscMatch match = initMatchEntity(matchResults.getMatch());
             initCompetitorEntities(matchResults.getCompetitors());
             initMatchStageEntities(matchResults.getStages());
 
@@ -101,7 +101,7 @@ public class TransactionServiceImpl implements TransactionService {
         clubMap.put(clubDto.getUuid(), clubEntity);
     }
 
-    protected Match initMatchEntity(MatchDto matchDto) {
+    protected IpscMatch initMatchEntity(MatchDto matchDto) {
         // Find the club entity
         Club clubEntity = null;
         if (matchDto.getClub() != null) {
@@ -109,9 +109,9 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         // Initialises the match entity from DTO or creates a new entity
-        Optional<Match> optionalMatchEntity = ((matchDto.getId() != null) ?
+        Optional<IpscMatch> optionalMatchEntity = ((matchDto.getId() != null) ?
                 matchRepository.findById(matchDto.getId()) : Optional.empty());
-        Match matchEntity = optionalMatchEntity.orElseGet(Match::new);
+        IpscMatch matchEntity = optionalMatchEntity.orElseGet(IpscMatch::new);
         matchEntity.init(matchDto, clubEntity);
 
         // Update the map of matches
@@ -137,7 +137,7 @@ public class TransactionServiceImpl implements TransactionService {
         // Initialises and accumulates match stages from DTOs
         matchStageDtoList.forEach(stage -> {
             // Find the match entity
-            Match matchEntity = matchMap.get(stage.getMatch().getUuid());
+            IpscMatch matchEntity = matchMap.get(stage.getMatch().getUuid());
 
             // Initialises the match stage entity from DTO or creates a new entity
             Optional<MatchStage> optionalMatchStageEntity = ((stage.getId() != null) ?
@@ -157,7 +157,7 @@ public class TransactionServiceImpl implements TransactionService {
             Competitor competitorEntity =
                     competitorMap.get(matchCompetitorDto.getCompetitor().getUuid());
             // Find the match entity
-            Match matchEntity = matchMap.get(matchCompetitorDto.getMatch().getUuid());
+            IpscMatch matchEntity = matchMap.get(matchCompetitorDto.getMatch().getUuid());
 
             // Initialises the match competitor entity from DTO or creates a new entity
             Optional<MatchCompetitor> optionalMatchCompetitorEntity =

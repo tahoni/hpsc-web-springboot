@@ -118,7 +118,7 @@ public class MatchResultServiceImplTest {
         scoreResponse.setLastModified(LocalDateTime.of(2025, 1, 10, 10, 0));
         ipscResponse.setScores(List.of(scoreResponse));
 
-        Match existingMatch = new Match();
+        IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
@@ -150,7 +150,7 @@ public class MatchResultServiceImplTest {
         scoreResponse.setLastModified(LocalDateTime.of(2025, 1, 25, 10, 0));
         ipscResponse.setScores(List.of(scoreResponse));
 
-        Match existingMatch = new Match();
+        IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
@@ -247,7 +247,7 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse1, stageResponse2);
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setId(1L);
 
         za.co.hpsc.web.domain.MatchStage matchStage1 = new za.co.hpsc.web.domain.MatchStage();

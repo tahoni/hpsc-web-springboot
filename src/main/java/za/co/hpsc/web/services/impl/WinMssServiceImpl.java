@@ -106,7 +106,7 @@ public class WinMssServiceImpl implements WinMssService {
                     TagRequest.class));
             ipscRequestHolder.setMembers(readRequests(ipscRequest.getMember(),
                     MemberRequest.class));
-            ipscRequestHolder.setClassifications(readRequests(ipscRequest.getClassification(),
+            ipscRequestHolder.setClassifications(readRequests(ipscRequest.getClassify(),
                     ClassificationRequest.class));
             ipscRequestHolder.setEnrolledMembers(readRequests(ipscRequest.getEnrolled(),
                     EnrolledRequest.class));

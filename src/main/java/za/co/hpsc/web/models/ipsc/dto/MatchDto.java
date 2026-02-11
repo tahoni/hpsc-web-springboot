@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
-import za.co.hpsc.web.domain.Match;
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
@@ -54,14 +54,14 @@ public class MatchDto {
 
     /**
      * Constructs a new {@code MatchDto} instance with data from the provided
-     * {@link Match} entity.
+     * {@link IpscMatch} entity.
      *
-     * @param matchEntity the {@link Match} entity containing match-related information, such as
+     * @param matchEntity the {@link IpscMatch} entity containing match-related information, such as
      *                    the unique identifier, associated club, name, scheduled date, match
      *                    firearm type, match category, creation timestamp, and update timestamp.
      *                    Must not be null.
      */
-    public MatchDto(@NotNull Match matchEntity) {
+    public MatchDto(@NotNull IpscMatch matchEntity) {
         if (matchEntity == null) {
             return;
         }
@@ -83,16 +83,16 @@ public class MatchDto {
     }
 
     /**
-     * Constructs a new {@code MatchDto} instance using the provided {@link Match} entity
+     * Constructs a new {@code MatchDto} instance using the provided {@link IpscMatch} entity
      * and {@link ClubDto} object.
      *
-     * @param matchEntity the {@link Match} entity containing match-related information such as
+     * @param matchEntity the {@link IpscMatch} entity containing match-related information such as
      *                    the unique identifier, name, scheduled date, division, category,
      *                    creation timestamp, and update timestamp. Must not be null.
      * @param clubDto     the {@link ClubDto} instance representing the club associated with the match.
      *                    Must not be null.
      */
-    public MatchDto(@NotNull Match matchEntity, @NotNull ClubDto clubDto) {
+    public MatchDto(@NotNull IpscMatch matchEntity, @NotNull ClubDto clubDto) {
         // Initialises match details
         this.id = matchEntity.getId();
         this.club = clubDto;

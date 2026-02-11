@@ -29,7 +29,7 @@ import java.util.List;
 @Entity
 public class Club {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -39,7 +39,7 @@ public class Club {
     private String abbreviation;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Match> matches;
+    private List<IpscMatch> matches;
 
     public Club(String name, String abbreviation) {
         // Initialises club details

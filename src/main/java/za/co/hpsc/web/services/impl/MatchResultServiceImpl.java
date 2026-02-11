@@ -94,7 +94,7 @@ public class MatchResultServiceImpl implements MatchResultService {
      */
     protected Optional<MatchDto> initMatch(@NotNull IpscResponse ipscResponse, ClubDto clubDto) {
         // Attempts to find the match by name and date in the database
-        Optional<Match> optionalMatch =
+        Optional<IpscMatch> optionalMatch =
                 matchService.findMatch(ipscResponse.getMatch().getMatchName(), ipscResponse.getMatch().getMatchDate());
         boolean ipscMatchExists = optionalMatch.isPresent();
         boolean ipscResponseHasNewerScore = false;
