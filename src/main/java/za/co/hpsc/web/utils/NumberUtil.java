@@ -44,4 +44,8 @@ public final class NumberUtil {
         // Scales the result to the default scale
         return result.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
+
+    public static String formatBigDecimal(BigDecimal value, int scale) {
+        return value.setScale(scale, RoundingMode.HALF_UP).toString();
+    }
 }

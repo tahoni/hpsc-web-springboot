@@ -6,10 +6,10 @@ public record MatchCompetitorResponse(
         String division,
         String powerFactor,
 
+        String competitorCategory,
+
         String matchPoints,
         String matchRanking,
-
-        String competitorCategory,
 
         String dateEdited
 ) {

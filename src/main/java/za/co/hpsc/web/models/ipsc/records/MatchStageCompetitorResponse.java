@@ -5,6 +5,8 @@ public record MatchStageCompetitorResponse(
         String division,
         String powerFactor,
 
+        String competitorCategory,
+
         Integer scoreA,
         Integer scoreB,
         Integer scoreC,
@@ -21,8 +23,6 @@ public record MatchStageCompetitorResponse(
         String stagePoints,
         String stagePercentage,
         String stageRanking,
-
-        String competitorCategory,
 
         String dateEdited
 ) {
