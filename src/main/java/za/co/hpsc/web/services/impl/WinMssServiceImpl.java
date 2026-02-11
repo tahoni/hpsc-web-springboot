@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
@@ -21,7 +21,6 @@ import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.services.WinMssService;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,40 +41,13 @@ public class WinMssServiceImpl implements WinMssService {
     }
 
     @Override
-    public ControllerResponse importWinMssCabFile(String cabFileContent)
+    public MatchResultsDtoHolder importWinMssCabFile(String cabFileContent)
             throws ValidationException, FatalException {
 
         if ((cabFileContent == null) || (cabFileContent.isBlank())) {
             log.error("The provided cab file is null or empty.");
             throw new ValidationException("The provided CAB file can not be null or empty.");
         }
-
-        // Imports WinMSS cab file
-        if (!importWinMssCabFileContent(cabFileContent).isEmpty()) {
-            // Returns a success message
-            return new ControllerResponse(LocalDateTime.now(), true,
-                    "Successfully imported the WinMSS.cab file data", "");
-        } else {
-            // Returns an error message
-            return new ControllerResponse(LocalDateTime.now(), false,
-                    "An error occurred importing the WinMSS.cab file data", "");
-        }
-    }
-
-    /**
-     * Imports the content of a WinMSS CAB file, processes its match information, and persists
-     * the resulting match data.
-     *
-     * @param cabFileContent The string content of the CAB file to be imported.
-     *                       Must not be null or blank.
-     * @return A list of {@link MatchResultsDto} objects representing the match results
-     * that were successfully processed and saved.
-     * @throws ValidationException If the input CAB file content is invalid, missing, or results
-     *                             in invalid request or response processing.
-     * @throws FatalException      If a critical failure occurs during file processing or data mapping.
-     */
-    public List<MatchResultsDto> importWinMssCabFileContent(@NotNull @NotBlank String cabFileContent)
-            throws ValidationException, FatalException {
 
         // Imports WinMSS cab file content
         IpscRequestHolder ipscRequestHolder = readIpscRequests(cabFileContent);
@@ -102,7 +74,7 @@ public class WinMssServiceImpl implements WinMssService {
             }
         });
 
-        return matchResultsList;
+        return new MatchResultsDtoHolder(matchResultsList);
     }
 
     /**

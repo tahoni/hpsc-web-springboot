@@ -7,8 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
@@ -37,7 +37,7 @@ public class WinMssServiceTest {
     private WinMssServiceImpl winMssService;
 
     @Test
-    void testImportWinMssCabFile_withValidCabFile_thenReturnsSuccessResponse() throws Exception {
+    void testImportWinMssCabFile_withValidCabFile_thenReturnsMatches() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -64,14 +64,12 @@ public class WinMssServiceTest {
         when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
         // Act
-        ControllerResponse response = winMssService.importWinMssCabFile(cabFileContent);
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
 
         // Assert
         assertNotNull(response);
-        assertTrue(response.isSuccess());
-        assertNotEquals("", response.getMessage());
-        assertEquals("", response.getError());
-        assertNotNull(response.getTimestamp());
+        assertEquals(1, response.getMatches().size());
+        assertEquals(matchResultsDto, response.getMatches().getFirst());
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(matchResultService, times(1)).initMatchResults(ipscResponse);
@@ -174,13 +172,13 @@ public class WinMssServiceTest {
         when(matchResultService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
 
         // Act
-        ControllerResponse response = winMssService.importWinMssCabFile(cabFileContent);
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
 
         // Assert
         assertNotNull(response);
-        assertTrue(response.isSuccess());
-        assertNotEquals("", response.getMessage());
-        assertEquals("", response.getError());
+        assertEquals(2, response.getMatches().size());
+        assertTrue(response.getMatches().contains(matchResults1));
+        assertTrue(response.getMatches().contains(matchResults2));
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(matchResultService, times(2)).initMatchResults(any(IpscResponse.class));
@@ -212,13 +210,11 @@ public class WinMssServiceTest {
         when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
 
         // Act
-        ControllerResponse response = winMssService.importWinMssCabFile(cabFileContent);
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
 
         // Assert
         assertNotNull(response);
-        assertFalse(response.isSuccess());
-        assertNotEquals("", response.getMessage());
-        assertEquals("", response.getError());
+        assertTrue(response.getMatches().isEmpty());
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(matchResultService, times(1)).initMatchResults(ipscResponse);
@@ -266,5 +262,45 @@ public class WinMssServiceTest {
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(matchResultService, never()).initMatchResults(any());
         verify(transactionService, never()).saveMatchResults(any());
+    }
+
+    @Test
+    void testImportWinMssCabFile_withCabFile_thenReturnsMatch() throws Exception {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Test Match'/></data></xml>",
+                    "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
+                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00'/></data></xml>",
+                    "classify": "<xml><data><row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100'/></data></xml>",
+                    "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='100'/></data></xml>",
+                    "team": "<xml><data><row TeamId='20' Team='Team A' MatchId='100'/></data></xml>",
+                    "score": "<xml><data><row MemberId='50' StageId='200' MatchId='100' HitFactor='6.08433734939759' FinalScore='101'/></data></xml>"
+                }
+                """;
+
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder();
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponseHolder.setIpscList(List.of(ipscResponse));
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+
+        when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
+        when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
+
+        // Act
+        MatchResultsDtoHolder response = winMssService.importWinMssCabFile(cabFileContent);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(1, response.getMatches().size());
+        assertEquals(matchResultsDto, response.getMatches().getFirst());
+
+        verify(ipscMatchService, times(1)).mapMatchResults(any());
+        verify(matchResultService, times(1)).initMatchResults(ipscResponse);
+        verify(transactionService, times(1)).saveMatchResults(matchResultsDto);
     }
 }

@@ -21,9 +21,9 @@ import za.co.hpsc.web.models.ipsc.request.ClubRequest;
 @AllArgsConstructor
 public class ClubResponse {
     @NotNull
-    private Integer clubId = 0;
-    private String clubCode = "";
-    private String clubName = "";
+    private Integer clubId;
+    private String clubCode;
+    private String clubName;
 
     /**
      * Constructs a new {@code ClubResponse} object by initialising its fields using the values
