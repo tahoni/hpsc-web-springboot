@@ -28,11 +28,11 @@ class HpscWebApplicationTests {
     @MockitoBean
     private ClubRepository clubRepository;
     @MockitoBean
-    private MatchRepository matchRepository;
+    private IpscMatchRepository matchRepository;
     @MockitoBean
     private CompetitorRepository competitorRepository;
     @MockitoBean
-    private MatchStageRepository matchStageRepository;
+    private IpscMatchStageRepository matchStageRepository;
     @MockitoBean
     private MatchCompetitorRepository matchCompetitorRepository;
     @MockitoBean

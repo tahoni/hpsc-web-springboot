@@ -21,9 +21,9 @@ import za.co.hpsc.web.models.ipsc.request.TagRequest;
 @AllArgsConstructor
 public class TagResponse {
     @NotNull
-    private Integer tagId = 0;
+    private Integer tagId;
     @NotNull
-    private String tagName = "";
+    private String tagName;
 
     /**
      * Constructs a new {@code TagResponse} object by initialising its fields using the values

@@ -2,8 +2,8 @@ package za.co.hpsc.web.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.domain.MatchStage;
-import za.co.hpsc.web.repositories.MatchStageRepository;
+import za.co.hpsc.web.domain.IpscMatchStage;
+import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.services.MatchStageService;
 
 import java.util.Optional;
@@ -11,14 +11,14 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class MatchStageServiceImpl implements MatchStageService {
-    protected final MatchStageRepository matchStageRepository;
+    protected final IpscMatchStageRepository matchStageRepository;
 
-    public MatchStageServiceImpl(MatchStageRepository matchStageRepository) {
+    public MatchStageServiceImpl(IpscMatchStageRepository matchStageRepository) {
         this.matchStageRepository = matchStageRepository;
     }
 
     @Override
-    public Optional<MatchStage> findMatchStage(Long matchId, Integer stageNumber) {
+    public Optional<IpscMatchStage> findMatchStage(Long matchId, Integer stageNumber) {
         if ((matchId == null) || (stageNumber == null)) {
             return Optional.empty();
         }

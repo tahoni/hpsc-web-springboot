@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequest;
 import za.co.hpsc.web.services.WinMssService;
 
@@ -51,19 +52,22 @@ public class IpscController {
     @PostMapping(value = "/importWinMssCabData", consumes = "application/json",
             produces = "application/json")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully imported the WinMSS.cab file " +
-                    "data.", content = @Content(mediaType = "application/json", schema =
-            @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully imported the WinMSS.cab file data.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = MatchResultsDtoHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid WinMSS.cab file data.",
-                    content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "An internal server error occurred importing " +
-                    "the WinMSS.cab file data.", content = @Content(mediaType = "application/json"))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "500", description = "An internal server error occurred importing the WinMSS.cab file data.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ControllerResponse.class)))
     })
     @Operation(summary = "Import WinMSS.cab file", description = "Import and persist WinMSS.cab content.")
-    ResponseEntity<ControllerResponse> importWinMssCabData(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType =
-                    "application/json", schema = @Schema(implementation = IpscRequest.class)
-            ))
+    ResponseEntity<MatchResultsDtoHolder> importWinMssCabData(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = IpscRequest.class)
+                    ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {
         return ResponseEntity.ok(winMssService.importWinMssCabFile(cabFileContent));

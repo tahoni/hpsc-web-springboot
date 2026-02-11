@@ -48,13 +48,11 @@ public class MatchResultServiceImplTest {
 
     @Test
     public void testInitClub_withNullResponse_thenReturnsEmptyOptional() {
-        // Arrange - No additional setup needed as we pass null directly
-
         // Act
         Optional<ClubDto> result = matchResultService.initClub(null);
 
         // Assert
-        assertTrue(result.isEmpty(), "Result should be empty when ClubResponse is null");
+        assertTrue(result.isEmpty());
         verifyNoInteractions(clubService);
     }
 
@@ -76,7 +74,7 @@ public class MatchResultServiceImplTest {
         Optional<ClubDto> result = matchResultService.initClub(clubResponse);
 
         // Assert
-        assertTrue(result.isPresent(), "Result should be present when club exists");
+        assertTrue(result.isPresent());
         ClubDto clubDto = result.get();
         assertEquals(101L, clubDto.getId());
         assertEquals("Test Club", clubDto.getName());
@@ -97,11 +95,11 @@ public class MatchResultServiceImplTest {
         Optional<ClubDto> result = matchResultService.initClub(clubResponse);
 
         // Assert
-        assertTrue(result.isPresent(), "Result should be present with a ClubDto");
+        assertTrue(result.isPresent());
         ClubDto clubDto = result.get();
-        assertNull(clubDto.getId(), "ID should be null for a new ClubDto");
-        assertEquals("Non-existent Club", clubDto.getName(), "Name should be populated from response");
-        assertEquals("NC", clubDto.getAbbreviation(), "Abbreviation should be populated from response");
+        assertNull(clubDto.getId());
+        assertEquals("Non-existent Club", clubDto.getName());
+        assertEquals("NC", clubDto.getAbbreviation());
         verify(clubService, times(1)).findClub("Non-existent Club", "NC");
     }
 
@@ -118,7 +116,7 @@ public class MatchResultServiceImplTest {
         scoreResponse.setLastModified(LocalDateTime.of(2025, 1, 10, 10, 0));
         ipscResponse.setScores(List.of(scoreResponse));
 
-        Match existingMatch = new Match();
+        IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
@@ -133,7 +131,7 @@ public class MatchResultServiceImplTest {
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
-        assertTrue(result.isEmpty(), "Result should be empty when match exists but has no newer scores");
+        assertTrue(result.isEmpty());
         verify(matchService, times(1)).findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay());
     }
 
@@ -150,7 +148,7 @@ public class MatchResultServiceImplTest {
         scoreResponse.setLastModified(LocalDateTime.of(2025, 1, 25, 10, 0));
         ipscResponse.setScores(List.of(scoreResponse));
 
-        Match existingMatch = new Match();
+        IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
@@ -165,7 +163,7 @@ public class MatchResultServiceImplTest {
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
-        assertTrue(result.isPresent(), "Result should be present when match exists with newer scores");
+        assertTrue(result.isPresent());
         MatchDto matchDto = result.get();
         assertEquals(1L, matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
@@ -194,9 +192,9 @@ public class MatchResultServiceImplTest {
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
-        assertTrue(result.isPresent(), "Result should be present for a new match");
+        assertTrue(result.isPresent());
         MatchDto matchDto = result.get();
-        assertNull(matchDto.getId(), "ID should be null for a new match");
+        assertNull(matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
         verify(matchService, times(1)).findMatch("New Match", LocalDate.of(2025, 2, 1).atStartOfDay());
     }
@@ -211,8 +209,8 @@ public class MatchResultServiceImplTest {
         List<MatchStageDto> result = matchResultService.initStages(matchDto, null);
 
         // Assert
-        assertNotNull(result, "Result should not be null");
-        assertTrue(result.isEmpty(), "Result should be empty when stage responses is null");
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
         verifyNoInteractions(matchStageService);
     }
 
@@ -226,8 +224,8 @@ public class MatchResultServiceImplTest {
         List<MatchStageDto> result = matchResultService.initStages(matchDto, List.of());
 
         // Assert
-        assertNotNull(result, "Result should not be null");
-        assertTrue(result.isEmpty(), "Result should be empty when stage responses is empty");
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
         verifyNoInteractions(matchStageService);
     }
 
@@ -247,15 +245,15 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse1, stageResponse2);
 
-        Match match = new Match();
+        IpscMatch match = new IpscMatch();
         match.setId(1L);
 
-        za.co.hpsc.web.domain.MatchStage matchStage1 = new za.co.hpsc.web.domain.MatchStage();
+        IpscMatchStage matchStage1 = new IpscMatchStage();
         matchStage1.setId(10L);
         matchStage1.setMatch(match);
         matchStage1.setStageNumber(1);
 
-        za.co.hpsc.web.domain.MatchStage matchStage2 = new za.co.hpsc.web.domain.MatchStage();
+        IpscMatchStage matchStage2 = new IpscMatchStage();
         matchStage2.setId(20L);
         matchStage2.setMatch(match);
         matchStage2.setStageNumber(2);
@@ -267,10 +265,10 @@ public class MatchResultServiceImplTest {
         List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
 
         // Assert
-        assertNotNull(result, "Result should not be null");
-        assertEquals(2, result.size(), "Result should contain 2 stages");
-        assertEquals(10L, result.get(0).getId(), "First stage ID should match");
-        assertEquals(20L, result.get(1).getId(), "Second stage ID should match");
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(10L, result.get(0).getId());
+        assertEquals(20L, result.get(1).getId());
         verify(matchStageService, times(1)).findMatchStage(1L, 1);
         verify(matchStageService, times(1)).findMatchStage(1L, 2);
     }
@@ -298,10 +296,10 @@ public class MatchResultServiceImplTest {
         List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
 
         // Assert
-        assertNotNull(result, "Result should not be null");
-        assertEquals(2, result.size(), "Result should contain 2 stages");
-        assertNull(result.get(0).getId(), "First stage ID should be null for new stage");
-        assertNull(result.get(1).getId(), "Second stage ID should be null for new stage");
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertNull(result.get(0).getId());
+        assertNull(result.get(1).getId());
         verify(matchStageService, times(1)).findMatchStage(1L, 1);
         verify(matchStageService, times(1)).findMatchStage(1L, 2);
     }
@@ -382,7 +380,7 @@ public class MatchResultServiceImplTest {
 
         // Assert
         assertNotNull(matchResultsDto.getCompetitors());
-        assertTrue(matchResultsDto.getCompetitors().isEmpty(), "Competitors list should be empty");
+        assertTrue(matchResultsDto.getCompetitors().isEmpty());
         verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
     }
 

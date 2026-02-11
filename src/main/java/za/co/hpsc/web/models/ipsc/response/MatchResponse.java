@@ -25,14 +25,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MatchResponse {
     @NotNull
-    private Integer matchId = 0;
-    private String matchName = "";
+    private Integer matchId;
+    private String matchName;
     @NotNull
     private LocalDateTime matchDate = LocalDate.now().atStartOfDay();
-    private Integer clubId = 0;
+    private Integer clubId;
 
-    private Integer squadCount = 0;
-    private Integer firearmId = 0;
+    private Integer squadCount;
+    private Integer firearmId;
 
     /**
      * Constructs a new {@code MatchResponse} object by initialising its fields using

@@ -13,6 +13,7 @@ import za.co.hpsc.web.services.TransactionService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -35,8 +36,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<IpscResponse> ipscResponses = new ArrayList<>();
         // Maps IPSC requests to responses by match ID
-        ipscRequestHolder.getMatches().forEach(match ->
-                ipscResponses.add(createBasicMatch(ipscRequestHolder, match)));
+        ipscRequestHolder.getMatches().forEach(match -> {
+            Optional<IpscResponse> response = createBasicMatch(ipscRequestHolder, match);
+            response.ifPresent(ipscResponses::add);
+        });
 
         // Add members to each match
         ipscResponses.forEach(ipscResponse -> addMembersToMatch(ipscResponse, ipscRequestHolder));
@@ -57,28 +60,32 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @return an {@link IpscResponse} object containing the filtered data associated with the
      * provided match.
      */
-    protected IpscResponse createBasicMatch(IpscRequestHolder ipscRequestHolder, MatchRequest match) {
+    protected Optional<IpscResponse> createBasicMatch(IpscRequestHolder ipscRequestHolder, MatchRequest match) {
         // Create the match response
         MatchResponse matchResponse = new MatchResponse(match);
         Integer matchId = matchResponse.getMatchId();
+        if (matchId == null) {
+            return Optional.empty();
+        }
 
         // Add all tags to the response
         List<TagRequest> tagRequests = ipscRequestHolder.getTags();
 
         // Add stages to the response, filtered by match ID
         List<StageRequest> stageRequests = ipscRequestHolder.getStages().stream()
-                .filter(stage -> stage.getMatchId()
-                        .equals(matchId)).toList();
+                .filter(stage -> matchId.equals(stage.getMatchId()))
+                .toList();
         // Add enrolled members to the response, filtered by match ID
         List<EnrolledRequest> enrolledRequests = ipscRequestHolder.getEnrolledMembers().stream()
-                .filter(enrolled -> enrolled.getMatchId()
-                        .equals(matchId)).toList();
+                .filter(enrolled -> matchId.equals(enrolled.getMatchId()))
+                .toList();
         // Add scores to the response, filtered by match ID
         List<ScoreRequest> scoreRequests = ipscRequestHolder.getScores().stream()
-                .filter(score -> score.getMatchId()
-                        .equals(matchId)).toList();
+                .filter(score -> matchId.equals(score.getMatchId()))
+                .toList();
 
-        return new IpscResponse(tagRequests, matchResponse, stageRequests, enrolledRequests, scoreRequests);
+        IpscResponse response = new IpscResponse(tagRequests, matchResponse, stageRequests, enrolledRequests, scoreRequests);
+        return Optional.of(response);
     }
 
     /**
@@ -95,16 +102,18 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *                          filtered and matched.
      */
     protected void addMembersToMatch(IpscResponse ipscResponse, IpscRequestHolder ipscRequestHolder) {
+        List<MemberRequest> responseMembers = new ArrayList<>();
         // Filters members by members with scores
         ipscRequestHolder.getScores().forEach(scoreRequest -> {
             List<MemberRequest> memberRequests = ipscRequestHolder.getMembers().stream()
                     .filter(memberRequest ->
-                            scoreRequest.getMemberId().equals(memberRequest.getMemberId()))
+                            memberRequest.getMemberId().equals(scoreRequest.getMemberId()))
                     .toList();
-
-            // Sets members on the response
-            ipscResponse.setMembers(memberRequests);
+            // Collects members with scores
+            responseMembers.addAll(memberRequests);
         });
+        // Sets members on the response
+        ipscResponse.setMembers(responseMembers);
     }
 
     /**
@@ -123,10 +132,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      */
     protected void addClubToMatch(IpscResponse ipscResponse, IpscRequestHolder ipscRequestHolder) {
         Integer clubId = ipscResponse.getMatch().getClubId();
-        // Finds club matching ID or provides default
-        ClubRequest club = ipscRequestHolder.getClubs().stream()
-                .filter(clubRequest -> clubRequest.getClubId()
-                        .equals(clubId)).findFirst().orElse(null);
-        ipscResponse.setClub((club != null) ? new ClubResponse(club) : new ClubResponse(clubId));
+        if (clubId != null) {
+            // Finds club matching ID or provides default
+            ClubRequest club = ipscRequestHolder.getClubs().stream()
+                    .filter(clubRequest -> clubId.equals(clubRequest.getClubId()))
+                    .findFirst().orElse(null);
+            ipscResponse.setClub((club != null) ? new ClubResponse(club) : new ClubResponse(clubId));
+        }
     }
 }

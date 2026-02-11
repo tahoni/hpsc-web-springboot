@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  *
  * <p>
  * The {@code MatchStageCompetitor} class serves as an entity in the persistence layer,
- * linking a competitor ({@link MatchCompetitor}) and a match stage ({@link MatchStage})
+ * linking a competitor ({@link MatchCompetitor}) and a match stage ({@link IpscMatchStage})
  * while storing detailed performance data for the competitor in the stage.
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to provide a human-readable string
@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
 @Entity
 public class MatchStageCompetitor {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -45,7 +45,7 @@ public class MatchStageCompetitor {
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "match_stage_id")
-    private MatchStage matchStage;
+    private IpscMatchStage matchStage;
 
     private FirearmType firearmType;
     private Division division;
@@ -94,7 +94,7 @@ public class MatchStageCompetitor {
      * @param matchStageEntity        the associated match stage entity.
      * @param competitorEntity        the associated competitor entity.
      */
-    public void init(MatchStageCompetitorDto matchStageCompetitorDto, MatchStage matchStageEntity,
+    public void init(MatchStageCompetitorDto matchStageCompetitorDto, IpscMatchStage matchStageEntity,
                      Competitor competitorEntity) {
 
         // Initialises the match stage and competitor details

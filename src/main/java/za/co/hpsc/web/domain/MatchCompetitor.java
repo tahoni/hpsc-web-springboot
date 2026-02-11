@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  *
  * <p>
  * The {@code MatchCompetitor} class serves as an entity in the persistence layer, linking the
- * {@link Competitor} and {@link Match} entities while storing additional data such as the competitor's
+ * {@link Competitor} and {@link IpscMatch} entities while storing additional data such as the competitor's
  * division, discipline, power factor, and performance metrics (e.g., match points and percentage).
  * It provides constructors for creating instances with specific details or using default values.
  * Additionally, it overrides the {@code toString} method to provide a concise string representation
@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 @Entity
 public class MatchCompetitor {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -42,7 +42,7 @@ public class MatchCompetitor {
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "match_id")
-    private Match match;
+    private IpscMatch match;
 
     @Enumerated(EnumType.STRING)
     private ClubReference club;
@@ -77,7 +77,7 @@ public class MatchCompetitor {
      * @param matchEntity        the associated match entity.
      * @param competitorEntity   the associated competitor entity.
      */
-    public void init(MatchCompetitorDto matchCompetitorDto, Match matchEntity, Competitor competitorEntity) {
+    public void init(MatchCompetitorDto matchCompetitorDto, IpscMatch matchEntity, Competitor competitorEntity) {
         // Initialises the competitor details
         this.id = matchCompetitorDto.getId();
         this.match = matchEntity;

@@ -23,26 +23,26 @@ import za.co.hpsc.web.models.ipsc.request.StageRequest;
 @AllArgsConstructor
 public class StageResponse {
     @NotNull
-    private Integer matchId = 0;
+    private Integer matchId;
     @NotNull
-    private Integer stageId = 0;
-    private String stageName = "";
-    private String description = "";
+    private Integer stageId;
+    private String stageName;
+    private String description;
 
-    private Integer firearmId = 0;
-    private Integer scoreClassificationId = 0;
+    private Integer firearmId;
+    private Integer scoreClassificationId;
 
-    private Integer targetPaper = 0;
-    private Integer targetPopper = 0;
-    private Integer targetPlates = 0;
-    private Integer targetDisappear = 0;
-    private Integer targetPenalty = 0;
+    private Integer targetPaper;
+    private Integer targetPopper;
+    private Integer targetPlates;
+    private Integer targetDisappear;
+    private Integer targetPenalty;
 
-    private Integer minRounds = 0;
-    private Integer maxPoints = 0;
+    private Integer minRounds;
+    private Integer maxPoints;
 
-    private Integer startPosition = 0;
-    private Integer startOn = 0;
+    private Integer startPosition;
+    private Integer startOn;
 
     /**
      * Constructs a new {@code StageResponse} object by initialising its fields using the values
