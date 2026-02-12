@@ -16,7 +16,10 @@ import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchResponseHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
-import za.co.hpsc.web.services.*;
+import za.co.hpsc.web.services.IpscMatchService;
+import za.co.hpsc.web.services.MatchResultService;
+import za.co.hpsc.web.services.TransactionService;
+import za.co.hpsc.web.services.WinMssService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,14 +33,12 @@ public class WinMssServiceImpl implements WinMssService {
     protected final IpscMatchService ipscMatchService;
     protected final MatchResultService matchResultService;
     protected final TransactionService transactionService;
-    private final MatchCompetitorService matchCompetitorService;
 
     public WinMssServiceImpl(IpscMatchService ipscMatchService, MatchResultService matchResultService,
-                             TransactionService transactionService, MatchCompetitorService matchCompetitorService) {
+                             TransactionService transactionService) {
         this.ipscMatchService = ipscMatchService;
         this.matchResultService = matchResultService;
         this.transactionService = transactionService;
-        this.matchCompetitorService = matchCompetitorService;
     }
 
     @Override

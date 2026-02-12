@@ -6,9 +6,9 @@ import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.models.ipsc.records.*;
 import za.co.hpsc.web.services.IpscMatchResponseService;
+import za.co.hpsc.web.utils.DateUtil;
 import za.co.hpsc.web.utils.NumberUtil;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +49,11 @@ public class IpscMatchResponseServiceImpl implements IpscMatchResponseService {
     }
 
     protected IpscMatchResponse initIpscMatchResponse(IpscMatch match, List<CompetitorResponse> competitors) {
-        String scheduledDate = DateTimeFormatter.ofPattern(IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT)
-                .format(match.getScheduledDate());
+        String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
+                IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
-        String dateEdited = DateTimeFormatter.ofPattern(IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT)
-                .format(match.getDateEdited());
+        String dateEdited = DateUtil.formatDateTime(match.getDateEdited(),
+                IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Creates match response from match details
         return new IpscMatchResponse(match.getName(), scheduledDate, match.getClubName().toString(),
@@ -65,8 +65,9 @@ public class IpscMatchResponseServiceImpl implements IpscMatchResponseService {
                                                 List<MatchStageCompetitorResponse> thisCompetitorStages) {
 
         // Creates competitor response from competitor details
-        String dateOfBirth = DateTimeFormatter.ofPattern(IpscConstants.IPSC_OUTPUT_DATE_FORMAT)
-                .format(competitor.getDateOfBirth());
+        String dateOfBirth = DateUtil.formatDate(competitor.getDateOfBirth(),
+                IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
+
         return new CompetitorResponse(competitor.getFirstName(),
                 competitor.getLastName(), competitor.getMiddleNames(), dateOfBirth,
                 competitor.getSapsaNumber(), competitor.getCompetitorNumber(),
@@ -93,8 +94,8 @@ public class IpscMatchResponseServiceImpl implements IpscMatchResponseService {
         String matchRanking = NumberUtil.formatBigDecimal(matchCompetitor.getMatchRanking(),
                 IpscConstants.PERCENTAGE_SCALE);
 
-        String dateEdited = DateTimeFormatter.ofPattern(IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT)
-                .format(matchCompetitor.getDateEdited());
+        String dateEdited = DateUtil.formatDateTime(matchCompetitor.getDateEdited(),
+                IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         thisCompetitorOverall =
                 // Formats competitor details for match competitor response
@@ -124,8 +125,8 @@ public class IpscMatchResponseServiceImpl implements IpscMatchResponseService {
                     String stagePercentage = NumberUtil.formatBigDecimal(msc.getStagePercentage(), IpscConstants.PERCENTAGE_SCALE);
                     String stageRanking = NumberUtil.formatBigDecimal(msc.getStageRanking(), IpscConstants.PERCENTAGE_SCALE);
 
-                    String dateEdited = DateTimeFormatter.ofPattern(IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT)
-                            .format(msc.getDateEdited());
+                    String dateEdited = DateUtil.formatDateTime(msc.getDateEdited(),
+                            IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
                     MatchStageCompetitorResponse thisCompetitorStage =
                             // Formats competitor details for match stage competitor response
