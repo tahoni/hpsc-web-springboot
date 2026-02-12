@@ -67,7 +67,7 @@ public class MatchCompetitorDto {
      *                              such as the competitor, match, and associated identifier.
      *                              Must not be null.
      */
-    public MatchCompetitorDto(MatchCompetitor matchCompetitorEntity) {
+    public MatchCompetitorDto(@NotNull MatchCompetitor matchCompetitorEntity) {
         // Initialises the match competitor details
         this.id = matchCompetitorEntity.getId();
         this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
@@ -99,17 +99,19 @@ public class MatchCompetitorDto {
      *                      competitor participates.
      *                      Must not be null.
      */
-    public MatchCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchDto matchDto) {
-        // Initialises the competitor and match details
-        this.competitorIndex = competitorDto.getIndex();
-        this.matchIndex = matchDto.getIndex();
-        this.competitor = competitorDto;
-        this.match = matchDto;
+    public MatchCompetitorDto(CompetitorDto competitorDto, MatchDto matchDto) {
+        if (competitorDto != null) {
+            // Initialises the competitor and match details
+            this.competitorIndex = competitorDto.getIndex();
+            this.matchIndex = matchDto.getIndex();
+            this.competitor = competitorDto;
+            this.match = matchDto;
 
-        // Initialises the date fields
-        this.dateCreated = LocalDateTime.now();
-        this.dateUpdated = LocalDateTime.now();
-        this.dateEdited = LocalDateTime.now();
+            // Initialises the date fields
+            this.dateCreated = LocalDateTime.now();
+            this.dateUpdated = LocalDateTime.now();
+            this.dateEdited = LocalDateTime.now();
+        }
     }
 
     /**
@@ -123,49 +125,45 @@ public class MatchCompetitorDto {
      *                         competitor information in the match.
      *                         Can be null.
      */
-    public void init(@NotNull List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
-        // Initializes aggregate score from multiple score responses
-        this.matchPoints = BigDecimal.ZERO;
+    public void init(List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
         if (scoreResponses != null) {
+            // Initializes aggregate score from multiple score responses
+            this.matchPoints = BigDecimal.ZERO;
             scoreResponses.forEach(scoreResponse -> matchPoints =
                     matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()))));
-        }
 
-        // Don't overwrite an existing date creation timestamp
-        this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
-        // Initialises the date updated
-        this.dateUpdated = LocalDateTime.now();
-        // Sets the date edited to the latest score update timestamp
-        if (scoreResponses != null) {
+            // Don't overwrite an existing date creation timestamp
+            this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
+            // Initialises the date updated
+            this.dateUpdated = LocalDateTime.now();
+            // Sets the date edited to the latest score update timestamp
             this.dateEdited = scoreResponses.stream()
                     .map(ScoreResponse::getLastModified)
                     .max(LocalDateTime::compareTo)
                     .orElse(LocalDateTime.now());
-        } else {
-            this.dateEdited = LocalDateTime.now();
-        }
 
-        // Initialises the competitor
-        this.competitorCategory = CompetitorCategory.NONE;
-        if (enrolledResponse != null) {
-            // Initialise the competitor and match details
-            this.competitorIndex = enrolledResponse.getCompetitorId();
-            this.matchIndex = enrolledResponse.getMatchId();
-            // TOOD: get DTOs
+            // Initialises the competitor
+            this.competitorCategory = CompetitorCategory.NONE;
+            if (enrolledResponse != null) {
+                // Initialise the competitor and match details
+                this.competitorIndex = enrolledResponse.getCompetitorId();
+                this.matchIndex = enrolledResponse.getMatchId();
+                // TOOD: get DTOs
 
-            // Determines the power factor based on the major power factor flag
-            this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
-            // Determines the club based on the club reference number
-            this.club = ClubReference.getByCode(enrolledResponse.getRefNo()).orElse(ClubReference.UNKNOWN);
-            // Determines the discipline based on the division ID
-            this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
-            // Determines the firearm type from the discipline
-            this.firearmType =
-                    FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
-            // Determines the competitor category based on the competitor category ID
-            this.competitorCategory =
-                    CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
-                            .orElse(CompetitorCategory.NONE);
+                // Determines the power factor based on the major power factor flag
+                this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
+                // Determines the club based on the club reference number
+                this.club = ClubReference.getByCode(enrolledResponse.getRefNo()).orElse(ClubReference.UNKNOWN);
+                // Determines the discipline based on the division ID
+                this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+                // Determines the firearm type from the discipline
+                this.firearmType =
+                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
+                // Determines the competitor category based on the competitor category ID
+                this.competitorCategory =
+                        CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                                .orElse(CompetitorCategory.NONE);
+            }
         }
     }
 

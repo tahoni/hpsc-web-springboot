@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchResponse;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.MatchResultService;
@@ -80,18 +80,18 @@ public class WinMssServiceIntegrationTest {
                 }
                 """;
 
-        IpscMatchResponseHolder ipscMatchResponseHolder = assertDoesNotThrow(() ->
+        IpscMatchRecordHolder ipscMatchRecordHolder = assertDoesNotThrow(() ->
                 winMssService.importWinMssCabFile(cabFileContent));
-        assertNotNull(ipscMatchResponseHolder);
-        assertNotNull(ipscMatchResponseHolder.matches());
-        assertEquals(1, ipscMatchResponseHolder.matches().size());
+        assertNotNull(ipscMatchRecordHolder);
+        assertNotNull(ipscMatchRecordHolder.matches());
+        assertEquals(1, ipscMatchRecordHolder.matches().size());
 
-        IpscMatchResponse ipscMatchResponse = ipscMatchResponseHolder.matches().getFirst();
-        assertEquals("", ipscMatchResponse.clubName());
-        assertEquals("Eeufees HG and PCC Club Shoot February 2026", ipscMatchResponse.name());
-        assertEquals("Club Shoot", ipscMatchResponse.matchCategory());
-        assertEquals("PCC", ipscMatchResponse.matchFirearmType());
-        assertEquals("2026-02-07", ipscMatchResponse.scheduledDate());
-        assertNotNull(ipscMatchResponse.dateEdited());
+        IpscMatchRecord ipscMatchRecord = ipscMatchRecordHolder.matches().getFirst();
+        assertEquals("", ipscMatchRecord.clubName());
+        assertEquals("Eeufees HG and PCC Club Shoot February 2026", ipscMatchRecord.name());
+        assertEquals("Club Shoot", ipscMatchRecord.matchCategory());
+        assertEquals("PCC", ipscMatchRecord.matchFirearmType());
+        assertEquals("2026-02-07", ipscMatchRecord.scheduledDate());
+        assertNotNull(ipscMatchRecord.dateEdited());
     }
 }

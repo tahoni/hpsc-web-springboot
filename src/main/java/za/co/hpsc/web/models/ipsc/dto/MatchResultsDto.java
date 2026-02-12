@@ -1,6 +1,5 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +32,7 @@ public class MatchResultsDto {
     private List<MatchStageCompetitorDto> matchStageCompetitors = new ArrayList<>();
 
     private IpscMatch ipscMatch;
-    
+
     /**
      * Constructs a new {@code MatchResultsDto} instance based on the provided match.
      *
@@ -42,8 +41,8 @@ public class MatchResultsDto {
      *              firearm type, associated club, and other metadata.
      *              Must not be null.
      */
-    public MatchResultsDto(@NotNull MatchDto match) {
+    public MatchResultsDto(MatchDto match) {
         this.match = match;
-        this.club = match.getClub();
+        this.club = ((match != null) ? match.getClub() : null);
     }
 }

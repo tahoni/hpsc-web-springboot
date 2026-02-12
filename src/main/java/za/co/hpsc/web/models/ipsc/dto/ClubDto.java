@@ -55,12 +55,25 @@ public class ClubDto {
      * @param clubResponse
      */
     public ClubDto(ClubResponse clubResponse) {
-        // Initialises club details
-        this.index = clubResponse.getClubId();
+        if (clubResponse != null) {
+            // Initialises club details
+            this.index = clubResponse.getClubId();
 
-        // Initialises club attributes
-        this.name = clubResponse.getClubName();
-        this.abbreviation = clubResponse.getClubCode();
+            // Initialises club attributes
+            this.name = clubResponse.getClubName();
+            this.abbreviation = clubResponse.getClubCode();
+        }
+    }
+
+    /**
+     *
+     * @param clubResponse
+     */
+    public void init(ClubResponse clubResponse) {
+        if (clubResponse != null) {
+            this.index = clubResponse.getClubId();
+            this.name = clubResponse.getClubName();
+        }
     }
 
     /**

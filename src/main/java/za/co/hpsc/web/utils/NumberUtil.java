@@ -37,15 +37,15 @@ public final class NumberUtil {
         BigDecimal result = BigDecimal.ZERO;
         // Calculates percentage to double the default scale, then multiplies by 100
         if ((whole != null) && (whole.compareTo(BigDecimal.ZERO) != 0)) {
-            result =
-                    part.divide(whole, SystemConstants.DEFAULT_SCALE * 2, RoundingMode.HALF_UP)
-                            .multiply(BigDecimal.valueOf(100));
+            result = part.divide(whole, SystemConstants.DEFAULT_SCALE * 2, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100));
         }
         // Scales the result to the default scale
         return result.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
     public static String formatBigDecimal(BigDecimal value, int scale) {
-        return value.setScale(scale, RoundingMode.HALF_UP).toString();
+        BigDecimal result = ((value != null) ? value : BigDecimal.ZERO);
+        return result.setScale(scale, RoundingMode.HALF_UP).toString();
     }
 }

@@ -2,7 +2,7 @@ package za.co.hpsc.web.models.ipsc.records;
 
 import java.util.List;
 
-public record IpscMatchResponse(
+public record IpscMatchRecord(
         String name,
         String scheduledDate,
         String clubName,
@@ -10,7 +10,7 @@ public record IpscMatchResponse(
         String matchFirearmType,
         String matchCategory,
 
-        List<CompetitorResponse> competitors,
+        List<CompetitorRecord> competitors,
 
         String dateEdited
 ) {

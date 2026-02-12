@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.services.WinMssService;
 
@@ -55,7 +55,7 @@ public class IpscController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully imported the WinMSS.cab file data.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = IpscMatchResponseHolder.class))),
+                            schema = @Schema(implementation = IpscMatchRecordHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid WinMSS.cab file data.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
@@ -64,7 +64,7 @@ public class IpscController {
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     @Operation(summary = "Import WinMSS.cab file", description = "Import and persist WinMSS.cab content.")
-    ResponseEntity<IpscMatchResponseHolder> importWinMssCabData(
+    ResponseEntity<IpscMatchRecordHolder> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = IpscRequestHolder.class)

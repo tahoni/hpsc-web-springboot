@@ -143,18 +143,20 @@ public class MatchStageCompetitorDto {
      *                      the competitor participates.
      *                      Must not be null.
      */
-    public MatchStageCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchStageDto matchStageDto) {
-        // Initialises the competitor and stage details
-        this.competitor = competitorDto;
-        this.matchStage = matchStageDto;
+    public MatchStageCompetitorDto(CompetitorDto competitorDto, MatchStageDto matchStageDto) {
+        if (competitorDto != null) {
+            // Initialises the competitor and stage details
+            this.competitor = competitorDto;
+            this.matchStage = matchStageDto;
 
-        // Initialises the competitor and stage attributes
-        this.competitorCategory = competitorDto.getDefaultCompetitorCategory();
+            // Initialises the competitor and stage attributes
+            this.competitorCategory = competitorDto.getDefaultCompetitorCategory();
 
-        // Initialises the date fields
-        this.dateCreated = LocalDateTime.now();
-        this.dateUpdated = LocalDateTime.now();
-        this.dateEdited = LocalDateTime.now();
+            // Initialises the date fields
+            this.dateCreated = LocalDateTime.now();
+            this.dateUpdated = LocalDateTime.now();
+            this.dateEdited = LocalDateTime.now();
+        }
     }
 
     /**
@@ -170,67 +172,69 @@ public class MatchStageCompetitorDto {
      * @param matchStageDto    the {@link MatchStageDto} object containing stage-related information,
      *                         Can be null.
      */
-    public void init(@NotNull ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
+    public void init(ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
                      MatchStageDto matchStageDto) {
 
-        // Initialises the detailed breakdown of the score
-        this.scoreA = scoreResponse.getScoreA();
-        this.scoreB = scoreResponse.getScoreB();
-        this.scoreC = scoreResponse.getScoreC();
-        this.scoreD = scoreResponse.getScoreD();
+        if (scoreResponse != null) {
+            // Initialises the detailed breakdown of the score
+            this.scoreA = scoreResponse.getScoreA();
+            this.scoreB = scoreResponse.getScoreB();
+            this.scoreC = scoreResponse.getScoreC();
+            this.scoreD = scoreResponse.getScoreD();
 
-        // Initialises the overall performance metrics
-        this.points = scoreResponse.getFinalScore();
-        this.misses = scoreResponse.getMisses();
-        this.penalties = scoreResponse.getPenalties();
-        this.procedurals = scoreResponse.getProcedurals();
+            // Initialises the overall performance metrics
+            this.points = scoreResponse.getFinalScore();
+            this.misses = scoreResponse.getMisses();
+            this.penalties = scoreResponse.getPenalties();
+            this.procedurals = scoreResponse.getProcedurals();
 
-        // Initialises the deduction details, if applicable
-        this.hasDeduction = scoreResponse.getDeduction();
-        this.deductionPercentage = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getDeductionPercentage());
+            // Initialises the deduction details, if applicable
+            this.hasDeduction = scoreResponse.getDeduction();
+            this.deductionPercentage = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getDeductionPercentage());
 
-        // Initialises whether the competitor is disqualified
-        this.isDisqualified = scoreResponse.getIsDisqualified();
+            // Initialises whether the competitor is disqualified
+            this.isDisqualified = scoreResponse.getIsDisqualified();
 
-        // Initialises the time and hit factor details
-        this.time = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getTime());
-        this.hitFactor = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getHitFactor());
+            // Initialises the time and hit factor details
+            this.time = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getTime());
+            this.hitFactor = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getHitFactor());
 
-        // Calculates the stage points and percentage based on the final score
-        this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
-        if (matchStageDto.getMaxPoints() != null) {
-            this.stagePercentage = NumberUtil.calculatePercentage(this.stagePoints,
-                    BigDecimal.valueOf(matchStageDto.getMaxPoints()));
-        }
+            // Calculates the stage points and percentage based on the final score
+            this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
+            if (matchStageDto.getMaxPoints() != null) {
+                this.stagePercentage = NumberUtil.calculatePercentage(this.stagePoints,
+                        BigDecimal.valueOf(matchStageDto.getMaxPoints()));
+            }
 
-        // Don't overwrite an existing date creation timestamp
-        this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
-        // Initialises the date updated
-        this.dateUpdated = LocalDateTime.now();
-        // Sets the date edited to the latest score update timestamp
-        this.dateEdited = scoreResponse.getLastModified();
+            // Don't overwrite an existing date creation timestamp
+            this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
+            // Initialises the date updated
+            this.dateUpdated = LocalDateTime.now();
+            // Sets the date edited to the latest score update timestamp
+            this.dateEdited = scoreResponse.getLastModified();
 
-        // Initialises competitor attributes
-        this.competitorCategory = CompetitorCategory.NONE;
-        if (enrolledResponse != null) {
-            // Initialise the competitor and match details
-            this.competitorIndex = enrolledResponse.getCompetitorId();
-            this.matchStageIndex = matchStageDto.getIndex();
-            // TOOD: get DTOs
-            this.matchStage = matchStageDto;
+            // Initialises competitor attributes
+            this.competitorCategory = CompetitorCategory.NONE;
+            if (enrolledResponse != null) {
+                // Initialise the competitor and match details
+                this.competitorIndex = enrolledResponse.getCompetitorId();
+                this.matchStageIndex = matchStageDto.getIndex();
+                // TOOD: get DTOs
+                this.matchStage = matchStageDto;
 
-            // Determines the power factor based on the major power factor flag
-            this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
-            this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
-            // Determines the discipline based on the division ID
-            this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
-            // Determines the firearm type from the discipline
-            this.firearmType =
-                    FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
-            // Determines the competitor category based on the competitor category ID
-            this.competitorCategory =
-                    CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
-                            .orElse(CompetitorCategory.NONE);
+                // Determines the power factor based on the major power factor flag
+                this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
+                this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+                // Determines the discipline based on the division ID
+                this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+                // Determines the firearm type from the discipline
+                this.firearmType =
+                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
+                // Determines the competitor category based on the competitor category ID
+                this.competitorCategory =
+                        CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                                .orElse(CompetitorCategory.NONE);
+            }
         }
     }
 

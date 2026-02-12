@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
@@ -39,6 +39,6 @@ public interface IpscMatchService {
      * @param ipscMatchEntityList
      * @return
      */
-    IpscMatchResponseHolder generateIpscMatchResultResponse(List<IpscMatch> ipscMatchEntityList);
+    IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList);
 
 }

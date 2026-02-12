@@ -82,21 +82,23 @@ public class CompetitorDto {
      *
      * @param memberResponse
      */
-    public CompetitorDto(@NotNull MemberResponse memberResponse) {
-        // Initialises competitor details
-        this.index = memberResponse.getMemberId();
+    public CompetitorDto(MemberResponse memberResponse) {
+        if (memberResponse != null) {
+            // Initialises competitor details
+            this.index = memberResponse.getMemberId();
 
-        // Initialises competitor attributes
-        this.firstName = memberResponse.getFirstName();
-        this.lastName = memberResponse.getLastName();
-        if (memberResponse.getDateOfBirth() != null) {
-            this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
-        }
+            // Initialises competitor attributes
+            this.firstName = memberResponse.getFirstName();
+            this.lastName = memberResponse.getLastName();
+            if (memberResponse.getDateOfBirth() != null) {
+                this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
+            }
 
-        // Initialises competitor number and SAPSA number based on the member's ICS alias
-        this.competitorNumber = memberResponse.getIcsAlias();
-        if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
-            this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+            // Initialises competitor number and SAPSA number based on the member's ICS alias
+            this.competitorNumber = memberResponse.getIcsAlias();
+            if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
+                this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+            }
         }
     }
 
@@ -112,29 +114,31 @@ public class CompetitorDto {
      *                         competitor category.
      *                         Can be null.
      */
-    public void init(@NotNull MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
-        // Initialises competitor details
-        this.index = memberResponse.getMemberId();
+    public void init(MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
+        if (memberResponse != null) {
+            // Initialises competitor details
+            this.index = memberResponse.getMemberId();
 
-        // Initialises competitor attributes
-        this.firstName = memberResponse.getFirstName();
-        this.lastName = memberResponse.getLastName();
-        if (memberResponse.getDateOfBirth() != null) {
-            this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
-        }
+            // Initialises competitor attributes
+            this.firstName = memberResponse.getFirstName();
+            this.lastName = memberResponse.getLastName();
+            if (memberResponse.getDateOfBirth() != null) {
+                this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
+            }
 
-        // Initialises competitor number and SAPSA number based on the member's ICS alias
-        this.competitorNumber = memberResponse.getIcsAlias();
-        if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
-            this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
-        }
+            // Initialises competitor number and SAPSA number based on the member's ICS alias
+            this.competitorNumber = memberResponse.getIcsAlias();
+            if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
+                this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+            }
 
-        // Initialises competitor category based on the member's category code'
-        if (enrolledResponse != null) {
-            this.defaultCompetitorCategory = CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
-                    .orElse(CompetitorCategory.NONE);
-        } else {
-            this.defaultCompetitorCategory = CompetitorCategory.NONE;
+            // Initialises competitor category based on the member's category code'
+            if (enrolledResponse != null) {
+                this.defaultCompetitorCategory = CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                        .orElse(CompetitorCategory.NONE);
+            } else {
+                this.defaultCompetitorCategory = CompetitorCategory.NONE;
+            }
         }
     }
 

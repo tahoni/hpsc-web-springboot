@@ -1,6 +1,6 @@
 package za.co.hpsc.web.models.ipsc.records;
 
-public record MatchCompetitorResponse(
+public record MatchCompetitorRecord(
         String club,
         String firearmType,
         String division,

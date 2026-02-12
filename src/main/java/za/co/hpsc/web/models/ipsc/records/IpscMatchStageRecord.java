@@ -2,7 +2,7 @@ package za.co.hpsc.web.models.ipsc.records;
 
 import java.util.List;
 
-public record IpscMatchStageResponse(
+public record IpscMatchStageRecord(
         Integer stageNumber,
         String stageName,
         Integer rangeNumber,
@@ -16,6 +16,6 @@ public record IpscMatchStageResponse(
         Integer minRounds,
         Integer maxPoints,
 
-        List<MatchStageCompetitorResponse> matchStageCompetitors
+        List<MatchStageCompetitorRecord> matchStageCompetitors
 ) {
 }

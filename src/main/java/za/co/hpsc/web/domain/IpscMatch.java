@@ -93,8 +93,10 @@ public class IpscMatch {
         // Initialises the match attributes
         this.name = matchDto.getName();
         this.scheduledDate = matchDto.getScheduledDate();
-        this.matchFirearmType = matchDto.getMatchFirearmType();
-        this.matchCategory = matchDto.getMatchCategory();
+        this.matchFirearmType = ((matchDto.getMatchFirearmType() != null) ?
+                matchDto.getMatchFirearmType() : this.matchFirearmType);
+        this.matchCategory = ((matchDto.getMatchFirearmType() != null) ?
+                matchDto.getMatchCategory() : this.matchCategory);
 
         // Initialises the date fields
         this.dateCreated = matchDto.getDateCreated();

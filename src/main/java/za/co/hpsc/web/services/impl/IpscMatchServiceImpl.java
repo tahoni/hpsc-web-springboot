@@ -53,8 +53,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     // TODO: add tests
     @Override
-    public IpscMatchResponseHolder generateIpscMatchResultResponse(List<IpscMatch> ipscMatchEntityList) {
-        List<IpscMatchResponse> ipscMatchResponseList = new ArrayList<>();
+    public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList) {
+        List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
 
         ipscMatchEntityList.forEach(match -> {
             // Get the match stages and competitors
@@ -65,20 +65,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             List<MatchStageCompetitor> matchStageCompetitorList = getMatchStageCompetitorList(matchStageList);
             List<Competitor> competitorList = getCompetitorList(matchCompetitorList);
 
-            List<CompetitorResponse> competitors = new ArrayList<>();
+            List<CompetitorRecord> competitors = new ArrayList<>();
             competitorList.forEach(c -> initMatchCompetitor(c, matchCompetitorList)
                     .ifPresent((mcr) -> {
-                        List<MatchStageCompetitorResponse> thisCompetitorStages =
+                        List<MatchStageCompetitorRecord> thisCompetitorStages =
                                 initMatchStageCompetitor(c, matchStageCompetitorList);
 
                         // Creates competitor response from competitor details
                         initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
                     }));
 
-            initIpscMatchResponse(match, competitors).ifPresent(ipscMatchResponseList::add);
+            initIpscMatchResponse(match, competitors).ifPresent(ipscMatchRecordList::add);
         });
 
-        return new IpscMatchResponseHolder(ipscMatchResponseList);
+        return new IpscMatchRecordHolder(ipscMatchRecordList);
     }
 
     /**
@@ -120,7 +120,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .filter(score -> matchId.equals(score.getMatchId()))
                 .toList();
 
-        IpscResponse response = new IpscResponse(tagRequests, matchResponse, stageRequests, enrolledRequests, scoreRequests);
+        IpscResponse response = new IpscResponse(tagRequests, matchResponse, stageRequests,
+                enrolledRequests, scoreRequests);
         return Optional.of(response);
     }
 
@@ -185,7 +186,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
     }
 
-    protected Optional<IpscMatchResponse> initIpscMatchResponse(IpscMatch match, List<CompetitorResponse> competitors) {
+    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
@@ -193,20 +194,24 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
 
+        String matchFirearmType = ((match.getMatchFirearmType() != null) ?
+                match.getMatchFirearmType().toString() : "");
+        String matchCategory = ((match.getMatchCategory() != null) ?
+                match.getMatchCategory().toString() : "");
+
         String dateEdited = DateUtil.formatDateTime(match.getDateEdited(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Creates match response from match details
         String clubName = ((match.getClubName() != null) ? match.getClubName().toString() : "");
-        IpscMatchResponse ipscMatchResponse = new IpscMatchResponse(match.getName(), scheduledDate,
-                clubName, match.getMatchFirearmType().toString(),
-                match.getMatchCategory().toString(), competitors, dateEdited);
-        return Optional.of(ipscMatchResponse);
+        IpscMatchRecord ipscMatchRecord = new IpscMatchRecord(match.getName(), scheduledDate,
+                clubName, matchFirearmType, matchCategory, competitors, dateEdited);
+        return Optional.of(ipscMatchRecord);
     }
 
-    protected Optional<CompetitorResponse> initCompetitor(Competitor competitor,
-                                                          MatchCompetitorResponse thisCompetitorOverall,
-                                                          List<MatchStageCompetitorResponse> thisCompetitorStages) {
+    protected Optional<CompetitorRecord> initCompetitor(Competitor competitor,
+                                                        MatchCompetitorRecord thisCompetitorOverall,
+                                                        List<MatchStageCompetitorRecord> thisCompetitorStages) {
         if ((competitor == null) || (thisCompetitorOverall == null) || (thisCompetitorStages == null)) {
             return Optional.empty();
         }
@@ -215,24 +220,24 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         String dateOfBirth = DateUtil.formatDate(competitor.getDateOfBirth(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
 
-        CompetitorResponse competitorResponse = new CompetitorResponse(competitor.getFirstName(),
+        CompetitorRecord competitorRecord = new CompetitorRecord(competitor.getFirstName(),
                 competitor.getLastName(), competitor.getMiddleNames(), dateOfBirth,
                 competitor.getSapsaNumber(), competitor.getCompetitorNumber(),
                 thisCompetitorOverall, thisCompetitorStages);
-        return Optional.of(competitorResponse);
+        return Optional.of(competitorRecord);
     }
 
     /**
      * Initializes match competitor response from competitor details
      */
-    protected Optional<MatchCompetitorResponse> initMatchCompetitor(Competitor competitor,
-                                                                    List<MatchCompetitor> matchCompetitorList) {
+    protected Optional<MatchCompetitorRecord> initMatchCompetitor(Competitor competitor,
+                                                                  List<MatchCompetitor> matchCompetitorList) {
 
         if ((competitor == null) || (matchCompetitorList == null)) {
             return Optional.empty();
         }
 
-        MatchCompetitorResponse thisCompetitorOverall = null;
+        MatchCompetitorRecord thisCompetitorOverall = null;
         MatchCompetitor matchCompetitor = matchCompetitorList.stream()
                 .filter(mc -> competitor.equals(mc.getCompetitor()))
                 .findFirst().orElse(null);
@@ -240,6 +245,15 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (matchCompetitor == null) {
             return Optional.empty();
         }
+
+        String firearmType = ((matchCompetitor.getFirearmType() != null) ?
+                matchCompetitor.getFirearmType().toString() : "");
+        String division = ((matchCompetitor.getDivision() != null ?
+                matchCompetitor.getDivision().toString() : ""));
+        String powerFactor = ((matchCompetitor.getPowerFactor() != null) ?
+                matchCompetitor.getPowerFactor().toString() : "");
+        String competitorCategory = ((matchCompetitor.getCompetitorCategory() != null) ?
+                matchCompetitor.getCompetitorCategory().toString() : "");
 
         String matchPoints = NumberUtil.formatBigDecimal(matchCompetitor.getMatchPoints(),
                 IpscConstants.MATCH_POINTS_SCALE);
@@ -249,50 +263,56 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         String dateEdited = DateUtil.formatDateTime(matchCompetitor.getDateEdited(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
-        thisCompetitorOverall =
-                // Formats competitor details for match competitor response
-                new MatchCompetitorResponse(matchCompetitor.getClub().toString(),
-                        matchCompetitor.getFirearmType().toString(),
-                        matchCompetitor.getDivision().toString(),
-                        matchCompetitor.getPowerFactor().toString(),
-                        matchCompetitor.getCompetitorCategory().toString(),
-                        matchPoints, matchRanking,
-                        dateEdited);
+        // Formats competitor details for match competitor response
+        thisCompetitorOverall = new MatchCompetitorRecord(matchCompetitor.getClub().toString(),
+                firearmType, division, powerFactor, competitorCategory, matchPoints, matchRanking, dateEdited);
         return Optional.of(thisCompetitorOverall);
     }
 
-    protected List<MatchStageCompetitorResponse> initMatchStageCompetitor(Competitor competitor,
-                                                                          List<MatchStageCompetitor> matchStageCompetitorList) {
+    protected List<MatchStageCompetitorRecord> initMatchStageCompetitor(Competitor competitor,
+                                                                        List<MatchStageCompetitor> matchStageCompetitorList) {
 
         if ((competitor == null) || (matchStageCompetitorList == null)) {
             return new ArrayList<>();
         }
 
-        List<MatchStageCompetitorResponse> thisCompetitorStages = new ArrayList<>();
+        List<MatchStageCompetitorRecord> thisCompetitorStages = new ArrayList<>();
         // Filters and maps stage data to response objects
         matchStageCompetitorList.stream()
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {
 
-                    String time = NumberUtil.formatBigDecimal(msc.getTime(), IpscConstants.TIME_SCALE);
-                    String hitFactor = NumberUtil.formatBigDecimal(msc.getHitFactor(), IpscConstants.HIT_FACTOR_SCALE);
+                    String firearmType = ((msc.getFirearmType() != null) ?
+                            msc.getFirearmType().toString() : "");
+                    String division = ((msc.getDivision() != null ?
+                            msc.getDivision().toString() : ""));
+                    String powerFactor = ((msc.getPowerFactor() != null) ?
+                            msc.getPowerFactor().toString() : "");
+                    String competitorCategory = ((msc.getCompetitorCategory() != null) ?
+                            msc.getCompetitorCategory().toString() : "");
 
-                    String stagePoints = NumberUtil.formatBigDecimal(msc.getStagePoints(), IpscConstants.STAGE_POINTS_SCALE);
-                    String stagePercentage = NumberUtil.formatBigDecimal(msc.getStagePercentage(), IpscConstants.PERCENTAGE_SCALE);
-                    String stageRanking = NumberUtil.formatBigDecimal(msc.getStageRanking(), IpscConstants.PERCENTAGE_SCALE);
+                    String time = NumberUtil.formatBigDecimal(msc.getTime(),
+                            IpscConstants.TIME_SCALE);
+                    String hitFactor = NumberUtil.formatBigDecimal(msc.getHitFactor(),
+                            IpscConstants.HIT_FACTOR_SCALE);
+
+                    String stagePoints = NumberUtil.formatBigDecimal(msc.getStagePoints(),
+                            IpscConstants.STAGE_POINTS_SCALE);
+                    String stagePercentage = NumberUtil.formatBigDecimal(msc.getStagePercentage(),
+                            IpscConstants.PERCENTAGE_SCALE);
+                    String stageRanking = NumberUtil.formatBigDecimal(msc.getStageRanking(),
+                            IpscConstants.PERCENTAGE_SCALE);
 
                     String dateEdited = DateUtil.formatDateTime(msc.getDateEdited(),
                             IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
-                    MatchStageCompetitorResponse thisCompetitorStage =
-                            // Formats competitor details for match stage competitor response
-                            new MatchStageCompetitorResponse(msc.getFirearmType().toString(),
-                                    msc.getDivision().toString(), msc.getPowerFactor().toString(),
-                                    msc.getCompetitorCategory().toString(),
-                                    msc.getScoreA(), msc.getScoreB(), msc.getScoreC(), msc.getScoreD(),
-                                    msc.getPoints(), msc.getMisses(), msc.getPenalties(), msc.getProcedurals(),
-                                    time, hitFactor, stagePoints, stagePercentage, stageRanking,
-                                    dateEdited);
+                    // Formats competitor details for match stage competitor response
+                    MatchStageCompetitorRecord thisCompetitorStage = new MatchStageCompetitorRecord(
+                            firearmType, division, powerFactor, competitorCategory,
+                            msc.getScoreA(), msc.getScoreB(), msc.getScoreC(), msc.getScoreD(),
+                            msc.getPoints(), msc.getMisses(), msc.getPenalties(), msc.getProcedurals(),
+                            time, hitFactor, stagePoints, stagePercentage, stageRanking,
+                            dateEdited);
                     thisCompetitorStages.add(thisCompetitorStage);
                 });
         return thisCompetitorStages;
