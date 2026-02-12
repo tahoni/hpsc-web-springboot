@@ -12,6 +12,7 @@ import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.utils.DateUtil;
 import za.co.hpsc.web.utils.NumberUtil;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                         initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
                     }));
 
-            initIpscMatchResponse(match, competitors).ifPresent(ipscMatchRecordList::add);
+            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, competitors);
+            ipscResponse.ifPresent(ipscMatchRecordList::add);
         });
 
         return new IpscMatchRecordHolder(ipscMatchRecordList);
@@ -194,16 +196,14 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
 
-        String matchFirearmType = ((match.getMatchFirearmType() != null) ?
-                match.getMatchFirearmType().toString() : "");
-        String matchCategory = ((match.getMatchCategory() != null) ?
-                match.getMatchCategory().toString() : "");
+        String matchFirearmType = ValueUtil.nullAsEmptyString(match.getMatchFirearmType());
+        String matchCategory = ValueUtil.nullAsEmptyString(match.getMatchCategory());
 
         String dateEdited = DateUtil.formatDateTime(match.getDateEdited(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Creates match response from match details
-        String clubName = ((match.getClubName() != null) ? match.getClubName().toString() : "");
+        String clubName = ValueUtil.nullAsEmptyString(match.getClubName());
         IpscMatchRecord ipscMatchRecord = new IpscMatchRecord(match.getName(), scheduledDate,
                 clubName, matchFirearmType, matchCategory, competitors, dateEdited);
         return Optional.of(ipscMatchRecord);
@@ -246,14 +246,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
-        String firearmType = ((matchCompetitor.getFirearmType() != null) ?
-                matchCompetitor.getFirearmType().toString() : "");
-        String division = ((matchCompetitor.getDivision() != null ?
-                matchCompetitor.getDivision().toString() : ""));
-        String powerFactor = ((matchCompetitor.getPowerFactor() != null) ?
-                matchCompetitor.getPowerFactor().toString() : "");
-        String competitorCategory = ((matchCompetitor.getCompetitorCategory() != null) ?
-                matchCompetitor.getCompetitorCategory().toString() : "");
+        String firearmType = ValueUtil.nullAsEmptyString(matchCompetitor.getFirearmType());
+        String division = ValueUtil.nullAsEmptyString(matchCompetitor.getDivision());
+        String powerFactor = ValueUtil.nullAsEmptyString(matchCompetitor.getPowerFactor());
+        String competitorCategory = ValueUtil.nullAsEmptyString(matchCompetitor.getCompetitorCategory());
 
         String matchPoints = NumberUtil.formatBigDecimal(matchCompetitor.getMatchPoints(),
                 IpscConstants.MATCH_POINTS_SCALE);
@@ -282,14 +278,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {
 
-                    String firearmType = ((msc.getFirearmType() != null) ?
-                            msc.getFirearmType().toString() : "");
-                    String division = ((msc.getDivision() != null ?
-                            msc.getDivision().toString() : ""));
-                    String powerFactor = ((msc.getPowerFactor() != null) ?
-                            msc.getPowerFactor().toString() : "");
-                    String competitorCategory = ((msc.getCompetitorCategory() != null) ?
-                            msc.getCompetitorCategory().toString() : "");
+                    String firearmType = ValueUtil.nullAsEmptyString(msc.getFirearmType());
+                    String division = ValueUtil.nullAsEmptyString(msc.getDivision());
+                    String powerFactor = ValueUtil.nullAsEmptyString(msc.getPowerFactor());
+                    String competitorCategory = ValueUtil.nullAsEmptyString(msc.getCompetitorCategory());
 
                     String time = NumberUtil.formatBigDecimal(msc.getTime(),
                             IpscConstants.TIME_SCALE);

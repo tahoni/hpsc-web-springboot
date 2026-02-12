@@ -15,6 +15,7 @@ import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -126,8 +127,11 @@ public class MatchDto {
 
             // Initialises the match attributes
             this.name = matchResponse.getMatchName();
-            this.clubName = ((clubDto != null) ?
-                    ClubReference.getByName(clubDto.getName()).orElse(null) : null);
+            Optional<ClubReference> clubReference = Optional.empty();
+            if (clubDto != null) {
+                clubReference = ClubReference.getByName(clubDto.getName());
+            }
+            this.clubName = clubReference.orElse(null);
             this.scheduledDate = matchResponse.getMatchDate();
 
             // Determines the firearm type based on the firearm ID
@@ -169,9 +173,16 @@ public class MatchDto {
 
             // Initialises the match attributes
             this.name = matchResponse.getMatchName();
-            this.clubName = ((clubDto != null) ?
-                    ClubReference.getByName(clubDto.getName()).orElse(null) : null);
             this.scheduledDate = matchResponse.getMatchDate();
+
+            Optional<ClubReference> clubReference = Optional.empty();
+            if (clubDto != null) {
+                Optional<ClubReference> cr = ClubReference.getByName(clubDto.getName());
+                if (cr.isPresent()) {
+                    clubReference = cr;
+                }
+            }
+            clubReference.ifPresent(cr -> this.clubName = cr);
 
             // Determines the firearm type based on the firearm ID
             this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId())

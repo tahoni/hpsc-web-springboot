@@ -124,15 +124,13 @@ public class MatchResultServiceImpl implements MatchResultService {
 */
 
         // Creates a new match DTO, from either the found entity or the match response
-
         MatchDto matchDto = optionalMatch.map(match -> new MatchDto(match, clubDto))
                 .orElseGet(() -> new MatchDto(ipscResponse.getMatch(), clubDto));
         matchDto.init(ipscResponse.getMatch(), null, new ArrayList<>());
-        return Optional.of(matchDto);
 
         // Initialises match attributes
-//        matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
-//        return Optional.of(matchDto);
+        matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
+        return Optional.of(matchDto);
     }
 
     /**

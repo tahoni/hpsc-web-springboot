@@ -9,11 +9,25 @@ public final class DateUtil {
         // Utility class, not to be instantiated
     }
 
-    public static String formatDate(LocalDate date, String format) {
-        return DateTimeFormatter.ofPattern(format).format(date);
+    /**
+     *
+     * @param date
+     * @param dateFormat
+     * @return
+     */
+    public static String formatDate(LocalDate date, String dateFormat) {
+        if ((date == null) || (dateFormat == null)) {
+            return "";
+        }
+
+        return DateTimeFormatter.ofPattern(dateFormat).format(date);
     }
 
-    public static String formatDateTime(LocalDateTime date, String format) {
-        return DateTimeFormatter.ofPattern(format).format(date);
+    public static String formatDateTime(LocalDateTime date, String dateFormat) {
+        if ((date == null) || (dateFormat == null)) {
+            return "";
+        }
+
+        return DateTimeFormatter.ofPattern(dateFormat).format(date);
     }
 }

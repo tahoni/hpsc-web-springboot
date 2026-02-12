@@ -54,10 +54,8 @@ public final class MatchHelpers {
         if (clubName.isEmpty()) {
             clubName = match.getClubName().toString();
         }
-        String divisionName = (match.getMatchFirearmType() != null ?
-                match.getMatchFirearmType().toString().toUpperCase() : "");
-        String categoryName = (match.getMatchCategory() != null ?
-                match.getMatchCategory().toString() : "");
+        String divisionName = ValueUtil.nullAsEmptyString(match.getMatchFirearmType()).toUpperCase();
+        String categoryName = ValueUtil.nullAsEmptyString(match.getMatchCategory());
         String longDate = longDateFormatter.format(match.getScheduledDate());
 
         // Prepare parameters for formatting
