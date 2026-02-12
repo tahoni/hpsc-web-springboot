@@ -109,6 +109,33 @@ public class MatchDto {
         // Initialises the date fields
         this.dateCreated = matchEntity.getDateCreated();
         this.dateUpdated = matchEntity.getDateUpdated();
+        this.dateEdited = matchEntity.getDateEdited();
+    }
+
+    /**
+     *
+     * @param matchResponse
+     * @param clubDto
+     */
+    public MatchDto(@NotNull MatchResponse matchResponse, ClubDto clubDto) {
+        // Initialises match details
+        this.index = matchResponse.getMatchId();
+        this.club = clubDto;
+
+        // Initialises the match attributes
+        this.name = matchResponse.getMatchName();
+        this.clubName = ((clubDto != null) ?
+                ClubReference.getByName(clubDto.getName()).orElse(null) : null);
+        this.scheduledDate = matchResponse.getMatchDate();
+
+        // Determines the firearm type based on the firearm ID
+        this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
+        this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
+
+        // Initialises the date fields
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = LocalDateTime.now();
+        this.dateEdited = LocalDateTime.now();
     }
 
     /**

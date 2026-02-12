@@ -35,7 +35,7 @@ public class IpscMatchStage {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "match_id")
     private IpscMatch match;
 
@@ -54,7 +54,7 @@ public class IpscMatchStage {
     private Integer minRounds;
     private Integer maxPoints;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<MatchStageCompetitor> matchStageCompetitors;
 
     /**

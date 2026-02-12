@@ -37,6 +37,10 @@ public class MatchResultServiceImpl implements MatchResultService {
 
     @Override
     public Optional<MatchResultsDto> initMatchResults(IpscResponse ipscResponse) {
+        if (ipscResponse == null) {
+            return Optional.empty();
+        }
+
         // Initialises club and match
         Optional<ClubDto> optionalClub = initClub(ipscResponse.getClub());
         Optional<MatchDto> optionalMatch = initMatch(ipscResponse, optionalClub.orElse(null));
@@ -93,7 +97,11 @@ public class MatchResultServiceImpl implements MatchResultService {
      * @return an {@code Optional} containing the initialised or updated {@link MatchDto},
      * or an empty {@code Optional} if the match exists but no newer scores are present.
      */
-    protected Optional<MatchDto> initMatch(@NotNull IpscResponse ipscResponse, ClubDto clubDto) {
+    protected Optional<MatchDto> initMatch(IpscResponse ipscResponse, ClubDto clubDto) {
+        if ((ipscResponse == null) || (ipscResponse.getMatch() == null)) {
+            return Optional.empty();
+        }
+
         // Attempts to find the match by name and date in the database
         Optional<IpscMatch> optionalMatch =
                 matchService.findMatch(ipscResponse.getMatch().getMatchName());
@@ -115,13 +123,13 @@ public class MatchResultServiceImpl implements MatchResultService {
 */
 
         // Creates a new match DTO, from either the found entity or the match response
-        MatchDto matchDto = optionalMatch
-                .map(match -> new MatchDto(match, clubDto))
-                .orElseGet(MatchDto::new);
+        MatchDto matchDto = optionalMatch.map(match -> new MatchDto(match, clubDto))
+                .orElseGet(() -> new MatchDto(ipscResponse.getMatch(), clubDto));
+        return Optional.of(matchDto);
 
         // Initialises match attributes
-        matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
-        return Optional.of(matchDto);
+//        matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
+//        return Optional.of(matchDto);
     }
 
     /**
@@ -168,107 +176,114 @@ public class MatchResultServiceImpl implements MatchResultService {
      *                        scores and competitors.
      * @param ipscResponse    the response containing score and member data from an IPSC source.
      */
-    protected void initScores(MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
-        if ((matchResultsDto != null) && (ipscResponse != null) &&
-                (ipscResponse.getScores() != null) && (ipscResponse.getMembers() != null)) {
-            List<ScoreResponse> scoreResponses = ipscResponse.getScores();
-            List<MemberResponse> memberResponses = ipscResponse.getMembers();
-            // Maps score responses to corresponding member responses
-            Set<Integer> memberIdsWithScores = scoreResponses.stream()
-                    .map(ScoreResponse::getMemberId)
-                    .collect(Collectors.toSet());
-            List<MemberResponse> scoreMembers = memberResponses.stream()
-                    .filter(memberResponse -> memberIdsWithScores
-                            .contains(memberResponse.getMemberId()))
+    protected void initScores(@NotNull MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
+        if ((ipscResponse == null) || (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
+            return;
+        }
+
+        List<ScoreResponse> scoreResponses = ipscResponse.getScores();
+        List<MemberResponse> memberResponses = ipscResponse.getMembers();
+        // Maps score responses to corresponding member responses
+        Set<Integer> memberIdsWithScores = scoreResponses.stream()
+                .map(ScoreResponse::getMemberId)
+                .collect(Collectors.toSet());
+        List<MemberResponse> scoreMembers = memberResponses.stream()
+                .filter(memberResponse -> memberIdsWithScores
+                        .contains(memberResponse.getMemberId()))
+                .toList();
+
+        Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
+        Map<Integer, EnrolledResponse> enrolledMap = new HashMap<>();
+        // Iterates through each member response
+        scoreMembers.forEach(memberResponse -> {
+            // Attempts to find the competitor by ICS alias, first name, last name, and
+            // date of birth in the database
+            Optional<Competitor> optionalCompetitor =
+                    competitorService.findCompetitor(memberResponse.getIcsAlias(),
+                            memberResponse.getFirstName(), memberResponse.getLastName(),
+                            memberResponse.getDateOfBirth());
+            // Creates a new competitor DTO, from either the found entity or the member response
+            CompetitorDto competitorDto = optionalCompetitor
+                    .map(CompetitorDto::new)
+                    .orElseGet(CompetitorDto::new);
+            competitorDto.setIndex(memberResponse.getMemberId());
+
+            // Initialises the enrolled response to use to initialise the scores for each
+            // competitor per match and stage
+            EnrolledResponse enrolledResponse = ipscResponse.getEnrolledMembers().stream()
+                    .filter(er -> er.getMemberId().equals(memberResponse.getMemberId()))
+                    .findFirst()
+                    .orElse(null);
+
+            // Initialises competitor attributes
+            competitorDto.init(memberResponse, enrolledResponse);
+
+            // Caches the competitor and enrolled response for later use
+            competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
+            enrolledMap.put(memberResponse.getMemberId(), enrolledResponse);
+        });
+        // Collects all competitors in the match results DTO
+        matchResultsDto.setCompetitors(new ArrayList<>(competitorDtoMap.values()));
+
+        List<MatchCompetitorDto> matchCompetitorDtoList = matchResultsDto.getMatchCompetitors();
+        // Iterates through each competitor
+        competitorDtoMap.keySet().forEach(memberId -> {
+            // Gets the competitor DTO from the map
+            CompetitorDto competitorDto = competitorDtoMap.get(memberId);
+            // Filters scores by member ID
+            List<ScoreResponse> scores = scoreResponses.stream()
+                    .filter(sr -> sr.getMemberId().equals(memberId))
                     .toList();
 
-            Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
-            Map<Integer, EnrolledResponse> enrolledMap = new HashMap<>();
-            // Iterates through each member response
-            scoreMembers.forEach(memberResponse -> {
-                // Attempts to find the competitor by ICS alias, first name, last name, and date of birth
-                // in the database
-                Optional<Competitor> optionalCompetitor =
-                        competitorService.findCompetitor(memberResponse.getIcsAlias(),
-                                memberResponse.getFirstName(), memberResponse.getLastName(),
-                                memberResponse.getDateOfBirth());
-                // Creates a new competitor DTO, from either the found entity or the member response
-                CompetitorDto competitorDto = optionalCompetitor
-                        .map(CompetitorDto::new)
-                        .orElseGet(CompetitorDto::new);
-                competitorDto.setIndex(memberResponse.getMemberId());
-
-                // Initialises the enrolled response to use to initialise the scores for each competitor
-                // per match and stage
-                EnrolledResponse enrolledResponse = ipscResponse.getEnrolledMembers().stream()
-                        .filter(er -> er.getMemberId().equals(memberResponse.getMemberId()))
-                        .findFirst()
-                        .orElse(null);
-
-                // Initialises competitor attributes
-                competitorDto.init(memberResponse, enrolledResponse);
-
-                // Caches the competitor and enrolled response for later use
-                competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
-                enrolledMap.put(memberResponse.getMemberId(), enrolledResponse);
-            });
-            // Collects all competitors in the match results DTO
-            matchResultsDto.setCompetitors(new ArrayList<>(competitorDtoMap.values()));
-
-            List<MatchCompetitorDto> matchCompetitorDtoList = matchResultsDto.getMatchCompetitors();
-            // Iterates through each competitor
-            competitorDtoMap.keySet().forEach(memberId -> {
-                // Gets the competitor DTO from the map
-                CompetitorDto competitorDto = competitorDtoMap.get(memberId);
-                // Filters scores by member ID
-                List<ScoreResponse> scores = scoreResponses.stream()
-                        .filter(sr -> sr.getMemberId().equals(memberId))
-                        .toList();
-
-                // Attempts to find the match competitor by competitor ID and match ID in the database
-                Optional<MatchCompetitor> optionalMatchCompetitor =
+            // Attempts to find the match competitor by competitor ID and match ID in the database
+            Optional<MatchCompetitor> optionalMatchCompetitor = Optional.empty();
+            if (matchResultsDto.getMatch().getId() != null) {
+                optionalMatchCompetitor =
                         matchCompetitorService.findMatchCompetitor(matchResultsDto.getMatch().getId(),
                                 competitorDto.getId());
-                // Creates a new match competitor DTO, from either the found entity or the competitor DTO
-                MatchCompetitorDto matchCompetitorDto = optionalMatchCompetitor
-                        .map(MatchCompetitorDto::new)
-                        .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch()));
-                matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
-                matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
+            }
 
-                // Initialises match competitor attributes
-                matchCompetitorDto.init(scores, enrolledMap.get(memberId));
-                matchCompetitorDtoList.add(matchCompetitorDto);
+            // Creates a new match competitor DTO, from either the found entity or the
+            // competitor DTO
+            MatchCompetitorDto matchCompetitorDto = optionalMatchCompetitor
+                    .map(MatchCompetitorDto::new)
+                    .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch()));
+            matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+            matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
 
-                // Gets the match stage competitors from the match results DTO
-                List<MatchStageCompetitorDto> matchStageCompetitorDtoList =
-                        matchResultsDto.getMatchStageCompetitors();
-                // Iterates through each stage
-                matchResultsDto.getStages().forEach(stageDto -> {
-                    // Filters scores by stage ID (already filtered by member ID)
-                    Optional<ScoreResponse> optionalStageScoreResponse = scores.stream()
-                            .filter(scoreResponse -> stageDto.getStageNumber()
-                                    .equals(scoreResponse.getStageId()))
-                            .findFirst();
-                    if (optionalStageScoreResponse.isPresent()) {
-                        // Attempts to find the match stage competitor by competitor ID, stage ID,
-                        // and match ID
-                        Optional<MatchStageCompetitor> optionalMatchStageCompetitor =
-                                matchStageCompetitorService.findMatchStageCompetitor(stageDto.getId(), competitorDto.getId());
-                        // Creates a new match stage competitor DTO, from either the found entity or the competitor DTO
-                        MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
-                                .map(MatchStageCompetitorDto::new)
-                                .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
-                        matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
-                        matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
+            // Initialises match competitor attributes
+            matchCompetitorDto.init(scores, enrolledMap.get(memberId));
+            matchCompetitorDtoList.add(matchCompetitorDto);
 
-                        // Initialises the match stage attributes
-                        matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
-                                enrolledMap.get(memberId), stageDto);
-                        matchStageCompetitorDtoList.add(matchStageCompetitorDto);
-                    }
-                });
+            // Gets the match stage competitors from the match results DTO
+            List<MatchStageCompetitorDto> matchStageCompetitorDtoList =
+                    matchResultsDto.getMatchStageCompetitors();
+            // Iterates through each stage
+            matchResultsDto.getStages().forEach(stageDto -> {
+                // Filters scores by stage ID (already filtered by member ID)
+                Optional<ScoreResponse> optionalStageScoreResponse = scores.stream()
+                        .filter(scoreResponse -> stageDto.getStageNumber()
+                                .equals(scoreResponse.getStageId()))
+                        .findFirst();
+                if (optionalStageScoreResponse.isPresent()) {
+                    // Attempts to find the match stage competitor by competitor ID, stage ID,
+                    // and match ID
+                    Optional<MatchStageCompetitor> optionalMatchStageCompetitor =
+                            matchStageCompetitorService.findMatchStageCompetitor(stageDto, competitorDto);
+                    // Creates a new match stage competitor DTO, from either the found entity
+                    // or the competitor DTO
+                    MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
+                            .map(MatchStageCompetitorDto::new)
+                            .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
+                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                    matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
+
+                    // Initialises the match stage attributes
+                    matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
+                            enrolledMap.get(memberId), stageDto);
+                    matchStageCompetitorDtoList.add(matchStageCompetitorDto);
+                }
             });
-        }
+        });
     }
 }

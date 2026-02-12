@@ -70,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            initClubEntity(matchResults.getClub());
+            Club club = initClubEntity(matchResults.getClub());
             IpscMatch match = initMatchEntity(matchResults.getMatch());
 //            initCompetitorEntities(matchResults.getCompetitors());
 //            initMatchStageEntities(matchResults.getStages());
@@ -79,9 +79,12 @@ public class TransactionServiceImpl implements TransactionService {
 //            initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(), ClubReference.HPSC);
 
 //            finaliseMatchEntity(match);
-            List<IpscMatchStage> ipscMatchStages = match.getMatchStages();
 
+            if (club != null) {
+                clubRepository.save(club);
+            }
             matchRepository.save(match);
+
             transactionManager.commit(transaction);
 
             return Optional.of(match);
@@ -106,7 +109,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    protected void initClubEntity(ClubDto clubDto) {
+    protected Club initClubEntity(ClubDto clubDto) {
         if (clubDto != null) {
             // Initialises the club entity from the DTO
             Club clubEntity = null;
@@ -121,7 +124,9 @@ public class TransactionServiceImpl implements TransactionService {
                 // Update the map of clubs
                 clubMap.put(clubDto.getUuid(), clubEntity);
             }
+            return clubEntity;
         }
+        return null;
     }
 
     protected IpscMatch initMatchEntity(@NotNull MatchDto matchDto) {

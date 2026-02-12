@@ -6,10 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.models.ipsc.dto.ClubDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.request.MemberRequest;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -316,18 +313,6 @@ public class MatchResultServiceImplTest {
     }
 
     @Test
-    public void testInitScores_withNullMatchResultsDto_thenReturnsEarly() {
-        // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        // Act
-        matchResultService.initScores(null, ipscResponse);
-
-        // Assert
-        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
-    }
-
-    @Test
     public void testInitScores_withNullIpscResponse_thenReturnsEarly() {
         // Arrange
         MatchResultsDto matchResultsDto = new MatchResultsDto();
@@ -500,12 +485,14 @@ public class MatchResultServiceImplTest {
         scoreResponse.setStageId(1);
         ipscResponse.setScores(List.of(scoreResponse));
 
-        MemberRequest memberResponse = new MemberRequest();
-        memberResponse.setMemberId(100);
-        memberResponse.setIcsAlias("ALIAS100");
-        memberResponse.setFirstName("John");
-        memberResponse.setLastName("Doe");
-        ipscResponse.setMembers(List.of(memberResponse));
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setMemberId(100);
+        memberRequest.setIcsAlias("ALIAS100");
+        memberRequest.setFirstName("John");
+        memberRequest.setLastName("Doe");
+        ipscResponse.setMembers(List.of(memberRequest));
+        MemberResponse memberResponse = new MemberResponse(memberRequest);
+        CompetitorDto competitorDto = new CompetitorDto(memberResponse);
 
         Competitor existingCompetitor = new Competitor();
         existingCompetitor.setId(10L);
@@ -520,7 +507,7 @@ public class MatchResultServiceImplTest {
                 .thenReturn(Optional.of(existingCompetitor));
         when(matchCompetitorService.findMatchCompetitor(1L, 10L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
-        when(matchStageCompetitorService.findMatchStageCompetitor(50L, 10L))
+        when(matchStageCompetitorService.findMatchStageCompetitor(stageDto, competitorDto))
                 .thenReturn(Optional.of(existingMatchStageCompetitor));
 
         // Act
@@ -530,6 +517,6 @@ public class MatchResultServiceImplTest {
         assertNotNull(matchResultsDto.getMatchStageCompetitors());
         assertEquals(1, matchResultsDto.getMatchStageCompetitors().size());
         assertEquals(30L, matchResultsDto.getMatchStageCompetitors().getFirst().getId());
-        verify(matchStageCompetitorService, times(1)).findMatchStageCompetitor(50L, 10L);
+        verify(matchStageCompetitorService, times(1)).findMatchStageCompetitor(stageDto, competitorDto);
     }
 }

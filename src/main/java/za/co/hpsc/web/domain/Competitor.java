@@ -53,10 +53,8 @@ public class Competitor {
     @Enumerated(EnumType.STRING)
     private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<MatchCompetitor> competitorMatches;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<MatchStageCompetitor> competitorStageMatches;
 
     /**
      * Initialises the current {@code Competitor} entity with data from a DTO.
