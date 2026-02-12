@@ -7,10 +7,7 @@ import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.records.*;
 import za.co.hpsc.web.models.ipsc.request.*;
-import za.co.hpsc.web.models.ipsc.response.ClubResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.utils.DateUtil;
@@ -156,7 +153,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             responseMembers.addAll(memberRequests);
         });
         // Sets members on the response
-        ipscResponse.setMembers(responseMembers);
+        ipscResponse.setMembers(responseMembers.stream().map(MemberResponse::new).toList());
     }
 
     /**

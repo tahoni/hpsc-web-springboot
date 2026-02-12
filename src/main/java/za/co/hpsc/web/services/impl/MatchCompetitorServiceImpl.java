@@ -19,7 +19,7 @@ public class MatchCompetitorServiceImpl implements MatchCompetitorService {
     }
 
     @Override
-    public Optional<MatchCompetitor> findMatchCompetitor(Long competitorId, Long matchId) {
+    public Optional<MatchCompetitor> findMatchCompetitor(Long matchId, Long competitorId) {
         if ((competitorId == null) || (matchId == null)) {
             return Optional.empty();
         }

@@ -239,8 +239,8 @@ public class MatchResultServiceImpl implements MatchResultService {
             Optional<MatchCompetitor> optionalMatchCompetitor = Optional.empty();
             if (matchResultsDto.getMatch().getId() != null) {
                 optionalMatchCompetitor =
-                        matchCompetitorService.findMatchCompetitor(matchResultsDto.getMatch().getId(),
-                                competitorDto.getId());
+                        matchCompetitorService.findMatchCompetitor(competitorDto.getId(),
+                                matchResultsDto.getMatch().getId());
             }
 
             // Creates a new match competitor DTO, from either the found entity or the

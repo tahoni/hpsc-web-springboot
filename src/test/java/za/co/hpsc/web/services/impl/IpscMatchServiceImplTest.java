@@ -98,8 +98,10 @@ public class IpscMatchServiceImplTest {
 
         // Assert all tags are included
         assertEquals(2, result.getTags().size());
-        TagResponse tagResponse1 = result.getTags().stream().filter(tag -> tag.getTagId().equals(1)).findFirst().orElse(null);
-        TagResponse tagResponse2 = result.getTags().stream().filter(tag -> tag.getTagId().equals(2)).findFirst().orElse(null);
+        TagResponse tagResponse1 = result.getTags().stream()
+                .filter(tag -> tag.getTagId().equals(1)).findFirst().orElse(null);
+        TagResponse tagResponse2 = result.getTags().stream()
+                .filter(tag -> tag.getTagId().equals(2)).findFirst().orElse(null);
         assertNotNull(tagResponse1);
         assertNotNull(tagResponse2);
         assertEquals(1, tagResponse1.getTagId());
@@ -110,9 +112,12 @@ public class IpscMatchServiceImplTest {
         // Assert that only stages for match 100 are included
         assertEquals(2, result.getStages().size());
         assertTrue(result.getStages().stream().allMatch(stage -> stage.getMatchId().equals(100)));
-        StageResponse stageResponse1 = result.getStages().stream().filter(stage -> stage.getStageId().equals(1)).findFirst().orElse(null);
-        StageResponse stageResponse2 = result.getStages().stream().filter(stage -> stage.getStageId().equals(2)).findFirst().orElse(null);
-        StageResponse stageResponse3 = result.getStages().stream().filter(stage -> stage.getStageId().equals(3)).findFirst().orElse(null);
+        StageResponse stageResponse1 = result.getStages().stream()
+                .filter(stage -> stage.getStageId().equals(1)).findFirst().orElse(null);
+        StageResponse stageResponse2 = result.getStages().stream()
+                .filter(stage -> stage.getStageId().equals(2)).findFirst().orElse(null);
+        StageResponse stageResponse3 = result.getStages().stream()
+                .filter(stage -> stage.getStageId().equals(3)).findFirst().orElse(null);
         assertNotNull(stageResponse1);
         assertNotNull(stageResponse2);
         assertNull(stageResponse3);
@@ -126,9 +131,12 @@ public class IpscMatchServiceImplTest {
         // Assert only enrolled members for match 100 are included
         assertEquals(2, result.getEnrolledMembers().size());
         assertTrue(result.getEnrolledMembers().stream().allMatch(enrolled -> enrolled.getMatchId().equals(100)));
-        EnrolledResponse enrolledResponse1 = result.getEnrolledMembers().stream().filter(enrolled -> enrolled.getMemberId().equals(50)).findFirst().orElse(null);
-        EnrolledResponse enrolledResponse2 = result.getEnrolledMembers().stream().filter(enrolled -> enrolled.getMemberId().equals(51)).findFirst().orElse(null);
-        EnrolledResponse enrolledResponse3 = result.getEnrolledMembers().stream().filter(enrolled -> enrolled.getMemberId().equals(52)).findFirst().orElse(null);
+        EnrolledResponse enrolledResponse1 = result.getEnrolledMembers().stream()
+                .filter(enrolled -> enrolled.getMemberId().equals(50)).findFirst().orElse(null);
+        EnrolledResponse enrolledResponse2 = result.getEnrolledMembers().stream()
+                .filter(enrolled -> enrolled.getMemberId().equals(51)).findFirst().orElse(null);
+        EnrolledResponse enrolledResponse3 = result.getEnrolledMembers().stream()
+                .filter(enrolled -> enrolled.getMemberId().equals(52)).findFirst().orElse(null);
         assertNotNull(enrolledResponse1);
         assertNotNull(enrolledResponse2);
         assertNull(enrolledResponse3);
@@ -142,12 +150,12 @@ public class IpscMatchServiceImplTest {
         // Assert that only scores for match 100 are included
         assertEquals(2, result.getScores().size());
         assertTrue(result.getScores().stream().allMatch(score -> score.getMatchId().equals(100)));
-        ScoreResponse scoreResponse1 =
-                result.getScores().stream().filter(score -> score.getMemberId().equals(50)).findFirst().orElse(null);
-        ScoreResponse scoreResponse2 =
-                result.getScores().stream().filter(score -> score.getMemberId().equals(51)).findFirst().orElse(null);
-        ScoreResponse scoreResponse3 =
-                result.getScores().stream().filter(score -> score.getMemberId().equals(52)).findFirst().orElse(null);
+        ScoreResponse scoreResponse1 = result.getScores().stream()
+                .filter(score -> score.getMemberId().equals(50)).findFirst().orElse(null);
+        ScoreResponse scoreResponse2 = result.getScores().stream()
+                .filter(score -> score.getMemberId().equals(51)).findFirst().orElse(null);
+        ScoreResponse scoreResponse3 = result.getScores().stream()
+                .filter(score -> score.getMemberId().equals(52)).findFirst().orElse(null);
         assertNotNull(scoreResponse1);
         assertNotNull(scoreResponse2);
         assertNull(scoreResponse3);
@@ -299,9 +307,12 @@ public class IpscMatchServiceImplTest {
         // Assert
         assertNotNull(result);
         assertEquals(3, result.getTags().size());
-        TagResponse tagResponse1 = result.getTags().stream().filter(tag -> tag.getTagId().equals(1)).findFirst().orElse(null);
-        TagResponse tagResponse2 = result.getTags().stream().filter(tag -> tag.getTagId().equals(2)).findFirst().orElse(null);
-        TagResponse tagResponse3 = result.getTags().stream().filter(tag -> tag.getTagId().equals(3)).findFirst().orElse(null);
+        TagResponse tagResponse1 = result.getTags().stream()
+                .filter(tag -> tag.getTagId().equals(1)).findFirst().orElse(null);
+        TagResponse tagResponse2 = result.getTags().stream()
+                .filter(tag -> tag.getTagId().equals(2)).findFirst().orElse(null);
+        TagResponse tagResponse3 = result.getTags().stream()
+                .filter(tag -> tag.getTagId().equals(3)).findFirst().orElse(null);
         assertNotNull(tagResponse1);
         assertNotNull(tagResponse2);
         assertNotNull(tagResponse3);
@@ -363,11 +374,12 @@ public class IpscMatchServiceImplTest {
 
         // Only stages with matchId 100
         assertEquals(2, result.getStages().size());
-        StageResponse stageResponse1 = result.getStages().stream().filter(stage -> stage.getStageId().equals(1)).findFirst().orElse(null);
-        StageResponse stageResponse2 =
-                result.getStages().stream().filter(stage -> stage.getStageId().equals(2)).findFirst().orElse(null);
-        StageResponse stageResponse3 =
-                result.getStages().stream().filter(stage -> stage.getStageId().equals(3)).findFirst().orElse(null);
+        StageResponse stageResponse1 = result.getStages().stream()
+                .filter(stage -> stage.getStageId().equals(1)).findFirst().orElse(null);
+        StageResponse stageResponse2 = result.getStages().stream()
+                .filter(stage -> stage.getStageId().equals(2)).findFirst().orElse(null);
+        StageResponse stageResponse3 = result.getStages().stream()
+                .filter(stage -> stage.getStageId().equals(3)).findFirst().orElse(null);
         assertNotNull(stageResponse1);
         assertNull(stageResponse2);
         assertNotNull(stageResponse3);
@@ -378,8 +390,10 @@ public class IpscMatchServiceImplTest {
 
         // Only enrolled with matchId 100
         assertEquals(1, result.getEnrolledMembers().size());
-        EnrolledResponse enrolledResponse1 = result.getEnrolledMembers().stream().filter(member -> member.getMemberId().equals(50)).findFirst().orElse(null);
-        EnrolledResponse enrolledResponse2 = result.getEnrolledMembers().stream().filter(member -> member.getMemberId().equals(51)).findFirst().orElse(null);
+        EnrolledResponse enrolledResponse1 = result.getEnrolledMembers().stream()
+                .filter(member -> member.getMemberId().equals(50)).findFirst().orElse(null);
+        EnrolledResponse enrolledResponse2 = result.getEnrolledMembers().stream()
+                .filter(member -> member.getMemberId().equals(51)).findFirst().orElse(null);
         assertNotNull(enrolledResponse1);
         assertNull(enrolledResponse2);
         assertEquals(50, enrolledResponse1.getMemberId());
@@ -387,8 +401,10 @@ public class IpscMatchServiceImplTest {
 
         // Only scores with matchId 100
         assertEquals(1, result.getScores().size());
-        ScoreResponse scoreResponse1 = result.getScores().stream().filter(score -> score.getMemberId().equals(50)).findFirst().orElse(null);
-        ScoreResponse scoreResponse2 = result.getScores().stream().filter(score -> score.getMemberId().equals(52)).findFirst().orElse(null);
+        ScoreResponse scoreResponse1 = result.getScores().stream()
+                .filter(score -> score.getMemberId().equals(50)).findFirst().orElse(null);
+        ScoreResponse scoreResponse2 = result.getScores().stream()
+                .filter(score -> score.getMemberId().equals(52)).findFirst().orElse(null);
         assertNotNull(scoreResponse1);
         assertNull(scoreResponse2);
         assertEquals(50, scoreResponse1.getMemberId());
@@ -696,8 +712,10 @@ public class IpscMatchServiceImplTest {
         // Assert
         assertNotNull(ipscResponse.getMembers());
         assertEquals(2, ipscResponse.getMembers().size());
-        MemberResponse memberResponse1 = ipscResponse.getMembers().stream().filter(member -> member.getMemberId().equals(50)).findFirst().orElse(null);
-        MemberResponse memberResponse2 = ipscResponse.getMembers().stream().filter(member -> member.getMemberId().equals(51)).findFirst().orElse(null);
+        MemberResponse memberResponse1 = ipscResponse.getMembers().stream()
+                .filter(member -> member.getMemberId().equals(50)).findFirst().orElse(null);
+        MemberResponse memberResponse2 = ipscResponse.getMembers().stream()
+                .filter(member -> member.getMemberId().equals(51)).findFirst().orElse(null);
         assertNotNull(memberResponse1);
         assertNotNull(memberResponse2);
         assertEquals(50, memberResponse1.getMemberId());
@@ -856,12 +874,12 @@ public class IpscMatchServiceImplTest {
         // Assert
         assertNotNull(ipscResponse.getMembers());
         assertEquals(3, ipscResponse.getMembers().size());
-        MemberResponse memberResponse1 =
-                ipscResponse.getMembers().stream().filter(member -> member.getMemberId() == 50).findFirst().orElse(null);
-        MemberResponse memberResponse2 =
-                ipscResponse.getMembers().stream().filter(member -> member.getMemberId() == 51).findFirst().orElse(null);
-        MemberResponse memberResponse3 =
-                ipscResponse.getMembers().stream().filter(member -> member.getMemberId() == 52).findFirst().orElse(null);
+        MemberResponse memberResponse1 = ipscResponse.getMembers().stream()
+                .filter(member -> member.getMemberId() == 50).findFirst().orElse(null);
+        MemberResponse memberResponse2 = ipscResponse.getMembers().stream()
+                .filter(member -> member.getMemberId() == 51).findFirst().orElse(null);
+        MemberResponse memberResponse3 = ipscResponse.getMembers().stream()
+                .filter(member -> member.getMemberId() == 52).findFirst().orElse(null);
         assertNotNull(memberResponse1);
         assertNotNull(memberResponse2);
         assertNotNull(memberResponse3);

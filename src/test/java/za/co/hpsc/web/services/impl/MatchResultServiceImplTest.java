@@ -131,8 +131,8 @@ public class MatchResultServiceImplTest {
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
-//        assertTrue(result.isEmpty());
-//        verify(matchService, times(1)).findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay());
+        assertFalse(result.isEmpty());
+        verify(matchService, times(1)).findMatch("Existing Match");
     }
 
     @Test
@@ -369,7 +369,8 @@ public class MatchResultServiceImplTest {
 
         MemberRequest memberResponse = new MemberRequest();
         memberResponse.setMemberId(200);
-        ipscResponse.setMembers(List.of(memberResponse));
+        List<MemberRequest> memberRequests = List.of(memberResponse);
+        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
         // Act
         matchResultService.initScores(matchResultsDto, ipscResponse);
@@ -400,7 +401,8 @@ public class MatchResultServiceImplTest {
         memberResponse.setIcsAlias("ALIAS100");
         memberResponse.setFirstName("John");
         memberResponse.setLastName("Doe");
-        ipscResponse.setMembers(List.of(memberResponse));
+        List<MemberRequest> memberRequests = List.of(memberResponse);
+        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
         Competitor existingCompetitor = new Competitor();
         existingCompetitor.setId(10L);
@@ -411,7 +413,7 @@ public class MatchResultServiceImplTest {
 
         when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorService.findMatchCompetitor(1L, 10L))
+        when(matchCompetitorService.findMatchCompetitor(10L, 1L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
 
         // Act
@@ -422,8 +424,10 @@ public class MatchResultServiceImplTest {
         assertEquals(1, matchResultsDto.getCompetitors().size());
         assertEquals(10L, matchResultsDto.getCompetitors().getFirst().getId());
         assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorService, times(1)).findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorService, times(1)).findMatchCompetitor(1L, 10L);
+        verify(competitorService, times(1))
+                .findCompetitor("ALIAS100", "John", "Doe", null);
+        verify(matchCompetitorService, times(1))
+                .findMatchCompetitor(10L, 1L);
     }
 
     @Test
@@ -446,11 +450,12 @@ public class MatchResultServiceImplTest {
         memberResponse.setIcsAlias("ALIAS100");
         memberResponse.setFirstName("John");
         memberResponse.setLastName("Doe");
-        ipscResponse.setMembers(List.of(memberResponse));
+        List<MemberRequest> memberRequests = List.of(memberResponse);
+        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
         when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.empty());
-        when(matchCompetitorService.findMatchCompetitor(1L, null))
+        when(matchCompetitorService.findMatchCompetitor(null, 1L))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -461,8 +466,10 @@ public class MatchResultServiceImplTest {
         assertEquals(1, matchResultsDto.getCompetitors().size());
         assertNull(matchResultsDto.getCompetitors().getFirst().getId());
         assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorService, times(1)).findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorService, times(1)).findMatchCompetitor(1L, null);
+        verify(competitorService, times(1))
+                .findCompetitor("ALIAS100", "John", "Doe", null);
+        verify(matchCompetitorService, times(1))
+                .findMatchCompetitor(null, 1L);
     }
 
     @Test
@@ -476,6 +483,7 @@ public class MatchResultServiceImplTest {
         stageDto.setStageNumber(1);
 
         MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
+        matchResultsDto.setMatch(matchDto);
         matchResultsDto.setStages(List.of(stageDto));
 
         IpscResponse ipscResponse = new IpscResponse();
@@ -490,9 +498,8 @@ public class MatchResultServiceImplTest {
         memberRequest.setIcsAlias("ALIAS100");
         memberRequest.setFirstName("John");
         memberRequest.setLastName("Doe");
-        ipscResponse.setMembers(List.of(memberRequest));
         MemberResponse memberResponse = new MemberResponse(memberRequest);
-        CompetitorDto competitorDto = new CompetitorDto(memberResponse);
+        ipscResponse.setMembers(List.of(memberResponse));
 
         Competitor existingCompetitor = new Competitor();
         existingCompetitor.setId(10L);
@@ -505,9 +512,9 @@ public class MatchResultServiceImplTest {
 
         when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorService.findMatchCompetitor(1L, 10L))
+        when(matchCompetitorService.findMatchCompetitor(10L, 1L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
-        when(matchStageCompetitorService.findMatchStageCompetitor(stageDto, competitorDto))
+        when(matchStageCompetitorService.findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class)))
                 .thenReturn(Optional.of(existingMatchStageCompetitor));
 
         // Act
@@ -517,6 +524,7 @@ public class MatchResultServiceImplTest {
         assertNotNull(matchResultsDto.getMatchStageCompetitors());
         assertEquals(1, matchResultsDto.getMatchStageCompetitors().size());
         assertEquals(30L, matchResultsDto.getMatchStageCompetitors().getFirst().getId());
-        verify(matchStageCompetitorService, times(1)).findMatchStageCompetitor(stageDto, competitorDto);
+        verify(matchStageCompetitorService, times(1))
+                .findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class));
     }
 }
