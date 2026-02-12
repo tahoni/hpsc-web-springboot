@@ -20,7 +20,7 @@ public class IpscMatchServiceImplTest {
     private IpscMatchServiceImpl ipscMatchService;
 
     @Test
-    void testCreateBasicMatch_withValidData_thenReturnsIpscResponse() {
+    public void testCreateBasicMatch_withValidData_thenReturnsIpscResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -163,7 +163,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testCreateBasicMatch_withNoMatchingStages_thenReturnsEmptyStagesList() {
+    public void testCreateBasicMatch_withNoMatchingStages_thenReturnsEmptyStagesList() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -190,7 +190,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testCreateBasicMatch_withNoMatchingEnrolledMembers_thenReturnsEmptyEnrolledList() {
+    public void testCreateBasicMatch_withNoMatchingEnrolledMembers_thenReturnsEmptyEnrolledList() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -216,7 +216,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testCreateBasicMatch_withNoMatchingScores_thenReturnsEmptyScoresList() {
+    public void testCreateBasicMatch_withNoMatchingScores_thenReturnsEmptyScoresList() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -243,7 +243,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testCreateBasicMatch_withEmptyRequestHolder_thenReturnsResponseWithEmptyLists() {
+    public void testCreateBasicMatch_withEmptyRequestHolder_thenReturnsResponseWithEmptyLists() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -269,7 +269,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testCreateBasicMatch_withMultipleTags_thenIncludesAllTags() {
+    public void testCreateBasicMatch_withMultipleTags_thenIncludesAllTags() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -314,7 +314,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testCreateBasicMatch_withMixedMatchIds_thenFiltersCorrectly() {
+    public void testCreateBasicMatch_withMixedMatchIds_thenFiltersCorrectly() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -396,7 +396,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testCreateBasicMatch_withNullMatchId_thenReturnsNull() {
+    public void testCreateBasicMatch_withNullMatchId_thenReturnsNull() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(null);
@@ -428,7 +428,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddClubToMatch_withMatchingClub_thenSetsClubOnResponse() {
+    public void testAddClubToMatch_withMatchingClub_thenSetsClubOnResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -461,7 +461,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddClubToMatch_withNoMatchingClub_thenSetsDefaultClubResponse() {
+    public void testAddClubToMatch_withNoMatchingClub_thenSetsDefaultClubResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -493,7 +493,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddClubToMatch_withEmptyClubsList_thenSetsDefaultClubResponse() {
+    public void testAddClubToMatch_withEmptyClubsList_thenSetsDefaultClubResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -519,7 +519,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddClubToMatch_withMultipleClubs_thenSetsCorrectClub() {
+    public void testAddClubToMatch_withMultipleClubs_thenSetsCorrectClub() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -560,7 +560,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddClubToMatch_withClubIdNull_thenSetsNullClubResponse() {
+    public void testAddClubToMatch_withClubIdNull_thenSetsNullClubResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -588,7 +588,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddClubToMatch_withClubIdZero_thenFindsMatchingClubOrDefault() {
+    public void testAddClubToMatch_withClubIdZero_thenFindsMatchingClubOrDefault() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -619,7 +619,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddClubToMatch_withCompleteClubData_thenSetsAllClubFields() {
+    public void testAddClubToMatch_withCompleteClubData_thenSetsAllClubFields() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -662,7 +662,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withMatchingMembers_thenSetsMembersOnResponse() {
+    public void testAddMembersToMatch_withMatchingMembers_thenSetsMembersOnResponse() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -710,7 +710,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withSingleScore_thenSetsMatchingMember() {
+    public void testAddMembersToMatch_withSingleScore_thenSetsMatchingMember() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -743,7 +743,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withNoMatchingMembers_thenSetsEmptyList() {
+    public void testAddMembersToMatch_withNoMatchingMembers_thenSetsEmptyList() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -770,7 +770,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withNoScores_thenDoesNotSetMembers() {
+    public void testAddMembersToMatch_withNoScores_thenDoesNotSetMembers() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -793,7 +793,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withNoMembers_thenSetsEmptyList() {
+    public void testAddMembersToMatch_withNoMembers_thenSetsEmptyList() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -815,7 +815,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withMultipleMembersAndScores_thenSetsLastMatchingMembers() {
+    public void testAddMembersToMatch_withMultipleMembersAndScores_thenSetsLastMatchingMembers() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -877,7 +877,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withMixedMatchingAndNonMatchingMembers_thenSetsMatchingMembers() {
+    public void testAddMembersToMatch_withMixedMatchingAndNonMatchingMembers_thenSetsMatchingMembers() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -917,7 +917,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withNullMemberId_thenHandlesGracefully() {
+    public void testAddMembersToMatch_withNullMemberId_thenHandlesGracefully() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -944,7 +944,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testAddMembersToMatch_withCompleteMemberData_thenSetsAllMemberFields() {
+    public void testAddMembersToMatch_withCompleteMemberData_thenSetsAllMemberFields() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 

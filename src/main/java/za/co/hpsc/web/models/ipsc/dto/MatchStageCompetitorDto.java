@@ -37,6 +37,9 @@ public class MatchStageCompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
 
+    private Integer competitorIndex;
+    private Integer matchStageIndex;
+
     @NotNull
     private CompetitorDto competitor;
     @NotNull
@@ -210,6 +213,12 @@ public class MatchStageCompetitorDto {
         // Initialises competitor attributes
         this.competitorCategory = CompetitorCategory.NONE;
         if (enrolledResponse != null) {
+            // Initialise the competitor and match details
+            this.competitorIndex = enrolledResponse.getCompetitorId();
+            this.matchStageIndex = matchStageDto.getIndex();
+            // TOOD: get DTOs
+            this.matchStage = matchStageDto;
+
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
             this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);

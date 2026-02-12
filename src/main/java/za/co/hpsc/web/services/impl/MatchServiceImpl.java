@@ -6,11 +6,9 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.services.MatchService;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
+// TOOD: add tests
 @Slf4j
 @Service
 public class MatchServiceImpl implements MatchService {
@@ -21,25 +19,12 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public Optional<IpscMatch> findMatch(String name, LocalDateTime scheduledDateTime) {
-        Optional<IpscMatch> match = Optional.empty();
-
-        // Filters matches by date
-        List<IpscMatch> matchList = new ArrayList<>();
-        if (scheduledDateTime != null) {
-            matchList = matchRepository.findAllByScheduledDate(scheduledDateTime.toLocalDate());
-        } else {
-            matchList = matchRepository.findAll();
+    public Optional<IpscMatch> findMatch(String name) {
+        if (name == null) {
+            return Optional.empty();
         }
 
-        // Filters matches by name when present
-        if (!name.isBlank()) {
-            matchList = matchList.stream()
-                    .filter(m -> m.getName().equals(name))
-                    .toList();
-        }
-
-        match = matchList.stream().findFirst();
-        return match;
+        // Filters matches by name
+        return matchRepository.findByName(name);
     }
 }

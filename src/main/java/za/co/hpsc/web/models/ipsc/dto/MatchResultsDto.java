@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.domain.IpscMatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +27,13 @@ import java.util.List;
 public class MatchResultsDto {
     private MatchDto match;
     private ClubDto club;
-    List<CompetitorDto> competitors = new ArrayList<>();
-    List<MatchStageDto> stages = new ArrayList<>();
-    List<MatchCompetitorDto> matchCompetitors = new ArrayList<>();
-    List<MatchStageCompetitorDto> matchStageCompetitors = new ArrayList<>();
+    private List<CompetitorDto> competitors = new ArrayList<>();
+    private List<MatchStageDto> stages = new ArrayList<>();
+    private List<MatchCompetitorDto> matchCompetitors = new ArrayList<>();
+    private List<MatchStageCompetitorDto> matchStageCompetitors = new ArrayList<>();
 
+    private IpscMatch ipscMatch;
+    
     /**
      * Constructs a new {@code MatchResultsDto} instance based on the provided match.
      *

@@ -15,6 +15,7 @@ import za.co.hpsc.web.services.TransactionService;
 
 import java.util.*;
 
+// TODO: create tests
 @Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -34,6 +35,11 @@ public class TransactionServiceImpl implements TransactionService {
     protected final Map<UUID, IpscMatchStage> matchStageMap = new HashMap<>();
     protected final Map<UUID, MatchCompetitor> matchCompetitorMap = new HashMap<>();
     protected final Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
+
+    protected final Map<Integer, Club> clubIndexMap = new HashMap<>();
+    protected final Map<Integer, IpscMatch> matchIndexMap = new HashMap<>();
+    protected final Map<Integer, Competitor> competitorIndexMap = new HashMap<>();
+    protected final Map<Integer, IpscMatchStage> matchStageIndexMap = new HashMap<>();
 
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
                                   IpscMatchRepository matchRepository, ClubRepository clubRepository,
@@ -66,13 +72,14 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             initClubEntity(matchResults.getClub());
             IpscMatch match = initMatchEntity(matchResults.getMatch());
-            initCompetitorEntities(matchResults.getCompetitors());
-            initMatchStageEntities(matchResults.getStages());
+//            initCompetitorEntities(matchResults.getCompetitors());
+//            initMatchStageEntities(matchResults.getStages());
 
-            initMatchCompetitorEntities(matchResults.getMatchCompetitors(), ClubReference.HPSC);
-            initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(), ClubReference.HPSC);
+//            initMatchCompetitorEntities(matchResults.getMatchCompetitors(), ClubReference.HPSC);
+//            initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(), ClubReference.HPSC);
 
-            finaliseMatchEntity(match);
+//            finaliseMatchEntity(match);
+            List<IpscMatchStage> ipscMatchStages = match.getMatchStages();
 
             matchRepository.save(match);
             transactionManager.commit(transaction);
@@ -101,14 +108,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     protected void initClubEntity(ClubDto clubDto) {
         if (clubDto != null) {
-            // Initialises the club entity from the DTO or creates a new entity
-            Optional<Club> optionalClubEntity = ((clubDto.getId() != null) ?
-                    clubRepository.findById(clubDto.getId()) : Optional.empty());
-            Club clubEntity = optionalClubEntity.orElseGet(Club::new);
-            clubEntity.init(clubDto);
+            // Initialises the club entity from the DTO
+            Club clubEntity = null;
+            if (clubDto.getId() != null) {
+                clubEntity = clubRepository.findById(clubDto.getId()).orElse(null);
+            } else {
+                clubEntity = clubRepository.findByName(clubDto.getName()).orElse(null);
+            }
 
-            // Update the map of clubs
-            clubMap.put(clubDto.getUuid(), clubEntity);
+            if (clubEntity != null) {
+                clubEntity.init(clubDto);
+                // Update the map of clubs
+                clubMap.put(clubDto.getUuid(), clubEntity);
+            }
         }
     }
 
@@ -120,13 +132,22 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         // Initialises the match entity from DTO or creates a new entity
-        Optional<IpscMatch> optionalMatchEntity = ((matchDto.getId() != null) ?
-                matchRepository.findById(matchDto.getId()) : Optional.empty());
-        IpscMatch matchEntity = optionalMatchEntity.orElseGet(IpscMatch::new);
+        IpscMatch matchEntity = null;
+        if (matchDto.getId() != null) {
+            matchEntity = matchRepository.findById(matchDto.getId()).orElse(null);
+        } else {
+            matchEntity = matchRepository.findByName(matchDto.getName()).orElse(null);
+        }
+
+        if (matchEntity == null) {
+            matchEntity = new IpscMatch();
+        }
+
         matchEntity.init(matchDto, clubEntity);
 
         // Update the map of matches
         matchMap.put(matchDto.getUuid(), matchEntity);
+        matchIndexMap.put(matchDto.getIndex(), matchEntity);
         return matchEntity;
     }
 
@@ -142,6 +163,7 @@ public class TransactionServiceImpl implements TransactionService {
 
             // Update the map of competitors
             competitorMap.put(competitorDto.getUuid(), competitorEntity);
+            competitorIndexMap.put(competitorDto.getIndex(), competitorEntity);
         });
     }
 
@@ -160,6 +182,7 @@ public class TransactionServiceImpl implements TransactionService {
 
             // Update the map of match stages
             matchStageMap.put(stage.getUuid(), matchStageEntity);
+            matchStageIndexMap.put(stage.getIndex(), matchStageEntity);
         });
     }
 

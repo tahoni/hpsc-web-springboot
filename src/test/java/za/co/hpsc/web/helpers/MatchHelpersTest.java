@@ -25,7 +25,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.HANDGUN);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
-        match.setScheduledDate(LocalDate.of(2023, 5, 20));
+        match.setScheduledDate(LocalDate.of(2023, 5, 20).atStartOfDay());
 
         // Expected parameters used in the formatted string
         String expectedDisplayName = StringUtil.formatStringWithNamedParameters(
@@ -52,7 +52,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
-        match.setScheduledDate(LocalDate.of(2024, 3, 15));
+        match.setScheduledDate(LocalDate.of(2024, 3, 15).atStartOfDay());
 
         // Expected parameters used in the formatted string
         String expectedDisplayName = StringUtil.formatStringWithNamedParameters(
@@ -79,7 +79,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
-        match.setScheduledDate(LocalDate.of(2025, 11, 12));
+        match.setScheduledDate(LocalDate.of(2025, 11, 12).atStartOfDay());
 
         // Expected parameters used in the formatted string
         String expectedDisplayName = StringUtil.formatStringWithNamedParameters(
@@ -106,7 +106,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.PCC);
         match.setMatchCategory(MatchCategory.LEAGUE);
-        match.setScheduledDate(LocalDate.of(2023, 5, 20));
+        match.setScheduledDate(LocalDate.of(2023, 5, 20).atStartOfDay());
 
         // Expected overall display name
         String expectedOverallDisplayName = StringUtil.formatStringWithNamedParameters(
@@ -131,7 +131,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
-        match.setScheduledDate(LocalDate.of(2024, 3, 15));
+        match.setScheduledDate(LocalDate.of(2024, 3, 15).atStartOfDay());
 
         // Expected overall display name
         String expectedOverallDisplayName = StringUtil.formatStringWithNamedParameters(
@@ -156,7 +156,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
-        match.setScheduledDate(LocalDate.of(2025, 11, 12));
+        match.setScheduledDate(LocalDate.of(2025, 11, 12).atStartOfDay());
 
         // Expected overall display name
         String expectedOverallDisplayName = StringUtil.formatStringWithNamedParameters(
@@ -181,7 +181,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.HANDGUN_22);
         match.setMatchCategory(null);
-        match.setScheduledDate(LocalDate.of(2026, 8, 3));
+        match.setScheduledDate(LocalDate.of(2026, 8, 3).atStartOfDay());
 
         // Expected overall display name
         String expectedOverallDisplayName = StringUtil.formatStringWithNamedParameters(
@@ -206,7 +206,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(FirearmType.SHOTGUN);
         match.setMatchCategory(MatchCategory.LEAGUE);
-        match.setScheduledDate(LocalDate.of(2023, 5, 20));
+        match.setScheduledDate(LocalDate.of(2023, 5, 20).atStartOfDay());
 
         IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setMatch(match);
@@ -238,7 +238,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
-        match.setScheduledDate(LocalDate.of(2024, 3, 15));
+        match.setScheduledDate(LocalDate.of(2024, 3, 15).atStartOfDay());
 
         IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setMatch(match);
@@ -270,7 +270,7 @@ class MatchHelpersTest {
         match.setClub(club);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
-        match.setScheduledDate(LocalDate.of(2025, 11, 12));
+        match.setScheduledDate(LocalDate.of(2025, 11, 12).atStartOfDay());
 
         IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setMatch(match);

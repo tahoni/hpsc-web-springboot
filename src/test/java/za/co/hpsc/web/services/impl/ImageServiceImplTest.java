@@ -19,7 +19,7 @@ class ImageServiceImplTest {
     private ImageServiceImpl imageService;
 
     @Test
-    void testReadImages_withValidCsv_thenReturnsImageRequestList() {
+    public void testReadImages_withValidCsv_thenReturnsImageRequestList() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -61,7 +61,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testReadImages_withValidCsvRearrangedColumns_thenReturnsImageRequestList() {
+    public void testReadImages_withValidCsvRearrangedColumns_thenReturnsImageRequestList() {
         // Arrange
         String csvData = """
                 summary,title,description,category,tags,filePath,fileName
@@ -139,7 +139,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testReadImages_withMissingCsvColumns_thenThrowsException() {
+    public void testReadImages_withMissingCsvColumns_thenThrowsException() {
         // Arrange
         String csvData = """
                 title,filePath,fileName
@@ -153,7 +153,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testReadImages_withInvalidCsvData_thenThrowsException() {
+    public void testReadImages_withInvalidCsvData_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -166,7 +166,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testReadImages_withEmptyCsvData_thenReturnsEmptyList() {
+    public void testReadImages_withEmptyCsvData_thenReturnsEmptyList() {
         // Arrange
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
@@ -180,7 +180,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testReadImages_withInvalidCsvStructure_thenThrowsException() {
+    public void testReadImages_withInvalidCsvStructure_thenThrowsException() {
         // Arrange
         String invalidCsvStructure = """
                 Invalid_Header1,Invalid_Header2,Invalid_Header3
@@ -193,7 +193,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testReadImages_withInvalidCsv_thenThrowsException() {
+    public void testReadImages_withInvalidCsv_thenThrowsException() {
         // Arrange
         String invalidCsv = """
                 Invalid CSV With One Column and no Header
@@ -205,28 +205,28 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testReadImages_withBlankCsv_thenThrowsException() {
+    public void testReadImages_withBlankCsv_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages("    "));
     }
 
     @Test
-    void testReadImages_withEmptyCsv_thenThrowsException() {
+    public void testReadImages_withEmptyCsv_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(""));
     }
 
     @Test
-    void testReadImages_withNullCsv_thenThrowsException() {
+    public void testReadImages_withNullCsv_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(null));
     }
 
     @Test
-    void testMapImages_withValidImageRequestList_thenReturnsImageResponseList() {
+    public void testMapImages_withValidImageRequestList_thenReturnsImageResponseList() {
         // Arrange
         ImageRequest request1 = new ImageRequest("Image 1", "Summary 1", "Description 1",
                 "Category 1", List.of("Tag1", "Tag2"), "/path/to/image1", "image1.png");
@@ -262,7 +262,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testMapImages_withEmptyImageRequestList_thenReturnsEmptyList() {
+    public void testMapImages_withEmptyImageRequestList_thenReturnsEmptyList() {
         // Act
         List<ImageResponse> imageResponseList =
                 imageService.mapImages(List.of());
@@ -273,7 +273,7 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void testMapImages_withNullImageRequestList_thenThrowsException() {
+    public void testMapImages_withNullImageRequestList_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.mapImages(null));

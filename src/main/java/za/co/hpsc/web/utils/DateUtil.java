@@ -16,8 +16,4 @@ public final class DateUtil {
     public static String formatDateTime(LocalDateTime date, String format) {
         return DateTimeFormatter.ofPattern(format).format(date);
     }
-
-    public static String formatDateTime(LocalDate date, String format) {
-        return DateTimeFormatter.ofPattern(format).format(date.atStartOfDay());
-    }
 }

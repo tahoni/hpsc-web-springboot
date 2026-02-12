@@ -28,12 +28,13 @@ import java.util.UUID;
 public class MatchStageDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
+    private Integer index;
 
     @NotNull
     private MatchDto match;
 
     @NotNull
-    private Integer stageNumber;
+    private Integer stageNumber = 0;
     private String stageName;
     private Integer rangeNumber;
 
@@ -123,6 +124,7 @@ public class MatchStageDto {
      */
     public void init(@NotNull MatchDto matchDto, @NotNull StageResponse stageResponse) {
         // Initialises the stage details
+        this.index = stageResponse.getStageId();
         this.match = matchDto;
 
         // Initialises the stage attributes

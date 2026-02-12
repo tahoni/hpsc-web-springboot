@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
@@ -45,8 +46,11 @@ public class WinMssServiceImpl implements WinMssService {
     public IpscMatchResponseHolder importWinMssCabFile(String cabFileContent)
             throws ValidationException, FatalException {
 
-        importWinMssCabFileContent(cabFileContent);
-        return null;
+        MatchResultsDtoHolder matchResultsDtoHolder = importWinMssCabFileContent(cabFileContent);
+        List<IpscMatch> ipscMatchList = matchResultsDtoHolder.getMatches().stream()
+                .map(MatchResultsDto::getIpscMatch)
+                .toList();
+        return ipscMatchService.generateIpscMatchResultResponse(ipscMatchList);
     }
 
     /**
@@ -85,10 +89,18 @@ public class WinMssServiceImpl implements WinMssService {
 
         // Persists the match results
         List<MatchResultsDto> matchResultsList = new ArrayList<>();
+        // Iterates responses; persists match results; accumulates DTOs
         ipscResponseHolder.getIpscList().forEach(ipscResponse -> {
-            Optional<MatchResultsDto> matchResults = matchResultService.initMatchResults(ipscResponse);
-            matchResults.ifPresent(transactionService::saveMatchResults);
-            matchResults.ifPresent(matchResultsList::add);
+            Optional<MatchResultsDto> optionalMatchResults = matchResultService.initMatchResults(ipscResponse);
+            // Persists match results if present and associates the match entity with it
+            if (optionalMatchResults.isPresent()) {
+                // Persists the match results
+                MatchResultsDto matchResults = optionalMatchResults.get();
+                Optional<IpscMatch> ipscMatch = transactionService.saveMatchResults(matchResults);
+                // Associates the persisted match with the match results
+                ipscMatch.ifPresent(matchResults::setIpscMatch);
+                matchResultsList.add(matchResults);
+            }
         });
 
         return new MatchResultsDtoHolder(matchResultsList);

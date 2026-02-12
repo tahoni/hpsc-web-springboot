@@ -75,7 +75,8 @@ public class MatchResultServiceImpl implements MatchResultService {
         // Creates a new club DTO, from either the found entity or the club response
         ClubDto clubDto = optionalClub
                 .map(ClubDto::new)
-                .orElseGet(() -> new ClubDto(null, clubResponse.getClubName(), clubResponse.getClubCode()));
+                .orElseGet(() -> new ClubDto(clubResponse));
+        clubDto.setIndex(clubResponse.getClubId());
 
         return Optional.of(clubDto);
     }
@@ -95,13 +96,14 @@ public class MatchResultServiceImpl implements MatchResultService {
     protected Optional<MatchDto> initMatch(@NotNull IpscResponse ipscResponse, ClubDto clubDto) {
         // Attempts to find the match by name and date in the database
         Optional<IpscMatch> optionalMatch =
-                matchService.findMatch(ipscResponse.getMatch().getMatchName(), ipscResponse.getMatch().getMatchDate());
+                matchService.findMatch(ipscResponse.getMatch().getMatchName());
         boolean ipscMatchExists = optionalMatch.isPresent();
         boolean ipscResponseHasNewerScore = false;
         // Determines the last updated date of the match
         LocalDateTime matchLastUpdated = (optionalMatch.isPresent() ?
                 optionalMatch.get().getDateUpdated() : LocalDateTime.now());
 
+/*
         // Skips update if there are no newer scores in the IPSC response
         if (ipscMatchExists) {
             ipscResponseHasNewerScore = ipscResponse.getScores().stream()
@@ -110,6 +112,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                 return Optional.empty();
             }
         }
+*/
 
         // Creates a new match DTO, from either the found entity or the match response
         MatchDto matchDto = optionalMatch
@@ -193,6 +196,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                 CompetitorDto competitorDto = optionalCompetitor
                         .map(CompetitorDto::new)
                         .orElseGet(CompetitorDto::new);
+                competitorDto.setIndex(memberResponse.getMemberId());
 
                 // Initialises the enrolled response to use to initialise the scores for each competitor
                 // per match and stage
@@ -229,6 +233,8 @@ public class MatchResultServiceImpl implements MatchResultService {
                 MatchCompetitorDto matchCompetitorDto = optionalMatchCompetitor
                         .map(MatchCompetitorDto::new)
                         .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch()));
+                matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
 
                 // Initialises match competitor attributes
                 matchCompetitorDto.init(scores, enrolledMap.get(memberId));
@@ -253,6 +259,8 @@ public class MatchResultServiceImpl implements MatchResultService {
                         MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
                                 .map(MatchStageCompetitorDto::new)
                                 .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
+                        matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                        matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                         // Initialises the match stage attributes
                         matchStageCompetitorDto.init(optionalStageScoreResponse.get(),

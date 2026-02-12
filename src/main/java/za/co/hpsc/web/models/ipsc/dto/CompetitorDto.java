@@ -32,12 +32,13 @@ import java.util.UUID;
 public class CompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
+    private Integer index;
 
     @NotNull
-    private String firstName;
+    private String firstName = "";
     @NotNull
-    private String lastName;
-    private String middleNames;
+    private String lastName = "";
+    private String middleNames = "";
     private LocalDate dateOfBirth;
 
     private Integer sapsaNumber;
@@ -90,6 +91,9 @@ public class CompetitorDto {
      *                         Can be null.
      */
     public void init(@NotNull MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
+        // Initialises competitor details
+        this.index = memberResponse.getMemberId();
+
         // Initialises competitor attributes
         this.firstName = memberResponse.getFirstName();
         this.lastName = memberResponse.getLastName();

@@ -12,8 +12,8 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +39,7 @@ public class IpscMatch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "club_id")
     private Club club;
 
@@ -48,7 +48,7 @@ public class IpscMatch {
     private String name;
     @NotNull
     @Column(nullable = false)
-    private LocalDate scheduledDate;
+    private LocalDateTime scheduledDate;
     @Enumerated(EnumType.STRING)
     private ClubReference clubName;
 
@@ -57,10 +57,10 @@ public class IpscMatch {
     @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<IpscMatchStage> matchStages;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MatchCompetitor> matchCompetitors;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<IpscMatchStage> matchStages = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
     @NotNull
     private LocalDateTime dateCreated;
@@ -81,7 +81,6 @@ public class IpscMatch {
      */
     public void init(MatchDto matchDto, Club clubEntity) {
         // Initialises the match details
-        this.id = matchDto.getId();
         this.club = clubEntity;
 
         // Sets club name from DTO or associated entity
@@ -90,7 +89,7 @@ public class IpscMatch {
         } else if (clubEntity != null) {
             clubName = ClubReference.getByName(clubEntity.getName()).orElse(null);
         }
-        
+
         // Initialises the match attributes
         this.name = matchDto.getName();
         this.scheduledDate = matchDto.getScheduledDate();

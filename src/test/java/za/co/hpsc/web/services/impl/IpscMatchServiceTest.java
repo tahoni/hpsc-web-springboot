@@ -21,7 +21,7 @@ public class IpscMatchServiceTest {
     private IpscMatchServiceImpl matchService;
 
     @Test
-    void testMapMatchResults_withValidData_thenReturnsIpscResponses() {
+    public void testMapMatchResults_withValidData_thenReturnsIpscResponses() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -110,7 +110,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testMapMatchResults_withMultipleMatches_thenReturnsMultipleResponses() {
+    public void testMapMatchResults_withMultipleMatches_thenReturnsMultipleResponses() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -165,7 +165,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testMapMatchResults_withNoMatchingClub_thenCreatesClubWithIdOnly() {
+    public void testMapMatchResults_withNoMatchingClub_thenCreatesClubWithIdOnly() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -199,7 +199,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testMapMatchResults_withEmptyRequestHolderLists_thenReturnsEmptyList() {
+    public void testMapMatchResults_withEmptyRequestHolderLists_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setClubs(new ArrayList<>());
@@ -223,7 +223,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testMapMatchResults_withMatchButNoMembers_thenReturnsResponseWithEmptyMembers() {
+    public void testMapMatchResults_withMatchButNoMembers_thenReturnsResponseWithEmptyMembers() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -259,7 +259,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testMapMatchResults_withEmptyRequestHolder_thenReturnsEmptyList() {
+    public void testMapMatchResults_withEmptyRequestHolder_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -273,7 +273,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testMapMatchResults_withNullRequestHolder_thenThrowsException() {
+    public void testMapMatchResults_withNullRequestHolder_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchService.mapMatchResults(null));
     }

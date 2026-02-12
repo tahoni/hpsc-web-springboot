@@ -13,7 +13,6 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -36,13 +35,15 @@ import java.util.UUID;
 public class MatchDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
+    private Integer index;
+
     private ClubDto club;
+    private ClubReference clubName;
 
     @NotNull
-    private String name;
+    private String name = "";
     @NotNull
-    private LocalDate scheduledDate;
-    private ClubReference clubName;
+    private LocalDateTime scheduledDate;
 
     private FirearmType matchFirearmType;
     private MatchCategory matchCategory;
@@ -132,13 +133,14 @@ public class MatchDto {
      */
     public void init(@NotNull MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
         // Initialises match details
+        this.index = matchResponse.getMatchId();
         this.club = clubDto;
 
         // Initialises the match attributes
         this.name = matchResponse.getMatchName();
         this.clubName = ((clubDto != null) ?
                 ClubReference.getByName(clubDto.getName()).orElse(null) : null);
-        this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
+        this.scheduledDate = matchResponse.getMatchDate();
 
         // Determines the firearm type based on the firearm ID
         this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);

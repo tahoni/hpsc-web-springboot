@@ -36,6 +36,9 @@ public class MatchCompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
 
+    private Integer competitorIndex;
+    private Integer matchIndex;
+
     @NotNull
     private CompetitorDto competitor;
     @NotNull
@@ -97,7 +100,9 @@ public class MatchCompetitorDto {
      *                      Must not be null.
      */
     public MatchCompetitorDto(@NotNull CompetitorDto competitorDto, @NotNull MatchDto matchDto) {
-        // Initialises the match competitor details
+        // Initialises the competitor and match details
+        this.competitorIndex = competitorDto.getIndex();
+        this.matchIndex = matchDto.getIndex();
         this.competitor = competitorDto;
         this.match = matchDto;
 
@@ -140,9 +145,14 @@ public class MatchCompetitorDto {
             this.dateEdited = LocalDateTime.now();
         }
 
-        // Initialises the competitor attributes
+        // Initialises the competitor
         this.competitorCategory = CompetitorCategory.NONE;
         if (enrolledResponse != null) {
+            // Initialise the competitor and match details
+            this.competitorIndex = enrolledResponse.getCompetitorId();
+            this.matchIndex = enrolledResponse.getMatchId();
+            // TOOD: get DTOs
+
             // Determines the power factor based on the major power factor flag
             this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
             // Determines the club based on the club reference number

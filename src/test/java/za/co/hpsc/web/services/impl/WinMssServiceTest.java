@@ -37,7 +37,7 @@ public class WinMssServiceTest {
     private WinMssServiceImpl winMssService;
 
     @Test
-    void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() throws Exception {
+    public void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -76,7 +76,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withNullCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withNullCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile(null)
@@ -89,7 +89,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withEmptyCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withEmptyCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile("")
@@ -102,7 +102,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withBlankCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withBlankCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile("   ")
@@ -114,7 +114,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withNullResponseHolder_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withNullResponseHolder_thenThrowsValidationException() {
         // Arrange
         String cabFileContent = """
                 {
@@ -143,7 +143,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withMultipleMatches_thenProcessesAllMatches() throws Exception {
+    public void testImportWinMssCabFileContent_withMultipleMatches_thenProcessesAllMatches() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -185,7 +185,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withEmptyMatchResults_thenSkipsSaving() throws Exception {
+    public void testImportWinMssCabFileContent_withEmptyMatchResults_thenSkipsSaving() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -219,7 +219,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withInvalidJson_thenThrowsFatalException() {
+    public void testImportWinMssCabFileContent_withInvalidJson_thenThrowsFatalException() {
         // Arrange
         String invalidCabFileContent = "This is not valid JSON content";
 
@@ -235,7 +235,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withInvalidXml_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withInvalidXml_thenThrowsValidationException() {
         // Arrange
         String invalidCabFileContent = """
                 {
@@ -262,7 +262,7 @@ public class WinMssServiceTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withCabFile_thenReturnsMatch() throws Exception {
+    public void testImportWinMssCabFileContent_withCabFile_thenReturnsMatch() throws Exception {
         // Arrange
         String cabFileContent = """
                 {

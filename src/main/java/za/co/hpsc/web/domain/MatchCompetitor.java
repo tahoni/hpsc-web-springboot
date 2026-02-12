@@ -79,7 +79,6 @@ public class MatchCompetitor {
      */
     public void init(MatchCompetitorDto matchCompetitorDto, IpscMatch matchEntity, Competitor competitorEntity) {
         // Initialises the competitor details
-        this.id = matchCompetitorDto.getId();
         this.match = matchEntity;
         this.competitor = competitorEntity;
 

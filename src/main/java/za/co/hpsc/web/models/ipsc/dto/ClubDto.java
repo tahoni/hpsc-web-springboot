@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.Club;
+import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 
 import java.util.UUID;
 
@@ -26,9 +27,10 @@ import java.util.UUID;
 public class ClubDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
+    private Integer index;
 
     @NotNull
-    private String name;
+    private String name = "";
     private String abbreviation;
 
     /**
@@ -49,31 +51,16 @@ public class ClubDto {
     }
 
     /**
-     * Constructs a new {@code ClubDto} instance with the provided details.
      *
-     * @param id           the club's unique identifier.
-     * @param name         the club's name.
-     * @param abbreviation the club's abbreviation.
+     * @param clubResponse
      */
-    public ClubDto(Long id, String name, String abbreviation) {
+    public ClubDto(ClubResponse clubResponse) {
         // Initialises club details
-        this.id = id;
+        this.index = clubResponse.getClubId();
 
         // Initialises club attributes
-        this.name = name;
-        this.abbreviation = abbreviation;
-    }
-
-    /**
-     * Constructs a new {@code ClubDto} instance with the provided details.
-     *
-     * @param name         the club's name.
-     * @param abbreviation the club's abbreviation.
-     */
-    public ClubDto(String name, String abbreviation) {
-        // Initialises club attributes
-        this.name = name;
-        this.abbreviation = abbreviation;
+        this.name = clubResponse.getClubName();
+        this.abbreviation = clubResponse.getClubCode();
     }
 
     /**

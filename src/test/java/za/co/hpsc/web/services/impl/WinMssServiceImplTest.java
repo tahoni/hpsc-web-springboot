@@ -39,7 +39,7 @@ public class WinMssServiceImplTest {
     private WinMssServiceImpl winMssService;
 
     @Test
-    void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() throws Exception {
+    public void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -78,7 +78,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withNullCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withNullCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile(null)
@@ -91,7 +91,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withEmptyCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withEmptyCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile("")
@@ -104,7 +104,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withBlankCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withBlankCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.importWinMssCabFile("   ")
@@ -116,7 +116,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withNullResponseHolder_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withNullResponseHolder_thenThrowsValidationException() {
         // Arrange
         String cabFileContent = """
                 {
@@ -145,7 +145,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withMultipleMatches_thenProcessesAllMatches() throws Exception {
+    public void testImportWinMssCabFileContent_withMultipleMatches_thenProcessesAllMatches() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -187,7 +187,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withEmptyMatchResults_thenSkipsSaving() throws Exception {
+    public void testImportWinMssCabFileContent_withEmptyMatchResults_thenSkipsSaving() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -221,7 +221,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withInvalidJson_thenThrowsFatalException() {
+    public void testImportWinMssCabFileContent_withInvalidJson_thenThrowsFatalException() {
         // Arrange
         String invalidCabFileContent = "This is not valid JSON content";
 
@@ -237,7 +237,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withInvalidXml_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_withInvalidXml_thenThrowsValidationException() {
         // Arrange
         String invalidCabFileContent = """
                 {
@@ -264,7 +264,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testImportWinMssCabFileContent_withCabFile_thenReturnsMatch() throws Exception {
+    public void testImportWinMssCabFileContent_withCabFile_thenReturnsMatch() throws Exception {
         // Arrange
         String cabFileContent = """
                 {
@@ -303,7 +303,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() {
+    public void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -393,7 +393,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withEmptyXmlSectionData_thenReturnsEmptyLists() {
+    public void testReadIpscRequests_withEmptyXmlSectionData_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -426,7 +426,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() {
+    public void testReadIpscRequests_withEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -480,7 +480,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withMissingXml_thenReturnsIpscRequestHolder() {
+    public void testReadIpscRequests_withMissingXml_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -514,7 +514,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withEmptyXmlSections_thenReturnsEmptyLists() {
+    public void testReadIpscRequests_withEmptyXmlSections_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -549,7 +549,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withNullXmlSections_thenReturnsEmptyLists() {
+    public void testReadIpscRequests_withNullXmlSections_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -584,7 +584,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withInvalidJson_thenThrowsException() {
+    public void testReadIpscRequests_withInvalidJson_thenThrowsException() {
         // Arrange
         String cabFileContent = "Invalid JSON Content";
 
@@ -595,7 +595,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadIpscRequests_withNullJson_thenThrowsException() {
+    public void testReadIpscRequests_withNullJson_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 winMssService.readIpscRequests(null)
@@ -603,7 +603,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidXml_thenReturnsRequests() {
+    public void testReadRequests_withValidXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -656,7 +656,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidNamespaceClubXml_thenReturnsClubRequest() {
+    public void testReadRequests_withValidNamespaceClubXml_thenReturnsClubRequest() {
         // Arrange
         String xmlData = """
                     <xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
@@ -712,7 +712,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withEmptyXmlData_thenReturnsEmptyList() {
+    public void testReadRequests_withEmptyXmlData_thenReturnsEmptyList() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -730,7 +730,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withInvalidXml_thenThrowsException() {
+    public void testReadRequests_withInvalidXml_thenThrowsException() {
         // Arrange
         String xmlData = "Invalid XML Content";
 
@@ -740,7 +740,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withEmptyXml_thenReturnsEmptyList() {
+    public void testReadRequests_withEmptyXml_thenReturnsEmptyList() {
         // Arrange
         String xmlData = "";
 
@@ -754,7 +754,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withNullXml_thenReturnsEmptyList() {
+    public void testReadRequests_withNullXml_thenReturnsEmptyList() {
         // Act
         List<ClubRequest> clubs = assertDoesNotThrow(() -> winMssService.readRequests(null,
                 ClubRequest.class));
@@ -765,7 +765,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidClubXml_thenReturnsRequests() {
+    public void testReadRequests_withValidClubXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -792,7 +792,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidMatchXml_thenReturnsRequests() {
+    public void testReadRequests_withValidMatchXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -819,7 +819,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidStageXml_thenReturnsRequests() {
+    public void testReadRequests_withValidStageXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -845,7 +845,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidTagXml_thenReturnsRequests() {
+    public void testReadRequests_withValidTagXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -870,7 +870,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidMemberXml_thenReturnsRequests() {
+    public void testReadRequests_withValidMemberXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -897,7 +897,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidClassificationXml_thenReturnsRequests() {
+    public void testReadRequests_withValidClassificationXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -924,7 +924,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidEnrolledXml_thenReturnsRequest() {
+    public void testReadRequests_withValidEnrolledXml_thenReturnsRequest() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -950,7 +950,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidSquadXml_thenReturnsRequest() {
+    public void testReadRequests_withValidSquadXml_thenReturnsRequest() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -976,7 +976,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidTeamXml_thenReturnsRequests() {
+    public void testReadRequests_withValidTeamXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -1002,7 +1002,7 @@ public class WinMssServiceImplTest {
     }
 
     @Test
-    void testReadRequests_withValidScoreXml_thenReturnsRequest() {
+    public void testReadRequests_withValidScoreXml_thenReturnsRequest() {
         // Arrange
         String xmlData = """
                     <xml>

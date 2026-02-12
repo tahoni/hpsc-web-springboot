@@ -98,7 +98,6 @@ public class MatchStageCompetitor {
                      Competitor competitorEntity) {
 
         // Initialises the match stage and competitor details
-        this.id = matchStageCompetitorDto.getId();
         this.matchStage = matchStageEntity;
         this.competitor = competitorEntity;
 

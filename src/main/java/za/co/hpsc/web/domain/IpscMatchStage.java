@@ -54,7 +54,7 @@ public class IpscMatchStage {
     private Integer minRounds;
     private Integer maxPoints;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<MatchStageCompetitor> matchStageCompetitors;
 
     /**
@@ -72,7 +72,6 @@ public class IpscMatchStage {
      */
     public void init(MatchStageDto stage, IpscMatch matchEntity) {
         // Initialises the stage details
-        this.id = stage.getId();
         this.match = matchEntity;
 
         // Initialises the stage attributes
