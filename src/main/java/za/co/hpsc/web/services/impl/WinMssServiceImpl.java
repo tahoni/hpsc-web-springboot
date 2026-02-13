@@ -9,10 +9,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
@@ -41,7 +43,29 @@ public class WinMssServiceImpl implements WinMssService {
     }
 
     @Override
-    public MatchResultsDtoHolder importWinMssCabFile(String cabFileContent)
+    public IpscMatchRecordHolder importWinMssCabFile(String cabFileContent)
+            throws ValidationException, FatalException {
+
+        MatchResultsDtoHolder matchResultsDtoHolder = importWinMssCabFileContent(cabFileContent);
+        List<IpscMatch> ipscMatchList = matchResultsDtoHolder.getMatches().stream()
+                .map(MatchResultsDto::getIpscMatch)
+                .toList();
+        return ipscMatchService.generateIpscMatchRecordHolder(ipscMatchList);
+    }
+
+    /**
+     * Imports and processes the content of a WinMSS.cab file.
+     *
+     * @param cabFileContent the content of the WinMSS.cab file to be imported. It must be provided
+     *                       as a non-null string containing the data in a valid JSON format.
+     * @return a {@link IpscMatchRecordHolder} object containing the parsed match results
+     * extracted from the CAB file.
+     * @throws ValidationException if the provided CAB file content fails validation, indicating
+     *                             that the input data is incomplete, malformed, or otherwise invalid.
+     * @throws FatalException      if a critical error occurs during the processing of the CAB file,
+     *                             rendering the operation unable to complete.
+     */
+    protected MatchResultsDtoHolder importWinMssCabFileContent(String cabFileContent)
             throws ValidationException, FatalException {
 
         if ((cabFileContent == null) || (cabFileContent.isBlank())) {
@@ -65,12 +89,17 @@ public class WinMssServiceImpl implements WinMssService {
 
         // Persists the match results
         List<MatchResultsDto> matchResultsList = new ArrayList<>();
-        // Iterates IPSC responses; persists present match results
+        // Iterates responses; persists match results; accumulates DTOs
         ipscResponseHolder.getIpscList().forEach(ipscResponse -> {
-            Optional<MatchResultsDto> matchResults = matchResultService.initMatchResults(ipscResponse);
-            if (matchResults.isPresent()) {
-                transactionService.saveMatchResults(matchResults.get());
-                matchResultsList.add(matchResults.get());
+            Optional<MatchResultsDto> optionalMatchResults = matchResultService.initMatchResults(ipscResponse);
+            // Persists match results if present and associates the match entity with it
+            if (optionalMatchResults.isPresent()) {
+                // Persists the match results
+                MatchResultsDto matchResults = optionalMatchResults.get();
+                Optional<IpscMatch> ipscMatch = transactionService.saveMatchResults(matchResults);
+                // Associates the persisted match with the match results
+                ipscMatch.ifPresent(matchResults::setIpscMatch);
+                matchResultsList.add(matchResults);
             }
         });
 

@@ -28,12 +28,13 @@ import java.util.UUID;
 public class MatchStageDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
+    private Integer index;
 
     @NotNull
     private MatchDto match;
 
     @NotNull
-    private Integer stageNumber;
+    private Integer stageNumber = 0;
     private String stageName;
     private Integer rangeNumber;
 
@@ -89,26 +90,28 @@ public class MatchStageDto {
      * @param matchDto         the {@link  MatchDto} object representing the associated match.
      *                         Must not be null.
      */
-    public MatchStageDto(@NotNull IpscMatchStage matchStageEntity, @NotNull MatchDto matchDto) {
-        // Initialises the stage details
-        this.id = matchStageEntity.getId();
-        this.match = matchDto;
+    public MatchStageDto(IpscMatchStage matchStageEntity, MatchDto matchDto) {
+        if (matchStageEntity != null) {
+            // Initialises the stage details
+            this.id = matchStageEntity.getId();
+            this.match = matchDto;
 
-        // Initialises the stage attributes
-        this.stageNumber = matchStageEntity.getStageNumber();
-        this.stageName = matchStageEntity.getStageName();
-        this.rangeNumber = matchStageEntity.getRangeNumber();
+            // Initialises the stage attributes
+            this.stageNumber = matchStageEntity.getStageNumber();
+            this.stageName = matchStageEntity.getStageName();
+            this.rangeNumber = matchStageEntity.getRangeNumber();
 
-        // Initialises the target details
-        this.targetPaper = matchStageEntity.getTargetPaper();
-        this.targetPopper = matchStageEntity.getTargetPopper();
-        this.targetPlates = matchStageEntity.getTargetPlates();
-        this.targetDisappear = matchStageEntity.getTargetDisappear();
-        this.targetPenalty = matchStageEntity.getTargetPenalty();
+            // Initialises the target details
+            this.targetPaper = matchStageEntity.getTargetPaper();
+            this.targetPopper = matchStageEntity.getTargetPopper();
+            this.targetPlates = matchStageEntity.getTargetPlates();
+            this.targetDisappear = matchStageEntity.getTargetDisappear();
+            this.targetPenalty = matchStageEntity.getTargetPenalty();
 
-        // Initialises the max rounds and max points details
-        this.minRounds = matchStageEntity.getMinRounds();
-        this.maxPoints = matchStageEntity.getMaxPoints();
+            // Initialises the max rounds and max points details
+            this.minRounds = matchStageEntity.getMinRounds();
+            this.maxPoints = matchStageEntity.getMaxPoints();
+        }
     }
 
     /**
@@ -121,25 +124,28 @@ public class MatchStageDto {
      *                      such as stage number, targets, and possible points.
      *                      Must not be null.
      */
-    public void init(@NotNull MatchDto matchDto, @NotNull StageResponse stageResponse) {
-        // Initialises the stage details
-        this.match = matchDto;
+    public void init(MatchDto matchDto, StageResponse stageResponse) {
+        if ((matchDto != null) && (stageResponse != null)) {
+            // Initialises the stage details
+            this.index = stageResponse.getStageId();
+            this.match = matchDto;
 
-        // Initialises the stage attributes
-        this.stageNumber = stageResponse.getStageId();
-        this.stageName = stageResponse.getStageName();
-        this.rangeNumber = 0;
+            // Initialises the stage attributes
+            this.stageNumber = stageResponse.getStageId();
+            this.stageName = stageResponse.getStageName();
+            this.rangeNumber = 0;
 
-        // Initialises the target details
-        this.targetPaper = stageResponse.getTargetPaper();
-        this.targetPopper = stageResponse.getTargetPopper();
-        this.targetPlates = stageResponse.getTargetPlates();
-        this.targetDisappear = stageResponse.getTargetDisappear();
-        this.targetPenalty = stageResponse.getTargetPenalty();
+            // Initialises the target details
+            this.targetPaper = stageResponse.getTargetPaper();
+            this.targetPopper = stageResponse.getTargetPopper();
+            this.targetPlates = stageResponse.getTargetPlates();
+            this.targetDisappear = stageResponse.getTargetDisappear();
+            this.targetPenalty = stageResponse.getTargetPenalty();
 
-        // Initialises the possible points details
-        this.minRounds = stageResponse.getMinRounds();
-        this.maxPoints = stageResponse.getMaxPoints();
+            // Initialises the possible points details
+            this.minRounds = stageResponse.getMinRounds();
+            this.maxPoints = stageResponse.getMaxPoints();
+        }
     }
 
     /**

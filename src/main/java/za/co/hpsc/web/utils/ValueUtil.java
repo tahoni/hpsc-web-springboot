@@ -31,6 +31,15 @@ public final class ValueUtil {
     }
 
     /**
+     *
+     * @param value
+     * @return
+     */
+    public static String nullAsEmptyString(Object value) {
+        return (value != null ? value.toString() : "");
+    }
+
+    /**
      * Returns the given integer value if it is not null; otherwise, returns zero.
      *
      * @param value the integer value to be checked; may be null.

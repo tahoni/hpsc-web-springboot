@@ -6,23 +6,25 @@
 
 A summary of the main changes.
 
+#### Breaking Changes
+
 #### Enhancements and Updates
 
 #### Bug Fixes
 
 #### Tests and Quality Assurance
 
+#### Code Quality Improvements
+
 #### General Code Improvements
 
 #### Configuration Changes
 
-#### Documentation Changes
+#### Documentation
 
 #### Dependencies
 
 #### Migration Notes
-
-#### License
 
 #### Changes by
 

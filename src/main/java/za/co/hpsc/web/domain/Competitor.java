@@ -53,10 +53,8 @@ public class Competitor {
     @Enumerated(EnumType.STRING)
     private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<MatchCompetitor> competitorMatches;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MatchStageCompetitor> competitorStageMatches;
 
     /**
      * Initialises the current {@code Competitor} entity with data from a DTO.
@@ -69,9 +67,6 @@ public class Competitor {
      * @param competitorDto the DTO containing data needed to populate the entity fields.
      */
     public void init(CompetitorDto competitorDto) {
-        // Initialises competitor details
-        this.id = competitorDto.getId();
-
         // Initialises competitor attributes
         this.firstName = competitorDto.getFirstName();
         this.lastName = competitorDto.getLastName();

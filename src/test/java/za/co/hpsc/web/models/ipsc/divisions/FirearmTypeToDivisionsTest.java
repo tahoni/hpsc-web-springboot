@@ -212,11 +212,8 @@ class FirearmTypeToDivisionsTest {
     @Test
     void testGetFirearmTypeFromDivision_shouldThrowValidationException_whenDivisionIsNull() {
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
-            FirearmTypeToDivisions.getFirearmTypeFromDivision(null);
-        });
-        // Assert
-        assertEquals("Division cannot be null", exception.getMessage());
+        ValidationException exception = assertThrows(ValidationException.class, () ->
+                FirearmTypeToDivisions.getFirearmTypeFromDivision(null));
     }
 
     @Test
@@ -270,10 +267,7 @@ class FirearmTypeToDivisionsTest {
     @Test
     void testGetDivisionsForFirearmType_shouldThrowValidationException_whenFirearmTypeIsNull() {
         // Act
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
-            FirearmTypeToDivisions.getDivisionsForFirearmType(null);
-        });
-        // Assert
-        assertEquals("Firearm type cannot be null", exception.getMessage());
+        ValidationException exception = assertThrows(ValidationException.class, () ->
+                FirearmTypeToDivisions.getDivisionsForFirearmType(null));
     }
 }

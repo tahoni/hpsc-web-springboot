@@ -38,7 +38,7 @@ public class Club {
 
     private String abbreviation;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<IpscMatch> matches;
 
     public Club(String name, String abbreviation) {

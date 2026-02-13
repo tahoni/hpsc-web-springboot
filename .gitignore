@@ -300,3 +300,4 @@ tsdocs/
 .idea/**/jpa-buddy.xml
 .idea/**/jpa.xml
 .idea/**/data_source*.xml
+.idea/**/db*.xml

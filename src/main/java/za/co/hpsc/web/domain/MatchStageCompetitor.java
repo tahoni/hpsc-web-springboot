@@ -39,11 +39,11 @@ public class MatchStageCompetitor {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "competitor_id")
     private Competitor competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "match_stage_id")
     private IpscMatchStage matchStage;
 
@@ -98,7 +98,6 @@ public class MatchStageCompetitor {
                      Competitor competitorEntity) {
 
         // Initialises the match stage and competitor details
-        this.id = matchStageCompetitorDto.getId();
         this.matchStage = matchStageEntity;
         this.competitor = competitorEntity;
 
