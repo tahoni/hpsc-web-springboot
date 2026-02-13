@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 // TODO: Javadoc
-// TODO: add test for protected methods
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -60,6 +59,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         ipscMatchEntityList.forEach(match -> {
             // Get the match stages and competitors
+            match.setName(ValueUtil.nullAsEmptyString(match.getName()));
             List<IpscMatchStage> matchStageList = match.getMatchStages();
             List<MatchCompetitor> matchCompetitorList = match.getMatchCompetitors();
 

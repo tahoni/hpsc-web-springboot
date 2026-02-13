@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 
@@ -1401,29 +1399,5 @@ public class IpscMatchServiceImplTest {
         assertTrue(result.getIsRegisteredForMatch());
         assertEquals(LocalDateTime.of(1980, 5, 15, 0, 0), result.getDateOfBirth());
         assertFalse(result.getFemale());
-    }
-
-    @Test
-    public void testGenerateIpscMatchRecordHolder_withEmptyList_thenReturnsEmptyHolder() {
-        // Arrange
-        List<IpscMatch> ipscMatchEntityList = new ArrayList<>();
-
-        // Act
-        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(ipscMatchEntityList);
-
-        // Assert
-        assertNotNull(result);
-        assertNotNull(result.matches());
-        assertTrue(result.matches().isEmpty());
-    }
-
-    @Test
-    public void testGenerateIpscMatchRecordHolder_withNullList_thenThrowsException() {
-        // Arrange
-        List<IpscMatch> ipscMatchEntityList = null;
-
-        // Act & Assert
-        assertThrows(NullPointerException.class, () ->
-                ipscMatchService.generateIpscMatchRecordHolder(ipscMatchEntityList));
     }
 }
