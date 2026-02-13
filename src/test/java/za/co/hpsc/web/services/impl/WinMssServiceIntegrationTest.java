@@ -10,10 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.IpscMatchService;
-import za.co.hpsc.web.services.MatchResultService;
-import za.co.hpsc.web.services.TransactionService;
-import za.co.hpsc.web.services.WinMssService;
+import za.co.hpsc.web.services.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,9 +26,11 @@ public class WinMssServiceIntegrationTest {
     @Autowired
     private ClubRepository clubRepository;
     @Autowired
-    private IpscMatchStageRepository ipscMatchStageRepository;
-    @Autowired
     private CompetitorRepository competitorRepository;
+    @Autowired
+    private IpscMatchRepository ipscMatchRepository;
+    @Autowired
+    private IpscMatchStageRepository ipscMatchStageRepository;
     @Autowired
     private MatchCompetitorRepository matchCompetitorRepository;
     @Autowired
@@ -42,13 +41,17 @@ public class WinMssServiceIntegrationTest {
     @Autowired
     private MatchResultService matchResultService;
     @Autowired
+    private MatchDomainService matchDomainService;
+    @Autowired
     private TransactionService transactionService;
 
     @Autowired
     private WinMssService winMssService;
 
     @Bean
-    public WinMssService winMssService(IpscMatchService ipscMatchService, MatchResultService matchResultService, TransactionService transactionService) {
+    public WinMssService winMssService(IpscMatchService ipscMatchService,
+                                       MatchResultService matchResultService,
+                                       TransactionService transactionService) {
         return new WinMssServiceImpl(ipscMatchService, matchResultService, transactionService);
     }
 
@@ -58,13 +61,15 @@ public class WinMssServiceIntegrationTest {
     }
 
     @Bean
-    public TransactionService transactionService(IpscMatchRepository matchRepository,
+    public TransactionService transactionService(MatchDomainService matchDomainService,
                                                  ClubRepository clubRepository,
+                                                 IpscMatchRepository ipscMatchRepository,
                                                  IpscMatchStageRepository ipscMatchStageRepository,
-                                                 CompetitorRepository competitorRepository, MatchCompetitorRepository matchCompetitorRepository, MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, matchRepository, clubRepository,
-                ipscMatchStageRepository, competitorRepository, matchCompetitorRepository,
-                matchStageCompetitorRepository);
+                                                 MatchCompetitorRepository matchCompetitorRepository,
+                                                 MatchStageCompetitorRepository matchStageCompetitorRepository) {
+        return new TransactionServiceImpl(platformTransactionManager, matchDomainService, clubRepository,
+                competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
+                matchCompetitorRepository, matchStageCompetitorRepository);
     }
 
     @Test

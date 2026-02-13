@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: Javadoc
+// TODO: add tests?
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -34,7 +36,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Validate input
         if (ipscRequestHolder == null) {
             log.error("IPSC request holder is null while mapping match results.");
-            throw new ValidationException("IPSC request holder can not be null");
+            throw new ValidationException("IPSC request holder can not be null while mapping match results.");
         }
 
         List<IpscResponse> ipscResponses = new ArrayList<>();
@@ -188,6 +190,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
     }
 
+    /**
+     *
+     * @param match
+     * @param competitors
+     * @return
+     */
     protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
@@ -209,6 +217,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(ipscMatchRecord);
     }
 
+    /**
+     *
+     * @param competitor
+     * @param thisCompetitorOverall
+     * @param thisCompetitorStages
+     * @return
+     */
     protected Optional<CompetitorRecord> initCompetitor(Competitor competitor,
                                                         MatchCompetitorRecord thisCompetitorOverall,
                                                         List<MatchStageCompetitorRecord> thisCompetitorStages) {
@@ -228,7 +243,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Initializes match competitor response from competitor details
+     *
+     * @param competitor
+     * @param matchCompetitorList
+     * @return
      */
     protected Optional<MatchCompetitorRecord> initMatchCompetitor(Competitor competitor,
                                                                   List<MatchCompetitor> matchCompetitorList) {
@@ -265,6 +283,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(thisCompetitorOverall);
     }
 
+    /**
+     *
+     * @param competitor
+     * @param matchStageCompetitorList
+     * @return
+     */
     protected List<MatchStageCompetitorRecord> initMatchStageCompetitor(Competitor competitor,
                                                                         List<MatchStageCompetitor> matchStageCompetitorList) {
 
@@ -310,6 +334,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return thisCompetitorStages;
     }
 
+    /**
+     *
+     * @param matchCompetitorList
+     * @return
+     */
     protected List<Competitor> getCompetitorList(List<MatchCompetitor> matchCompetitorList) {
         if (matchCompetitorList == null) {
             return new ArrayList<>();
@@ -320,6 +349,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .toList();
     }
 
+    /**
+     *
+     * @param matchStageList
+     * @return
+     */
     protected List<MatchStageCompetitor> getMatchStageCompetitorList(List<IpscMatchStage> matchStageList) {
         if (matchStageList == null) {
             return new ArrayList<>();

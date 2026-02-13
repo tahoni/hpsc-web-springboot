@@ -87,7 +87,7 @@ public class WinMssServiceImplTest {
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(matchResultService, never()).initMatchResults(any());
-        verify(transactionService, never()).saveMatchResults(any());
+        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class WinMssServiceImplTest {
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(matchResultService, never()).initMatchResults(any());
-        verify(transactionService, never()).saveMatchResults(any());
+        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class WinMssServiceImplTest {
 
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(matchResultService, never()).initMatchResults(any());
-        verify(transactionService, never()).saveMatchResults(any());
+        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
     @Test
@@ -141,7 +141,7 @@ public class WinMssServiceImplTest {
         // Assert
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(matchResultService, never()).initMatchResults(any());
-        verify(transactionService, never()).saveMatchResults(any());
+        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
     @Test
@@ -233,7 +233,7 @@ public class WinMssServiceImplTest {
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(matchResultService, never()).initMatchResults(any());
-        verify(transactionService, never()).saveMatchResults(any());
+        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
     @Test
@@ -260,7 +260,7 @@ public class WinMssServiceImplTest {
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(matchResultService, never()).initMatchResults(any());
-        verify(transactionService, never()).saveMatchResults(any());
+        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
     @Test

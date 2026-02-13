@@ -9,6 +9,9 @@ import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
 import java.util.List;
 
+// TODO: Javadoc
+// TOOD: add tests
+
 /**
  * Service interface for managing and processing IPSC (International Practical
  * Shooting Confederation) match data.

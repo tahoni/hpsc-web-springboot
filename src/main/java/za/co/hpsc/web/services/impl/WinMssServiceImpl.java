@@ -16,6 +16,7 @@ import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
+import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.MatchResultService;
@@ -90,7 +91,7 @@ public class WinMssServiceImpl implements WinMssService {
         // Persists the match results
         List<MatchResultsDto> matchResultsList = new ArrayList<>();
         // Iterates responses; persists match results; accumulates DTOs
-        ipscResponseHolder.getIpscList().forEach(ipscResponse -> {
+        for (IpscResponse ipscResponse : ipscResponseHolder.getIpscList()) {
             Optional<MatchResultsDto> optionalMatchResults = matchResultService.initMatchResults(ipscResponse);
             // Persists match results if present and associates the match entity with it
             if (optionalMatchResults.isPresent()) {
@@ -101,7 +102,7 @@ public class WinMssServiceImpl implements WinMssService {
                 ipscMatch.ifPresent(matchResults::setIpscMatch);
                 matchResultsList.add(matchResults);
             }
-        });
+        }
 
         return new MatchResultsDtoHolder(matchResultsList);
     }
@@ -154,10 +155,10 @@ public class WinMssServiceImpl implements WinMssService {
             throw e;
         } catch (MismatchedInputException | IllegalArgumentException e) {
             log.error("Error parsing JSON data: {}", e.getMessage(), e);
-            throw new ValidationException("Invalid JSON data format.", e);
+            throw new ValidationException("Invalid JSON data format: " + e.getMessage(), e);
         } catch (IOException e) {
             log.error("Error reading JSON data: {}", e.getMessage(), e);
-            throw new FatalException("Error reading JSON data.", e);
+            throw new FatalException("Error reading JSON data: " + e.getMessage(), e);
         }
     }
 
@@ -192,7 +193,7 @@ public class WinMssServiceImpl implements WinMssService {
 
         } catch (JsonProcessingException e) {
             log.error("Error parsing XML content: {}", e.getMessage(), e);
-            throw new ValidationException("Invalid XML data format.", e);
+            throw new ValidationException("Invalid XML data format: " + e.getMessage(), e);
         }
     }
 }

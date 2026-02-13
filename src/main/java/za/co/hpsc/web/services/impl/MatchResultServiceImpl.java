@@ -112,6 +112,7 @@ public class MatchResultServiceImpl implements MatchResultService {
         LocalDateTime matchLastUpdated = (optionalMatch.isPresent() ?
                 optionalMatch.get().getDateUpdated() : LocalDateTime.now());
 
+        // TODO: put this back
 /*
         // Skips update if there are no newer scores in the IPSC response
         if (ipscMatchExists) {
