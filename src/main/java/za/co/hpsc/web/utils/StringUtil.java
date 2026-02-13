@@ -44,4 +44,12 @@ public final class StringUtil {
         }
         return result;
     }
+
+    public static String toString(Object object) {
+        if (object == null) {
+            return null;
+        }
+        
+        return object.toString();
+    }
 }

@@ -13,9 +13,9 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -36,13 +36,15 @@ import java.util.UUID;
 public class MatchDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
+    private Integer index;
+
     private ClubDto club;
+    private ClubReference clubName;
 
     @NotNull
-    private String name;
+    private String name = "";
     @NotNull
-    private LocalDate scheduledDate;
-    private ClubReference clubName;
+    private LocalDateTime scheduledDate;
 
     private FirearmType matchFirearmType;
     private MatchCategory matchCategory;
@@ -103,11 +105,44 @@ public class MatchDto {
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
         this.clubName = matchEntity.getClubName();
+        this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
         // Initialises the date fields
         this.dateCreated = matchEntity.getDateCreated();
         this.dateUpdated = matchEntity.getDateUpdated();
+        this.dateEdited = matchEntity.getDateEdited();
+    }
+
+    /**
+     *
+     * @param matchResponse
+     * @param clubDto
+     */
+    public MatchDto(MatchResponse matchResponse, ClubDto clubDto) {
+        if (matchResponse != null) {
+            // Initialises match details
+            this.index = matchResponse.getMatchId();
+            this.club = clubDto;
+
+            // Initialises the match attributes
+            this.name = matchResponse.getMatchName();
+            Optional<ClubReference> clubReference = Optional.empty();
+            if (clubDto != null) {
+                clubReference = ClubReference.getByName(clubDto.getName());
+            }
+            this.clubName = clubReference.orElse(null);
+            this.scheduledDate = matchResponse.getMatchDate();
+
+            // Determines the firearm type based on the firearm ID
+            this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
+            this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
+
+            // Initialises the date fields
+            this.dateCreated = LocalDateTime.now();
+            this.dateUpdated = LocalDateTime.now();
+            this.dateEdited = LocalDateTime.now();
+        }
     }
 
     /**
@@ -130,32 +165,43 @@ public class MatchDto {
      *                       and their last modification times.
      *                       Can be null if no score data is available.
      */
-    public void init(@NotNull MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
-        // Initialises match details
-        this.club = clubDto;
+    public void init(MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
+        if (matchResponse != null) {
+            // Initialises match details
+            this.index = matchResponse.getMatchId();
+            this.club = clubDto;
 
-        // Initialises the match attributes
-        this.name = matchResponse.getMatchName();
-        this.clubName = ((clubDto != null) ?
-                ClubReference.getByName(clubDto.getName()).orElse(null) : null);
-        this.scheduledDate = matchResponse.getMatchDate().toLocalDate();
+            // Initialises the match attributes
+            this.name = matchResponse.getMatchName();
+            this.scheduledDate = matchResponse.getMatchDate();
 
-        // Determines the firearm type based on the firearm ID
-        this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
-        this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
+            Optional<ClubReference> clubReference = Optional.empty();
+            if (clubDto != null) {
+                Optional<ClubReference> cr = ClubReference.getByName(clubDto.getName());
+                if (cr.isPresent()) {
+                    clubReference = cr;
+                }
+            }
+            clubReference.ifPresent(cr -> this.clubName = cr);
 
-        // Don't overwrite an existing date creation timestamp
-        this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
-        // Initialises the date updated
-        this.dateUpdated = LocalDateTime.now();
-        // Sets the date edited to the latest score update timestamp
-        if (scoreResponses != null) {
-            this.dateEdited = scoreResponses.stream()
-                    .map(ScoreResponse::getLastModified)
-                    .max(LocalDateTime::compareTo)
-                    .orElse(LocalDateTime.now());
-        } else {
-            this.dateEdited = LocalDateTime.now();
+            // Determines the firearm type based on the firearm ID
+            this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId())
+                    .orElse(this.matchFirearmType);
+            this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
+
+            // Don't overwrite an existing date creation timestamp
+            this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
+            // Initialises the date updated
+            this.dateUpdated = LocalDateTime.now();
+            // Sets the date edited to the latest score update timestamp
+            if (scoreResponses != null) {
+                this.dateEdited = scoreResponses.stream()
+                        .map(ScoreResponse::getLastModified)
+                        .max(LocalDateTime::compareTo)
+                        .orElse(LocalDateTime.now());
+            } else {
+                this.dateEdited = LocalDateTime.now();
+            }
         }
     }
 

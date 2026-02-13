@@ -19,7 +19,7 @@ class ImageServiceTest {
     private ImageServiceImpl imageService;
 
     @Test
-    void testProcessCsv_withValidCsvData_thenReturnsListOfImages() {
+    public void testProcessCsv_withValidCsvData_thenReturnsListOfImages() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -57,7 +57,7 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withInvalidCsvData_thenThrowsException() {
+    public void testProcessCsv_withInvalidCsvData_thenThrowsException() {
         // Arrange
         String invalidCsvData = """
                 summary,description,category,tags,filePath,fileName
@@ -70,7 +70,7 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withEmptyCsvData_thenReturnsEmptyList() {
+    public void testProcessCsv_withEmptyCsvData_thenReturnsEmptyList() {
         // Arrange
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
@@ -84,14 +84,14 @@ class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_withNullCsvData_thenThrowsException() {
+    public void testProcessCsv_withNullCsvData_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.processCsv(null));
     }
 
     @Test
-    void testProcessCsv_withInvalidCsvFormat_thenThrowsException() {
+    public void testProcessCsv_withInvalidCsvFormat_thenThrowsException() {
         // Arrange
         String csvData = "Invalid CSV Format";
 

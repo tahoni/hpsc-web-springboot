@@ -1,4 +1,4 @@
 package za.co.hpsc.web.controllers;
 
-public class LogController {
+public class MatchLogController {
 }

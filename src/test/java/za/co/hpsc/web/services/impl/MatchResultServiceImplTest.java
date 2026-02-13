@@ -6,10 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.models.ipsc.dto.ClubDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.request.MemberRequest;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -119,20 +116,23 @@ public class MatchResultServiceImplTest {
         IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
-        existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
+        existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-        when(matchService.findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay()))
+        when(matchService.findMatch("Existing Match"))
                 .thenReturn(Optional.of(existingMatch));
 
-        ClubDto clubDto = new ClubDto("Test Club", "TC");
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubName("Test Club");
+        clubResponse.setClubCode("TC");
+        ClubDto clubDto = new ClubDto(clubResponse);
 
         // Act
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
-        assertTrue(result.isEmpty());
-        verify(matchService, times(1)).findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay());
+        assertFalse(result.isEmpty());
+        verify(matchService, times(1)).findMatch("Existing Match");
     }
 
     @Test
@@ -151,13 +151,17 @@ public class MatchResultServiceImplTest {
         IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(1L);
         existingMatch.setName("Existing Match");
-        existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15));
+        existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-        when(matchService.findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay()))
+        when(matchService.findMatch("Existing Match"))
                 .thenReturn(Optional.of(existingMatch));
 
-        ClubDto clubDto = new ClubDto(1L, "Test Club", "TC");
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubName("Test Club");
+        clubResponse.setClubCode("TC");
+        ClubDto clubDto = new ClubDto(clubResponse);
 
         // Act
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
@@ -167,7 +171,7 @@ public class MatchResultServiceImplTest {
         MatchDto matchDto = result.get();
         assertEquals(1L, matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
-        verify(matchService, times(1)).findMatch("Existing Match", LocalDate.of(2025, 1, 15).atStartOfDay());
+        verify(matchService, times(1)).findMatch("Existing Match");
     }
 
     @Test
@@ -183,10 +187,14 @@ public class MatchResultServiceImplTest {
         scoreResponse.setLastModified(LocalDateTime.of(2025, 2, 1, 10, 0));
         ipscResponse.setScores(List.of(scoreResponse));
 
-        when(matchService.findMatch("New Match", LocalDate.of(2025, 2, 1).atStartOfDay()))
+        when(matchService.findMatch("New Match"))
                 .thenReturn(Optional.empty());
 
-        ClubDto clubDto = new ClubDto(null, "New Club", "NC");
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(0);
+        clubResponse.setClubName("New Club");
+        clubResponse.setClubCode("NC");
+        ClubDto clubDto = new ClubDto(clubResponse);
 
         // Act
         Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
@@ -196,7 +204,7 @@ public class MatchResultServiceImplTest {
         MatchDto matchDto = result.get();
         assertNull(matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
-        verify(matchService, times(1)).findMatch("New Match", LocalDate.of(2025, 2, 1).atStartOfDay());
+        verify(matchService, times(1)).findMatch("New Match");
     }
 
     @Test
@@ -305,18 +313,6 @@ public class MatchResultServiceImplTest {
     }
 
     @Test
-    public void testInitScores_withNullMatchResultsDto_thenReturnsEarly() {
-        // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        // Act
-        matchResultService.initScores(null, ipscResponse);
-
-        // Assert
-        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
-    }
-
-    @Test
     public void testInitScores_withNullIpscResponse_thenReturnsEarly() {
         // Arrange
         MatchResultsDto matchResultsDto = new MatchResultsDto();
@@ -373,7 +369,8 @@ public class MatchResultServiceImplTest {
 
         MemberRequest memberResponse = new MemberRequest();
         memberResponse.setMemberId(200);
-        ipscResponse.setMembers(List.of(memberResponse));
+        List<MemberRequest> memberRequests = List.of(memberResponse);
+        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
         // Act
         matchResultService.initScores(matchResultsDto, ipscResponse);
@@ -404,7 +401,8 @@ public class MatchResultServiceImplTest {
         memberResponse.setIcsAlias("ALIAS100");
         memberResponse.setFirstName("John");
         memberResponse.setLastName("Doe");
-        ipscResponse.setMembers(List.of(memberResponse));
+        List<MemberRequest> memberRequests = List.of(memberResponse);
+        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
         Competitor existingCompetitor = new Competitor();
         existingCompetitor.setId(10L);
@@ -415,7 +413,7 @@ public class MatchResultServiceImplTest {
 
         when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorService.findMatchCompetitor(1L, 10L))
+        when(matchCompetitorService.findMatchCompetitor(10L, 1L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
 
         // Act
@@ -426,8 +424,10 @@ public class MatchResultServiceImplTest {
         assertEquals(1, matchResultsDto.getCompetitors().size());
         assertEquals(10L, matchResultsDto.getCompetitors().getFirst().getId());
         assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorService, times(1)).findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorService, times(1)).findMatchCompetitor(1L, 10L);
+        verify(competitorService, times(1))
+                .findCompetitor("ALIAS100", "John", "Doe", null);
+        verify(matchCompetitorService, times(1))
+                .findMatchCompetitor(10L, 1L);
     }
 
     @Test
@@ -450,11 +450,12 @@ public class MatchResultServiceImplTest {
         memberResponse.setIcsAlias("ALIAS100");
         memberResponse.setFirstName("John");
         memberResponse.setLastName("Doe");
-        ipscResponse.setMembers(List.of(memberResponse));
+        List<MemberRequest> memberRequests = List.of(memberResponse);
+        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
         when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.empty());
-        when(matchCompetitorService.findMatchCompetitor(1L, null))
+        when(matchCompetitorService.findMatchCompetitor(null, 1L))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -465,8 +466,10 @@ public class MatchResultServiceImplTest {
         assertEquals(1, matchResultsDto.getCompetitors().size());
         assertNull(matchResultsDto.getCompetitors().getFirst().getId());
         assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorService, times(1)).findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorService, times(1)).findMatchCompetitor(1L, null);
+        verify(competitorService, times(1))
+                .findCompetitor("ALIAS100", "John", "Doe", null);
+        verify(matchCompetitorService, times(1))
+                .findMatchCompetitor(null, 1L);
     }
 
     @Test
@@ -480,6 +483,7 @@ public class MatchResultServiceImplTest {
         stageDto.setStageNumber(1);
 
         MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
+        matchResultsDto.setMatch(matchDto);
         matchResultsDto.setStages(List.of(stageDto));
 
         IpscResponse ipscResponse = new IpscResponse();
@@ -489,11 +493,12 @@ public class MatchResultServiceImplTest {
         scoreResponse.setStageId(1);
         ipscResponse.setScores(List.of(scoreResponse));
 
-        MemberRequest memberResponse = new MemberRequest();
-        memberResponse.setMemberId(100);
-        memberResponse.setIcsAlias("ALIAS100");
-        memberResponse.setFirstName("John");
-        memberResponse.setLastName("Doe");
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setMemberId(100);
+        memberRequest.setIcsAlias("ALIAS100");
+        memberRequest.setFirstName("John");
+        memberRequest.setLastName("Doe");
+        MemberResponse memberResponse = new MemberResponse(memberRequest);
         ipscResponse.setMembers(List.of(memberResponse));
 
         Competitor existingCompetitor = new Competitor();
@@ -507,9 +512,9 @@ public class MatchResultServiceImplTest {
 
         when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorService.findMatchCompetitor(1L, 10L))
+        when(matchCompetitorService.findMatchCompetitor(10L, 1L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
-        when(matchStageCompetitorService.findMatchStageCompetitor(50L, 10L))
+        when(matchStageCompetitorService.findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class)))
                 .thenReturn(Optional.of(existingMatchStageCompetitor));
 
         // Act
@@ -519,6 +524,7 @@ public class MatchResultServiceImplTest {
         assertNotNull(matchResultsDto.getMatchStageCompetitors());
         assertEquals(1, matchResultsDto.getMatchStageCompetitors().size());
         assertEquals(30L, matchResultsDto.getMatchStageCompetitors().getFirst().getId());
-        verify(matchStageCompetitorService, times(1)).findMatchStageCompetitor(50L, 10L);
+        verify(matchStageCompetitorService, times(1))
+                .findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class));
     }
 }

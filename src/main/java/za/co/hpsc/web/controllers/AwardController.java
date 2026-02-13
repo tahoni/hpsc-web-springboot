@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,17 +52,17 @@ public class AwardController {
      * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
-    @PostMapping(value = "/processCsv", consumes = "text/csv", produces = "application/json")
+    @PostMapping(value = "/processCsv", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Process award CSV", description = "Convert CSV data about awards to JSON.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully converted the CSV data to JSON.",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = AwardCeremonyResponseHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error occurred while processing the CSV data.",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     ResponseEntity<AwardCeremonyResponseHolder> processCsv(

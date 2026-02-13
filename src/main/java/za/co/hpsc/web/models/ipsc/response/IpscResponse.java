@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.request.*;
+import za.co.hpsc.web.models.ipsc.request.EnrolledRequest;
+import za.co.hpsc.web.models.ipsc.request.ScoreRequest;
+import za.co.hpsc.web.models.ipsc.request.StageRequest;
+import za.co.hpsc.web.models.ipsc.request.TagRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,17 +64,4 @@ public class IpscResponse {
         this.scores = scoreRequests.stream().map(ScoreResponse::new).toList();
     }
 
-    /**
-     * Updates the list of members by transforming each {@link MemberRequest} object in the
-     * provided list into a {@link MemberResponse} object and storing the results.
-     *
-     * @param memberRequests a list of {@link MemberRequest} objects representing the members
-     *                       to be updated and initialised as {@link MemberResponse} objects.
-     */
-    public void setMembers(List<MemberRequest> memberRequests) {
-        if (memberRequests == null) {
-            return;
-        }
-        this.members = memberRequests.stream().map(MemberResponse::new).toList();
-    }
 }

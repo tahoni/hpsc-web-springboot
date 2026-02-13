@@ -1,9 +1,13 @@
 package za.co.hpsc.web.services;
 
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+
+import java.util.List;
 
 /**
  * Service interface for managing and processing IPSC (International Practical
@@ -29,4 +33,12 @@ public interface IpscMatchService {
      */
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
+
+    /**
+     *
+     * @param ipscMatchEntityList
+     * @return
+     */
+    IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList);
+
 }

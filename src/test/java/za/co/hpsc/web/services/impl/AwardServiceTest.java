@@ -21,7 +21,7 @@ class AwardServiceTest {
     private AwardServiceImpl awardService;
 
     @Test
-    void testProcessCsv_withValidCsvData_thenReturnsListOfAwards() {
+    public void testProcessCsv_withValidCsvData_thenReturnsListOfAwards() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
@@ -79,7 +79,7 @@ class AwardServiceTest {
     }
 
     @Test
-    void testProcessCsv_withInvalidCsvData_thenThrowsException() {
+    public void testProcessCsv_withInvalidCsvData_thenThrowsException() {
         // Arrange
         String csvData = """
                 ceremonyTitle,imageFilePath,title,firstPlace,secondPlace,thirdPlace
@@ -91,19 +91,19 @@ class AwardServiceTest {
     }
 
     @Test
-    void testProcessCsv_withEmptyCsvData_thenThrowsException() {
+    public void testProcessCsv_withEmptyCsvData_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(""));
     }
 
     @Test
-    void testProcessCsv_withNullCsvData_thenThrowsException() {
+    public void testProcessCsv_withNullCsvData_thenThrowsException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(null));
     }
 
     @Test
-    void testProcessCsv_withInvalidCsvFormat_thenThrowsException() {
+    public void testProcessCsv_withInvalidCsvFormat_thenThrowsException() {
         // Arrange
         String csvData = "Invalid CSV Format";
 

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
-import za.co.hpsc.web.models.ipsc.request.IpscRequest;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.services.WinMssService;
 
 /**
@@ -49,24 +50,24 @@ public class IpscController {
      *                       Must not be null or empty.
      * @return a {@link ControllerResponse} object if the processing is successful.
      */
-    @PostMapping(value = "/importWinMssCabData", consumes = "application/json",
-            produces = "application/json")
+    @PostMapping(value = "/importWinMssCabData", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully imported the WinMSS.cab file data.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = MatchResultsDtoHolder.class))),
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = IpscMatchRecordHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid WinMSS.cab file data.",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "500", description = "An internal server error occurred importing the WinMSS.cab file data.",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     @Operation(summary = "Import WinMSS.cab file", description = "Import and persist WinMSS.cab content.")
-    ResponseEntity<MatchResultsDtoHolder> importWinMssCabData(
+    ResponseEntity<IpscMatchRecordHolder> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = IpscRequest.class)
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = IpscRequestHolder.class)
                     ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {

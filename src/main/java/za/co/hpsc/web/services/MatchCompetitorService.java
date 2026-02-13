@@ -14,10 +14,10 @@ public interface MatchCompetitorService {
     /**
      * Retrieves a {@link MatchCompetitor} based on the provided details.
      *
-     * @param competitorId the unique identifier of the competitor.
      * @param matchId      the unique identifier of the match.
+     * @param competitorId the unique identifier of the competitor.
      * @return an {@code Optional} containing the {@link MatchCompetitor} if a match is found,
      * or an empty {@code Optional} if no matching record exists.
      */
-    Optional<MatchCompetitor> findMatchCompetitor(Long competitorId, Long matchId);
+    Optional<MatchCompetitor> findMatchCompetitor(Long matchId, Long competitorId);
 }
