@@ -112,8 +112,6 @@ public class MatchResultServiceImpl implements MatchResultService {
         LocalDateTime matchLastUpdated = (optionalMatch.isPresent() ?
                 optionalMatch.get().getDateUpdated() : LocalDateTime.now());
 
-        // TODO: put this back
-/*
         // Skips update if there are no newer scores in the IPSC response
         if (ipscMatchExists) {
             ipscResponseHasNewerScore = ipscResponse.getScores().stream()
@@ -122,7 +120,6 @@ public class MatchResultServiceImpl implements MatchResultService {
                 return Optional.empty();
             }
         }
-*/
 
         // Creates a new match DTO, from either the found entity or the match response
         MatchDto matchDto = optionalMatch.map(match -> new MatchDto(match, clubDto))

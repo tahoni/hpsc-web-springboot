@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 
@@ -130,7 +132,8 @@ public class IpscMatchServiceImplTest {
 
         // Assert only enrolled members for match 100 are included
         assertEquals(2, result.getEnrolledMembers().size());
-        assertTrue(result.getEnrolledMembers().stream().allMatch(enrolled -> enrolled.getMatchId().equals(100)));
+        assertTrue(result.getEnrolledMembers().stream()
+                .allMatch(enrolled -> enrolled.getMatchId().equals(100)));
         EnrolledResponse enrolledResponse1 = result.getEnrolledMembers().stream()
                 .filter(enrolled -> enrolled.getMemberId().equals(50)).findFirst().orElse(null);
         EnrolledResponse enrolledResponse2 = result.getEnrolledMembers().stream()
@@ -678,6 +681,405 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
+    public void testAddClubToMatch_withNullIpscResponse_thenDoesNothing() {
+        // Arrange
+        IpscResponse ipscResponse = null;
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode("ABC");
+        clubRequest.setClubName("Test Club");
+
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act & Assert - should not throw exception
+        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder));
+    }
+
+    @Test
+    public void testAddClubToMatch_withNullIpscRequestHolder_thenDoesNothing() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        IpscRequestHolder ipscRequestHolder = null;
+
+        // Act & Assert - should not throw exception
+        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder));
+    }
+
+    @Test
+    public void testAddClubToMatch_withBothNullParameters_thenDoesNothing() {
+        // Act & Assert - should not throw exception
+        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(null, null));
+    }
+
+    @Test
+    public void testAddClubToMatch_withNullMatch_thenDoesNothing() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(null);
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode("ABC");
+        clubRequest.setClubName("Test Club");
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert - club should not be set since match is null
+        assertNull(ipscResponse.getClub());
+    }
+
+    @Test
+    public void testAddClubToMatch_withLargeClubIdNumber_thenFindsCorrectClub() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(999999);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest1 = new ClubRequest();
+        clubRequest1.setClubId(100);
+        clubRequest1.setClubCode("ABC");
+        clubRequest1.setClubName("Club One");
+
+        ClubRequest clubRequest2 = new ClubRequest();
+        clubRequest2.setClubId(999999);
+        clubRequest2.setClubCode("XYZ");
+        clubRequest2.setClubName("Large ID Club");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest1, clubRequest2));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(999999, ipscResponse.getClub().getClubId());
+        assertEquals("XYZ", ipscResponse.getClub().getClubCode());
+        assertEquals("Large ID Club", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withNegativeClubId_thenHandlesNegativeId() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(-1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(-1);
+        clubRequest.setClubCode("NEG");
+        clubRequest.setClubName("Negative Club");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(-1, ipscResponse.getClub().getClubId());
+        assertEquals("NEG", ipscResponse.getClub().getClubCode());
+        assertEquals("Negative Club", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withDuplicateClubIds_thenUsesFirstMatch() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest1 = new ClubRequest();
+        clubRequest1.setClubId(1);
+        clubRequest1.setClubCode("FIRST");
+        clubRequest1.setClubName("First Club");
+
+        ClubRequest clubRequest2 = new ClubRequest();
+        clubRequest2.setClubId(1); // Same ID
+        clubRequest2.setClubCode("SECOND");
+        clubRequest2.setClubName("Second Club");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest1, clubRequest2));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert - should use first match
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(1, ipscResponse.getClub().getClubId());
+        assertEquals("FIRST", ipscResponse.getClub().getClubCode());
+        assertEquals("First Club", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withPartialClubData_thenSetsAvailableFields() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode("ABC");
+        // Club name is not set - null
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(1, ipscResponse.getClub().getClubId());
+        assertEquals("ABC", ipscResponse.getClub().getClubCode());
+        assertNull(ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withClubCodeAndNameNull_thenSetsClubIdOnly() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode(null);
+        clubRequest.setClubName(null);
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(1, ipscResponse.getClub().getClubId());
+        assertNull(ipscResponse.getClub().getClubCode());
+        assertNull(ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withMultipleClubsAndSpecificId_thenFindsCorrectOne() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(3);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest1 = new ClubRequest();
+        clubRequest1.setClubId(1);
+        clubRequest1.setClubCode("AAA");
+        clubRequest1.setClubName("Club A");
+
+        ClubRequest clubRequest2 = new ClubRequest();
+        clubRequest2.setClubId(2);
+        clubRequest2.setClubCode("BBB");
+        clubRequest2.setClubName("Club B");
+
+        ClubRequest clubRequest3 = new ClubRequest();
+        clubRequest3.setClubId(3);
+        clubRequest3.setClubCode("CCC");
+        clubRequest3.setClubName("Club C");
+
+        ClubRequest clubRequest4 = new ClubRequest();
+        clubRequest4.setClubId(4);
+        clubRequest4.setClubCode("DDD");
+        clubRequest4.setClubName("Club D");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest1, clubRequest2, clubRequest3, clubRequest4));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(3, ipscResponse.getClub().getClubId());
+        assertEquals("CCC", ipscResponse.getClub().getClubCode());
+        assertEquals("Club C", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withResponseAlreadyHavingClub_thenOverwritesExistingClub() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(2);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        // Pre-set a club on the response
+        ClubResponse oldClub = new ClubResponse();
+        oldClub.setClubId(1);
+        oldClub.setClubCode("OLD");
+        oldClub.setClubName("Old Club");
+        ipscResponse.setClub(oldClub);
+
+        ClubRequest newClubRequest = new ClubRequest();
+        newClubRequest.setClubId(2);
+        newClubRequest.setClubCode("NEW");
+        newClubRequest.setClubName("New Club");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(newClubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert - should have the new club
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(2, ipscResponse.getClub().getClubId());
+        assertEquals("NEW", ipscResponse.getClub().getClubCode());
+        assertEquals("New Club", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withSpecialCharactersInClubName_thenPreserves() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode("SPC");
+        clubRequest.setClubName("Club & Co. (Cape Town) - Est. 2020");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(1, ipscResponse.getClub().getClubId());
+        assertEquals("SPC", ipscResponse.getClub().getClubCode());
+        assertEquals("Club & Co. (Cape Town) - Est. 2020", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withUnicodeCharactersInClubName_thenPreserves() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode("UNI");
+        clubRequest.setClubName("Café ☆ Club 日本");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(1, ipscResponse.getClub().getClubId());
+        assertEquals("UNI", ipscResponse.getClub().getClubCode());
+        assertEquals("Café ☆ Club 日本", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withEmptyClubCode_thenSetsEmptyString() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode("");
+        clubRequest.setClubName("Test Club");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(1, ipscResponse.getClub().getClubId());
+        assertEquals("", ipscResponse.getClub().getClubCode());
+        assertEquals("Test Club", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
+    public void testAddClubToMatch_withWhitespaceOnlyClubCode_thenSetsAsIs() {
+        // Arrange
+        MatchRequest matchRequest = new MatchRequest();
+        matchRequest.setMatchId(100);
+        matchRequest.setClubId(1);
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(new MatchResponse(matchRequest));
+
+        ClubRequest clubRequest = new ClubRequest();
+        clubRequest.setClubId(1);
+        clubRequest.setClubCode("   ");
+        clubRequest.setClubName("Test Club");
+
+        IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
+        ipscRequestHolder.setClubs(List.of(clubRequest));
+
+        // Act
+        ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder);
+
+        // Assert
+        assertNotNull(ipscResponse.getClub());
+        assertEquals(1, ipscResponse.getClub().getClubId());
+        assertEquals("   ", ipscResponse.getClub().getClubCode());
+        assertEquals("Test Club", ipscResponse.getClub().getClubName());
+    }
+
+    @Test
     public void testAddMembersToMatch_withMatchingMembers_thenSetsMembersOnResponse() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
@@ -1021,8 +1423,7 @@ public class IpscMatchServiceImplTest {
         List<IpscMatch> ipscMatchEntityList = null;
 
         // Act & Assert
-        assertThrows(NullPointerException.class, () -> {
-            ipscMatchService.generateIpscMatchRecordHolder(ipscMatchEntityList);
-        });
+        assertThrows(NullPointerException.class, () ->
+                ipscMatchService.generateIpscMatchRecordHolder(ipscMatchEntityList));
     }
 }

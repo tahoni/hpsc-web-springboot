@@ -179,8 +179,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return;
         }
 
-        Integer clubId = ipscResponse.getMatch().getClubId();
-        if (clubId != null) {
+        if ((ipscResponse.getMatch() != null) && (ipscResponse.getMatch().getClubId() != null)) {
+            Integer clubId = ipscResponse.getMatch().getClubId();
             // Finds club matching ID or provides default
             ClubRequest club = ipscRequestHolder.getClubs().stream()
                     .filter(clubRequest -> clubId.equals(clubRequest.getClubId()))
