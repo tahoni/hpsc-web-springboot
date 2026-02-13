@@ -25,7 +25,6 @@ public final class IpscConstants {
 
     public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;
 
-    public static final int POINT_SCALE = 0;
     public static final int STAGE_POINTS_SCALE = 4;
     public static final int MATCH_POINTS_SCALE = 4;
     public static final int HIT_FACTOR_SCALE = 4;

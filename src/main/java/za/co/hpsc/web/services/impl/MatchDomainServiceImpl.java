@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 // TODO: Javadoc
-// TODO: add tests
 @Slf4j
 @Service
 public class MatchDomainServiceImpl implements MatchDomainService {
@@ -196,9 +195,12 @@ public class MatchDomainServiceImpl implements MatchDomainService {
         if (matchCompetitors != null) {
 
             // Initialise and accumulate match competitors from DTOs
-            matchCompetitors.forEach(matchCompetitorDto -> {
+            for (MatchCompetitorDto matchCompetitorDto : matchCompetitors) {
                 // Find the competitor entity
                 Competitor competitorEntity = competitorMap.get(matchCompetitorDto.getCompetitor().getUuid());
+                if (competitorEntity == null) {
+                    return new HashMap<>();
+                }
 
                 // Find the match competitor entity if present
                 Optional<MatchCompetitor> optionalMatchCompetitorEntity = Optional.empty();
@@ -214,7 +216,7 @@ public class MatchDomainServiceImpl implements MatchDomainService {
                 // Filter by club reference if specified
                 if ((clubReference != null) && (!clubReference.equals(ClubReference.UNKNOWN))) {
                     if (!clubReference.equals(matchCompetitorDto.getClub())) {
-                        return;
+                        continue;
                     }
                 }
 
@@ -226,7 +228,7 @@ public class MatchDomainServiceImpl implements MatchDomainService {
 
                 // Update the map of match competitors
                 matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
-            });
+            }
         }
 
         return matchCompetitorMap;
@@ -239,6 +241,7 @@ public class MatchDomainServiceImpl implements MatchDomainService {
      * @param competitorMap
      * @param clubReference
      */
+    // TODO: add tests
     protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
                                                                                Map<UUID, IpscMatchStage> matchStageMap, Map<UUID, Competitor> competitorMap,
                                                                                ClubReference clubReference) {
@@ -246,9 +249,12 @@ public class MatchDomainServiceImpl implements MatchDomainService {
         Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
         if (matchStageCompetitors != null) {
             // Initialises and accumulates match stage competitors from DTOs
-            matchStageCompetitors.forEach(matchStageCompetitorDto -> {
+            for (MatchStageCompetitorDto matchStageCompetitorDto : matchStageCompetitors) {
                 // Find the competitor entity
                 Competitor competitorEntity = competitorMap.get(matchStageCompetitorDto.getCompetitor().getUuid());
+                if (competitorEntity == null) {
+                    return new HashMap<>();
+                }
 
                 // Find the match stage entity
                 IpscMatchStage matchStageEntity =
@@ -268,7 +274,7 @@ public class MatchDomainServiceImpl implements MatchDomainService {
                 // Filter by club reference if specified
                 if ((clubReference != null) && (!clubReference.equals(ClubReference.UNKNOWN))) {
                     if (!clubReference.equals(matchStageCompetitorDto.getClub())) {
-                        return;
+                        continue;
                     }
                 }
 
@@ -280,7 +286,7 @@ public class MatchDomainServiceImpl implements MatchDomainService {
 
                 // Update the map of match stage competitors
                 matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorEntity);
-            });
+            }
         }
 
         return matchStageCompetitorMap;

@@ -79,30 +79,6 @@ public class CompetitorDto {
     }
 
     /**
-     *
-     * @param memberResponse
-     */
-    public CompetitorDto(MemberResponse memberResponse) {
-        if (memberResponse != null) {
-            // Initialises competitor details
-            this.index = memberResponse.getMemberId();
-
-            // Initialises competitor attributes
-            this.firstName = memberResponse.getFirstName();
-            this.lastName = memberResponse.getLastName();
-            if (memberResponse.getDateOfBirth() != null) {
-                this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
-            }
-
-            // Initialises competitor number and SAPSA number based on the member's ICS alias
-            this.competitorNumber = memberResponse.getIcsAlias();
-            if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
-                this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
-            }
-        }
-    }
-
-    /**
      * Initialises the current {@code CompetitorDto} instance with data from the provided
      * {@link MemberResponse} and {@link EnrolledResponse} objects.
      *

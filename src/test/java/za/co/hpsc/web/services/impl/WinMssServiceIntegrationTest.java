@@ -1,6 +1,5 @@
 package za.co.hpsc.web.services.impl;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,31 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class WinMssServiceIntegrationTest {
     @Autowired
-    private EntityManager entityManager;
-    @Autowired
     private PlatformTransactionManager platformTransactionManager;
 
     @Autowired
-    private ClubRepository clubRepository;
-    @Autowired
     private CompetitorRepository competitorRepository;
-    @Autowired
-    private IpscMatchRepository ipscMatchRepository;
-    @Autowired
-    private IpscMatchStageRepository ipscMatchStageRepository;
-    @Autowired
-    private MatchCompetitorRepository matchCompetitorRepository;
-    @Autowired
-    private MatchStageCompetitorRepository matchStageCompetitorRepository;
-
-    @Autowired
-    private IpscMatchService ipscMatchService;
-    @Autowired
-    private MatchResultService matchResultService;
-    @Autowired
-    private MatchDomainService matchDomainService;
-    @Autowired
-    private TransactionService transactionService;
 
     @Autowired
     private WinMssService winMssService;

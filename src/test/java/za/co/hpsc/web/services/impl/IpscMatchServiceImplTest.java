@@ -681,7 +681,6 @@ public class IpscMatchServiceImplTest {
     @Test
     public void testAddClubToMatch_withNullIpscResponse_thenDoesNothing() {
         // Arrange
-        IpscResponse ipscResponse = null;
         IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
 
         ClubRequest clubRequest = new ClubRequest();
@@ -692,7 +691,7 @@ public class IpscMatchServiceImplTest {
         ipscRequestHolder.setClubs(List.of(clubRequest));
 
         // Act & Assert - should not throw exception
-        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder));
+        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(null, ipscRequestHolder));
     }
 
     @Test
@@ -705,10 +704,8 @@ public class IpscMatchServiceImplTest {
         IpscResponse ipscResponse = new IpscResponse();
         ipscResponse.setMatch(new MatchResponse(matchRequest));
 
-        IpscRequestHolder ipscRequestHolder = null;
-
         // Act & Assert - should not throw exception
-        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(ipscResponse, ipscRequestHolder));
+        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(ipscResponse, null));
     }
 
     @Test
