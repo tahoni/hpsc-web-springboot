@@ -6,7 +6,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import java.util.List;
 
 /**
- * Represents the specific mapping between the PCC (Pistol Caliber Carbine) firearm type
+ * Represents the specific mapping between the PCC (Pistol Calibre Carbine) firearm type
  * and its associated divisions in the sport of practical shooting.
  *
  * <p>

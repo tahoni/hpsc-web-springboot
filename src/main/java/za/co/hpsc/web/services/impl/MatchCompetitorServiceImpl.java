@@ -8,7 +8,6 @@ import za.co.hpsc.web.services.MatchCompetitorService;
 
 import java.util.Optional;
 
-// TODO: add tests
 @Slf4j
 @Service
 public class MatchCompetitorServiceImpl implements MatchCompetitorService {

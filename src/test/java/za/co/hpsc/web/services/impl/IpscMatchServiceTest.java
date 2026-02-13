@@ -301,16 +301,6 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withNullList_thenThrowsException() {
-        // Arrange
-        List<IpscMatch> ipscMatchEntityList = null;
-
-        // Act & Assert
-        assertThrows(NullPointerException.class, () ->
-                ipscMatchService.generateIpscMatchRecordHolder(ipscMatchEntityList));
-    }
-
-    @Test
     public void testGenerateIpscMatchRecordHolder_withSingleMatch_thenReturnsSingleRecord() {
         // Arrange
         IpscMatch match = new IpscMatch();

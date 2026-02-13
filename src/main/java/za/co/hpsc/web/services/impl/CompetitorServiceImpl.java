@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-// TODO: add tests
 @Slf4j
 @Service
 public class CompetitorServiceImpl implements CompetitorService {
