@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 // TODO: Javadoc
-// TODO: add tests?
+// TODO: add test for protected methods
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -54,7 +54,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return new IpscResponseHolder(ipscResponses);
     }
 
-    // TODO: add tests
     @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList) {
         List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
