@@ -4,10 +4,6 @@
 
 ### Version 4.1.0 - _2026-02-13_
 
-# HPSC Website Backend
-
-## Release Notes
-
 This release adds core CRUD capabilities and supporting improvements for the refactored IPSC domain
 introduced in `4.0.0`.
 
