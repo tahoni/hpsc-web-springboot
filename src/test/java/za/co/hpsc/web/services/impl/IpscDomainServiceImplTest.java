@@ -11,7 +11,7 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -1262,7 +1262,7 @@ public class IpscDomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                null, matchEntity, competitorMap, ClubReference.HPSC);
+                null, matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result);
@@ -1278,7 +1278,7 @@ public class IpscDomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                new ArrayList<>(), matchEntity, competitorMap, ClubReference.HPSC);
+                new ArrayList<>(), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result);
@@ -1306,7 +1306,7 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setId(20L);
@@ -1315,7 +1315,7 @@ public class IpscDomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
+                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result);
@@ -1352,13 +1352,13 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClub(ClubReference.HPSC);
+        matchCompetitorDto1.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClub(ClubReference.HPSC);
+        matchCompetitorDto2.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1372,7 +1372,7 @@ public class IpscDomainServiceImplTest {
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
-                ClubReference.HPSC);
+                ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(2, result.size());
@@ -1407,13 +1407,13 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClub(ClubReference.HPSC); // Should be included
+        matchCompetitorDto1.setClub(ClubIdentifier.HPSC); // Should be included
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClub(ClubReference.SOSC); // Should be excluded
+        matchCompetitorDto2.setClub(ClubIdentifier.SOSC); // Should be excluded
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1427,7 +1427,7 @@ public class IpscDomainServiceImplTest {
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
-                ClubReference.HPSC);
+                ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(1, result.size());
@@ -1460,13 +1460,13 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClub(ClubReference.HPSC);
+        matchCompetitorDto1.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClub(ClubReference.SOSC);
+        matchCompetitorDto2.setClub(ClubIdentifier.SOSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1479,7 +1479,7 @@ public class IpscDomainServiceImplTest {
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
-                ClubReference.UNKNOWN);
+                ClubIdentifier.UNKNOWN);
 
         // Assert
         assertEquals(2, result.size());
@@ -1512,13 +1512,13 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClub(ClubReference.HPSC);
+        matchCompetitorDto1.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClub(ClubReference.SOSC);
+        matchCompetitorDto2.setClub(ClubIdentifier.SOSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1554,11 +1554,11 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto.setId(null);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
+                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(1, result.size());
@@ -1584,13 +1584,13 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.empty());
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
+                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(1, result.size());
@@ -1616,13 +1616,13 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto);
-        matchCompetitorDto1.setClub(ClubReference.HPSC);
+        matchCompetitorDto1.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto);
-        matchCompetitorDto2.setClub(ClubReference.HPSC);
+        matchCompetitorDto2.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1635,7 +1635,7 @@ public class IpscDomainServiceImplTest {
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
-                ClubReference.HPSC);
+                ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(matchCompetitor1, result.get(mc1Uuid));
@@ -1661,14 +1661,14 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitor spyMatchCompetitor = spy(new MatchCompetitor());
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(spyMatchCompetitor));
 
         // Act
         ipscDomainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
+                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         verify(spyMatchCompetitor, times(1)).init(matchCompetitorDto, matchEntity, competitor);
@@ -1692,7 +1692,7 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setId(20L);
@@ -1701,7 +1701,7 @@ public class IpscDomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
+                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         MatchCompetitor resultMC = result.get(mcUuid);
@@ -1728,11 +1728,11 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
+                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -1759,7 +1759,7 @@ public class IpscDomainServiceImplTest {
             mcDto.setId(100L + i);
             mcDto.setUuid(UUID.randomUUID());
             mcDto.setCompetitor(competitorDto);
-            mcDto.setClub(ClubReference.HPSC);
+            mcDto.setClub(ClubIdentifier.HPSC);
             matchCompetitorDtos.add(mcDto);
 
             MatchCompetitor mc = new MatchCompetitor();
@@ -1769,7 +1769,7 @@ public class IpscDomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
-                matchCompetitorDtos, matchEntity, competitorMap, ClubReference.HPSC);
+                matchCompetitorDtos, matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(numCompetitors, result.size());
@@ -1793,14 +1793,14 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
 
         // Act
         ipscDomainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
+                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         verify(matchCompetitorRepository, times(1)).findById(20L);
@@ -1814,9 +1814,9 @@ public class IpscDomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result1 = ipscDomainService.initMatchCompetitorEntities(
-                null, matchEntity, competitorMap, ClubReference.HPSC);
+                null, matchEntity, competitorMap, ClubIdentifier.HPSC);
         Map<UUID, MatchCompetitor> result2 = ipscDomainService.initMatchCompetitorEntities(
-                null, matchEntity, competitorMap, ClubReference.HPSC);
+                null, matchEntity, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result1);
@@ -1845,13 +1845,13 @@ public class IpscDomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto);
-        matchCompetitorDto1.setClub(ClubReference.HPSC);
+        matchCompetitorDto1.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(20L); // Same ID
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto);
-        matchCompetitorDto2.setClub(ClubReference.HPSC);
+        matchCompetitorDto2.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setId(20L);
@@ -1861,7 +1861,7 @@ public class IpscDomainServiceImplTest {
         // Act
         Map<UUID, MatchCompetitor> result = ipscDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
-                ClubReference.HPSC);
+                ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(2, result.size());

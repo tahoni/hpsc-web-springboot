@@ -45,7 +45,7 @@ public class MatchCompetitorDto {
     private MatchDto match;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    private ClubReference club;
+    private ClubIdentifier club;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
@@ -153,7 +153,7 @@ public class MatchCompetitorDto {
                 // Determines the power factor based on the major power factor flag
                 this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
                 // Determines the club based on the club reference number
-                this.club = ClubReference.getByCode(enrolledResponse.getRefNo()).orElse(ClubReference.UNKNOWN);
+                this.club = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
                 // Determines the discipline based on the division ID
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the firearm type from the discipline

@@ -19,21 +19,22 @@ public class ClubEntityServiceImpl implements ClubEntityService {
 
     @Override
     public Optional<Club> findClub(String name, String abbreviation) {
-        Optional<Club> club = Optional.empty();
+        Optional<Club> optionalClub = Optional.empty();
 
         // Attempt to find the club by name
         if ((name != null) && (!name.isBlank())) {
-            club = clubRepository.findByName(name);
+            optionalClub = clubRepository.findByName(name);
         }
 
         // If the club was not found
-        if (club.isEmpty()) {
+        Club club = optionalClub.orElseGet(() -> {
             if ((abbreviation != null) && (!abbreviation.isBlank())) {
                 // Attempt to find the club by abbreviation
-                club = clubRepository.findByAbbreviation(abbreviation);
+                return clubRepository.findByAbbreviation(abbreviation).orElse(null);
             }
-        }
+            return null;
+        });
 
-        return club;
+        return Optional.ofNullable(club);
     }
 }

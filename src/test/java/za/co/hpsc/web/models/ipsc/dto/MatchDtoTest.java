@@ -1,7 +1,7 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,7 +33,7 @@ public class MatchDtoTest {
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
         matchDto.setClub(clubDto);
-        matchDto.setClubName(ClubReference.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         String result = matchDto.toString();
@@ -48,7 +48,7 @@ public class MatchDtoTest {
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
         matchDto.setClub(null);
-        matchDto.setClubName(ClubReference.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         String result = matchDto.toString();
@@ -62,7 +62,7 @@ public class MatchDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubReference.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         String result = matchDto.toString();

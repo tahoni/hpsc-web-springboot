@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
@@ -50,7 +50,7 @@ public class IpscMatch {
     @Column(nullable = false)
     private LocalDateTime scheduledDate;
     @Enumerated(EnumType.STRING)
-    private ClubReference clubName;
+    private ClubIdentifier clubName;
 
     @Enumerated(EnumType.STRING)
     private FirearmType matchFirearmType;
@@ -88,7 +88,7 @@ public class IpscMatch {
         if (matchDto.getClubName() != null) {
             this.clubName = matchDto.getClubName();
         } else if (clubEntity != null) {
-            clubName = ClubReference.getByName(clubEntity.getName()).orElse(null);
+            clubName = ClubIdentifier.getByName(clubEntity.getName()).orElse(null);
         }
 
         // Initialises the match attributes

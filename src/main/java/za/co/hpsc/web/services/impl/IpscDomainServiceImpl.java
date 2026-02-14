@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
@@ -57,10 +57,10 @@ public class IpscDomainServiceImpl implements IpscDomainService {
             Map<UUID, MatchCompetitor> matchCompetitorMap =
                     initMatchCompetitorEntities(matchResults.getMatchCompetitors(),
                             match,
-                            competitorMap, ClubReference.HPSC);
+                            competitorMap, ClubIdentifier.HPSC);
             Map<UUID, MatchStageCompetitor> matchStageCompetitorMap =
                     initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(),
-                            matchStageMap, competitorMap, ClubReference.HPSC);
+                            matchStageMap, competitorMap, ClubIdentifier.HPSC);
 
             optionalMatchEntityHolder.set(Optional.of(new MatchEntityHolder(match, club,
                     matchStageMap.values().stream().toList(),
@@ -183,13 +183,13 @@ public class IpscDomainServiceImpl implements IpscDomainService {
      * @param matchCompetitors
      * @param matchEntity
      * @param competitorMap
-     * @param clubReference
+     * @param clubIdentifier
      * @return
      */
     protected Map<UUID, MatchCompetitor> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitors,
                                                                      IpscMatch matchEntity,
                                                                      Map<UUID, Competitor> competitorMap,
-                                                                     ClubReference clubReference) {
+                                                                     ClubIdentifier clubIdentifier) {
 
         Map<UUID, MatchCompetitor> matchCompetitorMap = new HashMap<>();
         if (matchCompetitors != null) {
@@ -214,8 +214,8 @@ public class IpscDomainServiceImpl implements IpscDomainService {
                         .orElse(new MatchCompetitor());
 
                 // Filter by club reference if specified
-                if ((clubReference != null) && (!clubReference.equals(ClubReference.UNKNOWN))) {
-                    if (!clubReference.equals(matchCompetitorDto.getClub())) {
+                if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
+                    if (!clubIdentifier.equals(matchCompetitorDto.getClub())) {
                         continue;
                     }
                 }
@@ -239,12 +239,12 @@ public class IpscDomainServiceImpl implements IpscDomainService {
      * @param matchStageCompetitors
      * @param matchStageMap
      * @param competitorMap
-     * @param clubReference
+     * @param clubIdentifier
      */
     // TODO: add tests
     protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
                                                                                Map<UUID, IpscMatchStage> matchStageMap, Map<UUID, Competitor> competitorMap,
-                                                                               ClubReference clubReference) {
+                                                                               ClubIdentifier clubIdentifier) {
 
         Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
         if (matchStageCompetitors != null) {
@@ -272,8 +272,8 @@ public class IpscDomainServiceImpl implements IpscDomainService {
                         .orElse(new MatchStageCompetitor());
 
                 // Filter by club reference if specified
-                if ((clubReference != null) && (!clubReference.equals(ClubReference.UNKNOWN))) {
-                    if (!clubReference.equals(matchStageCompetitorDto.getClub())) {
+                if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
+                    if (!clubIdentifier.equals(matchStageCompetitorDto.getClub())) {
                         continue;
                     }
                 }

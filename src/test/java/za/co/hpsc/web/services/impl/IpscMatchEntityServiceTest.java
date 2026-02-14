@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -307,7 +307,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 5, 10, 0, 0));
-        match.setClubName(ClubReference.HPSC);
+        match.setClubName(ClubIdentifier.HPSC);
         match.setMatchFirearmType(FirearmType.HANDGUN);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
@@ -339,7 +339,7 @@ public class IpscMatchEntityServiceTest {
         match1.setId(1L);
         match1.setName("Match 1");
         match1.setScheduledDate(LocalDateTime.of(2025, 9, 5, 10, 0, 0));
-        match1.setClubName(ClubReference.SOSC);
+        match1.setClubName(ClubIdentifier.SOSC);
         match1.setMatchFirearmType(FirearmType.HANDGUN);
         match1.setMatchCategory(MatchCategory.LEAGUE);
         match1.setDateEdited(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
@@ -350,7 +350,7 @@ public class IpscMatchEntityServiceTest {
         match2.setId(2L);
         match2.setName("Match 2");
         match2.setScheduledDate(LocalDateTime.of(2025, 9, 4, 15, 0, 0));
-        match2.setClubName(ClubReference.SOSC);
+        match2.setClubName(ClubIdentifier.SOSC);
         match2.setMatchFirearmType(FirearmType.RIFLE);
         match2.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match2.setDateEdited(LocalDateTime.of(2025, 9, 5, 15, 0, 0));
@@ -387,7 +387,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 5, 10, 0, 0));
-        match.setClubName(ClubReference.HPSC);
+        match.setClubName(ClubIdentifier.HPSC);
         match.setMatchFirearmType(FirearmType.HANDGUN_22);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 15, 30));
@@ -419,7 +419,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 5, 10, 0, 0));
-        match.setClubName(ClubReference.SOSC);
+        match.setClubName(ClubIdentifier.SOSC);
         match.setMatchFirearmType(FirearmType.SHOTGUN);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 30));
@@ -450,7 +450,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
-        match.setClubName(ClubReference.UNKNOWN);
+        match.setClubName(ClubIdentifier.UNKNOWN);
         match.setMatchFirearmType(FirearmType.PCC);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 30, 0));
@@ -483,7 +483,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match");
         match.setScheduledDate(null);
-        match.setClubName(ClubReference.SOSC);
+        match.setClubName(ClubIdentifier.SOSC);
         match.setMatchFirearmType(FirearmType.MINI_RIFLE);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match.setDateEdited(null);
@@ -510,7 +510,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName(null);
         match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
-        match.setClubName(ClubReference.UNKNOWN);
+        match.setClubName(ClubIdentifier.UNKNOWN);
         match.setMatchFirearmType(null);
         match.setMatchCategory(null);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
@@ -538,7 +538,7 @@ public class IpscMatchEntityServiceTest {
             match.setId((long) i);
             match.setName("Match " + i);
             match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
-            match.setClubName(ClubReference.UNKNOWN);
+            match.setClubName(ClubIdentifier.UNKNOWN);
             match.setMatchFirearmType(FirearmType.HANDGUN);
             match.setMatchCategory(MatchCategory.CLUB_SHOOT);
             match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
@@ -565,7 +565,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match & Co. (2025) - v2.0");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
-        match.setClubName(ClubReference.SOSC);
+        match.setClubName(ClubIdentifier.SOSC);
         match.setMatchFirearmType(FirearmType.HANDGUN);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
@@ -589,7 +589,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 11, 0, 0));
-        match.setClubName(ClubReference.PMPSC);
+        match.setClubName(ClubIdentifier.PMPSC);
         match.setMatchFirearmType(FirearmType.MINI_RIFLE);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 12, 0, 0));
@@ -614,7 +614,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Test Match");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
-        match.setClubName(ClubReference.SOSC);
+        match.setClubName(ClubIdentifier.SOSC);
         match.setMatchFirearmType(FirearmType.HANDGUN_22);
         match.setMatchCategory(MatchCategory.LEAGUE);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
@@ -639,7 +639,7 @@ public class IpscMatchEntityServiceTest {
         match.setId(1L);
         match.setName("Complete Match");
         match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 30, 0));
-        match.setClubName(ClubReference.HPSC);
+        match.setClubName(ClubIdentifier.HPSC);
         match.setMatchFirearmType(FirearmType.RIFLE);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match.setDateEdited(LocalDateTime.of(2025, 9, 6, 16, 45, 0));

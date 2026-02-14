@@ -1,7 +1,7 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -12,7 +12,7 @@ public class MatchStageDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubReference.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
         MatchStageDto clubDto = new MatchStageDto();
         clubDto.setStageNumber(1);
         clubDto.setMatch(matchDto);
@@ -29,7 +29,7 @@ public class MatchStageDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubReference.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
         MatchStageDto clubDto = new MatchStageDto();
         clubDto.setMatch(matchDto);
 
@@ -45,7 +45,7 @@ public class MatchStageDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubReference.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
         MatchStageDto clubDto = new MatchStageDto();
         clubDto.setStageNumber(null);
         clubDto.setMatch(matchDto);

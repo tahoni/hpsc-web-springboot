@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
@@ -252,7 +252,7 @@ public class IpscDomainServiceTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(UUID.randomUUID());
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClub(ClubReference.HPSC);
+        matchCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setMatchCompetitors(Collections.singletonList(matchCompetitorDto));
@@ -306,7 +306,7 @@ public class IpscDomainServiceTest {
         stageCompetitorDto.setUuid(UUID.randomUUID());
         stageCompetitorDto.setCompetitor(competitorDto);
         stageCompetitorDto.setMatchStage(stageDto);
-        stageCompetitorDto.setClub(ClubReference.HPSC);
+        stageCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setStages(Collections.singletonList(stageDto));
@@ -409,13 +409,13 @@ public class IpscDomainServiceTest {
         hpscCompetitorDto.setId(20L);
         hpscCompetitorDto.setUuid(UUID.randomUUID());
         hpscCompetitorDto.setCompetitor(competitorDto);
-        hpscCompetitorDto.setClub(ClubReference.HPSC);
+        hpscCompetitorDto.setClub(ClubIdentifier.HPSC);
 
         MatchCompetitorDto soscCompetitorDto = new MatchCompetitorDto();
         soscCompetitorDto.setId(21L);
         soscCompetitorDto.setUuid(UUID.randomUUID());
         soscCompetitorDto.setCompetitor(competitorDto);
-        soscCompetitorDto.setClub(ClubReference.SOSC); // Different club
+        soscCompetitorDto.setClub(ClubIdentifier.SOSC); // Different club
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setMatchCompetitors(Arrays.asList(hpscCompetitorDto, soscCompetitorDto));

@@ -45,7 +45,7 @@ public class MatchCompetitor {
     private IpscMatch match;
 
     @Enumerated(EnumType.STRING)
-    private ClubReference club;
+    private ClubIdentifier club;
     @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
     @Enumerated(EnumType.STRING)

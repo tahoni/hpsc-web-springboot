@@ -6,15 +6,15 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ClubReferenceTest {
+public class ClubIdentifierTest {
     @Test
     void testGetByName_withExactName_thenReturnsCorrectDiscipline() {
         // Arrange & Act
-        Optional<ClubReference> result = ClubReference.getByName("HPSC");
+        Optional<ClubIdentifier> result = ClubIdentifier.getByName("HPSC");
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(ClubReference.HPSC, result.get());
+        assertEquals(ClubIdentifier.HPSC, result.get());
     }
 
     @Test
@@ -23,17 +23,17 @@ public class ClubReferenceTest {
         String searchName = "sosc";
 
         // Act
-        Optional<ClubReference> result = ClubReference.getByName(searchName);
+        Optional<ClubIdentifier> result = ClubIdentifier.getByName(searchName);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(ClubReference.SOSC, result.get());
+        assertEquals(ClubIdentifier.SOSC, result.get());
     }
 
     @Test
     void testGetByName_withNulInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubReference> result = ClubReference.getByName(null);
+        Optional<ClubIdentifier> result = ClubIdentifier.getByName(null);
 
         // Assert
         assertFalse(result.isPresent());
@@ -42,7 +42,7 @@ public class ClubReferenceTest {
     @Test
     void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubReference> result = ClubReference.getByName(" ");
+        Optional<ClubIdentifier> result = ClubIdentifier.getByName(" ");
 
         // Assert
         assertFalse(result.isPresent());
@@ -54,7 +54,7 @@ public class ClubReferenceTest {
         String searchName = "Nonexistent Club";
 
         // Act
-        Optional<ClubReference> result = ClubReference.getByName(searchName);
+        Optional<ClubIdentifier> result = ClubIdentifier.getByName(searchName);
 
         // Assert
         assertFalse(result.isPresent());
@@ -63,17 +63,17 @@ public class ClubReferenceTest {
     @Test
     void testGetByCode_withMatch_thenReturnsCorrectClubReference() {
         // Act
-        Optional<ClubReference> result = ClubReference.getByCode("CCC");
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("CCC");
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(ClubReference.PMPSC, result.get());
+        assertEquals(ClubIdentifier.PMPSC, result.get());
     }
 
     @Test
     void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubReference> result = ClubReference.getByCode(null);
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode(null);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -82,7 +82,7 @@ public class ClubReferenceTest {
     @Test
     void testGetByCode_withBlankInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubReference> result = ClubReference.getByCode("   ");
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("   ");
 
         // Assert
         assertTrue(result.isEmpty());
@@ -91,7 +91,7 @@ public class ClubReferenceTest {
     @Test
     void testGetByCode_withNoMatch_returnsEmptyOptional() {
         // Act
-        Optional<ClubReference> result = ClubReference.getByCode("ZZZ");
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ZZZ");
 
         // Assert
         assertTrue(result.isEmpty());

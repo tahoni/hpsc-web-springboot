@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
@@ -39,7 +39,7 @@ public class MatchDto {
     private Integer index;
 
     private ClubDto club;
-    private ClubReference clubName;
+    private ClubIdentifier clubName;
 
     @NotNull
     private String name = "";
@@ -127,9 +127,9 @@ public class MatchDto {
 
             // Initialises the match attributes
             this.name = matchResponse.getMatchName();
-            Optional<ClubReference> clubReference = Optional.empty();
+            Optional<ClubIdentifier> clubReference = Optional.empty();
             if (clubDto != null) {
-                clubReference = ClubReference.getByName(clubDto.getName());
+                clubReference = ClubIdentifier.getByName(clubDto.getName());
             }
             this.clubName = clubReference.orElse(null);
             this.scheduledDate = matchResponse.getMatchDate();
@@ -175,9 +175,9 @@ public class MatchDto {
             this.name = matchResponse.getMatchName();
             this.scheduledDate = matchResponse.getMatchDate();
 
-            Optional<ClubReference> clubReference = Optional.empty();
+            Optional<ClubIdentifier> clubReference = Optional.empty();
             if (clubDto != null) {
-                Optional<ClubReference> cr = ClubReference.getByName(clubDto.getName());
+                Optional<ClubIdentifier> cr = ClubIdentifier.getByName(clubDto.getName());
                 if (cr.isPresent()) {
                     clubReference = cr;
                 }
