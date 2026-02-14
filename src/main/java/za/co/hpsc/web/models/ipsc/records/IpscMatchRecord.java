@@ -10,7 +10,7 @@ public record IpscMatchRecord(
         String matchFirearmType,
         String matchCategory,
 
-        List<CompetitorRecord> competitors,
+        List<CompetitorMatchRecord> competitors,
 
         String dateEdited
 ) {

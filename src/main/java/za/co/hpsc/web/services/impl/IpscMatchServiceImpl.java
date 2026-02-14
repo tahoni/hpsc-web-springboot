@@ -67,7 +67,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             List<MatchStageCompetitor> matchStageCompetitorList = getMatchStageCompetitorList(matchStageList);
             List<Competitor> competitorList = getCompetitorList(matchCompetitorList);
 
-            List<CompetitorRecord> competitors = new ArrayList<>();
+            List<CompetitorMatchRecord> competitors = new ArrayList<>();
             competitorList.forEach(c -> initMatchCompetitor(c, matchCompetitorList)
                     .ifPresent((mcr) -> {
                         List<MatchStageCompetitorRecord> thisCompetitorStages =
@@ -195,7 +195,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param competitors
      * @return
      */
-    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorRecord> competitors) {
+    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorMatchRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
@@ -223,9 +223,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param thisCompetitorStages
      * @return
      */
-    protected Optional<CompetitorRecord> initCompetitor(Competitor competitor,
-                                                        MatchCompetitorRecord thisCompetitorOverall,
-                                                        List<MatchStageCompetitorRecord> thisCompetitorStages) {
+    protected Optional<CompetitorMatchRecord> initCompetitor(Competitor competitor,
+                                                             MatchCompetitorRecord thisCompetitorOverall,
+                                                             List<MatchStageCompetitorRecord> thisCompetitorStages) {
         if ((competitor == null) || (thisCompetitorOverall == null) || (thisCompetitorStages == null)) {
             return Optional.empty();
         }
@@ -234,7 +234,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         String dateOfBirth = DateUtil.formatDate(competitor.getDateOfBirth(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
 
-        CompetitorRecord competitorRecord = new CompetitorRecord(competitor.getFirstName(),
+        CompetitorMatchRecord competitorRecord = new CompetitorMatchRecord(competitor.getFirstName(),
                 competitor.getLastName(), competitor.getMiddleNames(), dateOfBirth,
                 competitor.getSapsaNumber(), competitor.getCompetitorNumber(),
                 thisCompetitorOverall, thisCompetitorStages);

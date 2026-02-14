@@ -2,7 +2,7 @@ package za.co.hpsc.web.models.ipsc.records;
 
 import java.util.List;
 
-public record CompetitorRecord(
+public record CompetitorMatchRecord(
         String firstName,
         String lastName,
         String middleNames,
