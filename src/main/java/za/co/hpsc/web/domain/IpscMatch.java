@@ -85,8 +85,8 @@ public class IpscMatch {
         this.club = clubEntity;
 
         // Sets club name from DTO or associated entity
-        if (matchDto.getClubName() != null) {
-            this.clubName = matchDto.getClubName();
+        if (matchDto.getClubIdentifier() != null) {
+            this.clubName = matchDto.getClubIdentifier();
         } else if (clubEntity != null) {
             clubName = ClubIdentifier.getByName(clubEntity.getName()).orElse(null);
         }

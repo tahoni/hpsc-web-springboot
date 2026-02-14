@@ -215,7 +215,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
 
                 // Filter by club reference if specified
                 if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                    if (!clubIdentifier.equals(matchCompetitorDto.getClub())) {
+                    if (!clubIdentifier.equals(matchCompetitorDto.getClubIdentifier())) {
                         continue;
                     }
                 }
@@ -273,7 +273,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
 
                 // Filter by club reference if specified
                 if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                    if (!clubIdentifier.equals(matchStageCompetitorDto.getClub())) {
+                    if (!clubIdentifier.equals(matchStageCompetitorDto.getClubIdentifier())) {
                         continue;
                     }
                 }

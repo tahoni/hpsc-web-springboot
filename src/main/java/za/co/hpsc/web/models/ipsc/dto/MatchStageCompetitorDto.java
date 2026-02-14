@@ -46,7 +46,7 @@ public class MatchStageCompetitorDto {
     private MatchStageDto matchStage;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    private ClubIdentifier club;
+    private ClubIdentifier clubIdentifier;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;

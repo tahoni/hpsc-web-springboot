@@ -12,7 +12,7 @@ public class MatchStageDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubIdentifier.HPSC);
+        matchDto.setClubIdentifier(ClubIdentifier.HPSC);
         MatchStageDto clubDto = new MatchStageDto();
         clubDto.setStageNumber(1);
         clubDto.setMatch(matchDto);
@@ -29,7 +29,7 @@ public class MatchStageDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubIdentifier.HPSC);
+        matchDto.setClubIdentifier(ClubIdentifier.HPSC);
         MatchStageDto clubDto = new MatchStageDto();
         clubDto.setMatch(matchDto);
 
@@ -45,7 +45,7 @@ public class MatchStageDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubIdentifier.HPSC);
+        matchDto.setClubIdentifier(ClubIdentifier.HPSC);
         MatchStageDto clubDto = new MatchStageDto();
         clubDto.setStageNumber(null);
         clubDto.setMatch(matchDto);

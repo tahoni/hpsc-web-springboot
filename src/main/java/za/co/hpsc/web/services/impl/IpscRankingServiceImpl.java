@@ -13,11 +13,21 @@ import za.co.hpsc.web.services.IpscRankingService;
 public class IpscRankingServiceImpl implements IpscRankingService {
     @Override
     public IpscRankingClubHolderRecord refreshClubRankings(String matchName) {
-
+        return null;
     }
 
     @Override
     public IpscRankingMatchHolderRecord refreshMatchRankings(String matchName) {
         return null;
     }
+
+    protected boolean mustUpdateClubRanking(String clubName) {
+
+        return false;
+    }
+
+    protected boolean mustUpdateMatchRanking(String matchName) {
+        return false;
+    }
+
 }

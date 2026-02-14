@@ -45,7 +45,7 @@ public class MatchCompetitor {
     private IpscMatch match;
 
     @Enumerated(EnumType.STRING)
-    private ClubIdentifier club;
+    private ClubIdentifier clubIdentifier;
     @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
     @Enumerated(EnumType.STRING)
@@ -83,7 +83,7 @@ public class MatchCompetitor {
         this.competitor = competitorEntity;
 
         // Initialises the competitor attributes
-        this.club = matchCompetitorDto.getClub();
+        this.clubIdentifier = matchCompetitorDto.getClubIdentifier();
         this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
         this.firearmType = matchCompetitorDto.getFirearmType();
         this.division = matchCompetitorDto.getDivision();

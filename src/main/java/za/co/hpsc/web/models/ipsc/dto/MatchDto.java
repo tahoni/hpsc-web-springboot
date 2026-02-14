@@ -39,7 +39,7 @@ public class MatchDto {
     private Integer index;
 
     private ClubDto club;
-    private ClubIdentifier clubName;
+    private ClubIdentifier clubIdentifier;
 
     @NotNull
     private String name = "";
@@ -77,7 +77,7 @@ public class MatchDto {
         // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.clubName = matchEntity.getClubName();
+        this.clubIdentifier = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
@@ -104,7 +104,7 @@ public class MatchDto {
         // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.clubName = matchEntity.getClubName();
+        this.clubIdentifier = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
@@ -131,7 +131,7 @@ public class MatchDto {
             if (clubDto != null) {
                 clubReference = ClubIdentifier.getByName(clubDto.getName());
             }
-            this.clubName = clubReference.orElse(null);
+            this.clubIdentifier = clubReference.orElse(null);
             this.scheduledDate = matchResponse.getMatchDate();
 
             // Determines the firearm type based on the firearm ID
@@ -182,7 +182,7 @@ public class MatchDto {
                     clubReference = cr;
                 }
             }
-            clubReference.ifPresent(cr -> this.clubName = cr);
+            clubReference.ifPresent(cr -> this.clubIdentifier = cr);
 
             // Determines the firearm type based on the firearm ID
             this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId())
@@ -222,8 +222,8 @@ public class MatchDto {
         String clubString = "";
         if (this.club != null) {
             clubString = club.toString();
-        } else if (clubName != null) {
-            clubString = clubName.toString();
+        } else if (clubIdentifier != null) {
+            clubString = clubIdentifier.toString();
         }
 
         // Returns name, optionally with club if available

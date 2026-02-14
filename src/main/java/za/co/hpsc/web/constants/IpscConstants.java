@@ -1,5 +1,6 @@
 package za.co.hpsc.web.constants;
 
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.MatchCategory;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public final class IpscConstants {
 
     public static final List<Integer> EXCLUDE_ICS_ALIAS =
             List.of(15000, 16000);
+    public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS =
+            List.of(ClubIdentifier.UNKNOWN);
 
     public static final int NUMBER_OF_MATCHES_USED_FOR_LOGS = 4;
     public static final int NUMBER_OF_MATCHES_TO_DISPLAY = 6;

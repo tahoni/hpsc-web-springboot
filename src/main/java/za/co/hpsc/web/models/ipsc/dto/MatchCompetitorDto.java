@@ -45,7 +45,7 @@ public class MatchCompetitorDto {
     private MatchDto match;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    private ClubIdentifier club;
+    private ClubIdentifier clubIdentifier;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
@@ -74,7 +74,7 @@ public class MatchCompetitorDto {
         this.match = new MatchDto(matchCompetitorEntity.getMatch());
 
         // Initialises the competitor attributes
-        this.club = matchCompetitorEntity.getClub();
+        this.clubIdentifier = matchCompetitorEntity.getClubIdentifier();
         this.competitorCategory = matchCompetitorEntity.getCompetitorCategory();
         this.firearmType = matchCompetitorEntity.getFirearmType();
         this.division = matchCompetitorEntity.getDivision();
@@ -153,7 +153,7 @@ public class MatchCompetitorDto {
                 // Determines the power factor based on the major power factor flag
                 this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
                 // Determines the club based on the club reference number
-                this.club = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
+                this.clubIdentifier = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
                 // Determines the discipline based on the division ID
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the firearm type from the discipline
