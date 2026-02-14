@@ -12,7 +12,7 @@ import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
-import za.co.hpsc.web.services.MatchService;
+import za.co.hpsc.web.services.MatchEntityService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MatchResultServiceTest {
+public class IpscMatchResultServiceTest {
     @Mock
-    private MatchService matchService;
+    private MatchEntityService matchEntityService;
 
     @InjectMocks
-    private MatchResultServiceImpl matchResultService;
+    private IpscMatchResultServiceImpl ipscMatchResultService;
 
     @Test
     public void testInitMatch_withExistingMatchAndNoNewerScores_thenReturnsEmptyOptional() {
@@ -49,7 +49,7 @@ public class MatchResultServiceTest {
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-        when(matchService.findMatch("Existing Match"))
+        when(matchEntityService.findMatch("Existing Match"))
                 .thenReturn(Optional.of(existingMatch));
 
         ClubResponse clubResponse = new ClubResponse();
@@ -58,11 +58,11 @@ public class MatchResultServiceTest {
         ClubDto clubDto = new ClubDto(clubResponse);
 
         // Act
-        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
+        Optional<MatchDto> result = ipscMatchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
         assertTrue(result.isEmpty());
-        verify(matchService, times(1)).findMatch("Existing Match");
+        verify(matchEntityService, times(1)).findMatch("Existing Match");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class MatchResultServiceTest {
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-        when(matchService.findMatch("Existing Match"))
+        when(matchEntityService.findMatch("Existing Match"))
                 .thenReturn(Optional.of(existingMatch));
 
         ClubResponse clubResponse = new ClubResponse();
@@ -94,14 +94,14 @@ public class MatchResultServiceTest {
         ClubDto clubDto = new ClubDto(clubResponse);
 
         // Act
-        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
+        Optional<MatchDto> result = ipscMatchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
         assertTrue(result.isPresent());
         MatchDto matchDto = result.get();
         assertEquals(1L, matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
-        verify(matchService, times(1)).findMatch("Existing Match");
+        verify(matchEntityService, times(1)).findMatch("Existing Match");
     }
 
     @Test
@@ -117,7 +117,7 @@ public class MatchResultServiceTest {
         scoreResponse.setLastModified(LocalDateTime.of(2025, 2, 1, 10, 0));
         ipscResponse.setScores(List.of(scoreResponse));
 
-        when(matchService.findMatch("New Match"))
+        when(matchEntityService.findMatch("New Match"))
                 .thenReturn(Optional.empty());
 
         ClubResponse clubResponse = new ClubResponse();
@@ -127,13 +127,13 @@ public class MatchResultServiceTest {
         ClubDto clubDto = new ClubDto(clubResponse);
 
         // Act
-        Optional<MatchDto> result = matchResultService.initMatch(ipscResponse, clubDto);
+        Optional<MatchDto> result = ipscMatchResultService.initMatch(ipscResponse, clubDto);
 
         // Assert
         assertTrue(result.isPresent());
         MatchDto matchDto = result.get();
         assertNull(matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
-        verify(matchService, times(1)).findMatch("New Match");
+        verify(matchEntityService, times(1)).findMatch("New Match");
     }
 }

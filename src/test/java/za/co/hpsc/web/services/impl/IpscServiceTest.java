@@ -11,8 +11,8 @@ import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+import za.co.hpsc.web.services.IpscMatchResultService;
 import za.co.hpsc.web.services.IpscMatchService;
-import za.co.hpsc.web.services.MatchResultService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class WinMssServiceTest {
+public class IpscServiceTest {
 
     @Mock
     private TransactionService transactionService;
@@ -30,10 +30,10 @@ public class WinMssServiceTest {
     @Mock
     private IpscMatchService ipscMatchService;
     @Mock
-    private MatchResultService matchResultService;
+    private IpscMatchResultService ipscMatchResultService;
 
     @InjectMocks
-    private WinMssServiceImpl winMssService;
+    private IpscServiceImpl ipscService;
 
     @Test
     public void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() {
@@ -59,11 +59,11 @@ public class WinMssServiceTest {
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
-        when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
+        when(ipscMatchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
-                winMssService.importWinMssCabFileContent(cabFileContent));
+                ipscService.importWinMssCabFileContent(cabFileContent));
 
         // Assert
         assertNotNull(response);
@@ -71,7 +71,7 @@ public class WinMssServiceTest {
         assertEquals(matchResultsDto, response.getMatches().getFirst());
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
-        verify(matchResultService, times(1)).initMatchResults(ipscResponse);
+        verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
         verify(transactionService, times(1)).saveMatchResults(matchResultsDto);
     }
 
@@ -79,12 +79,12 @@ public class WinMssServiceTest {
     public void testImportWinMssCabFileContent_withNullCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                winMssService.importWinMssCabFile(null)
+                ipscService.importWinMssCabFile(null)
         );
 
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
-        verify(matchResultService, never()).initMatchResults(any());
+        verify(ipscMatchResultService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
@@ -92,12 +92,12 @@ public class WinMssServiceTest {
     public void testImportWinMssCabFileContent_withEmptyCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                winMssService.importWinMssCabFile("")
+                ipscService.importWinMssCabFile("")
         );
 
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
-        verify(matchResultService, never()).initMatchResults(any());
+        verify(ipscMatchResultService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
@@ -105,11 +105,11 @@ public class WinMssServiceTest {
     public void testImportWinMssCabFileContent_withBlankCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                winMssService.importWinMssCabFile("   ")
+                ipscService.importWinMssCabFile("   ")
         );
 
         verify(ipscMatchService, never()).mapMatchResults(any());
-        verify(matchResultService, never()).initMatchResults(any());
+        verify(ipscMatchResultService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
@@ -133,12 +133,12 @@ public class WinMssServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                winMssService.importWinMssCabFile(cabFileContent)
+                ipscService.importWinMssCabFile(cabFileContent)
         );
 
         // Assert
         verify(ipscMatchService, times(1)).mapMatchResults(any());
-        verify(matchResultService, never()).initMatchResults(any());
+        verify(ipscMatchResultService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
@@ -166,12 +166,12 @@ public class WinMssServiceTest {
         MatchResultsDto matchResults2 = new MatchResultsDto();
 
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
-        when(matchResultService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
-        when(matchResultService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
+        when(ipscMatchResultService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
+        when(ipscMatchResultService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
-                winMssService.importWinMssCabFileContent(cabFileContent));
+                ipscService.importWinMssCabFileContent(cabFileContent));
 
         // Assert
         assertNotNull(response);
@@ -180,7 +180,7 @@ public class WinMssServiceTest {
         assertTrue(response.getMatches().contains(matchResults2));
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
-        verify(matchResultService, times(2)).initMatchResults(any(IpscResponse.class));
+        verify(ipscMatchResultService, times(2)).initMatchResults(any(IpscResponse.class));
         verify(transactionService, times(1)).saveMatchResults(matchResults1);
         verify(transactionService, times(1)).saveMatchResults(matchResults2);
     }
@@ -205,18 +205,18 @@ public class WinMssServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
 
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
-        when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
+        when(ipscMatchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
-                winMssService.importWinMssCabFileContent(cabFileContent));
+                ipscService.importWinMssCabFileContent(cabFileContent));
 
         // Assert
         assertNotNull(response);
         assertTrue(response.getMatches().isEmpty());
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
-        verify(matchResultService, times(1)).initMatchResults(ipscResponse);
+        verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
         verify(transactionService, never()).saveMatchResults(any());
     }
 
@@ -227,12 +227,12 @@ public class WinMssServiceTest {
 
         // Act & Assert
         assertThrows(FatalException.class, () ->
-                winMssService.importWinMssCabFile(invalidCabFileContent)
+                ipscService.importWinMssCabFile(invalidCabFileContent)
         );
 
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
-        verify(matchResultService, never()).initMatchResults(any());
+        verify(ipscMatchResultService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
@@ -254,12 +254,12 @@ public class WinMssServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                winMssService.importWinMssCabFile(invalidCabFileContent)
+                ipscService.importWinMssCabFile(invalidCabFileContent)
         );
 
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
-        verify(matchResultService, never()).initMatchResults(any());
+        verify(ipscMatchResultService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
@@ -287,11 +287,11 @@ public class WinMssServiceTest {
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
-        when(matchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
+        when(ipscMatchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
-                winMssService.importWinMssCabFileContent(cabFileContent));
+                ipscService.importWinMssCabFileContent(cabFileContent));
 
         // Assert
         assertNotNull(response);
@@ -299,7 +299,7 @@ public class WinMssServiceTest {
         assertEquals(matchResultsDto, response.getMatches().getFirst());
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
-        verify(matchResultService, times(1)).initMatchResults(ipscResponse);
+        verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
         verify(transactionService, times(1)).saveMatchResults(matchResultsDto);
     }
 }

@@ -10,7 +10,7 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.MatchDomainService;
+import za.co.hpsc.web.services.IpscMatchDomainService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.util.Optional;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class TransactionServiceImpl implements TransactionService {
     protected final PlatformTransactionManager transactionManager;
 
-    protected final MatchDomainService matchDomainService;
+    protected final IpscMatchDomainService ipscMatchDomainService;
 
     protected final ClubRepository clubRepository;
     protected final CompetitorRepository competitorRepository;
@@ -31,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
-                                  MatchDomainService matchDomainService,
+                                  IpscMatchDomainService ipscMatchDomainService,
                                   ClubRepository clubRepository,
                                   CompetitorRepository competitorRepository,
                                   IpscMatchRepository ipscMatchRepository,
@@ -39,7 +39,7 @@ public class TransactionServiceImpl implements TransactionService {
                                   MatchCompetitorRepository matchCompetitorRepository,
                                   MatchStageCompetitorRepository matchStageCompetitorRepository) {
         this.transactionManager = transactionManager;
-        this.matchDomainService = matchDomainService;
+        this.ipscMatchDomainService = ipscMatchDomainService;
         this.clubRepository = clubRepository;
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
@@ -60,7 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            Optional<MatchEntityHolder> optionalMatch = matchDomainService.initMatchEntities(matchResults);
+            Optional<MatchEntityHolder> optionalMatch = ipscMatchDomainService.initMatchEntities(matchResults);
             optionalMatch.ifPresent(matchEntityHolder -> {
                 if (matchEntityHolder.getClub() != null) {
                     clubRepository.save(matchEntityHolder.getClub());

@@ -10,20 +10,20 @@ import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
-import za.co.hpsc.web.services.MatchStageCompetitorService;
+import za.co.hpsc.web.services.MatchStageCompetitorEntityService;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class MatchStageCompetitorServiceImpl implements MatchStageCompetitorService {
+public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetitorEntityService {
     protected final IpscMatchStageRepository ipscMatchStageRepository;
     protected final CompetitorRepository competitorRepository;
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
-    public MatchStageCompetitorServiceImpl(IpscMatchStageRepository ipscMatchStageRepository,
-                                           CompetitorRepository competitorRepository,
-                                           MatchStageCompetitorRepository matchStageCompetitorRepository) {
+    public MatchStageCompetitorEntityServiceImpl(IpscMatchStageRepository ipscMatchStageRepository,
+                                                 CompetitorRepository competitorRepository,
+                                                 MatchStageCompetitorRepository matchStageCompetitorRepository) {
         this.ipscMatchStageRepository = ipscMatchStageRepository;
         this.competitorRepository = competitorRepository;
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;

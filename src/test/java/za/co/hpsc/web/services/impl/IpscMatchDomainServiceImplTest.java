@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link MatchDomainServiceImpl}.
+ * Unit tests for {@link IpscMatchDomainServiceImpl}.
  *
  * <p>
  * Tests the {@code initMatchEntities} method and its related helper methods for initialising
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MatchDomainServiceImpl Tests")
-public class MatchDomainServiceImplTest {
+public class IpscMatchDomainServiceImplTest {
 
     @Mock
     private ClubRepository clubRepository;
@@ -50,7 +50,7 @@ public class MatchDomainServiceImplTest {
     private MatchCompetitorRepository matchCompetitorRepository;
 
     @InjectMocks
-    private MatchDomainServiceImpl matchDomainService;
+    private IpscMatchDomainServiceImpl ipscMatchDomainService;
 
     private MatchDto matchDto;
     private ClubDto clubDto;
@@ -95,7 +95,7 @@ public class MatchDomainServiceImplTest {
     @DisplayName("initClubEntity returns empty Optional when clubDto is null")
     public void testInitClubEntity_withNullClubDto_returnsEmpty() {
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(null);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(null);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -112,7 +112,7 @@ public class MatchDomainServiceImplTest {
         clubDtoWithoutId.setAbbreviation("TC");
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDtoWithoutId);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDtoWithoutId);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -126,7 +126,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDto);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -145,7 +145,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(spyClub));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDto);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -169,7 +169,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntityForTest));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDtoWithDifferentName);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDtoWithDifferentName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -194,7 +194,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntityForTest));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDtoWithDifferentAbbr);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDtoWithDifferentAbbr);
 
         // Assert
         assertTrue(result.isPresent());
@@ -209,7 +209,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDto);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDto);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -225,7 +225,7 @@ public class MatchDomainServiceImplTest {
         clubDtoNameOnly.setName("Test Club");
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDtoNameOnly);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDtoNameOnly);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -249,7 +249,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntityForTest));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDtoNoAbbr);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDtoNoAbbr);
 
         // Assert
         assertTrue(result.isPresent());
@@ -265,7 +265,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
 
         // Act
-        matchDomainService.initClubEntity(clubDto);
+        ipscMatchDomainService.initClubEntity(clubDto);
 
         // Assert
         verify(clubRepository).findById(1L);
@@ -287,7 +287,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
 
         // Act
-        matchDomainService.initClubEntity(clubDtoOriginal);
+        ipscMatchDomainService.initClubEntity(clubDtoOriginal);
 
         // Assert
         assertEquals(originalName, clubDtoOriginal.getName());
@@ -301,8 +301,8 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
 
         // Act
-        Optional<Club> result1 = matchDomainService.initClubEntity(clubDto);
-        Optional<Club> result2 = matchDomainService.initClubEntity(clubDto);
+        Optional<Club> result1 = ipscMatchDomainService.initClubEntity(clubDto);
+        Optional<Club> result2 = ipscMatchDomainService.initClubEntity(clubDto);
 
         // Assert
         assertTrue(result1.isPresent());
@@ -335,8 +335,8 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(2L)).thenReturn(Optional.of(club2));
 
         // Act
-        Optional<Club> result1 = matchDomainService.initClubEntity(clubDto1);
-        Optional<Club> result2 = matchDomainService.initClubEntity(clubDto2);
+        Optional<Club> result1 = ipscMatchDomainService.initClubEntity(clubDto1);
+        Optional<Club> result2 = ipscMatchDomainService.initClubEntity(clubDto2);
 
         // Assert
         assertTrue(result1.isPresent());
@@ -363,7 +363,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntityForTest));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDtoEmptyName);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDtoEmptyName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -384,7 +384,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubWithMatches));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDto);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -406,7 +406,7 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(Long.MAX_VALUE)).thenReturn(Optional.of(clubForLargeId));
 
         // Act
-        Optional<Club> result = matchDomainService.initClubEntity(clubDtoLargeId);
+        Optional<Club> result = ipscMatchDomainService.initClubEntity(clubDtoLargeId);
 
         // Assert
         assertTrue(result.isPresent());
@@ -427,7 +427,7 @@ public class MatchDomainServiceImplTest {
         matchDtoNoId.setScheduledDate(LocalDateTime.of(2026, 3, 15, 10, 0));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDtoNoId, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDtoNoId, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -444,7 +444,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -461,7 +461,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert - still returns present with newly created entity
         assertTrue(result.isPresent());
@@ -474,7 +474,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -491,7 +491,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(spyMatch));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -505,7 +505,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -520,7 +520,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, null);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, null);
 
         // Assert
         assertTrue(result.isPresent());
@@ -544,7 +544,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(existingMatch));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDtoWithName, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDtoWithName, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -567,7 +567,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(existingMatch));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDtoWithDate, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDtoWithDate, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -586,7 +586,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDtoNoDate, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDtoNoDate, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -600,7 +600,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        matchDomainService.initMatchEntity(matchDto, clubEntity);
+        ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         verify(ipscMatchRepository).findById(eq(100L));
@@ -622,7 +622,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        matchDomainService.initMatchEntity(originalMatchDto, clubEntity);
+        ipscMatchDomainService.initMatchEntity(originalMatchDto, clubEntity);
 
         // Assert
         assertEquals(originalName, originalMatchDto.getName());
@@ -636,8 +636,8 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<IpscMatch> result1 = matchDomainService.initMatchEntity(matchDto, clubEntity);
-        Optional<IpscMatch> result2 = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result1 = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result2 = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         assertTrue(result1.isPresent());
@@ -670,8 +670,8 @@ public class MatchDomainServiceImplTest {
         when(clubRepository.findById(2L)).thenReturn(Optional.of(club2));
 
         // Act
-        Optional<Club> result1 = matchDomainService.initClubEntity(clubDto1);
-        Optional<Club> result2 = matchDomainService.initClubEntity(clubDto2);
+        Optional<Club> result1 = ipscMatchDomainService.initClubEntity(clubDto1);
+        Optional<Club> result2 = ipscMatchDomainService.initClubEntity(clubDto2);
 
         // Assert
         assertTrue(result1.isPresent());
@@ -702,8 +702,8 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(match1)).thenReturn(Optional.of(match2));
 
         // Act
-        Optional<IpscMatch> result1 = matchDomainService.initMatchEntity(matchDto, clubEntity);
-        Optional<IpscMatch> result2 = matchDomainService.initMatchEntity(matchDto, club2);
+        Optional<IpscMatch> result1 = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result2 = ipscMatchDomainService.initMatchEntity(matchDto, club2);
 
         // Assert
         assertTrue(result1.isPresent());
@@ -728,7 +728,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(Long.MAX_VALUE)).thenReturn(Optional.of(matchForLargeId));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDtoLargeId, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDtoLargeId, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -748,7 +748,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchWithDetails));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -770,7 +770,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDtoEmptyName, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDtoEmptyName, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -785,7 +785,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(spyMatch));
 
         // Act
-        matchDomainService.initMatchEntity(matchDto, clubEntity);
+        ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         verify(spyMatch).init(eq(matchDto), eq(clubEntity));
@@ -798,7 +798,7 @@ public class MatchDomainServiceImplTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<IpscMatch> result = matchDomainService.initMatchEntity(matchDto, clubEntity);
+        Optional<IpscMatch> result = ipscMatchDomainService.initMatchEntity(matchDto, clubEntity);
 
         // Assert
         assertTrue(result.isPresent());
@@ -816,7 +816,7 @@ public class MatchDomainServiceImplTest {
     @DisplayName("initCompetitorEntities returns empty map when competitorDtoList is null")
     public void testInitCompetitorEntities_withNullList_returnsEmptyMap() {
         // Act
-        Map<UUID, Competitor> result = matchDomainService.initCompetitorEntities(null);
+        Map<UUID, Competitor> result = ipscMatchDomainService.initCompetitorEntities(null);
 
         // Assert
         assertNotNull(result);
@@ -828,7 +828,7 @@ public class MatchDomainServiceImplTest {
     @DisplayName("initCompetitorEntities returns empty map when competitorDtoList is empty")
     public void testInitCompetitorEntities_withEmptyList_returnsEmptyMap() {
         // Act
-        Map<UUID, Competitor> result = matchDomainService.initCompetitorEntities(new ArrayList<>());
+        Map<UUID, Competitor> result = ipscMatchDomainService.initCompetitorEntities(new ArrayList<>());
 
         // Assert
         assertNotNull(result);
@@ -858,7 +858,7 @@ public class MatchDomainServiceImplTest {
 
         // Act
         Map<UUID, Competitor> result =
-                matchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
+                ipscMatchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
 
         // Assert
         assertNotNull(result);
@@ -909,7 +909,7 @@ public class MatchDomainServiceImplTest {
         when(competitorRepository.findById(3L)).thenReturn(Optional.of(competitor3));
 
         // Act
-        Map<UUID, Competitor> result = matchDomainService.initCompetitorEntities(
+        Map<UUID, Competitor> result = ipscMatchDomainService.initCompetitorEntities(
                 Arrays.asList(competitorDto1, competitorDto2, competitorDto3));
 
         // Assert
@@ -937,7 +937,7 @@ public class MatchDomainServiceImplTest {
 
         // Act
         Map<UUID, Competitor> result =
-                matchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
+                ipscMatchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
 
         // Assert
         assertNotNull(result);
@@ -961,7 +961,7 @@ public class MatchDomainServiceImplTest {
 
         // Act
         Map<UUID, Competitor> result =
-                matchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
+                ipscMatchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
 
         // Assert
         assertNotNull(result);
@@ -996,7 +996,7 @@ public class MatchDomainServiceImplTest {
         when(competitorRepository.findById(2L)).thenReturn(Optional.of(competitor2));
 
         // Act
-        Map<UUID, Competitor> result = matchDomainService.initCompetitorEntities(
+        Map<UUID, Competitor> result = ipscMatchDomainService.initCompetitorEntities(
                 Arrays.asList(competitorDto1, competitorDto2));
 
         // Assert
@@ -1021,7 +1021,7 @@ public class MatchDomainServiceImplTest {
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(spyCompetitor));
 
         // Act
-        matchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
+        ipscMatchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
 
         // Assert
         verify(spyCompetitor, times(1)).init(competitorDto);
@@ -1048,7 +1048,7 @@ public class MatchDomainServiceImplTest {
 
         // Act
         Map<UUID, Competitor> result =
-                matchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
+                ipscMatchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
 
         // Assert
         Competitor resultCompetitor = result.get(competitorUuid);
@@ -1081,7 +1081,7 @@ public class MatchDomainServiceImplTest {
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor1));
 
         // Act
-        Map<UUID, Competitor> result = matchDomainService.initCompetitorEntities(
+        Map<UUID, Competitor> result = ipscMatchDomainService.initCompetitorEntities(
                 Arrays.asList(competitorDto1, competitorDto2));
 
         // Assert
@@ -1110,7 +1110,7 @@ public class MatchDomainServiceImplTest {
 
         // Act
         Map<UUID, Competitor> result =
-                matchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
+                ipscMatchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
 
         // Assert
         Competitor resultCompetitor = result.get(competitorUuid);
@@ -1138,7 +1138,7 @@ public class MatchDomainServiceImplTest {
         }
 
         // Act
-        Map<UUID, Competitor> result = matchDomainService.initCompetitorEntities(competitorDtos);
+        Map<UUID, Competitor> result = ipscMatchDomainService.initCompetitorEntities(competitorDtos);
 
         // Assert
         assertEquals(numCompetitors, result.size());
@@ -1165,7 +1165,7 @@ public class MatchDomainServiceImplTest {
         when(competitorRepository.findById(2L)).thenReturn(Optional.of(competitor2));
 
         // Act
-        matchDomainService.initCompetitorEntities(Arrays.asList(competitorDto1, competitorDto2));
+        ipscMatchDomainService.initCompetitorEntities(Arrays.asList(competitorDto1, competitorDto2));
 
         // Assert
         verify(competitorRepository).findById(1L);
@@ -1196,7 +1196,7 @@ public class MatchDomainServiceImplTest {
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
 
         // Act
-        Map<UUID, Competitor> result = matchDomainService.initCompetitorEntities(
+        Map<UUID, Competitor> result = ipscMatchDomainService.initCompetitorEntities(
                 Arrays.asList(competitorDto1, competitorDto2));
 
         // Assert
@@ -1226,7 +1226,7 @@ public class MatchDomainServiceImplTest {
 
         // Act
         Map<UUID, Competitor> result =
-                matchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
+                ipscMatchDomainService.initCompetitorEntities(Collections.singletonList(competitorDto));
 
         // Assert
         assertEquals(1, result.size());
@@ -1239,8 +1239,8 @@ public class MatchDomainServiceImplTest {
     @DisplayName("initCompetitorEntities returns new empty map instance each call")
     public void testInitCompetitorEntities_returnsNewMapInstance() {
         // Act
-        Map<UUID, Competitor> result1 = matchDomainService.initCompetitorEntities(null);
-        Map<UUID, Competitor> result2 = matchDomainService.initCompetitorEntities(null);
+        Map<UUID, Competitor> result1 = ipscMatchDomainService.initCompetitorEntities(null);
+        Map<UUID, Competitor> result2 = ipscMatchDomainService.initCompetitorEntities(null);
 
         // Assert
         assertNotNull(result1);
@@ -1261,7 +1261,7 @@ public class MatchDomainServiceImplTest {
         Map<UUID, Competitor> competitorMap = new HashMap<>();
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 null, matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1277,7 +1277,7 @@ public class MatchDomainServiceImplTest {
         Map<UUID, Competitor> competitorMap = new HashMap<>();
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 new ArrayList<>(), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1314,7 +1314,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1370,7 +1370,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(21L)).thenReturn(Optional.of(matchCompetitor2));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
                 ClubReference.HPSC);
 
@@ -1425,7 +1425,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(21L)).thenReturn(Optional.of(matchCompetitor2));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
                 ClubReference.HPSC);
 
@@ -1477,7 +1477,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(21L)).thenReturn(Optional.of(matchCompetitor2));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
                 ClubReference.UNKNOWN);
 
@@ -1529,7 +1529,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(21L)).thenReturn(Optional.of(matchCompetitor2));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap, null);
 
         // Assert
@@ -1557,7 +1557,7 @@ public class MatchDomainServiceImplTest {
         matchCompetitorDto.setClub(ClubReference.HPSC);
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1589,7 +1589,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.empty());
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1633,7 +1633,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(21L)).thenReturn(Optional.of(matchCompetitor2));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
                 ClubReference.HPSC);
 
@@ -1667,7 +1667,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(spyMatchCompetitor));
 
         // Act
-        matchDomainService.initMatchCompetitorEntities(
+        ipscMatchDomainService.initMatchCompetitorEntities(
                 Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1700,7 +1700,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1731,7 +1731,7 @@ public class MatchDomainServiceImplTest {
         matchCompetitorDto.setClub(ClubReference.HPSC);
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1768,7 +1768,7 @@ public class MatchDomainServiceImplTest {
         }
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 matchCompetitorDtos, matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1799,7 +1799,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
 
         // Act
-        matchDomainService.initMatchCompetitorEntities(
+        ipscMatchDomainService.initMatchCompetitorEntities(
                 Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1813,9 +1813,9 @@ public class MatchDomainServiceImplTest {
         Map<UUID, Competitor> competitorMap = new HashMap<>();
 
         // Act
-        Map<UUID, MatchCompetitor> result1 = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result1 = ipscMatchDomainService.initMatchCompetitorEntities(
                 null, matchEntity, competitorMap, ClubReference.HPSC);
-        Map<UUID, MatchCompetitor> result2 = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result2 = ipscMatchDomainService.initMatchCompetitorEntities(
                 null, matchEntity, competitorMap, ClubReference.HPSC);
 
         // Assert
@@ -1859,7 +1859,7 @@ public class MatchDomainServiceImplTest {
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
 
         // Act
-        Map<UUID, MatchCompetitor> result = matchDomainService.initMatchCompetitorEntities(
+        Map<UUID, MatchCompetitor> result = ipscMatchDomainService.initMatchCompetitorEntities(
                 Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
                 ClubReference.HPSC);
 

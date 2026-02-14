@@ -11,7 +11,7 @@ import java.util.Optional;
  * It provides methods for searching and retrieving details about competitors based on
  * specific criteria.
  */
-public interface CompetitorService {
+public interface CompetitorEntityService {
     /**
      * Searches for a {@link Competitor} based on the provided details.
      *

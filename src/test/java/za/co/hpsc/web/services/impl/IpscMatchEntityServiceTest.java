@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // TODO: add tests for competitors
 @ExtendWith(MockitoExtension.class)
-public class IpscMatchServiceTest {
+public class IpscMatchEntityServiceTest {
 
     @InjectMocks
     private IpscMatchServiceImpl ipscMatchService;

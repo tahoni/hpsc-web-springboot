@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // TODO: finish this
 @ActiveProfiles("test")
 @SpringBootTest
-public class WinMssServiceIntegrationTest {
+public class IpscServiceIntegrationTest {
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
 
@@ -24,13 +24,13 @@ public class WinMssServiceIntegrationTest {
     private CompetitorRepository competitorRepository;
 
     @Autowired
-    private WinMssService winMssService;
+    private IpscService ipscService;
 
     @Bean
-    public WinMssService winMssService(IpscMatchService ipscMatchService,
-                                       MatchResultService matchResultService,
-                                       TransactionService transactionService) {
-        return new WinMssServiceImpl(ipscMatchService, matchResultService, transactionService);
+    public IpscService winMssService(IpscMatchService ipscMatchService,
+                                     IpscMatchResultService ipscMatchResultService,
+                                     TransactionService transactionService) {
+        return new IpscServiceImpl(ipscMatchService, ipscMatchResultService, transactionService);
     }
 
     @Bean
@@ -39,13 +39,13 @@ public class WinMssServiceIntegrationTest {
     }
 
     @Bean
-    public TransactionService transactionService(MatchDomainService matchDomainService,
+    public TransactionService transactionService(IpscMatchDomainService ipscMatchDomainService,
                                                  ClubRepository clubRepository,
                                                  IpscMatchRepository ipscMatchRepository,
                                                  IpscMatchStageRepository ipscMatchStageRepository,
                                                  MatchCompetitorRepository matchCompetitorRepository,
                                                  MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, matchDomainService, clubRepository,
+        return new TransactionServiceImpl(platformTransactionManager, ipscMatchDomainService, clubRepository,
                 competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
                 matchCompetitorRepository, matchStageCompetitorRepository);
     }
@@ -64,7 +64,7 @@ public class WinMssServiceIntegrationTest {
                 """;
 
         IpscMatchRecordHolder ipscMatchRecordHolder = assertDoesNotThrow(() ->
-                winMssService.importWinMssCabFile(cabFileContent));
+                ipscService.importWinMssCabFile(cabFileContent));
         assertNotNull(ipscMatchRecordHolder);
         assertNotNull(ipscMatchRecordHolder.matches());
         assertEquals(1, ipscMatchRecordHolder.matches().size());

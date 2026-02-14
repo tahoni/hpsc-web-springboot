@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.repositories.CompetitorRepository;
-import za.co.hpsc.web.services.CompetitorService;
+import za.co.hpsc.web.services.CompetitorEntityService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,10 +15,10 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class CompetitorServiceImpl implements CompetitorService {
+public class CompetitorEntityServiceImpl implements CompetitorEntityService {
     protected final CompetitorRepository competitorRepository;
 
-    public CompetitorServiceImpl(CompetitorRepository competitorRepository) {
+    public CompetitorEntityServiceImpl(CompetitorRepository competitorRepository) {
         this.competitorRepository = competitorRepository;
     }
 

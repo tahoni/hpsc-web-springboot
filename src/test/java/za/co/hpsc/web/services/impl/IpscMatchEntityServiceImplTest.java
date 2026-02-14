@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IpscMatchServiceImplTest {
+public class IpscMatchEntityServiceImplTest {
 
     @InjectMocks
     private IpscMatchServiceImpl ipscMatchService;

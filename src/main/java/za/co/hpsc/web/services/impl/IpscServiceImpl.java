@@ -18,28 +18,29 @@ import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+import za.co.hpsc.web.services.IpscMatchResultService;
 import za.co.hpsc.web.services.IpscMatchService;
-import za.co.hpsc.web.services.MatchResultService;
+import za.co.hpsc.web.services.IpscService;
 import za.co.hpsc.web.services.TransactionService;
-import za.co.hpsc.web.services.WinMssService;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: add Javadoc
 @Slf4j
 @Service
-public class WinMssServiceImpl implements WinMssService {
+public class IpscServiceImpl implements IpscService {
 
     protected final IpscMatchService ipscMatchService;
-    protected final MatchResultService matchResultService;
+    protected final IpscMatchResultService ipscMatchResultService;
     protected final TransactionService transactionService;
 
-    public WinMssServiceImpl(IpscMatchService ipscMatchService, MatchResultService matchResultService,
-                             TransactionService transactionService) {
+    public IpscServiceImpl(IpscMatchService ipscMatchService, IpscMatchResultService ipscMatchResultService,
+                           TransactionService transactionService) {
         this.ipscMatchService = ipscMatchService;
-        this.matchResultService = matchResultService;
+        this.ipscMatchResultService = ipscMatchResultService;
         this.transactionService = transactionService;
     }
 
@@ -92,7 +93,7 @@ public class WinMssServiceImpl implements WinMssService {
         List<MatchResultsDto> matchResultsList = new ArrayList<>();
         // Iterates responses; persists match results; accumulates DTOs
         for (IpscResponse ipscResponse : ipscResponseHolder.getIpscList()) {
-            Optional<MatchResultsDto> optionalMatchResults = matchResultService.initMatchResults(ipscResponse);
+            Optional<MatchResultsDto> optionalMatchResults = ipscMatchResultService.initMatchResults(ipscResponse);
             // Persists match results if present and associates the match entity with it
             if (optionalMatchResults.isPresent()) {
                 // Persists the match results

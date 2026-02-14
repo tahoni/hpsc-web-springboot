@@ -14,25 +14,25 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class MatchResultServiceImpl implements MatchResultService {
-    protected final ClubService clubService;
-    protected final MatchService matchService;
-    protected final CompetitorService competitorService;
-    protected final MatchStageService matchStageService;
-    protected final MatchCompetitorService matchCompetitorService;
-    protected final MatchStageCompetitorService matchStageCompetitorService;
+public class IpscMatchResultServiceImpl implements IpscMatchResultService {
+    protected final ClubEntityService clubEntityService;
+    protected final MatchEntityService matchEntityService;
+    protected final CompetitorEntityService competitorEntityService;
+    protected final MatchStageEntityService matchStageEntityService;
+    protected final MatchCompetitorEntityService matchCompetitorEntityService;
+    protected final MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
-    public MatchResultServiceImpl(ClubService clubService, MatchService matchService,
-                                  CompetitorService competitorService, MatchStageService matchStageService,
-                                  MatchCompetitorService matchCompetitorService,
-                                  MatchStageCompetitorService matchStageCompetitorService) {
+    public IpscMatchResultServiceImpl(ClubEntityService clubEntityService, MatchEntityService matchEntityService,
+                                      CompetitorEntityService competitorEntityService, MatchStageEntityService matchStageEntityService,
+                                      MatchCompetitorEntityService matchCompetitorEntityService,
+                                      MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
 
-        this.clubService = clubService;
-        this.matchService = matchService;
-        this.competitorService = competitorService;
-        this.matchStageService = matchStageService;
-        this.matchCompetitorService = matchCompetitorService;
-        this.matchStageCompetitorService = matchStageCompetitorService;
+        this.clubEntityService = clubEntityService;
+        this.matchEntityService = matchEntityService;
+        this.competitorEntityService = competitorEntityService;
+        this.matchStageEntityService = matchStageEntityService;
+        this.matchCompetitorEntityService = matchCompetitorEntityService;
+        this.matchStageCompetitorEntityService = matchStageCompetitorEntityService;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MatchResultServiceImpl implements MatchResultService {
 
         // Attempts to find the club by name and abbreviation in the database
         Optional<Club> optionalClub =
-                clubService.findClub(clubResponse.getClubName(), clubResponse.getClubCode());
+                clubEntityService.findClub(clubResponse.getClubName(), clubResponse.getClubCode());
 
         // Creates a new club DTO, from either the found entity or the club response
         ClubDto clubDto = optionalClub
@@ -105,7 +105,7 @@ public class MatchResultServiceImpl implements MatchResultService {
 
         // Attempts to find the match by name and date in the database
         Optional<IpscMatch> optionalMatch =
-                matchService.findMatch(ipscResponse.getMatch().getMatchName());
+                matchEntityService.findMatch(ipscResponse.getMatch().getMatchName());
         boolean ipscMatchExists = optionalMatch.isPresent();
         boolean ipscResponseHasNewerScore = false;
         // Determines the last updated date of the match
@@ -150,7 +150,7 @@ public class MatchResultServiceImpl implements MatchResultService {
         // Iterates through each stage response
         stageResponses.forEach(stageResponse -> {
             // Attempts to find the match stage by match ID and stage ID in the database
-            Optional<IpscMatchStage> optionalMatchStage = matchStageService.findMatchStage(matchDto.getId(),
+            Optional<IpscMatchStage> optionalMatchStage = matchStageEntityService.findMatchStage(matchDto.getId(),
                     stageResponse.getStageId());
             // Creates a new stage DTO, from either the found entity or the stage response
             MatchStageDto matchStageDto = optionalMatchStage
@@ -198,7 +198,7 @@ public class MatchResultServiceImpl implements MatchResultService {
             // Attempts to find the competitor by ICS alias, first name, last name, and
             // date of birth in the database
             Optional<Competitor> optionalCompetitor =
-                    competitorService.findCompetitor(memberResponse.getIcsAlias(),
+                    competitorEntityService.findCompetitor(memberResponse.getIcsAlias(),
                             memberResponse.getFirstName(), memberResponse.getLastName(),
                             memberResponse.getDateOfBirth());
             // Creates a new competitor DTO, from either the found entity or the member response
@@ -238,7 +238,7 @@ public class MatchResultServiceImpl implements MatchResultService {
             Optional<MatchCompetitor> optionalMatchCompetitor = Optional.empty();
             if (matchResultsDto.getMatch().getId() != null) {
                 optionalMatchCompetitor =
-                        matchCompetitorService.findMatchCompetitor(competitorDto.getId(),
+                        matchCompetitorEntityService.findMatchCompetitor(competitorDto.getId(),
                                 matchResultsDto.getMatch().getId());
             }
 
@@ -268,7 +268,7 @@ public class MatchResultServiceImpl implements MatchResultService {
                     // Attempts to find the match stage competitor by competitor ID, stage ID,
                     // and match ID
                     Optional<MatchStageCompetitor> optionalMatchStageCompetitor =
-                            matchStageCompetitorService.findMatchStageCompetitor(stageDto, competitorDto);
+                            matchStageCompetitorEntityService.findMatchStageCompetitor(stageDto, competitorDto);
                     // Creates a new match stage competitor DTO, from either the found entity
                     // or the competitor DTO
                     MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor

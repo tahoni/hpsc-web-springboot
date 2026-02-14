@@ -4,17 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.services.MatchService;
+import za.co.hpsc.web.services.MatchEntityService;
 
 import java.util.Optional;
 
 // TOOD: add tests
 @Slf4j
 @Service
-public class MatchServiceImpl implements MatchService {
+public class MatchEntityServiceImpl implements MatchEntityService {
     protected final IpscMatchRepository matchRepository;
 
-    public MatchServiceImpl(IpscMatchRepository matchRepository) {
+    public MatchEntityServiceImpl(IpscMatchRepository matchRepository) {
         this.matchRepository = matchRepository;
     }
 

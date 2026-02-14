@@ -17,7 +17,7 @@ import java.util.Optional;
  * {@link MatchResultsDto} object.
  * </p>
  */
-public interface MatchResultService {
+public interface IpscMatchResultService {
     /**
      * Initialises and returns the match results data transfer object (DTO) based on the
      * provided IPSC response.

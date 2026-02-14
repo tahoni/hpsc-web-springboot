@@ -4,16 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.services.ClubService;
+import za.co.hpsc.web.services.ClubEntityService;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class ClubServiceImpl implements ClubService {
+public class ClubEntityServiceImpl implements ClubEntityService {
     protected final ClubRepository clubRepository;
 
-    public ClubServiceImpl(ClubRepository clubRepository) {
+    public ClubEntityServiceImpl(ClubRepository clubRepository) {
         this.clubRepository = clubRepository;
     }
 

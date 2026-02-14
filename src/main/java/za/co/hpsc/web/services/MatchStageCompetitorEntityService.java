@@ -7,12 +7,12 @@ import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 import java.util.Optional;
 
 /**
- * The {@code MatchStageCompetitorService} interface defines the contract for operations
+ * The {@code MatchStageCompetitorEntityService} interface defines the contract for operations
  * involving relationships between competitors and match stages in the system.
  * It provides methods for searching and retrieving details about match stage competitors
  * based on specific criteria.
  */
-public interface MatchStageCompetitorService {
+public interface MatchStageCompetitorEntityService {
     /**
      * Finds and retrieves a {@link MatchStageCompetitor} entity based on the provided match stage ID,
      * and competitor ID.

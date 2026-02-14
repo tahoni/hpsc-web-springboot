@@ -5,12 +5,12 @@ import za.co.hpsc.web.domain.IpscMatch;
 import java.util.Optional;
 
 /**
- * The {@code MatchService} interface defines the contract for operations related to
+ * The {@code MatchEntityService} interface defines the contract for operations related to
  * match information within the system.
  * It provides methods for searching and retrieving details about matches based on
  * specific criteria.
  */
-public interface MatchService {
+public interface MatchEntityService {
     /**
      * Searches for a match based on the provided details.
      *

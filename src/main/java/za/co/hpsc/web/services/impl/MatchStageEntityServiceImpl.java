@@ -4,16 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
-import za.co.hpsc.web.services.MatchStageService;
+import za.co.hpsc.web.services.MatchStageEntityService;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class MatchStageServiceImpl implements MatchStageService {
+public class MatchStageEntityServiceImpl implements MatchStageEntityService {
     protected final IpscMatchStageRepository matchStageRepository;
 
-    public MatchStageServiceImpl(IpscMatchStageRepository matchStageRepository) {
+    public MatchStageEntityServiceImpl(IpscMatchStageRepository matchStageRepository) {
         this.matchStageRepository = matchStageRepository;
     }
 

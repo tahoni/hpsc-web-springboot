@@ -14,7 +14,7 @@ import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
  * functionality required to manage the WinMSS integration.
  * </p>
  */
-public interface WinMssService {
+public interface IpscService {
     /**
      * Imports and processes the content of a WinMSS.cab file.
      *

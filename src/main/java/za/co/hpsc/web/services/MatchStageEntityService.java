@@ -10,7 +10,7 @@ import java.util.Optional;
  * It provides methods for searching and retrieving details about match stages based on
  * specific criteria.
  */
-public interface MatchStageService {
+public interface MatchStageEntityService {
     /**
      * Searches for a specific match stage within a match based on the provided match ID
      * and stage number.

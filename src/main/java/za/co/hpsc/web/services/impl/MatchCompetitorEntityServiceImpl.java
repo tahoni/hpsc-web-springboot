@@ -4,16 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.services.MatchCompetitorService;
+import za.co.hpsc.web.services.MatchCompetitorEntityService;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class MatchCompetitorServiceImpl implements MatchCompetitorService {
+public class MatchCompetitorEntityServiceImpl implements MatchCompetitorEntityService {
     protected final MatchCompetitorRepository matchCompetitorRepository;
 
-    public MatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository) {
+    public MatchCompetitorEntityServiceImpl(MatchCompetitorRepository matchCompetitorRepository) {
         this.matchCompetitorRepository = matchCompetitorRepository;
     }
 

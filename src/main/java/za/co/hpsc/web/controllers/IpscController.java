@@ -17,7 +17,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
-import za.co.hpsc.web.services.WinMssService;
+import za.co.hpsc.web.services.IpscService;
 
 /**
  * Controller responsible for handling IPSC-related API endpoints.
@@ -31,10 +31,10 @@ import za.co.hpsc.web.services.WinMssService;
 @RequestMapping("/ipsc")
 @Tag(name = "IPSC", description = "API for functionality related to IPSC directly.")
 public class IpscController {
-    private final WinMssService winMssService;
+    private final IpscService ipscService;
 
-    public IpscController(WinMssService winMssService) {
-        this.winMssService = winMssService;
+    public IpscController(IpscService ipscService) {
+        this.ipscService = ipscService;
     }
 
     /**
@@ -71,6 +71,6 @@ public class IpscController {
                     ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {
-        return ResponseEntity.ok(winMssService.importWinMssCabFile(cabFileContent));
+        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
     }
 }

@@ -5,12 +5,12 @@ import za.co.hpsc.web.domain.Club;
 import java.util.Optional;
 
 /**
- * The {@code ClubService} interface defines the contract for operations related to
+ * The {@code ClubEntityService} interface defines the contract for operations related to
  * club information within the system.
  * It provides methods for searching and retrieving details about clubs based on
  * specific criteria.
  */
-public interface ClubService {
+public interface ClubEntityService {
     /**
      * Searches for a {@link Club} entity based on the provided details.
      *

@@ -19,34 +19,34 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MatchResultServiceImplTest {
+public class IpscMatchResultServiceImplTest {
 
     @Mock
-    private ClubService clubService;
+    private ClubEntityService clubEntityService;
 
     @Mock
-    private CompetitorService competitorService;
+    private CompetitorEntityService competitorEntityService;
 
     @Mock
-    private MatchStageService matchStageService;
+    private MatchStageEntityService matchStageEntityService;
 
     @Mock
-    private MatchCompetitorService matchCompetitorService;
+    private MatchCompetitorEntityService matchCompetitorEntityService;
 
     @Mock
-    private MatchStageCompetitorService matchStageCompetitorService;
+    private MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
     @InjectMocks
-    private MatchResultServiceImpl matchResultService;
+    private IpscMatchResultServiceImpl ipscMatchResultService;
 
     @Test
     public void testInitClub_withNullResponse_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubDto> result = matchResultService.initClub(null);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(null);
 
         // Assert
         assertTrue(result.isEmpty());
-        verifyNoInteractions(clubService);
+        verifyNoInteractions(clubEntityService);
     }
 
     @Test
@@ -61,10 +61,10 @@ public class MatchResultServiceImplTest {
         existingClub.setName("Test Club");
         existingClub.setAbbreviation("TC");
 
-        when(clubService.findClub("Test Club", "TC")).thenReturn(Optional.of(existingClub));
+        when(clubEntityService.findClub("Test Club", "TC")).thenReturn(Optional.of(existingClub));
 
         // Act
-        Optional<ClubDto> result = matchResultService.initClub(clubResponse);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse);
 
         // Assert
         assertTrue(result.isPresent());
@@ -72,7 +72,7 @@ public class MatchResultServiceImplTest {
         assertEquals(101L, clubDto.getId());
         assertEquals("Test Club", clubDto.getName());
         assertEquals("TC", clubDto.getAbbreviation());
-        verify(clubService, times(1)).findClub("Test Club", "TC");
+        verify(clubEntityService, times(1)).findClub("Test Club", "TC");
     }
 
     @Test
@@ -82,10 +82,10 @@ public class MatchResultServiceImplTest {
         clubResponse.setClubName("Non-existent Club");
         clubResponse.setClubCode("NC");
 
-        when(clubService.findClub("Non-existent Club", "NC")).thenReturn(Optional.empty());
+        when(clubEntityService.findClub("Non-existent Club", "NC")).thenReturn(Optional.empty());
 
         // Act
-        Optional<ClubDto> result = matchResultService.initClub(clubResponse);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse);
 
         // Assert
         assertTrue(result.isPresent());
@@ -93,7 +93,7 @@ public class MatchResultServiceImplTest {
         assertNull(clubDto.getId());
         assertEquals("Non-existent Club", clubDto.getName());
         assertEquals("NC", clubDto.getAbbreviation());
-        verify(clubService, times(1)).findClub("Non-existent Club", "NC");
+        verify(clubEntityService, times(1)).findClub("Non-existent Club", "NC");
     }
 
     @Test
@@ -103,12 +103,12 @@ public class MatchResultServiceImplTest {
         matchDto.setId(1L);
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, null);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, null);
 
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verifyNoInteractions(matchStageService);
+        verifyNoInteractions(matchStageEntityService);
     }
 
     @Test
@@ -118,12 +118,12 @@ public class MatchResultServiceImplTest {
         matchDto.setId(1L);
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, List.of());
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, List.of());
 
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verifyNoInteractions(matchStageService);
+        verifyNoInteractions(matchStageEntityService);
     }
 
     @Test
@@ -155,19 +155,19 @@ public class MatchResultServiceImplTest {
         matchStage2.setMatch(match);
         matchStage2.setStageNumber(2);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage1));
-        when(matchStageService.findMatchStage(1L, 2)).thenReturn(Optional.of(matchStage2));
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage1));
+        when(matchStageEntityService.findMatchStage(1L, 2)).thenReturn(Optional.of(matchStage2));
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(10L, result.getFirst().getId());
         assertEquals(20L, result.get(1).getId());
-        verify(matchStageService, times(1)).findMatchStage(1L, 1);
-        verify(matchStageService, times(1)).findMatchStage(1L, 2);
+        verify(matchStageEntityService, times(1)).findMatchStage(1L, 1);
+        verify(matchStageEntityService, times(1)).findMatchStage(1L, 2);
     }
 
     @Test
@@ -186,19 +186,19 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse1, stageResponse2);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
-        when(matchStageService.findMatchStage(1L, 2)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 2)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertNull(result.getFirst().getId());
         assertNull(result.get(1).getId());
-        verify(matchStageService, times(1)).findMatchStage(1L, 1);
-        verify(matchStageService, times(1)).findMatchStage(1L, 2);
+        verify(matchStageEntityService, times(1)).findMatchStage(1L, 1);
+        verify(matchStageEntityService, times(1)).findMatchStage(1L, 2);
     }
 
     @Test
@@ -225,19 +225,19 @@ public class MatchResultServiceImplTest {
         matchStage1.setMatch(match);
         matchStage1.setStageNumber(1);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage1));
-        when(matchStageService.findMatchStage(1L, 2)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage1));
+        when(matchStageEntityService.findMatchStage(1L, 2)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(10L, result.getFirst().getId());
         assertNull(result.get(1).getId());
-        verify(matchStageService, times(1)).findMatchStage(1L, 1);
-        verify(matchStageService, times(1)).findMatchStage(1L, 2);
+        verify(matchStageEntityService, times(1)).findMatchStage(1L, 1);
+        verify(matchStageEntityService, times(1)).findMatchStage(1L, 2);
     }
 
     @Test
@@ -260,17 +260,17 @@ public class MatchResultServiceImplTest {
         matchStage.setMatch(match);
         matchStage.setStageNumber(1);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage));
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage));
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(100L, result.getFirst().getId());
         assertEquals(1, result.getFirst().getIndex());
-        verify(matchStageService, times(1)).findMatchStage(1L, 1);
+        verify(matchStageEntityService, times(1)).findMatchStage(1L, 1);
     }
 
     @Test
@@ -292,10 +292,10 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse);
 
-        when(matchStageService.findMatchStage(1L, 5)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 5)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -330,10 +330,10 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -364,11 +364,11 @@ public class MatchResultServiceImplTest {
         }
 
         for (int i = 1; i <= 20; i++) {
-            when(matchStageService.findMatchStage(1L, i)).thenReturn(Optional.empty());
+            when(matchStageEntityService.findMatchStage(1L, i)).thenReturn(Optional.empty());
         }
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -377,7 +377,7 @@ public class MatchResultServiceImplTest {
             assertEquals(i + 1, result.get(i).getStageNumber());
             assertEquals("Stage " + (i + 1), result.get(i).getStageName());
         }
-        verify(matchStageService, times(20)).findMatchStage(eq(1L), anyInt());
+        verify(matchStageEntityService, times(20)).findMatchStage(eq(1L), anyInt());
     }
 
     @Test
@@ -396,10 +396,10 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -437,10 +437,10 @@ public class MatchResultServiceImplTest {
         matchStage.setTargetPaper(3);
         matchStage.setTargetPopper(4);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage));
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.of(matchStage));
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -474,12 +474,12 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse1, stageResponse2, stageResponse3);
 
-        when(matchStageService.findMatchStage(1L, 10)).thenReturn(Optional.empty());
-        when(matchStageService.findMatchStage(1L, 20)).thenReturn(Optional.empty());
-        when(matchStageService.findMatchStage(1L, 30)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 10)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 20)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 30)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -508,10 +508,10 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -531,10 +531,10 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse);
 
-        when(matchStageService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -558,11 +558,11 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse1, stageResponse2);
 
-        when(matchStageService.findMatchStage(1L, 9999)).thenReturn(Optional.empty());
-        when(matchStageService.findMatchStage(1L, 10000)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 9999)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, 10000)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -590,10 +590,10 @@ public class MatchResultServiceImplTest {
 
         List<StageResponse> stageResponses = List.of(stageResponse);
 
-        when(matchStageService.findMatchStage(1L, Integer.MAX_VALUE)).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(1L, Integer.MAX_VALUE)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = matchResultService.initStages(matchDto, stageResponses);
+        List<MatchStageDto> result = ipscMatchResultService.initStages(matchDto, stageResponses);
 
         // Assert
         assertNotNull(result);
@@ -616,10 +616,10 @@ public class MatchResultServiceImplTest {
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
         // Act
-        matchResultService.initScores(matchResultsDto, null);
+        ipscMatchResultService.initScores(matchResultsDto, null);
 
         // Assert
-        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+        verifyNoInteractions(competitorEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
 
     @Test
@@ -630,10 +630,10 @@ public class MatchResultServiceImplTest {
         ipscResponse.setScores(null);
 
         // Act
-        matchResultService.initScores(matchResultsDto, ipscResponse);
+        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
 
         // Assert
-        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+        verifyNoInteractions(competitorEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
 
     @Test
@@ -645,10 +645,10 @@ public class MatchResultServiceImplTest {
         ipscResponse.setMembers(null);
 
         // Act
-        matchResultService.initScores(matchResultsDto, ipscResponse);
+        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
 
         // Assert
-        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+        verifyNoInteractions(competitorEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
 
     @Test
@@ -671,12 +671,12 @@ public class MatchResultServiceImplTest {
         ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
         // Act
-        matchResultService.initScores(matchResultsDto, ipscResponse);
+        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
 
         // Assert
         assertNotNull(matchResultsDto.getCompetitors());
         assertTrue(matchResultsDto.getCompetitors().isEmpty());
-        verifyNoInteractions(competitorService, matchCompetitorService, matchStageCompetitorService);
+        verifyNoInteractions(competitorEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
 
     @Test
@@ -709,22 +709,22 @@ public class MatchResultServiceImplTest {
         MatchCompetitor existingMatchCompetitor = new MatchCompetitor();
         existingMatchCompetitor.setId(20L);
 
-        when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
+        when(competitorEntityService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorService.findMatchCompetitor(10L, 1L))
+        when(matchCompetitorEntityService.findMatchCompetitor(10L, 1L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
 
         // Act
-        matchResultService.initScores(matchResultsDto, ipscResponse);
+        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
 
         // Assert
         assertNotNull(matchResultsDto.getCompetitors());
         assertEquals(1, matchResultsDto.getCompetitors().size());
         assertEquals(10L, matchResultsDto.getCompetitors().getFirst().getId());
         assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorService, times(1))
+        verify(competitorEntityService, times(1))
                 .findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorService, times(1))
+        verify(matchCompetitorEntityService, times(1))
                 .findMatchCompetitor(10L, 1L);
     }
 
@@ -751,22 +751,22 @@ public class MatchResultServiceImplTest {
         List<MemberRequest> memberRequests = List.of(memberResponse);
         ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
 
-        when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
+        when(competitorEntityService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.empty());
-        when(matchCompetitorService.findMatchCompetitor(null, 1L))
+        when(matchCompetitorEntityService.findMatchCompetitor(null, 1L))
                 .thenReturn(Optional.empty());
 
         // Act
-        matchResultService.initScores(matchResultsDto, ipscResponse);
+        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
 
         // Assert
         assertNotNull(matchResultsDto.getCompetitors());
         assertEquals(1, matchResultsDto.getCompetitors().size());
         assertNull(matchResultsDto.getCompetitors().getFirst().getId());
         assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorService, times(1))
+        verify(competitorEntityService, times(1))
                 .findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorService, times(1))
+        verify(matchCompetitorEntityService, times(1))
                 .findMatchCompetitor(null, 1L);
     }
 
@@ -808,21 +808,21 @@ public class MatchResultServiceImplTest {
         MatchStageCompetitor existingMatchStageCompetitor = new MatchStageCompetitor();
         existingMatchStageCompetitor.setId(30L);
 
-        when(competitorService.findCompetitor("ALIAS100", "John", "Doe", null))
+        when(competitorEntityService.findCompetitor("ALIAS100", "John", "Doe", null))
                 .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorService.findMatchCompetitor(10L, 1L))
+        when(matchCompetitorEntityService.findMatchCompetitor(10L, 1L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
-        when(matchStageCompetitorService.findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class)))
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class)))
                 .thenReturn(Optional.of(existingMatchStageCompetitor));
 
         // Act
-        matchResultService.initScores(matchResultsDto, ipscResponse);
+        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
 
         // Assert
         assertNotNull(matchResultsDto.getMatchStageCompetitors());
         assertEquals(1, matchResultsDto.getMatchStageCompetitors().size());
         assertEquals(30L, matchResultsDto.getMatchStageCompetitors().getFirst().getId());
-        verify(matchStageCompetitorService, times(1))
+        verify(matchStageCompetitorEntityService, times(1))
                 .findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class));
     }
 }
