@@ -6,7 +6,7 @@ import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import java.util.Optional;
 
 // TODO: Javadoc
-public interface IpscMatchDomainService {
+public interface IpscDomainService {
     /**
      *
      * @param matchResults

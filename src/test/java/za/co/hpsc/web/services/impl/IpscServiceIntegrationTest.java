@@ -39,13 +39,13 @@ public class IpscServiceIntegrationTest {
     }
 
     @Bean
-    public TransactionService transactionService(IpscMatchDomainService ipscMatchDomainService,
+    public TransactionService transactionService(IpscDomainService ipscDomainService,
                                                  ClubRepository clubRepository,
                                                  IpscMatchRepository ipscMatchRepository,
                                                  IpscMatchStageRepository ipscMatchStageRepository,
                                                  MatchCompetitorRepository matchCompetitorRepository,
                                                  MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, ipscMatchDomainService, clubRepository,
+        return new TransactionServiceImpl(platformTransactionManager, ipscDomainService, clubRepository,
                 competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
                 matchCompetitorRepository, matchStageCompetitorRepository);
     }

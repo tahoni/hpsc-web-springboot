@@ -66,6 +66,7 @@ public class IpscMatch {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
+    private LocalDateTime dateRefreshed;
 
     /**
      * Initialises the current {@code Match} entity with data from a DTO

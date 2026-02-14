@@ -8,7 +8,7 @@ import za.co.hpsc.web.enums.ClubReference;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.IpscMatchDomainService;
+import za.co.hpsc.web.services.IpscDomainService;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 // TODO: Javadoc
 @Slf4j
 @Service
-public class IpscMatchDomainServiceImpl implements IpscMatchDomainService {
+public class IpscDomainServiceImpl implements IpscDomainService {
     protected final ClubRepository clubRepository;
     protected final CompetitorRepository competitorRepository;
     protected final IpscMatchRepository ipscMatchRepository;
@@ -24,12 +24,12 @@ public class IpscMatchDomainServiceImpl implements IpscMatchDomainService {
     protected final MatchCompetitorRepository matchCompetitorRepository;
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
-    public IpscMatchDomainServiceImpl(ClubRepository clubRepository,
-                                      CompetitorRepository competitorRepository,
-                                      IpscMatchRepository ipscMatchRepository,
-                                      IpscMatchStageRepository ipscMatchStageRepository,
-                                      MatchCompetitorRepository matchCompetitorRepository,
-                                      MatchStageCompetitorRepository matchStageCompetitorRepository) {
+    public IpscDomainServiceImpl(ClubRepository clubRepository,
+                                 CompetitorRepository competitorRepository,
+                                 IpscMatchRepository ipscMatchRepository,
+                                 IpscMatchStageRepository ipscMatchStageRepository,
+                                 MatchCompetitorRepository matchCompetitorRepository,
+                                 MatchStageCompetitorRepository matchStageCompetitorRepository) {
         this.clubRepository = clubRepository;
         this.ipscMatchRepository = ipscMatchRepository;
         this.competitorRepository = competitorRepository;

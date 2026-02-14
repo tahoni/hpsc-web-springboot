@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IpscMatchDomainServiceTest {
+public class IpscDomainServiceTest {
     @Mock
     private ClubRepository clubRepository;
 
@@ -41,7 +41,7 @@ public class IpscMatchDomainServiceTest {
     private MatchStageCompetitorRepository matchStageCompetitorRepository;
 
     @InjectMocks
-    private IpscMatchDomainServiceImpl ipscMatchDomainService;
+    private IpscDomainServiceImpl ipscDomainService;
 
     private MatchResultsDto matchResultsDto;
     private MatchDto matchDto;
@@ -86,7 +86,7 @@ public class IpscMatchDomainServiceTest {
         nullMatchDto.setMatch(null);
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(nullMatchDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(nullMatchDto);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -100,7 +100,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -120,7 +120,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -136,7 +136,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -183,7 +183,7 @@ public class IpscMatchDomainServiceTest {
         when(competitorRepository.findById(2L)).thenReturn(Optional.of(competitor2));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -226,7 +226,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchStageRepository.findById(11L)).thenReturn(Optional.of(stage2));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -272,7 +272,7 @@ public class IpscMatchDomainServiceTest {
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -333,7 +333,7 @@ public class IpscMatchDomainServiceTest {
         when(matchStageCompetitorRepository.findById(30L)).thenReturn(Optional.of(stageCompetitor));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -355,7 +355,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -380,7 +380,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -439,7 +439,7 @@ public class IpscMatchDomainServiceTest {
         when(matchCompetitorRepository.findById(21L)).thenReturn(Optional.of(matchCompetitor2));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -456,7 +456,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -486,7 +486,7 @@ public class IpscMatchDomainServiceTest {
         when(competitorRepository.findById(1L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -511,7 +511,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchStageRepository.findById(10L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -541,7 +541,7 @@ public class IpscMatchDomainServiceTest {
         when(competitorRepository.findById(anyLong())).thenReturn(Optional.of(new Competitor()));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -559,7 +559,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        Optional<MatchEntityHolder> result = ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        Optional<MatchEntityHolder> result = ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -576,7 +576,7 @@ public class IpscMatchDomainServiceTest {
         when(ipscMatchRepository.findById(100L)).thenReturn(Optional.of(matchEntity));
 
         // Act
-        ipscMatchDomainService.initMatchEntities(matchResultsDto);
+        ipscDomainService.initMatchEntities(matchResultsDto);
 
         // Assert
         verify(clubRepository, times(1)).findById(1L);
