@@ -2,7 +2,8 @@ package za.co.hpsc.web.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.records.IpscRankingClubHolderRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscRankingMatchHolderRecord;
 import za.co.hpsc.web.services.IpscRankingService;
 
 // TODO: Javadoc
@@ -11,12 +12,12 @@ import za.co.hpsc.web.services.IpscRankingService;
 @Service
 public class IpscRankingServiceImpl implements IpscRankingService {
     @Override
-    public IpscMatchRecordHolder refreshClubLogs(String matchName) {
-        return null;
+    public IpscRankingClubHolderRecord refreshClubRankings(String matchName) {
+
     }
 
     @Override
-    public IpscMatchRecordHolder refreshMatchRankings(String matchName) {
+    public IpscRankingMatchHolderRecord refreshMatchRankings(String matchName) {
         return null;
     }
 }

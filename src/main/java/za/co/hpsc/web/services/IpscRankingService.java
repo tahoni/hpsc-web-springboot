@@ -1,10 +1,11 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.records.IpscRankingClubHolderRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscRankingMatchHolderRecord;
 
 // TODO: Javadoc
 public interface IpscRankingService {
-    public IpscMatchRecordHolder refreshClubLogs(String matchName);
+    IpscRankingClubHolderRecord refreshClubRankings(String clubName);
 
-    public IpscMatchRecordHolder refreshMatchRankings(String matchName);
+    IpscRankingMatchHolderRecord refreshMatchRankings(String matchName);
 }
