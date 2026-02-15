@@ -10,6 +10,7 @@ import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,9 +27,12 @@ public class MatchClubCompetitor {
     @JoinColumn(name = "competitor_id")
     private Competitor competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "match_id")
-    private IpscMatch match;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id")
+    private Club club;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<IpscMatch> matches;
 
     @Enumerated(EnumType.STRING)
     private ClubIdentifier clubIdentifier;
