@@ -8,6 +8,7 @@ import za.co.hpsc.web.services.ClubEntityService;
 
 import java.util.Optional;
 
+// TODO: add tests
 @Slf4j
 @Service
 public class ClubEntityServiceImpl implements ClubEntityService {
@@ -19,6 +20,10 @@ public class ClubEntityServiceImpl implements ClubEntityService {
 
     @Override
     public Optional<Club> findClub(String name, String abbreviation) {
+        if (((name == null) || (name.isBlank())) && ((abbreviation == null) || (abbreviation.isBlank()))) {
+            return Optional.empty();
+        }
+
         Optional<Club> optionalClub = Optional.empty();
 
         // Attempt to find the club by name
@@ -36,5 +41,15 @@ public class ClubEntityServiceImpl implements ClubEntityService {
         });
 
         return Optional.ofNullable(club);
+    }
+
+    @Override
+    public Optional<Club> findClub(String name) {
+        if (name == null || name.isBlank()) {
+            return Optional.empty();
+        }
+
+        // Attempt to find the club by name
+        return clubRepository.findByName(name);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.repositories.*;
@@ -49,7 +50,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<IpscMatch> saveMatchResults(MatchResultsDto matchResults) {
+    public Optional<IpscMatch> saveMatchResults(MatchResultsDto matchResults)
+            throws FatalException {
 
         if ((matchResults == null) || (matchResults.getMatch() == null)) {
             return Optional.empty();
@@ -77,15 +79,10 @@ public class TransactionServiceImpl implements TransactionService {
             transactionManager.commit(transaction);
             return optionalMatch.map(MatchEntityHolder::getMatch);
 
-/*
         } catch (Exception e) {
             transactionManager.rollback(transaction);
             log.error(e.getMessage(), e);
             throw new FatalException("Unable to save the match: " + e.getMessage(), e);
-        }
-*/
-        } finally {
-            log.info("Done");
         }
     }
 }

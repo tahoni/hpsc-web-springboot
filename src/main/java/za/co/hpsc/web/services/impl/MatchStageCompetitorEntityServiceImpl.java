@@ -14,6 +14,8 @@ import za.co.hpsc.web.services.MatchStageCompetitorEntityService;
 
 import java.util.Optional;
 
+// TODO: add tests
+// TODO: add comments
 @Slf4j
 @Service
 public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetitorEntityService {

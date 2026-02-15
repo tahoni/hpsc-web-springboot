@@ -32,6 +32,7 @@ public class MatchEntityServiceImpl implements MatchEntityService {
 
     @Override
     public List<IpscMatch> findMatches(ClubIdentifier clubIdentifier) {
+        // TODO: implement this method to find matches based on the provided club identifier
         return List.of();
     }
 }

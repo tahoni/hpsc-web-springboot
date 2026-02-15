@@ -1,6 +1,7 @@
 package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 
 import java.util.Optional;
@@ -12,5 +13,6 @@ public interface TransactionService {
      * @param matchResults
      * @return
      */
-    Optional<IpscMatch> saveMatchResults(MatchResultsDto matchResults);
+    Optional<IpscMatch> saveMatchResults(MatchResultsDto matchResults)
+            throws FatalException;
 }

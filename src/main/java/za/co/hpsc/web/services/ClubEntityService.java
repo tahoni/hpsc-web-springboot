@@ -20,4 +20,7 @@ public interface ClubEntityService {
      * or an empty {@code Optional} if no matching club is found.
      */
     Optional<Club> findClub(String name, String abbreviation);
+
+    // TODO: Javadoc
+    Optional<Club> findClub(String name);
 }

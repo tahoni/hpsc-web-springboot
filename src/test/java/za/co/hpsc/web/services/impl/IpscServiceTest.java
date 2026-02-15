@@ -72,7 +72,7 @@ public class IpscServiceTest {
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
-        verify(transactionService, times(1)).saveMatchResults(matchResultsDto);
+        assertDoesNotThrow(() -> verify(transactionService, times(1)).saveMatchResults(matchResultsDto));
     }
 
     @Test
@@ -181,8 +181,8 @@ public class IpscServiceTest {
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(ipscMatchResultService, times(2)).initMatchResults(any(IpscResponse.class));
-        verify(transactionService, times(1)).saveMatchResults(matchResults1);
-        verify(transactionService, times(1)).saveMatchResults(matchResults2);
+        assertDoesNotThrow(() -> verify(transactionService, times(1)).saveMatchResults(matchResults1));
+        assertDoesNotThrow(() -> verify(transactionService, times(1)).saveMatchResults(matchResults2));
     }
 
     @Test
@@ -217,7 +217,7 @@ public class IpscServiceTest {
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
-        verify(transactionService, never()).saveMatchResults(any());
+        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
     }
 
     @Test
@@ -300,6 +300,6 @@ public class IpscServiceTest {
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
-        verify(transactionService, times(1)).saveMatchResults(matchResultsDto);
+        assertDoesNotThrow(() -> verify(transactionService, times(1)).saveMatchResults(matchResultsDto));
     }
 }
