@@ -12,6 +12,7 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +104,22 @@ public class IpscMatch {
         this.dateCreated = matchDto.getDateCreated();
         this.dateUpdated = matchDto.getDateUpdated();
         this.dateEdited = matchDto.getDateEdited();
+    }
+
+    // TODO: Javadoc
+    public boolean isRefreshRequired() {
+        LocalDateTime thisDateUpdated = ((dateUpdated != null) ? dateUpdated : dateCreated);
+
+        // If the refresh date is null, we assume that the ranking needs to be updated
+        if (dateRefreshed == null) {
+            return true;
+        }
+        // If the refresh date is before the last update date, we need to refresh the ranking
+        return dateRefreshed.isBefore(thisDateUpdated);
+    }
+
+    public void refresh(BigDecimal newScore) {
+        this.dateRefreshed = LocalDateTime.now();
     }
 
     @Override

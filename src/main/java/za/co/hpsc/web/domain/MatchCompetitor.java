@@ -63,6 +63,7 @@ public class MatchCompetitor {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
+    private LocalDateTime dateRefreshed;
 
     /**
      * Initialises the current {@code MatchStageCompetitor} entity with data from a DTO
