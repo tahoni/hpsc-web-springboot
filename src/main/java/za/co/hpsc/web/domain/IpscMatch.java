@@ -88,7 +88,7 @@ public class IpscMatch {
         if (matchDto.getClubIdentifier() != null) {
             this.clubName = matchDto.getClubIdentifier();
         } else if (clubEntity != null) {
-            clubName = ClubIdentifier.getByName(clubEntity.getName()).orElse(null);
+            this.clubName = ClubIdentifier.getByName(clubEntity.getName()).orElse(null);
         }
 
         // Initialises the match attributes
