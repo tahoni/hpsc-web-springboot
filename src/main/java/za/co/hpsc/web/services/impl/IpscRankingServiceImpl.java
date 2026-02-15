@@ -2,11 +2,9 @@ package za.co.hpsc.web.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
+import za.co.hpsc.web.domain.ClubMatch;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.dto.ClubIdentityDto;
 import za.co.hpsc.web.models.ipsc.dto.IdentityDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchIdentityDto;
@@ -15,12 +13,12 @@ import za.co.hpsc.web.models.ipsc.records.IpscRankingMatchHolderRecord;
 import za.co.hpsc.web.models.ipsc.request.IpscRankingClubRequest;
 import za.co.hpsc.web.models.ipsc.request.IpscRankingMatchRequest;
 import za.co.hpsc.web.services.ClubEntityService;
+import za.co.hpsc.web.services.ClubMatchEntityService;
 import za.co.hpsc.web.services.IpscRankingService;
+import za.co.hpsc.web.services.MatchEntityService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 // TODO: Javadoc
@@ -29,10 +27,17 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class IpscRankingServiceImpl implements IpscRankingService {
-    private final ClubEntityService clubEntityService;
+    protected final ClubEntityService clubEntityService;
+    protected final MatchEntityService matchEntityService;
+    protected final ClubMatchEntityService clubMatchEntityService;
 
-    public IpscRankingServiceImpl(ClubEntityService clubEntityService) {
+    public IpscRankingServiceImpl(ClubEntityService clubEntityService,
+                                  MatchEntityService matchEntityService,
+                                  ClubMatchEntityService clubMatchEntityService) {
+
         this.clubEntityService = clubEntityService;
+        this.matchEntityService = matchEntityService;
+        this.clubMatchEntityService = clubMatchEntityService;
     }
 
     @Override
@@ -53,6 +58,8 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         if (mustRefresh) {
             refreshRankings(optionalClubIdentity.get());
         }
+
+        // TODO: initialise the holder
         return new IpscRankingClubHolderRecord(new ArrayList<>());
     }
 
@@ -80,24 +87,21 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         if (mustRefresh) {
             refreshRankings(optionalMatchIdentity.get());
         }
+
+        // TODO: initialise the holder
         return new IpscRankingMatchHolderRecord(new ArrayList<>());
     }
 
     protected Optional<ClubIdentityDto> initClubIdentity(String clubName) {
-        if (clubName == null || clubName.isEmpty()) {
+        if (clubName == null || clubName.isBlank()) {
             return Optional.empty();
         }
 
-        // TODO: implement this method to find the club entity and club identifier associated with the club name
-        Optional<Club> optionalClub = clubEntityService.findClub(clubName);
-        Optional<ClubIdentifier> optionalClubIdentifier = ClubIdentifier.getByName(clubName);
-        Club clubEntity = optionalClub.orElse(null);
-        ClubIdentifier clubIdentifier = optionalClubIdentifier.orElse(ClubIdentifier.UNKNOWN);
-
-        if ((clubEntity != null) || (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
-            // TODO: implement this method to find matches associated with the club entity and club identifier
-            List<IpscMatch> matchEntities = new ArrayList<>();
-            ClubIdentityDto identityDto = new ClubIdentityDto(clubEntity, clubIdentifier, matchEntities, clubName);
+        Optional<Club> optionalClubEntity = clubEntityService.findClub(clubName);
+        if (optionalClubEntity.isPresent()) {
+            Club clubEntity = optionalClubEntity.get();
+            List<ClubMatch> matchEntities = clubMatchEntityService.findClubMatches(clubEntity);
+            ClubIdentityDto identityDto = new ClubIdentityDto(clubEntity, matchEntities, clubName);
             return Optional.of(identityDto);
         }
 
@@ -109,17 +113,16 @@ public class IpscRankingServiceImpl implements IpscRankingService {
             return Optional.empty();
         }
 
-        // TODO: implement this method to find the club identity associated with the club name
-        Optional<ClubIdentityDto> optionalClubIdentityDto = initClubIdentity(clubName);
-        Optional<IpscMatch> optionalMatchEntity = Optional.empty();
-        Optional<MatchIdentityDto> optionalMatchIdentity = Optional.empty();
-
-        if ((optionalClubIdentityDto.isPresent()) && (optionalMatchEntity.isPresent())) {
-            MatchIdentityDto matchIdentity = new MatchIdentityDto(optionalClubIdentityDto.get().getClubEntity(),
-                    optionalClubIdentityDto.get().getClubIdentifier(), optionalMatchEntity.get(), clubName, matchName);
-            optionalMatchIdentity = Optional.of(matchIdentity);
+        Optional<Club> optionalClubEntity = clubEntityService.findClub(clubName);
+        Optional<IpscMatch> optionalMatchEntity = matchEntityService.findMatch(matchName);
+        if (optionalClubEntity.isPresent() && (optionalMatchEntity.isPresent())) {
+            Club clubEntity = optionalClubEntity.get();
+            IpscMatch matchEntity = optionalMatchEntity.get();
+            MatchIdentityDto identityDto = new MatchIdentityDto(clubEntity, matchEntity, clubName, matchName);
+            return Optional.of(identityDto);
         }
-        return optionalMatchIdentity;
+
+        return Optional.empty();
     }
 
     protected boolean isRefreshRequired(IdentityDto identityDto) {
@@ -129,39 +132,15 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         return identityDto.isRefreshRequired();
     }
 
-    protected BigDecimal refreshRankings(ClubIdentityDto clubIdentity) {
+    protected void refreshRankings(ClubIdentityDto clubIdentity) {
         if ((clubIdentity != null) && (clubIdentity.getMatchEntities() != null)) {
-            // Calculate the highest score among the matches associated with the club identity
-            BigDecimal highestScore = clubIdentity.getMatchEntities().stream()
-                    .filter(matchEntity -> matchEntity.getMatchCompetitors() != null)
-                    .flatMap(matchEntity -> matchEntity.getMatchCompetitors().stream())
-                    .map(MatchCompetitor::getMatchPoints)
-                    .filter(Objects::nonNull)
-                    .max(BigDecimal::compareTo)
-                    .orElse(BigDecimal.ZERO);
-
-            // TODO: implement this in clubCompetitor
-//            clubIdentity.getMatchEntities().forEach(matchEntity -> matchEntity.refreshRankings(highestScore));
-
-            return highestScore;
+            clubIdentity.refreshRankings();
         }
-
-        return BigDecimal.ZERO;
     }
 
-    protected BigDecimal refreshRankings(MatchIdentityDto matchIdentity) {
-        // TODO: implement this method to refresh the match rankings based on the provided match identity
+    protected void refreshRankings(MatchIdentityDto matchIdentity) {
         if (matchIdentity != null) {
-            // Calculate the highest score among the competitors associated with the match identity
-            BigDecimal highestScore = matchIdentity.getMatchEntity().getMatchCompetitors().stream()
-                    .map(MatchCompetitor::getMatchPoints)
-                    .filter(Objects::nonNull)
-                    .max(BigDecimal::compareTo)
-                    .orElse(BigDecimal.ZERO);
-
-            matchIdentity.getMatchEntity().refreshRankings(highestScore);
-            return highestScore;
+            matchIdentity.refreshRankings();
         }
-        return BigDecimal.ZERO;
     }
 }

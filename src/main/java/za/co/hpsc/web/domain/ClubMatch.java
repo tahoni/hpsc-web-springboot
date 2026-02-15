@@ -48,15 +48,14 @@ public class ClubMatch {
         if (this.dateRefreshed == null) {
             return true;
         }
+
         // If the refresh date is before the last update date, we need to refresh the ranking
         return this.dateRefreshed.isBefore(dateLastUpdated);
     }
 
     // TODO: Javadoc
     public void refreshRankings(BigDecimal highestScore) {
-        clubCompetitors.forEach(competitor -> {
-            competitor.refreshRankings(highestScore);
-        });
+        clubCompetitors.forEach(competitor -> competitor.refreshRankings(highestScore));
         this.dateRefreshed = LocalDateTime.now();
     }
 

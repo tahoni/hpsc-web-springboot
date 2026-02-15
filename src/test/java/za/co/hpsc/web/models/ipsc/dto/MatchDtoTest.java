@@ -33,7 +33,7 @@ public class MatchDtoTest {
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
         matchDto.setClub(clubDto);
-        matchDto.setClubIdentifier(ClubIdentifier.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         String result = matchDto.toString();
@@ -48,7 +48,7 @@ public class MatchDtoTest {
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
         matchDto.setClub(null);
-        matchDto.setClubIdentifier(ClubIdentifier.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         String result = matchDto.toString();
@@ -62,7 +62,7 @@ public class MatchDtoTest {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubIdentifier(ClubIdentifier.HPSC);
+        matchDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         String result = matchDto.toString();
@@ -90,7 +90,7 @@ public class MatchDtoTest {
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Eufees Clubshoot");
         matchDto.setClub(null);
-        matchDto.setClubIdentifier(null);
+        matchDto.setClubName(null);
 
         // Act
         String result = matchDto.toString();

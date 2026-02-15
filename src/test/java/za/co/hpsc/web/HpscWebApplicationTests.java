@@ -37,6 +37,8 @@ class HpscWebApplicationTests {
     private MatchCompetitorRepository matchCompetitorRepository;
     @MockitoBean
     private MatchStageCompetitorRepository matchStageCompetitorRepository;
+    @MockitoBean
+    private ClubMatchRepository clubMatchRepository;
 
     @SuppressWarnings("EmptyMethod")
     @Test

@@ -1,9 +1,7 @@
 package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.enums.ClubIdentifier;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,6 +19,4 @@ public interface MatchEntityService {
      * or an empty {@code Optional} if no matching match is found.
      */
     Optional<IpscMatch> findMatch(String name);
-
-    List<IpscMatch> findMatches(ClubIdentifier clubIdentifier);
 }

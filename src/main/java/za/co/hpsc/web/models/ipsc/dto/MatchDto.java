@@ -38,8 +38,9 @@ public class MatchDto {
     private Long id;
     private Integer index;
 
+    @NotNull
     private ClubDto club;
-    private ClubIdentifier clubIdentifier;
+    private ClubIdentifier clubName;
 
     @NotNull
     private String name = "";
@@ -70,6 +71,7 @@ public class MatchDto {
 
         // Initialises match details
         this.id = matchEntity.getId();
+        this.clubName = matchEntity.getClubName();
         if (matchEntity.getClub() != null) {
             this.club = new ClubDto(matchEntity.getClub());
         }
@@ -77,7 +79,6 @@ public class MatchDto {
         // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.clubIdentifier = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
@@ -104,7 +105,7 @@ public class MatchDto {
         // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.clubIdentifier = matchEntity.getClubName();
+        this.clubName = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
@@ -131,7 +132,7 @@ public class MatchDto {
             if (clubDto != null) {
                 clubReference = ClubIdentifier.getByName(clubDto.getName());
             }
-            this.clubIdentifier = clubReference.orElse(null);
+            this.clubName = clubReference.orElse(null);
             this.scheduledDate = matchResponse.getMatchDate();
 
             // Determines the firearm type based on the firearm ID
@@ -182,7 +183,7 @@ public class MatchDto {
                     clubReference = cr;
                 }
             }
-            clubReference.ifPresent(cr -> this.clubIdentifier = cr);
+            clubReference.ifPresent(cr -> this.clubName = cr);
 
             // Determines the firearm type based on the firearm ID
             this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId())
@@ -222,8 +223,8 @@ public class MatchDto {
         String clubString = "";
         if (this.club != null) {
             clubString = club.toString();
-        } else if (clubIdentifier != null) {
-            clubString = clubIdentifier.toString();
+        } else if (clubName != null) {
+            clubString = clubName.toString();
         }
 
         // Returns name, optionally with club if available

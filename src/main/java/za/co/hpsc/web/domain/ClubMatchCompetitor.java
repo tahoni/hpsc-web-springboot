@@ -33,7 +33,7 @@ public class ClubMatchCompetitor {
     private ClubMatch clubMatch;
 
     @Enumerated(EnumType.STRING)
-    private ClubIdentifier clubIdentifier;
+    private ClubIdentifier clubName;
     @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
     @Enumerated(EnumType.STRING)

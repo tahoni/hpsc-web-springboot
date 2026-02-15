@@ -35,7 +35,7 @@ public class MatchClubCompetitor {
     private List<IpscMatch> matches;
 
     @Enumerated(EnumType.STRING)
-    private ClubIdentifier clubIdentifier;
+    private ClubIdentifier clubName;
     @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
     @Enumerated(EnumType.STRING)

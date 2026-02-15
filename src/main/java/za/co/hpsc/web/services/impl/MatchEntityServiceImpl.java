@@ -3,11 +3,9 @@ package za.co.hpsc.web.services.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.services.MatchEntityService;
 
-import java.util.List;
 import java.util.Optional;
 
 // TOOD: add tests
@@ -28,11 +26,5 @@ public class MatchEntityServiceImpl implements MatchEntityService {
 
         // Filters matches by name
         return matchRepository.findByName(name);
-    }
-
-    @Override
-    public List<IpscMatch> findMatches(ClubIdentifier clubIdentifier) {
-        // TODO: implement this method to find matches based on the provided club identifier
-        return List.of();
     }
 }

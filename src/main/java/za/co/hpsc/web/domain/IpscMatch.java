@@ -89,8 +89,8 @@ public class IpscMatch {
         this.club = clubEntity;
 
         // Sets club name from DTO or associated entity
-        if (matchDto.getClubIdentifier() != null) {
-            this.clubName = matchDto.getClubIdentifier();
+        if (matchDto.getClubName() != null) {
+            this.clubName = matchDto.getClubName();
         } else if (clubEntity != null) {
             clubName = ClubIdentifier.getByName(clubEntity.getName()).orElse(null);
         }
@@ -118,15 +118,14 @@ public class IpscMatch {
         if (this.dateRefreshed == null) {
             return true;
         }
+
         // If the refresh date is before the last update date, we need to refresh the ranking
         return this.dateRefreshed.isBefore(dateLastUpdated);
     }
 
     // TODO: Javadoc
     public void refreshRankings(BigDecimal highestScore) {
-        matchCompetitors.forEach(competitor -> {
-            competitor.refreshRankings(highestScore);
-        });
+        matchCompetitors.forEach(competitor -> competitor.refreshRankings(highestScore));
         this.dateRefreshed = LocalDateTime.now();
     }
 

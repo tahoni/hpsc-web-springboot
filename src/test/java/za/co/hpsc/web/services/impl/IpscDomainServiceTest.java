@@ -244,7 +244,7 @@ public class IpscDomainServiceTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(UUID.randomUUID());
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubIdentifier(ClubIdentifier.HPSC);
+        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setMatchCompetitors(Collections.singletonList(matchCompetitorDto));
@@ -297,7 +297,7 @@ public class IpscDomainServiceTest {
         stageCompetitorDto.setUuid(UUID.randomUUID());
         stageCompetitorDto.setCompetitor(competitorDto);
         stageCompetitorDto.setMatchStage(stageDto);
-        stageCompetitorDto.setClubIdentifier(ClubIdentifier.HPSC);
+        stageCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setStages(Collections.singletonList(stageDto));
@@ -397,13 +397,13 @@ public class IpscDomainServiceTest {
         hpscCompetitorDto.setId(20L);
         hpscCompetitorDto.setUuid(UUID.randomUUID());
         hpscCompetitorDto.setCompetitor(competitorDto);
-        hpscCompetitorDto.setClubIdentifier(ClubIdentifier.HPSC);
+        hpscCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitorDto soscCompetitorDto = new MatchCompetitorDto();
         soscCompetitorDto.setId(21L);
         soscCompetitorDto.setUuid(UUID.randomUUID());
         soscCompetitorDto.setCompetitor(competitorDto);
-        soscCompetitorDto.setClubIdentifier(ClubIdentifier.SOSC); // Different clubName
+        soscCompetitorDto.setClubName(ClubIdentifier.SOSC); // Different clubName
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setMatchCompetitors(Arrays.asList(hpscCompetitorDto, soscCompetitorDto));

@@ -57,8 +57,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
 
             Map<UUID, MatchCompetitor> matchCompetitorMap =
                     initMatchCompetitorEntities(matchResults.getMatchCompetitors(),
-                            match,
-                            competitorMap, ClubIdentifier.HPSC);
+                            match, competitorMap, ClubIdentifier.HPSC);
             Map<UUID, MatchStageCompetitor> matchStageCompetitorMap =
                     initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(),
                             matchStageMap, competitorMap, ClubIdentifier.HPSC);
@@ -193,6 +192,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
                                                                      Map<UUID, Competitor> competitorMap,
                                                                      ClubIdentifier clubIdentifier) {
 
+        // TODO: map clubIdentifier to Club entity
         Map<UUID, MatchCompetitor> matchCompetitorMap = new HashMap<>();
         if (matchCompetitors != null) {
 
@@ -217,7 +217,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
 
                 // Filter by club reference if specified
                 if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                    if (!clubIdentifier.equals(matchCompetitorDto.getClubIdentifier())) {
+                    if (!clubIdentifier.equals(matchCompetitorDto.getClubName())) {
                         continue;
                     }
                 }
@@ -248,6 +248,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
                                                                                Map<UUID, IpscMatchStage> matchStageMap, Map<UUID, Competitor> competitorMap,
                                                                                ClubIdentifier clubIdentifier) {
 
+        // TODO: map clubIdentifier to Club entity
         Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
         if (matchStageCompetitors != null) {
             // Initialises and accumulates match stage competitors from DTOs
@@ -275,7 +276,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
 
                 // Filter by club reference if specified
                 if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                    if (!clubIdentifier.equals(matchStageCompetitorDto.getClubIdentifier())) {
+                    if (!clubIdentifier.equals(matchStageCompetitorDto.getClubName())) {
                         continue;
                     }
                 }
