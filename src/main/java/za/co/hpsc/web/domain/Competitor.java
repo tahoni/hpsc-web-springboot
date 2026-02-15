@@ -55,6 +55,8 @@ public class Competitor {
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<MatchCompetitor> competitorMatches;
+    @OneToMany
+    private List<ClubMatchCompetitor> competitorClubMatches;
 
     /**
      * Initialises the current {@code Competitor} entity with data from a DTO.

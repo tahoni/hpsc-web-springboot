@@ -40,6 +40,8 @@ public class Club {
 
     @OneToMany(fetch = FetchType.LAZY)
     private List<IpscMatch> matches;
+    @OneToMany
+    private List<ClubMatch> clubMatches;
 
     public Club(String name, String abbreviation) {
         // Initialises club details

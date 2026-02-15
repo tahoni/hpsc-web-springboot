@@ -6,11 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.utils.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -62,6 +63,8 @@ public class IpscMatch {
     private List<IpscMatchStage> matchStages = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
+    @OneToMany
+    private List<ClubMatch> clubMatches = new ArrayList<>();
 
     @NotNull
     private LocalDateTime dateCreated;
@@ -121,11 +124,15 @@ public class IpscMatch {
 
     // TODO: Javadoc
     public void refreshRankings(BigDecimal highestScore) {
+        matchCompetitors.forEach(competitor -> {
+            competitor.refreshRankings(highestScore);
+        });
         this.dateRefreshed = LocalDateTime.now();
     }
 
     @Override
     public String toString() {
-        return MatchHelpers.getMatchDisplayName(this);
+        return this.name + " (" + DateUtil.formatDateTime(this.scheduledDate,
+                IpscConstants.IPSC_OUTPUT_DATE_FORMAT) + ")";
     }
 }

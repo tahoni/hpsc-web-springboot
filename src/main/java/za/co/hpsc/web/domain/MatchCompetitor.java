@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
+import za.co.hpsc.web.utils.NumberUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -98,6 +99,12 @@ public class MatchCompetitor {
         this.dateCreated = matchCompetitorDto.getDateCreated();
         this.dateUpdated = matchCompetitorDto.getDateUpdated();
         this.dateEdited = matchCompetitorDto.getDateEdited();
+    }
+
+    // TODO: Javadoc
+    public void refreshRankings(BigDecimal highestScore) {
+        this.matchRanking = NumberUtil.calculatePercentage(matchPoints, highestScore);
+        this.dateRefreshed = LocalDateTime.now();
     }
 
     public String toString() {

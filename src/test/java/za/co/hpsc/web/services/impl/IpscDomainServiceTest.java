@@ -1,7 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -79,7 +78,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities returns empty Optional when match results has null match")
     public void testInitMatchEntities_withNullMatch_returnsEmpty() {
         // Arrange
         MatchResultsDto nullMatchDto = new MatchResultsDto();
@@ -93,7 +91,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities initializes match entities with valid data")
     public void testInitMatchEntities_withValidData_returnsMatchEntityHolder() {
         // Arrange
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
@@ -113,7 +110,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities creates match entity when not found in repository")
     public void testInitMatchEntities_matchNotInRepository_createsNewMatch() {
         // Arrange
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
@@ -129,7 +125,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities initializes match with null club")
     public void testInitMatchEntities_withNullClub_returnsMatchHolder() {
         // Arrange
         matchResultsDto.setClub(null);
@@ -146,7 +141,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities initializes competitors")
     public void testInitMatchEntities_withCompetitors_initializesCompetitorEntities() {
         // Arrange
         CompetitorDto competitorDto1 = new CompetitorDto();
@@ -193,7 +187,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities initializes match stages")
     public void testInitMatchEntities_withStages_initializesMatchStageEntities() {
         // Arrange
         MatchStageDto stageDto1 = new MatchStageDto();
@@ -236,7 +229,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities initializes match competitors")
     public void testInitMatchEntities_withMatchCompetitors_initializesMatchCompetitors() {
         // Arrange
         UUID competitorUuid = UUID.randomUUID();
@@ -282,7 +274,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities initializes match stage competitors")
     public void testInitMatchEntities_withMatchStageCompetitors_initializesMatchStageCompetitors() {
         // Arrange
         UUID competitorUuid = UUID.randomUUID();
@@ -343,7 +334,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities handles empty collections")
     public void testInitMatchEntities_withEmptyCollections_returnsMatchHolder() {
         // Arrange
         matchResultsDto.setCompetitors(new ArrayList<>());
@@ -368,7 +358,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities handles null collections")
     public void testInitMatchEntities_withNullCollections_returnsMatchHolder() {
         // Arrange
         matchResultsDto.setCompetitors(null);
@@ -393,7 +382,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities filters match competitors by club reference")
     public void testInitMatchEntities_matchCompetitorFiltering_filtersByClubReference() {
         // Arrange
         UUID competitorUuid = UUID.randomUUID();
@@ -449,7 +437,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities links entities correctly")
     public void testInitMatchEntities_linksEntitiesCorrectly() {
         // Arrange
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
@@ -467,7 +454,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities creates new competitor when not found in repository")
     public void testInitMatchEntities_competitorNotInRepository_createsNewCompetitor() {
         // Arrange
         UUID competitorUuid = UUID.randomUUID();
@@ -495,7 +481,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities creates new match stage when not found in repository")
     public void testInitMatchEntities_stageNotInRepository_createsNewStage() {
         // Arrange
         MatchStageDto stageDto = new MatchStageDto();
@@ -520,7 +505,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities handles multiple entities of same type")
     public void testInitMatchEntities_withMultipleEntitiesOfSameType_initializesAll() {
         // Arrange
         List<CompetitorDto> competitors = new ArrayList<>();
@@ -550,7 +534,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities processes match without club")
     public void testInitMatchEntities_matchWithoutClub_processesSuccessfully() {
         // Arrange
         matchDto.setClub(null);
@@ -569,7 +552,6 @@ public class IpscDomainServiceTest {
     }
 
     @Test
-    @DisplayName("initMatchEntities verifies repository calls with correct parameters")
     public void testInitMatchEntities_verifiesRepositoryCalls() {
         // Arrange
         when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));

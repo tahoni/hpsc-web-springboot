@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 
 import java.util.List;
@@ -93,6 +92,6 @@ public class IpscMatchStage {
 
     @Override
     public String toString() {
-        return MatchHelpers.getMatchStageDisplayName(this);
+        return this.stageName + " (" + this.stageNumber + ")";
     }
 }
