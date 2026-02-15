@@ -192,7 +192,6 @@ public class IpscDomainServiceImpl implements IpscDomainService {
                                                                      Map<UUID, Competitor> competitorMap,
                                                                      ClubIdentifier clubIdentifier) {
 
-        // TODO: map clubIdentifier to Club entity
         Map<UUID, MatchCompetitor> matchCompetitorMap = new HashMap<>();
         if (matchCompetitors != null) {
 
@@ -248,7 +247,6 @@ public class IpscDomainServiceImpl implements IpscDomainService {
                                                                                Map<UUID, IpscMatchStage> matchStageMap, Map<UUID, Competitor> competitorMap,
                                                                                ClubIdentifier clubIdentifier) {
 
-        // TODO: map clubIdentifier to Club entity
         Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
         if (matchStageCompetitors != null) {
             // Initialises and accumulates match stage competitors from DTOs

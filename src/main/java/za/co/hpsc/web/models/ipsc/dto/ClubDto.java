@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.Club;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 
 import java.util.UUID;
@@ -62,6 +63,15 @@ public class ClubDto {
             // Initialises club attributes
             this.name = clubResponse.getClubName();
             this.abbreviation = clubResponse.getClubCode();
+        }
+    }
+
+    public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
+        if (clubEntity != null) {
+            this.id = clubEntity.getId();
+            this.name = clubEntity.getName();
+        } else if (clubIdentifier != null) {
+            this.name = clubIdentifier.getName();
         }
     }
 
