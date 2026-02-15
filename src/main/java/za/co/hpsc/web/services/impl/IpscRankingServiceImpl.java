@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.dto.ClubIdentityDto;
 import za.co.hpsc.web.models.ipsc.dto.IdentityDto;
@@ -16,8 +17,10 @@ import za.co.hpsc.web.models.ipsc.request.IpscRankingMatchRequest;
 import za.co.hpsc.web.services.ClubEntityService;
 import za.co.hpsc.web.services.IpscRankingService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 // TODO: Javadoc
@@ -48,7 +51,7 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         }
 
         if (mustRefresh) {
-            return refreshRankings(optionalClubIdentity.get());
+            refreshRankings(optionalClubIdentity.get());
         }
         return new IpscRankingClubHolderRecord(new ArrayList<>());
     }
@@ -75,7 +78,7 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         }
 
         if (mustRefresh) {
-            return refreshRankings(optionalMatchIdentity.get());
+            refreshRankings(optionalMatchIdentity.get());
         }
         return new IpscRankingMatchHolderRecord(new ArrayList<>());
     }
@@ -126,13 +129,39 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         return identityDto.isRefreshRequired();
     }
 
-    protected IpscRankingClubHolderRecord refreshRankings(ClubIdentityDto clubIdentity) {
-        // TODO: implement this method to refresh the club rankings based on the provided club identity
-        return null;
+    protected BigDecimal refreshRankings(ClubIdentityDto clubIdentity) {
+        if ((clubIdentity != null) && (clubIdentity.getMatchEntities() != null)) {
+            // Calculate the highest score among the matches associated with the club identity
+            BigDecimal highestScore = clubIdentity.getMatchEntities().stream()
+                    .filter(matchEntity -> matchEntity.getMatchCompetitors() != null)
+                    .flatMap(matchEntity -> matchEntity.getMatchCompetitors().stream())
+                    .map(MatchCompetitor::getMatchPoints)
+                    .filter(Objects::nonNull)
+                    .max(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+
+            // TODO: implement this in clubCompetitor
+//            clubIdentity.getMatchEntities().forEach(matchEntity -> matchEntity.refreshRankings(highestScore));
+
+            return highestScore;
+        }
+
+        return BigDecimal.ZERO;
     }
 
-    protected IpscRankingMatchHolderRecord refreshRankings(MatchIdentityDto matchIdentity) {
+    protected BigDecimal refreshRankings(MatchIdentityDto matchIdentity) {
         // TODO: implement this method to refresh the match rankings based on the provided match identity
-        return null;
+        if (matchIdentity != null) {
+            // Calculate the highest score among the competitors associated with the match identity
+            BigDecimal highestScore = matchIdentity.getMatchEntity().getMatchCompetitors().stream()
+                    .map(MatchCompetitor::getMatchPoints)
+                    .filter(Objects::nonNull)
+                    .max(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+
+            matchIdentity.getMatchEntity().refreshRankings(highestScore);
+            return highestScore;
+        }
+        return BigDecimal.ZERO;
     }
 }

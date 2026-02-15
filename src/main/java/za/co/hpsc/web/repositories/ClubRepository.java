@@ -6,7 +6,7 @@ import za.co.hpsc.web.domain.Club;
 import java.util.Optional;
 
 public interface ClubRepository extends JpaRepository<Club, Long> {
-    Optional<Club> findByName(String clubName);
+    Optional<Club> findByName(String name);
 
-    Optional<Club> findByAbbreviation(String clubCode);
+    Optional<Club> findByAbbreviation(String abbreviation);
 }

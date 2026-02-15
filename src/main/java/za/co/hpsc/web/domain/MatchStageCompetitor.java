@@ -11,6 +11,7 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
+import za.co.hpsc.web.utils.NumberUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -140,6 +141,13 @@ public class MatchStageCompetitor {
         this.dateCreated = matchStageCompetitorDto.getDateCreated();
         this.dateUpdated = matchStageCompetitorDto.getDateUpdated();
         this.dateEdited = matchStageCompetitorDto.getDateEdited();
+    }
+
+    // TODO: Javadoc
+    public void refreshRankings(BigDecimal highestScore) {
+        this.stagePoints = NumberUtil.calculatePercentage(stagePoints, highestScore);
+        this.dateRefreshed = LocalDateTime.now();
+        this.getMatchStage().getMatch().setDateRefreshed(this.dateRefreshed);
     }
 
     @Override

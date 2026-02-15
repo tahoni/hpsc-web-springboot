@@ -109,6 +109,7 @@ public class IpscDomainServiceImpl implements IpscDomainService {
         // Initialise the match entity from DTO or create a new entity
         IpscMatch matchEntity = optionalIpscMatchEntity.orElse(new IpscMatch());
         // Add attributes to the match
+        // TODO: fix this method to handle the case where the match entity is being created and the club entity is null
         matchEntity.init(matchDto, clubEntity);
         // Link the match to the stage
         matchEntity.setClub(clubEntity);

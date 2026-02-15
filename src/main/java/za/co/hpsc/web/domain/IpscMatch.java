@@ -108,17 +108,19 @@ public class IpscMatch {
 
     // TODO: Javadoc
     public boolean isRefreshRequired() {
-        LocalDateTime thisDateUpdated = ((dateUpdated != null) ? dateUpdated : dateCreated);
+        LocalDateTime dateLastUpdated = ((this.dateEdited != null) ? this.dateEdited :
+                ((this.dateUpdated != null) ? this.dateUpdated : this.dateCreated));
 
         // If the refresh date is null, we assume that the ranking needs to be updated
-        if (dateRefreshed == null) {
+        if (this.dateRefreshed == null) {
             return true;
         }
         // If the refresh date is before the last update date, we need to refresh the ranking
-        return dateRefreshed.isBefore(thisDateUpdated);
+        return this.dateRefreshed.isBefore(dateLastUpdated);
     }
 
-    public void refresh(BigDecimal newScore) {
+    // TODO: Javadoc
+    public void refreshRankings(BigDecimal highestScore) {
         this.dateRefreshed = LocalDateTime.now();
     }
 

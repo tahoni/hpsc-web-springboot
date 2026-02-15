@@ -26,6 +26,9 @@ public final class IpscConstants {
     public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS =
             List.of(ClubIdentifier.UNKNOWN);
 
+    public static final int NUMBER_OF_MATCHES_USED_FOR_LOGS = 4;
+    public static final int NUMBER_OF_MATCHES_TO_DISPLAY = 6;
+
     public static final int STAGE_POINTS_SCALE = 4;
     public static final int MATCH_POINTS_SCALE = 4;
     public static final int HIT_FACTOR_SCALE = 4;
