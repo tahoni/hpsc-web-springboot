@@ -11,6 +11,7 @@ import za.co.hpsc.web.utils.NumberUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 // TODO: Javadoc
 @Getter
@@ -50,11 +51,35 @@ public class ClubMatchCompetitor {
     @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
-    private LocalDateTime dateEdited;
     private LocalDateTime dateRefreshed;
+
+    public ClubMatchCompetitor(ClubMatch clubMatchEntity, MatchCompetitor matchCompetitorEntity) {
+        // Initialises the club and match details
+        this.clubMatch = clubMatchEntity;
+        // Initialises the competitor details
+        this.competitor = matchCompetitorEntity.getCompetitor();
+
+        // Initialises the competitor attributes
+        this.clubName = matchCompetitorEntity.getClubName();
+        this.competitorCategory = matchCompetitorEntity.getCompetitorCategory();
+        this.firearmType = matchCompetitorEntity.getFirearmType();
+        this.division = matchCompetitorEntity.getDivision();
+        this.powerFactor = matchCompetitorEntity.getPowerFactor();
+
+        // Initialises the date fields
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = LocalDateTime.now();
+    }
 
     // TODO: Javadoc
     public void refreshRankings(BigDecimal highestScore) {
+        // Refresh the match points
+        List<BigDecimal> matchPointList = this.clubMatch.getMatch().getMatchCompetitors().stream()
+                .filter(matchCompetitor -> this.competitor.getId().equals(matchCompetitor.getCompetitor().getId()))
+                .map(MatchCompetitor::getMatchPoints)
+                .toList();
+        this.clubPoints = NumberUtil.calculateSum(matchPointList);
+        // Refresh the club ranking for the match
         this.clubRanking = NumberUtil.calculatePercentage(clubPoints, highestScore);
         this.dateRefreshed = LocalDateTime.now();
     }

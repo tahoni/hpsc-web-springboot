@@ -39,6 +39,23 @@ public class ClubMatch {
     private LocalDateTime dateEdited;
     private LocalDateTime dateRefreshed;
 
+    // Javadoc
+    public ClubMatch(Club clubEntity, List<MatchCompetitor> matchCompetitorEntities) {
+        // Initialise the club details
+        this.club = clubEntity;
+
+        // Initialise the competitor details
+        List<ClubMatchCompetitor> competitorList = new ArrayList<>();
+        for (MatchCompetitor matchCompetitor : matchCompetitorEntities) {
+            if (this.match.getId().equals(matchCompetitor.getMatch().getId())) {
+                if (this.club.getName().equals(matchCompetitor.getClubName().toString())) {
+                    competitorList.add(new ClubMatchCompetitor(this, matchCompetitor));
+                }
+            }
+        }
+        this.clubCompetitors = competitorList;
+    }
+
     // TODO: Javadoc
     public boolean isRefreshRequired() {
         LocalDateTime dateLastUpdated = ((this.dateEdited != null) ? this.dateEdited :

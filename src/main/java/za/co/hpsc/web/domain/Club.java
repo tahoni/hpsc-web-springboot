@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,9 +40,9 @@ public class Club {
     private String abbreviation;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<IpscMatch> matches;
-    @OneToMany
-    private List<ClubMatch> clubMatches;
+    private List<IpscMatch> matches = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<ClubMatch> clubMatches = new ArrayList<>();
 
     public Club(String name, String abbreviation) {
         // Initialises club details

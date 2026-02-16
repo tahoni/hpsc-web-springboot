@@ -10,6 +10,7 @@ import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -32,7 +33,7 @@ public class MatchClubCompetitor {
     private Club club;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<IpscMatch> matches;
+    private List<IpscMatch> matches = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private ClubIdentifier clubName;

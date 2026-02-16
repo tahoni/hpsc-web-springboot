@@ -2,6 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.MatchCompetitor;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,4 +21,7 @@ public interface MatchCompetitorEntityService {
      * or an empty {@code Optional} if no matching record exists.
      */
     Optional<MatchCompetitor> findMatchCompetitor(Long matchId, Long competitorId);
+
+    // TODO: Javadoc
+    List<MatchCompetitor> findAllMatchCompetitors(Long matchId, String clubName);
 }

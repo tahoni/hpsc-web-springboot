@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import za.co.hpsc.web.domain.Club;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 public abstract class IdentityDto {
@@ -22,5 +20,5 @@ public abstract class IdentityDto {
 
     public abstract boolean isRefreshRequired();
 
-    public abstract BigDecimal refreshRankings();
+    public abstract void refreshRankings();
 }

@@ -26,18 +26,19 @@ public class MatchIdentityDto extends IdentityDto {
 
     @Override
     public boolean isRefreshRequired() {
-        // A refresh of the club rankings is required if the match associated with the club
-        // requires a refresh
         if (matchEntity == null) {
             return false;
         }
+
+        // A refresh of the club rankings is required if the match associated with the club
+        // requires a refresh
         return matchEntity.isRefreshRequired();
     }
 
     @Override
-    public BigDecimal refreshRankings() {
+    public void refreshRankings() {
         if (matchEntity == null) {
-            return BigDecimal.ZERO;
+            return;
         }
 
         // Calculate the highest score among the competitors associated with the match identity
@@ -49,6 +50,5 @@ public class MatchIdentityDto extends IdentityDto {
 
         // Refresh the rankings in relation to the highest score for each of the matches
         this.matchEntity.refreshRankings(highestScore);
-        return highestScore;
     }
 }

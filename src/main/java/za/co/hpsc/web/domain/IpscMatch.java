@@ -63,7 +63,7 @@ public class IpscMatch {
     private List<IpscMatchStage> matchStages = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<ClubMatch> clubMatches = new ArrayList<>();
 
     @NotNull

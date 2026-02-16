@@ -14,20 +14,23 @@ import java.util.Objects;
 // TODO: add tests
 @Getter
 public class ClubIdentityDto extends IdentityDto {
-    private final List<ClubMatch> matchEntities;
+    private List<ClubMatch> clubMatchEntities = new ArrayList<>();
 
-    public ClubIdentityDto(Club clubEntity, List<ClubMatch> matchEntities,
-                           String clubName) {
+    public ClubIdentityDto(Club clubEntity, List<ClubMatch> clubMatchEntities, String clubName) {
         super(clubEntity, clubName);
-        this.matchEntities = (matchEntities != null ? matchEntities : new ArrayList<>());
+        this.clubMatchEntities = (clubMatchEntities != null ? clubMatchEntities : new ArrayList<>());
     }
 
     @Override
     public boolean isRefreshRequired() {
+        if (clubMatchEntities == null) {
+            return false;
+        }
+
         // A refresh of the club rankings is required if any of the matches associated with the club
         // require a refresh
-        for (ClubMatch clubMatch : this.matchEntities) {
-            boolean isRefreshOfMatchRequired = clubMatch.isRefreshRequired();
+        for (ClubMatch clubMatchEntity : this.clubMatchEntities) {
+            boolean isRefreshOfMatchRequired = clubMatchEntity.isRefreshRequired();
             if (isRefreshOfMatchRequired) {
                 return true;
             }
@@ -36,9 +39,13 @@ public class ClubIdentityDto extends IdentityDto {
     }
 
     @Override
-    public BigDecimal refreshRankings() {
+    public void refreshRankings() {
+        if (clubMatchEntities == null) {
+            return;
+        }
+
         // Calculate the highest score among the competitors associated with the club identity
-        BigDecimal highestScore = this.matchEntities.stream()
+        BigDecimal highestScore = this.clubMatchEntities.stream()
                 .filter(matchEntity -> matchEntity.getClubCompetitors() != null)
                 .flatMap(matchEntity -> matchEntity.getClubCompetitors().stream())
                 .map(ClubMatchCompetitor::getClubPoints)
@@ -47,7 +54,6 @@ public class ClubIdentityDto extends IdentityDto {
                 .orElse(BigDecimal.ZERO);
 
         // Refresh the rankings in relation to the highest score for each of the matches
-        this.matchEntities.forEach(matchEntity -> matchEntity.refreshRankings(highestScore));
-        return highestScore;
+        this.clubMatchEntities.forEach(matchEntity -> matchEntity.refreshRankings(highestScore));
     }
 }
