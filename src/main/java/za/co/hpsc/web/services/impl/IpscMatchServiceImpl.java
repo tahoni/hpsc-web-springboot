@@ -189,12 +189,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
     }
 
-    /**
-     *
-     * @param match
-     * @param competitors
-     * @return
-     */
+    // TODO: Javadoc
     protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorMatchRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
@@ -216,13 +211,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(ipscMatchRecord);
     }
 
-    /**
-     *
-     * @param competitor
-     * @param thisCompetitorOverall
-     * @param thisCompetitorStages
-     * @return
-     */
+    // TODO: Javadoc
     protected Optional<CompetitorMatchRecord> initCompetitor(Competitor competitor,
                                                              MatchCompetitorRecord thisCompetitorOverall,
                                                              List<MatchStageCompetitorRecord> thisCompetitorStages) {
@@ -241,12 +230,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(competitorRecord);
     }
 
-    /**
-     *
-     * @param competitor
-     * @param matchCompetitorList
-     * @return
-     */
+    // TODO: Javadoc
     protected Optional<MatchCompetitorRecord> initMatchCompetitor(Competitor competitor,
                                                                   List<MatchCompetitor> matchCompetitorList) {
 
@@ -282,12 +266,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(thisCompetitorOverall);
     }
 
-    /**
-     *
-     * @param competitor
-     * @param matchStageCompetitorList
-     * @return
-     */
+    // TODO: Javadoc
     protected List<MatchStageCompetitorRecord> initMatchStageCompetitor(Competitor competitor,
                                                                         List<MatchStageCompetitor> matchStageCompetitorList) {
 
@@ -333,11 +312,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return thisCompetitorStages;
     }
 
-    /**
-     *
-     * @param matchCompetitorList
-     * @return
-     */
+    // TODO: Javadoc
     protected List<Competitor> getCompetitorList(List<MatchCompetitor> matchCompetitorList) {
         if (matchCompetitorList == null) {
             return new ArrayList<>();
@@ -348,11 +323,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .toList();
     }
 
-    /**
-     *
-     * @param matchStageList
-     * @return
-     */
+    // TODO: Javadoc
     protected List<MatchStageCompetitor> getMatchStageCompetitorList(List<IpscMatchStage> matchStageList) {
         if (matchStageList == null) {
             return new ArrayList<>();

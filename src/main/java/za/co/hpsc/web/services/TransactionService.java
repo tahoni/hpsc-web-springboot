@@ -8,11 +8,6 @@ import java.util.Optional;
 
 // TODO: Javadoc
 public interface TransactionService {
-    /**
-     *
-     * @param matchResults
-     * @return
-     */
     Optional<IpscMatch> saveMatchResults(MatchResultsDto matchResults)
             throws FatalException;
 }

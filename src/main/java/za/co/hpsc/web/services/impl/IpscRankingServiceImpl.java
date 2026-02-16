@@ -92,7 +92,6 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         return new IpscRankingMatchHolderRecord(new ArrayList<>());
     }
 
-    // TODO: Javadoc
     protected Optional<ClubIdentityDto> initClubIdentity(String clubName) {
         if (clubName == null || clubName.isBlank()) {
             return Optional.empty();
@@ -109,8 +108,6 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         return Optional.empty();
     }
 
-    // TODO: Javadoc
-    // TODO: comment
     protected Optional<MatchIdentityDto> initMatchIdentity(String clubName, String matchName) {
         if ((clubName == null) || (clubName.isBlank()) || (matchName == null) || (matchName.isBlank())) {
             return Optional.empty();
@@ -128,7 +125,6 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         return Optional.empty();
     }
 
-    // TODO: Javadoc
     protected boolean isRefreshRequired(IdentityDto identityDto) {
         if (identityDto == null) {
             return false;
@@ -136,14 +132,12 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         return identityDto.isRefreshRequired();
     }
 
-    // TODO: Javadoc
     protected void refreshRankings(ClubIdentityDto clubIdentity) {
         if ((clubIdentity != null) && (clubIdentity.getClubMatchEntities() != null)) {
             clubIdentity.refreshRankings();
         }
     }
 
-    // TODO: Javadoc
     protected void refreshRankings(MatchIdentityDto matchIdentity) {
         if (matchIdentity != null) {
             matchIdentity.refreshRankings();

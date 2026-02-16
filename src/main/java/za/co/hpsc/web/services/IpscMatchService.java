@@ -37,11 +37,7 @@ public interface IpscMatchService {
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
 
-    /**
-     *
-     * @param ipscMatchEntityList
-     * @return
-     */
+    // TODO: Javadoc
     IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList);
 
 }

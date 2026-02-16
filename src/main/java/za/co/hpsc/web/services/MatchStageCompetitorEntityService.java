@@ -13,14 +13,6 @@ import java.util.Optional;
  * based on specific criteria.
  */
 public interface MatchStageCompetitorEntityService {
-    /**
-     * Finds and retrieves a {@link MatchStageCompetitor} entity based on the provided match stage ID,
-     * and competitor ID.
-     *
-     * @param matchStageDto
-     * @param competitorDto
-     * @return an {@code Optional} containing the {@link MatchStageCompetitor} if a matching entity
-     * is found, or an empty {@code Optional} if no match is found.
-     */
+    // TODO: Javadoc
     Optional<MatchStageCompetitor> findMatchStageCompetitor(MatchStageDto matchStageDto, CompetitorDto competitorDto);
 }

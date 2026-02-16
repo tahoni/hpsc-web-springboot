@@ -56,7 +56,6 @@ public class ClubMatch {
         this.clubCompetitors = competitorList;
     }
 
-    // TODO: Javadoc
     public boolean isRefreshRequired() {
         LocalDateTime dateLastUpdated = ((this.dateEdited != null) ? this.dateEdited :
                 ((this.dateUpdated != null) ? this.dateUpdated : this.dateCreated));
@@ -70,7 +69,6 @@ public class ClubMatch {
         return this.dateRefreshed.isBefore(dateLastUpdated);
     }
 
-    // TODO: Javadoc
     public void refreshRankings(BigDecimal highestScore) {
         clubCompetitors.forEach(competitor -> competitor.refreshRankings(highestScore));
         this.dateRefreshed = LocalDateTime.now();

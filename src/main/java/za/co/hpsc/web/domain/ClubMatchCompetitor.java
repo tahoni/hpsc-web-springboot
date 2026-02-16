@@ -71,7 +71,6 @@ public class ClubMatchCompetitor {
         this.dateUpdated = LocalDateTime.now();
     }
 
-    // TODO: Javadoc
     public void refreshRankings(BigDecimal highestScore) {
         // Refresh the match points
         List<BigDecimal> matchPointList = this.clubMatch.getMatch().getMatchCompetitors().stream()
