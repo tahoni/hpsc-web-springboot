@@ -1,5 +1,6 @@
 package za.co.hpsc.web.services;
 
+import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 
@@ -29,4 +30,7 @@ public interface IpscMatchResultService {
      * or an empty {@link Optional} if the initialisation cannot be performed.
      */
     Optional<MatchResultsDto> initMatchResults(IpscResponse ipscResponse);
+
+    // TODO: Javadoc
+    Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults);
 }
