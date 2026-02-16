@@ -5,6 +5,7 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// TODO: add tests for other methods
 public class MatchDtoTest {
 
     @Test

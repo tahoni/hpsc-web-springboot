@@ -136,7 +136,7 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsEmptyString_WithNonNullObject_ShouldReturnToStringValue() {
+    void testNullAsEmptyString_withNonNullObject_ShouldReturnToStringValue() {
         // Arrange
         Object value = 123;
         String expected = "123";
@@ -149,20 +149,16 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsEmptyString_WithNullObject_ShouldReturnEmptyString() {
-        // Arrange
-        Object value = null;
-        String expected = "";
-
+    void testNullAsEmptyString_withNullObject_ShouldReturnEmptyString() {
         // Act
-        String result = ValueUtil.nullAsEmptyString(value);
+        String result = ValueUtil.nullAsEmptyString(null);
 
         // Assert
-        assertEquals(expected, result);
+        assertEquals("", result);
     }
 
     @Test
-    void testNullAsEmptyString_WithCustomObject_ShouldReturnToStringValue() {
+    void testNullAsEmptyString_withCustomObject_ShouldReturnToStringValue() {
         // Arrange
         Object value = new Object() {
             @Override
