@@ -175,14 +175,10 @@ public class MatchDto {
             this.name = matchResponse.getMatchName();
             this.scheduledDate = matchResponse.getMatchDate();
 
-            Optional<ClubIdentifier> clubReference = Optional.empty();
             if (clubDto != null) {
                 Optional<ClubIdentifier> cr = ClubIdentifier.getByName(clubDto.getName());
-                if (cr.isPresent()) {
-                    clubReference = cr;
-                }
+                cr.ifPresent(clubIdentifier -> this.clubName = clubIdentifier);
             }
-            clubReference.ifPresent(cr -> this.clubIdentifier = cr);
 
             // Determines the firearm type based on the firearm ID
             this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId())
