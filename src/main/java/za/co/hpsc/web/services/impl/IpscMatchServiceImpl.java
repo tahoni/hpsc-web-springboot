@@ -277,7 +277,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Formats competitor details for match competitor response
-        thisCompetitorOverall = new MatchCompetitorRecord(matchCompetitor.getClubIdentifier().toString(),
+        thisCompetitorOverall = new MatchCompetitorRecord(matchCompetitor.getClubName().toString(),
                 firearmType, division, powerFactor, competitorCategory, matchPoints, matchRanking, dateEdited);
         return Optional.of(thisCompetitorOverall);
     }
