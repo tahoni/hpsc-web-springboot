@@ -6,11 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.utils.DateUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -107,6 +108,7 @@ public class IpscMatch {
 
     @Override
     public String toString() {
-        return MatchHelpers.getMatchDisplayName(this);
+        return this.name + " (" + DateUtil.formatDateTime(this.scheduledDate,
+                IpscConstants.IPSC_OUTPUT_DATE_FORMAT) + ")";
     }
 }
