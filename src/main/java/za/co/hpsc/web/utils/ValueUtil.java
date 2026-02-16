@@ -30,11 +30,7 @@ public final class ValueUtil {
         return (value != null ? value : "");
     }
 
-    /**
-     *
-     * @param value
-     * @return
-     */
+    // TODO: Javadoc
     public static String nullAsEmptyString(Object value) {
         return (value != null ? value.toString() : "");
     }

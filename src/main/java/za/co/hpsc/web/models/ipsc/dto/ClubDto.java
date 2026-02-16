@@ -51,10 +51,7 @@ public class ClubDto {
         this.abbreviation = clubEntity.getAbbreviation();
     }
 
-    /**
-     *
-     * @param clubResponse
-     */
+    // TODO: Javadoc
     public ClubDto(ClubResponse clubResponse) {
         if (clubResponse != null) {
             // Initialises club details
@@ -66,6 +63,7 @@ public class ClubDto {
         }
     }
 
+    // TODO: Javadoc
     public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
         if (clubEntity != null) {
             this.id = clubEntity.getId();
@@ -75,10 +73,7 @@ public class ClubDto {
         }
     }
 
-    /**
-     *
-     * @param clubResponse
-     */
+    // TODO: Javadoc
     public void init(ClubResponse clubResponse) {
         if (clubResponse != null) {
             this.index = clubResponse.getClubId();

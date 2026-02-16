@@ -114,11 +114,7 @@ public class MatchDto {
         this.dateEdited = matchEntity.getDateEdited();
     }
 
-    /**
-     *
-     * @param matchResponse
-     * @param clubDto
-     */
+    // TODO: Javadoc
     public MatchDto(MatchResponse matchResponse, ClubDto clubDto) {
         if (matchResponse != null) {
             // Initialises match details

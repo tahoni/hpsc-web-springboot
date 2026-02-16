@@ -45,6 +45,7 @@ public final class StringUtil {
         return result;
     }
 
+    // TODO: Javadoc
     public static String toString(Object object) {
         if (object == null) {
             return null;

@@ -15,13 +15,14 @@ public class NumberUtilTest {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(25);
         BigDecimal total = BigDecimal.valueOf(100);
+        BigDecimal expected = BigDecimal.valueOf(25).setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
 
         // Act
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.valueOf(25).setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
-                result);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -29,13 +30,14 @@ public class NumberUtilTest {
         // Arrange
         BigDecimal part = BigDecimal.ZERO;
         BigDecimal total = BigDecimal.valueOf(100);
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
 
         // Act
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
-                result);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -43,26 +45,28 @@ public class NumberUtilTest {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(25);
         BigDecimal total = BigDecimal.ZERO;
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
 
         // Act
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
-                result);
+        assertEquals(expected, result);
     }
 
     @Test
     void testCalculatePercentage_withNullTotal_thenReturnsZero() {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(25);
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
 
         // Act
         BigDecimal result = NumberUtil.calculatePercentage(part, null);
 
         // Assert
-        assertEquals(BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
-                result);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -70,13 +74,14 @@ public class NumberUtilTest {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(-25);
         BigDecimal total = BigDecimal.valueOf(100);
+        BigDecimal expected = BigDecimal.valueOf(-25).setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
 
         // Act
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.valueOf(-25).setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
-                result);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -84,12 +89,13 @@ public class NumberUtilTest {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(33);
         BigDecimal total = BigDecimal.valueOf(200);
+        BigDecimal expected = BigDecimal.valueOf(16.50).setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
 
         // Act
         BigDecimal result = NumberUtil.calculatePercentage(part, total);
 
         // Assert
-        assertEquals(BigDecimal.valueOf(16.50).setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP),
-                result);
+        assertEquals(expected, result);
     }
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,7 +55,7 @@ public class IpscMatchStage {
     private Integer maxPoints;
 
     @OneToMany(fetch = FetchType.EAGER)
-    private List<MatchStageCompetitor> matchStageCompetitors;
+    private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 
     /**
      * Initialises the current {@code MatchStage} entity with data from a DTO

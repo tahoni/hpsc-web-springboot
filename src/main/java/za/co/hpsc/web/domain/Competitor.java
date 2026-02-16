@@ -10,6 +10,7 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,7 +55,7 @@ public class Competitor {
     private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
 
     @OneToMany(fetch = FetchType.EAGER)
-    private List<MatchCompetitor> competitorMatches;
+    private List<MatchCompetitor> competitorMatches = new ArrayList<>();
 
     /**
      * Initialises the current {@code Competitor} entity with data from a DTO.
