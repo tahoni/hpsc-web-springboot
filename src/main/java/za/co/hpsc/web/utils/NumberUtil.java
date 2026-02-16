@@ -46,12 +46,13 @@ public final class NumberUtil {
     }
 
     // TODO: Javadoc
-    // TODO: test
     public static BigDecimal calculateSum(List<BigDecimal> values) {
         BigDecimal sum = BigDecimal.ZERO;
         // Calculates the sum of the values in the list
-        for (BigDecimal value : values) {
-            sum = sum.add(value);
+        if (values != null) {
+            for (BigDecimal value : values) {
+                sum = sum.add(value);
+            }
         }
 
         // Scales the result to the default scale
@@ -59,7 +60,6 @@ public final class NumberUtil {
     }
 
     // TODO: Javadoc
-    // TODO: test
     public static String formatBigDecimal(BigDecimal value, int scale) {
         BigDecimal result = ((value != null) ? value : BigDecimal.ZERO);
         // Scales the result to the default scale

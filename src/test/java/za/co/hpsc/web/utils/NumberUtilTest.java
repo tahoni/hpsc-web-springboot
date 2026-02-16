@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NumberUtilTest {
 
@@ -97,7 +96,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testCalculateSum_WithPositiveNumbers_ShouldReturnCorrectSum() {
+    void testCalculateSum_WithPositiveNumbers_thenReturnsCorrectSum() {
         // Arrange
         List<BigDecimal> values = List.of(new BigDecimal("10.5"), new BigDecimal("20.5"), new BigDecimal("30.0"));
         BigDecimal expected = new BigDecimal("61.00").setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
@@ -110,7 +109,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testCalculateSum_WithEmptyList_ShouldReturnZero() {
+    void testCalculateSum_WithEmptyList_thenReturnsZero() {
         // Arrange
         List<BigDecimal> values = Collections.emptyList();
         BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
@@ -123,18 +122,20 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testCalculateSum_WithNullList_ShouldThrowNullPointerException() {
+    void testCalculateSum_WithNullList_thenReturnZero() {
         // Arrange
         List<BigDecimal> values = null;
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> {
-            NumberUtil.calculateSum(values);
-        });
+        // Act
+        BigDecimal result = NumberUtil.calculateSum(values);
+
+        // Assert
+        assertEquals(expected, result);
     }
 
     @Test
-    void testCalculateSum_WithNumbersNeedingScaling_ShouldReturnScaledSum() {
+    void testCalculateSum_WithNumbersNeedingScaling_thenReturnsScaledSum() {
         // Arrange
         List<BigDecimal> values = List.of(new BigDecimal("10.123"), new BigDecimal("20.456"),
                 new BigDecimal("30.789"));
@@ -175,7 +176,7 @@ public class NumberUtilTest {
 
 
     @Test
-    void testFormatBigDecimal_WithNonNullValue_ShouldReturnFormattedString() {
+    void testFormatBigDecimal_WithNonNullValue_thenReturnsFormattedString() {
         // Arrange
         BigDecimal value = new BigDecimal("123.456");
         int scale = 2;
@@ -189,7 +190,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testFormatBigDecimal_WithNullValue_ShouldReturnZeroFormattedString() {
+    void testFormatBigDecimal_WithNullValue_thenReturnsZeroFormattedString() {
         // Arrange
         BigDecimal value = null;
         int scale = 2;
@@ -203,7 +204,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testFormatBigDecimal_WithRoundingUp_ShouldReturnFormattedString() {
+    void testFormatBigDecimal_WithRoundingUp_thenReturnsFormattedString() {
         // Arrange
         BigDecimal value = new BigDecimal("99.995");
         int scale = 2;
@@ -217,7 +218,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testFormatBigDecimal_WithRoundingDown_ShouldReturnFormattedString() {
+    void testFormatBigDecimal_WithRoundingDown_thenReturnsFormattedString() {
         // Arrange
         BigDecimal value = new BigDecimal("123.454");
         int scale = 2;
@@ -231,7 +232,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testFormatBigDecimal_WithZeroScale_ShouldReturnFormattedString() {
+    void testFormatBigDecimal_WithZeroScale_thenReturnsFormattedString() {
         // Arrange
         BigDecimal value = new BigDecimal("123.5");
         int scale = 0;
