@@ -9,7 +9,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.*;
+import za.co.hpsc.web.services.IpscMatchResultService;
+import za.co.hpsc.web.services.IpscMatchService;
+import za.co.hpsc.web.services.IpscService;
+import za.co.hpsc.web.services.TransactionService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,13 +42,13 @@ public class IpscServiceIntegrationTest {
     }
 
     @Bean
-    public TransactionService transactionService(IpscDomainService ipscDomainService,
+    public TransactionService transactionService(IpscMatchResultService ipscMatchResultService,
                                                  ClubRepository clubRepository,
                                                  IpscMatchRepository ipscMatchRepository,
                                                  IpscMatchStageRepository ipscMatchStageRepository,
                                                  MatchCompetitorRepository matchCompetitorRepository,
                                                  MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, ipscDomainService, clubRepository,
+        return new TransactionServiceImpl(platformTransactionManager, ipscMatchResultService, clubRepository,
                 competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
                 matchCompetitorRepository, matchStageCompetitorRepository);
     }
