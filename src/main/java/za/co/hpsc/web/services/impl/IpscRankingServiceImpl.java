@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.ClubMatch;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.ClubIdentityDto;
 import za.co.hpsc.web.models.ipsc.dto.IdentityDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchIdentityDto;
@@ -38,6 +39,11 @@ public class IpscRankingServiceImpl implements IpscRankingService {
         this.matchEntityService = matchEntityService;
         this.matchCompetitorEntityService = matchCompetitorEntityService;
         this.clubMatchEntityService = clubMatchEntityService;
+    }
+
+    @Override
+    public IpscRankingClubHolderRecord initClubRankingEntities(MatchEntityHolder matchEntityHolder) {
+        return null;
     }
 
     @Override
