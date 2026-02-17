@@ -23,8 +23,6 @@ public class MatchEntityServiceImpl implements MatchEntityService {
         if (name == null) {
             return Optional.empty();
         }
-
-        // Filters matches by name
         return matchRepository.findByName(name);
     }
 }
