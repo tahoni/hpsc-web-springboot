@@ -52,7 +52,6 @@ public class MatchStageCompetitorDto {
     private PowerFactor powerFactor;
 
     private Integer scoreA;
-    private Integer scoreB;
     private Integer scoreC;
     private Integer scoreD;
 
@@ -101,7 +100,6 @@ public class MatchStageCompetitorDto {
 
         // Initialises the detailed breakdown of the score
         this.scoreA = matchStageCompetitorEntity.getScoreA();
-        this.scoreB = matchStageCompetitorEntity.getScoreB();
         this.scoreC = matchStageCompetitorEntity.getScoreC();
         this.scoreD = matchStageCompetitorEntity.getScoreD();
 
@@ -178,7 +176,6 @@ public class MatchStageCompetitorDto {
         if (scoreResponse != null) {
             // Initialises the detailed breakdown of the score
             this.scoreA = scoreResponse.getScoreA();
-            this.scoreB = scoreResponse.getScoreB();
             this.scoreC = scoreResponse.getScoreC();
             this.scoreD = scoreResponse.getScoreD();
 

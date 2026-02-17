@@ -2,6 +2,7 @@ package za.co.hpsc.web.services.impl;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.ClubIdentifier;
@@ -32,6 +33,9 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     protected final MatchStageEntityService matchStageEntityService;
     protected final MatchCompetitorEntityService matchCompetitorEntityService;
     protected final MatchStageCompetitorEntityService matchStageCompetitorEntityService;
+
+    @Value("${hpsc-web.results.init-match-result.ignore-updated-date:false}")
+    private Boolean ignoreDateUpdated;
 
     public IpscMatchResultServiceImpl(ClubRepository clubRepository,
                                       CompetitorRepository competitorRepository,
@@ -171,7 +175,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                 optionalMatch.get().getDateUpdated() : LocalDateTime.now());
 
         // Skips update if there are no newer scores in the IPSC response
-        if (ipscMatchExists) {
+        boolean ignoreMatchDateUpdated = ((ignoreDateUpdated != null ? ignoreDateUpdated : false));
+        if ((!ignoreMatchDateUpdated) && (ipscMatchExists)) {
             ipscResponseHasNewerScore = ipscResponse.getScores().stream()
                     .anyMatch(sr -> matchLastUpdated.isBefore(sr.getLastModified()));
             if (!ipscResponseHasNewerScore) {

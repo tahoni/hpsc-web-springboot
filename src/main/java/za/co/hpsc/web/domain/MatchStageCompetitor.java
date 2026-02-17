@@ -51,9 +51,11 @@ public class MatchStageCompetitor {
     private Division division;
     private PowerFactor powerFactor;
 
+    @Column(name = "score_a")
     private Integer scoreA;
-    private Integer scoreB;
+    @Column(name = "score_c")
     private Integer scoreC;
+    @Column(name = "score_d")
     private Integer scoreD;
 
     private Integer points;
@@ -109,7 +111,6 @@ public class MatchStageCompetitor {
 
         // Initialises the detailed breakdown of the score
         this.scoreA = matchStageCompetitorDto.getScoreA();
-        this.scoreB = matchStageCompetitorDto.getScoreB();
         this.scoreC = matchStageCompetitorDto.getScoreC();
         this.scoreD = matchStageCompetitorDto.getScoreD();
 
