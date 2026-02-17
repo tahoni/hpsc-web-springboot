@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 // TODO: redo some tests
+// TODO: add tests for scores not zero/null
+// TODO: add tests for scores zero/null
 @ExtendWith(MockitoExtension.class)
 public class IpscMatchResultServiceImplTest {
     @Mock
@@ -736,6 +738,7 @@ public class IpscMatchResultServiceImplTest {
         ScoreResponse scoreResponse = new ScoreResponse();
         scoreResponse.setMemberId(100);
         scoreResponse.setStageId(1);
+        scoreResponse.setFinalScore(10);
         ipscResponse.setScores(List.of(scoreResponse));
 
         MemberRequest memberResponse = new MemberRequest();
@@ -785,6 +788,7 @@ public class IpscMatchResultServiceImplTest {
         ScoreResponse scoreResponse = new ScoreResponse();
         scoreResponse.setMemberId(100);
         scoreResponse.setStageId(1);
+        scoreResponse.setFinalScore(100);
         ipscResponse.setScores(List.of(scoreResponse));
 
         MemberRequest memberResponse = new MemberRequest();
@@ -833,6 +837,7 @@ public class IpscMatchResultServiceImplTest {
         ScoreResponse scoreResponse = new ScoreResponse();
         scoreResponse.setMemberId(100);
         scoreResponse.setStageId(1);
+        scoreResponse.setFinalScore(100);
         ipscResponse.setScores(List.of(scoreResponse));
 
         MemberRequest memberRequest = new MemberRequest();

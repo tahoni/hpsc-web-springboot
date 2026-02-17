@@ -27,49 +27,56 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
     public Optional<Competitor> findCompetitor(String icsAlias, String firstName, String lastName,
                                                LocalDateTime dateTimeOfBirth) {
 
-        Optional<Competitor> competitor = Optional.empty();
+        List<Competitor> competitorList = new ArrayList<>();
 
         // Attempts competitor lookup by SAPSA number or alias
         if ((icsAlias != null) && (!icsAlias.isBlank()) && (NumberUtils.isCreatable((icsAlias)))) {
             Integer sapsaNumber = Integer.parseInt(icsAlias);
             if (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(sapsaNumber)) {
-                competitor = competitorRepository.findBySapsaNumber(sapsaNumber);
+                competitorList = competitorRepository.findAllBySapsaNumber(sapsaNumber);
             }
         }
 
         // If the competitor was not found
-        if (competitor.isEmpty()) {
-            List<Competitor> competitorList = new ArrayList<>();
+        if (competitorList.isEmpty()) {
             // Attempt to find the competitor by first and last name
             competitorList = competitorRepository.findAllByFirstNameAndLastName(firstName, lastName);
             if (competitorList.isEmpty()) {
                 return Optional.empty();
             }
-
-            // Filters list by date of birth if present
-            List<Competitor> filteredCompetitorList = new ArrayList<>();
-            if (dateTimeOfBirth != null) {
-                // Filters list to matching dates of birth
-                filteredCompetitorList = competitorList.stream()
-                        .filter(c -> dateTimeOfBirth.toLocalDate().equals(c.getDateOfBirth()))
-                        .toList();
-            }
-
-            // If no matching dates of birth were found, return the first matching competitor
-            if (filteredCompetitorList.isEmpty()) {
-                return competitorList.stream().findFirst();
-            }
-
-            // Finds the first matching competitor without a SAPSA number
-            Optional<Competitor> filteredCompetitor = competitorList.stream()
-                    .filter(c -> c.getSapsaNumber() == null)
-                    .findFirst();
-            if (filteredCompetitor.isEmpty()) {
-                // Finds the first matching competitor with a SAPSA number
-                return filteredCompetitorList.stream().findFirst();
-            }
         }
 
-        return competitor;
+        // Filters list by date of birth if present
+        List<Competitor> filteredCompetitorList = competitorList;
+        if (dateTimeOfBirth != null) {
+            // Filters list to matching dates of birth
+            filteredCompetitorList = competitorList.stream()
+                    .filter(c -> dateTimeOfBirth.toLocalDate().equals(c.getDateOfBirth()))
+                    .toList();
+        }
+
+        List<Competitor> filteredListWithSapsaNumber = new ArrayList<>();
+        List<Competitor> filteredListWithoutSapsaNumber = new ArrayList<>();
+        if (!filteredCompetitorList.isEmpty()) {
+            // Finds the first matching competitor with a SAPSA number
+            filteredListWithSapsaNumber = filteredCompetitorList.stream()
+                    .filter(c -> c.getSapsaNumber() != null)
+                    .toList();
+            // Finds the first matching competitor without a SAPSA number
+            filteredListWithoutSapsaNumber = filteredCompetitorList.stream()
+                    .filter(c -> c.getSapsaNumber() != null)
+                    .toList();
+        }
+
+        List<Competitor> finalCompetitorList = new ArrayList<>();
+        if (!filteredListWithSapsaNumber.isEmpty()) {
+            finalCompetitorList = filteredListWithSapsaNumber;
+        } else if (!filteredListWithoutSapsaNumber.isEmpty()) {
+            finalCompetitorList = filteredListWithoutSapsaNumber;
+        } else {
+            finalCompetitorList = filteredCompetitorList;
+        }
+
+        return finalCompetitorList.stream().findFirst();
     }
 }

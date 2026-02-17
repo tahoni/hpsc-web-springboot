@@ -4,6 +4,7 @@ import za.co.hpsc.web.constants.SystemConstants;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 /**
  * Utility class providing methods for numeric calculations and operations.
@@ -42,6 +43,20 @@ public final class NumberUtil {
         }
         // Scales the result to the default scale
         return result.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
+    }
+
+    // TODO: Javadoc
+    public static BigDecimal calculateSum(List<BigDecimal> values) {
+        BigDecimal sum = BigDecimal.ZERO;
+        // Calculates the sum of the values in the list
+        if (values != null) {
+            for (BigDecimal value : values) {
+                sum = sum.add(value);
+            }
+        }
+
+        // Scales the result to the default scale
+        return sum.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
     // TODO: Javadoc

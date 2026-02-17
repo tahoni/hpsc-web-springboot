@@ -134,4 +134,44 @@ class ValueUtilTest {
         assertEquals(input, result);
         assertEquals(List.of("x", "y", "z"), input);
     }
+
+    @Test
+    void testNullAsEmptyString_withNonNullObject_ShouldReturnToStringValue() {
+        // Arrange
+        Object value = 123;
+        String expected = "123";
+
+        // Act
+        String result = ValueUtil.nullAsEmptyString(value);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testNullAsEmptyString_withNullObject_ShouldReturnEmptyString() {
+        // Act
+        String result = ValueUtil.nullAsEmptyString(null);
+
+        // Assert
+        assertEquals("", result);
+    }
+
+    @Test
+    void testNullAsEmptyString_withCustomObject_ShouldReturnToStringValue() {
+        // Arrange
+        Object value = new Object() {
+            @Override
+            public String toString() {
+                return "CustomObject";
+            }
+        };
+        String expected = "CustomObject";
+
+        // Act
+        String result = ValueUtil.nullAsEmptyString(value);
+
+        // Assert
+        assertEquals(expected, result);
+    }
 }

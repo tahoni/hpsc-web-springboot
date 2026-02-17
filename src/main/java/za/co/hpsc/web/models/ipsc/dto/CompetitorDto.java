@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.math.NumberUtils;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
@@ -96,8 +97,10 @@ public class CompetitorDto {
             this.index = memberResponse.getMemberId();
 
             // Initialises competitor attributes
-            this.firstName = memberResponse.getFirstName();
-            this.lastName = memberResponse.getLastName();
+            this.firstName = memberResponse.getFirstName().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX,
+                    "").trim();
+            this.lastName = memberResponse.getLastName().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX,
+                    "").trim();
             if (memberResponse.getDateOfBirth() != null) {
                 this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
             }

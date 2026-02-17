@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
@@ -77,10 +78,14 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             return Optional.empty();
         }
 
-        // Initialises match results
+        // Initialises match details
         MatchDto match = optionalMatch.get();
         MatchResultsDto matchResultsDto = new MatchResultsDto(match);
         matchResultsDto.setStages(initStages(match, ipscResponse.getStages()));
+
+        // Initialises match results
+        matchResultsDto.setMatchStageCompetitors(new ArrayList<>());
+        matchResultsDto.setMatchStageCompetitors(new ArrayList<>());
         initScores(matchResultsDto, ipscResponse);
 
         // Sets the date updated
@@ -245,8 +250,10 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
         List<ScoreResponse> scoreResponses = ipscResponse.getScores();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
-        // Maps score responses to corresponding member responses
+        // Maps score responses to corresponding member responses, excluding members who didn't participate
         Set<Integer> memberIdsWithScores = scoreResponses.stream()
+                .filter(scoreResponse -> scoreResponse.getFinalScore() != null)
+                .filter(scoreResponse -> scoreResponse.getFinalScore() != 0)
                 .map(ScoreResponse::getMemberId)
                 .collect(Collectors.toSet());
         List<MemberResponse> scoreMembers = memberResponses.stream()
@@ -283,9 +290,10 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             // Caches the competitor and enrolled response for later use
             competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
             enrolledMap.put(memberResponse.getMemberId(), enrolledResponse);
+
+            // Collects all competitors in the match results DTO
+            matchResultsDto.getCompetitors().addAll(competitorDtoMap.values());
         });
-        // Collects all competitors in the match results DTO
-        matchResultsDto.setCompetitors(new ArrayList<>(competitorDtoMap.values()));
 
         List<MatchCompetitorDto> matchCompetitorDtoList = matchResultsDto.getMatchCompetitors();
         // Iterates through each competitor
@@ -345,6 +353,9 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                     matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
                             enrolledMap.get(memberId), stageDto);
                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
+
+                    // Collects all stage competitors in the match results DTO
+                    matchResultsDto.getMatchStageCompetitors().addAll(matchStageCompetitorDtoList);
                 }
             });
         });
@@ -378,7 +389,6 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         // Initialise the match entity from DTO or create a new entity
         IpscMatch matchEntity = optionalIpscMatchEntity.orElse(new IpscMatch());
         // Add attributes to the match
-        // TODO: fix this method to handle the case where the match entity is being created and the club entity is null
         matchEntity.init(matchDto, clubEntity);
         // Link the match to the stage
         matchEntity.setClub(clubEntity);
@@ -491,7 +501,6 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     }
 
     // TODO: Javadoc
-    // TODO: add tests
     protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
                                                                                Map<UUID, IpscMatchStage> matchStageMap, Map<UUID, Competitor> competitorMap,
                                                                                ClubIdentifier clubIdentifier) {
@@ -522,7 +531,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                         .orElse(new MatchStageCompetitor());
 
                 // Filter by club reference if specified
-                if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
+                if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
                     if (!clubIdentifier.equals(matchStageCompetitorDto.getClubName())) {
                         continue;
                     }

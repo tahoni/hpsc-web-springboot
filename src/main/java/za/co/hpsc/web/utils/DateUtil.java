@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 // TODO: Javadoc
-// TODO: add tests
 public final class DateUtil {
     private DateUtil() {
         // Utility class, not to be instantiated
