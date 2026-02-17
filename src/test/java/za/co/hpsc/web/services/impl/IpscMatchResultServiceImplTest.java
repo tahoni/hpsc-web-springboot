@@ -23,6 +23,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+// TODO: redo some tests
 @ExtendWith(MockitoExtension.class)
 public class IpscMatchResultServiceImplTest {
     @Mock
@@ -855,7 +856,7 @@ public class IpscMatchResultServiceImplTest {
                 .thenReturn(Optional.of(existingCompetitor));
         when(matchCompetitorEntityService.findMatchCompetitor(10L, 1L))
                 .thenReturn(Optional.of(existingMatchCompetitor));
-        when(matchStageCompetitorEntityService.findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class)))
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(50L, 10L))
                 .thenReturn(Optional.of(existingMatchStageCompetitor));
 
         // Act
@@ -866,7 +867,7 @@ public class IpscMatchResultServiceImplTest {
         assertEquals(1, matchResultsDto.getMatchStageCompetitors().size());
         assertEquals(30L, matchResultsDto.getMatchStageCompetitors().getFirst().getId());
         verify(matchStageCompetitorEntityService, times(1))
-                .findMatchStageCompetitor(eq(stageDto), any(CompetitorDto.class));
+                .findMatchStageCompetitor(50L, 10L);
     }
 
     @Test

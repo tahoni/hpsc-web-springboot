@@ -331,7 +331,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                     // Attempts to find the match stage competitor by competitor ID, stage ID,
                     // and match ID
                     Optional<MatchStageCompetitor> optionalMatchStageCompetitor =
-                            matchStageCompetitorEntityService.findMatchStageCompetitor(stageDto, competitorDto);
+                            matchStageCompetitorEntityService.findMatchStageCompetitor(stageDto.getId(),
+                                    competitorDto.getId());
                     // Creates a new match stage competitor DTO, from either the found entity
                     // or the competitor DTO
                     MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
