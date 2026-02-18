@@ -23,7 +23,7 @@ public class MatchEntityServiceImpl implements MatchEntityService {
         if ((id == null) || (id == 0L)) {
             return Optional.empty();
         }
-        return matchRepository.findByIdWithClub(id);
+        return matchRepository.findById(id);
     }
 
     @Override
@@ -31,6 +31,6 @@ public class MatchEntityServiceImpl implements MatchEntityService {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
-        return matchRepository.findByNameWithClub(name);
+        return matchRepository.findByName(name);
     }
 }

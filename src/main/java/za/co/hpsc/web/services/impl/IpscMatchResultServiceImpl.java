@@ -132,13 +132,24 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         if ((clubResponse == null) && ((clubIdentifier == null))) {
             return Optional.empty();
         }
+        if (clubResponse != null) {
+            if ((clubResponse.getClubName() == null) && (clubResponse.getClubCode() == null)) {
+                return Optional.empty();
+            }
+            if ((clubResponse.getClubName().isBlank()) && (clubResponse.getClubCode().isBlank())) {
+                return Optional.empty();
+            }
+        }
 
         // Attempts to find the club by name or abbreviation in the database
         Optional<Club> optionalClub = Optional.empty();
-        if ((clubResponse != null) && ((clubResponse.getClubName() != null) || (clubResponse.getClubCode() != null))) {
+        if (clubResponse != null) {
             optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(),
                     clubResponse.getClubCode());
-        } else if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+        }
+
+        if ((optionalClub.isEmpty()) && (clubIdentifier != null) &&
+                (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
             String clubIdentifierName = clubIdentifier.getName();
             optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubIdentifierName,
                     clubIdentifierName);
@@ -149,9 +160,9 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         ClubDto clubDto = null;
         if (club != null) {
             clubDto = new ClubDto(club);
-        } else if ((clubResponse != null) && ((clubResponse.getClubName() != null) || (clubResponse.getClubCode() != null))) {
+        } else if (clubResponse != null) {
             clubDto = new ClubDto(clubResponse);
-        } else if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+        } else if (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier)) {
             clubDto = new ClubDto(clubIdentifier);
         }
 

@@ -40,7 +40,7 @@ public class IpscMatch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "club_id")
     private Club club;
 
@@ -58,9 +58,9 @@ public class IpscMatch {
     @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<IpscMatchStage> matchStages = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
     private LocalDateTime dateCreated;
