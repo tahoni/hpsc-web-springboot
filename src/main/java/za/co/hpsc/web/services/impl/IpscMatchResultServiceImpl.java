@@ -167,7 +167,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
         // Attempts to find the match by name and date in the database
         Optional<IpscMatch> optionalMatch =
-                matchEntityService.findMatch(ipscResponse.getMatch().getMatchName());
+                matchEntityService.findMatchByName(ipscResponse.getMatch().getMatchName());
         boolean ipscMatchExists = optionalMatch.isPresent();
         boolean ipscResponseHasNewerScore = false;
         // Determines the last updated date of the match
@@ -257,7 +257,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                 .toList();
 
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
-        Map<Integer, EnrolledResponse> enrolledMap = new HashMap<>();
+        Map<Integer, EnrolledResponse> enrolledResponseMap = new HashMap<>();
         // Iterates through each member response
         scoreMembers.forEach(memberResponse -> {
             // Attempts to find the competitor by ICS alias, first name, last name, and
@@ -284,13 +284,19 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
             // Caches the competitor and enrolled response for later use
             competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
-            enrolledMap.put(memberResponse.getMemberId(), enrolledResponse);
-
-            // Collects all competitors in the match results DTO
-            matchResultsDto.getCompetitors().addAll(competitorDtoMap.values());
+            enrolledResponseMap.put(memberResponse.getMemberId(), enrolledResponse);
         });
 
-        List<MatchCompetitorDto> matchCompetitorDtoList = matchResultsDto.getMatchCompetitors();
+        // Ensure the match and stage competitor list fields are not null
+        List<MatchCompetitorDto> matchCompetitorDtoList = new ArrayList<>();
+        List<MatchStageCompetitorDto> matchStageCompetitorDtoList = new ArrayList<>();
+        if (matchResultsDto.getMatchCompetitors() == null) {
+            matchResultsDto.setMatchCompetitors(new ArrayList<>());
+        }
+        if (matchResultsDto.getMatchStageCompetitors() == null) {
+            matchResultsDto.setMatchStageCompetitors(new ArrayList<>());
+        }
+
         // Iterates through each competitor
         competitorDtoMap.keySet().forEach(memberId -> {
             // Gets the competitor DTO from the map
@@ -321,8 +327,6 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             matchCompetitorDtoList.add(matchCompetitorDto);
 
             // Gets the match stage competitors from the match results DTO
-            List<MatchStageCompetitorDto> matchStageCompetitorDtoList =
-                    matchResultsDto.getMatchStageCompetitors();
             // Iterates through each stage
             matchResultsDto.getStages().forEach(stageDto -> {
                 // Filters scores by stage ID (already filtered by member ID)
