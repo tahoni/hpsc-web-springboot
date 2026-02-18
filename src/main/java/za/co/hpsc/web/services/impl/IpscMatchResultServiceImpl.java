@@ -323,7 +323,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
 
             // Initialises match competitor attributes
-            matchCompetitorDto.init(scores, enrolledMap.get(memberId));
+            matchCompetitorDto.init(scores, enrolledResponseMap.get(memberId));
             matchCompetitorDtoList.add(matchCompetitorDto);
 
             // Gets the match stage competitors from the match results DTO
@@ -350,7 +350,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
                     // Initialises the match stage attributes
                     matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
-                            enrolledMap.get(memberId), stageDto);
+                            enrolledResponseMap.get(memberId), stageDto);
                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
 
                     // Collects all stage competitors in the match results DTO
