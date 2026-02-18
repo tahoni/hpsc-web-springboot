@@ -39,11 +39,11 @@ public class MatchStageCompetitor {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "competitor_id")
     private Competitor competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "match_stage_id")
     private IpscMatchStage matchStage;
 
@@ -78,7 +78,6 @@ public class MatchStageCompetitor {
     @Enumerated(EnumType.STRING)
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
@@ -135,15 +134,21 @@ public class MatchStageCompetitor {
         this.stagePoints = matchStageCompetitorDto.getStagePoints();
         this.stagePercentage = matchStageCompetitorDto.getStagePercentage();
         this.stageRanking = matchStageCompetitorDto.getStageRanking();
-
-        // Initialises the date fields
-        this.dateCreated = matchStageCompetitorDto.getDateCreated();
-        this.dateUpdated = matchStageCompetitorDto.getDateUpdated();
-        this.dateEdited = matchStageCompetitorDto.getDateEdited();
     }
 
     @Override
     public String toString() {
         return this.matchStage.toString() + ": " + this.competitor.toString();
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

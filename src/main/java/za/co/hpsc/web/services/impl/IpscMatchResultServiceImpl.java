@@ -84,12 +84,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         matchResultsDto.setStages(initStages(match, ipscResponse.getStages()));
 
         // Initialises match results
-        matchResultsDto.setMatchStageCompetitors(new ArrayList<>());
-        matchResultsDto.setMatchStageCompetitors(new ArrayList<>());
         initScores(matchResultsDto, ipscResponse);
-
-        // Sets the date updated
-        match.setDateUpdated(LocalDateTime.now());
 
         return Optional.of(matchResultsDto);
     }

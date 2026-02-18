@@ -53,9 +53,6 @@ public class MatchCompetitorDto {
     private BigDecimal matchPoints;
     private BigDecimal matchRanking;
 
-    @NotNull
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
     /**
@@ -83,10 +80,6 @@ public class MatchCompetitorDto {
         // Initialises the competitor scoring details
         this.matchPoints = matchCompetitorEntity.getMatchPoints();
         this.matchRanking = matchCompetitorEntity.getMatchRanking();
-
-        // Initialises the date fields
-        this.dateCreated = matchCompetitorEntity.getDateCreated();
-        this.dateUpdated = LocalDateTime.now();
     }
 
     /**
@@ -106,11 +99,6 @@ public class MatchCompetitorDto {
             this.matchIndex = matchDto.getIndex();
             this.competitor = competitorDto;
             this.match = matchDto;
-
-            // Initialises the date fields
-            this.dateCreated = LocalDateTime.now();
-            this.dateUpdated = LocalDateTime.now();
-            this.dateEdited = LocalDateTime.now();
         }
     }
 
@@ -132,10 +120,6 @@ public class MatchCompetitorDto {
             scoreResponses.forEach(scoreResponse -> matchPoints =
                     matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()))));
 
-            // Don't overwrite an existing date creation timestamp
-            this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
-            // Initialises the date updated
-            this.dateUpdated = LocalDateTime.now();
             // Sets the date edited to the latest score update timestamp
             this.dateEdited = scoreResponses.stream()
                     .map(ScoreResponse::getLastModified)
@@ -148,7 +132,6 @@ public class MatchCompetitorDto {
                 // Initialise the competitor and match details
                 this.competitorIndex = enrolledResponse.getCompetitorId();
                 this.matchIndex = enrolledResponse.getMatchId();
-                // TOOD: get DTOs
 
                 // Determines the power factor based on the major power factor flag
                 this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
@@ -157,8 +140,8 @@ public class MatchCompetitorDto {
                 // Determines the discipline based on the division ID
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the firearm type from the discipline
-                this.firearmType =
-                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
+                this.firearmType = FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division)
+                        .orElse(null);
                 // Determines the competitor category based on the competitor category ID
                 this.competitorCategory =
                         CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())

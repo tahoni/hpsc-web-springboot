@@ -107,8 +107,11 @@ public class CompetitorDto {
 
             // Initialises competitor number and SAPSA number based on the member's ICS alias
             this.competitorNumber = memberResponse.getIcsAlias();
-            if (NumberUtils.isCreatable(memberResponse.getIcsAlias())) {
+            if ((NumberUtils.isCreatable(memberResponse.getIcsAlias())) &&
+                    (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(memberResponse.getIcsAlias()))) {
                 this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+            } else {
+                this.sapsaNumber = null;
             }
 
             // Initialises competitor category based on the member's category code'

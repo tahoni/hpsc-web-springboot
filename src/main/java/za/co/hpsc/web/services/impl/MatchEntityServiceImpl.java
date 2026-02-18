@@ -19,7 +19,7 @@ public class MatchEntityServiceImpl implements MatchEntityService {
     }
 
     @Override
-    public Optional<IpscMatch> findMatch(String name) {
+    public Optional<IpscMatch> findMatchByName(String name) {
         if (name == null) {
             return Optional.empty();
         }

@@ -49,9 +49,6 @@ public class MatchDto {
     private FirearmType matchFirearmType;
     private MatchCategory matchCategory;
 
-    @NotNull
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
     /**
@@ -80,10 +77,6 @@ public class MatchDto {
         this.clubName = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
-
-        // Initialises the date fields
-        this.dateCreated = matchEntity.getDateCreated();
-        this.dateUpdated = LocalDateTime.now();
     }
 
     /**
@@ -109,8 +102,6 @@ public class MatchDto {
         this.matchCategory = matchEntity.getMatchCategory();
 
         // Initialises the date fields
-        this.dateCreated = matchEntity.getDateCreated();
-        this.dateUpdated = matchEntity.getDateUpdated();
         this.dateEdited = matchEntity.getDateEdited();
     }
 
@@ -133,11 +124,6 @@ public class MatchDto {
             // Determines the firearm type based on the firearm ID
             this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
             this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
-
-            // Initialises the date fields
-            this.dateCreated = LocalDateTime.now();
-            this.dateUpdated = LocalDateTime.now();
-            this.dateEdited = LocalDateTime.now();
         }
     }
 
@@ -181,10 +167,6 @@ public class MatchDto {
                     .orElse(this.matchFirearmType);
             this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
 
-            // Don't overwrite an existing date creation timestamp
-            this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
-            // Initialises the date updated
-            this.dateUpdated = LocalDateTime.now();
             // Sets the date edited to the latest score update timestamp
             if (scoreResponses != null) {
                 this.dateEdited = scoreResponses.stream()

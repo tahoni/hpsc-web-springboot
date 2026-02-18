@@ -21,8 +21,8 @@ public final class IpscConstants {
     public static final String IPSC_OUTPUT_DATE_TIME_FORMAT =
             SystemConstants.ISO_DATE_TIME_FORMAT;
 
-    public static final List<Integer> EXCLUDE_ICS_ALIAS =
-            List.of(15000, 16000);
+    public static final List<String> EXCLUDE_ICS_ALIAS =
+            List.of("15000", "16000");
     public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS =
             List.of(ClubIdentifier.UNKNOWN);
 

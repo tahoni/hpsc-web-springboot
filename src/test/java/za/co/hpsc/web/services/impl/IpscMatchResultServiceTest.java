@@ -99,7 +99,7 @@ public class IpscMatchResultServiceTest {
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-        when(matchEntityService.findMatch("Existing Match"))
+        when(matchEntityService.findMatchByName("Existing Match"))
                 .thenReturn(Optional.of(existingMatch));
 
         ClubResponse clubResponse = new ClubResponse();
@@ -112,7 +112,7 @@ public class IpscMatchResultServiceTest {
 
         // Assert
         assertTrue(result.isEmpty());
-        verify(matchEntityService, times(1)).findMatch("Existing Match");
+        verify(matchEntityService, times(1)).findMatchByName("Existing Match");
     }
 
     @Test
@@ -134,7 +134,7 @@ public class IpscMatchResultServiceTest {
         existingMatch.setScheduledDate(LocalDate.of(2025, 1, 15).atStartOfDay());
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 1, 20, 10, 0));
 
-        when(matchEntityService.findMatch("Existing Match"))
+        when(matchEntityService.findMatchByName("Existing Match"))
                 .thenReturn(Optional.of(existingMatch));
 
         ClubResponse clubResponse = new ClubResponse();
@@ -151,7 +151,7 @@ public class IpscMatchResultServiceTest {
         MatchDto matchDto = result.get();
         assertEquals(1L, matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
-        verify(matchEntityService, times(1)).findMatch("Existing Match");
+        verify(matchEntityService, times(1)).findMatchByName("Existing Match");
     }
 
     @Test
@@ -167,7 +167,7 @@ public class IpscMatchResultServiceTest {
         scoreResponse.setLastModified(LocalDateTime.of(2025, 2, 1, 10, 0));
         ipscResponse.setScores(List.of(scoreResponse));
 
-        when(matchEntityService.findMatch("New Match"))
+        when(matchEntityService.findMatchByName("New Match"))
                 .thenReturn(Optional.empty());
 
         ClubResponse clubResponse = new ClubResponse();
@@ -184,7 +184,7 @@ public class IpscMatchResultServiceTest {
         MatchDto matchDto = result.get();
         assertNull(matchDto.getId());
         assertEquals(clubDto, matchDto.getClub());
-        verify(matchEntityService, times(1)).findMatch("New Match");
+        verify(matchEntityService, times(1)).findMatchByName("New Match");
     }
 
     @Test

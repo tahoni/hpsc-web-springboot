@@ -18,5 +18,5 @@ public interface MatchEntityService {
      * @return an {@code Optional} containing the {@link IpscMatch} if a match is found,
      * or an empty {@code Optional} if no matching match is found.
      */
-    Optional<IpscMatch> findMatch(String name);
+    Optional<IpscMatch> findMatchByName(String name);
 }

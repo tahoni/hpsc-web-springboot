@@ -22,5 +22,5 @@ public interface ClubEntityService {
     Optional<Club> findClub(String name, String abbreviation);
 
     // TODO: Javadoc
-    Optional<Club> findClub(String name);
+    Optional<Club> findClubByName(String name);
 }

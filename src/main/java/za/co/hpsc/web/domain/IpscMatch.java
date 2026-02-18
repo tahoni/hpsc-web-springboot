@@ -63,7 +63,6 @@ public class IpscMatch {
     @OneToMany(fetch = FetchType.EAGER)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
-    @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
@@ -99,16 +98,22 @@ public class IpscMatch {
                 matchDto.getMatchFirearmType() : this.matchFirearmType);
         this.matchCategory = ((matchDto.getMatchFirearmType() != null) ?
                 matchDto.getMatchCategory() : this.matchCategory);
-
-        // Initialises the date fields
-        this.dateCreated = matchDto.getDateCreated();
-        this.dateUpdated = matchDto.getDateUpdated();
-        this.dateEdited = matchDto.getDateEdited();
     }
 
     @Override
     public String toString() {
         return this.name + " (" + DateUtil.formatDateTime(this.scheduledDate,
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT) + ")";
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

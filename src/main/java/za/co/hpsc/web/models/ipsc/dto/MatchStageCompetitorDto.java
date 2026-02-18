@@ -72,9 +72,6 @@ public class MatchStageCompetitorDto {
 
     private Boolean isDisqualified;
 
-    @NotNull
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
     /**
@@ -126,8 +123,6 @@ public class MatchStageCompetitorDto {
         this.stageRanking = matchStageCompetitorEntity.getStageRanking();
 
         // Initialises the date fields
-        this.dateCreated = matchStageCompetitorEntity.getDateCreated();
-        this.dateUpdated = LocalDateTime.now();
         this.dateEdited = matchStageCompetitorEntity.getDateEdited();
     }
 
@@ -149,11 +144,6 @@ public class MatchStageCompetitorDto {
 
             // Initialises the competitor and stage attributes
             this.competitorCategory = competitorDto.getDefaultCompetitorCategory();
-
-            // Initialises the date fields
-            this.dateCreated = LocalDateTime.now();
-            this.dateUpdated = LocalDateTime.now();
-            this.dateEdited = LocalDateTime.now();
         }
     }
 
@@ -203,10 +193,6 @@ public class MatchStageCompetitorDto {
                         BigDecimal.valueOf(matchStageDto.getMaxPoints()));
             }
 
-            // Don't overwrite an existing date creation timestamp
-            this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
-            // Initialises the date updated
-            this.dateUpdated = LocalDateTime.now();
             // Sets the date edited to the latest score update timestamp
             this.dateEdited = scoreResponse.getLastModified();
 
@@ -226,7 +212,8 @@ public class MatchStageCompetitorDto {
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the firearm type from the discipline
                 this.firearmType =
-                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
+                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division)
+                                .orElse(null);
                 // Determines the competitor category based on the competitor category ID
                 this.competitorCategory =
                         CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())

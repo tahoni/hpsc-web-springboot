@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,10 @@ public class Club {
 
     private String abbreviation;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
+
+    @OneToMany(fetch = FetchType.EAGER)
     private List<IpscMatch> matches = new ArrayList<>();
 
     public Club(String name, String abbreviation) {
@@ -70,5 +74,16 @@ public class Club {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

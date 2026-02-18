@@ -44,12 +44,10 @@ public class ClubEntityServiceImpl implements ClubEntityService {
     }
 
     @Override
-    public Optional<Club> findClub(String name) {
+    public Optional<Club> findClubByName(String name) {
         if (name == null || name.isBlank()) {
             return Optional.empty();
         }
-
-        // Attempt to find the club by name
         return clubRepository.findByName(name);
     }
 }

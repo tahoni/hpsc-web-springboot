@@ -36,11 +36,11 @@ public class MatchCompetitor {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "competitor_id")
     private Competitor competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "match_id")
     private IpscMatch match;
 
@@ -59,7 +59,6 @@ public class MatchCompetitor {
     @Enumerated(EnumType.STRING)
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
@@ -92,14 +91,20 @@ public class MatchCompetitor {
         // Initialises the match scoring attributes
         this.matchPoints = matchCompetitorDto.getMatchPoints();
         this.matchRanking = matchCompetitorDto.getMatchRanking();
-
-        // Initialises the date fields
-        this.dateCreated = matchCompetitorDto.getDateCreated();
-        this.dateUpdated = matchCompetitorDto.getDateUpdated();
-        this.dateEdited = matchCompetitorDto.getDateEdited();
     }
 
     public String toString() {
         return this.match.toString() + ": " + this.competitor.toString();
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }
