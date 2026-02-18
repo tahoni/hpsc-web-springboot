@@ -13,6 +13,7 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.utils.DateUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,8 @@ public class IpscMatch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "club_id")
     private Club club;
 
@@ -49,7 +51,7 @@ public class IpscMatch {
     private String name;
     @NotNull
     @Column(nullable = false)
-    private LocalDateTime scheduledDate;
+    private LocalDate scheduledDate;
     @Enumerated(EnumType.STRING)
     private ClubIdentifier clubName;
 
@@ -58,9 +60,9 @@ public class IpscMatch {
     @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<IpscMatchStage> matchStages = new ArrayList<>();
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
     private LocalDateTime dateCreated;
@@ -93,7 +95,7 @@ public class IpscMatch {
 
         // Initialises the match attributes
         this.name = matchDto.getName();
-        this.scheduledDate = matchDto.getScheduledDate();
+        this.scheduledDate = matchDto.getScheduledDate().toLocalDate();
         this.matchFirearmType = ((matchDto.getMatchFirearmType() != null) ?
                 matchDto.getMatchFirearmType() : this.matchFirearmType);
         this.matchCategory = ((matchDto.getMatchFirearmType() != null) ?
@@ -102,7 +104,7 @@ public class IpscMatch {
 
     @Override
     public String toString() {
-        return this.name + " (" + DateUtil.formatDateTime(this.scheduledDate,
+        return this.name + " (" + DateUtil.formatDate(this.scheduledDate,
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT) + ")";
     }
 

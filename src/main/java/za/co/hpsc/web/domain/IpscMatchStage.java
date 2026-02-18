@@ -36,7 +36,7 @@ public class IpscMatchStage {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "match_id")
     private IpscMatch match;
 
@@ -58,7 +58,7 @@ public class IpscMatchStage {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 
     /**

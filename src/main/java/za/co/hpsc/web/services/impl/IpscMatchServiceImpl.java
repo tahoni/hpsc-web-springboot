@@ -195,7 +195,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
-        String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
+        String scheduledDate = DateUtil.formatDate(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
 
         String matchFirearmType = ValueUtil.nullAsEmptyString(match.getMatchFirearmType());

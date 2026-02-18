@@ -73,8 +73,8 @@ public class TransactionServiceImpl implements TransactionService {
                 ipscMatchRepository.save(matchEntityHolder.getMatch());
                 ipscMatchStageRepository.saveAll(matchEntityHolder.getMatchStages());
 
-                matchCompetitorRepository.saveAll(matchEntityHolder.getMatchCompetitors());
-                matchStageCompetitorRepository.saveAll(matchEntityHolder.getMatchStageCompetitors());
+//                matchCompetitorRepository.saveAll(matchEntityHolder.getMatchCompetitors());
+//                matchStageCompetitorRepository.saveAll(matchEntityHolder.getMatchStageCompetitors());
             });
 
             transactionManager.commit(transaction);

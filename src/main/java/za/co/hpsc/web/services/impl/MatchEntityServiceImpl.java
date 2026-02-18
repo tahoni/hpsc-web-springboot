@@ -19,10 +19,18 @@ public class MatchEntityServiceImpl implements MatchEntityService {
     }
 
     @Override
-    public Optional<IpscMatch> findMatchByName(String name) {
-        if (name == null) {
+    public Optional<IpscMatch> findMatchById(Long id) {
+        if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
-        return matchRepository.findByName(name);
+        return matchRepository.findByIdWithClub(id);
+    }
+
+    @Override
+    public Optional<IpscMatch> findMatchByName(String name) {
+        if ((name == null) || (name.isBlank())) {
+            return Optional.empty();
+        }
+        return matchRepository.findByNameWithClub(name);
     }
 }

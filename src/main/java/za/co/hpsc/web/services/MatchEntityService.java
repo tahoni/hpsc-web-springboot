@@ -11,6 +11,9 @@ import java.util.Optional;
  * specific criteria.
  */
 public interface MatchEntityService {
+    // TODO: Javadoc
+    Optional<IpscMatch> findMatchById(Long id);
+
     /**
      * Searches for a match based on the provided details.
      *

@@ -88,7 +88,7 @@ public class IpscMatchResultServiceImplTest {
     @Test
     public void testInitClub_withNullResponse_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubDto> result = ipscMatchResultService.initClub(null);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(null, );
 
         // Assert
         assertTrue(result.isEmpty());
@@ -107,10 +107,10 @@ public class IpscMatchResultServiceImplTest {
         existingClub.setName("Test Club");
         existingClub.setAbbreviation("TC");
 
-        when(clubEntityService.findClub("Test Club", "TC")).thenReturn(Optional.of(existingClub));
+        when(clubEntityService.findClubByNameOrAbbreviation("Test Club", "TC")).thenReturn(Optional.of(existingClub));
 
         // Act
-        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse, );
 
         // Assert
         assertTrue(result.isPresent());
@@ -118,7 +118,7 @@ public class IpscMatchResultServiceImplTest {
         assertEquals(101L, clubDto.getId());
         assertEquals("Test Club", clubDto.getName());
         assertEquals("TC", clubDto.getAbbreviation());
-        verify(clubEntityService, times(1)).findClub("Test Club", "TC");
+        verify(clubEntityService, times(1)).findClubByNameOrAbbreviation("Test Club", "TC");
     }
 
     @Test
@@ -128,10 +128,10 @@ public class IpscMatchResultServiceImplTest {
         clubResponse.setClubName("Non-existent Club");
         clubResponse.setClubCode("NC");
 
-        when(clubEntityService.findClub("Non-existent Club", "NC")).thenReturn(Optional.empty());
+        when(clubEntityService.findClubByNameOrAbbreviation("Non-existent Club", "NC")).thenReturn(Optional.empty());
 
         // Act
-        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse, );
 
         // Assert
         assertTrue(result.isPresent());
@@ -139,7 +139,7 @@ public class IpscMatchResultServiceImplTest {
         assertNull(clubDto.getId());
         assertEquals("Non-existent Club", clubDto.getName());
         assertEquals("NC", clubDto.getAbbreviation());
-        verify(clubEntityService, times(1)).findClub("Non-existent Club", "NC");
+        verify(clubEntityService, times(1)).findClubByNameOrAbbreviation("Non-existent Club", "NC");
     }
 
     @Test
