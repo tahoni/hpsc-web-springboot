@@ -42,13 +42,15 @@ public class ClubDto {
      *                   such as its unique identifier, name, and abbreviation.
      *                   Must not be null.
      */
-    public ClubDto(@NotNull Club clubEntity) {
-        // Initialises club details
-        this.id = clubEntity.getId();
+    public ClubDto(Club clubEntity) {
+        if (clubEntity != null) {
+            // Initialises club details
+            this.id = clubEntity.getId();
 
-        // Initialises club attributes
-        this.name = clubEntity.getName();
-        this.abbreviation = clubEntity.getAbbreviation();
+            // Initialises club attributes
+            this.name = clubEntity.getName();
+            this.abbreviation = clubEntity.getAbbreviation();
+        }
     }
 
     // TODO: Javadoc
@@ -60,6 +62,16 @@ public class ClubDto {
             // Initialises club attributes
             this.name = clubResponse.getClubName();
             this.abbreviation = clubResponse.getClubCode();
+        }
+    }
+
+    // TODO: Javadoc
+    public ClubDto(ClubIdentifier clubIdentifier) {
+        if (clubIdentifier != null) {
+            // Initialises club attributes
+            String clubIdentifierName = clubIdentifier.getName();
+            this.name = clubIdentifierName;
+            this.abbreviation = clubIdentifierName;
         }
     }
 

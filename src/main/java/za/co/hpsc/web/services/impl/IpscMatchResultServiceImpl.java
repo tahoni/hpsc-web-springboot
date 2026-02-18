@@ -135,26 +135,30 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
         // Attempts to find the club by name or abbreviation in the database
         Optional<Club> optionalClub = Optional.empty();
-        if (clubResponse != null) {
+        if ((clubResponse != null) && ((clubResponse.getClubName() != null) || (clubResponse.getClubCode() != null))) {
             optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(),
                     clubResponse.getClubCode());
+        } else if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+            String clubIdentifierName = clubIdentifier.getName();
+            optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubIdentifierName,
+                    clubIdentifierName);
         }
 
-        // TODO: comment
-        Club clubEntity = optionalClub.orElseGet(() -> {
-            if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
-                return clubEntityService.findClubByAbbreviation(clubIdentifier.getName()).orElse(new Club());
-            } else if (clubResponse != null) {
-                return new Club(clubResponse.getClubName(), clubResponse.getClubCode());
-            } else {
-                return null;
-            }
-        });
-
         // Creates a new club DTO, from either the found entity or the match response
-        ClubDto clubDto = new ClubDto(clubEntity, clubIdentifier);
-        clubDto.init(clubResponse);
-        return Optional.of(clubDto);
+        Club club = optionalClub.orElse(null);
+        ClubDto clubDto = null;
+        if (club != null) {
+            clubDto = new ClubDto(club);
+        } else if ((clubResponse != null) && ((clubResponse.getClubName() != null) || (clubResponse.getClubCode() != null))) {
+            clubDto = new ClubDto(clubResponse);
+        } else if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+            clubDto = new ClubDto(clubIdentifier);
+        }
+
+        if (clubDto != null) {
+            clubDto.init(clubResponse);
+        }
+        return Optional.ofNullable(clubDto);
     }
 
     /**
@@ -406,15 +410,11 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             Optional<Club> optionalClubEntity = clubEntityService.findClubById(clubDto.getId());
 
             // Initialise the club entity from DTO or create a new entity
-            Club clubEntity = optionalClubEntity.orElseGet(() ->
-                    clubEntityService.findClubByNameOrAbbreviation(clubDto.getName(),
-                            clubDto.getAbbreviation()).orElse(null));
+            Club clubEntity = optionalClubEntity.orElse(new Club());
 
             // Add attributes to the club
-            if (clubEntity != null) {
-                clubEntity.init(clubDto);
-                return Optional.of(clubEntity);
-            }
+            clubEntity.init(clubDto);
+            return Optional.of(clubEntity);
         }
 
         return Optional.empty();
@@ -426,8 +426,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         Optional<IpscMatch> optionalIpscMatchEntity = matchEntityService.findMatchById(matchDto.getId());
 
         // Initialise the match entity from DTO or create a new entity
-        IpscMatch matchEntity = optionalIpscMatchEntity.orElseGet(() ->
-                matchEntityService.findMatchByName(matchDto.getName()).orElse(new IpscMatch()));
+        IpscMatch matchEntity = optionalIpscMatchEntity.orElse(new IpscMatch());
 
         // Add attributes to the match
         matchEntity.init(matchDto, clubEntity);

@@ -54,6 +54,14 @@ public class Club {
         this.abbreviation = abbreviation;
     }
 
+    public Club(ClubDto clubDto) {
+        // Initialises club details
+        this.name = clubDto.getName();
+
+        // Initialises club attributes
+        this.abbreviation = clubDto.getAbbreviation();
+    }
+
     /**
      * Initialises the current {@code Club} entity with data from a DTO.
      *
