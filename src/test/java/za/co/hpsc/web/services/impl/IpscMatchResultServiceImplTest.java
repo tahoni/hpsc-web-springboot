@@ -127,7 +127,6 @@ public class IpscMatchResultServiceImplTest {
         verify(clubEntityService, times(1)).findClubByNameOrAbbreviation("Test Club", "TC");
     }
 
-    // TODO: fix bug
     @Test
     public void testInitClub_withNonExistingClub_thenReturnsClubDtoFromResponse() {
         // Arrange
