@@ -63,12 +63,14 @@ public class Club {
      *
      * @param clubDto the DTO containing data needed to populate the entity fields.
      */
-    public void init(ClubDto clubDto) {
+    public void init(@NotNull ClubDto clubDto) {
         // Initialises club details
-        this.name = clubDto.getName();
+        this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
+                clubDto.getName() : this.name);
 
         // Initialises club attributes
-        this.abbreviation = clubDto.getAbbreviation();
+        this.abbreviation = (((clubDto.getAbbreviation() != null) && (!clubDto.getAbbreviation().isBlank())) ?
+                clubDto.getAbbreviation() : this.abbreviation);
     }
 
     @Override

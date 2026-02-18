@@ -20,7 +20,7 @@ public class MatchEntityServiceImpl implements MatchEntityService {
 
     @Override
     public Optional<IpscMatch> findMatchById(Long id) {
-        if ((name == null) || (name.isBlank())) {
+        if ((id == null) || (id == 0L)) {
             return Optional.empty();
         }
         return matchRepository.findByIdWithClub(id);

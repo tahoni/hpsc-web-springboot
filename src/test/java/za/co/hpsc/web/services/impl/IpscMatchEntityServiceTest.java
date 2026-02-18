@@ -328,7 +328,7 @@ public class IpscMatchEntityServiceTest {
         assertEquals("HPSC", result.matches().getFirst().clubName());
         assertEquals("Handgun", result.matches().getFirst().matchFirearmType());
         assertEquals("Club Shoot", result.matches().getFirst().matchCategory());
-        assertEquals("2025-09-05", result.matches().getFirst().scheduledDate());
+        assertEquals("2025-09-05 10:00", result.matches().getFirst().scheduledDate());
         assertEquals("2025-09-06 15:00", result.matches().getFirst().dateEdited());
     }
 
@@ -374,8 +374,8 @@ public class IpscMatchEntityServiceTest {
         assertEquals("Rifle", result.matches().get(1).matchFirearmType());
         assertEquals("League", result.matches().getFirst().matchCategory());
         assertEquals("Club Shoot", result.matches().get(1).matchCategory());
-        assertEquals("2025-09-05", result.matches().getFirst().scheduledDate());
-        assertEquals("2025-09-04", result.matches().get(1).scheduledDate());
+        assertEquals("2025-09-05 10:00", result.matches().getFirst().scheduledDate());
+        assertEquals("2025-09-04 15:00", result.matches().get(1).scheduledDate());
         assertEquals("2025-09-06 10:00", result.matches().get(0).dateEdited());
         assertEquals("2025-09-05 15:00", result.matches().get(1).dateEdited());
     }
@@ -408,7 +408,7 @@ public class IpscMatchEntityServiceTest {
         assertEquals("HPSC", result.matches().getFirst().clubName());
         assertEquals("Handgun .22", result.matches().getFirst().matchFirearmType());
         assertEquals("League", result.matches().getFirst().matchCategory());
-        assertEquals("2025-09-05", result.matches().getFirst().scheduledDate());
+        assertEquals("2025-09-05 10:00", result.matches().getFirst().scheduledDate());
         assertEquals("2025-09-06 15:15", result.matches().getFirst().dateEdited());
     }
 
@@ -439,7 +439,7 @@ public class IpscMatchEntityServiceTest {
         assertEquals("SOSC", result.matches().getFirst().clubName());
         assertEquals("Shotgun", result.matches().getFirst().matchFirearmType());
         assertEquals("League", result.matches().getFirst().matchCategory());
-        assertEquals("2025-09-05", result.matches().getFirst().scheduledDate());
+        assertEquals("2025-09-05 10:00", result.matches().getFirst().scheduledDate());
         assertEquals("2025-09-06 15:00", result.matches().getFirst().dateEdited());
     }
 

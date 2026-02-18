@@ -32,7 +32,7 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
         // Attempts competitor lookup by SAPSA number or alias
         if ((icsAlias != null) && (!icsAlias.isBlank()) && (NumberUtils.isCreatable((icsAlias)))) {
             Integer sapsaNumber = Integer.parseInt(icsAlias);
-            if (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(sapsaNumber)) {
+            if (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(icsAlias)) {
                 competitorList = competitorRepository.findAllBySapsaNumber(sapsaNumber);
             }
         }

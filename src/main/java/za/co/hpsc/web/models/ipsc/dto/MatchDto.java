@@ -73,7 +73,7 @@ public class MatchDto {
 
         // Initialises the match attributes
         this.name = matchEntity.getName();
-        this.scheduledDate = matchEntity.getScheduledDate().atStartOfDay();
+        this.scheduledDate = matchEntity.getScheduledDate();
         this.clubName = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
@@ -96,7 +96,7 @@ public class MatchDto {
 
         // Initialises the match attributes
         this.name = matchEntity.getName();
-        this.scheduledDate = matchEntity.getScheduledDate().atStartOfDay();
+        this.scheduledDate = matchEntity.getScheduledDate();
         this.clubName = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();

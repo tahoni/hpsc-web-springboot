@@ -68,8 +68,9 @@ public class ClubDto {
         if (clubEntity != null) {
             this.id = clubEntity.getId();
             this.name = clubEntity.getName();
+            this.abbreviation = clubEntity.getAbbreviation();
         } else if (clubIdentifier != null) {
-            this.name = clubIdentifier.getName();
+            this.abbreviation = clubIdentifier.getCode();
         }
     }
 

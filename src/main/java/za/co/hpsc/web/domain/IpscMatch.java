@@ -13,7 +13,6 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.utils.DateUtil;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +40,7 @@ public class IpscMatch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     private Club club;
 
@@ -51,7 +49,7 @@ public class IpscMatch {
     private String name;
     @NotNull
     @Column(nullable = false)
-    private LocalDate scheduledDate;
+    private LocalDateTime scheduledDate;
     @Enumerated(EnumType.STRING)
     private ClubIdentifier clubName;
 
@@ -95,7 +93,7 @@ public class IpscMatch {
 
         // Initialises the match attributes
         this.name = matchDto.getName();
-        this.scheduledDate = matchDto.getScheduledDate().toLocalDate();
+        this.scheduledDate = matchDto.getScheduledDate();
         this.matchFirearmType = ((matchDto.getMatchFirearmType() != null) ?
                 matchDto.getMatchFirearmType() : this.matchFirearmType);
         this.matchCategory = ((matchDto.getMatchFirearmType() != null) ?
@@ -104,8 +102,8 @@ public class IpscMatch {
 
     @Override
     public String toString() {
-        return this.name + " (" + DateUtil.formatDate(this.scheduledDate,
-                IpscConstants.IPSC_OUTPUT_DATE_FORMAT) + ")";
+        return this.name + " (" + DateUtil.formatDateTime(this.scheduledDate,
+                IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT) + ")";
     }
 
     @PrePersist

@@ -10,7 +10,10 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.response.*;
-import za.co.hpsc.web.repositories.*;
+import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.IpscMatchStageRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
 import za.co.hpsc.web.services.*;
 
 import java.time.LocalDateTime;
@@ -21,9 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class IpscMatchResultServiceImpl implements IpscMatchResultService {
-    protected final ClubRepository clubRepository;
     protected final CompetitorRepository competitorRepository;
-    protected final IpscMatchRepository ipscMatchRepository;
     protected final IpscMatchStageRepository ipscMatchStageRepository;
     protected final MatchCompetitorRepository matchCompetitorRepository;
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
@@ -38,9 +39,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     @Value("${hpsc-web.results.init-match-result.ignore-updated-date:false}")
     private Boolean ignoreDateUpdated;
 
-    public IpscMatchResultServiceImpl(ClubRepository clubRepository,
-                                      CompetitorRepository competitorRepository,
-                                      IpscMatchRepository ipscMatchRepository,
+    public IpscMatchResultServiceImpl(CompetitorRepository competitorRepository,
                                       IpscMatchStageRepository ipscMatchStageRepository,
                                       MatchCompetitorRepository matchCompetitorRepository,
                                       MatchStageCompetitorRepository matchStageCompetitorRepository,
@@ -51,9 +50,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                                       MatchCompetitorEntityService matchCompetitorEntityService,
                                       MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
 
-        this.clubRepository = clubRepository;
         this.competitorRepository = competitorRepository;
-        this.ipscMatchRepository = ipscMatchRepository;
         this.ipscMatchStageRepository = ipscMatchStageRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;
@@ -132,29 +129,35 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
      */
     // TODO: Javadoc
     protected Optional<ClubDto> initClub(ClubResponse clubResponse, ClubIdentifier clubIdentifier) {
-        if ((clubResponse == null) && ((clubIdentifier == null)) ||
-                (IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+        if ((clubResponse == null) && ((clubIdentifier == null))) {
             return Optional.empty();
         }
 
-        // Attempts to find the club by name and abbreviation in the database
+        // Attempts to find the club by name or abbreviation in the database
         Optional<Club> optionalClub = Optional.empty();
         if (clubResponse != null) {
-            optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(), clubResponse.getClubCode());
-        }
-        if (optionalClub.isEmpty() && (clubIdentifier != null)) {
-            optionalClub = clubEntityService.findClubByAbbreviation(clubIdentifier.getName());
+            optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(),
+                    clubResponse.getClubCode());
         }
 
-        // Creates a new club DTO from the found entity
-        AtomicReference<ClubDto> clubDto = new AtomicReference<>();
-        optionalClub.ifPresent(club -> {
-            clubDto.set(new ClubDto(club));
-            clubDto.get().setIndex((clubResponse != null) ? clubResponse.getClubId() : null);
-            clubDto.get().init(clubResponse);
+        // Creates a new club DTO, from either the found entity or the match response
+        Club clubEntity = optionalClub.orElseGet(() -> {
+            if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+                return clubEntityService.findClubByAbbreviation(clubIdentifier.getName()).orElse(new Club());
+            } else {
+                return null;
+            }
         });
 
-        return Optional.ofNullable(clubDto.get());
+        // Creates a new club DTO from the found entity
+        if (clubEntity != null) {
+            ClubDto clubDto = new ClubDto(clubEntity, clubIdentifier);
+            clubDto.setIndex((clubResponse != null) ? clubResponse.getClubId() : null);
+            clubDto.init(clubResponse);
+            return Optional.of(clubDto);
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -179,6 +182,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                 matchEntityService.findMatchByName(ipscResponse.getMatch().getMatchName());
         boolean ipscMatchExists = optionalMatch.isPresent();
         boolean ipscResponseHasNewerScore = false;
+
         // Determines the last updated date of the match
         LocalDateTime matchLastUpdated = (optionalMatch.isPresent() ?
                 optionalMatch.get().getDateUpdated() : LocalDateTime.now());
@@ -402,14 +406,16 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     protected Optional<Club> initClubEntity(ClubDto clubDto) {
         if (clubDto != null) {
             // Find the club entity if present
-            Optional<Club> optionalClubEntity = Optional.empty();
-            if (clubDto.getId() != null) {
-                optionalClubEntity = clubRepository.findById(clubDto.getId());
-            }
+            Optional<Club> optionalClubEntity = clubEntityService.findClubById(clubDto.getId());
+
+            // Initialise the club entity from DTO or create a new entity
+            Club clubEntity = optionalClubEntity.orElseGet(() ->
+                    clubEntityService.findClubByNameOrAbbreviation(clubDto.getName(),
+                            clubDto.getAbbreviation()).orElse(new Club()));
 
             // Add attributes to the club
-            optionalClubEntity.ifPresent(clubEntity -> clubEntity.init(clubDto));
-            return optionalClubEntity;
+            clubEntity.init(clubDto);
+            return Optional.of(clubEntity);
         }
 
         return Optional.empty();
@@ -418,18 +424,16 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     // TODO: Javadoc
     protected Optional<IpscMatch> initMatchEntity(@NotNull MatchDto matchDto, Club clubEntity) {
         // Find the match entity if present
-        Optional<IpscMatch> optionalIpscMatchEntity = Optional.empty();
-        if (matchDto.getId() != null) {
-            optionalIpscMatchEntity =
-                    matchEntityService.findById(matchDto.getId(),
-                            matchDto.getScheduledDate().toLocalDate());
-        }
+        Optional<IpscMatch> optionalIpscMatchEntity = matchEntityService.findMatchById(matchDto.getId());
 
         // Initialise the match entity from DTO or create a new entity
-        IpscMatch matchEntity = optionalIpscMatchEntity.orElse(new IpscMatch());
+        IpscMatch matchEntity = optionalIpscMatchEntity.orElseGet(() ->
+                matchEntityService.findMatchByName(matchDto.getName()).orElse(new IpscMatch()));
+
         // Add attributes to the match
         matchEntity.init(matchDto, clubEntity);
-        // Link the match to the stage
+
+        // Link the match to the club
         matchEntity.setClub(clubEntity);
 
         return Optional.of(matchEntity);
