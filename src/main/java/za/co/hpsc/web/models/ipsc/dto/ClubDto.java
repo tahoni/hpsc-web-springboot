@@ -70,7 +70,7 @@ public class ClubDto {
             this.name = clubEntity.getName();
             this.abbreviation = clubEntity.getAbbreviation();
         } else if (clubIdentifier != null) {
-            this.abbreviation = clubIdentifier.getCode();
+            this.abbreviation = clubIdentifier.getName();
         }
     }
 
@@ -79,6 +79,7 @@ public class ClubDto {
         if (clubResponse != null) {
             this.index = clubResponse.getClubId();
             this.name = clubResponse.getClubName();
+            this.abbreviation = clubResponse.getClubCode();
         }
     }
 

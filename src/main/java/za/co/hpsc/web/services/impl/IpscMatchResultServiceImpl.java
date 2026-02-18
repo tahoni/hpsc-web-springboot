@@ -140,24 +140,21 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                     clubResponse.getClubCode());
         }
 
-        // Creates a new club DTO, from either the found entity or the match response
+        // TODO: comment
         Club clubEntity = optionalClub.orElseGet(() -> {
             if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
                 return clubEntityService.findClubByAbbreviation(clubIdentifier.getName()).orElse(new Club());
+            } else if (clubResponse != null) {
+                return new Club(clubResponse.getClubName(), clubResponse.getClubCode());
             } else {
                 return null;
             }
         });
 
-        // Creates a new club DTO from the found entity
-        if (clubEntity != null) {
-            ClubDto clubDto = new ClubDto(clubEntity, clubIdentifier);
-            clubDto.setIndex((clubResponse != null) ? clubResponse.getClubId() : null);
-            clubDto.init(clubResponse);
-            return Optional.of(clubDto);
-        }
-
-        return Optional.empty();
+        // Creates a new club DTO, from either the found entity or the match response
+        ClubDto clubDto = new ClubDto(clubEntity, clubIdentifier);
+        clubDto.init(clubResponse);
+        return Optional.of(clubDto);
     }
 
     /**
@@ -411,11 +408,13 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             // Initialise the club entity from DTO or create a new entity
             Club clubEntity = optionalClubEntity.orElseGet(() ->
                     clubEntityService.findClubByNameOrAbbreviation(clubDto.getName(),
-                            clubDto.getAbbreviation()).orElse(new Club()));
+                            clubDto.getAbbreviation()).orElse(null));
 
             // Add attributes to the club
-            clubEntity.init(clubDto);
-            return Optional.of(clubEntity);
+            if (clubEntity != null) {
+                clubEntity.init(clubDto);
+                return Optional.of(clubEntity);
+            }
         }
 
         return Optional.empty();
