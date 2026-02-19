@@ -4,9 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -50,7 +48,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         }
 
         // Initialises club and match
-        Optional<ClubDto> optionalClub = initClub(ipscResponse.getClub(), ClubIdentifier.HPSC);
+        Optional<ClubDto> optionalClub = initClub(ipscResponse.getClub());
         Optional<MatchDto> optionalMatch = initMatch(ipscResponse, optionalClub.orElse(null));
         if (optionalMatch.isEmpty()) {
             return Optional.empty();
@@ -70,46 +68,26 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     /**
      * Initialises a club based on the given club information.
      *
-     * @param clubResponse   the {@link ClubResponse} object containing club information.
-     * @param clubIdentifier
+     * @param clubResponse the {@link ClubResponse} object containing club information.
      * @return an {@code Optional} containing the initialized {@link ClubDto},
      * or an empty {@code Optional} if the club response is null.
      */
     // TODO: Javadoc
-    protected Optional<ClubDto> initClub(ClubResponse clubResponse, ClubIdentifier clubIdentifier) {
-        if ((clubResponse == null) && ((clubIdentifier == null))) {
+    protected Optional<ClubDto> initClub(ClubResponse clubResponse) {
+        if (clubResponse == null) {
             return Optional.empty();
         }
 
         // Attempts to find the club by name or abbreviation in the database
-        Optional<Club> optionalClub = Optional.empty();
-        if (clubResponse != null) {
-            optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(),
-                    clubResponse.getClubCode());
-        }
-
-        if ((optionalClub.isEmpty()) && (clubIdentifier != null) &&
-                (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
-            String clubIdentifierName = clubIdentifier.getName();
-            optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubIdentifierName,
-                    clubIdentifierName);
-        }
+        Optional<Club> optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(),
+                clubResponse.getClubCode());
 
         // Creates a new club DTO, from either the found entity or the match response
         Club club = optionalClub.orElse(null);
-        ClubDto clubDto = null;
-        if (club != null) {
-            clubDto = new ClubDto(club);
-        } else if (clubResponse != null) {
-            clubDto = new ClubDto(clubResponse);
-        } else if (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier)) {
-            clubDto = new ClubDto(clubIdentifier);
-        }
+        ClubDto clubDto = ((club != null) ? new ClubDto(club) : new ClubDto(clubResponse));
+        clubDto.init(clubResponse);
 
-        if (clubDto != null) {
-            clubDto.init(clubResponse);
-        }
-        return Optional.ofNullable(clubDto);
+        return Optional.of(clubDto);
     }
 
     /**

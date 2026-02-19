@@ -71,7 +71,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, ipscMatchRecordHolder.matches().size());
 
         IpscMatchRecord ipscMatchRecord = ipscMatchRecordHolder.matches().getFirst();
-        assertEquals("HPSC", ipscMatchRecord.clubName());
+        assertEquals("", ipscMatchRecord.clubName());
         assertEquals("Eeufees HG and PCC Club Shoot February 2026", ipscMatchRecord.name());
         assertEquals("Club Shoot", ipscMatchRecord.matchCategory());
         assertEquals("PCC", ipscMatchRecord.matchFirearmType());

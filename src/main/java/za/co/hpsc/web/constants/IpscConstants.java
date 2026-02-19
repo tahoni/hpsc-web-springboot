@@ -35,4 +35,5 @@ public final class IpscConstants {
     public static final int PERCENTAGE_SCALE = 2;
 
     public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;
+    public static final ClubIdentifier DEFAULT_CLUB_IDENTIFIER = ClubIdentifier.HPSC;
 }

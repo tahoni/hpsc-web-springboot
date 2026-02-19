@@ -66,16 +66,6 @@ public class ClubDto {
     }
 
     // TODO: Javadoc
-    public ClubDto(ClubIdentifier clubIdentifier) {
-        if (clubIdentifier != null) {
-            // Initialises club attributes
-            String clubIdentifierName = clubIdentifier.getName();
-            this.name = clubIdentifierName;
-            this.abbreviation = clubIdentifierName;
-        }
-    }
-
-    // TODO: Javadoc
     public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
         if (clubEntity != null) {
             this.id = clubEntity.getId();

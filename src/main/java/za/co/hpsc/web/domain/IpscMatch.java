@@ -81,23 +81,25 @@ public class IpscMatch {
      * @param clubEntity the associated club entity.
      */
     public void init(MatchDto matchDto, Club clubEntity) {
-        // Initialises the match details
-        this.club = clubEntity;
+        if (matchDto != null) {
+            // Initialises the match details
+            this.club = clubEntity;
 
-        // Sets club name from DTO or associated entity
-        if (matchDto.getClubName() != null) {
-            this.clubName = matchDto.getClubName();
-        } else if (clubEntity != null) {
-            this.clubName = ClubIdentifier.getByName(clubEntity.getName()).orElse(null);
+            // Sets club name from DTO or associated entity
+            if (matchDto.getClubName() != null) {
+                this.clubName = matchDto.getClubName();
+            } else if (clubEntity != null) {
+                this.clubName = ClubIdentifier.getByName(clubEntity.getName()).orElse(null);
+            }
+
+            // Initialises the match attributes
+            this.name = matchDto.getName();
+            this.scheduledDate = matchDto.getScheduledDate();
+            this.matchFirearmType = ((matchDto.getMatchFirearmType() != null) ?
+                    matchDto.getMatchFirearmType() : this.matchFirearmType);
+            this.matchCategory = ((matchDto.getMatchFirearmType() != null) ?
+                    matchDto.getMatchCategory() : this.matchCategory);
         }
-
-        // Initialises the match attributes
-        this.name = matchDto.getName();
-        this.scheduledDate = matchDto.getScheduledDate();
-        this.matchFirearmType = ((matchDto.getMatchFirearmType() != null) ?
-                matchDto.getMatchFirearmType() : this.matchFirearmType);
-        this.matchCategory = ((matchDto.getMatchFirearmType() != null) ?
-                matchDto.getMatchCategory() : this.matchCategory);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class IpscMatchResultServiceImplTest {
     @Test
     public void testInitClub_withNullResponse_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubDto> result = ipscMatchResultService.initClub(null, null);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(null);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -67,7 +67,7 @@ public class IpscMatchResultServiceImplTest {
         when(clubEntityService.findClubByNameOrAbbreviation("Test Club", "TC")).thenReturn(Optional.of(existingClub));
 
         // Act
-        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse, null);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse);
 
         // Assert
         assertTrue(result.isPresent());
@@ -88,7 +88,7 @@ public class IpscMatchResultServiceImplTest {
         when(clubEntityService.findClubByNameOrAbbreviation("Non-existent Club", "NC")).thenReturn(Optional.empty());
 
         // Act
-        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse, null);
+        Optional<ClubDto> result = ipscMatchResultService.initClub(clubResponse);
 
         // Assert
         assertTrue(result.isPresent());
