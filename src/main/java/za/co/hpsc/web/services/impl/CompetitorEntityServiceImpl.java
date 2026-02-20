@@ -11,6 +11,7 @@ import za.co.hpsc.web.services.CompetitorEntityService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 // TODO: add tests
@@ -51,6 +52,7 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
         if (dateTimeOfBirth != null) {
             // Filters list to matching dates of birth
             filteredCompetitorList = competitorList.stream()
+                    .filter(Objects::nonNull)
                     .filter(c -> dateTimeOfBirth.toLocalDate().equals(c.getDateOfBirth()))
                     .toList();
         }
@@ -60,10 +62,12 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
         if (!filteredCompetitorList.isEmpty()) {
             // Finds the first matching competitor with a SAPSA number
             filteredListWithSapsaNumber = filteredCompetitorList.stream()
+                    .filter(Objects::nonNull)
                     .filter(c -> c.getSapsaNumber() != null)
                     .toList();
             // Finds the first matching competitor without a SAPSA number
             filteredListWithoutSapsaNumber = filteredCompetitorList.stream()
+                    .filter(Objects::nonNull)
                     .filter(c -> c.getSapsaNumber() != null)
                     .toList();
         }
@@ -77,6 +81,6 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
             finalCompetitorList = filteredCompetitorList;
         }
 
-        return finalCompetitorList.stream().findFirst();
+        return finalCompetitorList.stream().filter(Objects::nonNull).findFirst();
     }
 }

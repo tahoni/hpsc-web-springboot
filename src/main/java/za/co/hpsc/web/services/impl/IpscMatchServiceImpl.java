@@ -16,6 +16,7 @@ import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 // TODO: Javadoc
@@ -112,14 +113,17 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Add stages to the response, filtered by match ID
         List<StageRequest> stageRequests = ipscRequestHolder.getStages().stream()
+                .filter(Objects::nonNull)
                 .filter(stage -> matchId.equals(stage.getMatchId()))
                 .toList();
         // Add enrolled members to the response, filtered by match ID
         List<EnrolledRequest> enrolledRequests = ipscRequestHolder.getEnrolledMembers().stream()
+                .filter(Objects::nonNull)
                 .filter(enrolled -> matchId.equals(enrolled.getMatchId()))
                 .toList();
         // Add scores to the response, filtered by match ID
         List<ScoreRequest> scoreRequests = ipscRequestHolder.getScores().stream()
+                .filter(Objects::nonNull)
                 .filter(score -> matchId.equals(score.getMatchId()))
                 .toList();
 
@@ -150,6 +154,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Filters members by members with scores
         ipscRequestHolder.getScores().forEach(scoreRequest -> {
             List<MemberRequest> memberRequests = ipscRequestHolder.getMembers().stream()
+                    .filter(Objects::nonNull)
                     .filter(memberRequest ->
                             memberRequest.getMemberId().equals(scoreRequest.getMemberId()))
                     .toList();
@@ -157,7 +162,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             responseMembers.addAll(memberRequests);
         });
         // Sets members on the response
-        ipscResponse.setMembers(responseMembers.stream().map(MemberResponse::new).toList());
+        ipscResponse.setMembers(responseMembers.stream().filter(Objects::nonNull).map(MemberResponse::new).toList());
     }
 
     /**
@@ -183,6 +188,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             Integer clubId = ipscResponse.getMatch().getClubId();
             // Finds club matching ID or provides default
             ClubRequest club = ipscRequestHolder.getClubs().stream()
+                    .filter(Objects::nonNull)
                     .filter(clubRequest -> clubId.equals(clubRequest.getClubId()))
                     .findFirst().orElse(null);
             ipscResponse.setClub((club != null) ? new ClubResponse(club) : new ClubResponse(clubId));
@@ -240,6 +246,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         MatchCompetitorRecord thisCompetitorOverall = null;
         MatchCompetitor matchCompetitor = matchCompetitorList.stream()
+                .filter(Objects::nonNull)
                 .filter(mc -> competitor.equals(mc.getCompetitor()))
                 .findFirst().orElse(null);
 
@@ -277,6 +284,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         List<MatchStageCompetitorRecord> thisCompetitorStages = new ArrayList<>();
         // Filters and maps stage data to response objects
         matchStageCompetitorList.stream()
+                .filter(Objects::nonNull)
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {
 
@@ -319,6 +327,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
 
         return matchCompetitorList.stream()
+                .filter(Objects::nonNull)
                 .map(MatchCompetitor::getCompetitor)
                 .toList();
     }
@@ -330,6 +339,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
 
         return matchStageList.stream()
+                .filter(Objects::nonNull)
                 .map(IpscMatchStage::getMatchStageCompetitors)
                 .flatMap(List::stream)
                 .toList();

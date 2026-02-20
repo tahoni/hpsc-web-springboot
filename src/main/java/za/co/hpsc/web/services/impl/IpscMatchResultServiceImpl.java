@@ -121,6 +121,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         boolean ignoreMatchDateUpdated = ((ignoreDateUpdated != null ? ignoreDateUpdated : false));
         if ((!ignoreMatchDateUpdated) && (ipscMatchExists)) {
             ipscResponseHasNewerScore = ipscResponse.getScores().stream()
+                    .filter(Objects::nonNull)
                     .anyMatch(sr -> matchLastUpdated.isBefore(sr.getLastModified()));
             if (!ipscResponseHasNewerScore) {
                 return Optional.empty();
@@ -190,11 +191,13 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
         // Maps score responses to corresponding member responses, excluding members who didn't participate
         Set<Integer> memberIdsWithScores = scoreResponses.stream()
+                .filter(Objects::nonNull)
                 .filter(scoreResponse -> scoreResponse.getFinalScore() != null)
                 .filter(scoreResponse -> scoreResponse.getFinalScore() != 0)
                 .map(ScoreResponse::getMemberId)
                 .collect(Collectors.toSet());
         List<MemberResponse> scoreMembers = memberResponses.stream()
+                .filter(Objects::nonNull)
                 .filter(memberResponse -> memberIdsWithScores
                         .contains(memberResponse.getMemberId()))
                 .toList();
@@ -218,6 +221,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             // Initialises the enrolled response to use to initialise the scores for each
             // competitor per match and stage
             EnrolledResponse enrolledResponse = ipscResponse.getEnrolledMembers().stream()
+                    .filter(Objects::nonNull)
                     .filter(er -> er.getMemberId().equals(memberResponse.getMemberId()))
                     .findFirst()
                     .orElse(null);
@@ -251,6 +255,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             CompetitorDto competitorDto = competitorDtoMap.get(memberId);
             // Filters scores by member ID
             List<ScoreResponse> scores = scoreResponses.stream()
+                    .filter(Objects::nonNull)
                     .filter(sr -> sr.getMemberId().equals(memberId))
                     .toList();
 
@@ -279,6 +284,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             matchResultsDto.getStages().forEach(stageDto -> {
                 // Filters scores by stage ID (already filtered by member ID)
                 Optional<ScoreResponse> optionalStageScoreResponse = scores.stream()
+                        .filter(Objects::nonNull)
                         .filter(scoreResponse -> stageDto.getStageNumber()
                                 .equals(scoreResponse.getStageId()))
                         .findFirst();
@@ -325,7 +331,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         });
 
         // Collects all competitors in the match results DTO
-//        matchResultsDto.setCompetitors(competitorDtoMap.values().stream().toList());
+//        matchResultsDto.setCompetitors(competitorDtoMap.values().stream().filter(Objects::nonNull).toList());
         // Collects all match competitors in the match results DTO
 //        matchResultsDto.getMatchCompetitors().addAll(matchCompetitorDtoList);
         // Collects all stage competitors in the match results DTO

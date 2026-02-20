@@ -62,10 +62,10 @@ public class DomainServiceImpl implements DomainService {
                             matchStageMap, competitorMap, ClubIdentifier.HPSC);
 
             optionalMatchEntityHolder.set(Optional.of(new MatchEntityHolder(match, club,
-                    matchStageMap.values().stream().toList(),
-                    competitorMap.values().stream().toList(),
-                    matchCompetitorMap.values().stream().toList(),
-                    matchStageCompetitorMap.values().stream().toList())));
+                    matchStageMap.values().stream().filter(Objects::nonNull).toList(),
+                    competitorMap.values().stream().filter(Objects::nonNull).toList(),
+                    matchCompetitorMap.values().stream().filter(Objects::nonNull).toList(),
+                    matchStageCompetitorMap.values().stream().filter(Objects::nonNull).toList())));
         });
 
         return optionalMatchEntityHolder.get();

@@ -19,6 +19,7 @@ import za.co.hpsc.web.services.ImageService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -108,6 +109,7 @@ public class ImageServiceImpl implements ImageService {
 
         // Map each request to a response
         return imageRequestList.stream()
+                .filter(Objects::nonNull)
                 .map(ImageResponse::new)
                 .toList();
     }

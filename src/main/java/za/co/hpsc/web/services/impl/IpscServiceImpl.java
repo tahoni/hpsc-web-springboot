@@ -26,6 +26,7 @@ import za.co.hpsc.web.services.TransactionService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -49,6 +50,7 @@ public class IpscServiceImpl implements IpscService {
 
         MatchResultsDtoHolder matchResultsDtoHolder = importWinMssCabFileContent(cabFileContent);
         List<IpscMatch> ipscMatchList = matchResultsDtoHolder.getMatches().stream()
+                .filter(Objects::nonNull)
                 .map(MatchResultsDto::getIpscMatch)
                 .toList();
         return ipscMatchService.generateIpscMatchRecordHolder(ipscMatchList);
