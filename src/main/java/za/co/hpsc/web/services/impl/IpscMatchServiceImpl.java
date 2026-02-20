@@ -41,15 +41,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<IpscResponse> ipscResponses = new ArrayList<>();
         // Maps IPSC requests to responses by match ID
-        ipscRequestHolder.getMatches().forEach(match -> {
-            Optional<IpscResponse> response = createBasicMatch(ipscRequestHolder, match);
-            response.ifPresent(ipscResponses::add);
-        });
+        ipscRequestHolder.getMatches().stream().filter(Objects::nonNull)
+                .forEach(match -> {
+                    Optional<IpscResponse> response = createBasicMatch(ipscRequestHolder, match);
+                    response.ifPresent(ipscResponses::add);
+                });
 
         // Add members to each match
-        ipscResponses.forEach(ipscResponse -> addMembersToMatch(ipscResponse, ipscRequestHolder));
+        ipscResponses.stream().filter(Objects::nonNull)
+                .forEach(ipscResponse ->
+                        addMembersToMatch(ipscResponse, ipscRequestHolder));
         // Add a club to each match
-        ipscResponses.forEach(ipscResponse -> addClubToMatch(ipscResponse, ipscRequestHolder));
+        ipscResponses.stream().filter(Objects::nonNull)
+                .forEach(ipscResponse ->
+                        addClubToMatch(ipscResponse, ipscRequestHolder));
 
         return new IpscResponseHolder(ipscResponses);
     }
@@ -58,29 +63,31 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList) {
         List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
 
-        ipscMatchEntityList.forEach(match -> {
-            // Get the match stages and competitors
-            match.setName(ValueUtil.nullAsEmptyString(match.getName()));
-            List<IpscMatchStage> matchStageList = match.getMatchStages();
-            List<MatchCompetitor> matchCompetitorList = match.getMatchCompetitors();
+        ipscMatchEntityList.stream().filter(Objects::nonNull)
+                .forEach(match -> {
+                    // Get the match stages and competitors
+                    match.setName(ValueUtil.nullAsEmptyString(match.getName()));
+                    List<IpscMatchStage> matchStageList = match.getMatchStages();
+                    List<MatchCompetitor> matchCompetitorList = match.getMatchCompetitors();
 
-            // Get the competitors
-            List<MatchStageCompetitor> matchStageCompetitorList = getMatchStageCompetitorList(matchStageList);
-            List<Competitor> competitorList = getCompetitorList(matchCompetitorList);
+                    // Get the competitors
+                    List<MatchStageCompetitor> matchStageCompetitorList = getMatchStageCompetitorList(matchStageList);
+                    List<Competitor> competitorList = getCompetitorList(matchCompetitorList);
 
-            List<CompetitorMatchRecord> competitors = new ArrayList<>();
-            competitorList.forEach(c -> initMatchCompetitor(c, matchCompetitorList)
-                    .ifPresent((mcr) -> {
-                        List<MatchStageCompetitorRecord> thisCompetitorStages =
-                                initMatchStageCompetitor(c, matchStageCompetitorList);
+                    List<CompetitorMatchRecord> competitors = new ArrayList<>();
+                    competitorList.stream().filter(Objects::nonNull)
+                            .forEach(c -> initMatchCompetitor(c, matchCompetitorList)
+                                    .ifPresent((mcr) -> {
+                                        List<MatchStageCompetitorRecord> thisCompetitorStages =
+                                                initMatchStageCompetitor(c, matchStageCompetitorList);
 
-                        // Creates competitor response from competitor details
-                        initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
-                    }));
+                                        // Creates competitor response from competitor details
+                                        initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
+                                    }));
 
-            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, competitors);
-            ipscResponse.ifPresent(ipscMatchRecordList::add);
-        });
+                    Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, competitors);
+                    ipscResponse.ifPresent(ipscMatchRecordList::add);
+                });
 
         return new IpscMatchRecordHolder(ipscMatchRecordList);
     }
@@ -152,15 +159,16 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<MemberRequest> responseMembers = new ArrayList<>();
         // Filters members by members with scores
-        ipscRequestHolder.getScores().forEach(scoreRequest -> {
-            List<MemberRequest> memberRequests = ipscRequestHolder.getMembers().stream()
-                    .filter(Objects::nonNull)
-                    .filter(memberRequest ->
-                            memberRequest.getMemberId().equals(scoreRequest.getMemberId()))
-                    .toList();
-            // Collects members with scores
-            responseMembers.addAll(memberRequests);
-        });
+        ipscRequestHolder.getScores().stream().filter(Objects::nonNull)
+                .forEach(scoreRequest -> {
+                    List<MemberRequest> memberRequests = ipscRequestHolder.getMembers().stream()
+                            .filter(Objects::nonNull)
+                            .filter(memberRequest ->
+                                    memberRequest.getMemberId().equals(scoreRequest.getMemberId()))
+                            .toList();
+                    // Collects members with scores
+                    responseMembers.addAll(memberRequests);
+                });
         // Sets members on the response
         ipscResponse.setMembers(responseMembers.stream().filter(Objects::nonNull).map(MemberResponse::new).toList());
     }

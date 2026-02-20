@@ -114,21 +114,22 @@ public class DomainServiceImpl implements DomainService {
         if (competitorDtoList != null) {
 
             // Initialise and accumulate competitor entities from DTOs
-            competitorDtoList.forEach(competitorDto -> {
-                // Find the competitor entity if present
-                Optional<Competitor> optionalCompetitorEntity = Optional.empty();
-                if (competitorDto.getId() != null) {
-                    optionalCompetitorEntity = competitorRepository.findById(competitorDto.getId());
-                }
+            competitorDtoList.stream().filter(Objects::nonNull)
+                    .forEach(competitorDto -> {
+                        // Find the competitor entity if present
+                        Optional<Competitor> optionalCompetitorEntity = Optional.empty();
+                        if (competitorDto.getId() != null) {
+                            optionalCompetitorEntity = competitorRepository.findById(competitorDto.getId());
+                        }
 
-                // Initialise the competitor entity from DTO or create a new entity
-                Competitor competitorEntity = optionalCompetitorEntity.orElse(new Competitor());
-                // Add attributes to the competitor
-                competitorEntity.init(competitorDto);
+                        // Initialise the competitor entity from DTO or create a new entity
+                        Competitor competitorEntity = optionalCompetitorEntity.orElse(new Competitor());
+                        // Add attributes to the competitor
+                        competitorEntity.init(competitorDto);
 
-                // Update the map of competitors
-                competitorMap.put(competitorDto.getUuid(), competitorEntity);
-            });
+                        // Update the map of competitors
+                        competitorMap.put(competitorDto.getUuid(), competitorEntity);
+                    });
         }
 
         return competitorMap;
@@ -141,23 +142,24 @@ public class DomainServiceImpl implements DomainService {
         if (matchStageDtoList != null) {
 
             // Initialise and accumulate match stages from DTOs
-            matchStageDtoList.forEach(stage -> {
-                // Find the match stage entity if present
-                Optional<IpscMatchStage> optionalIpscMatchStageEntity = Optional.empty();
-                if (stage.getId() != null) {
-                    optionalIpscMatchStageEntity = ipscMatchStageRepository.findById(stage.getId());
-                }
+            matchStageDtoList.stream().filter(Objects::nonNull)
+                    .forEach(stage -> {
+                        // Find the match stage entity if present
+                        Optional<IpscMatchStage> optionalIpscMatchStageEntity = Optional.empty();
+                        if (stage.getId() != null) {
+                            optionalIpscMatchStageEntity = ipscMatchStageRepository.findById(stage.getId());
+                        }
 
-                // Initialise the match stage entity from DTO or create a new entity
-                IpscMatchStage matchStageEntity = optionalIpscMatchStageEntity.orElse(new IpscMatchStage());
-                // Add attributes to the match stage
-                matchStageEntity.init(stage, matchEntity);
-                // Link the match stage to the match
-                matchStageEntity.setMatch(matchEntity);
+                        // Initialise the match stage entity from DTO or create a new entity
+                        IpscMatchStage matchStageEntity = optionalIpscMatchStageEntity.orElse(new IpscMatchStage());
+                        // Add attributes to the match stage
+                        matchStageEntity.init(stage, matchEntity);
+                        // Link the match stage to the match
+                        matchStageEntity.setMatch(matchEntity);
 
-                // Update the map of match stages
-                matchStageMap.put(stage.getUuid(), matchStageEntity);
-            });
+                        // Update the map of match stages
+                        matchStageMap.put(stage.getUuid(), matchStageEntity);
+                    });
         }
 
         return matchStageMap;
