@@ -135,6 +135,15 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
         // Initialises match attributes
         matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
+
+        // Initialises the date fields
+        LocalDateTime dateEdited = ipscResponse.getScores().stream()
+                .filter(Objects::nonNull)
+                .map(ScoreResponse::getLastModified)
+                .max(LocalDateTime::compareTo)
+                .orElse(LocalDateTime.now());
+        matchDto.setDateEdited(dateEdited);
+
         return Optional.of(matchDto);
     }
 
