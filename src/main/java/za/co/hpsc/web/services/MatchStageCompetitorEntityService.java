@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface MatchStageCompetitorEntityService {
     /**
-     * Finds and retrieves a {@link MatchStageCompetitor} entity based on the provided match stage ID,
+     * Searches for a {@link MatchStageCompetitor} entity by its match stage ID
      * and competitor ID.
      *
      * @param matchStageId the unique identifier of the match stage

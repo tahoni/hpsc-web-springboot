@@ -11,11 +11,18 @@ import java.util.Optional;
  * specific criteria.
  */
 public interface ClubEntityService {
-    // TODO: JavaDoc
+    /**
+     * Searches for a {@link Club} entity by its unique identifier.
+     *
+     * @param id the unique identifier of the club to be searched for.
+     *           Must not be null.
+     * @return an {@code Optional} containing the {@link Club} if found,
+     * or an empty {@code Optional} if no club with the given ID exists.
+     */
     Optional<Club> findClubById(Long id);
 
     /**
-     * Searches for a {@link Club} entity based on the provided details.
+     * Searches for a {@link Club} entity by its name or abbreviation.
      *
      * <p>
      * Will first see if it can find it using the name, if it can't,
@@ -29,10 +36,24 @@ public interface ClubEntityService {
      */
     Optional<Club> findClubByNameOrAbbreviation(String name, String abbreviation);
 
-    // TODO: Javadoc
+    /**
+     * Searches for a {@link Club} entity by its name.
+     *
+     * @param name the name of the club to be searched for.
+     *             Must not be null.
+     * @return an {@code Optional} containing the {@link Club} if a matching name is found,
+     * or an empty {@code Optional} if no club with the given name exists.
+     */
     Optional<Club> findClubByName(String name);
 
-    // TODO: Javadoc
+    /**
+     * Searches for a {@link Club} entity by its abbreviation.
+     *
+     * @param abbreviation the abbreviation of the club to be searched for.
+     *                     Must not be null.
+     * @return an {@code Optional} containing the {@link Club} if a matching abbreviation is found,
+     * or an empty {@code Optional} if no club with the given abbreviation exists.
+     */
     Optional<Club> findClubByAbbreviation(String abbreviation);
 }
 

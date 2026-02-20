@@ -38,6 +38,13 @@ public class DomainServiceImpl implements DomainService {
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;
     }
 
+    /**
+     * Initializes match entities based on the provided match results.
+     *
+     * @param matchResults The DTO containing match results, including match, club, competitors, and stages.
+     *                     Must not be null.
+     * @return An Optional containing the initialized MatchEntityHolder if the match is present; otherwise, an empty Optional.
+     */
     @Override
     public Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults) {
         if (matchResults.getMatch() == null) {

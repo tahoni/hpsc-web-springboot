@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface MatchCompetitorEntityService {
     /**
-     * Retrieves a {@link MatchCompetitor} based on the provided details.
+     * Searches for a {@link MatchCompetitor} by its match ID and competitor ID.
      *
      * @param matchId      the unique identifier of the match.
      * @param competitorId the unique identifier of the competitor.

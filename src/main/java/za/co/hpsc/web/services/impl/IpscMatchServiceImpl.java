@@ -59,6 +59,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return new IpscResponseHolder(ipscResponses);
     }
 
+    /**
+     * Generates an IPSC match record holder containing match records for the provided list of IPSC matches.
+     *
+     * @param ipscMatchEntityList A list of IPSC match entities to process. Must not be null.
+     * @return An IPSC match record holder containing the processed match records.
+     */
     @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList) {
         List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
