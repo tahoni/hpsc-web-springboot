@@ -54,7 +54,13 @@ public class DomainServiceImpl implements DomainService {
         AtomicReference<Optional<MatchEntityHolder>> optionalMatchEntityHolder =
                 new AtomicReference<>(Optional.empty());
 
-        Club club = initClubEntity(matchResults.getClub()).orElse(null);
+        Optional<Club> optionalClub = initClubEntity(matchResults.getClub());
+        if (optionalClub.isPresent()) {
+            optionalClub.ifPresent(club -> club.init(matchResults.getClub()));
+        } else {
+            optionalClub = initClubEntity(ClubIdentifier.HPSC);
+        }
+        Club club = optionalClub.orElse(null);
         Optional<IpscMatch> optionalMatch = initMatchEntity(matchResults.getMatch(), club);
 
         optionalMatch.ifPresent(match -> {
@@ -88,8 +94,17 @@ public class DomainServiceImpl implements DomainService {
             Club clubEntity = optionalClubEntity.orElse(new Club());
 
             // Add attributes to the club
-            clubEntity.init(clubDto);
             return Optional.of(clubEntity);
+        }
+
+        return Optional.empty();
+    }
+
+    // TODO: Javadoc
+    protected Optional<Club> initClubEntity(ClubIdentifier clubIdentifier) {
+        if (clubIdentifier != null) {
+            // Find the club entity if present
+            return clubRepository.findByAbbreviation(clubIdentifier.getName());
         }
 
         return Optional.empty();
@@ -108,12 +123,9 @@ public class DomainServiceImpl implements DomainService {
 
         // Add attributes to the match
         matchEntity.init(matchDto);
-        if (clubEntity != null) {
-            matchEntity.setClub(clubEntity);
-        }
 
         // Link the match to the club
-//        matchEntity.setClub(clubEntity);
+        matchEntity.setClub(clubEntity);
 
         return Optional.of(matchEntity);
     }

@@ -71,19 +71,25 @@ public class Club {
      * @param clubDto the DTO containing data needed to populate the entity fields.
      */
     public void init(@NotNull ClubDto clubDto) {
-        // Initialises club details
-        this.id = clubDto.getId();
+        if (clubDto != null) {
+            // Initialises club details
+            this.id = clubDto.getId();
 
-        // Initialises club attributes
-        this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
-                clubDto.getName() : this.name);
-        this.abbreviation = (((clubDto.getAbbreviation() != null) && (!clubDto.getAbbreviation().isBlank())) ?
-                clubDto.getAbbreviation() : this.abbreviation);
+            // Initialises club attributes
+            this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
+                    clubDto.getName() : this.name);
+            this.abbreviation = (((clubDto.getAbbreviation() != null) && (!clubDto.getAbbreviation().isBlank())) ?
+                    clubDto.getAbbreviation() : this.abbreviation);
+        }
     }
 
     @Override
     public String toString() {
-        return this.name;
+        if ((abbreviation != null) && (!abbreviation.isBlank())) {
+            return this.name + " (" + this.abbreviation + ")";
+        } else {
+            return this.name;
+        }
     }
 
     @PrePersist

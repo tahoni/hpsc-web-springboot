@@ -216,8 +216,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
-        String clubName = ((match.getClub() != null) ?
-                ValueUtil.nullAsEmptyString(match.getClub().getName()) : "");
+        String clubName = ((match.getClub() != null) ? match.getClub().toString() : "");
 
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);

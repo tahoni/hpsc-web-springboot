@@ -31,6 +31,6 @@ public class MatchEntityServiceImpl implements MatchEntityService {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
-        return matchRepository.findByName(name);
+        return matchRepository.findByNameWithClub(name);
     }
 }

@@ -77,7 +77,7 @@ public class IpscMatch {
             this.matchFirearmType = matchDto.getMatchFirearmType();
             this.matchCategory = matchDto.getMatchCategory();
 
-            // Initailises the date fields
+            // Initialise the date fields
             this.dateEdited = matchDto.getDateEdited();
         }
     }
