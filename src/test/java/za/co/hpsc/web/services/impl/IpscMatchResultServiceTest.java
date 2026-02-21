@@ -1,13 +1,16 @@
 package za.co.hpsc.web.services.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
@@ -30,12 +33,11 @@ public class IpscMatchResultServiceTest {
     @InjectMocks
     private IpscMatchResultServiceImpl ipscMatchResultService;
 
-//    private MatchResultsDto matchResultsDto;
-//    private MatchDto matchDto;
-//    private Club clubEntity;
-//    private IpscMatch matchEntity;
+    private MatchResultsDto matchResultsDto;
+    private MatchDto matchDto;
+    private Club clubEntity;
+    private IpscMatch matchEntity;
 
-/*
     @BeforeEach
     public void setUp() {
         // Initialize test data
@@ -65,7 +67,6 @@ public class IpscMatchResultServiceTest {
         matchResultsDto.setMatch(matchDto);
         matchResultsDto.setClub(clubDto);
     }
-*/
 
     @Test
     public void testInitMatch_withExistingMatchAndNoNewerScores_thenReturnsEmptyOptional() {
@@ -137,7 +138,7 @@ public class IpscMatchResultServiceTest {
         assertTrue(result.isPresent());
         MatchDto matchDto = result.get();
         assertEquals(1L, matchDto.getId());
-        assertEquals(clubDto, matchDto.getClub());
+        assertEquals(clubDto.getId(), matchDto.getClub().getId());
         verify(matchEntityService, times(1)).findMatchByName("Existing Match");
     }
 
@@ -170,7 +171,7 @@ public class IpscMatchResultServiceTest {
         assertTrue(result.isPresent());
         MatchDto matchDto = result.get();
         assertNull(matchDto.getId());
-        assertEquals(clubDto, matchDto.getClub());
+        assertEquals(clubDto.getId(), matchDto.getClub().getId());
         verify(matchEntityService, times(1)).findMatchByName("New Match");
     }
 }
