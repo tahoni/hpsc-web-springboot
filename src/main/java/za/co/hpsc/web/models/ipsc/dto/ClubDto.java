@@ -55,6 +55,17 @@ public class ClubDto {
     }
 
     // TODO: Javadoc
+    public ClubDto(ClubResponse clubResponse) {
+        if (clubResponse != null) {
+            // Initialises club details
+            this.index = clubResponse.getClubId();
+            // Initialises club attributes
+            this.name = clubResponse.getClubName();
+            this.abbreviation = clubResponse.getClubCode();
+        }
+    }
+
+    // TODO: Javadoc
     public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
         if (clubEntity != null) {
             // Initialises club details

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
@@ -37,10 +36,8 @@ public class MatchDto {
     private Long id;
     private Integer index;
 
-    private UUID clubUUID;
-    private Long clubId;
+    private ClubDto club;
     private Integer clubIndex;
-    private ClubIdentifier clubName;
 
     @NotNull
     private String name = "";
@@ -70,10 +67,8 @@ public class MatchDto {
         this.id = matchEntity.getId();
 
         // Initialises club details from the associated entity
-        this.clubId = ((matchEntity.getClub() != null) ? matchEntity.getClub().getId() : null);
         if (matchEntity.getClub() != null) {
-            this.clubId = matchEntity.getClub().getId();
-            this.clubName = ClubIdentifier.getByName(matchEntity.getClub().getName()).orElse(null);
+            this.club = new ClubDto(matchEntity.getClub());
         }
 
         // Initialises the match attributes
@@ -98,14 +93,11 @@ public class MatchDto {
         this.id = matchEntity.getId();
 
         // Initialises club details from the DTO or associated entity
-        if ((clubDto != null) && (clubDto.getId() != null)) {
-            this.clubUUID = clubDto.getUuid();
-            this.clubId = clubDto.getId();
+        if (clubDto != null) {
             this.clubIndex = clubDto.getIndex();
-            this.clubName = ClubIdentifier.getByName(clubDto.getName()).orElse(null);
+            this.club = clubDto;
         } else if (matchEntity.getClub() != null) {
-            this.clubId = matchEntity.getClub().getId();
-            this.clubName = ClubIdentifier.getByName(matchEntity.getClub().getName()).orElse(null);
+            this.club = new ClubDto(matchEntity.getClub());
         }
 
         // Initialises the match attributes
@@ -164,8 +156,8 @@ public class MatchDto {
 
             // Initialises club details from the DTO or associated entity
             if (clubDto != null) {
-                this.clubUUID = clubDto.getUuid();
-                this.clubId = clubDto.getId();
+                this.clubIndex = clubDto.getIndex();
+                this.club = clubDto;
             }
             this.clubIndex = matchResponse.getClubId();
 
@@ -204,6 +196,13 @@ public class MatchDto {
      */
     @Override
     public String toString() {
-        return name;
+        String clubString = ((this.club != null) ? this.club.toString() : null);
+
+        // Returns name, optionally with club if available
+        if ((clubString != null) && (!clubString.isBlank())) {
+            return name + " @ " + clubString;
+        } else {
+            return name;
+        }
     }
 }
