@@ -22,9 +22,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: fix problem with testing club link
 // TODO: add tests for competitors
-// TODO: fix club name
 @ExtendWith(MockitoExtension.class)
 public class IpscMatchEntityServiceTest {
 

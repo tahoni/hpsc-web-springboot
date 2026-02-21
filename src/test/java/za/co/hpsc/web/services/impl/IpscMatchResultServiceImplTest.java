@@ -25,7 +25,6 @@ import static org.mockito.Mockito.*;
 // TODO: redo some tests
 // TODO: add tests for scores not zero/null
 // TODO: add tests for scores zero/null
-// TODO: add tests for club identifier
 @ExtendWith(MockitoExtension.class)
 public class IpscMatchResultServiceImplTest {
     @Mock
