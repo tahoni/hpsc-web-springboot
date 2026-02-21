@@ -63,5 +63,4 @@ public class IpscResponse {
         this.enrolledMembers = enrolledRequests.stream().map(EnrolledResponse::new).toList();
         this.scores = scoreRequests.stream().map(ScoreResponse::new).toList();
     }
-
 }

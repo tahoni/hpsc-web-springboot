@@ -39,7 +39,7 @@ public class DomainServiceImpl implements DomainService {
     }
 
     /**
-     * Initializes match entities based on the provided match results.
+     * Initialises match entities based on the provided match results.
      *
      * @param matchResults The DTO containing match results, including match, club, competitors, and stages.
      *                     Must not be null.
@@ -100,17 +100,20 @@ public class DomainServiceImpl implements DomainService {
         // Find the match entity if present
         Optional<IpscMatch> optionalIpscMatchEntity = Optional.empty();
         if ((matchDto != null) && (matchDto.getId() != null)) {
-            optionalIpscMatchEntity = ipscMatchRepository.findById(matchDto.getId());
+            optionalIpscMatchEntity = ipscMatchRepository.findByIdWithClubStages(matchDto.getId());
         }
 
         // Initialise the match entity from DTO or create a new entity
         IpscMatch matchEntity = optionalIpscMatchEntity.orElse(new IpscMatch());
 
         // Add attributes to the match
-        matchEntity.init(matchDto, clubEntity);
+        matchEntity.init(matchDto);
+        if (clubEntity != null) {
+            matchEntity.setClub(clubEntity);
+        }
 
         // Link the match to the club
-        matchEntity.setClub(clubEntity);
+//        matchEntity.setClub(clubEntity);
 
         return Optional.of(matchEntity);
     }

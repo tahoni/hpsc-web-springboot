@@ -43,22 +43,21 @@ public class Club {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<IpscMatch> matches = new ArrayList<>();
 
     public Club(String name, String abbreviation) {
-        // Initialises club details
-        this.name = name;
-
         // Initialises club attributes
+        this.name = name;
         this.abbreviation = abbreviation;
     }
 
     public Club(ClubDto clubDto) {
         // Initialises club details
-        this.name = clubDto.getName();
+        this.id = clubDto.getId();
 
         // Initialises club attributes
+        this.name = clubDto.getName();
         this.abbreviation = clubDto.getAbbreviation();
     }
 
@@ -73,10 +72,11 @@ public class Club {
      */
     public void init(@NotNull ClubDto clubDto) {
         // Initialises club details
-        this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
-                clubDto.getName() : this.name);
+        this.id = clubDto.getId();
 
         // Initialises club attributes
+        this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
+                clubDto.getName() : this.name);
         this.abbreviation = (((clubDto.getAbbreviation() != null) && (!clubDto.getAbbreviation().isBlank())) ?
                 clubDto.getAbbreviation() : this.abbreviation);
     }

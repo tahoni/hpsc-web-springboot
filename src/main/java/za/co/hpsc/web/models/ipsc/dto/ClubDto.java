@@ -29,6 +29,7 @@ public class ClubDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
     private Integer index;
+    private Long matchId;
 
     @NotNull
     private String name = "";
@@ -54,24 +55,17 @@ public class ClubDto {
     }
 
     // TODO: Javadoc
-    public ClubDto(ClubResponse clubResponse) {
-        if (clubResponse != null) {
-            // Initialises club details
-            this.index = clubResponse.getClubId();
-
-            // Initialises club attributes
-            this.name = clubResponse.getClubName();
-            this.abbreviation = clubResponse.getClubCode();
-        }
-    }
-
-    // TODO: Javadoc
     public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
         if (clubEntity != null) {
+            // Initialises club details
             this.id = clubEntity.getId();
+            // Initialises club attributes
             this.name = clubEntity.getName();
             this.abbreviation = clubEntity.getAbbreviation();
+
         } else if (clubIdentifier != null) {
+            // Initialises club attributes
+            this.name = clubIdentifier.getName();
             this.abbreviation = clubIdentifier.getName();
         }
     }
@@ -79,7 +73,9 @@ public class ClubDto {
     // TODO: Javadoc
     public void init(ClubResponse clubResponse) {
         if (clubResponse != null) {
+            // Initialises club details
             this.index = clubResponse.getClubId();
+            // Initialises club attributes
             this.name = clubResponse.getClubName();
             this.abbreviation = clubResponse.getClubCode();
         }
