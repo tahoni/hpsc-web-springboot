@@ -43,6 +43,5 @@ public class MatchResultsDto {
      */
     public MatchResultsDto(MatchDto match) {
         this.match = match;
-        this.club = ((match != null) ? match.getClub() : null);
     }
 }

@@ -15,7 +15,6 @@ import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -38,7 +37,9 @@ public class MatchDto {
     private Long id;
     private Integer index;
 
-    private ClubDto club;
+    private UUID clubUUID;
+    private Long clubId;
+    private Integer clubIndex;
     private ClubIdentifier clubName;
 
     @NotNull
@@ -67,14 +68,17 @@ public class MatchDto {
 
         // Initialises match details
         this.id = matchEntity.getId();
+
+        // Initialises club details from the associated entity
+        this.clubId = ((matchEntity.getClub() != null) ? matchEntity.getClub().getId() : null);
         if (matchEntity.getClub() != null) {
-            this.club = new ClubDto(matchEntity.getClub());
+            this.clubId = matchEntity.getClub().getId();
+            this.clubName = ClubIdentifier.getByName(matchEntity.getClub().getName()).orElse(null);
         }
 
         // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.clubName = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
     }
@@ -92,12 +96,21 @@ public class MatchDto {
     public MatchDto(@NotNull IpscMatch matchEntity, ClubDto clubDto) {
         // Initialises match details
         this.id = matchEntity.getId();
-        this.club = clubDto;
+
+        // Initialises club details from the DTO or associated entity
+        if ((clubDto != null) && (clubDto.getId() != null)) {
+            this.clubUUID = clubDto.getUuid();
+            this.clubId = clubDto.getId();
+            this.clubIndex = clubDto.getIndex();
+            this.clubName = ClubIdentifier.getByName(clubDto.getName()).orElse(null);
+        } else if (matchEntity.getClub() != null) {
+            this.clubId = matchEntity.getClub().getId();
+            this.clubName = ClubIdentifier.getByName(matchEntity.getClub().getName()).orElse(null);
+        }
 
         // Initialises the match attributes
         this.name = matchEntity.getName();
         this.scheduledDate = matchEntity.getScheduledDate();
-        this.clubName = matchEntity.getClubName();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
 
@@ -106,19 +119,16 @@ public class MatchDto {
     }
 
     // TODO: Javadoc
-    public MatchDto(MatchResponse matchResponse, ClubDto clubDto) {
+    public MatchDto(MatchResponse matchResponse) {
         if (matchResponse != null) {
             // Initialises match details
             this.index = matchResponse.getMatchId();
-            this.club = clubDto;
+
+            // Initialises club details from the DTO
+            this.clubIndex = matchResponse.getClubId();
 
             // Initialises the match attributes
             this.name = matchResponse.getMatchName();
-            Optional<ClubIdentifier> clubReference = Optional.empty();
-            if (clubDto != null) {
-                clubReference = ClubIdentifier.getByName(clubDto.getName());
-            }
-            this.clubName = clubReference.orElse(null);
             this.scheduledDate = matchResponse.getMatchDate();
 
             // Determines the firearm type based on the firearm ID
@@ -151,16 +161,17 @@ public class MatchDto {
         if (matchResponse != null) {
             // Initialises match details
             this.index = matchResponse.getMatchId();
-            this.club = clubDto;
+
+            // Initialises club details from the DTO or associated entity
+            if (clubDto != null) {
+                this.clubUUID = clubDto.getUuid();
+                this.clubId = clubDto.getId();
+            }
+            this.clubIndex = matchResponse.getClubId();
 
             // Initialises the match attributes
             this.name = matchResponse.getMatchName();
             this.scheduledDate = matchResponse.getMatchDate();
-
-            if (clubDto != null) {
-                Optional<ClubIdentifier> cr = ClubIdentifier.getByName(clubDto.getName());
-                cr.ifPresent(clubIdentifier -> this.clubName = clubIdentifier);
-            }
 
             // Determines the firearm type based on the firearm ID
             this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId())
@@ -193,18 +204,6 @@ public class MatchDto {
      */
     @Override
     public String toString() {
-        String clubString = "";
-        if (this.club != null) {
-            clubString = club.toString();
-        } else if (clubName != null) {
-            clubString = clubName.toString();
-        }
-
-        // Returns name, optionally with club if available
-        if ((clubString != null) && (!clubString.isBlank())) {
-            return name + " @ " + clubString;
-        } else {
-            return name;
-        }
+        return name;
     }
 }
