@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 // TODO: Javadoc
+// TODO: comment
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -215,6 +216,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
+        String clubName = ((match.getClub() != null) ?
+                ValueUtil.nullAsEmptyString(match.getClub().getName()) : "");
+
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
@@ -225,7 +229,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Creates match response from match details
-        String clubName = ValueUtil.nullAsEmptyString(match.getClubName());
         IpscMatchRecord ipscMatchRecord = new IpscMatchRecord(match.getName(), scheduledDate,
                 clubName, matchFirearmType, matchCategory, competitors, dateEdited);
         return Optional.of(ipscMatchRecord);
@@ -268,6 +271,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
+        String clubName = ((matchCompetitor.getMatch() != null) &&
+                (matchCompetitor.getMatch().getClub() != null)) ?
+                ValueUtil.nullAsEmptyString(matchCompetitor.getMatch().getClub().getName()) : "";
+
         String firearmType = ValueUtil.nullAsEmptyString(matchCompetitor.getFirearmType());
         String division = ValueUtil.nullAsEmptyString(matchCompetitor.getDivision());
         String powerFactor = ValueUtil.nullAsEmptyString(matchCompetitor.getPowerFactor());
@@ -282,8 +289,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Formats competitor details for match competitor response
-        thisCompetitorOverall = new MatchCompetitorRecord(matchCompetitor.getClubName().toString(),
-                firearmType, division, powerFactor, competitorCategory, matchPoints, matchRanking, dateEdited);
+        thisCompetitorOverall = new MatchCompetitorRecord(clubName, firearmType, division,
+                powerFactor, competitorCategory, matchPoints, matchRanking, dateEdited);
         return Optional.of(thisCompetitorOverall);
     }
 

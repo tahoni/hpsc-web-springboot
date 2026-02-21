@@ -4,32 +4,57 @@
 
 ### Table of Contents
 
-- [Version 0.0.0](#version-000--_20xx-xx-xx_)
+- [Version X.Y.Z](#version-xyz---_yyyy-mm-dd_)
 
-### [Version 0.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-0.0.0) -_20xx-xx-xx_
+---
 
-A summary of the main changes.
+### Version X.Y.Z - _YYYY-MM-DD_
+
+Brief description of the release focus and key improvements.
 
 #### Breaking Changes
 
-#### Enhancements and Updates
+- List any breaking changes or migration requirements
+- Include details on deprecated APIs or renamed entities
+
+#### Features
+
+- Feature description with affected components
+- Include service layer, repository, and controller improvements
+
+#### Enhancements
+
+- Performance improvements
+- Code quality and refactoring updates
+- Documentation and test coverage enhancements
 
 #### Bug Fixes
 
-#### Tests and Quality Assurance
+- Description of bugs fixed in this release
+- Include affected components and impact
 
-#### Code Quality Improvements
+#### Known Issues
 
-#### General Code Improvements
+- Known issue description with affected components
+- Workarounds or mitigation strategies (if available)
+- Expected resolution timeline or target version for fix
 
-#### Configuration Changes
+#### API Changes
 
-#### Documentation
+- New endpoints or modified request/response structures
+- DTO updates and validation changes
 
-#### Dependencies
+#### Testing
 
-#### Migration Notes
+- Test coverage additions (unit, integration, end-to-end)
+- Test data and fixture updates
 
-#### Changes by
+#### Migration Guide
 
-@tahoni
+- Database schema changes and required migrations
+- Repository/service interface updates
+- Configuration changes required for upgrade
+
+#### Contributors
+
+@username

@@ -71,7 +71,6 @@ public class MatchCompetitorDto {
         this.match = new MatchDto(matchCompetitorEntity.getMatch());
 
         // Initialises the competitor attributes
-        this.clubName = matchCompetitorEntity.getClubName();
         this.competitorCategory = matchCompetitorEntity.getCompetitorCategory();
         this.firearmType = matchCompetitorEntity.getFirearmType();
         this.division = matchCompetitorEntity.getDivision();

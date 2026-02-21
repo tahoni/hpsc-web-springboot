@@ -6,7 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.*;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
@@ -45,8 +48,6 @@ public class MatchCompetitor {
     private IpscMatch match;
 
     @Enumerated(EnumType.STRING)
-    private ClubIdentifier clubName;
-    @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
     @Enumerated(EnumType.STRING)
     private Division division;
@@ -82,7 +83,6 @@ public class MatchCompetitor {
         this.competitor = competitorEntity;
 
         // Initialises the competitor attributes
-        this.clubName = matchCompetitorDto.getClubName();
         this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
         this.firearmType = matchCompetitorDto.getFirearmType();
         this.division = matchCompetitorDto.getDivision();
