@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
 public class MatchResultsDto {
     private MatchDto match;
     private ClubDto club;
+    private List<ScoreResponse> scores = new ArrayList<>();
     private List<CompetitorDto> competitors = new ArrayList<>();
     private List<MatchStageDto> stages = new ArrayList<>();
     private List<MatchCompetitorDto> matchCompetitors = new ArrayList<>();

@@ -134,14 +134,6 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         // Initialises match attributes
         matchDto.init(ipscResponse.getMatch(), clubDto, ipscResponse.getScores());
 
-        // Initialises the date fields
-        LocalDateTime dateEdited = ipscResponse.getScores().stream()
-                .filter(Objects::nonNull)
-                .map(ScoreResponse::getLastModified)
-                .max(LocalDateTime::compareTo)
-                .orElse(LocalDateTime.now());
-        matchDto.setDateEdited(dateEdited);
-
         return Optional.of(matchDto);
     }
 
@@ -195,10 +187,14 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
             return;
         }
 
-        List<ScoreResponse> scoreResponses = ipscResponse.getScores();
+        List<ScoreResponse> scoreResponses = ipscResponse.getScores().stream()
+                .filter(Objects::nonNull)
+                .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), matchResultsDto.getMatch().getIndex()))
+                .toList();
+//        matchResultsDto.setScores(scoreResponses);
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
         // Maps score responses to corresponding member responses, excluding members who didn't participate
-        Set<Integer> memberIdsWithScores = scoreResponses.stream()
+        Set<Integer> memberIndexesWithScores = scoreResponses.stream()
                 .filter(Objects::nonNull)
                 .filter(scoreResponse -> scoreResponse.getFinalScore() != null)
                 .filter(scoreResponse -> scoreResponse.getFinalScore() != 0)
@@ -206,7 +202,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                 .collect(Collectors.toSet());
         List<MemberResponse> scoreMembers = memberResponses.stream()
                 .filter(Objects::nonNull)
-                .filter(memberResponse -> memberIdsWithScores
+                .filter(memberResponse -> memberIndexesWithScores
                         .contains(memberResponse.getMemberId()))
                 .toList();
 
@@ -260,13 +256,13 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
         // Iterates through each competitor
         competitorDtoMap.keySet().stream().filter(Objects::nonNull)
-                .forEach(memberId -> {
+                .forEach(memberIndex -> {
                     // Gets the competitor DTO from the map
-                    CompetitorDto competitorDto = competitorDtoMap.get(memberId);
+                    CompetitorDto competitorDto = competitorDtoMap.get(memberIndex);
                     // Filters scores by member ID
                     List<ScoreResponse> scores = scoreResponses.stream()
                             .filter(Objects::nonNull)
-                            .filter(sr -> sr.getMemberId().equals(memberId))
+                            .filter(sr -> sr.getMemberId().equals(memberIndex))
                             .toList();
 
                     // Attempts to find the match competitor by competitor ID and match ID in the database
@@ -315,7 +311,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
                                     // Initialises the match stage attributes
                                     matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
-                                            enrolledResponseMap.get(memberId), stageDto);
+                                            enrolledResponseMap.get(memberIndex), stageDto);
                                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
                                 });
                                 if (optionalStageScoreResponse.isPresent()) {
@@ -334,7 +330,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
                                     // Initialises the match stage attributes
                                     matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
-                                            enrolledResponseMap.get(memberId), stageDto);
+                                            enrolledResponseMap.get(memberIndex), stageDto);
                                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
 
                                 }

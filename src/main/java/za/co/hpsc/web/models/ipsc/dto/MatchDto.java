@@ -14,6 +14,7 @@ import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -38,6 +39,8 @@ public class MatchDto {
 
     private ClubDto club;
     private Integer clubIndex;
+
+    private List<ScoreResponse> scores;
 
     @NotNull
     private String name = "";
@@ -76,6 +79,9 @@ public class MatchDto {
         this.scheduledDate = matchEntity.getScheduledDate();
         this.matchFirearmType = matchEntity.getMatchFirearmType();
         this.matchCategory = matchEntity.getMatchCategory();
+
+        // Initialises the date fields
+        this.dateEdited = matchEntity.getDateEdited();
     }
 
     /**
@@ -108,25 +114,6 @@ public class MatchDto {
 
         // Initialises the date fields
         this.dateEdited = matchEntity.getDateEdited();
-    }
-
-    // TODO: Javadoc
-    public MatchDto(MatchResponse matchResponse) {
-        if (matchResponse != null) {
-            // Initialises match details
-            this.index = matchResponse.getMatchId();
-
-            // Initialises club details from the DTO
-            this.clubIndex = matchResponse.getClubId();
-
-            // Initialises the match attributes
-            this.name = matchResponse.getMatchName();
-            this.scheduledDate = matchResponse.getMatchDate();
-
-            // Determines the firearm type based on the firearm ID
-            this.matchFirearmType = FirearmType.getByCode(matchResponse.getFirearmId()).orElse(null);
-            this.matchCategory = IpscConstants.DEFAULT_MATCH_CATEGORY;
-        }
     }
 
     /**
@@ -172,7 +159,12 @@ public class MatchDto {
 
             // Sets the date edited to the latest score update timestamp
             if (scoreResponses != null) {
-                this.dateEdited = scoreResponses.stream()
+                this.scores = scoreResponses.stream()
+                        .filter(Objects::nonNull)
+                        .filter(scoreResponse -> scoreResponse.getMatchId() == scoreResponse.getMatchId())
+                        .toList();
+                this.dateEdited = this.scores.stream()
+                        .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), this.index))
                         .map(ScoreResponse::getLastModified)
                         .max(LocalDateTime::compareTo)
                         .orElse(LocalDateTime.now());

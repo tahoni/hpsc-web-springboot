@@ -76,6 +76,9 @@ public class IpscMatch {
                     matchDto.getScheduledDate() : LocalDateTime.now());
             this.matchFirearmType = matchDto.getMatchFirearmType();
             this.matchCategory = matchDto.getMatchCategory();
+
+            // Initailises the date fields
+            this.dateEdited = matchDto.getDateEdited();
         }
     }
 
