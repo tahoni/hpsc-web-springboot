@@ -3,22 +3,22 @@
 The official repository for the Spring Boot backend of the Hartbeespoortdam Practical Shooting Club
 (HPSC) platform.
 
-## Table of Contents
+## 📑 Table of Contents
 
-- [Introduction](#introduction)
-- [Repository](#repository)
-- [Technology](#technology)
-- [Features](#features)
-- [Instructions](#instructions)
-    - [Prerequisites](#prerequisites)
-    - [Installation and Execution](#installation-and-execution)
-- [API Documentation](#api-documentation)
-- [Testing](#testing)
-- [Architecture](#architecture)
-- [License](#license)
-- [Author](#author)
+- [📖 Introduction](#-introduction)
+- [🔗 Repository](#-repository)
+- [⚙️ Technology](#-technology)
+- [✨ Features](#-features)
+- [🚀 Instructions](#-instructions)
+    - [📋 Prerequisites](#-prerequisites)
+    - [🔧 Installation and Execution](#-installation-and-execution)
+- [📚 API Documentation](#-api-documentation)
+- [🧪 Testing](#-testing)
+- [🏛️ Architecture](#-architecture)
+- [📜 License](#-license)
+- [👤 Author](#-author)
 
-## Introduction
+## 📖 Introduction
 
 The HPSC Website backend is a high-performance Spring Boot application designed to manage and serve data for
 the Hartbeespoortdam Practical Shooting Club platform. It provides a comprehensive set of RESTful APIs for:
@@ -33,14 +33,14 @@ the Hartbeespoortdam Practical Shooting Club platform. It provides a comprehensi
 The application emphasises structured data processing, validation, and data integrity with MySQL database
 persistence.
 
-## Repository
+## 🔗 Repository
 
 The repository for this project is located at [GitHub](https://github.com/tahoni/hpsc-web-springboot).
 
 Feature requests, suggestions for improvements, and bugs can be logged using the project's
 [Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
 
-## Technology
+## ⚙️ Technology
 
 This is a Spring Boot application built with:
 
@@ -55,7 +55,7 @@ This is a Spring Boot application built with:
 
 Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
-## Features
+## ✨ Features
 
 - **Advanced Data Processing**: Specialised engines for parsing CSV and XML sources with support for MIME type
   inference, multi-format parsing, and flexible schema mapping.
@@ -70,16 +70,16 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 - **Comprehensive Testing**: Extensive unit and integration test coverage with Spring Test and Mockito.
 - **Modern Tech Stack**: Leveraging Java 25 features and Spring Boot 4 framework.
 
-## Instructions
+## 🚀 Instructions
 
-### Prerequisites
+### 📋 Prerequisites
 
 - **Java SDK**: Version 25 or higher
 - **Maven**: Version 3.9+ (or use the provided `./mvnw` wrapper)
 - **MySQL**: Version 8.0+ (or compatible database)
 - **Database Configuration**: Configure connection details in `application.properties`
 
-### Installation and Execution
+### 🔧 Installation and Execution
 
 1. **Clone the repository**:
    ```bash
@@ -108,7 +108,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
 The application starts by default on `http://localhost:8081`.
 
-## API Documentation
+## 📚 API Documentation
 
 Interactive API documentation is automatically generated using SpringDoc OpenAPI and can be accessed at:
 
@@ -118,7 +118,7 @@ Interactive API documentation is automatically generated using SpringDoc OpenAPI
 The Swagger UI provides a comprehensive, interactive interface for exploring and testing all available REST
 endpoints.
 
-## Testing
+## 🧪 Testing
 
 The application includes comprehensive test coverage with unit and integration tests.
 
@@ -149,15 +149,15 @@ Test coverage includes:
 - Repository operations
 - Utility methods and helpers
 
-## Architecture
+## 🏛️ Architecture
 
 A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md`](ARCHITECTURE.md) file.
 
-## License
+## 📜 License
 
 The copyright licence can be found in the [`LICENSE.md`](LICENSE.md) file.
 
-## Author
+## 👤 Author
 
 **Leoni Lubbinge**
 

@@ -1,4 +1,4 @@
-# 📋 Release Notes - Version 1.1.0
+# Release Notes - Version 1.1.0
 
 **Release Date:** January 14, 2026  
 **Status:** ✨ Stable
@@ -18,7 +18,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 ---
 
-## ⭐ Key Features
+## ⭐ Key Highlights
 
 ### 🏆 Award Processing System
 
@@ -31,7 +31,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 - **`AwardController`:** New API endpoints for award operations
 - **Award grouping:** `AwardCeremonyResponse` for structured award ceremony data
 
-### 🏗️ Core Model Refactoring
+### 📦 Core Model Refactoring
 
 - **Base classes:** Introduced generic `Request` and `Response` base classes for metadata standardization
 - **Error handling:** Standardized error responses using new `ErrorResponse` model
@@ -42,7 +42,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 - **Utilities:** Introduced `ValueUtil` for consistent null-to-default initialization
 
-### 📖 API Documentation
+### 📚 API Documentation
 
 - **OpenAPI integration:** Integrated `springdoc-openapi` for automatic API documentation
 - **Javadoc expansion:** Extensive Javadoc comments across:
@@ -73,22 +73,27 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 ---
 
-## 🧪 Testing & Quality
+## 🧪 Testing Summary
+
+### ✓ Test Coverage
 
 - **Award Service tests:** Added comprehensive unit tests for `HpscAwardService`
 - **Response tests:** Added tests for `AwardResponse` and `AwardCeremonyResponse`
-- **Image Service tests:** Improved `HpscImageServiceTest` with:
-    - Detailed assertions for file paths
-    - Tag validation
-    - Description validation
-
+- **Image Service tests:** Improved `HpscImageServiceTest` with detailed assertions
 - **Overall coverage:** Expanded test coverage for new features
+
+### 🎯 Test Scenarios
+
+- ✅ Award processing CSV inputs
+- ✅ Award ceremony grouping
+- ✅ Image service validation (file paths, tags, descriptions)
+- ✅ Error handling and validation paths
 
 ---
 
-## ⚙️ Technical Changes
+## 🔧 Technical Enhancements
 
-### Maven Configuration
+### 📚 Maven & Configuration
 
 - **Maven plugin:** Added `springdoc-openapi-maven-plugin` for OpenAPI documentation generation during
   integration-test phase
@@ -104,15 +109,15 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 ## 📦 Dependencies
 
-### New
+### 🏢 New
 
 - **springdoc-openapi:** For OpenAPI documentation generation and Swagger UI
 
-### Updated
+### ⬆️ Updated
 
 - **Spring Boot:** 4.0.2
 
-### Unchanged
+### ✅ Unchanged
 
 - **Java:** 25
 
@@ -144,15 +149,6 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 ---
 
-## 🧪 Testing Summary
-
-- New test suites for award processing
-- Enhanced test coverage for image processing
-- Comprehensive validation testing
-- Error scenario coverage
-
----
-
 ## 👥 Credits
 
 @tahoni
@@ -163,4 +159,3 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 **Status:** Stable  
 **Previous Version:** 1.0.0  
 **Next Version:** 1.1.1
-

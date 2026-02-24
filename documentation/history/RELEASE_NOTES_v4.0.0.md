@@ -1,4 +1,4 @@
-# Release Notes - Version 4.0.0
+# 🧾 Release Notes - Version 4.0.0
 
 **Status:** ✨ Stable
 
@@ -10,14 +10,14 @@ Domain Refactoring & Quality Assurance
 
 ---
 
-## Overview
+## 📖 Overview
 
 This release includes significant refactoring of the IPSC match system, enhanced input validation, improved
 exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ---
 
-## Breaking Changes ⚠️
+## ⚠️ Breaking Changes
 
 **This is a major version update with breaking changes:**
 
@@ -30,30 +30,30 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ---
 
-## Key Enhancements
+## ⭐ Key Highlights
 
-### IPSC System Refactoring
+### 🔄 IPSC System Refactoring
 
 - **Entity renaming:** Refactored `Match` to `IpscMatch` and `MatchStage` to `IpscMatchStage` for clarity
 - **Repository consolidation:** Renamed and consolidated repository interfaces
 - **Updated dependencies:** Propagated entity name changes across all dependent services, controllers, helpers
 - **Domain model updates:** Updated entity relationships in `MatchCompetitor` and `MatchStageCompetitor`
 
-### Enhanced Validation & Robustness
+### 🛡️ Enhanced Validation & Robustness
 
 - **Multi-layered validation:** Validation at controller, service, and entity levels
 - **Enhanced null safety:** Added `@NotNull` annotations to critical service methods
 - **Improved DTO validation:** Enhanced null checks and input validation in DTO processing
 - **Request validation:** Added validation annotations to request objects
 
-### Match Processing Improvements
+### 📊 Match Processing Improvements
 
 - **Refactored logic:** Refined match and score processing logic in `MatchResultServiceImpl`
 - **DTO holder:** Introduced `MatchResultsDtoHolder` class for improved DTO management
 - **Enhanced CAB import:** Improved `WinMssServiceImpl` modularity through refactored logic
 - **Transaction handling:** Enhanced transaction processing and error recovery
 
-### Exception Handling Improvements
+### 🎯 Exception Handling Improvements
 
 - **Enhanced error responses:** Improved exception handling in `ControllerAdvice` for consistent error
   responses
@@ -62,9 +62,9 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ---
 
-## Bug Fixes
+## 🐛 Bug Fixes
 
-### XML Parsing Error Handling
+### 🔧 XML Parsing Error Handling
 
 - **Fixed XML parsing bugs:** Resolved critical issues in XML parsing logic
 - **Improved error recovery:** Enhanced error handling and recovery mechanisms during XML processing
@@ -72,7 +72,9 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ---
 
-## Test Coverage
+## 🧪 Testing Summary
+
+### ✓ Test Coverage
 
 - **Comprehensive testing:** Added extensive test coverage with 985+ lines of new test code
 - **Enhanced WinMssService testing:** Significantly expanded test cases covering CAB file import and XML
@@ -81,9 +83,20 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 - **Integration testing:** Full request-response pipeline validation
 - **Updated test classes:** Enhanced tests for entity renames across all test packages
 
+### 🎯 Test Scenarios
+
+- ✅ Entity mapping and initialization
+- ✅ Repository operations
+- ✅ Service business logic
+- ✅ Controller endpoints
+- ✅ Error handling and exceptions
+- ✅ Null handling and edge cases
+- ✅ XML and JSON parsing
+- ✅ CAB file import workflow
+
 ---
 
-## Code Quality Improvements
+## 🔧 Technical Enhancements
 
 - **Improved modularity:** Refactored service implementations for better separation of concerns and
   testability
@@ -93,7 +106,9 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ---
 
-## Migration Notes
+## 📦 Migration Guide
+
+### 📋 Migration Notes
 
 **Database schema updates:** If using JPA auto-DDL, table names will change:
 
@@ -112,37 +127,16 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ---
 
-## Dependencies
+## 📦 Dependencies
 
-### Updated
+### ⬆️ Updated
 
 - **Spring Boot:** 4.0.3 (security patch)
 
-### Unchanged
+### ✅ Unchanged
 
 - **Java:** 25
 - **All other dependencies:** Remain the same
-
----
-
-## Testing Summary
-
-### New Test Suites
-
-- **IpscMatchServiceImplTest:** 985+ lines of comprehensive test coverage
-- **Enhanced WinMssServiceTest:** Expanded XML parsing and CAB import tests
-- **Updated existing tests:** All test classes updated for entity renames
-
-### Test Coverage Areas
-
-- ✅ Entity mapping and initialization
-- ✅ Repository operations
-- ✅ Service business logic
-- ✅ Controller endpoints
-- ✅ Error handling and exceptions
-- ✅ Null handling and edge cases
-- ✅ XML and JSON parsing
-- ✅ CAB file import workflow
 
 ---
 
@@ -165,4 +159,3 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 **Status:** Stable  
 **Previous Version:** 3.1.0  
 **Next Version:** 4.1.0
-

@@ -1,4 +1,4 @@
-# 📋 Release Notes - Version 5.0.0
+# Release Notes - Version 5.0.0
 
 **Release Date:** February 24, 2026  
 **Status:** ✨ Stable
@@ -7,17 +7,18 @@
 
 ## 🎯 Theme
 
-Semantic Versioning Transition & Infrastructure Consolidation
-to **Semantic Versioning (SemVer)** after the conclusion of the legacy non-semantic versioning scheme used in
-versions 1.x through 4.x. This release consolidates critical infrastructure improvements, enhanced data
-processing capabilities, and comprehensive testing frameworks established in recent releases while maintaining
-full backward compatibility with the IPSC domain refactoring from version 4.0.0.
+**Semantic Versioning Transition & Infrastructure Consolidation**
+
+Transition to **Semantic Versioning (SemVer)** after the conclusion of the legacy non-semantic versioning
+scheme used in versions 1.x through 4.x. This release consolidates critical infrastructure improvements,
+enhanced data processing capabilities, and comprehensive testing frameworks established in recent releases
+while maintaining full backward compatibility with the IPSC domain refactoring from version 4.0.0.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 🎯 Semantic Versioning Adoption
+### 🔄 Semantic Versioning Adoption
 
 - **Major milestone:** The project now adheres to [Semantic Versioning (SemVer)](https://semver.org/)
   standards
@@ -26,7 +27,7 @@ full backward compatibility with the IPSC domain refactoring from version 4.0.0.
   now documented in the [Legacy Release Archive](./documentation/archive/ARCHIVE.md)
 - **Future releases:** Will follow SemVer conventions with clear major, minor, and patch version increments
 
-### 🔧 Infrastructure & Architecture
+### ⚙️ Infrastructure & Architecture
 
 - **Spring Boot upgrade:** Running on Spring Boot 4.0.3 with Java 25 support
 - **Modern Java features:** Leveraging Java 25 language enhancements and optimizations
@@ -35,7 +36,7 @@ full backward compatibility with the IPSC domain refactoring from version 4.0.0.
 - **Improved error handling:** Multi-layered validation and comprehensive exception mapping across all API
   layers
 
-### 📊 Data Processing & Integration
+### 🔗 Data Processing & Integration
 
 - **Advanced IPSC matching:** Sophisticated algorithms for mapping match results from IPSC sources to domain
   entities
@@ -57,7 +58,7 @@ full backward compatibility with the IPSC domain refactoring from version 4.0.0.
 
 ## ✨ What's New in 5.0.0
 
-### 🔄 Enhanced Entity Initialization Framework
+### 🏗️ Enhanced Entity Initialization Framework
 
 Version 5.0.0 builds upon the `DomainServiceImpl` and related initialization classes to provide robust entity
 lifecycle management:
@@ -91,7 +92,7 @@ New methods enhance the request-to-response mapping workflow:
 - **Score aggregation:** Comprehensive score collection and stage-wise aggregation
 - **Response enrichment:** Multi-step response building ensuring all required data is present
 
-### 🏗️ Improved DTO Architecture
+### 📦 Improved DTO Architecture
 
 The `ClubDto` class and related DTOs have been enhanced with:
 
@@ -104,7 +105,7 @@ The `ClubDto` class and related DTOs have been enhanced with:
 
 ## 🔧 Technical Enhancements
 
-### 🔹 Service Layer Improvements
+### 🎯 Service Layer Improvements
 
 | Component                    | Enhancement                                                |
 |------------------------------|------------------------------------------------------------|
@@ -164,7 +165,7 @@ This release includes stability improvements and bug fixes carried forward from 
 
 ## 📦 Migration Guide
 
-### For Existing Deployments
+### 📋 For Existing Deployments
 
 No migration required. Version 5.0.0 is a drop-in replacement for version 4.1.0.
 
@@ -173,7 +174,7 @@ No migration required. Version 5.0.0 is a drop-in replacement for version 4.1.0.
 3. **Dependencies:** No breaking dependency updates
 4. **Data:** All existing data remains compatible
 
-### For New Deployments
+### 🆕 For New Deployments
 
 Follow standard Spring Boot deployment procedures:
 
@@ -235,9 +236,9 @@ Version 5.0.0 maintains the performance characteristics of version 4.1.0:
 
 ## 📚 Documentation
 
-- **Architecture Guide:** See [ARCHITECTURE.md](../../ARCHITECTURE.md) for detailed system design
-- **README:** See [README.md](../../README.md) for setup and configuration instructions
-- **Legacy Releases:** See [ARCHIVE.md](../archive/ARCHIVE.md) for historical release information
+- **Architecture Guide:** See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed system design
+- **README:** See [README.md](./README.md) for setup and configuration instructions
+- **Legacy Releases:** See [ARCHIVE.md](./documentation/archive/ARCHIVE.md) for historical release information
 - **API Docs:** Available via Swagger UI at `/swagger-ui.html` when running the application
 
 ---

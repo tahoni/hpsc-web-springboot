@@ -1,23 +1,17 @@
-# Release Notes - Version 3.0.0
+# 🧾 Release Notes - Version 3.0.0
 
 **Status:** ✨ Stable
 
 ---
 
-## 🎯 Theme
-
-Domain Model Restructuring & IPSC Specialization
-
----
-
-## Overview
+## 📖 Overview
 
 Major refactoring of the IPSC match results processing system to improve modularity, maintainability, and
 testability. Introduces IPSC-specific domain modeling with firearm-type-based classifications.
 
 ---
 
-## Breaking Changes ⚠️
+## ⚠️ Breaking Changes
 
 **This is a major version update with breaking changes:**
 
@@ -31,9 +25,9 @@ testability. Introduces IPSC-specific domain modeling with firearm-type-based cl
 
 ---
 
-## Key Enhancements
+## ⭐ Key Highlights
 
-### Domain Model Refactoring
+### 🎯 Domain Model Refactoring
 
 - **`Club` entity reintroduced:** Added `Club` JPA entity with bidirectional `@OneToMany` relationship to
   `Match`
@@ -44,50 +38,61 @@ testability. Introduces IPSC-specific domain modeling with firearm-type-based cl
 - **CompetitorCategory field added:** Added across `Competitor`, `MatchCompetitor`, and related DTOs
 - **Firearm-type mappings:** New mapping classes for divisions by firearm type
 
-### Service Layer Improvements
+### 🔧 Service Layer Improvements
 
 - **`ClubService` introduced:** New service layer for club management operations
 - **Enhanced services:** Updated `MatchResultService`, `AwardService`, and transaction handling
 - **DTO layer enhancements:** Introduced `ClubDto` and enhanced existing DTOs with new fields
 
-### Testing & Quality
+### 🧪 Testing Summary
+
+### ✓ Test Coverage
 
 - **279+ new test lines:** Extensive tests for `FirearmTypeToDivisions` mapper
 - **Domain model tests:** Added tests for firearm type, club, and division enumerations
 - **Updated test suites:** Enhanced existing tests to reflect new domain structure
 
+### 🎯 Test Scenarios
+
+- ✅ Firearm type classification
+- ✅ Division mapping by firearm type
+- ✅ Club entity relationships
+- ✅ Competitor category handling
+- ✅ Match entity initialization
+- ✅ Stage max points handling
+
 ---
 
-## New Classes & Components
+## 🆕 New Components
 
-### Domain Entities
+### 🏛️ Domain Entities
 
 - `Club` entity with bidirectional relationships
 - `ClubRepository` for club persistence
 
-### Enums
+### 🔤 Enums
 
 - `FirearmType` - IPSC firearm type classification
 - Updated `Division` enum with firearm-type mappings
 - Enhanced `CompetitorCategory` enum
 
-### Services
+### 🔧 Services
 
 - `ClubService` / `ClubServiceImpl` - Club management
 
-### Mappers
+### 🧩 Mappers
 
 - `FirearmTypeToDivisions` - Centralized firearm-type to division mapping
 - `DivisionsHandgun`, `DivisionsPcc`, `DivisionsRifle`, `DivisionsShotgun`, `DivisionsMiniRifle`,
   `Divisions22Handgun`
 
-### DTOs
+### 📦 DTOs
 
 - `ClubDto` - Club data transfer object with multiple constructors
 
 ---
 
-## Removed Components
+## 🗑️ Removed Components
 
 The following classes were removed in this version as they are no longer needed:
 
@@ -97,7 +102,7 @@ The following classes were removed in this version as they are no longer needed:
 
 ---
 
-## Enhanced Components
+## ✨ Enhanced Components
 
 - `Match` entity - Added firearm type and club relationship
 - `MatchStage` entity - Added `maxPoints` field for stage scoring
@@ -106,7 +111,9 @@ The following classes were removed in this version as they are no longer needed:
 
 ---
 
-## Migration Notes
+## 📦 Migration Guide
+
+### 📋 Migration Notes
 
 **Significant breaking changes require:**
 
@@ -134,9 +141,9 @@ The following classes were removed in this version as they are no longer needed:
 
 ---
 
-## Dependencies
+## 📦 Dependencies
 
-### Unchanged
+### ✅ Unchanged
 
 - **Spring Boot:** 4.0.3
 - **Java:** 25
@@ -144,23 +151,9 @@ The following classes were removed in this version as they are no longer needed:
 
 ---
 
-## Testing Summary
+## 🧪 Testing Summary
 
-### New Test Classes
-
-- `FirearmTypeTest` - 132+ lines of comprehensive tests
-- `FirearmTypeToDivisionsTest` - 279+ lines of mapper tests
-- `ClubDtoTest` - 77+ lines of DTO initialization tests
-- `ClubReferenceTest` - 99+ lines of enum tests
-
-### Updated Test Classes
-
-- `DivisionTest` - Expanded for new firearm-type divisions (194+ lines)
-- `CompetitorDtoTest` - Tests for new category field
-- `MatchDtoTest` - Tests for club entity mapping
-- `MatchStageDtoTest` - Tests for max points field
-
-### Test Coverage
+### ✓ Test Coverage
 
 - ✅ Firearm type classification
 - ✅ Division mapping by firearm type
@@ -168,6 +161,17 @@ The following classes were removed in this version as they are no longer needed:
 - ✅ Competitor category handling
 - ✅ Match entity initialization
 - ✅ Stage max points handling
+
+### 🎯 Test Scenarios
+
+- `FirearmTypeTest` - 132+ lines of comprehensive tests
+- `FirearmTypeToDivisionsTest` - 279+ lines of mapper tests
+- `ClubDtoTest` - 77+ lines of DTO initialization tests
+- `ClubReferenceTest` - 99+ lines of enum tests
+- `DivisionTest` - Expanded for new firearm-type divisions (194+ lines)
+- `CompetitorDtoTest` - Tests for new category field
+- `MatchDtoTest` - Tests for club entity mapping
+- `MatchStageDtoTest` - Tests for max points field
 
 ---
 
@@ -189,4 +193,3 @@ The following classes were removed in this version as they are no longer needed:
 **Status:** Stable  
 **Previous Version:** 2.0.0  
 **Next Version:** 3.1.0
-

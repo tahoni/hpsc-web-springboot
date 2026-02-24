@@ -1,25 +1,19 @@
-# Release Notes - Version 4.1.0
+# 🧾 Release Notes - Version 4.1.0
 
 **Status:** ✨ Stable
 
 ---
 
-## 🎯 Theme
-
-CRUD Enhancement & API Maturity
-
----
-
-## Overview
+## 📖 Overview
 
 This release adds core CRUD (Create, Read, Update, Delete) capabilities and supporting improvements for the
 refactored IPSC domain introduced in version 4.0.0.
 
 ---
 
-## Key Features
+## ⭐ Key Highlights
 
-### CRUD Operations for IPSC Entities
+### 🛠️ CRUD Operations for IPSC Entities
 
 - **IpscMatch CRUD:** Complete create, read, update, delete support for IPSC match entities
 - **IpscMatchStage CRUD:** Full CRUD support for match stage entities
@@ -27,13 +21,13 @@ refactored IPSC domain introduced in version 4.0.0.
 - **Service layer:** Corresponding service methods for all CRUD operations
 - **Transactional handling:** Transaction management for all write operations ensuring data integrity
 
-### Enhanced Input Validation
+### ✅ Enhanced Input Validation
 
 - **DTO Validation:** Additional `@NotNull` annotations on critical DTO fields
 - **Bean Validation:** Jakarta Validation annotations integrated throughout request/response DTOs
 - **Error Messages:** Detailed validation error reporting for better API usability
 
-### Testing Improvements
+### 🧪 Testing Improvements
 
 - **Unit Tests:** Added comprehensive unit tests for CRUD endpoints
 - **Integration Tests:** Extended integration tests for service behavior validation
@@ -41,7 +35,7 @@ refactored IPSC domain introduced in version 4.0.0.
 
 ---
 
-## Breaking Changes
+## ⚠️ Breaking Changes
 
 - **No new breaking changes:** Previous breaking changes from v4.0.0 (e.g., `Match` → `IpscMatch`) remain in
   effect
@@ -49,7 +43,7 @@ refactored IPSC domain introduced in version 4.0.0.
 
 ---
 
-## Enhancements and Updates
+## 🔧 Technical Enhancements
 
 - CRUD endpoints and service operations added for IPSC entities
 - Improved request validation on create/update DTOs
@@ -61,20 +55,22 @@ refactored IPSC domain introduced in version 4.0.0.
 
 ---
 
-## Bug Fixes
+## 🐛 Bug Fixes
 
 - Fixed edge cases in entity initialisation when creating stages with missing `maxPoints`
 - Resolved mapping issues between DTOs and domain entities during updates
 
 ---
 
-## API Changes
+## 🔗 API Changes
 
 - Request/response DTOs updated to include necessary fields for create/update flows
 
 ---
 
-## Migration Notes
+## 📦 Migration Guide
+
+### 📋 Migration Notes
 
 - **Database schema:** Ensure tables `ipsc_match` and `ipsc_match_stage` are present
 - **Foreign-key constraints:** Review cascade behavior for delete operations to avoid accidental data loss
@@ -85,7 +81,7 @@ refactored IPSC domain introduced in version 4.0.0.
 
 ## 📦 Dependencies
 
-### Unchanged from v4.0.0
+### ✅ Unchanged from v4.0.0
 
 - **Spring Boot:** 4.0.3
 - **Java:** 25
@@ -95,18 +91,25 @@ refactored IPSC domain introduced in version 4.0.0.
 
 ## 🧪 Testing Summary
 
-### New Tests Added
+### 🧪 New Tests Added
 
 - CRUD operation unit tests
 - CRUD endpoint integration tests
 - Validation failure scenarios
 - Edge case coverage
 
-### Test Coverage
+### ✓ Test Coverage
 
 - Extended `IpscMatchServiceImplTest` with CRUD scenarios
 - Added `IpscMatchStageServiceTest` coverage
 - Enhanced error handling tests
+
+### 🎯 Test Scenarios
+
+- ✅ CRUD operation flows
+- ✅ Validation failure handling
+- ✅ Entity mapping updates
+- ✅ Integration path coverage
 
 ---
 
@@ -120,4 +123,3 @@ refactored IPSC domain introduced in version 4.0.0.
 **Status:** Stable  
 **Previous Version:** 4.0.0  
 **Next Version:** 5.0.0
-

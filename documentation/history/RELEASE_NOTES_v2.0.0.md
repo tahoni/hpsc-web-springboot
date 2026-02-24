@@ -1,4 +1,4 @@
-# Release Notes - Version 2.0.0
+# 🧾 Release Notes - Version 2.0.0
 
 **Status:** ✨ Stable
 
@@ -10,16 +10,16 @@ Service-Oriented Architecture & Modularity
 
 ---
 
-## Overview
+## 📖 Overview
 
 Major refactoring of the IPSC match results processing system to introduce a service-oriented architecture
 with dedicated DTOs, removing legacy code and enhancing documentation.
 
 ---
 
-## Key Enhancements
+## ⭐ Key Highlights
 
-### Architecture & Services
+### 🔄 Architecture & Services
 
 - **New Service Layer:** Introduced `WinMssService` (replacing `IpscService`), `MatchResultService`,
   `TransactionService`, `IpscMatchService`
@@ -28,7 +28,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 - **Modular Processing:** Broke down monolithic match processing logic into discrete, testable methods
 - **Transaction Management:** Added transactional support with dedicated `TransactionService`
 
-### Domain Model Improvements
+### 📊 Domain Model Improvements
 
 - **`Club` entity removed:** Replaced with simpler `ClubReference` enum
 - **Enhanced Models:** Added fields for timestamps, scoring, ranking, and competitor categories
@@ -41,7 +41,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
     - `MatchCompetitorDto`
 - **UUID Mapping:** Implemented UUID-based mapping between requests and domain objects
 
-### Request/Response Refactoring
+### 🔀 Request/Response Refactoring
 
 - **Unified Models:** Consolidated XML and JSON request models by removing `-ForXml` variants
 - **Modular Responses:** Replaced monolithic response objects with specialized responses
@@ -50,7 +50,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 
 ---
 
-## Removed Components
+## 🗑️ Removed Components
 
 - **Legacy `IpscService`** - Replaced with `WinMssService`
 - **Legacy response models** - Replaced with DTO-based approach
@@ -59,9 +59,9 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 
 ---
 
-## New Components
+## 🆕 New Components
 
-### Services
+### 🔧 Services
 
 - `WinMssService` - CAB file and XML processing
 - `MatchResultService` - Core match result transformation
@@ -69,7 +69,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 - `IpscMatchService` - IPSC-specific match operations
 - Domain-specific services for Competitor, Stage, and relationships
 
-### DTOs
+### 📦 DTOs
 
 - `MatchDto` - Match data transfer
 - `MatchResultsDto` - Combined match and result data
@@ -77,55 +77,65 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 - `MatchStageDto` - Stage details
 - And related association DTOs
 
-### Models
+### 📦 Models
 
 - `XmlDataWrapper` - Generic XML processing wrapper
 - Enhanced request/response models
 
 ---
 
-## Code Improvements
+## 🔧 Technical Enhancements
 
-### Documentation
+### 📚 Documentation
 
 - **Javadoc expansion:** Added comprehensive Javadoc comments across services, models, and DTOs
 - **Code comments:** Enhanced documentation throughout the codebase
 
-### Code Quality
+### 📚 Code Quality
 
 - **Code Style:** Enforced 110-character line wrapping for improved readability
 - **Null Safety:** Introduced null checks in service layer and domain classes
 - **Constants:** Renamed `CompetitorConstants` to `MatchLogConstants`; added `IpscConstants`
 
-### Testing & Quality
+### 🧪 Testing Summary
+
+### ✓ Test Coverage
 
 - **Comprehensive Test Coverage:** Added tests for `WinMssServiceImpl`, `MatchResultServiceImpl`,
   `IpscMatchService`
-- **Test Scenarios:** Cover XML/JSON parsing, null handling, initialization logic, transactional behavior
 - **Edge case handling:** Tests for error conditions and unusual inputs
+
+### 🎯 Test Scenarios
+
+- ✅ XML/JSON parsing
+- ✅ Null handling
+- ✅ Initialization logic
+- ✅ Transactional behavior
 
 ---
 
-## Configuration Changes
+## ⚙️ Configuration Changes
 
 - **Application Config:** Added case-insensitivity for JSON property names
 
 ---
 
-## Dependencies
+## 📦 Dependencies
 
-### Updated
+### ⬆️ Updated
 
 - **Dependencies:** Updated `pom.xml` with required dependencies for enhanced XML/JSON processing
 
-### Unchanged
+### ✅ Unchanged
 
 - **Spring Boot:** 4.0.3
 - **Java:** 25
 
 ---
 
-## Migration Notes
+## 📦 Migration Guide
+
+### 📋 Migration Notes
 
 **Significant breaking changes:**
 
@@ -138,16 +148,21 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 
 ---
 
-## Testing Summary
+## 🧪 Testing Summary
+
+### ✓ Test Coverage
 
 - New comprehensive test suites for all major services
 - Test coverage for XML/JSON parsing
-- Transaction handling tests
-- Entity initialization and persistence tests
+
+### 🎯 Test Scenarios
+
+- ✅ Transaction handling
+- ✅ Entity initialization and persistence tests
 
 ---
 
-## Credits
+## 👥 Credits
 
 @tahoni
 
@@ -157,4 +172,3 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 **Status:** Stable  
 **Previous Version:** 1.1.3  
 **Next Version:** 3.0.0
-

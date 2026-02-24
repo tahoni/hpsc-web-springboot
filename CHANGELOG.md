@@ -341,9 +341,9 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 ---
 
-## 📐 Version Policy
+## 📋 Version Policy
 
-### Semantic Versioning (Current)
+### 📐 Semantic Versioning (Current)
 
 As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://semver.org/):
 
@@ -351,7 +351,7 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 - **MINOR** version for backward-compatible functionality additions
 - **PATCH** version for backward-compatible bug fixes
 
-### Legacy Versioning (v1.x - v4.x)
+### 📐 Legacy Versioning (v1.x - v4.x)
 
 Earlier releases used a non-semantic versioning scheme. For historical documentation,
 see [ARCHIVE.md](./documentation/archive/ARCHIVE.md).
