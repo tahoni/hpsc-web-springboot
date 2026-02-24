@@ -1173,7 +1173,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                null, matchEntity, competitorMap, ClubIdentifier.HPSC);
+                null, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result);
@@ -1188,7 +1188,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                new ArrayList<>(), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                new ArrayList<>(), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result);
@@ -1224,7 +1224,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                Collections.singletonList(matchCompetitorDto), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result);
@@ -1278,7 +1278,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
+                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), competitorMap,
                 ClubIdentifier.HPSC);
 
         // Assert
@@ -1331,7 +1331,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
+                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), competitorMap,
                 ClubIdentifier.HPSC);
 
         // Assert
@@ -1381,7 +1381,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
+                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), competitorMap,
                 ClubIdentifier.UNKNOWN);
 
         // Assert
@@ -1431,7 +1431,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap, null);
+                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), competitorMap, null);
 
         // Assert
         assertEquals(2, result.size());
@@ -1458,7 +1458,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                Collections.singletonList(matchCompetitorDto), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(1, result.size());
@@ -1489,7 +1489,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                Collections.singletonList(matchCompetitorDto), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(1, result.size());
@@ -1531,7 +1531,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
+                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), competitorMap,
                 ClubIdentifier.HPSC);
 
         // Assert
@@ -1564,7 +1564,7 @@ public class DomainServiceImplTest {
 
         // Act
         domainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                Collections.singletonList(matchCompetitorDto), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         verify(spyMatchCompetitor, times(1)).init(matchCompetitorDto, matchEntity, competitor);
@@ -1596,7 +1596,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                Collections.singletonList(matchCompetitorDto), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         MatchCompetitor resultMC = result.get(mcUuid);
@@ -1625,7 +1625,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                Collections.singletonList(matchCompetitorDto), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertTrue(result.isEmpty());
@@ -1662,7 +1662,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                matchCompetitorDtos, matchEntity, competitorMap, ClubIdentifier.HPSC);
+                matchCompetitorDtos, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertEquals(numCompetitors, result.size());
@@ -1691,7 +1691,7 @@ public class DomainServiceImplTest {
 
         // Act
         domainService.initMatchCompetitorEntities(
-                Collections.singletonList(matchCompetitorDto), matchEntity, competitorMap, ClubIdentifier.HPSC);
+                Collections.singletonList(matchCompetitorDto), competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         verify(matchCompetitorRepository, times(1)).findById(20L);
@@ -1704,9 +1704,9 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result1 = domainService.initMatchCompetitorEntities(
-                null, matchEntity, competitorMap, ClubIdentifier.HPSC);
+                null, competitorMap, ClubIdentifier.HPSC);
         Map<UUID, MatchCompetitor> result2 = domainService.initMatchCompetitorEntities(
-                null, matchEntity, competitorMap, ClubIdentifier.HPSC);
+                null, competitorMap, ClubIdentifier.HPSC);
 
         // Assert
         assertNotNull(result1);
@@ -1748,7 +1748,7 @@ public class DomainServiceImplTest {
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
-                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), matchEntity, competitorMap,
+                Arrays.asList(matchCompetitorDto1, matchCompetitorDto2), competitorMap,
                 ClubIdentifier.HPSC);
 
         // Assert

@@ -69,10 +69,10 @@ public class DomainServiceImpl implements DomainService {
 
             Map<UUID, MatchCompetitor> matchCompetitorMap =
                     initMatchCompetitorEntities(matchResults.getMatchCompetitors(),
-                            match, competitorMap, ClubIdentifier.HPSC);
+                            competitorMap, ClubIdentifier.HPSC);
             Map<UUID, MatchStageCompetitor> matchStageCompetitorMap =
                     initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(),
-                            matchStageMap, competitorMap, ClubIdentifier.HPSC);
+                            competitorMap, ClubIdentifier.HPSC);
 
             optionalMatchEntityHolder.set(Optional.of(new MatchEntityHolder(match, club,
                     matchStageMap.values().stream().filter(Objects::nonNull).toList(),
@@ -190,7 +190,6 @@ public class DomainServiceImpl implements DomainService {
 
     // TODO: Javadoc
     protected Map<UUID, MatchCompetitor> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitors,
-                                                                     IpscMatch matchEntity,
                                                                      Map<UUID, Competitor> competitorMap,
                                                                      ClubIdentifier clubIdentifier) {
 
@@ -225,14 +224,8 @@ public class DomainServiceImpl implements DomainService {
                     }
                 }
 
-                // Add attributes to the match competitor
-//                matchCompetitorEntity.init(matchCompetitorDto, matchEntity, competitorEntity);
-                // Link the match competitor to the match and competitor
-//                matchCompetitorEntity.setMatch(matchEntity);
-//                matchCompetitorEntity.setCompetitor(competitorEntity);
-
                 // Update the map of match competitors
-//                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
+                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
             }
         }
 
@@ -241,7 +234,7 @@ public class DomainServiceImpl implements DomainService {
 
     // TODO: Javadoc
     protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
-                                                                               Map<UUID, IpscMatchStage> matchStageMap, Map<UUID, Competitor> competitorMap,
+                                                                               Map<UUID, Competitor> competitorMap,
                                                                                ClubIdentifier clubIdentifier) {
 
         Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
@@ -253,10 +246,6 @@ public class DomainServiceImpl implements DomainService {
                 if (competitorEntity == null) {
                     return new HashMap<>();
                 }
-
-                // Find the match stage entity
-                IpscMatchStage matchStageEntity =
-                        matchStageMap.get(matchStageCompetitorDto.getMatchStage().getUuid());
 
                 // Find the match stage competitor entity if present
                 Optional<MatchStageCompetitor> optionalMatchStageEntity = Optional.empty();
@@ -277,12 +266,6 @@ public class DomainServiceImpl implements DomainService {
                         }
                     }
                 }
-
-                // Add attributes to the match stage competitor
-//                matchStageCompetitorEntity.init(matchStageCompetitorDto, matchStageEntity, competitorEntity);
-                // Link the match stage competitor to the match stage and competitor
-//                matchStageCompetitorEntity.setMatchStage(matchStageEntity);
-//                matchStageCompetitorEntity.setCompetitor(competitorEntity);
 
                 // Update the map of match stage competitors
                 matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorEntity);
