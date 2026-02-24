@@ -113,11 +113,30 @@ public class ClubDto {
      */
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        // Appends the club name if it is not null and not blank
+        if ((this.name != null && (!this.name.isBlank()))) {
+            sb.append(this.name);
+            sb.append(" ");
+        }
+
+        // Appends the club abbreviation in parentheses if it is not null, not blank,
+        // and not the same as the name
         if ((this.abbreviation != null) && (!this.abbreviation.isBlank()) &&
                 (!this.abbreviation.equalsIgnoreCase(this.name))) {
-            return this.name + " (" + this.abbreviation + ")";
-        } else {
-            return this.name;
+            sb.append("(");
+            sb.append(this.abbreviation);
+            sb.append(")");
         }
+
+        // Trim all leading and trailing whitespace, and remove parentheses
+        // if they are the leading and trailing characters
+        String result = sb.toString().trim();
+        if (result.startsWith("(") && result.endsWith(")")) {
+            result = result.substring(1, result.length() - 1).trim();
+        }
+
+        return result;
     }
 }
