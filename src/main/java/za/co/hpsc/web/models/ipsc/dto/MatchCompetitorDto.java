@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
@@ -45,7 +46,6 @@ public class MatchCompetitorDto {
     private MatchDto match;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    private ClubIdentifier clubName;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
@@ -132,10 +132,17 @@ public class MatchCompetitorDto {
                 this.competitorIndex = enrolledResponse.getCompetitorId();
                 this.matchIndex = enrolledResponse.getMatchId();
 
+                // Initialises the club details
+                ClubIdentifier clubIdentifier =
+                        ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
+                if (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier)) {
+                    if (this.match != null) {
+                        this.match.setClub(new ClubDto(clubIdentifier));
+                    }
+                }
+
                 // Determines the power factor based on the major power factor flag
                 this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
-                // Determines the club based on the club reference number
-                this.clubName = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
                 // Determines the discipline based on the division ID
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the firearm type from the discipline
@@ -146,6 +153,37 @@ public class MatchCompetitorDto {
                         CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
                                 .orElse(CompetitorCategory.NONE);
             }
+        }
+    }
+
+    // TODO: Javadoc
+    public ClubIdentifier getClubName() {
+        if (this.match != null && this.match.getClub() != null) {
+            String clubName = this.match.getClub().getName();
+            return ClubIdentifier.getByName(clubName).orElse(ClubIdentifier.UNKNOWN);
+        } else {
+            return ClubIdentifier.UNKNOWN;
+        }
+    }
+
+    // TODO: Javadoc
+    public ClubDto getClub() {
+        if (this.match != null && this.match.getClub() != null) {
+            return this.match.getClub();
+        }
+        return null;
+    }
+
+    // TODO: Javadoc
+    public void setClubName(ClubIdentifier clubIdentifier) {
+        if (this.match == null) {
+            return;
+        }
+
+        if ((clubIdentifier != null) &&
+                (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+            ClubDto clubDto = new ClubDto(clubIdentifier);
+            this.match.setClub(clubDto);
         }
     }
 

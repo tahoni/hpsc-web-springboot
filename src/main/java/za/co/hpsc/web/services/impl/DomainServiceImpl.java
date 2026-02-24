@@ -92,6 +92,7 @@ public class DomainServiceImpl implements DomainService {
 
             // Initialise the club entity from DTO or create a new entity
             Club clubEntity = optionalClubEntity.orElse(new Club());
+            clubEntity.init(clubDto);
 
             // Add attributes to the club
             return Optional.of(clubEntity);
@@ -216,9 +217,11 @@ public class DomainServiceImpl implements DomainService {
                         .orElse(new MatchCompetitor());
 
                 // Filter by club reference if specified
-                if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                    if (!clubIdentifier.equals(matchCompetitorDto.getClubName())) {
-                        continue;
+                if (matchCompetitorDto.getClub() != null) {
+                    if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
+                        if (!clubIdentifier.getName().equals(matchCompetitorDto.getClub().getName())) {
+                            continue;
+                        }
                     }
                 }
 
@@ -268,8 +271,10 @@ public class DomainServiceImpl implements DomainService {
 
                 // Filter by club reference if specified
                 if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
-                    if (!clubIdentifier.equals(matchStageCompetitorDto.getClubName())) {
-                        continue;
+                    if (matchStageCompetitorDto.getClub() != null) {
+                        if (!clubIdentifier.getName().equals(matchStageCompetitorDto.getClub().getName())) {
+                            continue;
+                        }
                     }
                 }
 

@@ -8,6 +8,7 @@ public record MatchStageCompetitorRecord(
         String competitorCategory,
 
         Integer scoreA,
+        Integer scoreB,
         Integer scoreC,
         Integer scoreD,
 

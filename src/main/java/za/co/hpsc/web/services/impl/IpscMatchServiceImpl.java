@@ -331,7 +331,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     // Formats competitor details for match stage competitor response
                     MatchStageCompetitorRecord thisCompetitorStage = new MatchStageCompetitorRecord(
                             firearmType, division, powerFactor, competitorCategory,
-                            msc.getScoreA(), msc.getScoreC(), msc.getScoreD(),
+                            msc.getScoreA(), msc.getScoreB(), msc.getScoreC(), msc.getScoreD(),
                             msc.getPoints(), msc.getMisses(), msc.getPenalties(), msc.getProcedurals(),
                             time, hitFactor, stagePoints, stagePercentage, stageRanking,
                             dateEdited);

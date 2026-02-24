@@ -84,7 +84,7 @@ public class DomainServiceImplTest {
     @Test
     public void testInitClubEntity_withNullClubDto_returnsEmpty() {
         // Act
-        Optional<Club> result = domainService.initClubEntity(null);
+        Optional<Club> result = domainService.initClubEntity((ClubDto) null);
 
         // Assert
         assertTrue(result.isEmpty());

@@ -66,6 +66,15 @@ public class ClubDto {
     }
 
     // TODO: Javadoc
+    public ClubDto(ClubIdentifier clubIdentifier) {
+        if (clubIdentifier != null) {
+            // Initialises club attributes
+            this.name = clubIdentifier.getName();
+            this.abbreviation = clubIdentifier.getName();
+        }
+    }
+
+    // TODO: Javadoc
     public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
         if (clubEntity != null) {
             // Initialises club details
@@ -104,7 +113,8 @@ public class ClubDto {
      */
     @Override
     public String toString() {
-        if ((abbreviation != null) && (!abbreviation.isBlank())) {
+        if ((this.abbreviation != null) && (!this.abbreviation.isBlank()) &&
+                (!this.abbreviation.equalsIgnoreCase(this.name))) {
             return this.name + " (" + this.abbreviation + ")";
         } else {
             return this.name;

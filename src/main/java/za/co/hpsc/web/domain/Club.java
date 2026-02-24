@@ -85,7 +85,8 @@ public class Club {
 
     @Override
     public String toString() {
-        if ((abbreviation != null) && (!abbreviation.isBlank())) {
+        if ((abbreviation != null) && (!abbreviation.isBlank()) &&
+                (!abbreviation.equalsIgnoreCase(name))) {
             return this.name + " (" + this.abbreviation + ")";
         } else {
             return this.name;

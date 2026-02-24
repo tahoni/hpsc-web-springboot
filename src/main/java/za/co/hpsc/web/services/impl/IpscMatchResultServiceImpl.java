@@ -79,8 +79,9 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         }
 
         // Attempts to find the club by name or abbreviation in the database
-        Optional<Club> optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(),
-                clubResponse.getClubCode());
+        Optional<Club> optionalClub =
+                clubEntityService.findClubByNameOrAbbreviation(clubResponse.getClubName(),
+                        clubResponse.getClubCode());
 
         // Creates a new club DTO, from either the found entity or the match response
         Club club = optionalClub.orElse(null);

@@ -40,7 +40,7 @@ public class MatchDto {
     private ClubDto club;
     private Integer clubIndex;
 
-    private List<ScoreResponse> scores;
+    private List<ScoreDto> scores;
 
     @NotNull
     private String name = "";
@@ -161,11 +161,11 @@ public class MatchDto {
             if (scoreResponses != null) {
                 this.scores = scoreResponses.stream()
                         .filter(Objects::nonNull)
-                        .filter(scoreResponse -> scoreResponse.getMatchId() == scoreResponse.getMatchId())
+                        .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), this.index))
+                        .map(ScoreDto::new)
                         .toList();
                 this.dateEdited = this.scores.stream()
-                        .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), this.index))
-                        .map(ScoreResponse::getLastModified)
+                        .map(ScoreDto::getLastModified)
                         .max(LocalDateTime::compareTo)
                         .orElse(LocalDateTime.now());
             } else {

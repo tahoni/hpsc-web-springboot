@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
@@ -46,12 +47,13 @@ public class MatchStageCompetitorDto {
     private MatchStageDto matchStage;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    private ClubIdentifier clubName;
+    private ClubDto club;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
 
     private Integer scoreA;
+    private Integer scoreB;
     private Integer scoreC;
     private Integer scoreD;
 
@@ -89,14 +91,18 @@ public class MatchStageCompetitorDto {
         this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
         this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
+        // Initialises the club details
+        this.club = new ClubDto(matchStageCompetitorEntity.getMatchStage().getMatch().getClub());
+
         // Initialises the competitor and stage attributes
         this.competitorCategory = matchStageCompetitorEntity.getCompetitorCategory();
         this.firearmType = matchStageCompetitorEntity.getFirearmType();
         this.division = matchStageCompetitorEntity.getDivision();
         this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
 
-        // Initialises the detailed breakdown of the score
+        // Initialises thfe detailed breakdown of the score
         this.scoreA = matchStageCompetitorEntity.getScoreA();
+        this.scoreB = matchStageCompetitorEntity.getScoreB();
         this.scoreC = matchStageCompetitorEntity.getScoreC();
         this.scoreD = matchStageCompetitorEntity.getScoreD();
 
@@ -166,6 +172,7 @@ public class MatchStageCompetitorDto {
         if (scoreResponse != null) {
             // Initialises the detailed breakdown of the score
             this.scoreA = scoreResponse.getScoreA();
+            this.scoreB = scoreResponse.getScoreB();
             this.scoreC = scoreResponse.getScoreC();
             this.scoreD = scoreResponse.getScoreD();
 
@@ -219,6 +226,31 @@ public class MatchStageCompetitorDto {
                         CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
                                 .orElse(CompetitorCategory.NONE);
             }
+        }
+    }
+
+    // TODO: Javadoc
+    public ClubIdentifier getClubName() {
+        if ((this.club != null) && (this.matchStage.getMatch() != null) &&
+                (this.matchStage.getMatch().getClub() != null)) {
+
+            String clubName = this.matchStage.getMatch().getClub().getName();
+            return ClubIdentifier.getByName(clubName).orElse(ClubIdentifier.UNKNOWN);
+        } else {
+            return ClubIdentifier.UNKNOWN;
+        }
+    }
+
+    // TODO: Javadoc
+    public void setClubName(ClubIdentifier clubIdentifier) {
+        if ((this.matchStage == null) || (this.matchStage.getMatch() == null)) {
+            return;
+        }
+
+        if ((clubIdentifier != null) &&
+                (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+            ClubDto clubDto = new ClubDto(clubIdentifier);
+            this.matchStage.getMatch().setClub(clubDto);
         }
     }
 
