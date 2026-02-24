@@ -1216,7 +1216,6 @@ public class DomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setId(20L);
@@ -1262,13 +1261,11 @@ public class DomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1317,13 +1314,11 @@ public class DomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClubName(ClubIdentifier.HPSC); // Should be included
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClubName(ClubIdentifier.SOSC); // Should be excluded
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1370,13 +1365,11 @@ public class DomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClubName(ClubIdentifier.SOSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1422,13 +1415,11 @@ public class DomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto1);
-        matchCompetitorDto1.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto2);
-        matchCompetitorDto2.setClubName(ClubIdentifier.SOSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1464,7 +1455,6 @@ public class DomainServiceImplTest {
         matchCompetitorDto.setId(null);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
@@ -1494,7 +1484,6 @@ public class DomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.empty());
 
@@ -1526,13 +1515,11 @@ public class DomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto);
-        matchCompetitorDto1.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(21L);
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto);
-        matchCompetitorDto2.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor1 = new MatchCompetitor();
         matchCompetitor1.setId(20L);
@@ -1571,7 +1558,6 @@ public class DomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitor spyMatchCompetitor = spy(new MatchCompetitor());
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(spyMatchCompetitor));
@@ -1602,7 +1588,6 @@ public class DomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setId(20L);
@@ -1637,7 +1622,6 @@ public class DomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         // Act
         Map<UUID, MatchCompetitor> result = domainService.initMatchCompetitorEntities(
@@ -1669,7 +1653,6 @@ public class DomainServiceImplTest {
             mcDto.setId(100L + i);
             mcDto.setUuid(UUID.randomUUID());
             mcDto.setCompetitor(competitorDto);
-            mcDto.setClubName(ClubIdentifier.HPSC);
             matchCompetitorDtos.add(mcDto);
 
             MatchCompetitor mc = new MatchCompetitor();
@@ -1702,7 +1685,6 @@ public class DomainServiceImplTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(mcUuid);
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
@@ -1753,13 +1735,11 @@ public class DomainServiceImplTest {
         matchCompetitorDto1.setId(20L);
         matchCompetitorDto1.setUuid(mc1Uuid);
         matchCompetitorDto1.setCompetitor(competitorDto);
-        matchCompetitorDto1.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitorDto matchCompetitorDto2 = new MatchCompetitorDto();
         matchCompetitorDto2.setId(20L); // Same ID
         matchCompetitorDto2.setUuid(mc2Uuid);
         matchCompetitorDto2.setCompetitor(competitorDto);
-        matchCompetitorDto2.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setId(20L);

@@ -133,10 +133,10 @@ public class MatchCompetitorDto {
                 this.matchIndex = enrolledResponse.getMatchId();
 
                 // Initialises the club details
-                ClubIdentifier clubIdentifier =
-                        ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
-                if (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier)) {
-                    if (this.match != null) {
+                if (this.match != null) {
+                    ClubIdentifier clubIdentifier =
+                            ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
+                    if (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier)) {
                         this.match.setClub(new ClubDto(clubIdentifier));
                     }
                 }
@@ -153,37 +153,6 @@ public class MatchCompetitorDto {
                         CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
                                 .orElse(CompetitorCategory.NONE);
             }
-        }
-    }
-
-    // TODO: Javadoc
-    public ClubIdentifier getClubName() {
-        if (this.match != null && this.match.getClub() != null) {
-            String clubName = this.match.getClub().getName();
-            return ClubIdentifier.getByName(clubName).orElse(ClubIdentifier.UNKNOWN);
-        } else {
-            return ClubIdentifier.UNKNOWN;
-        }
-    }
-
-    // TODO: Javadoc
-    public ClubDto getClub() {
-        if (this.match != null && this.match.getClub() != null) {
-            return this.match.getClub();
-        }
-        return null;
-    }
-
-    // TODO: Javadoc
-    public void setClubName(ClubIdentifier clubIdentifier) {
-        if (this.match == null) {
-            return;
-        }
-
-        if ((clubIdentifier != null) &&
-                (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
-            ClubDto clubDto = new ClubDto(clubIdentifier);
-            this.match.setClub(clubDto);
         }
     }
 

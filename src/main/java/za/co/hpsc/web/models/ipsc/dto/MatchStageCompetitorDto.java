@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
-import za.co.hpsc.web.enums.*;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -226,31 +228,6 @@ public class MatchStageCompetitorDto {
                         CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
                                 .orElse(CompetitorCategory.NONE);
             }
-        }
-    }
-
-    // TODO: Javadoc
-    public ClubIdentifier getClubName() {
-        if ((this.club != null) && (this.matchStage.getMatch() != null) &&
-                (this.matchStage.getMatch().getClub() != null)) {
-
-            String clubName = this.matchStage.getMatch().getClub().getName();
-            return ClubIdentifier.getByName(clubName).orElse(ClubIdentifier.UNKNOWN);
-        } else {
-            return ClubIdentifier.UNKNOWN;
-        }
-    }
-
-    // TODO: Javadoc
-    public void setClubName(ClubIdentifier clubIdentifier) {
-        if ((this.matchStage == null) || (this.matchStage.getMatch() == null)) {
-            return;
-        }
-
-        if ((clubIdentifier != null) &&
-                (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
-            ClubDto clubDto = new ClubDto(clubIdentifier);
-            this.matchStage.getMatch().setClub(clubDto);
         }
     }
 

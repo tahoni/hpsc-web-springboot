@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
@@ -245,7 +244,6 @@ public class DomainServiceTest {
         matchCompetitorDto.setId(20L);
         matchCompetitorDto.setUuid(UUID.randomUUID());
         matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setMatchCompetitors(Collections.singletonList(matchCompetitorDto));
@@ -298,7 +296,6 @@ public class DomainServiceTest {
         stageCompetitorDto.setUuid(UUID.randomUUID());
         stageCompetitorDto.setCompetitor(competitorDto);
         stageCompetitorDto.setMatchStage(stageDto);
-        stageCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setStages(Collections.singletonList(stageDto));
@@ -399,13 +396,11 @@ public class DomainServiceTest {
         hpscCompetitorDto.setId(20L);
         hpscCompetitorDto.setUuid(UUID.randomUUID());
         hpscCompetitorDto.setCompetitor(competitorDto);
-        hpscCompetitorDto.setClubName(ClubIdentifier.HPSC);
 
         MatchCompetitorDto soscCompetitorDto = new MatchCompetitorDto();
         soscCompetitorDto.setId(21L);
         soscCompetitorDto.setUuid(UUID.randomUUID());
         soscCompetitorDto.setCompetitor(competitorDto);
-        soscCompetitorDto.setClubName(ClubIdentifier.SOSC); // Different clubName
 
         matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
         matchResultsDto.setMatchCompetitors(Arrays.asList(hpscCompetitorDto, soscCompetitorDto));

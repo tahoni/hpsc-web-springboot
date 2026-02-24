@@ -217,9 +217,9 @@ public class DomainServiceImpl implements DomainService {
                         .orElse(new MatchCompetitor());
 
                 // Filter by club reference if specified
-                if (matchCompetitorDto.getClub() != null) {
+                if ((matchCompetitorDto.getMatch() != null) && (matchCompetitorEntity.getMatch().getClub() != null)) {
                     if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                        if (!clubIdentifier.getName().equals(matchCompetitorDto.getClub().getName())) {
+                        if (!clubIdentifier.getName().equals(matchCompetitorDto.getMatch().getClub().getAbbreviation())) {
                             continue;
                         }
                     }
