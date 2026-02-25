@@ -122,7 +122,6 @@ public class IpscServiceTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    @Disabled("Currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty sections, need to update the code to handle empty XML sections and return empty lists instead of throwing exceptions")
     @Test
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange
@@ -163,7 +162,6 @@ public class IpscServiceTest {
     }
 
     // Test Group: Partial Data Processing
-    @Disabled("Currently the code does not handle partial match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process partial match results and skip empty ones without throwing an exception")
     @Test
     public void importWinMssCabFile_withPartialMatchData_thenProcessesSuccessfully() {
         // Arrange - Only match required fields, other sections mostly empty
@@ -317,7 +315,6 @@ public class IpscServiceTest {
     }
 
     // Test Group: Mixed Match Results (Some Present, Some Empty)
-    @Disabled("Currently the code does not handle mixed results properly, it throws an exception when trying to process the empty result, need to adjust service to process present results and skip empty ones without throwing an exception")
     @Test
     public void importWinMssCabFile_withMixedMatchResults_thenProcessesPresentResultsOnly() {
         // Arrange
@@ -362,7 +359,6 @@ public class IpscServiceTest {
     }
 
     // Test Group: Empty Strings vs Null Values in XML
-    @Disabled("Currently fails because empty strings in XML are treated as nulls in the service, need to adjust service to differentiate between empty and null if we want to support this test case")
     @Test
     public void importWinMssCabFile_withEmptyStringXmlFields_thenProcessesSuccessfully() {
         // Arrange
@@ -399,7 +395,6 @@ public class IpscServiceTest {
     }
 
     // Test Group: Special Characters and Unicode Handling
-    @Disabled("Currently fails because the XML parser does not handle special characters properly, need to ensure that the service can handle XML with special characters and that they are correctly parsed and processed")
     @Test
     public void importWinMssCabFile_withSpecialCharactersInData_thenProcessesSuccessfully() {
         // Arrange
