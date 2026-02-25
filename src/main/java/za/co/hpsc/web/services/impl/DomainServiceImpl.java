@@ -272,8 +272,14 @@ public class DomainServiceImpl implements DomainService {
                     }
                 }
 
+                // Add attributes to the match competitor
+//                matchCompetitorEntity.init(matchCompetitorDto, matchEntity, competitorEntity);
+                // Link the match competitor to the match and competitor
+//                matchCompetitorEntity.setMatch(matchEntity);
+//                matchCompetitorEntity.setCompetitor(competitorEntity);
+
                 // Update the map of match competitors
-                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
+//                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
             }
         }
 
@@ -305,6 +311,10 @@ public class DomainServiceImpl implements DomainService {
                     return new HashMap<>();
                 }
 
+                // Find the match stage entity
+                IpscMatchStage matchStageEntity =
+                        matchStageMap.get(matchStageCompetitorDto.getMatchStage().getUuid());
+
                 // Find the match stage competitor entity if present
                 Optional<MatchStageCompetitor> optionalMatchStageEntity = Optional.empty();
                 if (matchStageCompetitorDto.getId() != null) {
@@ -324,6 +334,12 @@ public class DomainServiceImpl implements DomainService {
                         }
                     }
                 }
+
+                // Add attributes to the match stage competitor
+//                matchStageCompetitorEntity.init(matchStageCompetitorDto, matchStageEntity, competitorEntity);
+                // Link the match stage competitor to the match stage and competitor
+//                matchStageCompetitorEntity.setMatchStage(matchStageEntity);
+//                matchStageCompetitorEntity.setCompetitor(competitorEntity);
 
                 // Update the map of match stage competitors
                 matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorEntity);
