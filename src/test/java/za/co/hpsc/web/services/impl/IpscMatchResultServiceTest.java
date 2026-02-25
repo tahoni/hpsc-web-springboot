@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -136,9 +135,10 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(clubEntityService.findClubByNameOrAbbreviation(anyString(), anyString()))
+        when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(anyString())).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByName(anyString()))
+                .thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchResultService.initMatchResults(ipscResponse);
@@ -168,7 +168,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(null);
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(clubEntityService.findClubByNameOrAbbreviation(anyString(), anyString()))
+        when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
         when(matchEntityService.findMatchByName(anyString())).thenReturn(Optional.empty());
 
@@ -200,9 +200,10 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(null);
 
-        when(clubEntityService.findClubByNameOrAbbreviation(anyString(), anyString()))
+        when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(anyString())).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByName(anyString()))
+                .thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchResultService.initMatchResults(ipscResponse);
@@ -235,9 +236,10 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(clubEntityService.findClubByNameOrAbbreviation(anyString(), anyString()))
+        when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(null)).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByName(null))
+                .thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchResultService.initMatchResults(ipscResponse);
@@ -265,11 +267,13 @@ public class IpscMatchResultServiceTest {
 
         ipscResponse.setStages(new ArrayList<>());
         ipscResponse.setScores(new ArrayList<>());
+
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(clubEntityService.findClubByNameOrAbbreviation(anyString(), anyString()))
+        when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByName(""))
+                .thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchResultService.initMatchResults(ipscResponse);
@@ -299,7 +303,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(clubEntityService.findClubByNameOrAbbreviation(anyString(), anyString()))
+        when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
         when(matchEntityService.findMatchByName("   ")).thenReturn(Optional.empty());
 

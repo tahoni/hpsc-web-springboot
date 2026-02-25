@@ -71,6 +71,6 @@ public class IpscController {
                     ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {
-        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
+        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent).orElse(null));
     }
 }

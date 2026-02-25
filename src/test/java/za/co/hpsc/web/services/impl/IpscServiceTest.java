@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.IpscMatchResultService;
@@ -199,7 +200,6 @@ public class IpscServiceTest {
     }
 
     // Test Group: Empty XML Sections Handling
-    @Disabled("Currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty sections, need to update the code to handle empty XML sections and return empty lists instead of throwing exceptions")
     @Test
     public void importWinMssCabFile_withEmptyXmlSections_thenProcessesWithEmptyData() {
         // Arrange
@@ -221,16 +221,19 @@ public class IpscServiceTest {
         IpscResponse ipscResponse = new IpscResponse();
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
 
-        when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
-        when(ipscMatchResultService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
+        when(ipscMatchService.mapMatchResults(any()))
+                .thenReturn(ipscResponseHolder);
+        when(ipscMatchResultService.initMatchResults(any(IpscResponse.class)))
+                .thenReturn(Optional.empty());
 
         // Act
-        var recordHolder = assertDoesNotThrow(() ->
+        Optional<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
         // Assert
         assertNotNull(recordHolder);
+        assertTrue(recordHolder.isEmpty());
         assertDoesNotThrow(() -> {
             verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
             // TransactionService should not be called when initMatchResults returns empty

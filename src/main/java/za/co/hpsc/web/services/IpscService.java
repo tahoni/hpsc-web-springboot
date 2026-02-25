@@ -4,6 +4,8 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 
+import java.util.Optional;
+
 /**
  * Provides an interface for handling operations related to the WinMSS system of the IPSC.
  *
@@ -27,6 +29,6 @@ public interface IpscService {
      * @throws FatalException      if a critical error occurs during the processing of the CAB file,
      *                             rendering the operation unable to complete.
      */
-    IpscMatchRecordHolder importWinMssCabFile(String cabFileContent)
+    Optional<IpscMatchRecordHolder> importWinMssCabFile(String cabFileContent)
             throws ValidationException, FatalException;
 }
