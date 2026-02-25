@@ -45,11 +45,13 @@ public final class StringUtil {
         return result;
     }
 
+    // TODO: Javadoc
+    // TODO: add tests
     public static String toString(Object object) {
         if (object == null) {
             return null;
         }
-        
+
         return object.toString();
     }
 }

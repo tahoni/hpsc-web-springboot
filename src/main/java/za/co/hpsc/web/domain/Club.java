@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,15 +40,25 @@ public class Club {
 
     private String abbreviation;
 
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
+
     @OneToMany(fetch = FetchType.LAZY)
-    private List<IpscMatch> matches;
+    private List<IpscMatch> matches = new ArrayList<>();
 
     public Club(String name, String abbreviation) {
-        // Initialises club details
+        // Initialises club attributes
         this.name = name;
+        this.abbreviation = abbreviation;
+    }
+
+    public Club(ClubDto clubDto) {
+        // Initialises club details
+        this.id = clubDto.getId();
 
         // Initialises club attributes
-        this.abbreviation = abbreviation;
+        this.name = clubDto.getName();
+        this.abbreviation = clubDto.getAbbreviation();
     }
 
     /**
@@ -58,16 +70,37 @@ public class Club {
      *
      * @param clubDto the DTO containing data needed to populate the entity fields.
      */
-    public void init(ClubDto clubDto) {
-        // Initialises club details
-        this.name = clubDto.getName();
+    public void init(@NotNull ClubDto clubDto) {
+        if (clubDto != null) {
+            // Initialises club details
+            this.id = clubDto.getId();
 
-        // Initialises club attributes
-        this.abbreviation = clubDto.getAbbreviation();
+            // Initialises club attributes
+            this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
+                    clubDto.getName() : this.name);
+            this.abbreviation = (((clubDto.getAbbreviation() != null) && (!clubDto.getAbbreviation().isBlank())) ?
+                    clubDto.getAbbreviation() : this.abbreviation);
+        }
     }
 
     @Override
     public String toString() {
-        return this.name;
+        if ((abbreviation != null) && (!abbreviation.isBlank()) &&
+                (!abbreviation.equalsIgnoreCase(name))) {
+            return this.name + " (" + this.abbreviation + ")";
+        } else {
+            return this.name;
+        }
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

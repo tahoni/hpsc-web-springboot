@@ -6,9 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class IpscMatchStage {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "match_id")
     private IpscMatch match;
 
@@ -54,8 +55,11 @@ public class IpscMatchStage {
     private Integer minRounds;
     private Integer maxPoints;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<MatchStageCompetitor> matchStageCompetitors;
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 
     /**
      * Initialises the current {@code MatchStage} entity with data from a DTO
@@ -93,6 +97,17 @@ public class IpscMatchStage {
 
     @Override
     public String toString() {
-        return MatchHelpers.getMatchStageDisplayName(this);
+        return this.stageName + " (" + this.stageNumber + ")";
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

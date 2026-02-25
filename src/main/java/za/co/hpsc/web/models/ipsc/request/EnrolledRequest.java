@@ -46,7 +46,6 @@ public class EnrolledRequest {
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "TeamId")
     private Integer teamId;
-    // 29
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DivId")
     private Integer divisionId;

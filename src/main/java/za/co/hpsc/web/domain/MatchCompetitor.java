@@ -6,7 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.*;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
@@ -45,8 +48,6 @@ public class MatchCompetitor {
     private IpscMatch match;
 
     @Enumerated(EnumType.STRING)
-    private ClubReference club;
-    @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
     @Enumerated(EnumType.STRING)
     private Division division;
@@ -59,7 +60,6 @@ public class MatchCompetitor {
     @Enumerated(EnumType.STRING)
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
@@ -83,7 +83,6 @@ public class MatchCompetitor {
         this.competitor = competitorEntity;
 
         // Initialises the competitor attributes
-        this.club = matchCompetitorDto.getClub();
         this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
         this.firearmType = matchCompetitorDto.getFirearmType();
         this.division = matchCompetitorDto.getDivision();
@@ -92,14 +91,20 @@ public class MatchCompetitor {
         // Initialises the match scoring attributes
         this.matchPoints = matchCompetitorDto.getMatchPoints();
         this.matchRanking = matchCompetitorDto.getMatchRanking();
-
-        // Initialises the date fields
-        this.dateCreated = matchCompetitorDto.getDateCreated();
-        this.dateUpdated = matchCompetitorDto.getDateUpdated();
-        this.dateEdited = matchCompetitorDto.getDateEdited();
     }
 
     public String toString() {
         return this.match.toString() + ": " + this.competitor.toString();
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

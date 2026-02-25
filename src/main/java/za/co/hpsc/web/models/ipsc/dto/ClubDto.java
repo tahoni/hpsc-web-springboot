@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.Club;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.response.ClubResponse;
 
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class ClubDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
     private Integer index;
+    private Long matchId;
 
     @NotNull
     private String name = "";
@@ -41,38 +43,61 @@ public class ClubDto {
      *                   such as its unique identifier, name, and abbreviation.
      *                   Must not be null.
      */
-    public ClubDto(@NotNull Club clubEntity) {
-        // Initialises club details
-        this.id = clubEntity.getId();
+    public ClubDto(Club clubEntity) {
+        if (clubEntity != null) {
+            // Initialises club details
+            this.id = clubEntity.getId();
 
-        // Initialises club attributes
-        this.name = clubEntity.getName();
-        this.abbreviation = clubEntity.getAbbreviation();
+            // Initialises club attributes
+            this.name = clubEntity.getName();
+            this.abbreviation = clubEntity.getAbbreviation();
+        }
     }
 
-    /**
-     *
-     * @param clubResponse
-     */
+    // TODO: Javadoc
     public ClubDto(ClubResponse clubResponse) {
         if (clubResponse != null) {
             // Initialises club details
             this.index = clubResponse.getClubId();
-
             // Initialises club attributes
             this.name = clubResponse.getClubName();
             this.abbreviation = clubResponse.getClubCode();
         }
     }
 
-    /**
-     *
-     * @param clubResponse
-     */
+    // TODO: Javadoc
+    public ClubDto(ClubIdentifier clubIdentifier) {
+        if (clubIdentifier != null) {
+            // Initialises club attributes
+            this.name = clubIdentifier.getName();
+            this.abbreviation = clubIdentifier.getName();
+        }
+    }
+
+    // TODO: Javadoc
+    public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
+        if (clubEntity != null) {
+            // Initialises club details
+            this.id = clubEntity.getId();
+            // Initialises club attributes
+            this.name = clubEntity.getName();
+            this.abbreviation = clubEntity.getAbbreviation();
+
+        } else if (clubIdentifier != null) {
+            // Initialises club attributes
+            this.name = clubIdentifier.getName();
+            this.abbreviation = clubIdentifier.getName();
+        }
+    }
+
+    // TODO: Javadoc
     public void init(ClubResponse clubResponse) {
         if (clubResponse != null) {
+            // Initialises club details
             this.index = clubResponse.getClubId();
+            // Initialises club attributes
             this.name = clubResponse.getClubName();
+            this.abbreviation = clubResponse.getClubCode();
         }
     }
 
@@ -88,7 +113,8 @@ public class ClubDto {
      */
     @Override
     public String toString() {
-        if ((abbreviation != null) && (!abbreviation.isBlank())) {
+        if ((this.abbreviation != null) && (!this.abbreviation.isBlank()) &&
+                (!this.abbreviation.equalsIgnoreCase(this.name))) {
             return this.name + " (" + this.abbreviation + ")";
         } else {
             return this.name;

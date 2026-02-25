@@ -6,11 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.ClubReference;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.helpers.MatchHelpers;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.utils.DateUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class IpscMatch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     private Club club;
 
@@ -49,63 +49,53 @@ public class IpscMatch {
     @NotNull
     @Column(nullable = false)
     private LocalDateTime scheduledDate;
-    @Enumerated(EnumType.STRING)
-    private ClubReference clubName;
 
     @Enumerated(EnumType.STRING)
     private FirearmType matchFirearmType;
     @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<IpscMatchStage> matchStages = new ArrayList<>();
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
-    @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
+    private LocalDateTime dateRefreshed;
 
-    /**
-     * Initialises the current {@code Match} entity with data from a DTO
-     * and associated entities.
-     *
-     * <p>
-     * This method sets the relevant fields in the entity, including association with a club,
-     * name, scheduled date, and match category.
-     * </p>
-     *
-     * @param matchDto   the DTO containing data needed to populate the entity fields.
-     * @param clubEntity the associated club entity.
-     */
-    public void init(MatchDto matchDto, Club clubEntity) {
-        // Initialises the match details
-        this.club = clubEntity;
+    public void init(MatchDto matchDto) {
+        if (matchDto != null) {
+            // Initialises the match details
+            this.id = matchDto.getId();
 
-        // Sets club name from DTO or associated entity
-        if (matchDto.getClubName() != null) {
-            this.clubName = matchDto.getClubName();
-        } else if (clubEntity != null) {
-            clubName = ClubReference.getByName(clubEntity.getName()).orElse(null);
+            // Initialises the match attributes
+            this.name = matchDto.getName();
+            this.scheduledDate = ((matchDto.getScheduledDate() != null) ?
+                    matchDto.getScheduledDate() : LocalDateTime.now());
+            this.matchFirearmType = matchDto.getMatchFirearmType();
+            this.matchCategory = matchDto.getMatchCategory();
+
+            // Initialise the date fields
+            this.dateEdited = matchDto.getDateEdited();
         }
-
-        // Initialises the match attributes
-        this.name = matchDto.getName();
-        this.scheduledDate = matchDto.getScheduledDate();
-        this.matchFirearmType = ((matchDto.getMatchFirearmType() != null) ?
-                matchDto.getMatchFirearmType() : this.matchFirearmType);
-        this.matchCategory = ((matchDto.getMatchFirearmType() != null) ?
-                matchDto.getMatchCategory() : this.matchCategory);
-
-        // Initialises the date fields
-        this.dateCreated = matchDto.getDateCreated();
-        this.dateUpdated = matchDto.getDateUpdated();
-        this.dateEdited = matchDto.getDateEdited();
     }
 
     @Override
     public String toString() {
-        return MatchHelpers.getMatchDisplayName(this);
+        return this.name + " (" + DateUtil.formatDateTime(this.scheduledDate,
+                IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT) + ")";
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

@@ -79,10 +79,10 @@ public class AwardServiceImpl implements AwardService {
 
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
             log.error("Error parsing CSV data: {}", e.getMessage(), e);
-            throw new ValidationException("Invalid CSV data format.", e);
+            throw new ValidationException("Invalid CSV data format: " + e.getMessage(), e);
         } catch (IOException e) {
             log.error("Error reading CSV data: {}", e.getMessage(), e);
-            throw new FatalException("Error reading CSV data.", e);
+            throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
         }
     }
 

@@ -6,6 +6,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Central mapping of {@link FirearmType} to its corresponding {@link DivisionsForFirearmType}
@@ -60,20 +61,20 @@ public final class FirearmTypeToDivisions {
      * @throws ValidationException if the {@code division} is null or if no mapping exists
      *                             for the provided {@link Division}.
      */
-    public static FirearmType getFirearmTypeFromDivision(Division division)
+    public static Optional<FirearmType> getFirearmTypeFromDivision(Division division)
             throws ValidationException {
 
         if (division == null) {
-            throw new ValidationException("Division cannot be null");
+            return Optional.empty();
         }
 
         for (Map.Entry<FirearmType, DivisionsForFirearmType> entry : MAPPING.entrySet()) {
             if (entry.getValue().getDivisions().contains(division)) {
-                return entry.getKey();
+                return Optional.of(entry.getKey());
             }
         }
 
-        throw new ValidationException("No FirearmType mapping found for division: " + division);
+        return Optional.empty();
     }
 
     public static Map<FirearmType, DivisionsForFirearmType> getAll() {

@@ -19,6 +19,7 @@ import za.co.hpsc.web.services.ImageService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -78,10 +79,10 @@ public class ImageServiceImpl implements ImageService {
 
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
             log.error("Error parsing CSV data: {}", e.getMessage(), e);
-            throw new ValidationException("Invalid CSV data format.", e);
+            throw new ValidationException("Invalid CSV data format: " + e.getMessage(), e);
         } catch (IOException e) {
             log.error("Error reading CSV data: {}", e.getMessage(), e);
-            throw new FatalException("Error reading CSV data.", e);
+            throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
         }
     }
 
@@ -108,6 +109,7 @@ public class ImageServiceImpl implements ImageService {
 
         // Map each request to a response
         return imageRequestList.stream()
+                .filter(Objects::nonNull)
                 .map(ImageResponse::new)
                 .toList();
     }

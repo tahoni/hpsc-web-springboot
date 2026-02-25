@@ -1,10 +1,10 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.enums.ClubReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// TODO: add tests for other methods
 public class MatchDtoTest {
 
     @Test
@@ -14,14 +14,14 @@ public class MatchDtoTest {
         clubDto.setName("Hartbeespoortdam Practical Shooting Club");
         clubDto.setAbbreviation("HPSC");
         MatchDto matchDto = new MatchDto();
-        matchDto.setName("Eufees Clubshoot");
+        matchDto.setName("Eufees Club Shoot");
         matchDto.setClub(clubDto);
 
         // Act
         String result = matchDto.toString();
 
         // Assert
-        assertEquals("Eufees Clubshoot @ Hartbeespoortdam Practical Shooting Club (HPSC)", result);
+        assertEquals("Eufees Club Shoot @ Hartbeespoortdam Practical Shooting Club (HPSC)", result);
     }
 
     @Test
@@ -31,71 +31,26 @@ public class MatchDtoTest {
         clubDto.setName("Hartbeespoortdam Practical Shooting Club");
         clubDto.setAbbreviation("HPSC");
         MatchDto matchDto = new MatchDto();
-        matchDto.setName("Eufees Clubshoot");
+        matchDto.setName("Eufees Club Shoot");
         matchDto.setClub(clubDto);
-        matchDto.setClubName(ClubReference.HPSC);
 
         // Act
         String result = matchDto.toString();
 
         // Assert
-        assertEquals("Eufees Clubshoot @ Hartbeespoortdam Practical Shooting Club (HPSC)", result);
-    }
-
-    @Test
-    void testToString_withNullClubButClubName_thenReturnsMatchNameAtClubName() {
-        // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Eufees Clubshoot");
-        matchDto.setClub(null);
-        matchDto.setClubName(ClubReference.HPSC);
-
-        // Act
-        String result = matchDto.toString();
-
-        // Assert
-        assertEquals("Eufees Clubshoot @ HPSC", result);
-    }
-
-    @Test
-    void testToString_withoutClubButClubName_thenReturnsMatchNameAtClubName() {
-        // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Eufees Clubshoot");
-        matchDto.setClubName(ClubReference.HPSC);
-
-        // Act
-        String result = matchDto.toString();
-
-        // Assert
-        assertEquals("Eufees Clubshoot @ HPSC", result);
+        assertEquals("Eufees Club Shoot @ Hartbeespoortdam Practical Shooting Club (HPSC)", result);
     }
 
     @Test
     void testToString_withoutClubAndClubName_thenReturnsMatchName() {
         // Arrange
         MatchDto matchDto = new MatchDto();
-        matchDto.setName("Eufees Clubshoot");
+        matchDto.setName("Eufees Club Shoot");
 
         // Act
         String result = matchDto.toString();
 
         // Assert
-        assertEquals("Eufees Clubshoot", result);
-    }
-
-    @Test
-    void testToString_witNullClubAndClubName_thenReturnsMatchName() {
-        // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Eufees Clubshoot");
-        matchDto.setClub(null);
-        matchDto.setClubName(null);
-
-        // Act
-        String result = matchDto.toString();
-
-        // Assert
-        assertEquals("Eufees Clubshoot", result);
+        assertEquals("Eufees Club Shoot", result);
     }
 }

@@ -16,8 +16,11 @@ import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+// TODO: Javadoc
+// TODO: comment
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -34,51 +37,64 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Validate input
         if (ipscRequestHolder == null) {
             log.error("IPSC request holder is null while mapping match results.");
-            throw new ValidationException("IPSC request holder can not be null");
+            throw new ValidationException("IPSC request holder can not be null while mapping match results.");
         }
 
         List<IpscResponse> ipscResponses = new ArrayList<>();
         // Maps IPSC requests to responses by match ID
-        ipscRequestHolder.getMatches().forEach(match -> {
-            Optional<IpscResponse> response = createBasicMatch(ipscRequestHolder, match);
-            response.ifPresent(ipscResponses::add);
-        });
+        ipscRequestHolder.getMatches().stream().filter(Objects::nonNull)
+                .forEach(match -> {
+                    Optional<IpscResponse> response = createBasicMatch(ipscRequestHolder, match);
+                    response.ifPresent(ipscResponses::add);
+                });
 
         // Add members to each match
-        ipscResponses.forEach(ipscResponse -> addMembersToMatch(ipscResponse, ipscRequestHolder));
+        ipscResponses.stream().filter(Objects::nonNull)
+                .forEach(ipscResponse ->
+                        addMembersToMatch(ipscResponse, ipscRequestHolder));
         // Add a club to each match
-        ipscResponses.forEach(ipscResponse -> addClubToMatch(ipscResponse, ipscRequestHolder));
+        ipscResponses.stream().filter(Objects::nonNull)
+                .forEach(ipscResponse ->
+                        addClubToMatch(ipscResponse, ipscRequestHolder));
 
         return new IpscResponseHolder(ipscResponses);
     }
 
-    // TODO: add tests
+    /**
+     * Generates an IPSC match record holder containing match records for the provided list of IPSC matches.
+     *
+     * @param ipscMatchEntityList A list of IPSC match entities to process. Must not be null.
+     * @return An IPSC match record holder containing the processed match records.
+     */
     @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList) {
         List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
 
-        ipscMatchEntityList.forEach(match -> {
-            // Get the match stages and competitors
-            List<IpscMatchStage> matchStageList = match.getMatchStages();
-            List<MatchCompetitor> matchCompetitorList = match.getMatchCompetitors();
+        ipscMatchEntityList.stream().filter(Objects::nonNull)
+                .forEach(match -> {
+                    // Get the match stages and competitors
+                    match.setName(ValueUtil.nullAsEmptyString(match.getName()));
+                    List<IpscMatchStage> matchStageList = match.getMatchStages();
+                    List<MatchCompetitor> matchCompetitorList = match.getMatchCompetitors();
 
-            // Get the competitors
-            List<MatchStageCompetitor> matchStageCompetitorList = getMatchStageCompetitorList(matchStageList);
-            List<Competitor> competitorList = getCompetitorList(matchCompetitorList);
+                    // Get the competitors
+                    List<MatchStageCompetitor> matchStageCompetitorList = getMatchStageCompetitorList(matchStageList);
+                    List<Competitor> competitorList = getCompetitorList(matchCompetitorList);
 
-            List<CompetitorRecord> competitors = new ArrayList<>();
-            competitorList.forEach(c -> initMatchCompetitor(c, matchCompetitorList)
-                    .ifPresent((mcr) -> {
-                        List<MatchStageCompetitorRecord> thisCompetitorStages =
-                                initMatchStageCompetitor(c, matchStageCompetitorList);
+                    List<CompetitorMatchRecord> competitors = new ArrayList<>();
+                    competitorList.stream().filter(Objects::nonNull)
+                            .forEach(c -> initMatchCompetitor(c, matchCompetitorList)
+                                    .ifPresent((mcr) -> {
+                                        List<MatchStageCompetitorRecord> thisCompetitorStages =
+                                                initMatchStageCompetitor(c, matchStageCompetitorList);
 
-                        // Creates competitor response from competitor details
-                        initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
-                    }));
+                                        // Creates competitor response from competitor details
+                                        initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
+                                    }));
 
-            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, competitors);
-            ipscResponse.ifPresent(ipscMatchRecordList::add);
-        });
+                    Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, competitors);
+                    ipscResponse.ifPresent(ipscMatchRecordList::add);
+                });
 
         return new IpscMatchRecordHolder(ipscMatchRecordList);
     }
@@ -111,14 +127,17 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Add stages to the response, filtered by match ID
         List<StageRequest> stageRequests = ipscRequestHolder.getStages().stream()
+                .filter(Objects::nonNull)
                 .filter(stage -> matchId.equals(stage.getMatchId()))
                 .toList();
         // Add enrolled members to the response, filtered by match ID
         List<EnrolledRequest> enrolledRequests = ipscRequestHolder.getEnrolledMembers().stream()
+                .filter(Objects::nonNull)
                 .filter(enrolled -> matchId.equals(enrolled.getMatchId()))
                 .toList();
         // Add scores to the response, filtered by match ID
         List<ScoreRequest> scoreRequests = ipscRequestHolder.getScores().stream()
+                .filter(Objects::nonNull)
                 .filter(score -> matchId.equals(score.getMatchId()))
                 .toList();
 
@@ -147,16 +166,18 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<MemberRequest> responseMembers = new ArrayList<>();
         // Filters members by members with scores
-        ipscRequestHolder.getScores().forEach(scoreRequest -> {
-            List<MemberRequest> memberRequests = ipscRequestHolder.getMembers().stream()
-                    .filter(memberRequest ->
-                            memberRequest.getMemberId().equals(scoreRequest.getMemberId()))
-                    .toList();
-            // Collects members with scores
-            responseMembers.addAll(memberRequests);
-        });
+        ipscRequestHolder.getScores().stream().filter(Objects::nonNull)
+                .forEach(scoreRequest -> {
+                    List<MemberRequest> memberRequests = ipscRequestHolder.getMembers().stream()
+                            .filter(Objects::nonNull)
+                            .filter(memberRequest ->
+                                    memberRequest.getMemberId().equals(scoreRequest.getMemberId()))
+                            .toList();
+                    // Collects members with scores
+                    responseMembers.addAll(memberRequests);
+                });
         // Sets members on the response
-        ipscResponse.setMembers(responseMembers.stream().map(MemberResponse::new).toList());
+        ipscResponse.setMembers(responseMembers.stream().filter(Objects::nonNull).map(MemberResponse::new).toList());
     }
 
     /**
@@ -178,23 +199,27 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return;
         }
 
-        Integer clubId = ipscResponse.getMatch().getClubId();
-        if (clubId != null) {
+        if ((ipscResponse.getMatch() != null) && (ipscResponse.getMatch().getClubId() != null)) {
+            Integer clubId = ipscResponse.getMatch().getClubId();
             // Finds club matching ID or provides default
             ClubRequest club = ipscRequestHolder.getClubs().stream()
+                    .filter(Objects::nonNull)
                     .filter(clubRequest -> clubId.equals(clubRequest.getClubId()))
                     .findFirst().orElse(null);
             ipscResponse.setClub((club != null) ? new ClubResponse(club) : new ClubResponse(clubId));
         }
     }
 
-    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorRecord> competitors) {
+    // TODO: Javadoc
+    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorMatchRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
 
+        String clubName = ((match.getClub() != null) ? match.getClub().toString() : "");
+
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
-                IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
+                IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         String matchFirearmType = ValueUtil.nullAsEmptyString(match.getMatchFirearmType());
         String matchCategory = ValueUtil.nullAsEmptyString(match.getMatchCategory());
@@ -203,15 +228,15 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Creates match response from match details
-        String clubName = ValueUtil.nullAsEmptyString(match.getClubName());
         IpscMatchRecord ipscMatchRecord = new IpscMatchRecord(match.getName(), scheduledDate,
                 clubName, matchFirearmType, matchCategory, competitors, dateEdited);
         return Optional.of(ipscMatchRecord);
     }
 
-    protected Optional<CompetitorRecord> initCompetitor(Competitor competitor,
-                                                        MatchCompetitorRecord thisCompetitorOverall,
-                                                        List<MatchStageCompetitorRecord> thisCompetitorStages) {
+    // TODO: Javadoc
+    protected Optional<CompetitorMatchRecord> initCompetitor(Competitor competitor,
+                                                             MatchCompetitorRecord thisCompetitorOverall,
+                                                             List<MatchStageCompetitorRecord> thisCompetitorStages) {
         if ((competitor == null) || (thisCompetitorOverall == null) || (thisCompetitorStages == null)) {
             return Optional.empty();
         }
@@ -220,16 +245,14 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         String dateOfBirth = DateUtil.formatDate(competitor.getDateOfBirth(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
 
-        CompetitorRecord competitorRecord = new CompetitorRecord(competitor.getFirstName(),
+        CompetitorMatchRecord competitorRecord = new CompetitorMatchRecord(competitor.getFirstName(),
                 competitor.getLastName(), competitor.getMiddleNames(), dateOfBirth,
                 competitor.getSapsaNumber(), competitor.getCompetitorNumber(),
                 thisCompetitorOverall, thisCompetitorStages);
         return Optional.of(competitorRecord);
     }
 
-    /**
-     * Initializes match competitor response from competitor details
-     */
+    // TODO: Javadoc
     protected Optional<MatchCompetitorRecord> initMatchCompetitor(Competitor competitor,
                                                                   List<MatchCompetitor> matchCompetitorList) {
 
@@ -239,12 +262,17 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         MatchCompetitorRecord thisCompetitorOverall = null;
         MatchCompetitor matchCompetitor = matchCompetitorList.stream()
+                .filter(Objects::nonNull)
                 .filter(mc -> competitor.equals(mc.getCompetitor()))
                 .findFirst().orElse(null);
 
         if (matchCompetitor == null) {
             return Optional.empty();
         }
+
+        String clubName = ((matchCompetitor.getMatch() != null) &&
+                (matchCompetitor.getMatch().getClub() != null)) ?
+                ValueUtil.nullAsEmptyString(matchCompetitor.getMatch().getClub().getName()) : "";
 
         String firearmType = ValueUtil.nullAsEmptyString(matchCompetitor.getFirearmType());
         String division = ValueUtil.nullAsEmptyString(matchCompetitor.getDivision());
@@ -260,11 +288,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Formats competitor details for match competitor response
-        thisCompetitorOverall = new MatchCompetitorRecord(matchCompetitor.getClub().toString(),
-                firearmType, division, powerFactor, competitorCategory, matchPoints, matchRanking, dateEdited);
+        thisCompetitorOverall = new MatchCompetitorRecord(clubName, firearmType, division,
+                powerFactor, competitorCategory, matchPoints, matchRanking, dateEdited);
         return Optional.of(thisCompetitorOverall);
     }
 
+    // TODO: Javadoc
     protected List<MatchStageCompetitorRecord> initMatchStageCompetitor(Competitor competitor,
                                                                         List<MatchStageCompetitor> matchStageCompetitorList) {
 
@@ -275,6 +304,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         List<MatchStageCompetitorRecord> thisCompetitorStages = new ArrayList<>();
         // Filters and maps stage data to response objects
         matchStageCompetitorList.stream()
+                .filter(Objects::nonNull)
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {
 
@@ -310,22 +340,26 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return thisCompetitorStages;
     }
 
+    // TODO: Javadoc
     protected List<Competitor> getCompetitorList(List<MatchCompetitor> matchCompetitorList) {
         if (matchCompetitorList == null) {
             return new ArrayList<>();
         }
 
         return matchCompetitorList.stream()
+                .filter(Objects::nonNull)
                 .map(MatchCompetitor::getCompetitor)
                 .toList();
     }
 
+    // TODO: Javadoc
     protected List<MatchStageCompetitor> getMatchStageCompetitorList(List<IpscMatchStage> matchStageList) {
         if (matchStageList == null) {
             return new ArrayList<>();
         }
 
         return matchStageList.stream()
+                .filter(Objects::nonNull)
                 .map(IpscMatchStage::getMatchStageCompetitors)
                 .flatMap(List::stream)
                 .toList();

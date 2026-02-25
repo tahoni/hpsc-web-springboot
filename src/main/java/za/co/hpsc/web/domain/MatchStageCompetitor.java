@@ -51,9 +51,13 @@ public class MatchStageCompetitor {
     private Division division;
     private PowerFactor powerFactor;
 
+    @Column(name = "score_a")
     private Integer scoreA;
+    @Column(name = "score_b")
     private Integer scoreB;
+    @Column(name = "score_c")
     private Integer scoreC;
+    @Column(name = "score_d")
     private Integer scoreD;
 
     private Integer points;
@@ -76,7 +80,6 @@ public class MatchStageCompetitor {
     @Enumerated(EnumType.STRING)
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    @NotNull
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
@@ -134,15 +137,21 @@ public class MatchStageCompetitor {
         this.stagePoints = matchStageCompetitorDto.getStagePoints();
         this.stagePercentage = matchStageCompetitorDto.getStagePercentage();
         this.stageRanking = matchStageCompetitorDto.getStageRanking();
-
-        // Initialises the date fields
-        this.dateCreated = matchStageCompetitorDto.getDateCreated();
-        this.dateUpdated = matchStageCompetitorDto.getDateUpdated();
-        this.dateEdited = matchStageCompetitorDto.getDateEdited();
     }
 
     @Override
     public String toString() {
         return this.matchStage.toString() + ": " + this.competitor.toString();
+    }
+
+    @PrePersist
+    void onInsert() {
+        this.dateCreated = LocalDateTime.now();
+        this.dateUpdated = this.dateCreated;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.dateUpdated = LocalDateTime.now();
     }
 }

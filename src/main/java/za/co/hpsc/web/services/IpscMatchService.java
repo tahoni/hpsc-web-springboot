@@ -9,6 +9,9 @@ import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
 import java.util.List;
 
+// TODO: Javadoc
+// TOOD: add tests
+
 /**
  * Service interface for managing and processing IPSC (International Practical
  * Shooting Confederation) match data.
@@ -34,11 +37,7 @@ public interface IpscMatchService {
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
 
-    /**
-     *
-     * @param ipscMatchEntityList
-     * @return
-     */
+    // TODO: Javadoc
     IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList);
 
 }

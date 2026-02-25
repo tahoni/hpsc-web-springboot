@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
-import za.co.hpsc.web.enums.*;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -46,7 +49,7 @@ public class MatchStageCompetitorDto {
     private MatchStageDto matchStage;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    private ClubReference club;
+    private ClubDto club;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
@@ -73,9 +76,6 @@ public class MatchStageCompetitorDto {
 
     private Boolean isDisqualified;
 
-    @NotNull
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
     /**
@@ -93,13 +93,16 @@ public class MatchStageCompetitorDto {
         this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
         this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
+        // Initialises the club details
+        this.club = new ClubDto(matchStageCompetitorEntity.getMatchStage().getMatch().getClub());
+
         // Initialises the competitor and stage attributes
         this.competitorCategory = matchStageCompetitorEntity.getCompetitorCategory();
         this.firearmType = matchStageCompetitorEntity.getFirearmType();
         this.division = matchStageCompetitorEntity.getDivision();
         this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
 
-        // Initialises the detailed breakdown of the score
+        // Initialises thfe detailed breakdown of the score
         this.scoreA = matchStageCompetitorEntity.getScoreA();
         this.scoreB = matchStageCompetitorEntity.getScoreB();
         this.scoreC = matchStageCompetitorEntity.getScoreC();
@@ -128,8 +131,6 @@ public class MatchStageCompetitorDto {
         this.stageRanking = matchStageCompetitorEntity.getStageRanking();
 
         // Initialises the date fields
-        this.dateCreated = matchStageCompetitorEntity.getDateCreated();
-        this.dateUpdated = LocalDateTime.now();
         this.dateEdited = matchStageCompetitorEntity.getDateEdited();
     }
 
@@ -151,11 +152,6 @@ public class MatchStageCompetitorDto {
 
             // Initialises the competitor and stage attributes
             this.competitorCategory = competitorDto.getDefaultCompetitorCategory();
-
-            // Initialises the date fields
-            this.dateCreated = LocalDateTime.now();
-            this.dateUpdated = LocalDateTime.now();
-            this.dateEdited = LocalDateTime.now();
         }
     }
 
@@ -206,10 +202,6 @@ public class MatchStageCompetitorDto {
                         BigDecimal.valueOf(matchStageDto.getMaxPoints()));
             }
 
-            // Don't overwrite an existing date creation timestamp
-            this.dateCreated = ((this.dateCreated != null) ? this.dateCreated : LocalDateTime.now());
-            // Initialises the date updated
-            this.dateUpdated = LocalDateTime.now();
             // Sets the date edited to the latest score update timestamp
             this.dateEdited = scoreResponse.getLastModified();
 
@@ -229,7 +221,8 @@ public class MatchStageCompetitorDto {
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the firearm type from the discipline
                 this.firearmType =
-                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division);
+                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division)
+                                .orElse(null);
                 // Determines the competitor category based on the competitor category ID
                 this.competitorCategory =
                         CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())

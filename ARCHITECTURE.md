@@ -3,26 +3,26 @@
 This document describes the architectural design, directory structure, and core concepts
 of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
-## Table of Contents
+## 📑 Table of Contents
 
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
-- [System Overview](#system-overview)
-- [Layered Structure](#layered-structure)
-    - [Presentation Layer](#1-presentation-layer-zacohpscwebcontrollers)
-    - [Service Layer](#2-service-layer-zacohpscwebservices)
-    - [Persistence Layer](#3-persistence-layer-zacohpscwebrepositories--zacohpscwebdomain)
-    - [Model Layer](#4-model-layer-zacohpscwebmodels)
-    - [Domain Support Layers](#5-domain-support-layers)
-    - [Exception and Error Handling](#6-exception-and-error-handling-zacohpscwebexceptions)
-- [Key Design Patterns](#key-design-patterns)
-- [Data Flow](#data-flow)
-    - [Typical Request-Response Flow](#typical-request-response-flow)
-    - [Data Import Flow (CSV/XML Processing)](#data-import-flow-csvxml-processing)
-- [Quality Attributes](#quality-attributes)
-- [Development Guidelines](#development-guidelines)
+- [⚙️ Technology Stack](#-technology-stack)
+- [📁 Project Structure](#-project-structure)
+- [🎯 System Overview](#-system-overview)
+- [🏗️ Layered Structure](#-layered-structure)
+    - [📊 Presentation Layer](#1-presentation-layer-zacohpscwebcontrollers)
+    - [⚡ Service Layer](#2-service-layer-zacohpscwebservices)
+    - [🗄️ Persistence Layer](#3-persistence-layer-zacohpscwebrepositories--zacohpscwebdomain)
+    - [📦 Model Layer](#4-model-layer-zacohpscwebmodels)
+    - [🔧 Domain Support Layers](#5-domain-support-layers)
+    - [🛡️ Exception and Error Handling](#6-exception-and-error-handling-zacohpscwebexceptions)
+- [🔄 Key Design Patterns](#-key-design-patterns)
+- [🔀 Data Flow](#-data-flow)
+    - [📈 Typical Request-Response Flow](#typical-request-response-flow)
+    - [📥 Data Import Flow (CSV/XML Processing)](#data-import-flow-csvxml-processing)
+- [✅ Quality Attributes](#-quality-attributes)
+- [📚 Development Guidelines](#-development-guidelines)
 
-## Technology Stack
+## ⚙️ Technology Stack
 
 The application is built using modern technologies:
 
@@ -87,7 +87,7 @@ business (`services`), and data/DTOs (`models`) for clear layering and testabili
 │                           └───utils           # Tests of helper utilities and common functions
 ```
 
-## System Overview
+## 🎯 System Overview
 
 The HPSC Website Backend is a REST API service that manages practical shooting club operations, including:
 
@@ -100,15 +100,15 @@ The HPSC Website Backend is a REST API service that manages practical shooting c
 The application follows a classic **N-Tier Architecture** pattern, ensuring a clean separation of concerns
 between the entry points, business logic, data access, and persistence layers.
 
-## Layered Structure
+## 🏗️ Layered Structure
 
-### 1. Presentation Layer (`za.co.hpsc.web.controllers`)
+### 📊 1. Presentation Layer (`za.co.hpsc.web.controllers`)
 
 - Responsible for handling incoming HTTP requests.
 - Maps REST endpoints to service layer methods.
 - Handles Request/Response DTO mapping and basic input validation via Spring's validation framework.
 
-### 2. Service Layer (`za.co.hpsc.web.services`)
+### ⚡ 2. Service Layer (`za.co.hpsc.web.services`)
 
 - Contains the core business logic.
 - Orchestrates data flow between controllers, repositories, and data processing components.
@@ -117,34 +117,34 @@ between the entry points, business logic, data access, and persistence layers.
 - Implementation of **WinMSS** and **IPSC Match** data processing services.
 - **Transaction Management**: Handles database transactions via `TransactionService`.
 
-### 3. Persistence Layer (`za.co.hpsc.web.repositories` & `za.co.hpsc.web.domain`)
+### 🗄️ 3. Persistence Layer (`za.co.hpsc.web.repositories` & `za.co.hpsc.web.domain`)
 
 - **Repositories**: Spring Data JPA interfaces for database access patterns.
 - **Domain Entities**: JPA entities representing database tables.
 - Provides abstraction over database operations with automatic query generation.
 
-### 4. Model Layer (`za.co.hpsc.web.models`)
+### 📦 4. Model Layer (`za.co.hpsc.web.models`)
 
 - Defines the data structures used throughout the application.
 - Includes **DTOs** (Data Transfer Objects) for external communication and internal domain representations.
 - Organised by feature domains.
 - Base request/response wrappers for consistent API contracts.
 
-### 5. Domain Support Layers
+### 🔧 5. Domain Support Layers
 
 - **Enums** (`za.co.hpsc.web.enums`): Type-safe enumerations for domain concepts.
 - **Helpers** (`za.co.hpsc.web.helpers`): Domain-specific helper classes and business logic utilities.
 - **Constants** (`za.co.hpsc.web.constants`): Application-wide constant definitions.
 - **Utils** (`za.co.hpsc.web.utils`): Generic utility functions.
 
-### 6. Exception and Error Handling (`za.co.hpsc.web.exceptions`)
+### 🛡️ 6. Exception and Error Handling (`za.co.hpsc.web.exceptions`)
 
 - Global exception handling mechanism using `@ControllerAdvice`.
 - Custom exception hierarchy: `FatalException`, `NonFatalException`, `ValidationException`.
 - Translates internal processing errors and validation failures into standardised, user-friendly JSON
   responses.
 
-## Key Design Patterns
+## 🔄 Key Design Patterns
 
 - **Repository Pattern**: Spring Data JPA repositories abstract database access and provide clean data access
   APIs.
@@ -159,9 +159,9 @@ between the entry points, business logic, data access, and persistence layers.
 - **Global Error Handling**: Centralised management of application state and error feedback via
   `@ControllerAdvice`.
 
-## Data Flow
+## 🔀 Data Flow
 
-### Typical Request-Response Flow
+### 📈 Typical Request-Response Flow
 
 1. **Request**: A client makes a request to a REST endpoint (e.g., `/api/results`).
 2. **Controller**: Receives and validates the request, extracting parameters and request body.
@@ -170,7 +170,7 @@ between the entry points, business logic, data access, and persistence layers.
 5. **Transformation**: Service transforms domain entities to DTOs for external consumption.
 6. **Response**: Controller wraps the result in a standardised response format and returns JSON to the client.
 
-### Data Import Flow (CSV/XML Processing)
+### 📥 Data Import Flow (CSV/XML Processing)
 
 1. **File Upload**: Client uploads a CSV or XML file to an import endpoint.
 2. **Parser Invocation**: Service invokes appropriate parser (WinMSS, IPSC).
@@ -179,7 +179,7 @@ between the entry points, business logic, data access, and persistence layers.
 5. **Persistence**: Entities are saved to the database via repositories within a transaction.
 6. **Response**: Import summary or errors are returned to the client.
 
-## Quality Attributes
+## ✅ Quality Attributes
 
 - **Scalability**: Stateless service design with database-backed persistence allows for horizontal scaling.
 - **Maintainability**: Strict package naming conventions, clear separation of concerns, and comprehensive test
@@ -193,7 +193,7 @@ between the entry points, business logic, data access, and persistence layers.
 - **Data Integrity**: JPA entity relationships with cascading rules and transaction management ensure data
   consistency.
 
-## Development Guidelines
+## 📚 Development Guidelines
 
 Refer to the [README.md](README.md) for detailed instructions on local setup, commands, and
 coding standards.

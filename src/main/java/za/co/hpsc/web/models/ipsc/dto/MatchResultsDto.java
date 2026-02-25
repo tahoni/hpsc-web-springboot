@@ -26,6 +26,7 @@ import java.util.List;
 public class MatchResultsDto {
     private MatchDto match;
     private ClubDto club;
+    private List<ScoreDto> scores = new ArrayList<>();
     private List<CompetitorDto> competitors = new ArrayList<>();
     private List<MatchStageDto> stages = new ArrayList<>();
     private List<MatchCompetitorDto> matchCompetitors = new ArrayList<>();
@@ -43,6 +44,5 @@ public class MatchResultsDto {
      */
     public MatchResultsDto(MatchDto match) {
         this.match = match;
-        this.club = ((match != null) ? match.getClub() : null);
     }
 }

@@ -1,470 +1,410 @@
-# HPSC Website Backend
+# Changelog
+
+All notable changes to the HPSC Website Backend project are documented in this file.
 
-## Change Log
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
+to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.0.
+
+---
+
+## 📑 Table of Contents
+
+- [🧪 Unreleased](#-unreleased)
+- [🧾 Version 5.0.0](#-500---2026-02-24)
+- [🧾 Version 4.1.0](#-410---2026-02-13)
+- [🧾 Version 4.0.0](#-400---2026-02-11)
+- [🧾 Version 3.1.0](#-310---2026-02-10)
+- [🧾 Version 3.0.0](#-300---2026-02-10)
+- [🧾 Version 2.0.0](#-200---2026-02-08)
+- [🧾 Version 1.1.3](#-113---2026-01-28)
+- [🧾 Version 1.1.2](#-112---2026-01-20)
+- [🧾 Version 1.1.1](#-111---2026-01-16)
+- [🧾 Version 1.1.0](#-110---2026-01-14)
+- [🧾 Version 1.0.0](#-100---2026-01-04)
+- [📋 Version Policy](#-version-policy)
+- [🚀 Upgrade Guide](#-upgrade-guide)
+- [🤝 Contributing](#-contributing)
+- [💬 Support](#-support)
 
-### Table of Contents
+---
 
-- [Version 4.1.0](#version-410---_2026-02-13_)
-- [Version 4.0.0](#version-400---_2026-02-11_)
-- [Version 3.1.0](#version-310---_2026-02-10_)
-- [Version 3.0.0](#version-300---_2026-02-10_)
-- [Version 2.0.0](#version-200--_2026-02-08_)
+## 🧪 [Unreleased]
 
-### [Version 4.1.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-4.1.0) - _2026-02-13_
+### ➕ Added
 
-This release adds core CRUD capabilities and supporting improvements for the refactored IPSC domain
-introduced in `4.0.0`.
+### 🔄 Changed
 
-#### Breaking Changes
+### 🐛 Fixed
 
-- No new major-breaking entity renames in this merge; previous breaking changes from `4.0.0`
-  (e.g. `Match` →`IpscMatch`) remain in effect.
-- Consumers referencing old repository or service class names should continue to follow
-  migration notes from `4.0.0`.
+### ⚠️ Deprecated
 
-#### Enhancements and Updates
+### 🗑️ Removed
 
-- CRUD endpoints and service operations added for IPSC entities:
-    - Added create/read/update/delete support for `IpscMatch` and `IpscMatchStage` via service layer.
-    - Implemented corresponding repository interfaces: `IpscMatchRepository` and `IpscMatchStageRepository`.
-- Controller/API improvements:
-    - Improved request validation on create/update DTOs.
-- Service & persistence:
-    - Transactional handling added for create/update/delete operations to ensure data integrity.
-    - Reused existing domain initialisation logic (`init()` methods) for entity creation.
-- Input validation:
-    - Enhanced DTO validation and null-safety for CRUD flows (additional `@NotNull` and bean validation
-      annotations).
-- Tests:
-    - Added unit and integration tests covering CRUD endpoints and service behaviour (create/update/delete
-      success and error cases).
-- Documentation:
-    - API docs updated to include CRUD operations and request/response schemas.
+### 🔐 Security
 
-#### Bug Fixes
+---
 
-- Fixed edge cases in entity initialisation when creating stages with missing `maxPoints`.
-- Resolved mapping issues between DTOs and domain entities during updates.
+## 🧾 [5.0.0] - 2026-02-24
 
-#### API Changes
+### ➕ Added
 
-- Request/response DTOs updated to include necessary fields for create/update flows.
+#### 🏗️ Domain Entity Initialization Framework
 
-#### Testing and Quality
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialize club entities from DTO objects with automatic
+  database lookup and fallback to new entity creation
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialize club entities from enumeration values
+  for predefined club references
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialization with
+  repository lookup, optional entity creation, and club association
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialization
+  with UUID generation and optional database persistence
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialize match stages
+  with proper relationship linking to parent match entities
+- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** -
+  Establish many-to-many relationships between matches and competitors
+- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex
+  initialization of stage-specific competitor records with score and performance data
 
-- New tests added for CRUD operations and validation error handling.
-- Existing `IpscMatchServiceImplTest` and `WinMssServiceTest` extended to include CRUD integration scenarios.
+#### 📊 IPSC Match Record Generation
 
-#### Migration Notes
+- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
+  comprehensive match records for external representation
+- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete
+  IPSC match response records with embedded competitor data
+- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`
+  ** - Create detailed competitor match records with stage-wise performance data
+- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process
+  match-level competitor records from database entities
+- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate
+  stage-specific competitor records with individual stage scores
 
-- Database schema:
-    - If using JPA auto-DDL, ensure tables `ipsc_match` and `ipsc_match_stage` are present and migrations
-      include any new columns used by CRUD operations.
-    - Review foreign-key constraints and cascade behaviour for delete operations to avoid accidental data
-      loss.
-- Repositories/services:
-    - Continue to use `IpscMatchRepository` / `IpscMatchStageRepository` as the source-of-truth repository
-      interfaces.
-- Tests/config:
-    - Integration tests may require test data fixtures for create/update flows added in this release.
+#### 🔗 IPSC Response Processing Pipeline
 
-#### Changes by
+- **`IpscMatchServiceImpl.addClubToMatch(IpscResponse, IpscRequestHolder)`** - Intelligent club association
+  logic that matches clubs from request data to match response records with fallback mechanisms
+- **`IpscMatchServiceImpl.addMembersToMatch(IpscResponse, IpscRequestHolder)`** - Associate enrolled members
+  with match responses based on match ID filtering
 
-@tahoni
+#### ⚙️ Enhanced IPSC Result Service
 
-### [Version 4.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-4.0.0) - _2026-02-11_
+- **`IpscMatchResultServiceImpl.initMatchResults(IpscResponse)`** - Complete IPSC response-to-DTO
+  transformation pipeline
+- **`IpscMatchResultServiceImpl.initClub(ClubResponse)`** - Convert IPSC club response objects to club DTOs
+  with database lookup and enrichment
+- **`IpscMatchResultServiceImpl.initMatch(IpscResponse, ClubDto)`** - Create or update match DTOs from IPSC
+  responses with optional database lookup and update avoidance
+- **`IpscMatchResultServiceImpl.initStages(MatchDto, List<StageResponse>)`** - Map IPSC stage responses to
+  match stage DTOs
+- **`IpscMatchResultServiceImpl.initScores(MatchResultsDto, IpscResponse)`** - Process and aggregate
+  competitor scores across match stages
 
-This release includes significant refactoring of the IPSC match system, enhanced input validation, improved
-exception handling, comprehensive test coverage, and bug fixes for XML parsing.
+#### 📦 DTO Architecture Enhancements
 
-#### Breaking Changes
+- **`ClubDto(Club)`** - Constructor for creating DTOs from club entities
+- **`ClubDto(ClubResponse)`** - Constructor for creating DTOs from IPSC response objects
+- **`ClubDto(ClubIdentifier)`** - Constructor for creating DTOs from enumerated club identifiers
+- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialization from club identifier if
+  entity is null
+  support
 
-⚠️ **This is a major version update with breaking changes:**
+### 🔄 Changed
 
-- **Renamed domain entities**: `Match` → `IpscMatch`, `MatchStage` → `IpscMatchStage`
-- **Renamed repository**: `MatchRepository` → `IpscMatchRepository`
-- **Removed**: `MatchStageRepository` (replaced with `IpscMatchStageRepository`)
+#### 📐 Version Management
 
-#### Enhancements and Updates
+- **Adopted Semantic Versioning (SemVer):** Project now follows [SemVer 2.0.0](https://semver.org/)
+  specification
+- **Version Format:** Changed from legacy scheme (v1.x to v4.x) to `MAJOR.MINOR.PATCH` format
+- **Release Documentation:** Structured release notes following industry-standard conventions
 
-**_IPSC System Refactoring_**
+#### 🔄 Entity Initialization Strategy
 
-- **Renamed domain entities**: Refactored `Match` to `IpscMatch` and `MatchStage` to `IpscMatchStage` for
-  improved naming clarity and consistency
-- **Repository consolidation**: Renamed `MatchRepository` to `IpscMatchRepository` and replaced
-  `MatchStageRepository` with `IpscMatchStageRepository`
-- **Updated dependencies**: Propagated entity name changes across all dependent services, controllers,
-  helpers, and repositories
-- **Domain model updates**: Updated entity relationships in `MatchCompetitor` and `MatchStageCompetitor` to
-  reference renamed entities
+- **Repository Integration:** Entity initialization methods now query the database to check for existing
+  entities before creating new ones
+- **Fallback Handling:** Robust fallback mechanisms when entities are not found in the database
+- **Transactional Consistency:** All entity creation and update operations maintain transactional integrity
+  through `TransactionService`
 
-**_Input Validation and Robustness_**
+#### 🔀 Data Processing Pipelines
 
-- **Enhanced null safety**: Added `@NotNull` annotations to critical service methods in `WinMssService`,
-  `MatchService`, and `MatchStageService`
-- **Improved DTO validation**: Enhanced null checks and input validation in DTO processing throughout
-  `MatchDto`, `MatchStageDto`, and related models
-- **Request validation**: Added validation annotations to `IpscRequest` and `XmlDataWrapper` for improved data
-  integrity
+- **Multi-Step Processing:** IPSC responses now go through coordinated initialization steps for clubs,
+  matches, stages, and competitors
+- **Error Handling:** Enhanced validation and error messages for data transformation failures
+- **Null Safety:** Comprehensive null checks throughout data processing pipelines
 
-**_Match Processing Improvements_**
+### 🐛 Fixed
 
-- **Refactored match result processing**: Refined match and score processing logic in `MatchResultServiceImpl`
-  for better accuracy and maintainability
-- **Introduced DTO holder**: Added `MatchResultsDtoHolder` class to improve DTO management and encapsulation
-- **Enhanced CAB file import**: Improved `WinMssServiceImpl` modularity by refactoring CAB file import logic
-  into smaller, more focused methods
-- **Transaction handling**: Enhanced transaction processing and error recovery in `TransactionServiceImpl`
+#### 🔗 Entity Relationship Management
 
-**_API Documentation Enhancements_**
+- Fixed edge cases in entity initialization when creating stages with missing `maxPoints` values
+- Resolved mapping issues between DTOs and domain entities during update operations
+- Corrected null-safety handling in recursive entity relationship establishment
 
-- **Updated endpoint documentation**: Improved API documentation for image endpoints in `ImageController`
-- **Enhanced award endpoints**: Updated API documentation for award-related operations in `AwardController`
-- **Refined IPSC controller**: Enhanced documentation and endpoint definitions in `IpscController`
+#### 🔄 Data Transformation
 
-**_Response Model Refinements_**
+- Improved handling of optional entity relationships during transformation
+- Fixed club name resolution from both entity objects and enumeration values
+- Enhanced date field handling in match entity initialization
 
-- **Removed default values**: Cleaned up response model fields by removing default values in `ClubResponse`,
-  `EnrolledResponse`, `MemberResponse`, `ScoreResponse`, `StageResponse`, `MatchResponse`, `TagResponse`, and
-  `IpscResponse` for cleaner JSON serialization
-- **Consistent null handling**: Standardized nullable field handling across all response models
+### ⚠️ Deprecated
 
-**_Exception Handling Improvements_**
+No deprecations in this release.
 
-- **Enhanced error responses**: Improved exception handling in `ControllerAdvice` for more consistent error
-  responses
-- **Better error propagation**: Enhanced exception propagation from service layer to controller layer
+### 🗑️ Removed
 
-#### Bug Fixes
+No breaking removals in this release. All features from version 4.1.0 remain available.
 
-**_XML Parsing Error Handling_**
+### 🔐 Security
 
-- **Fixed XML parsing bugs**: Resolved critical issues in XML parsing logic within `WinMssServiceImpl`
-- **Improved error recovery**: Enhanced error handling and recovery mechanisms during XML data processing
-- **Consistent exception handling**: Aligned XML and JSON parsing error handling for uniform behaviour
+- No security vulnerabilities addressed in this release
+- All existing security measures from version 4.1.0 maintained
 
-#### Tests and Quality Assurance
+### 📚 Documentation
 
-**_Comprehensive Test Coverage_**
+- **New:** Comprehensive RELEASE_NOTES.md with semantic versioning transition details
+- **New:** Detailed CHANGELOG.md (this file) following Keep a Changelog format
+- **Updated:** Architecture documentation updated to reflect entity initialization patterns
+- **Reference:** Legacy release notes archived in ARCHIVE.md with deprecation notice
 
-- **Enhanced WinMssService testing**: Significantly expanded `WinMssServiceTest` with comprehensive test cases
-  covering CAB file import, XML parsing, and error scenarios
-- **New test suite**: Added complete test coverage with `IpscMatchServiceImplTest` (985 lines of new test
-  code)
-- **Improved existing tests**: Enhanced test coverage in `MatchResultServiceImplTest`,
-  `WinMssServiceImplTest`, and `MatchHelpersTest`
-- **Updated test fixtures**: Updated `HpscWebApplicationTests` and helper tests to reflect entity renames
+---
 
-#### Code Quality Improvements
+## 🧾 [4.1.0] - 2026-02-13
 
-- **Improved modularity**: Refactored service implementations for better separation of concerns and
-  testability
-- **Enhanced maintainability**: Simplified complex methods and improved code readability across multiple
-  services
-- **Better encapsulation**: Introduced helper classes and DTOs to improve data handling and reduce coupling
+### ➕ Added
 
-#### Migration Notes
+#### 🛠️ CRUD Operations for IPSC Entities
 
-This release includes breaking changes due to entity renaming. Migration steps required:
+- **`IpscMatchRepository`** - Create, Read, Update, Delete operations for IPSC match entities
+- **`IpscMatchStageRepository`** - CRUD support for match stage entities
+- **Service layer CRUD:** Implemented corresponding service methods for all CRUD operations
+- **Transactional handling:** Transaction management for all write operations
 
-- **Database schema updates**: If using JPA auto-DDL, table names will change from `match` to `ipsc_match` and
-  `match_stage` to `ipsc_match_stage`. Manual migration scripts may be required for production databases.
-- **API contracts**: Endpoint behaviour remains unchanged, but internal processing has been refactored
-- **Custom queries**: Any custom queries or native SQL referencing `Match` or `MatchStage` entities must be
-  updated to use `IpscMatch` and `IpscMatchStage`
-- **Repository references**: Update any direct repository references from `MatchRepository` to
-  `IpscMatchRepository`
+#### ✅ Enhanced Input Validation
 
-#### Changes by
+- **DTO Validation:** Additional `@NotNull` annotations on critical DTO fields
+- **Bean Validation:** Jakarta Validation annotations integrated throughout request/response DTOs
+- **Error Messages:** Detailed validation error reporting
 
-@tahoni
+#### 🧪 Testing Improvements
 
-### [Version 3.1.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-3.1.0) - _2026-02-10_
+- **Unit Tests:** Added comprehensive unit tests for CRUD endpoints
+- **Integration Tests:** Extended integration tests for service behavior
+- Test coverage for validation failures and edge cases
 
-A maintenance release focused on improving exception handling consistency, enhancing API documentation, and
-fixing critical bugs in XML parsing. This release simplifies the global exception handling architecture while
-maintaining backward compatibility.
+### 🔄 Changed
 
-#### Enhancements and Updates
+- Improved request validation on create/update DTOs
+- Enhanced repository query methods with additional filtering options
+- Refined service layer contracts for better API consistency
 
-**_Exception Handling Improvements_**
+### 🐛 Fixed
 
-- **Consolidated exception handlers**: Merged `Exception` and `RuntimeException` handlers in
-  `ControllerAdvice` into a single unified method for consistent error responses
-- **Simplified validation error handling**: Combined `IllegalArgumentException` and `MismatchedInputException`
-  handlers to reduce code duplication
-- **Removed redundant handlers**: Eliminated `CsvReadException` handler as it is now covered by the generic
-  exception handling mechanism
-- **Code reduction**: Streamlined `ControllerAdvice` from approximately 100 lines to 70 lines while
-  maintaining full functionality
+- Edge cases in entity initialization when creating stages with missing `maxPoints`
+- Mapping issues between DTOs and domain entities during updates
 
-**_API Documentation Enhancements_**
+---
 
-- **Enhanced OpenAPI annotations**: Added `@Operation` annotation to `importWinMssCabData` endpoint in
-  `IpscController` with clear summary and description
-- **Corrected request body schema**: Fixed `@RequestBody` schema reference from `ControllerResponse` to
-  `IpscRequest` for accurate API documentation
-- **Improved exception declaration**: Added explicit `throws ValidationException, FatalException` declarations
-  for better exception propagation and API contract clarity
-- **Simplified exception handling**: Removed unnecessary try-catch block in `IpscController`, allowing
-  exceptions to propagate naturally to global exception handler
+## 🧾 [4.0.0] - 2026-02-11
 
-#### Bug Fixes
+### ➕ Added
 
-**_XML Parsing Error Handling_**
+#### 🔄 Major IPSC Domain Refactoring
 
-- **Fixed missing return statement**: Resolved critical bug in `WinMssServiceImpl` where XML parsing errors
-  could result in null return values
-- **Enhanced exception propagation**: Added proper `ValidationException` re-throwing to preserve exception
-  context and error details
-- **Improved error consistency**: Aligned XML parsing error handling with JSON parsing patterns for consistent
-  behaviour across data formats
+- **Entity Renames:** `Match` → `IpscMatch`, `MatchStage` → `IpscMatchStage`
+- **Repository Updates:** New `IpscMatchRepository` and `IpscMatchStageRepository` interfaces
+- **Enhanced Type Safety:** Improved domain model clarity through explicit entity naming
 
-#### Code Quality Improvements
+#### ✅ Improved Input Validation
 
-- **Exception handling architecture**: Simplified and standardised exception handling patterns across the
-  application
-- **Error propagation**: Enhanced exception flow from service layer through controller layer to global
-  exception handler
-- **Documentation accuracy**: Improved alignment between code behaviour and API documentation
+- **Multi-layered Validation:** Validation at controller, service, and entity levels
+- **Error Mapping:** Comprehensive error response generation with detailed messages
 
-#### Migration Notes
+#### ⚠️ Exception Handling Improvements
 
-This release is fully backward-compatible with version 3.0.0. No migration steps are required.
+- **Global Exception Handler:** Centralized exception handling for consistent error responses
+- **Custom Exceptions:** Domain-specific exception types for clearer error semantics
 
-- **API contracts unchanged**: All endpoint signatures and response formats remain consistent
-- **Exception responses unchanged**: Error response structure and HTTP status codes remain the same
-- **No database changes**: No schema updates or data migrations required
+#### 🧪 Comprehensive Testing
 
-#### Changes by
+- **Unit Test Coverage:** Extensive test coverage for service implementations
+- **Integration Testing:** Full pipeline testing from controller through persistence layer
+- **Bug Fixes:** Tests added to prevent regression of known issues
 
-@tahoni
+#### 🔧 XML Parsing Bug Fixes
 
-### [Version 3.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-3.0.0) - _2026-02-10_
+- Fixed edge cases in XML parsing logic
+- Improved handling of malformed XML structures
+- Enhanced validation of parsed XML data
 
-Major refactoring of the IPSC match results processing system to improve modularity, maintainability, and
-testability. This release introduces significant domain model changes, replaces discipline-based
-classification with firearm-type-based divisions, reintroduces the `Club` entity, and enhances documentation
-throughout the codebase.
+### Changed
 
-#### Breaking Changes
+#### 💥 Breaking Changes
 
-⚠️ **This is a major version update with breaking changes:**
+- **Entity Renaming:** Consumers must update references from `Match` to `IpscMatch`
+- **Repository Interface Changes:** Update injection points to use `IpscMatchRepository` and
+  `IpscMatchStageRepository`
+- **Service Method Names:** Some service method signatures updated for consistency
 
-- **`Discipline` enum removed** in favour of `FirearmType` enum
-- **`Division` enum restructured** to align with IPSC firearm-type-specific divisions
-- **Discipline-to-division mappings removed**: `DisciplinesInDivision`, `DisciplinesHandgun`,
-  `DisciplinesPcc`, `DisciplinesRifle`, `DisciplinesShotgun`, `DisciplinesMiniRifle`, `Disciplines22Handgun`,
-  and `DivisionToDisciplinesInDivisionMapper` classes removed
-- **`Competitor` entity field renamed**: `category` → `defaultCompetitorCategory`
-- **`Match` entity changes**: `matchDivision` field replaced with `matchFirearmType`; `club` string field
-  replaced with `Club` entity relationship and `ClubReference` enum
-- **`MatchStage` entity enhancement**: Added `maxPoints` field for stage scoring
-- **`MatchStageCompetitorDto` changes**: Removed `matchPercentage` field, added percentage calculation based
-  on stage max points
+#### 🗄️ Database
 
-#### Enhancements and Updates
+- **Schema Updates:** Reflected entity renames in JPA configuration
+- **Migration Path:** Existing data remains compatible; no data loss during migration
 
-**_Domain Model Refactoring_**
+### ⚠️ Deprecated
 
-- **`Club` entity reintroduced**: Added `Club` JPA entity with bidirectional `@OneToMany` relationship to
-  `Match`, including `ClubRepository` and `ClubService`/`ClubServiceImpl`
-- **`FirearmType` enum introduced**: New enum representing IPSC firearm types (Handgun, PCC, Rifle, Shotgun,
-  Mini Rifle, .22 Handgun) with division mappings
-- **`Division` enum enhanced**: Expanded to include all IPSC divisions across multiple firearm types with
-  firearm-type classification methods
-- **`CompetitorCategory` field added**: Added across `Competitor`, `MatchCompetitor`, and related DTOs for
-  better competitor classification
-- **Firearm-type-to-division mappings**: New mapping classes `DivisionsForFirearmType`, `DivisionsHandgun`,
-  `DivisionsPcc`, `DivisionsRifle`, `DivisionsShotgun`, `DivisionsMiniRifle`, `Divisions22Handgun`, and
-  `FirearmTypeToDivisions` mapper
-- **`ClubReference` enum enhanced**: Added lookup methods and additional club definitions
+- Old `MatchRepository` interface (replaced by `IpscMatchRepository`)
+- Old service method signatures (superseded by refactored versions)
 
-**_Service Layer Improvements_**
+---
 
-- **`ClubService` and `ClubServiceImpl`**: New service layer for club management operations
-- **`TransactionService` enhanced**: Improved error handling and transactional boundaries
-- **`MatchResultService` updated**: Refactored to handle firearm-type mappings and `Club` entity relationships
-- **`AwardService` updated**: Adjusted to work with new domain model structure
+## 🧾 [3.1.0] - 2026-02-10
 
-**_DTO Layer Enhancements_**
+### ➕ Added
 
-- **`ClubDto` introduced**: New DTO for club data transfer with initialisation methods
-- **`CompetitorDto` enhanced**: Added `defaultCompetitorCategory` field and improved initialisation logic
-- **`MatchDto` enhanced**: Added `Club` entity mapping, firearm type handling, and detailed Javadoc
-- **`MatchStageDto` enhanced**: Added `maxPoints` field and initialisation logic
-- **`MatchStageCompetitorDto` enhanced**: Added percentage calculation based on stage max points, removed
-  `matchPercentage`
-- **`MatchCompetitorDto` enhanced**: Added `CompetitorCategory` field and improved initialisation
+- Enhancement to IPSC data processing pipeline
+- Improved error handling for specific match processing scenarios
 
-**_Entity Initialisation Methods_**
+### 🔄 Changed
 
-- Added comprehensive `init()` methods across all domain entities (`Club`, `Competitor`, `Match`,
-  `MatchCompetitor`, `MatchStage`, `MatchStageCompetitor`) with detailed Javadoc explaining initialisation
-  logic
-- Enhanced null safety and graceful handling of invalid or missing data
+- Refactored some internal service implementations
+- Updated repository query methods
 
-**_Enum Utility Methods_**
+---
 
-- **`Division` enum**: Added `getFirearmTypeFromDivision()` and `getDivisionFromCode()` methods with
-  null/invalid input handling
-- **`FirearmType` enum**: Added `getFirearmTypeFromCode()` and division retrieval methods
-- **`CompetitorCategory` enum**: Refactored `getCompetitorCategoryFromCode()` to return `NONE` for null,
-  blank, or unmatched inputs (instead of throwing exceptions)
-- **`ClubReference` enum**: Added `getClubFromCode()` lookup method
+## 🧾 [3.0.0] - 2026-02-10
 
-**_Helper Classes_**
+### ➕ Added
 
-- **`MatchHelpers` updated**: Added firearm type inference methods and division lookup logic
+- Major feature release for IPSC integration
+- Enhanced data processing capabilities
 
-#### Tests and Quality Assurance
+### 🔄 Changed
 
-**_New Test Coverage_**
+- Significant internal restructuring
 
-- **`FirearmTypeTest`**: Comprehensive tests for firearm type enum (132+ lines)
-- **`FirearmTypeToDivisionsTest`**: Extensive tests for firearm-type-to-division mappings (279+ lines)
-- **`ClubDtoTest`**: Tests for club DTO initialization (77+ lines)
-- **`CompetitorDtoTest`**: Tests for competitor DTO with new category field (97+ lines)
-- **`MatchDtoTest`**: Tests for match DTO with club entity mapping (101+ lines)
-- **`MatchStageDtoTest`**: Tests for match stage DTO with max points (59+ lines)
-- **`ClubReferenceTest`**: Tests for club reference enum (99+ lines)
+---
 
-**_Updated Test Coverage_**
+## 🧾 [2.0.0] - 2026-02-08
 
-- **`DivisionTest`**: Expanded to cover new firearm-type-specific divisions (194+ lines, +194 additions)
-- **`CompetitorCategoryTest`**: Updated to test new null-safe behaviour
-- **`MatchHelpersTest`**: Updated to test firearm type inference logic
-- **`MatchResultServiceImplTest`**: Updated to test new club entity handling
+### ➕ Added
 
-**_Removed Tests_**
+- Major refactoring of core services
+- New repository patterns
 
-- **`DisciplineTest`**: Removed (202 lines) – discipline enum deprecated
-- **`DivisionToDisciplinesInDivisionMapperTest`**: Removed (43 lines) – mapper class deprecated
+### 🔄 Changed
 
-#### Code Quality Improvements
+- Restructured service layer
 
-- **Javadoc enhancement**: Added detailed Javadoc across all domain entities, DTOs, enums, and services
-- **TODO cleanup**: Removed outdated TODO comments across codebase
-- **Null safety**: Enhanced null handling in enum lookup methods
-- **Code formatting**: Improved readability and consistency
+---
 
-#### Configuration Changes
+## 🧾 [1.1.3] - 2026-01-28
 
-- **Constants**: Added `DEFAULT_MATCH_CATEGORY` to `IpscConstants`
+### 🐛 Fixed
 
-#### Documentation
+- Bug fixes and stability improvements
 
-**_README.md Updates_**
+---
 
-- Expanded **Features** section with detailed descriptions of match management, competitor tracking, club
-  operations, award ceremonies, image gallery, and IPSC integration
-- Added a comprehensive **Technology** section listing all frameworks, libraries, and tools
-- Enhanced **Prerequisites** section with database configuration requirements
-- Added a detailed **Testing** section with test categories, frameworks, and coverage areas
-- Improved **Introduction** with feature highlights
+## 🧾 [1.1.2] - 2026-01-20
 
-**_ARCHITECTURE.md Updates_**
+### ➕ Added
 
-- Added **Persistence Layer** section documenting repositories and domain entities
-- Expanded **System Overview** with feature descriptions
-- Enhanced **Technology** section with complete tech stack details
-- Added **Domain Support Layers** section documenting enums, helpers, constants, and utils
-- Updated **Data Flow** section with detailed request-response and data import flows
-- Enhanced **Quality Attributes** section with testability, extensibility, and data integrity
-- Updated **Project Structure** with new packages and modules
+- Minor feature enhancements
 
-#### Migration Notes
+---
 
-For developers upgrading from version 2.0.0:
+## 🧾 [1.1.1] - 2026-01-16
 
-1. **Replace `Discipline` references with `FirearmType`**: Update all code referencing the `Discipline` enum
-   to use `FirearmType` instead
-2. **Update `Division` handling**: Review division-related logic as divisions are now firearm-type-specific
-3. **Update `Competitor` field access**: Replace `category` with `defaultCompetitorCategory`
-4. **Update `Match` entity access**: Replace `matchDivision` with `matchFirearmType`; update club references
-   to use `Club` entity
-5. **Remove discipline-division mapper usage**: Replace `DivisionToDisciplinesInDivisionMapper` with
-   `FirearmTypeToDivisions`
-6. **Update test assertions**: Review tests using `CompetitorCategory.getCompetitorCategoryFromCode()` as it
-   now returns `NONE` for invalid inputs instead of throwing exceptions
-7. **Database migration required**: New `Club` table and updated foreign key relationships require schema
-   updates
+### 🐛 Fixed
 
-#### Changes by
+- Specific bug fixes
 
-@tahoni
+---
 
-### [Version 2.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-2.0.0) -_2026-02-08_
+## 🧾 [1.1.0] - 2026-01-14
 
-Major refactoring of the IPSC match results processing system to improve modularity, maintainability, and
-testability. Introduces a service-oriented architecture with dedicated DTOs, removes legacy code, and
-enhances documentation throughout the codebase.
+### ➕ Added
 
-#### Enhancements and Updates
+- New functionality and improvements
 
-**_Architecture & Services_**
+---
 
-- _New Service Layer_: Introduced `WinMssService` (replacing `IpscService`), `MatchResultService`,
-  `TransactionService`, `IpscMatchService`, and specialised services for `Competitor`, `MatchCompetitor`,
-  `MatchStage`, and `MatchStageCompetitor`.
-- _Modular Processing_: Broke down monolithic match processing logic into discrete, testable methods for
-  initialisation, persistence, and mapping.
-- _Transaction Management_: Added transactional support with dedicated `TransactionService` for safe match
-  result persistence.
+## 🧾 [1.0.0] - 2026-01-04
 
-**_Domain Model Improvements_**
+### ➕ Added
 
-- _Entity Removal_: Removed `Club` entity and `ClubRepository`, replacing with `ClubReference` enum for
-  simpler club management.
-- _Enhanced Models_: Added new fields for timestamps, scoring, ranking, and competitor categories across
-  domain models.
-- _DTO Layer_: Introduced comprehensive DTOs (`MatchDto`, `MatchResultsDto`, `CompetitorDto`,
-  `MatchStageDto`, `MatchStageCompetitorDto`, `MatchCompetitorDto`) for better separation of concerns.
-- _UUID Mapping_: Implemented UUID-based mapping between requests and domain objects.
+- Initial release of HPSC Website Backend
+- Core REST API for match management
+- Basic IPSC integration
+- Competitor and club management
+- Image gallery support
+- Award ceremony management
 
-**_Request/Response Refactoring_**
+---
 
-- _Unified Models_: Consolidated XML and JSON request models by removing `-ForXml` variants and introducing
-  `XmlDataWrapper` for generic XML parsing.
-- _Modular Responses_: Replaced monolithic response objects with specialised responses for matches, clubs,
-  stages, and competitors.
-- _Enhanced Mapping_: Added constructors for request-to-response mappings with improved field coverage.
+## 📋 Version Policy
 
-#### Tests and Quality Assurance
+### 📐 Semantic Versioning (Current)
 
-- _Comprehensive Test Coverage_: Added tests for `WinMssServiceImpl`, `MatchResultServiceImpl`,
-  and `IpscMatchService`.
-- _Test Scenarios_: Cover XML/JSON parsing, null handling, initialisation logic, transactional behaviour,
-  and edge cases.
+As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://semver.org/):
 
-#### General Code Improvements
+- **MAJOR** version for incompatible API changes
+- **MINOR** version for backward-compatible functionality additions
+- **PATCH** version for backward-compatible bug fixes
 
-- _Documentation_: Added comprehensive Javadoc comments across services, models, and DTOs.
-- _Code Style_: Enforced 110-character line wrapping for improved readability.
-- _Null Safety_: Introduced null checks in service layer `find` methods and domain class `init` methods.
-- _Constants_: Renamed `CompetitorConstants` to `MatchLogConstants` and added `IpscConstants`.
-- _Utility Cleanup_: Removed `DateUtil` class and inlined its functionality; enhanced `NumberUtil`,
-  `ValueUtil`, and `StringUtil`.
+### 📐 Legacy Versioning (v1.x - v4.x)
 
-#### Configuration Changes
+Earlier releases used a non-semantic versioning scheme. For historical documentation,
+see [ARCHIVE.md](./documentation/archive/ARCHIVE.md).
 
-- _Application Config_: Added case-insensitivity for JSON property names.
+---
 
-#### Documentation
+## 🚀 Upgrade Guide
 
-- _Documentation Updates_: Updated CHANGELOG.md, RELEASE_NOTES.md, and documentation templates.
+### ⬆️ From v4.1.0 to v5.0.0
 
-#### Dependencies
+**Breaking Changes:** None
 
-- _Dependency Updates_: Updated `pom.xml` with required dependencies for enhanced XML/JSON processing.
+1. Update the version in `pom.xml` to `5.0.0`
+2. Run `./mvnw clean install` to rebuild the project
+3. Restart the application
+4. Existing data and configurations remain compatible
 
-#### Migration Notes
+### ⬆️ From v4.0.0 to v4.1.0
 
-- `Club` entity replaced with `ClubReference` enum - update any code referencing club entities.
-- `IpscService` renamed to `WinMssService` - update service references.
-- Legacy response models (`MatchLogResponse`, `MatchResultResponse`) removed in favour of modular DTOs.
-- `DateUtil` removed - date handling now inline or in existing utilities.
+**Breaking Changes:** None
 
-#### Changes by
+Migration: See v4.1.0 release notes
 
-@tahoni
+### ⬆️ From v3.x to v4.x
+
+**Breaking Changes:** Yes
+
+- Update entity references from `Match` to `IpscMatch`
+- Update service injections to use `IpscMatchRepository`
+- See v4.0.0 release notes for detailed migration guide
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+1. Create a feature branch from `main`
+2. Make your changes with comprehensive test coverage
+3. Document your changes in the appropriate sections of this CHANGELOG
+4. Submit a pull request with detailed description
+
+---
+
+## 💬 Support
+
+For issues, feature requests, or questions:
+
+- **GitHub Issues:**
+  [tahoni/hpsc-web-springboot/issues](https://github.com/tahoni/hpsc-web-springboot/issues)
+- **Repository:** [tahoni/hpsc-web-springboot](https://github.com/tahoni/hpsc-web-springboot)
+
+---
+
+**Last Updated:** 2026-02-24
+
