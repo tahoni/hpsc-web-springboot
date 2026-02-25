@@ -45,20 +45,25 @@ public class IpscServiceImpl implements IpscService {
     }
 
     @Override
-    public Optional<IpscMatchRecordHolder> importWinMssCabFile(String cabFileContent)
+    public List<IpscMatchRecordHolder> importWinMssCabFile(String cabFileContent)
             throws ValidationException, FatalException {
 
         MatchResultsDtoHolder matchResultsDtoHolder = importWinMssCabFileContent(cabFileContent);
         if ((matchResultsDtoHolder == null) || (matchResultsDtoHolder.getMatches() == null)) {
-            return Optional.empty();
+            return new ArrayList<>();
         }
 
+        List<IpscMatchRecordHolder> holderList = new ArrayList<>();
         List<IpscMatch> ipscMatchList = matchResultsDtoHolder.getMatches().stream()
                 .filter(Objects::nonNull)
                 .map(MatchResultsDto::getIpscMatch)
                 .toList();
-        IpscMatchRecordHolder holder = ipscMatchService.generateIpscMatchRecordHolder(ipscMatchList);
-        return Optional.ofNullable(holder);
+        ipscMatchList.stream().filter(Objects::nonNull)
+                .forEach(ipscMatch -> {
+                    holderList.add(ipscMatchService.generateIpscMatchRecordHolder(List.of(ipscMatch)));
+                });
+
+        return holderList;
     }
 
     /**

@@ -19,6 +19,8 @@ import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.services.IpscService;
 
+import java.util.List;
+
 /**
  * Controller responsible for handling IPSC-related API endpoints.
  *
@@ -64,13 +66,13 @@ public class IpscController {
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     @Operation(summary = "Import WinMSS.cab file", description = "Import and persist WinMSS.cab content.")
-    ResponseEntity<IpscMatchRecordHolder> importWinMssCabData(
+    ResponseEntity<List<IpscMatchRecordHolder>> importWinMssCabData(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = IpscRequestHolder.class)
                     ))
             @RequestBody String cabFileContent)
             throws ValidationException, FatalException {
-        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent).orElse(null));
+        return ResponseEntity.ok(ipscService.importWinMssCabFile(cabFileContent));
     }
 }

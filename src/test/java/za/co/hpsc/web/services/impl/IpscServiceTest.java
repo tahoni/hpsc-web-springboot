@@ -1,6 +1,5 @@
 package za.co.hpsc.web.services.impl;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -225,13 +224,13 @@ public class IpscServiceTest {
                 .thenReturn(Optional.empty());
 
         // Act
-        Optional<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
+        List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
         // Assert
-        assertNotNull(recordHolder);
-        assertTrue(recordHolder.isEmpty());
+        assertNotNull(recordHolders);
+        assertTrue(recordHolders.isEmpty());
         assertDoesNotThrow(() -> {
             verify(ipscMatchResultService, times(1)).initMatchResults(ipscResponse);
             // TransactionService should not be called when initMatchResults returns empty
@@ -240,7 +239,6 @@ public class IpscServiceTest {
     }
 
     // Test Group: Multiple Records Processing
-    @Disabled("Currently the code does not handle multiple match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process all match results and skip empty ones without throwing exceptions")
     @Test
     public void importWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() {
         // Arrange

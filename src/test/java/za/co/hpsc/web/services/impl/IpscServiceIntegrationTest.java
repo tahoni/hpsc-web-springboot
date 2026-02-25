@@ -1,6 +1,5 @@
 package za.co.hpsc.web.services.impl;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -106,7 +105,6 @@ public class IpscServiceIntegrationTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    @Disabled("Currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty sections, need to update the code to handle empty XML sections and return empty lists instead of throwing exceptions")
     @Test
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange

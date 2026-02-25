@@ -58,7 +58,7 @@ public class IpscMatchStage {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {})
     private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 
     /**

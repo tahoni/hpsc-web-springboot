@@ -58,7 +58,7 @@ public class Competitor {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<MatchCompetitor> competitorMatches = new ArrayList<>();
 
     /**

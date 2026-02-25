@@ -43,7 +43,7 @@ public class Club {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {})
     private List<IpscMatch> matches = new ArrayList<>();
 
     public Club(String name, String abbreviation) {
