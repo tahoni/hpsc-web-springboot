@@ -48,7 +48,7 @@ Comprehensive project overview describing:
 - **API documentation references**
 - **Testing guidelines**
 - **Architecture overview**
-- **License and author information**
+- **Licence and author information**
 
 #### ARCHITECTURE.md
 
@@ -90,7 +90,7 @@ Detailed architectural documentation describing:
 
 ### 📚 Reference Materials
 
-- Created reference guides for project structure
+- Created reference guides for the project structure
 - Documented design patterns used throughout the system
 - Clear quality attribute documentation
 
@@ -134,7 +134,7 @@ Detailed architectural documentation describing:
 
 ### 📋 Migration Notes
 
-**No migration required** - This is a documentation-only release.
+**No migration required** – This is a documentation-only release.
 
 ---
 

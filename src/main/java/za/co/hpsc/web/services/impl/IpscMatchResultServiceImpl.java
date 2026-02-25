@@ -73,13 +73,19 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     }
 
     /**
-     * Initialises a club based on the given club information.
+     * Initialises a {@link ClubDto} object based on the provided club response.
      *
-     * @param clubResponse the {@link ClubResponse} object containing club information.
-     * @return an {@code Optional} containing the initialized {@link ClubDto},
-     * or an empty {@code Optional} if the club response is null.
+     * <p>
+     * If a matching club entity with the same name and abbreviation is found in the database,`
+     * it is used to populate the DTO; otherwise, a new DTO is created and initialised
+     * using the club response.
+     * </p>
+     *
+     * @param clubResponse the response containing club information, which may be used to initialise the DTO.
+     *                     If null, the method will return an empty optional.
+     * @return an {@code Optional} containing the initialized {@link ClubDto}, or {@code Optional.empty}
+     * if the provided clubResponse is null.
      */
-    // TODO: Javadoc
     protected Optional<ClubDto> initClub(ClubResponse clubResponse) {
         if (clubResponse == null) {
             return Optional.empty();
@@ -99,16 +105,18 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     }
 
     /**
-     * Initialises or updates a match based on the provided IPSC response and club information.
-     * If the match already exists in the database and no newer scores are present, the method
-     * skips the update and returns an empty {@code Optional}. Otherwise, it creates or updates
-     * the match data based on the IPSC response.
+     * Initialises a {@link MatchDto} object based on the provided IPSC response data
+     * and club information.
      *
-     * @param ipscResponse the {@link IpscResponse} object containing match and score information.
-     *                     Must not be null.
-     * @param clubDto      the club details associated with the match.
-     * @return an {@code Optional} containing the initialised or updated {@link MatchDto},
-     * or an empty {@code Optional} if the match exists but no newer scores are present.
+     * <p>The method checks if the match exists in the database, determines whether the response contains
+     * newer scores, and skips updates if applicable. If the match is valid, it creates or updates the
+     * match DTO and initialises its attributes.
+     * </p>
+     *
+     * @param ipscResponse The response object containing match details and scores from the IPSC system.
+     * @param clubDto      The club data transfer object containing information about the club associated with the match.
+     * @return An {@code Optional} containing the initialised {@link MatchDto} if the match is valid
+     * and meets the update criteria, or {@code Optional.empty()} if no match is initialised.
      */
     protected Optional<MatchDto> initMatch(IpscResponse ipscResponse, ClubDto clubDto) {
         if ((ipscResponse == null) || (ipscResponse.getMatch() == null)) {
@@ -150,10 +158,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
      * and stage response data. If no stage responses are provided, an empty list is returned.
      *
      * @param matchDto       the match details.
-     *                       Must not be null.
      * @param stageResponses a list of stage response objects.
-     *                       Can be null.
-     * @return a list of initialized {@link MatchStageDto} objects based on the input parameters.
+     * @return a list of initialised {@link MatchStageDto} objects based on the input parameters.
      */
     protected List<MatchStageDto> initStages(MatchDto matchDto, List<StageResponse> stageResponses) {
         if ((matchDto == null) || (stageResponses == null)) {
@@ -182,9 +188,12 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
     /**
      * Initialises the scores and competitors information for a given match results DTO
-     * based on the data from the IPSC response. It processes score and member responses,
-     * matches them to existing competitors or creates new ones, and updates the match results DTO
-     * with the complete competitor and scoring information.
+     * based on the data from the IPSC response.
+     *
+     * <p>
+     * It processes score and member responses, matches them to existing competitors or creates new
+     * ones, and updates the match results DTO with the complete competitor and scoring information.
+     * </p>
      *
      * @param matchResultsDto the data transfer object for match results to be initialised with
      *                        scores and competitors.

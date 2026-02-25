@@ -8,7 +8,6 @@ import za.co.hpsc.web.services.MatchStageEntityService;
 
 import java.util.Optional;
 
-// TODO: add tests
 @Slf4j
 @Service
 public class MatchStageEntityServiceImpl implements MatchStageEntityService {

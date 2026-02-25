@@ -6,13 +6,13 @@
 
 ## 🎯 Theme
 
-API Clarity & Javadoc Standardization
+API Clarity & Javadoc Standardisation
 
 ---
 
 ## 📖 Overview
 
-Improves code maintainability and API clarity through standardized Javadoc documentation across key
+Improves code maintainability and API clarity through standardised Javadoc documentation across key
 components.
 
 ---
@@ -35,14 +35,14 @@ components.
 ### 🛡️ Exception Documentation
 
 - **`FatalException` and `NonFatalException`:**
-    - Standardized Javadoc comments to match Java's core exception patterns
+    - Standardised Javadoc comments to match Java's core exception patterns
     - Clear exception purpose and usage documentation
     - Removed unnecessary imports
 
 ### 🧰 Model Layer Documentation
 
 - **Javadoc annotations:** Improved annotations and validation constraints across models
-- **Nullability descriptions:** Standardized descriptions to improve IDE assistance
+- **Nullability descriptions:** Standardised descriptions to improve IDE assistance
 - **API documentation:** Enhanced clarity for OpenAPI documentation generation
 - **Field documentation:** Clear descriptions of all model fields
 
@@ -66,7 +66,7 @@ components.
 
 ## 📚 Documentation
 
-- **Consistent style:** Standardized Javadoc format across all classes
+- **Consistent style:** Standardised Javadoc format across all classes
 - **Complete coverage:** All public methods documented
 - **Clear examples:** Where applicable, usage examples provided
 
@@ -86,7 +86,7 @@ components.
 
 ### 📋 Migration Notes
 
-**Fully backward-compatible:** No migration steps required from v1.1.0.
+**Fully backward-compatible:** No migration steps are required from v1.1.0.
 
 ---
 

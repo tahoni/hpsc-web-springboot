@@ -145,4 +145,45 @@ public class StringUtilTest {
         // Assert
         assertEquals("Hello, ${missingKey}.", result);
     }
+
+    @Test
+    void testToString_withValidObject_thenReturnsObjectStringRepresentation() {
+        // Arrange
+        Object obj = 123; // Example object to test
+
+        // Act
+        String result = StringUtil.toString(obj);
+
+        // Assert
+        assertEquals("123", result);
+    }
+
+    @Test
+    void testToString_withNullObject_thenReturnsNull() {
+        // Arrange
+        Object obj = null;
+
+        // Act
+        String result = StringUtil.toString(obj);
+
+        // Assert
+        assertEquals(null, result);
+    }
+
+    @Test
+    void testToString_withCustomObject_thenReturnsCustomStringRepresentation() {
+        // Arrange
+        Object obj = new Object() {
+            @Override
+            public String toString() {
+                return "CustomToString";
+            }
+        };
+
+        // Act
+        String result = StringUtil.toString(obj);
+
+        // Assert
+        assertEquals("CustomToString", result);
+    }
 }

@@ -59,9 +59,8 @@ public class MatchDto {
      * @param matchEntity the {@link IpscMatch} entity containing match-related information, such as
      *                    the unique identifier, associated club, name, scheduled date, match
      *                    firearm type, match category, creation timestamp, and update timestamp.
-     *                    Must not be null.
      */
-    public MatchDto(@NotNull IpscMatch matchEntity) {
+    public MatchDto(IpscMatch matchEntity) {
         if (matchEntity == null) {
             return;
         }
@@ -90,31 +89,37 @@ public class MatchDto {
      *
      * @param matchEntity the {@link IpscMatch} entity containing match-related information such as
      *                    the unique identifier, name, scheduled date, division, category,
-     *                    creation timestamp, and update timestamp. Must not be null.
+     *                    creation timestamp, and update timestamp.
      * @param clubDto     the {@link ClubDto} instance representing the club associated with the match.
-     *                    Can be null.
      */
-    public MatchDto(@NotNull IpscMatch matchEntity, ClubDto clubDto) {
-        // Initialises match details
-        this.id = matchEntity.getId();
+    public MatchDto(IpscMatch matchEntity, ClubDto clubDto) {
+        if (matchEntity != null) {
+            // Initialises match details
+            this.id = matchEntity.getId();
 
-        // Initialises club details from the DTO or associated entity
+            // Initialises club details from the DTO or associated entity
+            if (clubDto != null) {
+                this.club = clubDto;
+            } else if (matchEntity.getClub() != null) {
+                this.club = new ClubDto(matchEntity.getClub());
+            }
+
+            // Initialises the match attributes
+            this.name = matchEntity.getName();
+            this.scheduledDate = matchEntity.getScheduledDate();
+            this.matchFirearmType = matchEntity.getMatchFirearmType();
+            this.matchCategory = matchEntity.getMatchCategory();
+
+            // Initialises the date fields
+            this.dateEdited = matchEntity.getDateEdited();
+        }
+
         if (clubDto != null) {
             this.clubIndex = clubDto.getIndex();
             this.club = clubDto;
-        } else if (matchEntity.getClub() != null) {
-            this.club = new ClubDto(matchEntity.getClub());
         }
-
-        // Initialises the match attributes
-        this.name = matchEntity.getName();
-        this.scheduledDate = matchEntity.getScheduledDate();
-        this.matchFirearmType = matchEntity.getMatchFirearmType();
-        this.matchCategory = matchEntity.getMatchCategory();
-
-        // Initialises the date fields
-        this.dateEdited = matchEntity.getDateEdited();
     }
+
 
     /**
      * Initialises the current {@code MatchDto} object using the provided
@@ -129,12 +134,9 @@ public class MatchDto {
      *
      * @param matchResponse  the {@link MatchResponse} object containing information about the match,
      *                       such as its name, date, and firearm type.
-     *                       Must not be null.
      * @param clubDto        the {@link ClubDto} object representing the club associated with the match.
-     *                       Can be null if no club association is required.
      * @param scoreResponses a list of {@link ScoreResponse} objects containing information about scores
      *                       and their last modification times.
-     *                       Can be null if no score data is available.
      */
     public void init(MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
         if (matchResponse != null) {
@@ -143,10 +145,11 @@ public class MatchDto {
 
             // Initialises club details from the DTO or associated entity
             if (clubDto != null) {
-                this.clubIndex = clubDto.getIndex();
                 this.club = clubDto;
+                this.clubIndex = clubDto.getIndex();
+            } else {
+                this.clubIndex = matchResponse.getClubId();
             }
-            this.clubIndex = matchResponse.getClubId();
 
             // Initialises the match attributes
             this.name = matchResponse.getMatchName();
@@ -188,13 +191,16 @@ public class MatchDto {
      */
     @Override
     public String toString() {
-        String clubString = ((this.club != null) ? this.club.toString() : null);
+        String clubString = ((this.club != null) ? this.club.toString().trim() : null);
+        String nameString = ((this.name != null) ? this.name.trim() : null);
 
         // Returns name, optionally with club if available
+        String result = "";
         if ((clubString != null) && (!clubString.isBlank())) {
-            return name + " @ " + clubString;
-        } else {
-            return name;
+            result = nameString + " @ " + clubString;
+        } else if (nameString != null) {
+            result = nameString;
         }
+        return result.trim();
     }
 }

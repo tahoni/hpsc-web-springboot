@@ -1,4 +1,4 @@
-# 🧾 Release Notes - Version 4.0.0
+# 🧾 Release Notes – Version 4.0.0
 
 **Status:** ✨ Stable
 
@@ -85,7 +85,7 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ### 🎯 Test Scenarios
 
-- ✅ Entity mapping and initialization
+- ✅ Entity mapping and initialisation
 - ✅ Repository operations
 - ✅ Service business logic
 - ✅ Controller endpoints
@@ -142,7 +142,7 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 
 ## ⚡ Performance & Stability
 
-- Entity fetching optimized with strategic queries
+- Entity fetching optimised with strategic queries
 - Improved transaction handling and error recovery
 - Enhanced memory management in data processing
 - Consistent error responses and logging

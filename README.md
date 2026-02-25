@@ -143,7 +143,7 @@ The application includes comprehensive test coverage with unit and integration t
 Test coverage includes:
 
 - Domain entities and JPA relationships
-- DTO initialization and mapping logic
+- DTO initialisation and mapping logic
 - Enum validations and lookups
 - Service layer business logic
 - Repository operations

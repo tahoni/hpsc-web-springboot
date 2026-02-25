@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-// TODO: add tests
 @Slf4j
 @Service
 public class CompetitorEntityServiceImpl implements CompetitorEntityService {

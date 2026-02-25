@@ -45,8 +45,12 @@ public final class StringUtil {
         return result;
     }
 
-    // TODO: Javadoc
-    // TODO: add tests
+    /**
+     * Converts an object to its string representation.
+     *
+     * @param object the object to be converted to a string.
+     * @return the string representation of the object, or null if the input object is null.
+     */
     public static String toString(Object object) {
         if (object == null) {
             return null;

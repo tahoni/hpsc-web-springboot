@@ -1,4 +1,4 @@
-# 🧾 Release Notes - Version 4.1.0
+# 🧾 Release Notes – Version 4.1.0
 
 **Status:** ✨ Stable
 
@@ -30,7 +30,7 @@ refactored IPSC domain introduced in version 4.0.0.
 ### 🧪 Testing Improvements
 
 - **Unit Tests:** Added comprehensive unit tests for CRUD endpoints
-- **Integration Tests:** Extended integration tests for service behavior validation
+- **Integration Tests:** Extended integration tests for service behaviour validation
 - **Error Cases:** Test coverage for validation failures and edge cases
 
 ---
@@ -45,9 +45,9 @@ refactored IPSC domain introduced in version 4.0.0.
 
 ## 🔧 Technical Enhancements
 
-- CRUD endpoints and service operations added for IPSC entities
+- CRUD endpoints and service operations were added for IPSC entities
 - Improved request validation on create/update DTOs
-- Transactional handling added for create/update/delete operations to ensure data integrity
+- Transactional handling was added for create/update/delete operations to ensure data integrity
 - Reused existing domain initialisation logic (`init()` methods) for entity creation
 - Enhanced DTO validation and null-safety for CRUD flows
 - Added unit and integration tests covering CRUD endpoints and service behaviour
@@ -64,7 +64,7 @@ refactored IPSC domain introduced in version 4.0.0.
 
 ## 🔗 API Changes
 
-- Request/response DTOs updated to include necessary fields for create/update flows
+- Request/response DTOs updated to include all necessary fields for create/update flows
 
 ---
 

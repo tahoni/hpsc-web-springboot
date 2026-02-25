@@ -1,4 +1,4 @@
-# 🧾 Release Notes - Version 2.0.0
+# 🧾 Release Notes – Version 2.0.0
 
 **Status:** ✨ Stable
 
@@ -44,7 +44,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 ### 🔀 Request/Response Refactoring
 
 - **Unified Models:** Consolidated XML and JSON request models by removing `-ForXml` variants
-- **Modular Responses:** Replaced monolithic response objects with specialized responses
+- **Modular Responses:** Replaced monolithic response objects with specialised responses
 - **Enhanced Mapping:** Added constructors for request-to-response mappings
 - **XmlDataWrapper:** Introduced for generic XML parsing
 
@@ -53,7 +53,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 ## 🗑️ Removed Components
 
 - **Legacy `IpscService`** - Replaced with `WinMssService`
-- **Legacy response models** - Replaced with DTO-based approach
+- **Legacy response models** – Replaced with a DTO-based approach
 - **`Club` entity** - Replaced with `ClubReference` enum
 - **`DateUtil` class** - Functionality inlined into utilities
 
@@ -144,7 +144,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 3. **Club entity:** Remove any club entity references, use `ClubReference` enum instead
 4. **Date handling:** Update any `DateUtil` usages to inline date handling
 
-**No database schema changes required** - domain entities and relationships remain compatible.
+**No database schema changes are required** – domain entities and relationships remain compatible.
 
 ---
 
@@ -158,7 +158,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 ### 🎯 Test Scenarios
 
 - ✅ Transaction handling
-- ✅ Entity initialization and persistence tests
+- ✅ Entity initialisation and persistence tests
 
 ---
 
