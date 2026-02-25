@@ -149,6 +149,30 @@ The `ClubDto` class and related DTOs have been enhanced with:
 
 ---
 
+### 🧪 Enhanced Test Coverage (Post-Release)
+
+**Test Refactoring & Enhancements**
+
+- **IpscMatchServiceTest:** Renamed from `IpscMatchEntityServiceImplTest` for clarity and enhanced test coverage
+  for match results processing
+- **FirearmTypeToDivisions:** Comprehensive test cases added with improved naming conventions
+- **Test class documentation:** Improved comments across test classes for better maintainability and clarity
+
+**Integration Testing**
+
+- **WinMSS CAB Import:** Added comprehensive integration tests for `importWinMssCabFile` method
+    - Validation scenario coverage
+    - Processing scenario testing
+    - End-to-end pipeline verification
+
+**Service Layer Improvements**
+
+- **IpscMatchResultServiceImpl:** Enhanced with comprehensive null handling and robust processing for match
+  results
+- Improved edge case handling throughout match result processing pipeline
+
+---
+
 ## 📌 Deprecations
 
 No deprecated features in this release. The following TODOs are marked for future enhancement:
@@ -217,9 +241,13 @@ This release includes comprehensive test coverage:
 #### 🎯 Service Layer Tests
 
 - **DomainServiceImplTest:** 20+ test methods covering entity initialization patterns
-- **IpscMatchServiceImplTest:** 15+ test methods for match mapping and response building
-- **IpscMatchResultServiceImplTest:** 10+ test methods for IPSC data transformation
-- **Integration tests:** Full request-to-response pipeline validation
+- **IpscMatchServiceTest** (renamed from IpscMatchEntityServiceImplTest): 15+ test methods for match mapping and
+  response building with enhanced coverage for match results processing
+- **IpscMatchResultServiceImplTest:** 10+ test methods for IPSC data transformation with comprehensive null
+  handling
+- **Integration tests:** Full request-to-response pipeline validation including WinMSS CAB file import scenarios
+  with comprehensive validation and processing tests
+- **FirearmTypeToDivisionsTest:** Enhanced with comprehensive test cases and improved naming conventions
 
 #### 📦 DTO Unit Tests (New in 5.0.0)
 
