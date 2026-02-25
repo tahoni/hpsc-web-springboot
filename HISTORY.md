@@ -505,10 +505,53 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Testing & Quality**
 
-- Extensive unit and integration tests
+- Extensive unit and integration tests for service layer
 - Mock-based testing with Mockito
 - Complex entity initialization testing
 - Multi-scenario edge case coverage
+
+**Comprehensive DTO Unit Testing (Post-Release Enhancement)**
+
+- **MatchStageDtoTest:** 48 tests covering constructors, init() methods, and toString() implementations
+    - Single and dual-parameter constructor tests (11 tests)
+    - init() method tests with null handling, partial/full population (19 tests)
+    - toString() method tests with edge cases, club information, stage numbers (18 tests)
+    - Edge cases: null fields, empty/blank strings, zero/negative/large stage numbers
+
+- **ScoreDtoTest:** 26 tests covering all constructor patterns
+    - No-argument constructor tests (3 tests)
+    - ScoreResponse constructor tests with null/empty/blank handling (16 tests)
+    - All-arguments constructor tests (3 tests)
+    - Constructor equivalence tests (2 tests)
+    - Edge cases: zero values, negative values, max values, empty/blank strings, partial population
+
+- **MatchStageCompetitorDtoTest:** 77 tests providing comprehensive coverage
+    - No-argument constructor tests (3 tests)
+    - MatchStageCompetitor entity constructor tests with edge cases (10 tests)
+    - CompetitorDto + MatchStageDto constructor tests (6 tests)
+    - All-arguments constructor tests with 28 parameters (3 tests)
+    - init() method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
+    - toString() method tests with comprehensive scenarios (29 tests)
+    - Edge cases: null entities, partial/full population, zero/negative/max values, enum mapping (PowerFactor,
+      Division, FirearmType, CompetitorCategory), stage percentage calculation, special characters, unicode
+      support, long strings
+
+**Test Quality Metrics**
+
+- Clear naming: All tests follow `testMethod_whenCondition_thenExpectedBehavior` pattern
+- AAA structure: Arrange-Act-Assert pattern with clear comments throughout
+- Comprehensive assertions: Multiple assertions per test validating all aspects
+- Edge case coverage: Extensive null, empty, blank, and boundary value testing
+- Organized sections: Tests grouped by functionality with clear section headers
+- Field-by-field validation: Every field tested in isolation and combination scenarios
+- Total DTO tests added: 151+ (48 + 26 + 77)
+
+**Consolidated Test Structure**
+
+- **ClubDtoTest:** Reorganized with section headers for constructors, init(), toString()
+- **CompetitorDtoTest:** Consolidated structure with logical grouping
+- **MatchDtoTest:** Structured tests with clear subsections
+- All existing tests updated to follow consistent patterns
 
 **Architecture Highlights:**
 
@@ -777,6 +820,14 @@ Repository Layer
 - **v3.0.0:** Domain model tests (279+ lines)
 - **v4.0.0:** Integration tests (985+ lines)
 - **v5.0.0:** Advanced entity initialization tests
+- **v5.0.0+:** Comprehensive DTO unit tests (151+ tests)
+    - MatchStageDtoTest (48 tests): Constructors, init(), toString()
+    - ScoreDtoTest (26 tests): All constructor patterns, edge cases
+    - MatchStageCompetitorDtoTest (77 tests): Complete lifecycle coverage
+    - Consolidated test structure across all DTO classes
+    - Edge case testing: null/empty/blank fields, boundary values, enum mapping
+    - Special character and unicode support validation
+    - Format consistency and mutability testing
 
 ### 📚 Documentation Quality
 
@@ -851,6 +902,15 @@ Repository Layer
 2. **Validation Layers:** Multi-layered validation (v4.0.0) ensures data integrity across tiers
 3. **Transaction Management:** Abstraction layer (v2.0.0) enables consistent data consistency patterns
 4. **Test Coverage:** Growing investment from basic tests to comprehensive integration testing
+5. **DTO Testing Excellence:** Post-v5.0.0 comprehensive DTO unit testing (151+ tests) establishes quality
+   standards
+    - Systematic testing of all constructor patterns
+    - Complete init() method coverage with parameter combinations
+    - toString() validation across all scenarios
+    - Edge case mastery: null, empty, blank, boundary values
+    - Enum mapping validation across all enums (PowerFactor, Division, FirearmType, CompetitorCategory)
+    - Special character and unicode support verification
+    - Consistent test organization with AAA pattern and clear naming conventions
 
 ---
 
@@ -861,9 +921,10 @@ Based on the evolution to v5.0.0, the following areas are identified for future 
 ### 🔄 Short-term (Minor Releases)
 
 - Complete JavaDoc documentation across all methods
-- Extended test scenarios for edge cases
+- Extended test scenarios for service layer edge cases
 - Performance optimization for large-scale match processing
 - Enhanced diagnostic logging
+- ✅ **Completed (151+ tests added)**
 
 ### 📦 Medium-term (v5.1+)
 
@@ -871,6 +932,7 @@ Based on the evolution to v5.0.0, the following areas are identified for future 
 - Bulk match processing capabilities
 - Enhanced error reporting and recovery
 - Performance metrics and monitoring
+- Repository layer comprehensive testing
 
 ### 🎯 Long-term (v6.0+)
 
@@ -898,7 +960,8 @@ stable, predictable releases that serve as a foundation for the shooting club's 
 ---
 
 **Document Created:** February 24, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.0.0 (February 24, 2026)  
+**Last Updated:** February 25, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.0.0+ (February 24, 2026)  
 **Reference:** See [CHANGELOG.md](./CHANGELOG.md) and [ARCHIVE.md](./documentation/archive/ARCHIVE.md) for
 detailed technical information
 

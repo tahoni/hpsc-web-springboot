@@ -32,7 +32,50 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### ➕ Added
 
+#### 🧪 Comprehensive DTO Unit Tests
+
+- **`MatchStageDtoTest`** - Complete test suite with 48 tests covering:
+    - Constructor tests for single and two-parameter constructors (11 tests)
+    - init() method tests with null handling, partial/full population (19 tests)
+    - toString() method tests with edge cases, club information, stage numbers (18 tests)
+    - Edge cases: null fields, empty/blank strings, zero/negative/large stage numbers
+
+- **`ScoreDtoTest`** - Comprehensive test suite with 26 tests covering:
+    - No-argument constructor tests (3 tests)
+    - ScoreResponse constructor tests with null/empty/blank handling (16 tests)
+    - All-arguments constructor tests (3 tests)
+    - Constructor equivalence tests (2 tests)
+    - Edge cases: zero values, negative values, max values, empty/blank strings, partial population
+
+- **`MatchStageCompetitorDtoTest`** - Extensive test suite with 77 tests covering:
+    - No-argument constructor tests (3 tests)
+    - MatchStageCompetitor entity constructor tests with edge cases (10 tests)
+    - CompetitorDto + MatchStageDto constructor tests (6 tests)
+    - All-arguments constructor tests with 28 parameters (3 tests)
+    - init() method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
+    - toString() method tests with comprehensive scenarios (29 tests)
+    - Edge cases: null entities, partial/full population, zero/negative/max values, enum mapping, stage
+      percentage calculation, PowerFactor mapping, CompetitorCategory mapping, special characters, unicode
+      support, long strings
+
+#### ✅ Test Quality Improvements
+
+- **Consolidated test organization:** All DTO tests organized with clear section headers and subsections
+- **AAA pattern:** Consistent Arrange-Act-Assert structure with comments throughout all tests
+- **Naming convention:** All tests follow `testMethod_whenCondition_thenExpectedBehavior` pattern
+- **Edge case coverage:** Extensive testing of null, empty, blank fields and boundary values
+- **Field-by-field validation:** Every field tested in isolation and combination scenarios
+- **Enum mapping tests:** Complete coverage of PowerFactor, Division, FirearmType, CompetitorCategory
+  conversions
+- **Calculation tests:** Stage percentage, stagePoints, and derived field calculations validated
+- **Format consistency tests:** toString() methods tested for deterministic output and mutability reflection
+- **Special character handling:** Tests for apostrophes, hyphens, unicode characters in names
+
 ### 🔄 Changed
+
+- **Test organization:** Restructured DTO test classes with logical grouping and clear section headers
+- **Test naming:** Standardized all test names to follow descriptive `whenCondition_thenExpectedBehavior`
+  pattern
 
 ### 🐛 Fixed
 
@@ -130,6 +173,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   matches, stages, and competitors
 - **Error Handling:** Enhanced validation and error messages for data transformation failures
 - **Null Safety:** Comprehensive null checks throughout data processing pipelines
+
+#### 🧪 Test Infrastructure (Post-Release Enhancement)
+
+- **Test Organization:** Restructured DTO test classes with clear section headers and logical grouping
+- **Naming Standards:** Standardized test naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
+- **Test Coverage Expansion:** Added 151+ new unit tests for DTO classes (MatchStageDtoTest: 48, ScoreDtoTest:
+  26, MatchStageCompetitorDtoTest: 77)
+- **AAA Pattern:** Consistent Arrange-Act-Assert structure implemented across all new tests
+- **Edge Case Coverage:** Extensive null/empty/blank field testing, boundary value testing
+- **Documentation:** Comprehensive test documentation and inline comments
 
 ### 🐛 Fixed
 

@@ -49,10 +49,17 @@ while maintaining full backward compatibility with the IPSC domain refactoring f
 
 ### ✅ Testing & Quality Assurance
 
-- **Comprehensive test coverage:** Extensive unit and integration tests for all major service components
+- **Comprehensive test coverage:** Extensive unit and integration tests for all major service components and
+  DTOs
+- **DTO unit testing:** Complete test suites for `ScoreDto`, `MatchStageCompetitorDto`, and related DTOs
+  covering constructors, init() methods, and toString() implementations
+- **Edge case testing:** Extensive null/empty/blank field handling, partial and full field population
+  scenarios
 - **Mock-based testing:** Utilization of Mockito for isolated service testing
 - **Entity initialization testing:** Dedicated tests for complex entity initialization flows
 - **Validation testing:** Multi-scenario testing for edge cases and error conditions
+- **Test organization:** Well-structured tests with clear AAA (Arrange-Act-Assert) patterns and descriptive
+  naming
 
 ---
 
@@ -207,19 +214,88 @@ These items are tracked for upcoming minor releases and do not impact functional
 
 This release includes comprehensive test coverage:
 
+#### 🎯 Service Layer Tests
+
 - **DomainServiceImplTest:** 20+ test methods covering entity initialization patterns
 - **IpscMatchServiceImplTest:** 15+ test methods for match mapping and response building
 - **IpscMatchResultServiceImplTest:** 10+ test methods for IPSC data transformation
 - **Integration tests:** Full request-to-response pipeline validation
 
+#### 📦 DTO Unit Tests (New in 5.0.0)
+
+**MatchStageDtoTest** - 48 tests
+
+- Constructor tests with single and multiple parameters (11 tests)
+- init() method tests covering all parameter combinations (19 tests)
+- toString() method tests with edge cases (18 tests)
+- Coverage: Null handling, empty/blank fields, partial/full population, stage numbers, club information
+
+**ScoreDtoTest** - 26 tests
+
+- No-arg constructor tests (3 tests)
+- ScoreResponse constructor tests with null/empty/blank handling (16 tests)
+- All-args constructor tests (3 tests)
+- Constructor equivalence tests (2 tests)
+- Coverage: Zero values, negative values, max values, special formatting, partial population
+
+**MatchStageCompetitorDtoTest** - 77 tests
+
+- No-arg constructor tests (3 tests)
+- Entity-based constructor tests with edge cases (10 tests)
+- CompetitorDto + MatchStageDto constructor tests (6 tests)
+- All-args constructor tests (3 tests)
+- init() method tests covering ScoreResponse, EnrolledResponse, and MatchStageDto (24 tests)
+- toString() method tests with comprehensive scenarios (29 tests)
+- Coverage: Null entities, partial/full population, zero/negative/max values, enum mapping, stage percentage
+  calculation, special characters, unicode support
+
+**CompetitorDtoTest** (Consolidated)
+
+- Constructor tests with edge cases
+- init() method tests
+- toString() method tests
+- Coverage: Null/empty/blank fields, competitor categories, SAPSA numbers
+
+**ClubDtoTest** (Consolidated)
+
+- Constructor tests with multiple parameter sets
+- init() method tests
+- toString() method tests
+- Coverage: Name/abbreviation combinations, null handling, string formatting
+
+**MatchDtoTest** (Consolidated)
+
+- Constructor tests
+- init() method tests
+- toString() method tests
+- Coverage: Club associations, null fields, partial population
+
 ### 🎯 Test Scenarios
 
 - ✅ Entity creation and initialization
+- ✅ DTO constructor parameter handling (null, partial, complete)
+- ✅ init() method parameter combinations
+- ✅ toString() output formatting and edge cases
 - ✅ Repository integration and fallback handling
 - ✅ Null and empty data handling
+- ✅ Blank string handling (whitespace-only)
 - ✅ Complex entity relationship establishment
 - ✅ Score aggregation and calculation
+- ✅ Stage percentage calculations
+- ✅ Enum mapping (PowerFactor, Division, FirearmType, CompetitorCategory)
+- ✅ Special character handling (apostrophes, hyphens, unicode)
+- ✅ Boundary value testing (zero, negative, max values)
 - ✅ Error condition handling
+- ✅ Format consistency and mutability checks
+
+### 📊 Test Quality Metrics
+
+- **Clear naming:** All tests follow `testMethod_whenCondition_thenExpectedBehavior` pattern
+- **AAA structure:** Arrange-Act-Assert pattern with clear comments
+- **Comprehensive assertions:** Multiple assertions per test validating all aspects
+- **Edge case coverage:** Extensive null, empty, blank, and boundary value testing
+- **Organized sections:** Tests grouped by functionality with clear section headers
+- **Consolidated structure:** Related tests grouped together with blank line separation
 
 ---
 
