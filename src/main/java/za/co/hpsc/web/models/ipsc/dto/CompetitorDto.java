@@ -138,10 +138,16 @@ public class CompetitorDto {
      */
     @Override
     public String toString() {
-        if ((this.middleNames != null) && (!this.middleNames.isBlank())) {
-            return this.firstName + " " + this.middleNames + " " + this.lastName;
+        String firstNameString = ((this.firstName != null) ? this.firstName.trim() : "");
+        String lastNameString = ((this.lastName != null) ? this.lastName.trim() : "");
+        String middleNamesString = ((this.middleNames != null) ? this.middleNames.trim() : "");
+
+        String result = "";
+        if (!middleNamesString.isBlank()) {
+            result = firstNameString + " " + middleNamesString + " " + lastNameString;
         } else {
-            return this.firstName + " " + this.lastName;
+            result = firstNameString + " " + lastNameString;
         }
+        return result.trim();
     }
 }

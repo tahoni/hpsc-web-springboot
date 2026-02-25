@@ -159,6 +159,8 @@ public class MatchStageDto {
      */
     @Override
     public String toString() {
-        return ((this.stageNumber != null) ? this.stageNumber : "0") + " for " + this.match.toString();
+        String matchString = (this.match != null) ? this.match.toString() : "";
+        String result = ((this.stageNumber != null) ? this.stageNumber : "0") + " for " + matchString;
+        return result.trim();
     }
 }

@@ -117,7 +117,7 @@ public class ClubDto {
 
         // Appends the club name if it is not null and not blank
         if ((this.name != null && (!this.name.isBlank()))) {
-            sb.append(this.name);
+            sb.append(this.name.trim());
             sb.append(" ");
         }
 
@@ -126,7 +126,7 @@ public class ClubDto {
         if ((this.abbreviation != null) && (!this.abbreviation.isBlank()) &&
                 (!this.abbreviation.equalsIgnoreCase(this.name))) {
             sb.append("(");
-            sb.append(this.abbreviation);
+            sb.append(this.abbreviation.trim());
             sb.append(")");
         }
 
@@ -137,6 +137,6 @@ public class ClubDto {
             result = result.substring(1, result.length() - 1).trim();
         }
 
-        return result;
+        return result.trim();
     }
 }
