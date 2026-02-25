@@ -40,7 +40,6 @@ public class MatchResultsDto {
      * @param match the {@link MatchDto} object representing the shooting match.
      *              It contains details such as the match's name, scheduled date,
      *              firearm type, associated club, and other metadata.
-     *              Must not be null.
      */
     public MatchResultsDto(MatchDto match) {
         this.match = match;

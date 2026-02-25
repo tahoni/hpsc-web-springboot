@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## 📑 Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
+- [🧾 Version 5.1.0](#-510---2026-02-25)
 - [🧾 Version 5.0.0](#-500---2026-02-24)
 - [🧾 Version 4.1.0](#-410---2026-02-13)
 - [🧾 Version 4.0.0](#-400---2026-02-11)
@@ -44,26 +45,131 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ---
 
+## 🧾 [5.1.0] - 2026-02-25
+
+### ➕ Added
+
+#### 🧪 Test Suite Enhancements
+
+- **Test organisation improvements** in `IpscMatchResultServiceImplTest`
+    - Section-based test grouping for improved navigation and understanding
+    - Six distinct test sections: Null Input Handling, Null Collections and Fields, Match Name Field Handling,
+      Club Fields Handling, Partial and Complete Data Scenarios, Edge Cases
+    - Clear separation of concerns between test categories
+
+#### ✅ Test Quality Improvements
+
+- **Comprehensive test coverage metrics** with detailed test categorisation
+- **23 unit tests** covering all critical scenarios for IPSC match result service
+- **Section-based documentation** for enhanced test maintainability
+
+### 🔄 Changed
+
+#### 🧪 Test Infrastructure
+
+- **Test organisation:** Restructured `IpscMatchResultServiceImplTest` with logical section-based grouping
+    - Null Input Handling section (2 tests)
+    - Null Collections and Fields section (5 tests)
+    - Match Name Field Handling section (3 tests)
+    - Club Fields Handling section (2 tests)
+    - Partial and Complete Data Scenarios section (6 tests)
+    - Edge Cases section (4 tests)
+    - Database Interaction section (1 skipped test)
+- **Test naming:** Standardised naming conventions for consistency (
+  `testMethod_whenCondition_thenExpectedBehavior`)
+- **Code style:** Improved spacing and formatting for better readability
+- **Documentation:** Enhanced test section comments with clear headers and visual separators
+
+### 🐛 Fixed
+
+#### 🧪 Test Quality
+
+- **Duplicate test elimination:** Removed duplicate
+  `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` test method
+- **Code clean-up:** Removed TODO comment about adding sections (now complete)
+- **Test file consolidation:** Ensured no redundant test coverage
+
+### ⚠️ Deprecated
+
+### 🗑️ Removed
+
+- **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact
+  duplicate at the end of the file
+
+### 🔐 Security
+
+---
+
 ## 🧾 [5.0.0] - 2026-02-24
 
 ### ➕ Added
 
-#### 🏗️ Domain Entity Initialization Framework
+#### 🏗️ Domain Entity Initialisation Framework
 
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialize club entities from DTO objects with automatic
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic
   database lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialize club entities from enumeration values
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
   for predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialization with
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
   repository lookup, optional entity creation, and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialization
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
   with UUID generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialize match stages
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
   with proper relationship linking to parent match entities
 - **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** -
   Establish many-to-many relationships between matches and competitors
 - **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex
-  initialization of stage-specific competitor records with score and performance data
+  initialisation of stage-specific competitor records with score and performance data
+
+#### 📊 IPSC Match Record Generation
+
+- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
+  comprehensive match records for external representation
+- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete
+  IPSC match response records with embedded competitor data
+- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`
+  ** - Create detailed competitor match records with stage-wise performance data
+- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process
+  match-level competitor records from database entities
+- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate
+  stage-specific competitor records with individual stage scores
+
+#### 🔧 Service Layer
+
+- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match
+  results
+    - Improved edge case handling
+    - Better robustness in match result transformation
+    - Additional null-safety checks
+
+### ⚠️ Deprecated
+
+### 🗑️ Removed
+
+### 🔐 Security
+
+---
+
+## 🧾 [5.0.0] - 2026-02-24
+
+### ➕ Added
+
+#### 🏗️ Domain Entity Initialisation Framework
+
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic
+  database lookup and fallback to new entity creation
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
+  for predefined club references
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
+  repository lookup, optional entity creation, and club association
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
+  with UUID generation and optional database persistence
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
+  with proper relationship linking to parent match entities
+- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** -
+  Establish many-to-many relationships between matches and competitors
+- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex
+  initialisation of stage-specific competitor records with score and performance data
 
 #### 📊 IPSC Match Record Generation
 
@@ -103,9 +209,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubDto(Club)`** - Constructor for creating DTOs from club entities
 - **`ClubDto(ClubResponse)`** - Constructor for creating DTOs from IPSC response objects
 - **`ClubDto(ClubIdentifier)`** - Constructor for creating DTOs from enumerated club identifiers
-- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialization from club identifier if
-  entity is null
-  support
+- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialisation from club identifier if
+  entity is null support
 
 ### 🔄 Changed
 
@@ -113,12 +218,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **Adopted Semantic Versioning (SemVer):** Project now follows [SemVer 2.0.0](https://semver.org/)
   specification
-- **Version Format:** Changed from legacy scheme (v1.x to v4.x) to `MAJOR.MINOR.PATCH` format
+- **Version Format:** Changed from the legacy scheme (v1.x to v4.x) to `MAJOR.MINOR.PATCH` format
 - **Release Documentation:** Structured release notes following industry-standard conventions
 
-#### 🔄 Entity Initialization Strategy
+#### 🔄 Entity Initialisation Strategy
 
-- **Repository Integration:** Entity initialization methods now query the database to check for existing
+- **Repository Integration:** Entity initialisation methods now query the database to check for existing
   entities before creating new ones
 - **Fallback Handling:** Robust fallback mechanisms when entities are not found in the database
 - **Transactional Consistency:** All entity creation and update operations maintain transactional integrity
@@ -126,24 +231,34 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔀 Data Processing Pipelines
 
-- **Multi-Step Processing:** IPSC responses now go through coordinated initialization steps for clubs,
+- **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs,
   matches, stages, and competitors
 - **Error Handling:** Enhanced validation and error messages for data transformation failures
 - **Null Safety:** Comprehensive null checks throughout data processing pipelines
+
+#### 🧪 Test Infrastructure (Post-Release Enhancement)
+
+- **Test Organisation:** Restructured DTO test classes with clear section headers and logical grouping
+- **Naming Standards:** Standardised test naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
+- **Test Coverage Expansion:** Added 151+ new unit tests for DTO classes (MatchStageDtoTest: 48, ScoreDtoTest:
+  26, MatchStageCompetitorDtoTest: 77)
+- **AAA Pattern:** Consistent Arrange-Act-Assert structure implemented across all new tests
+- **Edge Case Coverage:** Extensive null/empty/blank field-testing, boundary value testing
+- **Documentation:** Comprehensive test documentation and inline comments
 
 ### 🐛 Fixed
 
 #### 🔗 Entity Relationship Management
 
-- Fixed edge cases in entity initialization when creating stages with missing `maxPoints` values
+- Fixed edge cases in entity initialisation when creating stages with missing `maxPoints` values
 - Resolved mapping issues between DTOs and domain entities during update operations
-- Corrected null-safety handling in recursive entity relationship establishment
+- Corrected null-safety handling in the recursive establishment of entity relationships
 
 #### 🔄 Data Transformation
 
 - Improved handling of optional entity relationships during transformation
 - Fixed club name resolution from both entity objects and enumeration values
-- Enhanced date field handling in match entity initialization
+- Enhanced date field handling in match entity initialisation
 
 ### ⚠️ Deprecated
 
@@ -155,15 +270,15 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 ### 🔐 Security
 
-- No security vulnerabilities addressed in this release
-- All existing security measures from version 4.1.0 maintained
+- No security vulnerabilities were addressed in this release
+- All existing security measures from version 4.1.0 are maintained
 
 ### 📚 Documentation
 
 - **New:** Comprehensive RELEASE_NOTES.md with semantic versioning transition details
 - **New:** Detailed CHANGELOG.md (this file) following Keep a Changelog format
-- **Updated:** Architecture documentation updated to reflect entity initialization patterns
-- **Reference:** Legacy release notes archived in ARCHIVE.md with deprecation notice
+- **Updated:** Architecture documentation updated to reflect entity initialisation patterns
+- **Reference:** Legacy release notes archived in ARCHIVE.md with a deprecation notice
 
 ---
 
@@ -187,7 +302,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 #### 🧪 Testing Improvements
 
 - **Unit Tests:** Added comprehensive unit tests for CRUD endpoints
-- **Integration Tests:** Extended integration tests for service behavior
+- **Integration Tests:** Extended integration tests for service behaviour
 - Test coverage for validation failures and edge cases
 
 ### 🔄 Changed
@@ -198,7 +313,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 ### 🐛 Fixed
 
-- Edge cases in entity initialization when creating stages with missing `maxPoints`
+- Edge cases in entity initialisation when creating stages with missing `maxPoints`
 - Mapping issues between DTOs and domain entities during updates
 
 ---
@@ -220,7 +335,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 #### ⚠️ Exception Handling Improvements
 
-- **Global Exception Handler:** Centralized exception handling for consistent error responses
+- **Global Exception Handler:** Centralised exception handling for consistent error responses
 - **Custom Exceptions:** Domain-specific exception types for clearer error semantics
 
 #### 🧪 Comprehensive Testing
@@ -354,7 +469,7 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 ### 📐 Legacy Versioning (v1.x - v4.x)
 
 Earlier releases used a non-semantic versioning scheme. For historical documentation,
-see [ARCHIVE.md](./documentation/archive/ARCHIVE.md).
+see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 
 ---
 
@@ -381,7 +496,7 @@ Migration: See v4.1.0 release notes
 
 - Update entity references from `Match` to `IpscMatch`
 - Update service injections to use `IpscMatchRepository`
-- See v4.0.0 release notes for detailed migration guide
+- See v4.0.0 release notes for a detailed migration guide
 
 ---
 

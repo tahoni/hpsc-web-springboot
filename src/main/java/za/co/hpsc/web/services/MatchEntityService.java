@@ -15,7 +15,6 @@ public interface MatchEntityService {
      * Searches for an {@link IpscMatch} entity by its unique identifier.
      *
      * @param id the unique identifier of the match to be searched for.
-     *           Must not be null.
      * @return an {@code Optional} containing the {@link IpscMatch} if found,
      * or an empty {@code Optional} if no match with the given ID exists.
      */

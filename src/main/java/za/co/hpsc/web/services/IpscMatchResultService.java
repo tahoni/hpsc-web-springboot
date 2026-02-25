@@ -24,8 +24,7 @@ public interface IpscMatchResultService {
      *
      * @param ipscResponse the {@link IpscResponse} object containing data related to the match,
      *                     such as club information, match details, stages, scores, and participants.
-     *                     Must not be null.
-     * @return an {@link Optional} containing the initialized {@link MatchResultsDto} if successful,
+     * @return an {@link Optional} containing the initialised {@link MatchResultsDto} if successful,
      * or an empty {@link Optional} if the initialisation cannot be performed.
      */
     Optional<MatchResultsDto> initMatchResults(IpscResponse ipscResponse);

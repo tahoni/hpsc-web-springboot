@@ -30,7 +30,14 @@ public final class ValueUtil {
         return (value != null ? value : "");
     }
 
-    // TODO: Javadoc
+    /**
+     * Converts the provided object to its string representation if it is not null;
+     * otherwise, returns an empty string.
+     *
+     * @param value the object to be converted to a string; may be null.
+     * @return the string representation of the object if it is not null,
+     * or an empty string if the object is null.
+     */
     public static String nullAsEmptyString(Object value) {
         return (value != null ? value.toString() : "");
     }

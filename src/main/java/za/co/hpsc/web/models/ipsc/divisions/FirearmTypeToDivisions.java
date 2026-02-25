@@ -26,7 +26,6 @@ public final class FirearmTypeToDivisions {
      *
      * @param firearmType the {@link FirearmType} for which the corresponding {@link DivisionsForFirearmType}
      *                    is to be returned.
-     *                    Must not be null.
      * @return the {@link DivisionsForFirearmType} associated with the provided {@link FirearmType}.
      * @throws ValidationException if the {@code firearmType} is null or if no mapping exists
      *                             for the provided {@code FirearmType}.
@@ -56,7 +55,7 @@ public final class FirearmTypeToDivisions {
      * </p>
      *
      * @param division the {@link Division} for which the corresponding {@link FirearmType}
-     *                 is to be determined. Must not be null.
+     *                 is to be determined.
      * @return the {@link FirearmType} associated with the given {@link Division}.
      * @throws ValidationException if the {@code division} is null or if no mapping exists
      *                             for the provided {@link Division}.

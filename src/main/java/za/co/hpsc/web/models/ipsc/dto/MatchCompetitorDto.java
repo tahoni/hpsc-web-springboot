@@ -62,23 +62,24 @@ public class MatchCompetitorDto {
      * @param matchCompetitorEntity the {@link MatchCompetitor} entity containing information
      *                              about a competitor's participation in a specific match,
      *                              such as the competitor, match, and associated identifier.
-     *                              Must not be null.
      */
-    public MatchCompetitorDto(@NotNull MatchCompetitor matchCompetitorEntity) {
-        // Initialises the match competitor details
-        this.id = matchCompetitorEntity.getId();
-        this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
-        this.match = new MatchDto(matchCompetitorEntity.getMatch());
+    public MatchCompetitorDto(MatchCompetitor matchCompetitorEntity) {
+        if (matchCompetitorEntity != null) {
+            // Initialises the match competitor details
+            this.id = matchCompetitorEntity.getId();
+            this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
+            this.match = new MatchDto(matchCompetitorEntity.getMatch());
 
-        // Initialises the competitor attributes
-        this.competitorCategory = matchCompetitorEntity.getCompetitorCategory();
-        this.firearmType = matchCompetitorEntity.getFirearmType();
-        this.division = matchCompetitorEntity.getDivision();
-        this.powerFactor = matchCompetitorEntity.getPowerFactor();
+            // Initialises the competitor attributes
+            this.competitorCategory = matchCompetitorEntity.getCompetitorCategory();
+            this.firearmType = matchCompetitorEntity.getFirearmType();
+            this.division = matchCompetitorEntity.getDivision();
+            this.powerFactor = matchCompetitorEntity.getPowerFactor();
 
-        // Initialises the competitor scoring details
-        this.matchPoints = matchCompetitorEntity.getMatchPoints();
-        this.matchRanking = matchCompetitorEntity.getMatchRanking();
+            // Initialises the competitor scoring details
+            this.matchPoints = matchCompetitorEntity.getMatchPoints();
+            this.matchRanking = matchCompetitorEntity.getMatchRanking();
+        }
     }
 
     /**
@@ -86,10 +87,8 @@ public class MatchCompetitorDto {
      * {@link CompetitorDto} and {@link MatchDto} objects.
      *
      * @param competitorDto the {@link CompetitorDto} representing the competitor in the match.
-     *                      Must not be null.
      * @param matchDto      the {@link MatchDto} representing the match in which the
      *                      competitor participates.
-     *                      Must not be null.
      */
     public MatchCompetitorDto(CompetitorDto competitorDto, MatchDto matchDto) {
         if (competitorDto != null) {
@@ -107,10 +106,8 @@ public class MatchCompetitorDto {
      *
      * @param scoreResponses   a list of {@link ScoreResponse} objects containing performance metrics
      *                         and detailed scoring information.
-     *                         Must not be null.
      * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
      *                         competitor information in the match.
-     *                         Can be null.
      */
     public void init(List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
         if (scoreResponses != null) {

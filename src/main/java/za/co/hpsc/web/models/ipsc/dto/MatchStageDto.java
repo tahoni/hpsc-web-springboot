@@ -53,7 +53,6 @@ public class MatchStageDto {
      *
      * @param matchStageEntity the {@link IpscMatchStage} entity containing stage-related information,
      *                         such as the unique identifier, associated match, and stage number.
-     *                         Must not be null.
      */
     public MatchStageDto(@NotNull IpscMatchStage matchStageEntity) {
         if (matchStageEntity == null) {
@@ -86,9 +85,7 @@ public class MatchStageDto {
      *
      * @param matchStageEntity the {@link IpscMatchStage} entity containing stage-related information,
      *                         such as the unique identifier, stage number, and stage name.
-     *                         Must not be null.
      * @param matchDto         the {@link  MatchDto} object representing the associated match.
-     *                         Must not be null.
      */
     public MatchStageDto(IpscMatchStage matchStageEntity, MatchDto matchDto) {
         if (matchStageEntity != null) {
@@ -119,10 +116,8 @@ public class MatchStageDto {
      * {@link MatchDto} and {@link StageResponse} objects.
      *
      * @param matchDto      the {@link MatchDto} object representing match-related information.
-     *                      Must not be null.
      * @param stageResponse the {@link StageResponse} object containing stage-related information,
      *                      such as stage number, targets, and possible points.
-     *                      Must not be null.
      */
     public void init(MatchDto matchDto, StageResponse stageResponse) {
         if ((matchDto != null) && (stageResponse != null)) {
@@ -159,6 +154,8 @@ public class MatchStageDto {
      */
     @Override
     public String toString() {
-        return ((this.stageNumber != null) ? this.stageNumber : "0") + " for " + this.match.toString();
+        String matchString = (this.match != null) ? this.match.toString() : "";
+        String result = ((this.stageNumber != null) ? this.stageNumber : "0") + " for " + matchString;
+        return result.trim();
     }
 }
