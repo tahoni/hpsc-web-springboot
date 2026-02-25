@@ -23,6 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class IpscServiceTest {
+
     @Mock
     private TransactionService transactionService;
 
@@ -238,7 +239,7 @@ public class IpscServiceTest {
     }
 
     // Test Group: Multiple Records Processing
-    @Disabled("Currently the code does not handle multiple match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process all match results and skip empty ones without throwing an exception")
+    @Disabled("Currently the code does not handle multiple match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process all match results and skip empty ones without throwing exceptions")
     @Test
     public void importWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() {
         // Arrange
