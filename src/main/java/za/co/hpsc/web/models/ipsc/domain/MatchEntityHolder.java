@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,8 +26,8 @@ import java.util.List;
 public class MatchEntityHolder {
     IpscMatch match;
     Club club;
-    List<IpscMatchStage> matchStages;
-    List<Competitor> competitors;
-    List<MatchCompetitor> matchCompetitors;
-    List<MatchStageCompetitor> matchStageCompetitors;
+    List<IpscMatchStage> matchStages = new ArrayList<>();
+    List<Competitor> competitors = new ArrayList<>();
+    List<MatchCompetitor> matchCompetitors = new ArrayList<>();
+    List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 }
