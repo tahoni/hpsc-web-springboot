@@ -47,7 +47,7 @@ public class DomainServiceImpl implements DomainService {
      */
     @Override
     public Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults) {
-        if (matchResults.getMatch() == null) {
+        if ((matchResults == null) || (matchResults.getMatch() == null)) {
             return Optional.empty();
         }
 
