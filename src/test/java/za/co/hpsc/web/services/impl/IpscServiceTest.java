@@ -41,7 +41,7 @@ public class IpscServiceTest {
 
     // Test Group: Null/Empty/Blank Input Handling
     @Test
-    public void importWinMssCabFile_whenCabFileIsNull_thenThrowsValidationException() {
+    public void testImportWinMssCabFile_whenCabFileIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(null)
@@ -56,7 +56,7 @@ public class IpscServiceTest {
     }
 
     @Test
-    public void importWinMssCabFile_whenCabFileIsEmpty_thenThrowsValidationException() {
+    public void testImportWinMssCabFile_whenCabFileIsEmpty_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("")
@@ -71,7 +71,7 @@ public class IpscServiceTest {
     }
 
     @Test
-    public void importWinMssCabFile_whenCabFileIsBlank_thenThrowsValidationException() {
+    public void testImportWinMssCabFile_whenCabFileIsBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("   \t\n  ")
@@ -87,7 +87,7 @@ public class IpscServiceTest {
 
     // Test Group: Invalid JSON Format Handling
     @Test
-    public void importWinMssCabFile_whenJsonIsInvalid_thenThrowsFatalException() {
+    public void testImportWinMssCabFile_whenJsonIsInvalid_thenThrowsFatalException() {
         // Arrange
         String invalidJson = "This is not valid JSON at all";
 
@@ -105,7 +105,7 @@ public class IpscServiceTest {
     }
 
     @Test
-    public void importWinMssCabFile_whenJsonHasMissingBraces_thenThrowsFatalException() {
+    public void testImportWinMssCabFile_whenJsonHasMissingBraces_thenThrowsFatalException() {
         // Arrange
         String malformedJson = """
                 {
@@ -122,7 +122,7 @@ public class IpscServiceTest {
 
     // Test Group: Valid Complete Data Processing
     @Test
-    public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
+    public void testImportWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -162,7 +162,7 @@ public class IpscServiceTest {
 
     // Test Group: Partial Data Processing
     @Test
-    public void importWinMssCabFile_withPartialMatchData_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_withPartialMatchData_thenProcessesSuccessfully() {
         // Arrange - Only match required fields, other sections mostly empty
         String cabFileContent = """
                 {
@@ -198,7 +198,7 @@ public class IpscServiceTest {
 
     // Test Group: Empty XML Sections Handling
     @Test
-    public void importWinMssCabFile_withEmptyXmlSections_thenProcessesWithEmptyData() {
+    public void testImportWinMssCabFile_withEmptyXmlSections_thenProcessesWithEmptyData() {
         // Arrange
         String cabFileContent = """
                 {
@@ -240,7 +240,7 @@ public class IpscServiceTest {
 
     // Test Group: Multiple Records Processing
     @Test
-    public void importWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() {
+    public void testImportWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() {
         // Arrange
         String cabFileContent = """
                 {
@@ -284,7 +284,7 @@ public class IpscServiceTest {
 
     // Test Group: Error Handling During Processing
     @Test
-    public void importWinMssCabFile_whenMapMatchResultsReturnsNull_thenThrowsValidationException() {
+    public void testImportWinMssCabFile_whenMapMatchResultsReturnsNull_thenThrowsValidationException() {
         // Arrange
         String cabFileContent = """
                 {
@@ -314,7 +314,7 @@ public class IpscServiceTest {
 
     // Test Group: Mixed Match Results (Some Present, Some Empty)
     @Test
-    public void importWinMssCabFile_withMixedMatchResults_thenProcessesPresentResultsOnly() {
+    public void testImportWinMssCabFile_withMixedMatchResults_thenProcessesPresentResultsOnly() {
         // Arrange
         String cabFileContent = """
                 {
@@ -358,7 +358,7 @@ public class IpscServiceTest {
 
     // Test Group: Empty Strings vs Null Values in XML
     @Test
-    public void importWinMssCabFile_withEmptyStringXmlFields_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_withEmptyStringXmlFields_thenProcessesSuccessfully() {
         // Arrange
         String cabFileContent = """
                 {
@@ -394,7 +394,7 @@ public class IpscServiceTest {
 
     // Test Group: Special Characters and Unicode Handling
     @Test
-    public void importWinMssCabFile_withSpecialCharactersInData_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_withSpecialCharactersInData_thenProcessesSuccessfully() {
         // Arrange
         String cabFileContent = """
                 {

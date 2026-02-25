@@ -431,6 +431,163 @@ public class IpscMatchResultServiceImplTest {
         assertFalse(result.get().getMatchStageCompetitors().isEmpty());
     }
 
+    // =====================================================================
+    // Tests for initScores - Consolidated edge cases + partial/full
+    // =====================================================================
+
+    @Test
+    public void testInitScores_whenResponseIsNull_thenNoChangesApplied_fromConsolidated() {
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+
+        assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, null));
+
+        assertNotNull(matchResults.getScores());
+        assertTrue(matchResults.getScores().isEmpty());
+        assertNotNull(matchResults.getCompetitors());
+        assertTrue(matchResults.getCompetitors().isEmpty());
+    }
+
+    @Test
+    public void testInitScores_whenScoresNull_thenNoChangesApplied_fromConsolidated() {
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setScores(null);
+        ipscResponse.setMembers(new ArrayList<>());
+
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+
+        assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
+
+        assertNotNull(matchResults.getScores());
+        assertTrue(matchResults.getScores().isEmpty());
+        assertNotNull(matchResults.getCompetitors());
+        assertTrue(matchResults.getCompetitors().isEmpty());
+    }
+
+    @Test
+    public void testInitScores_whenMembersNull_thenNoChangesApplied_fromConsolidated() {
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMembers(null);
+        ipscResponse.setScores(new ArrayList<>());
+
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+
+        assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
+
+        assertNotNull(matchResults.getScores());
+        assertTrue(matchResults.getScores().isEmpty());
+        assertNotNull(matchResults.getCompetitors());
+        assertTrue(matchResults.getCompetitors().isEmpty());
+    }
+
+    @Test
+    public void testInitScores_withEmptyScoresAndMembers_thenKeepsEmptyCollections_fromConsolidated() {
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setScores(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        matchResults.setStages(new ArrayList<>());
+
+        assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
+
+        assertNotNull(matchResults.getScores());
+        assertTrue(matchResults.getScores().isEmpty());
+        assertNotNull(matchResults.getCompetitors());
+        assertTrue(matchResults.getCompetitors().isEmpty());
+        assertNotNull(matchResults.getMatchCompetitors());
+        assertTrue(matchResults.getMatchCompetitors().isEmpty());
+        assertNotNull(matchResults.getMatchStageCompetitors());
+        assertTrue(matchResults.getMatchStageCompetitors().isEmpty());
+    }
+
+    @Test
+    public void testInitScores_withPartialFields_thenFiltersByMatchAndFinalScore_fromConsolidated() {
+        when(competitorEntityService.findCompetitor(any(), any(), any(), any())).thenReturn(Optional.empty());
+        when(matchCompetitorEntityService.findMatchCompetitor(any(), any())).thenReturn(Optional.empty());
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(any(), any())).thenReturn(Optional.empty());
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setScores(List.of(
+                buildScoreResponse(100, 10, 1, null),
+                buildScoreResponse(100, 10, 2, 0),
+                buildScoreResponse(100, 10, 3, 150),
+                buildScoreResponse(999, 10, 4, 200)
+        ));
+        ipscResponse.setMembers(List.of(
+                buildMemberResponse(1, null, null),
+                buildMemberResponse(2, "", ""),
+                buildMemberResponse(3, "Jane", "Doe"),
+                buildMemberResponse(4, "Skip", "Me")
+        ));
+        ipscResponse.setEnrolledMembers(List.of(
+                buildEnrolledResponse(1, 100),
+                buildEnrolledResponse(2, 100),
+                buildEnrolledResponse(3, 100),
+                buildEnrolledResponse(4, 999)
+        ));
+
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 10, 10, 10L)));
+
+        ipscMatchResultService.initScores(matchResults, ipscResponse);
+
+        assertEquals(3, matchResults.getScores().size());
+        assertEquals(1, matchResults.getCompetitors().size());
+        assertEquals(1, matchResults.getMatchCompetitors().size());
+        assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
+    }
+
+    @Test
+    public void testInitScores_withFullFields_thenBuildsCompetitorsAndStageScores_fromConsolidated() {
+        when(competitorEntityService.findCompetitor(any(), any(), any(), any())).thenReturn(Optional.empty());
+        when(matchCompetitorEntityService.findMatchCompetitor(any(), any())).thenReturn(Optional.empty());
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(any(), any())).thenReturn(Optional.empty());
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setScores(List.of(
+                buildScoreResponse(100, 11, 7, 120)
+        ));
+        ipscResponse.setMembers(List.of(
+                buildMemberResponse(7, "Alice", "Jones")
+        ));
+        ipscResponse.setEnrolledMembers(List.of(
+                buildEnrolledResponse(7, 100)
+        ));
+
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 11, 11, 11L)));
+
+        ipscMatchResultService.initScores(matchResults, ipscResponse);
+
+        assertEquals(1, matchResults.getScores().size());
+        assertEquals(1, matchResults.getCompetitors().size());
+        assertEquals(1, matchResults.getMatchCompetitors().size());
+        assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
+    }
+
+    @Test
+    public void testInitMatchResults_withScoresAndMembers_thenInitializesScoresViaInitScores_fromConsolidated() {
+        when(matchEntityService.findMatchByName("Match 100")).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
+        when(competitorEntityService.findCompetitor(any(), any(), any(), any())).thenReturn(Optional.empty());
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(any(), any())).thenReturn(Optional.empty());
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(buildMatchResponse(100, "Match 100"));
+        ipscResponse.setStages(List.of(buildStageResponse(100, 21, "Stage 21")));
+        ipscResponse.setScores(List.of(buildScoreResponse(100, 21, 9, 95)));
+        ipscResponse.setMembers(List.of(buildMemberResponse(9, "Bob", "Smith")));
+        ipscResponse.setEnrolledMembers(List.of(buildEnrolledResponse(9, 100)));
+
+        Optional<MatchResultsDto> result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        assertTrue(result.isPresent());
+        assertEquals(1, result.get().getScores().size());
+        assertEquals(1, result.get().getCompetitors().size());
+        assertEquals(1, result.get().getMatchCompetitors().size());
+        assertFalse(result.get().getMatchStageCompetitors().isEmpty());
+    }
+
     @Test
     public void testInitScores_withNullScoreFields_thenHandlesGracefully() {
         when(competitorEntityService.findCompetitor(any(), any(), any(), any())).thenReturn(Optional.empty());

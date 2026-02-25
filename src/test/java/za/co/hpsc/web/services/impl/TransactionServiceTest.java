@@ -50,7 +50,7 @@ public class TransactionServiceTest {
     // =====================================================================
 
     @Test
-    public void saveMatchResults_whenMatchResultsIsNull_thenReturnsEmpty() {
+    public void testSaveMatchResults_whenMatchResultsIsNull_thenReturnsEmpty() {
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(null)
         );
@@ -61,7 +61,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_whenMatchIsNull_thenReturnsEmpty() {
+    public void testSaveMatchResults_whenMatchIsNull_thenReturnsEmpty() {
         MatchResultsDto matchResults = new MatchResultsDto();
         matchResults.setMatch(null);
 
@@ -75,7 +75,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_whenMatchHasOnlyRequiredFields_thenSavesMatch() {
+    public void testSaveMatchResults_whenMatchHasOnlyRequiredFields_thenSavesMatch() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
@@ -103,7 +103,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_whenMatchHasClub_thenSavesBothClubAndMatch() {
+    public void testSaveMatchResults_whenMatchHasClub_thenSavesBothClubAndMatch() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
@@ -138,7 +138,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_withFullMatchResults_thenSavesAllEntities() {
+    public void testSaveMatchResults_withFullMatchResults_thenSavesAllEntities() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, 1L);
@@ -181,7 +181,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_whenDomainServiceReturnsEmpty_thenReturnsEmpty() {
+    public void testSaveMatchResults_whenDomainServiceReturnsEmpty_thenReturnsEmpty() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
@@ -202,7 +202,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_whenDomainServiceReturnsHolderWithNullMatch_thenReturnsEmpty() {
+    public void testSaveMatchResults_whenDomainServiceReturnsHolderWithNullMatch_thenReturnsEmpty() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
@@ -224,7 +224,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_whenExceptionOccurs_thenRollsBackAndThrowsFatalException() {
+    public void testSaveMatchResults_whenExceptionOccurs_thenRollsBackAndThrowsFatalException() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
@@ -245,7 +245,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_whenMatchNameIsBlank_thenStillProcesses() {
+    public void testSaveMatchResults_whenMatchNameIsBlank_thenStillProcesses() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
@@ -270,7 +270,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_withEmptyCollections_thenSavesMatch() {
+    public void testSaveMatchResults_withEmptyCollections_thenSavesMatch() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
@@ -303,7 +303,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void saveMatchResults_withNullCollections_thenSavesMatch() {
+    public void testSaveMatchResults_withNullCollections_thenSavesMatch() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         MatchDto matchDto = buildMatchDto(100, null);
