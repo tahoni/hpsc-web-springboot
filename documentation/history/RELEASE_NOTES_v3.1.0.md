@@ -1,4 +1,4 @@
-# 🧾 Release Notes - Version 3.1.0
+# 🧾 Release Notes – Version 3.1.0
 
 **Release Date:** February 10, 2026  
 **Status:** ✨ Stable
@@ -40,7 +40,7 @@ fixing critical bugs in XML parsing while maintaining backward compatibility.
 
 ### 🐛 Bug Fixes
 
-- **Fixed XML parsing:** Resolved critical bug where XML parsing errors resulted in null return values
+- **Fixed XML parsing:** Resolved a critical bug where XML parsing errors resulted in null return values
 - **Enhanced exception context:** Added proper exception re-throwing to preserve context and error details
 - **Improved consistency:** Aligned XML parsing error handling with JSON parsing patterns
 
@@ -59,7 +59,7 @@ fixing critical bugs in XML parsing while maintaining backward compatibility.
 
 ### 📋 Migration Notes
 
-**Fully backward-compatible:** No migration steps required from v3.0.0.
+**Fully backward-compatible:** No migration steps are required from v3.0.0.
 
 - **API contracts unchanged:** All endpoint signatures and response formats remain consistent
 - **Exception responses unchanged:** Error response structure and HTTP status codes remain the same
@@ -83,7 +83,7 @@ fixing critical bugs in XML parsing while maintaining backward compatibility.
 
 - All existing tests remain valid
 - Exception handling tests updated for consolidated handlers
-- No new test suites required
+- No new test suites are required
 
 ### 🎯 Test Scenarios
 

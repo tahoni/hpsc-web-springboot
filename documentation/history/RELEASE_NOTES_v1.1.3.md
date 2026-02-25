@@ -13,7 +13,8 @@ Documentation Enhancement & Mapper Centralization
 
 ## 📖 Overview
 
-Improved maintainability and clarity through expanded Javadoc coverage and introduction of centralized mapping
+Improved maintainability and clarity through expanded Javadoc coverage and the introduction of centralised
+mapping
 patterns.
 
 ---
@@ -26,7 +27,7 @@ patterns.
   `DisciplinesInDivision` singleton
 - **Division.NONE:** Added new enum value for "no division" scenarios
 - **Improved mappings:** Centralized discipline-to-division resolution
-- **Code organization:** Better separation of concerns in mapper architecture
+- **Code organisation:** Better separation of concerns in mapper architecture
 
 ### 📚 Code Improvements
 
@@ -46,7 +47,7 @@ patterns.
 
 ### ✓ Test Coverage
 
-- **Unit tests:** Added and updated tests to validate mapper behavior
+- **Unit tests:** Added and updated tests to validate mapper behaviour
 - **Test setup:** Simplified test setup and fixed grammar issues in test code/docs
 - **Validation tests:** Added coverage for validation-oriented methods
 
@@ -54,14 +55,14 @@ patterns.
 
 - ✅ Division-to-discipline mapping
 - ✅ Division.NONE handling
-- ✅ Mapper behavior regression checks
+- ✅ Mapper behaviour regression checks
 
 ---
 
 ## 🛡️ Security & Updates
 
 - **Spring Boot upgrade:** Bumped to version 4.0.2 to address security vulnerabilities
-- **IDE cleanup:** Removed unnecessary IDE files (`.idea/data_source_mapping.xml`)
+- **IDE clean-up:** Removed unnecessary IDE files (`.idea/data_source_mapping.xml`)
 - **Git configuration:** Updated `.gitignore` to prevent similar IDE metadata
 
 ---
@@ -83,7 +84,7 @@ patterns.
 
 ### 📋 Migration Notes
 
-**Fully backward-compatible:** No migration steps required from v1.1.2.
+**Fully backward-compatible:** No migration steps are required from v1.1.2.
 
 ---
 

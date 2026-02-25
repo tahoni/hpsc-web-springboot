@@ -13,9 +13,10 @@ Foundation & Image Gallery
 
 ## 📖 Overview
 
-Introduced the initial release of the HPSC Website Backend with focus on robust image gallery functionality in
-a Spring Boot application, including CSV-based image data processing, improved error handling, and better
-maintainability.
+Introduced the initial release of the HPSC Website Backend with a focus on robust image gallery
+functionality in a Spring Boot application, including CSV-based image data processing, improved error
+handling,
+and better maintainability.
 
 ---
 
@@ -61,7 +62,7 @@ maintainability.
 
 #### 🎯 Global Exception Handler
 
-- **`ApiControllerAdvice`** - Centralized exception handling
+- **`ApiControllerAdvice`** - Centralised exception handling
 - **Error responses:** Structured error reporting with `ErrorResponse` model
 - **Consistent error format:** Uniform error response across all endpoints
 
@@ -74,7 +75,7 @@ maintainability.
 ### 📚 Documentation
 
 - **Javadoc documentation:** Comprehensive Javadoc comments across classes and methods
-- **Code organization:** Well-structured model package (`za.co.hpsc.web.models`)
+- **Code organisation:** Well-structured model package (`za.co.hpsc.web.models`)
 - **Validation:** Enhanced null checks and input validation
 
 ---
@@ -128,7 +129,7 @@ maintainability.
 
 ### 👨‍💻 Development Configuration
 
-- **`.gitignore`:** Configured to exclude IDE and build artifacts
+- **`.gitignore`:** Configured to exclude IDE and build artefacts
 - **IDE setup:** Ready for IntelliJ IDEA, Eclipse, VS Code
 - **Git ready:** Configured for version control
 
@@ -145,7 +146,7 @@ maintainability.
 ### 🖼️ Image Management
 
 - **POST /images** - Upload or process image data
-- **GET /images** - Retrieve image information
+- **GET /images** – Retrieve image information
 - **GET /images/{id}** - Get specific image details
 - **PUT /images/{id}** - Update image metadata
 - **DELETE /images/{id}** - Delete image
@@ -153,7 +154,7 @@ maintainability.
 ### ❌ Error Handling
 
 - **400 Bad Request** - Validation errors
-- **500 Internal Server Error** - Fatal errors with detailed messages
+- **500 Internal Server Error** – Fatal errors with detailed messages
 
 ---
 
@@ -236,7 +237,7 @@ This foundation is designed for easy extension:
 - **Add new features:** Follow existing service/controller patterns
 - **Add new entities:** Create entity, DTO, repository, and service
 - **Add new validations:** Use Hibernate Validator annotations
-- **Add new endpoints:** Create controller with proper exception handling
+- **Add new endpoints:** Create a controller with proper exception handling
 
 ---
 

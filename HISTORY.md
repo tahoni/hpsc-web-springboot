@@ -1,6 +1,6 @@
 # Project History
 
-A comprehensive historical overview of the HPSC Website Backend project from inception through current
+A comprehensive historical overview of the HPSC Website Backend project from inception to current
 release, documenting the evolution of architecture, features, and design philosophy across all versions.
 
 ---
@@ -39,7 +39,7 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ### Version 3.0.0 (February 10, 2026)
 
-**Theme:** Domain Model Restructuring & IPSC Specialization
+**Theme:** Domain Model Restructuring & IPSC Specialisation
 
 ### Version 2.0.0 (February 8, 2026)
 
@@ -47,7 +47,7 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ### Version 1.1.3 (January 28, 2026)
 
-**Theme:** Documentation Enhancement & Mapper Centralization
+**Theme:** Documentation Enhancement & Mapper Centralisation
 
 ### Version 1.1.2 (January 20, 2026)
 
@@ -55,7 +55,7 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ### Version 1.1.1 (January 16, 2026)
 
-**Theme:** API Clarity & Javadoc Standardization
+**Theme:** API Clarity & Javadoc Standardisation
 
 ### Version 1.1.0 (January 14, 2026)
 
@@ -76,7 +76,7 @@ and feature requirements:
 
 **Duration:** January 4, 2026 - January 4, 2026
 
-The inaugural release established the core infrastructure for the HPSC platform with focus on image gallery
+The inaugural release established the core infrastructure for the HPSC platform with a focus on image gallery
 functionality.
 
 **Key Accomplishments:**
@@ -105,25 +105,25 @@ functionality.
 
 ### 📈 Phase 2: Feature Expansion (v1.1.0 - v1.1.3)
 
-**Duration:** January 14, 2026 - January 28, 2026
+**Duration:** January 14, 2026 – January 28, 2026
 
 Rapid iteration adding award processing, improving code quality, and establishing documentation standards.
 
 **Key Accomplishments:**
 
-**v1.1.0 - Award Processing Integration**
+**v1.1.0 – Award Processing Integration**
 
 - Comprehensive award processing with CSV support
 - New service layer pattern (`HpscAwardService`)
 - Award ceremony grouping and structured responses
 - Enhanced input validation across all models
-- Base `Request` and `Response` classes for metadata standardization
+- Base `Request` and `Response` classes for metadata standardisation
 - Integration of OpenAPI (Swagger UI) for API documentation
 - Extensive unit test coverage for new features
 
-**v1.1.1 - API Clarity**
+**v1.1.1 – API Clarity**
 
-- Javadoc standardization across codebase
+- Javadoc standardisation across codebase
 - Improved parameter documentation
 - Enhanced validation annotations
 - Better IDE assistance through improved documentation
@@ -134,17 +134,17 @@ Rapid iteration adding award processing, improving code quality, and establishin
 - Creation of ARCHITECTURE.md (detailed system design)
 - Comprehensive onboarding materials
 
-**v1.1.3 - Code Quality & Documentation**
+**v1.1.3 – Code Quality & Documentation**
 
 - Central Division → DisciplinesInDivision mapper
-- Introduction of Division.NONE enum value
+- Introduction of `Division.NONE` enum value
 - Expanded Javadoc coverage
 - Improved utility class design (private constructors)
 - Spring Boot security update (4.0.2)
 
 **Architecture Highlights:**
 
-- Formalized service layer pattern
+- Formalised service layer pattern
 - Introduction of generic request/response base classes
 - Centralized error response handling
 - OpenAPI integration for automatic documentation
@@ -168,7 +168,7 @@ Major refactoring introducing service-oriented architecture and comprehensive DT
 
 **Service Layer Revolution**
 
-- Replaced monolithic `IpscService` with specialized services:
+- Replaced monolithic `IpscService` with specialised services:
     - `WinMssService` - CAB file import and XML processing
     - `MatchResultService` - Core match result transformation
     - `TransactionService` - Transaction management
@@ -193,15 +193,15 @@ Major refactoring introducing service-oriented architecture and comprehensive DT
 **Testing & Quality**
 
 - Comprehensive test coverage for new services
-- Edge case handling (null values, initialization logic)
-- Transactional behavior testing
+- Edge case handling (null values, initialisation logic)
+- Transactional behaviour testing
 
 **Architecture Highlights:**
 
 - Modular service architecture
 - DTO pattern for data transfer
 - Transaction management abstraction
-- Specialized domain services
+- Specialised domain services
 
 **Technical Focus:**
 
@@ -212,7 +212,7 @@ Major refactoring introducing service-oriented architecture and comprehensive DT
 
 ---
 
-### 🎯 Phase 4: Domain Specialization (v3.0.0)
+### 🎯 Phase 4: Domain Specialisation (v3.0.0)
 
 **Duration:** February 10, 2026
 
@@ -225,10 +225,10 @@ Comprehensive domain model restructuring for IPSC compliance and firearm-type cl
 - `Discipline` enum → `FirearmType` enum (Handgun, PCC, Rifle, Shotgun, Mini Rifle, .22 Handgun)
 - Division mapper restructure: `DivisionToDisciplinesInDivisionMapper` → `FirearmTypeToDivisions`
 - Reintroduction of `Club` entity with proper JPA relationships
-- Competitor category field standardization across all models
+- Competitor category field standardisation across all models
 - Match entity firearm type classification
 
-**IPSC Specialization**
+**IPSC Specialisation**
 
 - Firearm-type-specific division mappings
 - Enhanced `FirearmType` enum with division retrieval methods
@@ -245,7 +245,7 @@ Comprehensive domain model restructuring for IPSC compliance and firearm-type cl
 **Comprehensive Testing**
 
 - New test classes: `FirearmTypeTest`, `FirearmTypeToDivisionsTest`, `ClubDtoTest`, `ClubReferenceTest`
-- Updated test classes for new domain structure
+- Updated test classes for the new domain structure
 - Expanded test coverage for enum utilities
 
 **Documentation Enhancement**
@@ -253,7 +253,7 @@ Comprehensive domain model restructuring for IPSC compliance and firearm-type cl
 - Detailed Javadoc for all domain entities and DTOs
 - README.md feature expansion
 - ARCHITECTURE.md domain documentation
-- Entity initialization method documentation
+- Entity initialisation method documentation
 
 **Architecture Highlights:**
 
@@ -413,13 +413,13 @@ Added complete CRUD capabilities for IPSC entities and supporting improvements.
 
 - Transactional boundaries for data consistency
 - Foreign key constraint management
-- Cascade behavior specification
-- Entity initialization logic reuse
+- Cascade behaviour specification
+- Entity initialisation logic reuse
 
 **Testing Improvements**
 
 - Unit tests for CRUD operations
-- Integration tests for service behavior
+- Integration tests for service behaviour
 - Validation failure test cases
 - Edge case coverage
 
@@ -454,16 +454,16 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Semantic Versioning Adoption**
 
-- Transition from legacy non-semantic versioning (v1.x - v4.x)
+- Transition from legacy non-semantic versioning (v1.x – v4.x)
 - Full compliance with [Semantic Versioning 2.0.0](https://semver.org/)
 - Clear MAJOR.MINOR.PATCH version format
 - Future release predictability
 
-**Entity Initialization Framework**
+**Entity Initialisation Framework**
 
-- Comprehensive entity initialization methods across DomainServiceImpl
-- Club entity initialization from DTOs and enumerations
-- Match entity initialization with repository integration
+- Comprehensive entity initialisation methods across DomainServiceImpl
+- Club entity initialisation from DTOs and enumerations
+- Match entity initialisation with repository integration
 - Competitor entity batch processing
 - Stage entity relationship management
 - Complex competitor-stage association methods
@@ -484,7 +484,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **DTO Architecture Enhancements**
 
-- Multiple constructor patterns for flexible initialization
+- Multiple constructor patterns for flexible initialisation
 - Update methods from various sources
 - Strong typing and null-safety
 - Comprehensive string representations
@@ -505,9 +505,9 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Testing & Quality**
 
-- Extensive unit and integration tests for service layer
+- Extensive unit and integration tests for the service layer
 - Mock-based testing with Mockito
-- Complex entity initialization testing
+- Complex entity initialisation testing
 - Multi-scenario edge case coverage
 
 **Comprehensive DTO Unit Testing (Post-Release Enhancement)**
@@ -533,7 +533,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
     - init() method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
     - toString() method tests with comprehensive scenarios (29 tests)
     - Edge cases: null entities, partial/full population, zero/negative/max values, enum mapping (PowerFactor,
-      Division, FirearmType, CompetitorCategory), stage percentage calculation, special characters, unicode
+      Division, FirearmType, CompetitorCategory), stage percentage calculation, special characters, Unicode
       support, long strings
 
 **Test Quality Metrics**
@@ -542,7 +542,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 - AAA structure: Arrange-Act-Assert pattern with clear comments throughout
 - Comprehensive assertions: Multiple assertions per test validating all aspects
 - Edge case coverage: Extensive null, empty, blank, and boundary value testing
-- Organized sections: Tests grouped by functionality with clear section headers
+- Organised sections: Tests grouped by functionality with clear section headers
 - Field-by-field validation: Every field tested in isolation and combination scenarios
 - Total DTO tests added: 151+ (48 + 26 + 77)
 
@@ -559,7 +559,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
     - Processing scenario testing (end-to-end pipeline verification)
     - Comprehensive CAB file import testing
 - **FirearmTypeToDivisionsTest:** Enhanced with comprehensive cases and improved naming
-    - Extended coverage of firearm type to division mappings
+    - Extended coverage of firearm types to division mappings
     - Improved test readability and maintainability
 - **Test Documentation:** Improved comments in test classes for clarity and consistency
     - Better inline documentation
@@ -567,9 +567,9 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Documentation & Code Quality Improvements (Post-v5.0.0)**
 
-- **Javadoc Standardization:** Enhanced DTO and model Javadoc for consistency and clarity
+- **Javadoc Standardisation:** Enhanced DTO and model Javadoc for consistency and clarity
     - Removed redundant "Must not be null" comments where `@NotNull` annotations enforce constraints
-    - Standardized parameter descriptions across all DTOs (MatchDto, CompetitorDto, ClubDto, MatchStageDto,
+    - Standardised parameter descriptions across all DTOs (MatchDto, CompetitorDto, ClubDto, MatchStageDto,
       ScoreDto, MatchStageCompetitorDto, MatchCompetitorDto)
     - Improved method-level documentation for better understanding
     - Consistent documentation style throughout the codebase
@@ -580,10 +580,10 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Consolidated Test Structure**
 
-- **ClubDtoTest:** Reorganized with section headers for constructors, init(), toString()
+- **ClubDtoTest:** Reorganised with section headers for constructors, init(), toString()
 - **CompetitorDtoTest:** Consolidated structure with logical grouping
 - **MatchDtoTest:** Structured tests with clear subsections
-- All existing tests updated to follow consistent patterns
+- All existing tests were updated to follow consistent patterns
 
 **Architecture Highlights:**
 
@@ -595,7 +595,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 **Technical Focus:**
 
 - Versioning standards adoption
-- Entity initialization robustness
+- Entity initialisation robustness
 - Data transformation completeness
 - Infrastructure consolidation
 
@@ -637,14 +637,14 @@ testing.
 
 ---
 
-### 🎯 Milestone 4: Domain Specialization (v3.0.0)
+### 🎯 Milestone 4: Domain Specialisation (v3.0.0)
 
 - ✅ IPSC-specific domain modeling
 - ✅ Firearm-type classification
 - ✅ Club entity reintroduction
 - ✅ Comprehensive enum utilities
 
-**Achievement:** Aligned domain model with IPSC standards for specialized shooting competition management.
+**Achievement:** Aligned domain model with IPSC standards for specialised shooting competition management.
 
 ---
 
@@ -664,7 +664,7 @@ testing.
 - ✅ Entity naming clarification
 - ✅ Comprehensive test coverage
 - ✅ Enhanced validation layers
-- ✅ IPSC entity specialization
+- ✅ IPSC entity specialisation
 
 **Achievement:** Clarified domain model through explicit entity naming (Match → IpscMatch) improving code
 clarity.
@@ -685,7 +685,7 @@ clarity.
 ### 🎖️ Milestone 8: Standards Adoption (v5.0.0)
 
 - ✅ Semantic versioning adoption
-- ✅ Entity initialization framework
+- ✅ Entity initialisation framework
 - ✅ Response generation pipeline
 - ✅ Infrastructure consolidation
 
@@ -710,7 +710,7 @@ Controller → Service → Repository → Entity
 - Single service for image processing
 - Direct controller-service-repository flow
 - Basic entity relationships
-- Centralized exception handling
+- Centralised exception handling
 
 ---
 
@@ -732,7 +732,7 @@ WinMssService    MatchResultService
 
 **Characteristics:**
 
-- Specialized services for different domains
+- Specialised services for different domains
 - DTO layer for data transfer
 - Transaction abstraction
 - Improved separation of concerns
@@ -760,7 +760,7 @@ Repository  Repository
 - IPSC-specific domain modeling
 - Firearm-type classification
 - Club entity relationship
-- Specialized enums for IPSC
+- Specialised enums for IPSC
 
 ---
 
@@ -800,14 +800,14 @@ Service   Domain    IPSC
 Layer     Layer    Services
   ↓         ↓         ↓
 Entity    Entity    Records
-Layer   Initialization
+Layer   Initialisation
   ↓      Framework
 Repository Layer
 ```
 
 **Characteristics:**
 
-- Entity initialization framework
+- Entity initialisation framework
 - Response generation pipeline
 - Consolidated infrastructure
 - Industry-standard versioning
@@ -823,7 +823,7 @@ Repository Layer
 - **v2.0.0:** CAB file import, XML processing, UUID mapping
 - **v3.0.0:** Firearm-type classification, enhanced scoring
 - **v4.0.0:** Enhanced entity mapping, validation layers
-- **v5.0.0:** Entity initialization framework, record generation
+- **v5.0.0:** Entity initialisation framework, record generation
 
 ### 🏛️ Domain Management Features
 
@@ -832,7 +832,7 @@ Repository Layer
 - **v2.0.0:** Match, Competitor, Stage entities
 - **v3.0.0:** Club reintroduction, Firearm types
 - **v4.0.0:** IpscMatch, IpscMatchStage entities
-- **v5.0.0:** Advanced initialization patterns
+- **v5.0.0:** Advanced initialisation patterns
 
 ### 🌐 API Capabilities
 
@@ -851,14 +851,14 @@ Repository Layer
 - **v2.0.0:** Comprehensive service tests
 - **v3.0.0:** Domain model tests (279+ lines)
 - **v4.0.0:** Integration tests (985+ lines)
-- **v5.0.0:** Advanced entity initialization tests
+- **v5.0.0:** Advanced entity initialisation tests
 - **v5.0.0+:** Comprehensive DTO unit tests (151+ tests)
     - MatchStageDtoTest (48 tests): Constructors, init(), toString()
     - ScoreDtoTest (26 tests): All constructor patterns, edge cases
     - MatchStageCompetitorDtoTest (77 tests): Complete lifecycle coverage
     - Consolidated test structure across all DTO classes
     - Edge case testing: null/empty/blank fields, boundary values, enum mapping
-    - Special character and unicode support validation
+    - Special character and Unicode support validation
     - Format consistency and mutability testing
 - **v5.0.0+ (Post-Release):** Test refactoring and enhanced coverage
     - IpscMatchServiceTest: Renamed from IpscMatchEntityServiceImplTest with enhanced match results processing
@@ -871,7 +871,7 @@ Repository Layer
 ### 📚 Documentation Quality
 
 - **v1.0.0:** Inline Javadoc
-- **v1.1.0:** Standardized documentation, OpenAPI
+- **v1.1.0:** Standardised documentation, OpenAPI
 - **v1.1.2:** README and ARCHITECTURE guides
 - **v3.0.0:** Enhanced Javadoc across codebase
 - **v5.0.0:** RELEASE_NOTES, CHANGELOG, HISTORY
@@ -884,7 +884,7 @@ Repository Layer
 
 **Focus:** Foundation & Basic Functionality
 
-- Establish working Spring Boot application
+- Establish a working Spring Boot application
 - Implement CSV data processing
 - Create basic API endpoints
 - Error handling foundation
@@ -898,7 +898,7 @@ Repository Layer
 - Establish documentation standards
 - Improve code quality
 
-### 🎯 Specialization Phase (v3.0.0 - v4.0.0)
+### 🎯 Specialisation Phase (v3.0.0 - v4.0.0)
 
 **Focus:** IPSC Domain Compliance & Quality
 
@@ -932,8 +932,8 @@ Repository Layer
 
 1. **DTO Layer:** Introduction in v2.0.0 created crucial separation between API contracts and domain models
 2. **Firearm-Type Classification:** v3.0.0 restructuring improved IPSC compliance without major disruption
-3. **Entity Initialization Framework:** v5.0.0 consolidation provides unified pattern for complex entity setup
-4. **Semantic Versioning:** Late adoption (v5.0.0) aligns with industry standards for future releases
+3. **Entity Initialisation Framework:** v5.0.0 consolidation provides a unified pattern for complex entity
+   setup4. **Semantic Versioning:** Late adoption (v5.0.0) aligns with industry standards for future releases
 
 ### ⚙️ Technical Evolution
 
@@ -948,7 +948,7 @@ Repository Layer
     - toString() validation across all scenarios
     - Edge case mastery: null, empty, blank, boundary values
     - Enum mapping validation across all enums (PowerFactor, Division, FirearmType, CompetitorCategory)
-    - Special character and unicode support verification
+    - Special character and Unicode support verification
     - Consistent test organization with AAA pattern and clear naming conventions
 6. **Continuous Test Refinement:** Ongoing test improvements demonstrate commitment to quality
     - Test class renaming for clarity (IpscMatchEntityServiceImplTest → IpscMatchServiceTest)
@@ -964,9 +964,9 @@ Based on the evolution to v5.0.0, the following areas are identified for future 
 
 ### 🔄 Short-term (Minor Releases)
 
-- Complete JavaDoc documentation across all methods
+- Complete Javadoc documentation across all methods
 - Extended test scenarios for service layer edge cases
-- Performance optimization for large-scale match processing
+- Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
 - ✅ **Completed (151+ tests added)**
 
@@ -981,7 +981,7 @@ Based on the evolution to v5.0.0, the following areas are identified for future 
 ### 🎯 Long-term (v6.0+)
 
 - Potential domain model expansions
-- Advanced query optimization
+- Advanced query optimisation
 - Possible API versioning strategy
 - Enhanced integrations with external systems
 
@@ -989,11 +989,11 @@ Based on the evolution to v5.0.0, the following areas are identified for future 
 
 ## 🎓 Conclusion
 
-The HPSC Website Backend has evolved from a simple image gallery application into a sophisticated, specialized
+The HPSC Website Backend has evolved from a simple image gallery application into a sophisticated, specialised
 platform for managing practical shooting competition data. This evolution demonstrates a commitment to:
 
 - **Continuous Improvement:** Regular releases addressing quality, features, and standards
-- **Domain Alignment:** Progressive refinement toward IPSC compliance and specialization
+- **Domain Alignment:** Progressive refinement toward IPSC compliance and specialisation
 - **Architectural Excellence:** Evolution from monolithic to modular, testable architecture
 - **Standards Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
@@ -1006,14 +1006,15 @@ stable, predictable releases that serve as a foundation for the shooting club's 
 **Document Created:** February 24, 2026
 **Last Updated:** February 25, 2026
 **Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.0.0+ (February 25, 2026)
-**Reference:** See [CHANGELOG.md](./CHANGELOG.md) and [ARCHIVE.md](./documentation/archive/ARCHIVE.md) for
+**Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for
 detailed technical information
 
 **Recent Updates:**
+
 - Test enhancements and refactoring (IpscMatchServiceTest rename, enhanced coverage)
 - Comprehensive null handling improvements in IpscMatchResultServiceImpl
 - Integration tests for WinMSS CAB file import
 - FirearmTypeToDivisions test improvements
 - Test documentation clarity enhancements
-- Javadoc standardization across DTOs and models (removed redundant comments, improved consistency)
+- Javadoc standardisation across DTOs and models (removed redundant comments, improved consistency)
 

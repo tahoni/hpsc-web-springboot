@@ -33,7 +33,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 ### 📦 Core Model Refactoring
 
-- **Base classes:** Introduced generic `Request` and `Response` base classes for metadata standardization
+- **Base classes:** Introduced generic `Request` and `Response` base classes for metadata standardisation
 - **Error handling:** Standardized error responses using new `ErrorResponse` model
 - **Validation:** Enhanced field validation across all models using:
     - `@NotNull` annotation
@@ -103,7 +103,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 - **Documentation:** Comprehensive Javadoc comments throughout
 - **Null safety:** Enhanced null checking and validation
-- **Consistency:** Standardized patterns across award and image processing
+- **Consistency:** Standardised patterns across award and image processing
 
 ---
 
@@ -127,7 +127,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 ### 🏆 Award Processing
 
-- **POST /awards** - Create or process awards
+- **POST /awards** – Create or process awards
 - **GET /awards** - Retrieve award data
 - **POST /award-ceremonies** - Group awards by ceremony
 
@@ -139,13 +139,13 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 ## 📦 Migration Guide
 
-**Partially breaking changes** - Core model restructuring:
+**Partially breaking changes** – Core model restructuring:
 
 1. **Request/Response base classes:** Use new base classes for consistency
 2. **Error responses:** Updated error response handling through `ErrorResponse`
 3. **Validation:** Add validation annotations to custom models
 
-**No database schema changes required** - DTOs and models are orthogonal to persistence layer.
+**No database schema changes required** – DTOs and models are orthogonal to the persistence layer.
 
 ---
 

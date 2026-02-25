@@ -1,4 +1,4 @@
-# 🧾 Release Notes - Version 3.0.0
+# 🧾 Release Notes – Version 3.0.0
 
 **Status:** ✨ Stable
 
@@ -7,7 +7,7 @@
 ## 📖 Overview
 
 Major refactoring of the IPSC match results processing system to improve modularity, maintainability, and
-testability. Introduces IPSC-specific domain modeling with firearm-type-based classifications.
+testability. Introduces IPSC-specific domain modelling with firearm-type-based classifications.
 
 ---
 
@@ -15,9 +15,9 @@ testability. Introduces IPSC-specific domain modeling with firearm-type-based cl
 
 **This is a major version update with breaking changes:**
 
-- **`Discipline` enum removed** in favor of `FirearmType` enum
+- **`Discipline` enum removed** in favour of `FirearmType` enum
 - **`Division` enum restructured** to align with IPSC firearm-type-specific divisions
-- **Discipline-to-division mappers removed:** Multiple mapper classes removed in favor of
+- **Discipline-to-division mappers removed:** Multiple mapper classes removed in favour of
   `FirearmTypeToDivisions`
 - **`Competitor` entity field renamed:** `category` → `defaultCompetitorCategory`
 - **`Match` entity changes:** `matchDivision` field replaced with `matchFirearmType`; club string replaced
@@ -50,7 +50,7 @@ testability. Introduces IPSC-specific domain modeling with firearm-type-based cl
 
 - **279+ new test lines:** Extensive tests for `FirearmTypeToDivisions` mapper
 - **Domain model tests:** Added tests for firearm type, club, and division enumerations
-- **Updated test suites:** Enhanced existing tests to reflect new domain structure
+- **Updated test suites:** Enhanced existing tests to reflect the new domain structure
 
 ### 🎯 Test Scenarios
 
@@ -82,7 +82,7 @@ testability. Introduces IPSC-specific domain modeling with firearm-type-based cl
 
 ### 🧩 Mappers
 
-- `FirearmTypeToDivisions` - Centralized firearm-type to division mapping
+- `FirearmTypeToDivisions` - Centralised firearm-type to division mapping
 - `DivisionsHandgun`, `DivisionsPcc`, `DivisionsRifle`, `DivisionsShotgun`, `DivisionsMiniRifle`,
   `Divisions22Handgun`
 
@@ -106,7 +106,7 @@ The following classes were removed in this version as they are no longer needed:
 
 - `Match` entity - Added firearm type and club relationship
 - `MatchStage` entity - Added `maxPoints` field for stage scoring
-- `Competitor` entity - Field name standardization
+- `Competitor` entity - Field name standardisation
 - All related DTOs and repositories
 
 ---

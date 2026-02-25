@@ -24,13 +24,13 @@ while maintaining full backward compatibility with the IPSC domain refactoring f
   standards
 - **Version format:** `MAJOR.MINOR.PATCH` (e.g., 5.0.0)
 - **Legacy versioning archived:** All previous releases using non-semantic versioning (v1.x through v4.x) are
-  now documented in the [Legacy Release Archive](./documentation/archive/ARCHIVE.md)
+  now documented in the [Legacy Release Archive](/documentation/archive/ARCHIVE.md)
 - **Future releases:** Will follow SemVer conventions with clear major, minor, and patch version increments
 
 ### ⚙️ Infrastructure & Architecture
 
 - **Spring Boot upgrade:** Running on Spring Boot 4.0.3 with Java 25 support
-- **Modern Java features:** Leveraging Java 25 language enhancements and optimizations
+- **Modern Java features:** Leveraging Java 25 language enhancements and optimisations
 - **Enhanced transaction management:** Centralised transaction handling through improved `TransactionService`
   implementation
 - **Improved error handling:** Multi-layered validation and comprehensive exception mapping across all API
@@ -42,7 +42,7 @@ while maintaining full backward compatibility with the IPSC domain refactoring f
   entities
 - **Club association logic:** Enhanced club-to-match binding with fallback mechanisms and flexible club
   resolution
-- **Stage management:** Improved initialization and management of match stages with comprehensive entity
+- **Stage management:** Improved initialisation and management of match stages with comprehensive entity
   relationships
 - **Competitor tracking:** Robust competitor entity creation with relationship maintenance and score
   validation
@@ -55,30 +55,30 @@ while maintaining full backward compatibility with the IPSC domain refactoring f
   covering constructors, init() methods, and toString() implementations
 - **Edge case testing:** Extensive null/empty/blank field handling, partial and full field population
   scenarios
-- **Mock-based testing:** Utilization of Mockito for isolated service testing
-- **Entity initialization testing:** Dedicated tests for complex entity initialization flows
+- **Mock-based testing:** Utilisation of Mockito for isolated service testing
+- **Entity initialisation testing:** Dedicated tests for complex entity initialisation flows
 - **Validation testing:** Multi-scenario testing for edge cases and error conditions
-- **Test organization:** Well-structured tests with clear AAA (Arrange-Act-Assert) patterns and descriptive
+- **Test organisation:** Well-structured tests with clear AAA (Arrange-Act-Assert) patterns and descriptive
   naming
 
 ---
 
-## ✨ What's New in 5.0.0
+## ✨ What's New in 5.0.0?
 
-### 🏗️ Enhanced Entity Initialization Framework
+### 🏗️ Enhanced Entity Initialisation Framework
 
-Version 5.0.0 builds upon the `DomainServiceImpl` and related initialization classes to provide robust entity
+Version 5.0.0 builds upon the `DomainServiceImpl` and related initialisation classes to provide robust entity
 lifecycle management:
 
-- **Club Entity Initialization:** `initClubEntity()` methods handle both DTO-based and enumeration-based club
+- **Club Entity Initialisation:** `initClubEntity()` methods handle both DTO-based and enumeration-based club
   creation
-- **Match Entity Initialization:** Sophisticated `initMatchEntity()` method with repository lookup and
+- **Match Entity Initialisation:** Sophisticated `initMatchEntity()` method with repository lookup and
   fallback entity creation
-- **Competitor Entity Initialization:** `initCompetitorEntities()` for batch competitor processing with UUID
+- **Competitor Entity Initialisation:** `initCompetitorEntities()` for batch competitor processing with UUID
   generation
-- **Stage Entity Initialization:** `initMatchStageEntities()` with comprehensive stage data mapping
-- **Competitor Association:** `initMatchCompetitorEntities()` and related methods for complex relationship
-  establishment
+- **Stage Entity Initialisation:** `initMatchStageEntities()` with comprehensive stage data mapping
+- **Competitor Association:** `initMatchCompetitorEntities()` and related methods for the establishment of  
+  complex relationships
 
 ### 📊 Advanced IPSC Match Record Generation
 
@@ -103,8 +103,8 @@ New methods enhance the request-to-response mapping workflow:
 
 The `ClubDto` class and related DTOs have been enhanced with:
 
-- **Multiple constructors:** Support for initialization from entities, responses, and enumerations
-- **Flexible initialization:** `init()` methods for updating DTOs from various sources
+- **Multiple constructors:** Support for initialisation from entities, responses, and enumerations
+- **Flexible initialisation:** `init()` methods for updating DTOs from various sources
 - **Strong typing:** Proper null-safety and validation in all DTO operations
 - **Utility methods:** Comprehensive `toString()` implementations for debugging and logging
 
@@ -116,7 +116,7 @@ The `ClubDto` class and related DTOs have been enhanced with:
 
 | Component                    | Enhancement                                                |
 |------------------------------|------------------------------------------------------------|
-| `DomainServiceImpl`          | Enhanced entity initialization with repository integration |
+| `DomainServiceImpl`          | Enhanced entity initialisation with repository integration |
 | `IpscMatchServiceImpl`       | Advanced match-to-response mapping and record generation   |
 | `IpscMatchResultServiceImpl` | Improved IPSC response processing and data transformation  |
 | `ClubEntityService`          | Extended club lookup and creation capabilities             |
@@ -125,16 +125,16 @@ The `ClubDto` class and related DTOs have been enhanced with:
 ### 🗄️ Database & Persistence
 
 - Seamless JPA/Hibernate integration with Spring Data repositories
-- Optimized entity fetching strategies (`findByIdWithClubStages`)
+- Optimised entity fetching strategies (`findByIdWithClubStages`)
 - Transactional consistency across entity lifecycle operations
-- Support for complex entity relationships and cascade behaviors
+- Support for complex entity relationships and cascade behaviours
 
 ### 🛡️ API & Validation
 
 - Multi-layered validation (controller, service, entity levels)
 - Comprehensive error responses with detailed messages
 - Jakarta Validation framework integration
-- Input sanitization and null-safety checks throughout
+- Input sanitisation and null-safety checks throughout
 
 ---
 
@@ -153,9 +153,9 @@ The `ClubDto` class and related DTOs have been enhanced with:
 
 **Test Refactoring & Enhancements**
 
-- **IpscMatchServiceTest:** Renamed from `IpscMatchEntityServiceImplTest` for clarity and enhanced test coverage
-  for match results processing
-- **FirearmTypeToDivisions:** Comprehensive test cases added with improved naming conventions
+- **IpscMatchServiceTest:** Renamed from `IpscMatchEntityServiceImplTest` for clarity and enhanced test
+  coverage for match results processing
+- **FirearmTypeToDivisions:** Comprehensive test cases were added with improved naming conventions
 - **Test class documentation:** Improved comments across test classes for better maintainability and clarity
 
 **Integration Testing**
@@ -169,13 +169,13 @@ The `ClubDto` class and related DTOs have been enhanced with:
 
 - **IpscMatchResultServiceImpl:** Enhanced with comprehensive null handling and robust processing for match
   results
-- Improved edge case handling throughout match result processing pipeline
+- Improved edge case handling throughout the match result processing pipeline
 
 **Documentation & Code Quality**
 
 - **Javadoc Improvements:** Enhanced DTO and model Javadoc documentation for consistency and clarity
     - Removed redundant "Must not be null" comments where `@NotNull` annotations already enforce constraints
-    - Standardized parameter descriptions across all DTOs and models
+    - Standardised parameter descriptions across all DTOs and models
     - Improved method-level documentation for better code understanding
     - Consistent documentation style across the codebase
 
@@ -185,8 +185,8 @@ The `ClubDto` class and related DTOs have been enhanced with:
 
 No deprecated features in this release. The following TODOs are marked for future enhancement:
 
-- JavaDoc documentation for additional service methods (marked with `// TODO: Javadoc`)
-- Enhanced commenting for complex initialization logic (marked with `// TODO: comment`)
+- Javadoc documentation for additional service methods (marked with `// TODO: Javadoc`)
+- Enhanced commenting for complex initialisation logic (marked with `// TODO: comment`)
 - Extended test coverage for specific scenarios (marked with `// TODO: ...`)
 
 ---
@@ -195,7 +195,7 @@ No deprecated features in this release. The following TODOs are marked for futur
 
 This release includes stability improvements and bug fixes carried forward from version 4.1.0:
 
-- Entity initialization edge cases properly handled
+- Entity initialisation edge cases properly handled
 - Null-safety checks in all data transformation pipelines
 - Proper handling of optional entity relationships
 - Correct cascade behavior in entity deletion scenarios
@@ -230,11 +230,11 @@ Follow standard Spring Boot deployment procedures:
 
 The codebase contains the following enhancement markers for future versions:
 
-- **JavaDoc gaps:** Several protected methods in `DomainServiceImpl`, `IpscMatchServiceImpl`, and related
-  classes require JavaDoc documentation
+- **Javadoc gaps:** Several protected methods in `DomainServiceImpl`, `IpscMatchServiceImpl`, and related
+  classes require Javadoc documentation
 - **Club name validation:** Some tests include a TODO regarding club name handling edge cases
 - **Test expansion:** Additional test scenarios for zero/null scores are marked for implementation
-- **Club identifier handling:** Extended test coverage for `ClubIdentifier` initialization patterns
+- **Club identifier handling:** Extended test coverage for `ClubIdentifier` initialisation patterns
 
 These items are tracked for upcoming minor releases and do not impact functionality in version 5.0.0.
 
@@ -248,25 +248,27 @@ This release includes comprehensive test coverage:
 
 #### 🎯 Service Layer Tests
 
-- **DomainServiceImplTest:** 20+ test methods covering entity initialization patterns
-- **IpscMatchServiceTest** (renamed from IpscMatchEntityServiceImplTest): 15+ test methods for match mapping and
+- **DomainServiceImplTest:** 20+ test methods covering entity initialisation patterns
+- **IpscMatchServiceTest** (renamed from IpscMatchEntityServiceImplTest): 15+ test methods for match mapping
+  and
   response building with enhanced coverage for match results processing
 - **IpscMatchResultServiceImplTest:** 10+ test methods for IPSC data transformation with comprehensive null
   handling
-- **Integration tests:** Full request-to-response pipeline validation including WinMSS CAB file import scenarios
+- **Integration tests:** Full request-to-response pipeline validation including WinMSS CAB file import
+  scenarios
   with comprehensive validation and processing tests
 - **FirearmTypeToDivisionsTest:** Enhanced with comprehensive test cases and improved naming conventions
 
 #### 📦 DTO Unit Tests (New in 5.0.0)
 
-**MatchStageDtoTest** - 48 tests
+**MatchStageDtoTest** – 48 tests
 
 - Constructor tests with single and multiple parameters (11 tests)
 - init() method tests covering all parameter combinations (19 tests)
 - toString() method tests with edge cases (18 tests)
 - Coverage: Null handling, empty/blank fields, partial/full population, stage numbers, club information
 
-**ScoreDtoTest** - 26 tests
+**ScoreDtoTest** – 26 tests
 
 - No-arg constructor tests (3 tests)
 - ScoreResponse constructor tests with null/empty/blank handling (16 tests)
@@ -274,7 +276,7 @@ This release includes comprehensive test coverage:
 - Constructor equivalence tests (2 tests)
 - Coverage: Zero values, negative values, max values, special formatting, partial population
 
-**MatchStageCompetitorDtoTest** - 77 tests
+**MatchStageCompetitorDtoTest** – 77 tests
 
 - No-arg constructor tests (3 tests)
 - Entity-based constructor tests with edge cases (10 tests)
@@ -308,7 +310,7 @@ This release includes comprehensive test coverage:
 
 ### 🎯 Test Scenarios
 
-- ✅ Entity creation and initialization
+- ✅ Entity creation and initialisation
 - ✅ DTO constructor parameter handling (null, partial, complete)
 - ✅ init() method parameter combinations
 - ✅ toString() output formatting and edge cases
@@ -319,7 +321,7 @@ This release includes comprehensive test coverage:
 - ✅ Score aggregation and calculation
 - ✅ Stage percentage calculations
 - ✅ Enum mapping (PowerFactor, Division, FirearmType, CompetitorCategory)
-- ✅ Special character handling (apostrophes, hyphens, unicode)
+- ✅ Special character handling (apostrophes, hyphens, Unicode)
 - ✅ Boundary value testing (zero, negative, max values)
 - ✅ Error condition handling
 - ✅ Format consistency and mutability checks
@@ -330,7 +332,7 @@ This release includes comprehensive test coverage:
 - **AAA structure:** Arrange-Act-Assert pattern with clear comments
 - **Comprehensive assertions:** Multiple assertions per test validating all aspects
 - **Edge case coverage:** Extensive null, empty, blank, and boundary value testing
-- **Organized sections:** Tests grouped by functionality with clear section headers
+- **Organised sections:** Tests grouped by functionality with clear section headers
 - **Consolidated structure:** Related tests grouped together with blank line separation
 
 ---
@@ -339,7 +341,7 @@ This release includes comprehensive test coverage:
 
 Version 5.0.0 maintains the performance characteristics of version 4.1.0:
 
-- **Entity fetching:** Optimized queries with strategic joins (e.g., `findByIdWithClubStages`)
+- **Entity fetching:** Optimised queries with strategic joins (e.g., `findByIdWithClubStages`)
 - **Transactional handling:** Efficient transaction management through `TransactionService`
 - **Memory efficiency:** Proper resource management in collection processing
 - **Scalability:** Support for bulk operations through stream-based processing
@@ -348,9 +350,9 @@ Version 5.0.0 maintains the performance characteristics of version 4.1.0:
 
 ## 📚 Documentation
 
-- **Architecture Guide:** See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed system design
-- **README:** See [README.md](./README.md) for setup and configuration instructions
-- **Legacy Releases:** See [ARCHIVE.md](./documentation/archive/ARCHIVE.md) for historical release information
+- **Architecture Guide:** See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed system design
+- **README:** See [README.md](README.md) for setup and configuration instructions
+- **Legacy Releases:** See [ARCHIVE.md](documentation/archive/ARCHIVE.md) for historical release information
 - **API Docs:** Available via Swagger UI at `/swagger-ui.html` when running the application
 
 ---
@@ -372,7 +374,7 @@ Version 5.0.0 maintains the performance characteristics of version 4.1.0:
 - **Lombok:** For annotation-driven code generation
 - **JUnit 5, Mockito:** For testing
 
-For complete dependency information, see [pom.xml](./pom.xml).
+For complete dependency information, see [pom.xml](pom.xml).
 
 ---
 
@@ -396,11 +398,11 @@ on the IPSC domain refactoring from version 4.0.0 and the CRUD enhancements from
 
 ### 🎯 Planned for Future Releases
 
-- Complete JavaDoc coverage for all public and protected methods
+- Complete Javadoc coverage for all public and protected methods
 - Extended unit test scenarios for edge cases
 - Additional IPSC data format support
 - Enhanced error reporting and diagnostic logging
-- Performance optimization for large-scale match processing
+- Performance optimisation for large-scale match processing
 
 ### 💬 Feedback & Support
 
@@ -428,12 +430,12 @@ project's [GitHub Issues](https://github.com/tahoni/hpsc-web-springboot/issues) 
 - **v5.0.0** - 2026-02-24: Initial semantic versioning release
 - **v4.1.0** - 2026-02-13: CRUD enhancement and feature completion
 - **v4.0.0** - 2026-02-11: Major IPSC domain refactoring
-- **[Earlier versions...]** - See [ARCHIVE.md](./documentation/archive/ARCHIVE.md)
+- **[Earlier versions...]** — See [ARCHIVE.md](documentation/archive/ARCHIVE.md)
 
 ---
 
 **End of Release Notes for v5.0.0**
 
 For more information, visit the [project repository](https://github.com/tahoni/hpsc-web-springboot) or refer
-to the [Architecture Guide](./ARCHITECTURE.md).
+to the [Architecture Guide](ARCHITECTURE.md).
 

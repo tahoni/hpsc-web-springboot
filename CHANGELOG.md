@@ -37,14 +37,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceTest`** - Renamed from `IpscMatchEntityServiceImplTest` for clarity and consistency
     - Enhanced test coverage for match results processing
     - Improved test organization and naming conventions
-- **WinMSS Integration Tests** - Comprehensive integration tests for `importWinMssCabFile` method
+- **WinMSS Integration Tests** – Comprehensive integration tests for `importWinMssCabFile` method
     - Validation scenario coverage (multiple test cases)
     - Processing scenario testing (end-to-end pipeline verification)
     - Complete CAB file import workflow testing
 - **`FirearmTypeToDivisionsTest`** - Enhanced with comprehensive test cases and improved naming
-    - Extended coverage of firearm type to division mappings
+    - Extended coverage of firearm types to division mappings
     - Better test readability and maintainability
-- **Test Documentation** - Improved comments across test classes for clarity and consistency
+- **Test Documentation** – Improved comments across test classes for clarity and consistency
 
 #### 🧪 Comprehensive DTO Unit Tests
 
@@ -69,12 +69,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
     - init() method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
     - toString() method tests with comprehensive scenarios (29 tests)
     - Edge cases: null entities, partial/full population, zero/negative/max values, enum mapping, stage
-      percentage calculation, PowerFactor mapping, CompetitorCategory mapping, special characters, unicode
+      percentage calculation, PowerFactor mapping, CompetitorCategory mapping, special characters, Unicode
       support, long strings
 
 #### ✅ Test Quality Improvements
 
-- **Consolidated test organization:** All DTO tests organized with clear section headers and subsections
+- **Consolidated test organisation:** All DTO tests are organised with clear section headers and subsections
 - **AAA pattern:** Consistent Arrange-Act-Assert structure with comments throughout all tests
 - **Naming convention:** All tests follow `testMethod_whenCondition_thenExpectedBehavior` pattern
 - **Edge case coverage:** Extensive testing of null, empty, blank fields and boundary values
@@ -83,25 +83,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   conversions
 - **Calculation tests:** Stage percentage, stagePoints, and derived field calculations validated
 - **Format consistency tests:** toString() methods tested for deterministic output and mutability reflection
-- **Special character handling:** Tests for apostrophes, hyphens, unicode characters in names
+- **Special character handling:** Tests for apostrophes, hyphens, Unicode characters in names
 
 ### 🔄 Changed
 
 #### 📚 Documentation & Code Quality
 
-- **Javadoc Improvements** - Enhanced DTO and model Javadoc for consistency and clarity
+- **Javadoc Improvements** – Enhanced DTO and model Javadoc for consistency and clarity
     - Removed redundant "Must not be null" comments where annotations already enforce null constraints
-    - Standardized parameter descriptions across DTOs
+    - Standardised parameter descriptions across DTOs
     - Improved method-level documentation for clarity
-- **Test organization:** Restructured DTO test classes with logical grouping and clear section headers
-- **Test naming:** Standardized all test names to follow descriptive `whenCondition_thenExpectedBehavior`
+- **Test organisation:** Restructured DTO test classes with logical grouping and clear section headers
+- **Test naming:** Standardised all test names to follow descriptive `whenCondition_thenExpectedBehavior`
   pattern
 
 ### 🐛 Fixed
 
 #### 🔧 Service Layer
 
-- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match results
+- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match
+  results
     - Improved edge case handling
     - Better robustness in match result transformation
     - Additional null-safety checks
@@ -118,22 +119,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### ➕ Added
 
-#### 🏗️ Domain Entity Initialization Framework
+#### 🏗️ Domain Entity Initialisation Framework
 
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialize club entities from DTO objects with automatic
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic
   database lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialize club entities from enumeration values
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
   for predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialization with
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
   repository lookup, optional entity creation, and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialization
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
   with UUID generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialize match stages
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
   with proper relationship linking to parent match entities
 - **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** -
   Establish many-to-many relationships between matches and competitors
 - **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex
-  initialization of stage-specific competitor records with score and performance data
+  initialisation of stage-specific competitor records with score and performance data
 
 #### 📊 IPSC Match Record Generation
 
@@ -173,9 +174,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubDto(Club)`** - Constructor for creating DTOs from club entities
 - **`ClubDto(ClubResponse)`** - Constructor for creating DTOs from IPSC response objects
 - **`ClubDto(ClubIdentifier)`** - Constructor for creating DTOs from enumerated club identifiers
-- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialization from club identifier if
-  entity is null
-  support
+- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialisation from club identifier if
+  entity is null support
 
 ### 🔄 Changed
 
@@ -183,12 +183,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **Adopted Semantic Versioning (SemVer):** Project now follows [SemVer 2.0.0](https://semver.org/)
   specification
-- **Version Format:** Changed from legacy scheme (v1.x to v4.x) to `MAJOR.MINOR.PATCH` format
+- **Version Format:** Changed from the legacy scheme (v1.x to v4.x) to `MAJOR.MINOR.PATCH` format
 - **Release Documentation:** Structured release notes following industry-standard conventions
 
-#### 🔄 Entity Initialization Strategy
+#### 🔄 Entity Initialisation Strategy
 
-- **Repository Integration:** Entity initialization methods now query the database to check for existing
+- **Repository Integration:** Entity initialisation methods now query the database to check for existing
   entities before creating new ones
 - **Fallback Handling:** Robust fallback mechanisms when entities are not found in the database
 - **Transactional Consistency:** All entity creation and update operations maintain transactional integrity
@@ -196,34 +196,34 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔀 Data Processing Pipelines
 
-- **Multi-Step Processing:** IPSC responses now go through coordinated initialization steps for clubs,
+- **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs,
   matches, stages, and competitors
 - **Error Handling:** Enhanced validation and error messages for data transformation failures
 - **Null Safety:** Comprehensive null checks throughout data processing pipelines
 
 #### 🧪 Test Infrastructure (Post-Release Enhancement)
 
-- **Test Organization:** Restructured DTO test classes with clear section headers and logical grouping
-- **Naming Standards:** Standardized test naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
+- **Test Organisation:** Restructured DTO test classes with clear section headers and logical grouping
+- **Naming Standards:** Standardised test naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
 - **Test Coverage Expansion:** Added 151+ new unit tests for DTO classes (MatchStageDtoTest: 48, ScoreDtoTest:
   26, MatchStageCompetitorDtoTest: 77)
 - **AAA Pattern:** Consistent Arrange-Act-Assert structure implemented across all new tests
-- **Edge Case Coverage:** Extensive null/empty/blank field testing, boundary value testing
+- **Edge Case Coverage:** Extensive null/empty/blank field-testing, boundary value testing
 - **Documentation:** Comprehensive test documentation and inline comments
 
 ### 🐛 Fixed
 
 #### 🔗 Entity Relationship Management
 
-- Fixed edge cases in entity initialization when creating stages with missing `maxPoints` values
+- Fixed edge cases in entity initialisation when creating stages with missing `maxPoints` values
 - Resolved mapping issues between DTOs and domain entities during update operations
-- Corrected null-safety handling in recursive entity relationship establishment
+- Corrected null-safety handling in the recursive establishment of entity relationships
 
 #### 🔄 Data Transformation
 
 - Improved handling of optional entity relationships during transformation
 - Fixed club name resolution from both entity objects and enumeration values
-- Enhanced date field handling in match entity initialization
+- Enhanced date field handling in match entity initialisation
 
 ### ⚠️ Deprecated
 
@@ -235,15 +235,15 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 ### 🔐 Security
 
-- No security vulnerabilities addressed in this release
-- All existing security measures from version 4.1.0 maintained
+- No security vulnerabilities were addressed in this release
+- All existing security measures from version 4.1.0 are maintained
 
 ### 📚 Documentation
 
 - **New:** Comprehensive RELEASE_NOTES.md with semantic versioning transition details
 - **New:** Detailed CHANGELOG.md (this file) following Keep a Changelog format
-- **Updated:** Architecture documentation updated to reflect entity initialization patterns
-- **Reference:** Legacy release notes archived in ARCHIVE.md with deprecation notice
+- **Updated:** Architecture documentation updated to reflect entity initialisation patterns
+- **Reference:** Legacy release notes archived in ARCHIVE.md with a deprecation notice
 
 ---
 
@@ -267,7 +267,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 #### 🧪 Testing Improvements
 
 - **Unit Tests:** Added comprehensive unit tests for CRUD endpoints
-- **Integration Tests:** Extended integration tests for service behavior
+- **Integration Tests:** Extended integration tests for service behaviour
 - Test coverage for validation failures and edge cases
 
 ### 🔄 Changed
@@ -278,7 +278,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 ### 🐛 Fixed
 
-- Edge cases in entity initialization when creating stages with missing `maxPoints`
+- Edge cases in entity initialisation when creating stages with missing `maxPoints`
 - Mapping issues between DTOs and domain entities during updates
 
 ---
@@ -300,7 +300,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 #### ⚠️ Exception Handling Improvements
 
-- **Global Exception Handler:** Centralized exception handling for consistent error responses
+- **Global Exception Handler:** Centralised exception handling for consistent error responses
 - **Custom Exceptions:** Domain-specific exception types for clearer error semantics
 
 #### 🧪 Comprehensive Testing
@@ -434,7 +434,7 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 ### 📐 Legacy Versioning (v1.x - v4.x)
 
 Earlier releases used a non-semantic versioning scheme. For historical documentation,
-see [ARCHIVE.md](./documentation/archive/ARCHIVE.md).
+see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 
 ---
 
@@ -461,7 +461,7 @@ Migration: See v4.1.0 release notes
 
 - Update entity references from `Match` to `IpscMatch`
 - Update service injections to use `IpscMatchRepository`
-- See v4.0.0 release notes for detailed migration guide
+- See v4.0.0 release notes for a detailed migration guide
 
 ---
 
