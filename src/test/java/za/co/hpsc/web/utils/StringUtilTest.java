@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringUtilTest {
 
@@ -167,7 +166,7 @@ public class StringUtilTest {
         String result = StringUtil.toString(obj);
 
         // Assert
-        assertEquals(null, result);
+        assertNull(result);
     }
 
     @Test

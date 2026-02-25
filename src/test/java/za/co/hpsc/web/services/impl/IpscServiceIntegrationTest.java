@@ -106,7 +106,7 @@ public class IpscServiceIntegrationTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    @Disabled
+    @Disabled("Currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty sections, need to update the code to handle empty XML sections and return empty lists instead of throwing exceptions")
     @Test
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange
