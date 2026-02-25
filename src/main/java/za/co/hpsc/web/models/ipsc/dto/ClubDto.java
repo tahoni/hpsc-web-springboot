@@ -54,13 +54,12 @@ public class ClubDto {
     }
 
     /**
-     * Constructs a new {@code ClubDto} instance using data from the provided {@code ClubResponse}.
+     * Constructs a new {@code ClubDto} instance with data from the provided
+     * {@code ClubResponse} object.
      *
      * @param clubResponse the {@code ClubResponse} object containing the club's information
-     *                     such as its identifier, name, and abbreviation. If null, the fields
-     *                     are not initialized.
+     *                     such as its identifier, name, and abbreviation.
      */
-    // TODO: Javadoc
     public ClubDto(ClubResponse clubResponse) {
         if (clubResponse != null) {
             // Initialises club details
@@ -71,7 +70,13 @@ public class ClubDto {
         }
     }
 
-    // TODO: Javadoc
+    /**
+     * Constructs a new {@code ClubDto} instance with data from the provided
+     * {@code ClubIdentifier} object.
+     *
+     * @param clubIdentifier the {@code ClubIdentifier} object containing the club's
+     *                       name and abbreviation.
+     */
     public ClubDto(ClubIdentifier clubIdentifier) {
         if (clubIdentifier != null) {
             // Initialises club attributes
@@ -80,7 +85,23 @@ public class ClubDto {
         }
     }
 
-    // TODO: Javadoc
+    /**
+     * Constructs a new {@code ClubDto} instance with data from the provided
+     * {@code Club} entity or {@code ClubIdentifier} object.
+     *
+     * <p>
+     * If {@code clubEntity} is not null, the instance is initialised with the
+     * data from the {@code Club} entity, including its unique identifier, name,
+     * and abbreviation.
+     * If {@code clubEntity} is null but {@code clubIdentifier} is not null, the instance is
+     * initialised with the name and abbreviation from the {@code ClubIdentifier} object.
+     * </p>
+     *
+     * @param clubEntity     the {@code Club} entity containing the club's information such as
+     *                       its unique identifier, name, and abbreviation.
+     * @param clubIdentifier the {@code ClubIdentifier} object containing the club's
+     *                       name and abbreviation.
+     */
     public ClubDto(Club clubEntity, ClubIdentifier clubIdentifier) {
         if (clubEntity != null) {
             // Initialises club details
@@ -96,7 +117,13 @@ public class ClubDto {
         }
     }
 
-    // TODO: Javadoc
+    /**
+     * Initializes the current {@code ClubDto} instance with data from the provided
+     * {@code ClubResponse} object.
+     *
+     * @param clubResponse the {@code ClubResponse} object containing the club's information,
+     *                     including its unique identifier, name, and abbreviation.
+     */
     public void init(ClubResponse clubResponse) {
         if (clubResponse != null) {
             // Initialises club details

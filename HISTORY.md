@@ -565,6 +565,19 @@ Strategic release consolidating infrastructure improvements and transitioning to
     - Better inline documentation
     - Enhanced code maintainability
 
+**Documentation & Code Quality Improvements (Post-v5.0.0)**
+
+- **Javadoc Standardization:** Enhanced DTO and model Javadoc for consistency and clarity
+    - Removed redundant "Must not be null" comments where `@NotNull` annotations enforce constraints
+    - Standardized parameter descriptions across all DTOs (MatchDto, CompetitorDto, ClubDto, MatchStageDto,
+      ScoreDto, MatchStageCompetitorDto, MatchCompetitorDto)
+    - Improved method-level documentation for better understanding
+    - Consistent documentation style throughout the codebase
+- **Code Quality:** Continuous refinement of documentation standards
+    - Emphasis on clarity over redundancy
+    - Leveraging annotation-based constraints for null safety documentation
+    - Focus on meaningful descriptions rather than repetitive boilerplate
+
 **Consolidated Test Structure**
 
 - **ClubDtoTest:** Reorganized with section headers for constructors, init(), toString()
@@ -1002,4 +1015,5 @@ detailed technical information
 - Integration tests for WinMSS CAB file import
 - FirearmTypeToDivisions test improvements
 - Test documentation clarity enhancements
+- Javadoc standardization across DTOs and models (removed redundant comments, improved consistency)
 

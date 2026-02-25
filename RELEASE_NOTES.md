@@ -171,6 +171,14 @@ The `ClubDto` class and related DTOs have been enhanced with:
   results
 - Improved edge case handling throughout match result processing pipeline
 
+**Documentation & Code Quality**
+
+- **Javadoc Improvements:** Enhanced DTO and model Javadoc documentation for consistency and clarity
+    - Removed redundant "Must not be null" comments where `@NotNull` annotations already enforce constraints
+    - Standardized parameter descriptions across all DTOs and models
+    - Improved method-level documentation for better code understanding
+    - Consistent documentation style across the codebase
+
 ---
 
 ## 📌 Deprecations

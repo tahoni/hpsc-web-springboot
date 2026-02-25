@@ -9,17 +9,11 @@ import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
 import java.util.List;
 
-// TODO: Javadoc
-// TOOD: add tests
-
 /**
- * Service interface for managing and processing IPSC (International Practical
- * Shooting Confederation) match data.
- *
- * <p>
- * Provides functionality to map input requests into structured responses, encapsulating match
- * details, scores, stages, enrolled members, tags, and related club information.
- * </p>
+ * Service interface for processing IPSC matches, stages, members, scores, tags, and clubs into
+ * structured response objects and record holders. It provides methods to map the input data
+ * into domain-specific responses and generate match records for further utilisation in the
+ * application.
  */
 public interface IpscMatchService {
     /**
@@ -37,7 +31,16 @@ public interface IpscMatchService {
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
 
-    // TODO: Javadoc
+    /**
+     * Generates an {@code IpscMatchRecordHolder} from the given list of {@code IpscMatch} entities.
+     * This method processes the input list and structures the data into a record holder
+     * for convenient access and manipulation.
+     *
+     * @param ipscMatchEntityList a list of {@code IpscMatch} entities representing the matches
+     *                            to be included in the generated {@code IpscMatchRecordHolder}.
+     * @return an {@code IpscMatchRecordHolder} containing a list of structured match records
+     * generated from the provided {@code IpscMatch} entities.
+     */
     IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList);
 
 }

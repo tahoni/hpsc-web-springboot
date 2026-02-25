@@ -32,6 +32,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### ➕ Added
 
+#### 🧪 Test Enhancements (Post-v5.0.0)
+
+- **`IpscMatchServiceTest`** - Renamed from `IpscMatchEntityServiceImplTest` for clarity and consistency
+    - Enhanced test coverage for match results processing
+    - Improved test organization and naming conventions
+- **WinMSS Integration Tests** - Comprehensive integration tests for `importWinMssCabFile` method
+    - Validation scenario coverage (multiple test cases)
+    - Processing scenario testing (end-to-end pipeline verification)
+    - Complete CAB file import workflow testing
+- **`FirearmTypeToDivisionsTest`** - Enhanced with comprehensive test cases and improved naming
+    - Extended coverage of firearm type to division mappings
+    - Better test readability and maintainability
+- **Test Documentation** - Improved comments across test classes for clarity and consistency
+
 #### 🧪 Comprehensive DTO Unit Tests
 
 - **`MatchStageDtoTest`** - Complete test suite with 48 tests covering:
@@ -73,11 +87,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🔄 Changed
 
+#### 📚 Documentation & Code Quality
+
+- **Javadoc Improvements** - Enhanced DTO and model Javadoc for consistency and clarity
+    - Removed redundant "Must not be null" comments where annotations already enforce null constraints
+    - Standardized parameter descriptions across DTOs
+    - Improved method-level documentation for clarity
 - **Test organization:** Restructured DTO test classes with logical grouping and clear section headers
 - **Test naming:** Standardized all test names to follow descriptive `whenCondition_thenExpectedBehavior`
   pattern
 
 ### 🐛 Fixed
+
+#### 🔧 Service Layer
+
+- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match results
+    - Improved edge case handling
+    - Better robustness in match result transformation
+    - Additional null-safety checks
 
 ### ⚠️ Deprecated
 
