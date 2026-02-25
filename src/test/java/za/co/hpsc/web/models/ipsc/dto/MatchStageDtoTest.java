@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchStageDtoTest {
 
-    // Constructor Tests - Single Parameter
+    // Constructor mapping - Single Parameter
 
     // Null and Empty Cases
     @Test
@@ -191,7 +191,7 @@ public class MatchStageDtoTest {
         assertNotNull(dto.getUuid());
     }
 
-    // Constructor Tests - Two Parameters
+    // Constructor mapping - Two Parameters
 
     // Null and Empty Cases
     @Test

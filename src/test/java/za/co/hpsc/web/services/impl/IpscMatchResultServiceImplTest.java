@@ -1,12 +1,13 @@
 package za.co.hpsc.web.services.impl;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import za.co.hpsc.web.domain.*;
+import za.co.hpsc.web.domain.Club;
+import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
@@ -679,158 +680,5 @@ public class IpscMatchResultServiceImplTest {
         assertNotNull(matchResultsDto.getCompetitors());
         assertTrue(matchResultsDto.getCompetitors().isEmpty());
         verifyNoInteractions(competitorEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
-    }
-
-    @Disabled
-    @Test
-    public void testInitScores_withExistingCompetitorsAndMatchCompetitors_thenInitializesCorrectly() {
-        // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-
-        MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
-
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setMemberId(100);
-        scoreResponse.setStageId(1);
-        scoreResponse.setFinalScore(10);
-        ipscResponse.setScores(List.of(scoreResponse));
-
-        MemberRequest memberResponse = new MemberRequest();
-        memberResponse.setMemberId(100);
-        memberResponse.setIcsAlias("ALIAS100");
-        memberResponse.setFirstName("John");
-        memberResponse.setLastName("Doe");
-        List<MemberRequest> memberRequests = List.of(memberResponse);
-        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
-
-        Competitor existingCompetitor = new Competitor();
-        existingCompetitor.setId(10L);
-        existingCompetitor.setCompetitorNumber("ALIAS100");
-
-        MatchCompetitor existingMatchCompetitor = new MatchCompetitor();
-        existingMatchCompetitor.setId(20L);
-
-        when(competitorEntityService.findCompetitor("ALIAS100", "John", "Doe", null))
-                .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorEntityService.findMatchCompetitor(10L, 1L))
-                .thenReturn(Optional.of(existingMatchCompetitor));
-
-        // Act
-        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
-
-        // Assert
-        assertNotNull(matchResultsDto.getCompetitors());
-        assertEquals(1, matchResultsDto.getCompetitors().size());
-        assertEquals(10L, matchResultsDto.getCompetitors().getFirst().getId());
-        assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorEntityService, times(1))
-                .findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorEntityService, times(1))
-                .findMatchCompetitor(10L, 1L);
-    }
-
-    @Disabled
-    @Test
-    public void testInitScores_withNonExistingCompetitorsAndMatchCompetitors_thenCreatesNew() {
-        // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-
-        MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
-
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setMemberId(100);
-        scoreResponse.setStageId(1);
-        scoreResponse.setFinalScore(100);
-        ipscResponse.setScores(List.of(scoreResponse));
-
-        MemberRequest memberResponse = new MemberRequest();
-        memberResponse.setMemberId(100);
-        memberResponse.setIcsAlias("ALIAS100");
-        memberResponse.setFirstName("John");
-        memberResponse.setLastName("Doe");
-        List<MemberRequest> memberRequests = List.of(memberResponse);
-        ipscResponse.setMembers(memberRequests.stream().map(MemberResponse::new).toList());
-
-        when(competitorEntityService.findCompetitor("ALIAS100", "John", "Doe", null))
-                .thenReturn(Optional.empty());
-        when(matchCompetitorEntityService.findMatchCompetitor(null, 1L))
-                .thenReturn(Optional.empty());
-
-        // Act
-        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
-
-        // Assert
-        assertNotNull(matchResultsDto.getCompetitors());
-        assertEquals(1, matchResultsDto.getCompetitors().size());
-        assertNull(matchResultsDto.getCompetitors().getFirst().getId());
-        assertEquals(1, matchResultsDto.getMatchCompetitors().size());
-        verify(competitorEntityService, times(1))
-                .findCompetitor("ALIAS100", "John", "Doe", null);
-        verify(matchCompetitorEntityService, times(1))
-                .findMatchCompetitor(null, 1L);
-    }
-
-    @Disabled
-    @Test
-    public void testInitScores_withMatchStageCompetitorsScores_thenInitializesCorrectly() {
-        // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setId(50L);
-        stageDto.setStageNumber(1);
-
-        MatchResultsDto matchResultsDto = new MatchResultsDto(matchDto);
-        matchResultsDto.setMatch(matchDto);
-        matchResultsDto.setStages(List.of(stageDto));
-
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setMemberId(100);
-        scoreResponse.setStageId(1);
-        scoreResponse.setFinalScore(100);
-        ipscResponse.setScores(List.of(scoreResponse));
-
-        MemberRequest memberRequest = new MemberRequest();
-        memberRequest.setMemberId(100);
-        memberRequest.setIcsAlias("ALIAS100");
-        memberRequest.setFirstName("John");
-        memberRequest.setLastName("Doe");
-        MemberResponse memberResponse = new MemberResponse(memberRequest);
-        ipscResponse.setMembers(List.of(memberResponse));
-
-        Competitor existingCompetitor = new Competitor();
-        existingCompetitor.setId(10L);
-
-        MatchCompetitor existingMatchCompetitor = new MatchCompetitor();
-        existingMatchCompetitor.setId(20L);
-
-        MatchStageCompetitor existingMatchStageCompetitor = new MatchStageCompetitor();
-        existingMatchStageCompetitor.setId(30L);
-
-        when(competitorEntityService.findCompetitor("ALIAS100", "John", "Doe", null))
-                .thenReturn(Optional.of(existingCompetitor));
-        when(matchCompetitorEntityService.findMatchCompetitor(10L, 1L))
-                .thenReturn(Optional.of(existingMatchCompetitor));
-        when(matchStageCompetitorEntityService.findMatchStageCompetitor(50L, 10L))
-                .thenReturn(Optional.of(existingMatchStageCompetitor));
-
-        // Act
-        ipscMatchResultService.initScores(matchResultsDto, ipscResponse);
-
-        // Assert
-        assertNotNull(matchResultsDto.getMatchStageCompetitors());
-        assertEquals(1, matchResultsDto.getMatchStageCompetitors().size());
-        assertEquals(30L, matchResultsDto.getMatchStageCompetitors().getFirst().getId());
-        verify(matchStageCompetitorEntityService, times(1))
-                .findMatchStageCompetitor(50L, 10L);
     }
 }

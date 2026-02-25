@@ -87,51 +87,53 @@ public class MatchStageCompetitorDto {
      *                                   such as the competitor, match stage, and associated identifier.
      *                                   Must not be null.
      */
-    public MatchStageCompetitorDto(@NotNull MatchStageCompetitor matchStageCompetitorEntity) {
-        // Initialises the competitor and stage details
-        this.id = matchStageCompetitorEntity.getId();
-        this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
-        this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
+    public MatchStageCompetitorDto(MatchStageCompetitor matchStageCompetitorEntity) {
+        if (matchStageCompetitorEntity != null) {
+            // Initialises the competitor and stage details
+            this.id = matchStageCompetitorEntity.getId();
+            this.competitor = new CompetitorDto(matchStageCompetitorEntity.getCompetitor());
+            this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
-        // Initialises the club details
-        this.club = new ClubDto(matchStageCompetitorEntity.getMatchStage().getMatch().getClub());
+            // Initialises the club details
+            this.club = new ClubDto(matchStageCompetitorEntity.getMatchStage().getMatch().getClub());
 
-        // Initialises the competitor and stage attributes
-        this.competitorCategory = matchStageCompetitorEntity.getCompetitorCategory();
-        this.firearmType = matchStageCompetitorEntity.getFirearmType();
-        this.division = matchStageCompetitorEntity.getDivision();
-        this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
+            // Initialises the competitor and stage attributes
+            this.competitorCategory = matchStageCompetitorEntity.getCompetitorCategory();
+            this.firearmType = matchStageCompetitorEntity.getFirearmType();
+            this.division = matchStageCompetitorEntity.getDivision();
+            this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
 
-        // Initialises thfe detailed breakdown of the score
-        this.scoreA = matchStageCompetitorEntity.getScoreA();
-        this.scoreB = matchStageCompetitorEntity.getScoreB();
-        this.scoreC = matchStageCompetitorEntity.getScoreC();
-        this.scoreD = matchStageCompetitorEntity.getScoreD();
+            // Initialises the detailed breakdown of the score
+            this.scoreA = matchStageCompetitorEntity.getScoreA();
+            this.scoreB = matchStageCompetitorEntity.getScoreB();
+            this.scoreC = matchStageCompetitorEntity.getScoreC();
+            this.scoreD = matchStageCompetitorEntity.getScoreD();
 
-        // Initialises the overall performance metrics
-        this.points = matchStageCompetitorEntity.getPoints();
-        this.misses = matchStageCompetitorEntity.getMisses();
-        this.penalties = matchStageCompetitorEntity.getPenalties();
-        this.procedurals = matchStageCompetitorEntity.getProcedurals();
+            // Initialises the overall performance metrics
+            this.points = matchStageCompetitorEntity.getPoints();
+            this.misses = matchStageCompetitorEntity.getMisses();
+            this.penalties = matchStageCompetitorEntity.getPenalties();
+            this.procedurals = matchStageCompetitorEntity.getProcedurals();
 
-        // Initialises the deduction details, if applicable
-        this.hasDeduction = matchStageCompetitorEntity.getHasDeduction();
-        this.deductionPercentage = matchStageCompetitorEntity.getDeductionPercentage();
+            // Initialises the deduction details, if applicable
+            this.hasDeduction = matchStageCompetitorEntity.getHasDeduction();
+            this.deductionPercentage = matchStageCompetitorEntity.getDeductionPercentage();
 
-        // Initialises whether the competitor is disqualified
-        this.isDisqualified = matchStageCompetitorEntity.getIsDisqualified();
+            // Initialises whether the competitor is disqualified
+            this.isDisqualified = matchStageCompetitorEntity.getIsDisqualified();
 
-        // Initialises the time and hit factor details
-        this.time = matchStageCompetitorEntity.getTime();
-        this.hitFactor = matchStageCompetitorEntity.getHitFactor();
+            // Initialises the time and hit factor details
+            this.time = matchStageCompetitorEntity.getTime();
+            this.hitFactor = matchStageCompetitorEntity.getHitFactor();
 
-        // Initialises the stage ranking and percentage
-        this.stagePoints = matchStageCompetitorEntity.getStagePoints();
-        this.stagePercentage = matchStageCompetitorEntity.getStagePercentage();
-        this.stageRanking = matchStageCompetitorEntity.getStageRanking();
+            // Initialises the stage ranking and percentage
+            this.stagePoints = matchStageCompetitorEntity.getStagePoints();
+            this.stagePercentage = matchStageCompetitorEntity.getStagePercentage();
+            this.stageRanking = matchStageCompetitorEntity.getStageRanking();
 
-        // Initialises the date fields
-        this.dateEdited = matchStageCompetitorEntity.getDateEdited();
+            // Initialises the date fields
+            this.dateEdited = matchStageCompetitorEntity.getDateEdited();
+        }
     }
 
     /**
@@ -197,7 +199,7 @@ public class MatchStageCompetitorDto {
 
             // Calculates the stage points and percentage based on the final score
             this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
-            if (matchStageDto.getMaxPoints() != null) {
+            if ((matchStageDto != null) && (matchStageDto.getMaxPoints() != null)) {
                 this.stagePercentage = NumberUtil.calculatePercentage(this.stagePoints,
                         BigDecimal.valueOf(matchStageDto.getMaxPoints()));
             }
@@ -210,12 +212,14 @@ public class MatchStageCompetitorDto {
             if (enrolledResponse != null) {
                 // Initialise the competitor and match details
                 this.competitorIndex = enrolledResponse.getCompetitorId();
-                this.matchStageIndex = matchStageDto.getIndex();
+                this.matchStageIndex = ((matchStageDto != null) ? matchStageDto.getIndex() : null);
                 // TOOD: get DTOs
                 this.matchStage = matchStageDto;
 
                 // Determines the power factor based on the major power factor flag
-                this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
+                this.powerFactor =
+                        (((enrolledResponse.getMajorPowerFactor() != null) && (enrolledResponse.getMajorPowerFactor())) ?
+                                PowerFactor.MAJOR : PowerFactor.MINOR);
                 this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the discipline based on the division ID
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);

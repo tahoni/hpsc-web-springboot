@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ScoreDtoTest {
 
-    // Constructor Tests - No Parameter
+    // Constructor mapping - No Parameter
 
     // Default Construction
     @Test
@@ -60,7 +60,7 @@ public class ScoreDtoTest {
                 dto.getLastModified().isEqual(afterConstruction));
     }
 
-    // Constructor Tests - Single Parameter (ScoreResponse)
+    // Constructor mapping - Single Parameter (ScoreResponse)
 
     // Null ScoreResponse
     @Test
@@ -477,9 +477,7 @@ public class ScoreDtoTest {
         assertEquals("  2.15  ", dto.getHitFactor());
     }
 
-    // ========================================
-    // Constructor Tests - All Parameters
-    // ========================================
+    // Constructor mapping - All Parameters
 
     // Fully Populated with All Parameters
     @Test
@@ -575,9 +573,7 @@ public class ScoreDtoTest {
         assertEquals(lastModified, dto.getLastModified());
     }
 
-    // ========================================
     // Constructor Equivalence Tests
-    // ========================================
 
     @Test
     void testConstructors_whenUsingNoArgAndSettingProperties_thenEquivalentToAllArgs() {
@@ -645,4 +641,3 @@ public class ScoreDtoTest {
         assertNotEquals(lastMod, dtoEmpty.getLastModified());
     }
 }
-

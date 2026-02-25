@@ -1,7 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -227,51 +226,6 @@ public class DomainServiceTest {
         assertEquals(2, holder.getMatchStages().size());
     }
 
-    @Disabled
-    @Test
-    public void testInitMatchEntities_withMatchCompetitors_initializesMatchCompetitors() {
-        // Arrange
-        UUID competitorUuid = UUID.randomUUID();
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setId(1L);
-        competitorDto.setUuid(competitorUuid);
-        competitorDto.setFirstName("John");
-        competitorDto.setLastName("Doe");
-        competitorDto.setCompetitorNumber("C001");
-
-        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
-        matchCompetitorDto.setId(20L);
-        matchCompetitorDto.setUuid(UUID.randomUUID());
-        matchCompetitorDto.setCompetitor(competitorDto);
-
-        matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
-        matchResultsDto.setMatchCompetitors(Collections.singletonList(matchCompetitorDto));
-
-        Competitor competitor = new Competitor();
-        competitor.setId(1L);
-        competitor.setFirstName("John");
-        competitor.setLastName("Doe");
-        competitor.setCompetitorNumber("C001");
-
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        matchCompetitor.setId(20L);
-
-        when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
-        when(ipscMatchRepository.findByIdWithClubStages(100L)).thenReturn(Optional.of(matchEntity));
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
-        when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor));
-
-        // Act
-        Optional<MatchEntityHolder> result = domainService.initMatchEntities(matchResultsDto);
-
-        // Assert
-        assertTrue(result.isPresent());
-        MatchEntityHolder holder = result.get();
-        assertNotNull(holder.getMatchCompetitors());
-        assertEquals(1, holder.getMatchCompetitors().size());
-    }
-
     @Test
     public void testInitMatchEntities_withMatchStageCompetitors_initializesMatchStageCompetitors() {
         // Arrange
@@ -377,60 +331,6 @@ public class DomainServiceTest {
         assertEquals(0, holder.getMatchStages().size());
         assertEquals(0, holder.getMatchCompetitors().size());
         assertEquals(0, holder.getMatchStageCompetitors().size());
-    }
-
-    @Disabled
-    @Test
-    public void testInitMatchEntities_matchCompetitorFiltering_filtersByClubReference() {
-        // Arrange
-        UUID competitorUuid = UUID.randomUUID();
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setId(1L);
-        competitorDto.setUuid(competitorUuid);
-        competitorDto.setFirstName("John");
-        competitorDto.setLastName("Doe");
-        competitorDto.setCompetitorNumber("C001");
-
-        MatchCompetitorDto hpscCompetitorDto = new MatchCompetitorDto();
-        hpscCompetitorDto.setId(20L);
-        hpscCompetitorDto.setUuid(UUID.randomUUID());
-        hpscCompetitorDto.setCompetitor(competitorDto);
-
-        MatchCompetitorDto soscCompetitorDto = new MatchCompetitorDto();
-        soscCompetitorDto.setId(21L);
-        soscCompetitorDto.setUuid(UUID.randomUUID());
-        soscCompetitorDto.setCompetitor(competitorDto);
-
-        matchResultsDto.setCompetitors(Collections.singletonList(competitorDto));
-        matchResultsDto.setMatchCompetitors(Arrays.asList(hpscCompetitorDto, soscCompetitorDto));
-
-        Competitor competitor = new Competitor();
-        competitor.setId(1L);
-        competitor.setFirstName("John");
-        competitor.setLastName("Doe");
-        competitor.setCompetitorNumber("C001");
-
-        MatchCompetitor matchCompetitor1 = new MatchCompetitor();
-        matchCompetitor1.setId(20L);
-
-        MatchCompetitor matchCompetitor2 = new MatchCompetitor();
-        matchCompetitor2.setId(21L);
-
-        when(clubRepository.findById(1L)).thenReturn(Optional.of(clubEntity));
-        when(ipscMatchRepository.findByIdWithClubStages(100L)).thenReturn(Optional.of(matchEntity));
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
-        when(matchCompetitorRepository.findById(20L)).thenReturn(Optional.of(matchCompetitor1));
-        when(matchCompetitorRepository.findById(21L)).thenReturn(Optional.of(matchCompetitor2));
-
-        // Act
-        Optional<MatchEntityHolder> result = domainService.initMatchEntities(matchResultsDto);
-
-        // Assert
-        assertTrue(result.isPresent());
-        MatchEntityHolder holder = result.get();
-        // Should only include HPSC competitors
-        assertEquals(1, holder.getMatchCompetitors().size());
     }
 
     @Test
