@@ -8,7 +8,16 @@ import za.co.hpsc.web.domain.*;
 
 import java.util.List;
 
-// TODO: Javadoc
+/**
+ * Encapsulates information about a match, its associated club, match stages, and competitors.
+ *
+ * <p>
+ * The {@code MatchEntityHolder} class acts as a container, aggregating
+ * various entities related to a match. This includes the match details,
+ * associated club, stages of the match, competitors, and their participation
+ * in the match stages.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

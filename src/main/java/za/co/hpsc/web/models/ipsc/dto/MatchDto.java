@@ -59,9 +59,8 @@ public class MatchDto {
      * @param matchEntity the {@link IpscMatch} entity containing match-related information, such as
      *                    the unique identifier, associated club, name, scheduled date, match
      *                    firearm type, match category, creation timestamp, and update timestamp.
-     *                    Must not be null.
      */
-    public MatchDto(@NotNull IpscMatch matchEntity) {
+    public MatchDto(IpscMatch matchEntity) {
         if (matchEntity == null) {
             return;
         }
@@ -90,9 +89,8 @@ public class MatchDto {
      *
      * @param matchEntity the {@link IpscMatch} entity containing match-related information such as
      *                    the unique identifier, name, scheduled date, division, category,
-     *                    creation timestamp, and update timestamp. Must not be null.
+     *                    creation timestamp, and update timestamp.
      * @param clubDto     the {@link ClubDto} instance representing the club associated with the match.
-     *                    Can be null.
      */
     public MatchDto(IpscMatch matchEntity, ClubDto clubDto) {
         if (matchEntity != null) {
@@ -136,12 +134,9 @@ public class MatchDto {
      *
      * @param matchResponse  the {@link MatchResponse} object containing information about the match,
      *                       such as its name, date, and firearm type.
-     *                       Must not be null.
      * @param clubDto        the {@link ClubDto} object representing the club associated with the match.
-     *                       Can be null if no club association is required.
      * @param scoreResponses a list of {@link ScoreResponse} objects containing information about scores
      *                       and their last modification times.
-     *                       Can be null if no score data is available.
      */
     public void init(MatchResponse matchResponse, ClubDto clubDto, List<ScoreResponse> scoreResponses) {
         if (matchResponse != null) {

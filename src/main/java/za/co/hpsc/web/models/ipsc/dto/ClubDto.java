@@ -41,7 +41,6 @@ public class ClubDto {
      *
      * @param clubEntity the {@link Club} entity containing the club's information
      *                   such as its unique identifier, name, and abbreviation.
-     *                   Must not be null.
      */
     public ClubDto(Club clubEntity) {
         if (clubEntity != null) {
@@ -54,6 +53,13 @@ public class ClubDto {
         }
     }
 
+    /**
+     * Constructs a new {@code ClubDto} instance using data from the provided {@code ClubResponse}.
+     *
+     * @param clubResponse the {@code ClubResponse} object containing the club's information
+     *                     such as its identifier, name, and abbreviation. If null, the fields
+     *                     are not initialized.
+     */
     // TODO: Javadoc
     public ClubDto(ClubResponse clubResponse) {
         if (clubResponse != null) {

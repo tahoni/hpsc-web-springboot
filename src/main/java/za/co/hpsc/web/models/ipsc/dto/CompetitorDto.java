@@ -55,7 +55,6 @@ public class CompetitorDto {
      * @param competitorEntity the {@link Competitor} entity containing the competitor's information,
      *                         such as unique identifier, first name, last name, middle names,
      *                         competitor number, date of birth, and category.
-     *                         Must not be null.
      */
     public CompetitorDto(@NotNull Competitor competitorEntity) {
         if (competitorEntity == null) {
@@ -86,10 +85,8 @@ public class CompetitorDto {
      * @param memberResponse   the {@link MemberResponse} object containing competitor-related
      *                         information, such as the competitor's first name, last name,
      *                         date of birth, and SAPSA number.
-     *                         Must not be null.
      * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
      *                         competitor category.
-     *                         Can be null.
      */
     public void init(MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
         if (memberResponse != null) {

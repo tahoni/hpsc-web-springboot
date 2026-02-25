@@ -85,7 +85,6 @@ public class MatchStageCompetitorDto {
      * @param matchStageCompetitorEntity the {@link MatchStageCompetitor} entity containing information
      *                                   about a competitor's participation in a specific match stage,
      *                                   such as the competitor, match stage, and associated identifier.
-     *                                   Must not be null.
      */
     public MatchStageCompetitorDto(MatchStageCompetitor matchStageCompetitorEntity) {
         if (matchStageCompetitorEntity != null) {
@@ -141,10 +140,8 @@ public class MatchStageCompetitorDto {
      * {@link CompetitorDto} and {@link MatchStageDto} objects.
      *
      * @param competitorDto the {@link  CompetitorDto} representing the competitor in the match stage.
-     *                      Must not be null.
      * @param matchStageDto the {@link MatchStageDto} representing the match stage in which
      *                      the competitor participates.
-     *                      Must not be null.
      */
     public MatchStageCompetitorDto(CompetitorDto competitorDto, MatchStageDto matchStageDto) {
         if (competitorDto != null) {
@@ -163,12 +160,9 @@ public class MatchStageCompetitorDto {
      *
      * @param scoreResponse    the {@link ScoreResponse} object containing performance metrics
      *                         and detailed scoring information.
-     *                         Must not be null.
      * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
      *                         competitor information in the match stage.
-     *                         Can be null.
      * @param matchStageDto    the {@link MatchStageDto} object containing stage-related information,
-     *                         Can be null.
      */
     public void init(ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
                      MatchStageDto matchStageDto) {
