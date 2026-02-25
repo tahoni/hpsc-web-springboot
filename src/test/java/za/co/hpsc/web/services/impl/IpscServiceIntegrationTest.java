@@ -23,7 +23,6 @@ public class IpscServiceIntegrationTest {
     @Autowired
     private CompetitorRepository competitorRepository;
 
-
     @Autowired
     private IpscService ipscService;
 

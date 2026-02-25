@@ -80,7 +80,7 @@ public class MatchStageCompetitorDtoTest {
 
     // Null Entity
     @Test
-    void testConstructor_whenMatchStageCompetitorEntityNull_thenInitilizesWithDefaults() {
+    void testConstructor_whenMatchStageCompetitorEntityNull_thenInitializesWithDefaults() {
         // Act & Assert
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(null);
 
@@ -234,7 +234,7 @@ public class MatchStageCompetitorDtoTest {
         // penalties, procedurals not set
         entity.setTime(BigDecimal.valueOf(45.32));
         entity.setHitFactor(BigDecimal.valueOf(3.31));
-        // other fields not set
+        // other fields are not set
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(entity);
@@ -1783,7 +1783,7 @@ public class MatchStageCompetitorDtoTest {
         // Arrange
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setStageNumber(6);
-        // Match not set
+        // Match is not set
 
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("Partial");

@@ -234,7 +234,7 @@ public class ScoreDtoTest {
         // matchId not set (null)
         scoreResponse.setStageId(5);
         scoreResponse.setMemberId(16);
-        // time not set (null)
+        // time is not set (null)
         scoreResponse.setHitFactor("1.95");
         scoreResponse.setFinalScore(95);
         scoreResponse.setLastModified(LocalDateTime.of(2026, 2, 15, 13, 45));

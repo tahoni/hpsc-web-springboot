@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FirearmTypeToDivisionsTest {
 
-    // getDivisionsForFirearmType
+    // getDivisionsForFirearmType() tests
 
     @Test
     void testGetDivisionsForFirearmType_whenFirearmTypeIsHandgun_thenReturnsDivisionsHandgun() {
@@ -81,7 +81,7 @@ class FirearmTypeToDivisionsTest {
     }
 
 
-    // getFirearmTypeFromDivision
+    // getFirearmTypeFromDivision() tests
 
     @Test
     void testGetFirearmTypeFromDivision_whenDivisionIsOpen_thenReturnsHandgun() {

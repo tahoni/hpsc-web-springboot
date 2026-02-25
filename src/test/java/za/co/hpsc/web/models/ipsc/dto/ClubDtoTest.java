@@ -520,7 +520,7 @@ public class ClubDtoTest {
         String result = clubDto.toString();
 
         // Assert
-        // Name is not blank (has content), so included; then result is trimmed
+        // Name is not blank (has content), so included; then the result is trimmed
         assertEquals("Leading Space Club (LSC)", result);
     }
 
@@ -549,7 +549,7 @@ public class ClubDtoTest {
         String result = clubDto.toString();
 
         // Assert
-        // Name is not blank, so included; result is trimmed
+        // Name is not blank, so included; the result is trimmed
         assertEquals("Mixed   Spaces (MIX)", result);
     }
 
@@ -575,9 +575,9 @@ public class ClubDtoTest {
         // Arrange
         ClubDto clubDto = new ClubDto();
         clubDto.setId(777L);
-        // Index not set
+        // Index is not set
         clubDto.setName("Partial Club");
-        // Abbreviation not set
+        // Abbreviation is not set
 
         // Act
         String result = clubDto.toString();
@@ -592,7 +592,7 @@ public class ClubDtoTest {
         // Arrange
         ClubDto clubDto = new ClubDto();
         clubDto.setId(123L);
-        // Name and abbreviation not set (defaulted to "")
+        // Name and abbreviation are not set (defaulted to "")
 
         // Act
         String result = clubDto.toString();
@@ -607,7 +607,7 @@ public class ClubDtoTest {
         // Arrange
         ClubDto clubDto = new ClubDto();
         clubDto.setIndex(456);
-        // Name and abbreviation not set (defaulted to "")
+        // Name and abbreviation are not set (defaulted to "")
 
         // Act
         String result = clubDto.toString();
@@ -645,7 +645,8 @@ public class ClubDtoTest {
         String result = clubDto.toString();
 
         // Assert
-        // equalsIgnoreCase means abbreviation is considered same as name, so only name is shown
+        // equalsIgnoreCase means the abbreviation is considered to be the same as the name,
+        // so only the name is shown
         assertEquals("HPSC", result);
     }
 
@@ -718,7 +719,7 @@ public class ClubDtoTest {
         String result = clubDto.toString();
 
         // Assert
-        // Both name and abbreviation are null, so nothing is appended; result is ""
+        // Both name and abbreviation are null, so nothing is appended; the result is ""
         assertEquals("", result);
     }
 

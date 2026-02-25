@@ -22,7 +22,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: add tests for competitors
 @ExtendWith(MockitoExtension.class)
 public class IpscMatchEntityServiceTest {
 

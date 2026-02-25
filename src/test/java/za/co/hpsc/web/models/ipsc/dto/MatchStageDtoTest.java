@@ -15,7 +15,7 @@ public class MatchStageDtoTest {
     @Test
     void testConstructor_whenIpscMatchStageNull_thenKeepsDefaults() {
         // Arrange & Act
-        MatchStageDto dto = new MatchStageDto((IpscMatchStage) null);
+        MatchStageDto dto = new MatchStageDto(null);
 
         // Assert
         assertNotNull(dto.getUuid());
@@ -196,12 +196,8 @@ public class MatchStageDtoTest {
     // Null and Empty Cases
     @Test
     void testConstructor_whenIpscMatchStageAndMatchDtoNull_thenKeepsDefaults() {
-        // Arrange
-        IpscMatchStage stage = null;
-        MatchDto matchDto = null;
-
         // Act
-        MatchStageDto dto = new MatchStageDto(stage, matchDto);
+        MatchStageDto dto = new MatchStageDto(null, null);
 
         // Assert
         assertNotNull(dto.getUuid());

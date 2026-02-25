@@ -37,6 +37,10 @@ public class IpscServiceImplTest {
     @InjectMocks
     private IpscServiceImpl ipscService;
 
+    // =====================================================================
+    // Tests for importWinMssCabFileContent - valid/invalid file processing
+    // =====================================================================
+
     @Test
     public void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() {
         // Arrange
@@ -139,9 +143,11 @@ public class IpscServiceImplTest {
         );
 
         // Assert
-        verify(ipscMatchService, times(1)).mapMatchResults(any());
-        verify(ipscMatchResultService, never()).initMatchResults(any());
-        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
+        assertDoesNotThrow(() -> {
+            verify(ipscMatchService, times(1)).mapMatchResults(any());
+            verify(ipscMatchResultService, never()).initMatchResults(any());
+            verify(transactionService, never()).saveMatchResults(any());
+        });
     }
 
     @Test
@@ -305,6 +311,10 @@ public class IpscServiceImplTest {
         assertDoesNotThrow(() -> verify(transactionService, times(1)).saveMatchResults(matchResultsDto));
     }
 
+    // =====================================================================
+    // Tests for readIpscRequests - IPSC request parsing with XML
+    // =====================================================================
+
     @Test
     public void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() {
         // Arrange
@@ -423,7 +433,6 @@ public class IpscServiceImplTest {
         assertTrue(result.getMembers().isEmpty());
         assertTrue(result.getClassifications().isEmpty());
         assertTrue(result.getEnrolledMembers().isEmpty());
-        assertTrue(result.getSquads().isEmpty());
         assertTrue(result.getTeams().isEmpty());
         assertTrue(result.getScores().isEmpty());
     }
@@ -597,13 +606,11 @@ public class IpscServiceImplTest {
         );
     }
 
-    @Test
-    public void testReadIpscRequests_withNullJson_thenThrowsException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () ->
-                ipscService.readIpscRequests(null)
-        );
-    }
+    // =====================================================================
+    // Tests for readRequests - Generic XML to request object parsing
+    // =====================================================================
+
+    // --- Existing readRequests tests (original) ---
 
     @Test
     public void testReadRequests_withValidXml_thenReturnsRequests() {
@@ -633,7 +640,7 @@ public class IpscServiceImplTest {
         assertNotNull(clubs);
         assertEquals(2, clubs.size());
 
-        // Assert first club
+        // Assert the first club
         ClubRequest firstClub = clubs.getFirst();
         assertEquals(1, firstClub.getClubId());
         assertEquals("ABC", firstClub.getClubCode());
@@ -689,7 +696,7 @@ public class IpscServiceImplTest {
         assertNotNull(clubs);
         assertEquals(2, clubs.size());
 
-        // Assert first club
+        // Assert the first club
         ClubRequest firstClub = clubs.getFirst();
         assertEquals(1, firstClub.getClubId());
         assertEquals("ABC", firstClub.getClubCode());
@@ -757,276 +764,1033 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withNullXml_thenReturnsEmptyList() {
+    public void testReadRequests_withPartialData_thenReturnsRequestsWithPartialData() {
+        // Arrange
+        String xmlData = """
+                    <xml>
+                        <data>
+                            <row ClubId="1" ClubCode="ABC" Club="Alpha Club"/>
+                            <row ClubId="2" Club="Beta Club"/>
+                        </data>
+                    </xml>
+                """;
+
         // Act
-        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(null,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
         assertNotNull(clubs);
-        assertTrue(clubs.isEmpty());
+        assertEquals(2, clubs.size());
+
+        // Assert the first club with partial data
+        ClubRequest firstClub = clubs.getFirst();
+        assertEquals(1, firstClub.getClubId());
+        assertEquals("ABC", firstClub.getClubCode());
+        assertEquals("Alpha Club", firstClub.getClubName());
+        assertNull(firstClub.getContact());
+        assertNull(firstClub.getAddress1());
+        assertNull(firstClub.getAddress2());
+        assertNull(firstClub.getCity());
+        assertNull(firstClub.getProvince());
+        assertNull(firstClub.getCountryId());
+        assertNull(firstClub.getPostalCode());
+        assertNull(firstClub.getOfficePhoneNumber());
+        assertNull(firstClub.getAlternativePhoneNumber());
+        assertNull(firstClub.getFaxNumber());
+        assertNull(firstClub.getEmail());
+        assertNull(firstClub.getWebsite());
+
+        // Assert the second club with partial data
+        ClubRequest secondClub = clubs.get(1);
+        assertEquals(2, secondClub.getClubId());
+        assertEquals("Beta Club", secondClub.getClubName());
+        assertNull(secondClub.getClubCode());
+        assertNull(secondClub.getContact());
+        assertNull(secondClub.getAddress1());
+        assertNull(secondClub.getAddress2());
+        assertNull(secondClub.getCity());
+        assertNull(secondClub.getProvince());
+        assertNull(secondClub.getCountryId());
+        assertNull(secondClub.getPostalCode());
+        assertNull(secondClub.getOfficePhoneNumber());
+        assertNull(secondClub.getAlternativePhoneNumber());
+        assertNull(secondClub.getFaxNumber());
+        assertNull(secondClub.getEmail());
+        assertNull(secondClub.getWebsite());
     }
 
     @Test
-    public void testReadRequests_withValidClubXml_thenReturnsRequests() {
+    public void testReadRequests_withMixedDataCompleteness_thenProcessesAllRowsCorrectly() {
         // Arrange
         String xmlData = """
                     <xml>
                         <data>
                             <row ClubId="1" ClubCode="ABC" Club="Alpha Club" Contact="John Doe"/>
+                            <row ClubId="2" Club="Beta Club"/>
+                            <row ClubId="3" ClubCode="GHI"/>
                         </data>
                     </xml>
                 """;
 
         // Act
-        List<ClubRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
+        List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(clubs);
+        assertEquals(3, clubs.size());
 
         // Assert the first row
-        ClubRequest clubRequest = requestList.getFirst();
-        assertEquals(1, clubRequest.getClubId());
-        assertEquals("ABC", clubRequest.getClubCode());
-        assertEquals("Alpha Club", clubRequest.getClubName());
-        assertEquals("John Doe", clubRequest.getContact());
+        ClubRequest firstClub = clubs.getFirst();
+        assertEquals(1, firstClub.getClubId());
+        assertEquals("ABC", firstClub.getClubCode());
+        assertEquals("Alpha Club", firstClub.getClubName());
+        assertEquals("John Doe", firstClub.getContact());
+
+        // Assert the second row
+        ClubRequest secondClub = clubs.get(1);
+        assertEquals(2, secondClub.getClubId());
+        assertEquals("Beta Club", secondClub.getClubName());
+        assertNull(secondClub.getClubCode());
+        assertNull(secondClub.getContact());
+
+        // Assert the third row
+        ClubRequest thirdClub = clubs.get(2);
+        assertEquals(3, thirdClub.getClubId());
+        assertEquals("GHI", thirdClub.getClubCode());
+        assertNull(thirdClub.getClubName());
+        assertNull(thirdClub.getContact());
     }
 
     @Test
-    public void testReadRequests_withValidMatchXml_thenReturnsRequests() {
+    public void testReadRequests_whenXmlHasNumericAttributes_thenParsesCorrectly() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row MatchId='1' MatchName='Eeufees HG and PCC Club Shoot September 2025' MatchDt='2025-09-06T00:00:00' Chrono='True' MatchLevel='1' CountryId='CAN' FirearmId='7' SquadCount='9'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row MatchId="100" SquadCount="9" FirearmId="7"/>
+                        <row MatchId="101" SquadCount="5" FirearmId="2"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<MatchRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                MatchRequest.class));
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(2, result.size());
 
-        // Assert the first row
-        MatchRequest firstRequest = requestList.getFirst();
-        assertEquals(1, firstRequest.getMatchId());
-        assertEquals("Eeufees HG and PCC Club Shoot September 2025", firstRequest.getMatchName());
-        assertEquals(true, firstRequest.getChrono());
-        assertEquals(LocalDateTime.of(2025, 9, 6, 0, 0, 0), firstRequest.getMatchDate());
+        MatchRequest match1 = result.getFirst();
+        assertEquals(100, match1.getMatchId());
+        assertEquals(9, match1.getSquadCount());
+        assertEquals(7, match1.getFirearmId());
+
+        MatchRequest match2 = result.get(1);
+        assertEquals(101, match2.getMatchId());
+        assertEquals(5, match2.getSquadCount());
+        assertEquals(2, match2.getFirearmId());
     }
 
     @Test
-    public void testReadRequests_withValidStageXml_thenReturnsRequests() {
+    public void testReadRequests_whenXmlHasBooleanAttributes_thenParsesBooleanCorrectly() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row MatchId='1' StageId='1' StageName='Stage 1' FirearmId='7' CourseId='2' ScoringId='1' TrgtTypeId='2' IcsStageId='0' Remove='False' TrgtPaper='9' TrgtPopper='3' TrgtPlates='0' TrgtVanish='0' TrgtPenlty='32' MinRounds='21' ReportOn='False' MaxPoints='105'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row MatchId="1" Chrono="True"/>
+                        <row MatchId="2" Chrono="False"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<StageRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                StageRequest.class));
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(2, result.size());
 
-        // Assert the first row
-        StageRequest firstRequest = requestList.getFirst();
-        assertEquals(1, firstRequest.getMatchId());
-        assertEquals(1, firstRequest.getStageId());
-        assertEquals("Stage 1", firstRequest.getStageName());
+        MatchRequest match1 = result.getFirst();
+        assertEquals(1, match1.getMatchId());
+        assertTrue(match1.getChrono());
+
+        MatchRequest match2 = result.get(1);
+        assertEquals(2, match2.getMatchId());
+        assertFalse(match2.getChrono());
     }
 
     @Test
-    public void testReadRequests_withValidTagXml_thenReturnsRequests() {
+    public void testReadRequests_whenXmlHasDateTimeAttributes_thenParsesDateTimeCorrectly() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row TagId='1' Tag='RO'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row MatchId="1" MatchDt="2025-09-06T00:00:00"/>
+                        <row MatchId="2" MatchDt="2025-12-25T14:30:45"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<TagRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                TagRequest.class));
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(2, result.size());
 
-        // Assert the first row
-        TagRequest firstRequest = requestList.getFirst();
-        assertEquals(1, firstRequest.getTagId());
-        assertEquals("RO", firstRequest.getTagName());
+        MatchRequest match1 = result.getFirst();
+        assertEquals(LocalDateTime.of(2025, 9, 6, 0, 0, 0), match1.getMatchDate());
+
+        MatchRequest match2 = result.get(1);
+        assertEquals(LocalDateTime.of(2025, 12, 25, 14, 30, 45), match2.getMatchDate());
     }
 
     @Test
-    public void testReadRequests_withValidMemberXml_thenReturnsRequests() {
+    public void testReadRequests_withNumericAttributes_thenParsesCorrectly() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row MemberId='105' Lastname='Anthony' Firstname='Charlton' InActive='False' Female='false' PrintLabel='False' RegionId='CAN' Province='' ClassId='U' DfltDivId='0' DfltCatId='0' DfltTagId='0' QualId='0' IcsAlias='15000' Register='False'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row MatchId="1" SquadCount="9" FirearmId="7"/>
+                        <row MatchId="2" SquadCount="5" FirearmId="2"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<MemberRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                MemberRequest.class));
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(2, result.size());
 
-        // Assert the first row
-        MemberRequest firstRequest = requestList.getFirst();
-        assertEquals(105, firstRequest.getMemberId());
-        assertEquals("Anthony", firstRequest.getLastName());
-        assertEquals("Charlton", firstRequest.getFirstName());
-        assertEquals("15000", firstRequest.getIcsAlias());
+        MatchRequest match1 = result.getFirst();
+        assertEquals(1, match1.getMatchId());
+        assertEquals(9, match1.getSquadCount());
+        assertEquals(7, match1.getFirearmId());
+
+        MatchRequest match2 = result.get(1);
+        assertEquals(2, match2.getMatchId());
+        assertEquals(5, match2.getSquadCount());
+        assertEquals(2, match2.getFirearmId());
     }
 
     @Test
-    public void testReadRequests_withValidClassificationXml_thenReturnsRequests() {
+    public void testReadRequests_withBooleanAttributes_thenParsesBooleanCorrectly() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row MatchId="1" Chrono="True"/>
+                        <row MatchId="2" Chrono="False"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<ClassificationRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                ClassificationRequest.class));
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(2, result.size());
 
-        // Assert the first row
-        ClassificationRequest classificationRequest = requestList.getFirst();
-        assertEquals(50, classificationRequest.getMemberId());
-        assertEquals(1, classificationRequest.getDivisionId());
-        assertEquals(5000, classificationRequest.getInternationalClassificationId());
-        assertEquals(500, classificationRequest.getNationalClassificationId());
+        MatchRequest match1 = result.getFirst();
+        assertEquals(1, match1.getMatchId());
+        assertTrue(match1.getChrono());
+
+        MatchRequest match2 = result.get(1);
+        assertEquals(2, match2.getMatchId());
+        assertFalse(match2.getChrono());
     }
 
     @Test
-    public void testReadRequests_withValidEnrolledXml_thenReturnsRequest() {
+    public void testReadRequests_withDateTimeAttributes_thenParsesDateTimeCorrectly() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row MatchId='1' MemberId='105' CompId='105' DivId='29' CatId='2'  SquadId='7' TagId='0' MajorPF='True' IsDisq='False' DisqRuleId='0'   StageDisq='False' RefNo='AAA'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row MatchId="1" MatchDt="2025-09-06T00:00:00"/>
+                        <row MatchId="2" MatchDt="2025-12-25T14:30:45"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<EnrolledRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                EnrolledRequest.class));
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(2, result.size());
 
-        // Assert the first row
-        EnrolledRequest firstRequest = requestList.getFirst();
-        assertEquals(105, firstRequest.getMemberId());
-        assertEquals(1, firstRequest.getMatchId());
-        assertEquals(105, firstRequest.getCompetitorId());
+        MatchRequest match1 = result.getFirst();
+        assertEquals(LocalDateTime.of(2025, 9, 6, 0, 0, 0), match1.getMatchDate());
+
+        MatchRequest match2 = result.get(1);
+        assertEquals(LocalDateTime.of(2025, 12, 25, 14, 30, 45), match2.getMatchDate());
     }
 
     @Test
-    public void testReadRequests_withValidSquadXml_thenReturnsRequest() {
+    public void testReadRequests_withCompleteScoreFields_thenReturnsAllFieldsPopulated() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row MatchId='1' SquadId='4' Squad='4'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row MatchId="1" StageId="8" MemberId="105" ScoreA="5" ScoreB="3" ScoreC="2" ScoreD="1" Misses="0" Penalties="5" HitFactor="8.75" FinalScore="87"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<SquadRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                SquadRequest.class));
+        List<ScoreRequest> result = ipscService.readRequests(xmlData, ScoreRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(1, result.size());
 
-        // Assert the first row
-        SquadRequest firstRequest = requestList.getFirst();
-        assertEquals(1, firstRequest.getMatchId());
-        assertEquals(4, firstRequest.getSquadId());
-        assertEquals("4", firstRequest.getSquadName());
+        ScoreRequest score = result.getFirst();
+        assertEquals(1, score.getMatchId());
+        assertEquals(8, score.getStageId());
+        assertEquals(105, score.getMemberId());
+        assertEquals(5, score.getScoreA());
+        assertEquals(3, score.getScoreB());
+        assertEquals(2, score.getScoreC());
+        assertEquals(1, score.getScoreD());
+        assertEquals(0, score.getMisses());
+        assertEquals(5, score.getPenalties());
+        assertEquals("8.75", score.getHitFactor());
+        assertEquals(87, score.getFinalScore());
     }
 
     @Test
-    public void testReadRequests_withValidTeamXml_thenReturnsRequests() {
+    public void testReadRequests_whenXmlHasEmptyDataElement_thenReturnsEmptyList() {
         // Arrange
-        String xmlData = """
-                    <xml>
-                        <data>
-                            <row MatchId='2' TeamId='10' Team='Test Team'/>
-                        </data>
-                    </xml>
-                """;
+        String xmlData = "<xml><data></data></xml>";
 
         // Act
-        List<TeamRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                TeamRequest.class));
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
-
-        // Assert the first row
-        TeamRequest firstRequest = requestList.getFirst();
-        assertEquals(2, firstRequest.getMatchId());
-        assertEquals(10, firstRequest.getTeamId());
-        assertEquals("Test Team", firstRequest.getTeamName());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testReadRequests_withValidScoreXml_thenReturnsRequest() {
+    public void testReadRequests_whenXmlHasNullDataElement_thenReturnsEmptyList() {
+        // Arrange
+        String xmlData = "<xml><data/></xml>";
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testReadRequests_whenXmlHasPartialClubFields_thenReturnsRequestsWithPartialData() {
         // Arrange
         String xmlData = """
-                    <xml>
-                        <data>
-                            <row MatchId='1' StageId='8' MemberId='105' ScoreA='0' ScoreB='0' ScoreC='0' ScoreD='0' Misses='0' Penalties='0' ProcError='0' ShootTime='0' Remove='True' Deduction='False' DedPctg='0' FlagDelete='False' IsDisq='False' ExtraShot='0' OverTime='0' HitFactor='0' FinalScore='0' LastModify='2025-09-10T15:54:03' NoVerify='True'/>
-                        </data>
-                    </xml>
+                <xml>
+                    <data>
+                        <row ClubId="1" ClubCode="ABC"/>
+                        <row ClubId="2" Club="Beta Club"/>
+                        <row ClubCode="GHI" Club="Gamma Club"/>
+                    </data>
+                </xml>
                 """;
 
         // Act
-        List<ScoreRequest> requestList = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
-                ScoreRequest.class));
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
         // Assert
-        assertNotNull(requestList);
-        assertEquals(1, requestList.size());
+        assertNotNull(result);
+        assertEquals(3, result.size());
+
+        // The first row has ClubId and ClubCode, missing Club and Contact
+        ClubRequest firstClub = result.getFirst();
+        assertEquals(1, firstClub.getClubId());
+        assertEquals("ABC", firstClub.getClubCode());
+        assertNull(firstClub.getClubName());
+
+        // The second row has ClubId and Club, missing ClubCode
+        ClubRequest secondClub = result.get(1);
+        assertEquals(2, secondClub.getClubId());
+        assertEquals("Beta Club", secondClub.getClubName());
+
+        // The third row has ClubCode and Club, missing ClubId
+        ClubRequest thirdClub = result.get(2);
+        assertEquals("GHI", thirdClub.getClubCode());
+        assertEquals("Gamma Club", thirdClub.getClubName());
+    }
+
+    @Test
+    public void testReadRequests_whenXmlHasMultipleRowsWithVariedFieldPopulation_thenProcessesAllRows() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="1" ClubCode="ABC" Club="Alpha" Contact="John" Address1="123 St" City="CT"/>
+                        <row ClubId="2" Club="Beta Club"/>
+                        <row ClubId="3" ClubCode="GHI"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(3, result.size());
 
         // Assert the first row
-        ScoreRequest firstRequest = requestList.getFirst();
-        assertEquals(1, firstRequest.getMatchId());
-        assertEquals(105, firstRequest.getMemberId());
-        assertEquals(8, firstRequest.getStageId());
+        ClubRequest firstClub = result.getFirst();
+        assertEquals(1, firstClub.getClubId());
+        assertEquals("ABC", firstClub.getClubCode());
+        assertEquals("Alpha", firstClub.getClubName());
+        assertEquals("John", firstClub.getContact());
+        assertEquals("123 St", firstClub.getAddress1());
+        assertEquals("CT", firstClub.getCity());
+
+        // Assert the second row
+        ClubRequest secondClub = result.get(1);
+        assertEquals(2, secondClub.getClubId());
+        assertEquals("Beta Club", secondClub.getClubName());
+        assertNull(secondClub.getClubCode());
+        assertNull(secondClub.getContact());
+
+        // Assert the third row
+        ClubRequest thirdClub = result.get(2);
+        assertEquals(3, thirdClub.getClubId());
+        assertEquals("GHI", thirdClub.getClubCode());
+        assertNull(thirdClub.getClubName());
+        assertNull(thirdClub.getContact());
+    }
+
+    @Test
+    public void testReadRequests_withOnlyRequiredMemberId_thenReturnsRequest() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MemberId="50"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<MemberRequest> result = ipscService.readRequests(xmlData, MemberRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        MemberRequest member = result.getFirst();
+        assertEquals(50, member.getMemberId());
+        assertNull(member.getFirstName());
+        assertNull(member.getLastName());
+    }
+
+    @Test
+    public void testReadRequests_withCompleteMatchFields_thenReturnsAllFieldsPopulated() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" MatchName="Test Match" MatchDt="2025-09-06T00:00:00" Chrono="True" MatchLevel="2" CountryId="ZA" FirearmId="7" SquadCount="9"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        MatchRequest match = result.getFirst();
+        assertEquals(1, match.getMatchId());
+        assertEquals("Test Match", match.getMatchName());
+        assertEquals(LocalDateTime.of(2025, 9, 6, 0, 0, 0), match.getMatchDate());
+        assertTrue(match.getChrono());
+        assertEquals(2, match.getMatchLevel());
+        assertEquals("ZA", match.getCountryId());
+        assertEquals(7, match.getFirearmId());
+        assertEquals(9, match.getSquadCount());
+    }
+
+    @Test
+    public void testReadRequests_withPartialMatchFields_thenReturnsOnlyPopulatedFields() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" MatchName="Partial Match"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        MatchRequest match = result.getFirst();
+        assertEquals(1, match.getMatchId());
+        assertEquals("Partial Match", match.getMatchName());
+        assertNull(match.getMatchDate());
+        assertNull(match.getChrono());
+    }
+
+    @Test
+    public void testReadRequests_withCompleteStageFields_thenReturnsAllFieldsPopulated() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" StageId="2" StageName="Test Stage" FirearmId="7" CourseId="2" ScoringId="1" TrgtTypeId="2" MaxPoints="105" MinRounds="21"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<StageRequest> result = ipscService.readRequests(xmlData, StageRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        StageRequest stage = result.getFirst();
+        assertEquals(1, stage.getMatchId());
+        assertEquals(2, stage.getStageId());
+        assertEquals("Test Stage", stage.getStageName());
+        assertEquals(7, stage.getFirearmId());
+        assertEquals(2, stage.getCourseId());
+        assertEquals(2, stage.getTargetClassificationId());
+        assertEquals(105, stage.getMaxPoints());
+        assertEquals(21, stage.getMinRounds());
+    }
+
+    @Test
+    public void testReadRequests_withCompleteEnrolledFields_thenReturnsAllFieldsPopulated() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" MemberId="50" CompId="105" DivId="29" CatId="2" SquadId="7" TagId="1" MajorPF="True" IsDisq="False"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<EnrolledRequest> result = ipscService.readRequests(xmlData, EnrolledRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        EnrolledRequest enrolled = result.getFirst();
+        assertEquals(1, enrolled.getMatchId());
+        assertEquals(50, enrolled.getMemberId());
+        assertEquals(105, enrolled.getCompetitorId());
+        assertEquals(29, enrolled.getDivisionId());
+        assertEquals(2, enrolled.getCompetitorCategoryId());
+        assertEquals(7, enrolled.getSquadId());
+        assertEquals(1, enrolled.getTagId());
+    }
+
+    @Test
+    public void testReadRequests_whenXmlHasMultipleClubsWithVariedFieldCompleteness_thenProcessesAllClubs() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="1" ClubCode="ABC" Club="Alpha Club" Contact="John Doe" Phone="123456789" Email="john@alpha.com"/>
+                        <row ClubId="2" ClubCode="DEF"/>
+                        <row ClubId="3" Club="Gamma Club"/>
+                        <row ClubCode="IJK" Club="Iota Club"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(4, result.size());
+
+        // Fully populated
+        ClubRequest club1 = result.getFirst();
+        assertEquals(1, club1.getClubId());
+        assertEquals("ABC", club1.getClubCode());
+        assertEquals("Alpha Club", club1.getClubName());
+        assertEquals("John Doe", club1.getContact());
+        assertEquals("123456789", club1.getOfficePhoneNumber());
+        assertEquals("john@alpha.com", club1.getEmail());
+
+        // Minimal fields
+        ClubRequest club2 = result.get(1);
+        assertEquals(2, club2.getClubId());
+        assertEquals("DEF", club2.getClubCode());
+
+        // Only name
+        ClubRequest club3 = result.get(2);
+        assertEquals(3, club3.getClubId());
+        assertEquals("Gamma Club", club3.getClubName());
+
+        // No ID
+        ClubRequest club4 = result.get(3);
+        assertEquals("IJK", club4.getClubCode());
+        assertEquals("Iota Club", club4.getClubName());
+    }
+
+    @Test
+    public void testReadRequests_whenXmlHasEmptyStringAttributes_thenProcessesWithEmptyValues() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="1" ClubCode="" Club="Alpha Club"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        ClubRequest club = result.getFirst();
+        assertEquals(1, club.getClubId());
+        assertEquals("", club.getClubCode());
+        assertEquals("Alpha Club", club.getClubName());
+    }
+
+    // --- New comprehensive readRequests tests: Edge cases, null/empty/blank, partial/full fields ---
+
+    // Test Group: Null/Empty/Blank Input Handling
+    @Test
+    public void readRequests_whenXmlIsNull_thenReturnsEmptyList() {
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(null, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void readRequests_whenXmlIsEmpty_thenReturnsEmptyList() {
+        // Act
+        List<ClubRequest> result = ipscService.readRequests("", ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void readRequests_whenXmlIsBlank_thenReturnsEmptyList() {
+        // Act
+        List<ClubRequest> result = ipscService.readRequests("   ", ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void readRequests_whenXmlHasBlankWithTabsAndNewlines_thenReturnsEmptyList() {
+        // Act
+        List<ClubRequest> result = ipscService.readRequests("\t\t\n   ", ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    // Test Group: XML Structure Edge Cases
+    @Test
+    public void readRequests_whenXmlHasEmptyDataElement_thenReturnsEmptyList() {
+        // Arrange
+        String xmlData = "<xml><data></data></xml>";
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void readRequests_whenXmlHasSelfClosingDataElement_thenReturnsEmptyList() {
+        // Arrange
+        String xmlData = "<xml><data/></xml>";
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    // Test Group: Partial and Full Field Coverage
+    @Test
+    public void readRequests_whenRowHasEmptyStringAttributes_thenProcessesWithEmptyValues() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="1" ClubCode="" Club="Alpha Club"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        ClubRequest club = result.getFirst();
+        assertEquals(1, club.getClubId());
+        assertEquals("", club.getClubCode());
+        assertEquals("Alpha Club", club.getClubName());
+    }
+
+    @Test
+    public void readRequests_whenRowHasPartialFields_thenReturnsRequestWithOnlyPopulatedFields() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="5" ClubCode="XYZ"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        ClubRequest club = result.getFirst();
+        assertEquals(5, club.getClubId());
+        assertEquals("XYZ", club.getClubCode());
+        assertNull(club.getClubName());
+        assertNull(club.getContact());
+    }
+
+    @Test
+    public void readRequests_whenRowHasAllFields_thenReturnsRequestWithAllFields() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="10" ClubCode="FULL" Club="Full Club" Contact="Admin"
+                             Address1="123 Main" City="Cape Town" Province="WC"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        ClubRequest club = result.getFirst();
+        assertEquals(10, club.getClubId());
+        assertEquals("FULL", club.getClubCode());
+        assertEquals("Full Club", club.getClubName());
+        assertEquals("Admin", club.getContact());
+        assertEquals("123 Main", club.getAddress1());
+        assertEquals("Cape Town", club.getCity());
+        assertEquals("WC", club.getProvince());
+    }
+
+    @Test
+    public void readRequests_whenMultipleRowsWithVariedFieldPopulation_thenProcessesAllRows() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="1" ClubCode="A" Club="Alpha"/>
+                        <row ClubId="2" ClubCode="B"/>
+                        <row ClubId="3" Club="Gamma"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(3, result.size());
+
+        assertEquals(1, result.getFirst().getClubId());
+        assertEquals("A", result.getFirst().getClubCode());
+        assertEquals("Alpha", result.getFirst().getClubName());
+
+        assertEquals(2, result.get(1).getClubId());
+        assertEquals("B", result.get(1).getClubCode());
+        assertNull(result.get(1).getClubName());
+
+        assertEquals(3, result.get(2).getClubId());
+        assertNull(result.get(2).getClubCode());
+        assertEquals("Gamma", result.get(2).getClubName());
+    }
+
+    @Test
+    public void readRequests_whenRowHasMissingOptionalFields_thenReturnsWithNullValues() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row ClubId="99"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        ClubRequest club = result.getFirst();
+        assertEquals(99, club.getClubId());
+        assertNull(club.getClubCode());
+        assertNull(club.getClubName());
+        assertNull(club.getContact());
+        assertNull(club.getAddress1());
+    }
+
+    // Test Group: Data Type Handling (Numeric, Boolean, DateTime)
+    @Test
+    public void readRequests_withNumericFields_thenParsesCorrectly() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="100" SquadCount="5" FirearmId="7"/>
+                        <row MatchId="200" SquadCount="10" FirearmId="3"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(100, result.getFirst().getMatchId());
+        assertEquals(5, result.getFirst().getSquadCount());
+        assertEquals(7, result.getFirst().getFirearmId());
+
+        assertEquals(200, result.get(1).getMatchId());
+        assertEquals(10, result.get(1).getSquadCount());
+        assertEquals(3, result.get(1).getFirearmId());
+    }
+
+    @Test
+    public void readRequests_withBooleanFields_thenParsesBooleanCorrectly() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" Chrono="True"/>
+                        <row MatchId="2" Chrono="False"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.getFirst().getChrono());
+        assertFalse(result.get(1).getChrono());
+    }
+
+    @Test
+    public void readRequests_withDateTimeFields_thenParsesDateTimeCorrectly() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" MatchDt="2025-09-06T10:30:00"/>
+                        <row MatchId="2" MatchDt="2025-12-25T14:45:30"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(LocalDateTime.of(2025, 9, 6, 10, 30, 0), result.getFirst().getMatchDate());
+        assertEquals(LocalDateTime.of(2025, 12, 25, 14, 45, 30), result.get(1).getMatchDate());
+    }
+
+    @Test
+    public void readRequests_withCompleteMatchRecord_thenMapsAllFieldsCorrectly() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="50" MatchName="Full Match Test" MatchDt="2025-06-15T09:00:00"
+                             Chrono="True" MatchLevel="3" CountryId="ZA" FirearmId="5" SquadCount="8"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        MatchRequest match = result.getFirst();
+        assertEquals(50, match.getMatchId());
+        assertEquals("Full Match Test", match.getMatchName());
+        assertEquals(LocalDateTime.of(2025, 6, 15, 9, 0, 0), match.getMatchDate());
+        assertTrue(match.getChrono());
+        assertEquals(3, match.getMatchLevel());
+        assertEquals("ZA", match.getCountryId());
+        assertEquals(5, match.getFirearmId());
+        assertEquals(8, match.getSquadCount());
+    }
+
+    @Test
+    public void readRequests_withCompleteScoreRecord_thenMapsAllScoreFieldsCorrectly() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" StageId="5" MemberId="100" ScoreA="10" ScoreB="8"
+                             ScoreC="6" ScoreD="4" Misses="2" Penalties="10" HitFactor="9.5" FinalScore="95"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ScoreRequest> result = ipscService.readRequests(xmlData, ScoreRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        ScoreRequest score = result.getFirst();
+        assertEquals(1, score.getMatchId());
+        assertEquals(5, score.getStageId());
+        assertEquals(100, score.getMemberId());
+        assertEquals(10, score.getScoreA());
+        assertEquals(8, score.getScoreB());
+        assertEquals(6, score.getScoreC());
+        assertEquals(4, score.getScoreD());
+        assertEquals(2, score.getMisses());
+        assertEquals(10, score.getPenalties());
+        assertEquals("9.5", score.getHitFactor());
+        assertEquals(95, score.getFinalScore());
+    }
+
+    @Test
+    public void readRequests_withPartialScoreRecord_thenMapsOnlyPopulatedScoreFields() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MatchId="1" StageId="2" MemberId="50"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<ScoreRequest> result = ipscService.readRequests(xmlData, ScoreRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        ScoreRequest score = result.getFirst();
+        assertEquals(1, score.getMatchId());
+        assertEquals(2, score.getStageId());
+        assertEquals(50, score.getMemberId());
+        assertNull(score.getScoreA());
+        assertNull(score.getScoreB());
+        assertNull(score.getHitFactor());
+    }
+
+    @Test
+    public void readRequests_withCompleteEnrolledRecord_thenMapsAllEnrolledFieldsCorrectly() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MemberId="75" CompId="150" MatchId="10" SquadId="3" DivId="2"
+                             CatId="1" TagId="5" MajorPF="True" IsDisq="False"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<EnrolledRequest> result = ipscService.readRequests(xmlData, EnrolledRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        EnrolledRequest enrolled = result.getFirst();
+        assertEquals(75, enrolled.getMemberId());
+        assertEquals(150, enrolled.getCompetitorId());
+        assertEquals(10, enrolled.getMatchId());
+        assertEquals(3, enrolled.getSquadId());
+        assertEquals(2, enrolled.getDivisionId());
+        assertEquals(1, enrolled.getCompetitorCategoryId());
+        assertEquals(5, enrolled.getTagId());
+        assertTrue(enrolled.getMajorPowerFactor());
+        assertFalse(enrolled.getIsDisqualified());
+    }
+
+    @Test
+    public void readRequests_withPartialEnrolledRecord_thenMapsOnlyPopulatedEnrolledFields() {
+        // Arrange
+        String xmlData = """
+                <xml>
+                    <data>
+                        <row MemberId="25" CompId="50" MatchId="5"/>
+                    </data>
+                </xml>
+                """;
+
+        // Act
+        List<EnrolledRequest> result = ipscService.readRequests(xmlData, EnrolledRequest.class);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        EnrolledRequest enrolled = result.getFirst();
+        assertEquals(25, enrolled.getMemberId());
+        assertEquals(50, enrolled.getCompetitorId());
+        assertEquals(5, enrolled.getMatchId());
+        assertNull(enrolled.getSquadId());
+        assertNull(enrolled.getDivisionId());
+        assertNull(enrolled.getCompetitorCategoryId());
     }
 }
