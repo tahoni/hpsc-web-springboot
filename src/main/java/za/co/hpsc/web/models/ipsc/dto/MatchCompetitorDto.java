@@ -16,6 +16,7 @@ import za.co.hpsc.web.utils.ValueUtil;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -118,7 +119,9 @@ public class MatchCompetitorDto {
 
             // Sets the date edited to the latest score update timestamp
             this.dateEdited = scoreResponses.stream()
+                    .filter(Objects::nonNull)
                     .map(ScoreResponse::getLastModified)
+                    .filter(Objects::nonNull)
                     .max(LocalDateTime::compareTo)
                     .orElse(LocalDateTime.now());
 
@@ -139,7 +142,8 @@ public class MatchCompetitorDto {
                 }
 
                 // Determines the power factor based on the major power factor flag
-                this.powerFactor = (enrolledResponse.getMajorPowerFactor() ? PowerFactor.MAJOR : PowerFactor.MINOR);
+                this.powerFactor = ((enrolledResponse.getMajorPowerFactor() != null) &&
+                        (enrolledResponse.getMajorPowerFactor()) ? PowerFactor.MAJOR : PowerFactor.MINOR);
                 // Determines the discipline based on the division ID
                 this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
                 // Determines the firearm type from the discipline

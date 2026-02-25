@@ -65,17 +65,13 @@ public class TransactionServiceImpl implements TransactionService {
             Optional<MatchEntityHolder> optionalMatch = domainService.initMatchEntities(matchResults)
                     .filter(matchEntityHolder -> matchEntityHolder.getMatch() != null);
             optionalMatch.ifPresent(matchEntityHolder -> {
+/*
                 if (matchEntityHolder.getClub() != null) {
                     clubRepository.save(matchEntityHolder.getClub());
                 }
-//                competitorRepository.saveAll(matchEntityHolder.getCompetitors());
-                matchEntityHolder.setClub(null);
+*/
 
                 ipscMatchRepository.save(matchEntityHolder.getMatch());
-//                ipscMatchStageRepository.saveAll(matchEntityHolder.getMatchStages());
-
-//                matchCompetitorRepository.saveAll(matchEntityHolder.getMatchCompetitors());
-//                matchStageCompetitorRepository.saveAll(matchEntityHolder.getMatchStageCompetitors());
             });
 
             transactionManager.commit(transaction);

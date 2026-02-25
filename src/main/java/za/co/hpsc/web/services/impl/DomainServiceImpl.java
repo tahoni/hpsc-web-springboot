@@ -71,7 +71,7 @@ public class DomainServiceImpl implements DomainService {
                             competitorMap, ClubIdentifier.HPSC);
             Map<UUID, MatchStageCompetitor> matchStageCompetitorMap =
                     initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(),
-                            competitorMap, ClubIdentifier.HPSC);
+                            matchStageMap, competitorMap, ClubIdentifier.HPSC);
 
             optionalMatchEntityHolder.set(Optional.of(new MatchEntityHolder(match, club,
                     matchStageMap.values().stream().filter(Objects::nonNull).toList(),
@@ -298,6 +298,7 @@ public class DomainServiceImpl implements DomainService {
      * @return a map of `UUID` to `MatchStageCompetitor` entities representing the initialised and mapped match stage competitors.
      */
     protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
+                                                                               Map<UUID, IpscMatchStage>  matchStageMap,
                                                                                Map<UUID, Competitor> competitorMap,
                                                                                ClubIdentifier clubIdentifier) {
 
