@@ -10,11 +10,9 @@
 **Test Suite Enhancement & Code Quality Consolidation**
 
 Version 5.1.0 focuses on strengthening the project's test infrastructure through comprehensive test
-reorganisation,
-elimination of duplicate test cases, and improved test organisation patterns. This release consolidates gains
-from
-version 5.0.0's semantic versioning transition and builds upon the extensive testing frameworks established in
-recent releases, delivering enhanced test maintainability and clarity.
+reorganisation, elimination of duplicate test cases, and improved test organisation patterns. This release
+consolidates gains from version 5.0.0's semantic versioning transition and builds upon the extensive testing
+frameworks established in recent releases, delivering enhanced test maintainability and clarity.
 
 ---
 
