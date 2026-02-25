@@ -40,6 +40,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throw new ValidationException("IPSC request holder can not be null while mapping match results.");
         }
 
+        if (ipscRequestHolder.getMatches() == null) {
+            return new IpscResponseHolder(new ArrayList<>());
+        }
+
         List<IpscResponse> ipscResponses = new ArrayList<>();
         // Maps IPSC requests to responses by match ID
         ipscRequestHolder.getMatches().stream().filter(Objects::nonNull)
@@ -125,6 +129,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Add all tags to the response
         List<TagRequest> tagRequests = ipscRequestHolder.getTags();
 
+        if ((ipscRequestHolder.getStages() == null) || (ipscRequestHolder.getEnrolledMembers() == null) ||
+                (ipscRequestHolder.getScores() == null)) {
+            return Optional.empty();
+        }
+
         // Add stages to the response, filtered by match ID
         List<StageRequest> stageRequests = ipscRequestHolder.getStages().stream()
                 .filter(Objects::nonNull)
@@ -199,7 +208,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return;
         }
 
-        if ((ipscResponse.getMatch() != null) && (ipscResponse.getMatch().getClubId() != null)) {
+        if ((ipscResponse.getMatch() != null) && (ipscResponse.getMatch().getClubId() != null) &&
+                (ipscRequestHolder.getClubs() != null)) {
             Integer clubId = ipscResponse.getMatch().getClubId();
             // Finds club matching ID or provides default
             ClubRequest club = ipscRequestHolder.getClubs().stream()

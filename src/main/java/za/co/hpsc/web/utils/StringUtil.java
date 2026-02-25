@@ -46,7 +46,6 @@ public final class StringUtil {
     }
 
     // TODO: Javadoc
-    // TODO: add tests
     public static String toString(Object object) {
         if (object == null) {
             return null;

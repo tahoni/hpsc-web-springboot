@@ -1882,8 +1882,7 @@ public class IpscServiceImplTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    // TODO: fix this, currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty sections, need to update the code to handle empty XML sections and return empty lists instead of throwing exceptions
-    @Disabled
+    @Disabled("Currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty sections, need to update the code to handle empty XML sections and return empty lists instead of throwing exceptions")
     @Test
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange
@@ -1924,8 +1923,7 @@ public class IpscServiceImplTest {
     }
 
     // Test Group: Partial Data Processing
-    // TODO: fix this, currently the code does not handle partial match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process partial match results and skip empty ones without throwing an exception
-    @Disabled
+    @Disabled("Currently the code does not handle partial match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process partial match results and skip empty ones without throwing an exception")
     @Test
     public void importWinMssCabFile_withPartialMatchData_thenProcessesSuccessfully() {
         // Arrange - Only match required fields, other sections mostly empty
@@ -1962,8 +1960,7 @@ public class IpscServiceImplTest {
     }
 
     // Test Group: Empty XML Sections Handling
-    // TODO: fix this, currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty
-    @Disabled
+    @Disabled("Currently the code does not handle empty XML sections gracefully, it throws an exception when trying to parse empty sections, need to update the code to handle empty XML sections and return empty lists instead of throwing exceptions")
     @Test
     public void importWinMssCabFile_withEmptyXmlSections_thenProcessesWithEmptyData() {
         // Arrange
@@ -2003,8 +2000,7 @@ public class IpscServiceImplTest {
     }
 
     // Test Group: Multiple Records Processing
-    // TODO: fix this, currently the code does not handle multiple match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process all match results and skip empty ones without throwing an exception
-    @Disabled
+    @Disabled("Currently the code does not handle multiple match results properly, it processes the first match result and then throws an exception when trying to process the second match result which returns empty, need to adjust service to process all match results and skip empty ones without throwing an exception")
     @Test
     public void importWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() {
         // Arrange
@@ -2079,8 +2075,7 @@ public class IpscServiceImplTest {
     }
 
     // Test Group: Mixed Match Results (Some Present, Some Empty)
-    // TODO: fix this, currently the code does not handle mixed results properly, it throws an exception when trying to process the empty result, need to adjust service to process present results and skip empty ones without throwing an exception
-    @Disabled
+    @Disabled("Currently the code does not handle mixed results properly, it throws an exception when trying to process the empty result, need to adjust service to process present results and skip empty ones without throwing an exception")
     @Test
     public void importWinMssCabFile_withMixedMatchResults_thenProcessesPresentResultsOnly() {
         // Arrange
@@ -2125,8 +2120,7 @@ public class IpscServiceImplTest {
     }
 
     // Test Group: Empty Strings vs Null Values in XML
-    // TODO: fix this - currently fails because empty strings in XML are treated as nulls in the service, need to adjust service to differentiate between empty and null if we want to support this test case
-    @Disabled
+    @Disabled("Currently fails because empty strings in XML are treated as nulls in the service, need to adjust service to differentiate between empty and null if we want to support this test case")
     @Test
     public void importWinMssCabFile_withEmptyStringXmlFields_thenProcessesSuccessfully() {
         // Arrange
@@ -2163,8 +2157,7 @@ public class IpscServiceImplTest {
     }
 
     // Test Group: Special Characters and Unicode Handling
-    // TODO: fix this - currently fails because the XML parser does not handle special characters properly, need to ensure that the service can handle XML with special characters and that they are correctly parsed and processed
-    @Disabled
+    @Disabled("Currently fails because the XML parser does not handle special characters properly, need to ensure that the service can handle XML with special characters and that they are correctly parsed and processed")
     @Test
     public void importWinMssCabFile_withSpecialCharactersInData_thenProcessesSuccessfully() {
         // Arrange
