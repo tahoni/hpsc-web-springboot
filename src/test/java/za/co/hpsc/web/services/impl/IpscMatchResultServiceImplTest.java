@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-// TODO: add sections
 public class IpscMatchResultServiceImplTest {
 
     @Mock
@@ -58,7 +57,7 @@ public class IpscMatchResultServiceImplTest {
     }
 
     // =====================================================================
-    // Tests for initMatchResults - Null/Empty Input Handling
+    // Tests for initMatchResults - Null Input Handling
     // =====================================================================
 
     @Test
@@ -70,6 +69,28 @@ public class IpscMatchResultServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    public void testInitMatchResults_whenMatchResponseIsNull_thenReturnsEmptyOptional() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(null);
+        ipscResponse.setClub(new ClubResponse());
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setScores(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    // =====================================================================
+    // Tests for initMatchResults - Null Collections and Fields
+    // =====================================================================
 
     @Test
     public void testInitMatchResults_whenClubResponseIsNull_thenProcessesWithoutClub() {
@@ -95,24 +116,6 @@ public class IpscMatchResultServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertNull(result.get().getClub());
-    }
-
-    @Test
-    public void testInitMatchResults_whenMatchResponseIsNull_thenReturnsEmptyOptional() {
-        // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-        ipscResponse.setMatch(null);
-        ipscResponse.setClub(new ClubResponse());
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
-
-        // Act
-        var result = ipscMatchResultService.initMatchResults(ipscResponse);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -211,7 +214,7 @@ public class IpscMatchResultServiceImplTest {
     }
 
     // =====================================================================
-    // Tests for initMatchResults - Null/Empty/Blank Field Handling
+    // Tests for initMatchResults - Match Name Field Handling
     // =====================================================================
 
     @Test
@@ -310,6 +313,10 @@ public class IpscMatchResultServiceImplTest {
         assertEquals("   ", result.get().getMatch().getName());
     }
 
+    // =====================================================================
+    // Tests for initMatchResults - Club Fields Handling
+    // =====================================================================
+
     @Test
     public void testInitMatchResults_whenClubNameIsNull_thenProcessesWithNullClubName() {
         // Arrange
@@ -375,8 +382,36 @@ public class IpscMatchResultServiceImplTest {
     }
 
     // =====================================================================
-    // Tests for initMatchResults - Partial Data Scenarios
+    // Tests for initMatchResults - Partial and Complete Data Scenarios
     // =====================================================================
+
+    @Test
+    public void testInitMatchResults_withOnlyMatchData_thenReturnsMatchWithoutDetails() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Simple Match");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setClub(null);
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setScores(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        when(matchEntityService.findMatchByName("Simple Match")).thenReturn(Optional.empty());
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals("Simple Match", result.get().getMatch().getName());
+        assertTrue(result.get().getStages().isEmpty());
+        assertTrue(result.get().getScores().isEmpty());
+    }
 
     @Test
     public void testInitMatchResults_withPartialData_thenMapsAvailableData() {
@@ -416,34 +451,6 @@ public class IpscMatchResultServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertEquals(1, result.get().getStages().size());
-        assertTrue(result.get().getScores().isEmpty());
-    }
-
-    @Test
-    public void testInitMatchResults_withOnlyMatchData_thenReturnsMatchWithoutDetails() {
-        // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Simple Match");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setClub(null);
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
-
-        when(matchEntityService.findMatchByName("Simple Match")).thenReturn(Optional.empty());
-
-        // Act
-        var result = ipscMatchResultService.initMatchResults(ipscResponse);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals("Simple Match", result.get().getMatch().getName());
-        assertTrue(result.get().getStages().isEmpty());
         assertTrue(result.get().getScores().isEmpty());
     }
 
@@ -489,10 +496,6 @@ public class IpscMatchResultServiceImplTest {
         assertTrue(result.isPresent());
         assertEquals(1, result.get().getScores().size());
     }
-
-    // =====================================================================
-    // Tests for initMatchResults - Full Data Scenarios
-    // =====================================================================
 
     @Test
     public void testInitMatchResults_withCompleteData_thenMapsAllData() {
@@ -544,6 +547,50 @@ public class IpscMatchResultServiceImplTest {
         assertEquals("Complete Match", matchResults.getMatch().getName());
         assertEquals(1, matchResults.getStages().size());
         assertEquals(1, matchResults.getScores().size());
+    }
+
+    @Test
+    public void testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Complex Match");
+        ipscResponse.setMatch(matchResponse);
+
+        List<StageResponse> stages = new ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            StageResponse stage = new StageResponse();
+            stage.setStageId(200 + i);
+            stage.setMatchId(100);
+            stages.add(stage);
+        }
+        ipscResponse.setStages(stages);
+
+        List<ScoreResponse> scores = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            ScoreResponse score = new ScoreResponse();
+            score.setMatchId(100);
+            score.setFinalScore(90 + i);
+            scores.add(score);
+        }
+        ipscResponse.setScores(scores);
+
+        ipscResponse.setClub(null);
+        ipscResponse.setMembers(new ArrayList<>());
+
+        when(matchEntityService.findMatchByName("Complex Match")).thenReturn(Optional.empty());
+        when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals(3, result.get().getStages().size());
+        assertEquals(5, result.get().getScores().size());
     }
 
     // TODO: test with/without date updated
@@ -792,50 +839,6 @@ public class IpscMatchResultServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-    }
-
-    @Test
-    public void testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly() {
-        // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Complex Match");
-        ipscResponse.setMatch(matchResponse);
-
-        List<StageResponse> stages = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            StageResponse stage = new StageResponse();
-            stage.setStageId(200 + i);
-            stage.setMatchId(100);
-            stages.add(stage);
-        }
-        ipscResponse.setStages(stages);
-
-        List<ScoreResponse> scores = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            ScoreResponse score = new ScoreResponse();
-            score.setMatchId(100);
-            score.setFinalScore(90 + i);
-            scores.add(score);
-        }
-        ipscResponse.setScores(scores);
-
-        ipscResponse.setClub(null);
-        ipscResponse.setMembers(new ArrayList<>());
-
-        when(matchEntityService.findMatchByName("Complex Match")).thenReturn(Optional.empty());
-        when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
-
-        // Act
-        var result = ipscMatchResultService.initMatchResults(ipscResponse);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals(3, result.get().getStages().size());
-        assertEquals(5, result.get().getScores().size());
     }
 }
 

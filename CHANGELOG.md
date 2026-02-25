@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## 📑 Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
+- [🧾 Version 5.1.0](#-510---2026-02-25)
 - [🧾 Version 5.0.0](#-500---2026-02-24)
 - [🧾 Version 4.1.0](#-410---2026-02-13)
 - [🧾 Version 4.0.0](#-400---2026-02-11)
@@ -32,72 +33,106 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### ➕ Added
 
-#### 🧪 Test Enhancements (Post-v5.0.0)
+### 🔄 Changed
 
-- **`IpscMatchServiceTest`** - Renamed from `IpscMatchEntityServiceImplTest` for clarity and consistency
-    - Enhanced test coverage for match results processing
-    - Improved test organization and naming conventions
-- **WinMSS Integration Tests** – Comprehensive integration tests for `importWinMssCabFile` method
-    - Validation scenario coverage (multiple test cases)
-    - Processing scenario testing (end-to-end pipeline verification)
-    - Complete CAB file import workflow testing
-- **`FirearmTypeToDivisionsTest`** - Enhanced with comprehensive test cases and improved naming
-    - Extended coverage of firearm types to division mappings
-    - Better test readability and maintainability
-- **Test Documentation** – Improved comments across test classes for clarity and consistency
+### 🐛 Fixed
 
-#### 🧪 Comprehensive DTO Unit Tests
+### ⚠️ Deprecated
 
-- **`MatchStageDtoTest`** - Complete test suite with 48 tests covering:
-    - Constructor tests for single and two-parameter constructors (11 tests)
-    - init() method tests with null handling, partial/full population (19 tests)
-    - toString() method tests with edge cases, club information, stage numbers (18 tests)
-    - Edge cases: null fields, empty/blank strings, zero/negative/large stage numbers
+### 🗑️ Removed
 
-- **`ScoreDtoTest`** - Comprehensive test suite with 26 tests covering:
-    - No-argument constructor tests (3 tests)
-    - ScoreResponse constructor tests with null/empty/blank handling (16 tests)
-    - All-arguments constructor tests (3 tests)
-    - Constructor equivalence tests (2 tests)
-    - Edge cases: zero values, negative values, max values, empty/blank strings, partial population
+### 🔐 Security
 
-- **`MatchStageCompetitorDtoTest`** - Extensive test suite with 77 tests covering:
-    - No-argument constructor tests (3 tests)
-    - MatchStageCompetitor entity constructor tests with edge cases (10 tests)
-    - CompetitorDto + MatchStageDto constructor tests (6 tests)
-    - All-arguments constructor tests with 28 parameters (3 tests)
-    - init() method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
-    - toString() method tests with comprehensive scenarios (29 tests)
-    - Edge cases: null entities, partial/full population, zero/negative/max values, enum mapping, stage
-      percentage calculation, PowerFactor mapping, CompetitorCategory mapping, special characters, Unicode
-      support, long strings
+---
+
+## 🧾 [5.1.0] - 2026-02-25
+
+### ➕ Added
+
+#### 🧪 Test Suite Enhancements
+
+- **Test organisation improvements** in `IpscMatchResultServiceImplTest`
+    - Section-based test grouping for improved navigation and understanding
+    - Six distinct test sections: Null Input Handling, Null Collections and Fields, Match Name Field Handling,
+      Club Fields Handling, Partial and Complete Data Scenarios, Edge Cases
+    - Clear separation of concerns between test categories
 
 #### ✅ Test Quality Improvements
 
-- **Consolidated test organisation:** All DTO tests are organised with clear section headers and subsections
-- **AAA pattern:** Consistent Arrange-Act-Assert structure with comments throughout all tests
-- **Naming convention:** All tests follow `testMethod_whenCondition_thenExpectedBehavior` pattern
-- **Edge case coverage:** Extensive testing of null, empty, blank fields and boundary values
-- **Field-by-field validation:** Every field tested in isolation and combination scenarios
-- **Enum mapping tests:** Complete coverage of PowerFactor, Division, FirearmType, CompetitorCategory
-  conversions
-- **Calculation tests:** Stage percentage, stagePoints, and derived field calculations validated
-- **Format consistency tests:** toString() methods tested for deterministic output and mutability reflection
-- **Special character handling:** Tests for apostrophes, hyphens, Unicode characters in names
+- **Comprehensive test coverage metrics** with detailed test categorisation
+- **23 unit tests** covering all critical scenarios for IPSC match result service
+- **Section-based documentation** for enhanced test maintainability
 
 ### 🔄 Changed
 
-#### 📚 Documentation & Code Quality
+#### 🧪 Test Infrastructure
 
-- **Javadoc Improvements** – Enhanced DTO and model Javadoc for consistency and clarity
-    - Removed redundant "Must not be null" comments where annotations already enforce null constraints
-    - Standardised parameter descriptions across DTOs
-    - Improved method-level documentation for clarity
-- **Test organisation:** Restructured DTO test classes with logical grouping and clear section headers
-- **Test naming:** Standardised all test names to follow descriptive `whenCondition_thenExpectedBehavior`
-  pattern
+- **Test organisation:** Restructured `IpscMatchResultServiceImplTest` with logical section-based grouping
+    - Null Input Handling section (2 tests)
+    - Null Collections and Fields section (5 tests)
+    - Match Name Field Handling section (3 tests)
+    - Club Fields Handling section (2 tests)
+    - Partial and Complete Data Scenarios section (6 tests)
+    - Edge Cases section (4 tests)
+    - Database Interaction section (1 skipped test)
+- **Test naming:** Standardised naming conventions for consistency (
+  `testMethod_whenCondition_thenExpectedBehavior`)
+- **Code style:** Improved spacing and formatting for better readability
+- **Documentation:** Enhanced test section comments with clear headers and visual separators
 
 ### 🐛 Fixed
+
+#### 🧪 Test Quality
+
+- **Duplicate test elimination:** Removed duplicate
+  `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` test method
+- **Code clean-up:** Removed TODO comment about adding sections (now complete)
+- **Test file consolidation:** Ensured no redundant test coverage
+
+### ⚠️ Deprecated
+
+### 🗑️ Removed
+
+- **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact
+  duplicate at the end of the file
+
+### 🔐 Security
+
+---
+
+## 🧾 [5.0.0] - 2026-02-24
+
+### ➕ Added
+
+#### 🏗️ Domain Entity Initialisation Framework
+
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic
+  database lookup and fallback to new entity creation
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
+  for predefined club references
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
+  repository lookup, optional entity creation, and club association
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
+  with UUID generation and optional database persistence
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
+  with proper relationship linking to parent match entities
+- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** -
+  Establish many-to-many relationships between matches and competitors
+- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex
+  initialisation of stage-specific competitor records with score and performance data
+
+#### 📊 IPSC Match Record Generation
+
+- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
+  comprehensive match records for external representation
+- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete
+  IPSC match response records with embedded competitor data
+- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`
+  ** - Create detailed competitor match records with stage-wise performance data
+- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process
+  match-level competitor records from database entities
+- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate
+  stage-specific competitor records with individual stage scores
 
 #### 🔧 Service Layer
 

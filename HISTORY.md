@@ -21,6 +21,17 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ## 📅 Historical Timeline
 
+### Version 5.1.0 (February 25, 2026)
+
+**Theme:** Test Suite Enhancement & Code Quality Consolidation
+
+**Key Focus:**
+
+- Comprehensive test reorganisation with 6 logical sections
+- Elimination of duplicate test cases
+- Enhanced test readability and maintainability
+- Build stability: 23 passing tests, 0 failures, 1 skipped
+
 ### Version 5.0.0 (February 24, 2026)
 
 **Theme:** Semantic Versioning Transition & Infrastructure Consolidation
@@ -907,13 +918,15 @@ Repository Layer
 - Comprehensive testing
 - Production readiness
 
-### 🚀 Maturity Phase (v4.1.0 - v5.0.0)
+### 🚀 Maturity Phase (v4.1.0 - v5.1.0)
 
-**Focus:** Completeness & Standards
+**Focus:** Completeness, Standards & Code Quality
 
 - Complete CRUD capabilities
 - Industry-standard versioning
 - Infrastructure consolidation
+- Test suite enhancement and refactoring
+- Improved code maintainability
 - Long-term maintainability
 
 ---
@@ -955,12 +968,30 @@ Repository Layer
     - Enhanced null handling in service implementations
     - Comprehensive integration testing for complex workflows (WinMSS CAB import)
     - Documentation improvements ensuring maintainability
+7. **Test Suite Consolidation (v5.1.0):** Structural improvements to test organisation and quality
+    - Comprehensive test reorganisation with 6 logical sections for better navigation
+    - Elimination of duplicate test cases while maintaining complete coverage
+    - Section-based grouping: Null Input Handling, Null Collections & Fields, Match Name Field Handling,
+      Club Fields Handling, Partial/Complete Data Scenarios, Edge Cases
+    - Improved test readability with clear headers and consistent formatting
+    - Enhanced maintainability through reduced code duplication (1 duplicate test removed)
+    - All tests follow `testMethod_whenCondition_thenExpectedBehavior` naming pattern
+    - Consolidated IpscMatchResultServiceImplTest from 24 to 23 tests with zero reduction in effective
+      coverage
 
 ---
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v5.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v5.1.0, the following areas are identified for future enhancement:
+
+### ✅ Recently Completed (v5.1.0)
+
+- ✅ Test suite reorganisation and consolidation
+- ✅ Elimination of duplicate test cases
+- ✅ Enhanced test readability with section-based grouping
+- ✅ Consistent test naming across large test suites
+- ✅ Improved test maintainability through better organisation
 
 ### 🔄 Short-term (Minor Releases)
 
@@ -968,15 +999,16 @@ Based on the evolution to v5.0.0, the following areas are identified for future 
 - Extended test scenarios for service layer edge cases
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
-- ✅ **Completed (151+ tests added)**
+- ✅ **Completed (151+ tests added, test consolidation in v5.1.0)**
 
-### 📦 Medium-term (v5.1+)
+### 📦 Medium-term (v5.2+)
 
 - Additional IPSC data format support
 - Bulk match processing capabilities
 - Enhanced error reporting and recovery
 - Performance metrics and monitoring
 - Repository layer comprehensive testing
+- Extended service layer test coverage with section-based organisation patterns
 
 ### 🎯 Long-term (v6.0+)
 
@@ -997,19 +1029,32 @@ platform for managing practical shooting competition data. This evolution demons
 - **Architectural Excellence:** Evolution from monolithic to modular, testable architecture
 - **Standards Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
+- **Code Maintainability:** Systematic refinement of test organisation and consolidation (v5.1.0)
 
-The transition to Semantic Versioning in v5.0.0 marks a maturation point where the project is ready for
-stable, predictable releases that serve as a foundation for the shooting club's digital operations.
+The transition to Semantic Versioning in v5.0.0 and the test suite consolidation in v5.1.0 mark a maturation
+point where the project is ready for stable, predictable releases. These releases serve as a foundation
+for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
 
 ---
 
 **Document Created:** February 24, 2026
 **Last Updated:** February 25, 2026
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.0.0+ (February 25, 2026)
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.1.0 (February 25, 2026)
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for
 detailed technical information
 
-**Recent Updates:**
+**Recent Updates (v5.1.0):**
+
+- Test suite reorganisation with 6 logical sections
+- Duplicate test elimination (1 duplicate removed)
+- Enhanced test readability with clear section headers and visual separators
+- Consolidated 24 tests to 23 with improved maintainability
+- Section-based grouping: Null Input Handling, Null Collections & Fields, Match Name Field Handling, Club
+  Fields Handling, Partial/Complete Data Scenarios, Edge Cases
+- All tests follow consistent `testMethod_whenCondition_thenExpectedBehavior` naming pattern
+- 100% test pass rate maintained (23 passing, 1 skipped as expected)
+
+**Previous Updates:**
 
 - Test enhancements and refactoring (IpscMatchServiceTest rename, enhanced coverage)
 - Comprehensive null handling improvements in IpscMatchResultServiceImpl
