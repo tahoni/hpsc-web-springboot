@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-// TODO: Javadoc
-// TODO: comment
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -67,7 +65,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     /**
      * Generates an IPSC match record holder containing match records for the provided list of IPSC matches.
      *
-     * @param ipscMatchEntityList A list of IPSC match entities to process. Must not be null.
+     * @param ipscMatchEntityList A list of IPSC match entities to be processed.
      * @return An IPSC match record holder containing the processed match records.
      */
     @Override
@@ -220,12 +218,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a {@link IpscMatchRecord} based on the provided match details and competitors list.
+     *
+     * @param match       The IPSC match object containing match details. If null, an empty Optional is returned.
+     * @param competitors A list of competitor match records associated with the match. If null, an empty Optional is returned.
+     * @return An Optional containing the initialized {@link IpscMatchRecord} if both inputs are non-null,
+     * otherwise an empty Optional.
+     */
     protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, List<CompetitorMatchRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
 
+        // Initialises match details
         String clubName = ((match.getClub() != null) ? match.getClub().toString() : "");
 
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
@@ -243,7 +249,15 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(ipscMatchRecord);
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a {@link CompetitorMatchRecord} based on the given Competitor and match records.
+     *
+     * @param competitor            the Competitor object containing personal and identification details.
+     * @param thisCompetitorOverall the overall match record of the competitor.
+     * @param thisCompetitorStages  a list of stage-wise match records of the competitor.
+     * @return an Optional containing the initialized {@link CompetitorMatchRecord} if all inputs are
+     * non-null; otherwise an empty Optional.
+     */
     protected Optional<CompetitorMatchRecord> initCompetitor(Competitor competitor,
                                                              MatchCompetitorRecord thisCompetitorOverall,
                                                              List<MatchStageCompetitorRecord> thisCompetitorStages) {
@@ -262,7 +276,25 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(competitorRecord);
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a {@link MatchCompetitorRecord} object for the specified competitor based on the provided list of
+     * {@link MatchCompetitor} objects.
+     *
+     * <p>
+     * The method finds the relevant {@link MatchCompetitor} for the given competitor, extracts the necessary
+     * details, formats them, and creates a {@link MatchCompetitorRecord}. If the input {@code competitor}
+     * is null, the list {@code matchCompetitorList} is null, or no matching competitor is found in the
+     * list, the method returns an empty {@code Optional}.
+     * </p>
+     *
+     * @param competitor          the {@link Competitor} object for which a match competitor record needs to be initialised.
+     *                            If it is null, the method will return {@code Optional.empty()}.
+     * @param matchCompetitorList the list of {@link MatchCompetitor} objects from which the relevant match competitor
+     *                            will be identified.
+     *                            If it is null, the method will return {@code Optional.empty()}.
+     * @return an {@code Optional} containing the initialized {@link MatchCompetitorRecord} if successful, or an empty
+     * {@code Optional} if the input is invalid or no matching competitor is found.
+     */
     protected Optional<MatchCompetitorRecord> initMatchCompetitor(Competitor competitor,
                                                                   List<MatchCompetitor> matchCompetitorList) {
 
@@ -271,6 +303,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
 
         MatchCompetitorRecord thisCompetitorOverall = null;
+        // Filters and maps overall data to the response object
         MatchCompetitor matchCompetitor = matchCompetitorList.stream()
                 .filter(Objects::nonNull)
                 .filter(mc -> competitor.equals(mc.getCompetitor()))
@@ -280,6 +313,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
+        // Initialises match competitor details
         String clubName = ((matchCompetitor.getMatch() != null) &&
                 (matchCompetitor.getMatch().getClub() != null)) ?
                 ValueUtil.nullAsEmptyString(matchCompetitor.getMatch().getClub().getName()) : "";
@@ -303,7 +337,23 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(thisCompetitorOverall);
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises and retrieves a list of {@link MatchStageCompetitorRecord} for the given competitor,
+     * based on the provided list of {@link MatchStageCompetitor}.
+     *
+     * <p>
+     * The method filters the match stage competitor list to include only entities matching the provided
+     * competitor, processes the data, and maps it to a structured response format.
+     * </p>
+     *
+     * @param competitor               The {@link Competitor} object for which the match stage competitor records
+     *                                 are to be initialised. If null, an empty list is returned.
+     * @param matchStageCompetitorList A list of {@link MatchStageCompetitor} objects representing
+     *                                 stage details. If null, an empty list is returned.
+     * @return A list of {@link MatchStageCompetitorRecord} objects containing the initialised
+     * details for the specified competitor. If no match stage competitors belong to the
+     * provided competitor or if any input is null, an empty list is returned.
+     */
     protected List<MatchStageCompetitorRecord> initMatchStageCompetitor(Competitor competitor,
                                                                         List<MatchStageCompetitor> matchStageCompetitorList) {
 
@@ -318,6 +368,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {
 
+                    // Initialises match stage competitor details
                     String firearmType = ValueUtil.nullAsEmptyString(msc.getFirearmType());
                     String division = ValueUtil.nullAsEmptyString(msc.getDivision());
                     String powerFactor = ValueUtil.nullAsEmptyString(msc.getPowerFactor());
@@ -350,24 +401,39 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return thisCompetitorStages;
     }
 
-    // TODO: Javadoc
+    /**
+     * Retrieves a list of competitors from the provided match competitor list.
+     *
+     * @param matchCompetitorList the list of MatchCompetitor objects to the process.
+     *                            If null, an empty list will be returned.
+     * @return a list of Competitor objects extracted from the match competitor list.
+     * If the input list is null or contains null elements, these are handled appropriately.
+     */
     protected List<Competitor> getCompetitorList(List<MatchCompetitor> matchCompetitorList) {
         if (matchCompetitorList == null) {
             return new ArrayList<>();
         }
 
+        // Gets competitors from the match competitor list
         return matchCompetitorList.stream()
                 .filter(Objects::nonNull)
                 .map(MatchCompetitor::getCompetitor)
                 .toList();
     }
 
-    // TODO: Javadoc
+    /**
+     * Retrieves a list of competitors from the provided match stage list.
+     *
+     * @param matchStageList the list of {@link IpscMatchStage} objects. If null, an empty list is returned.
+     * @return a list of {@link MatchStageCompetitor} objects aggregated from all non-null stages in the input list.
+     * If the input list is null or contains no valid stages, the returned list will be empty.
+     */
     protected List<MatchStageCompetitor> getMatchStageCompetitorList(List<IpscMatchStage> matchStageList) {
         if (matchStageList == null) {
             return new ArrayList<>();
         }
 
+        // Gets competitors from the match stage list
         return matchStageList.stream()
                 .filter(Objects::nonNull)
                 .map(IpscMatchStage::getMatchStageCompetitors)

@@ -42,8 +42,7 @@ public class DomainServiceImpl implements DomainService {
      * Initialises match entities based on the provided match results.
      *
      * @param matchResults The DTO containing match results, including match, club, competitors, and stages.
-     *                     Must not be null.
-     * @return An Optional containing the initialized MatchEntityHolder if the match is present; otherwise, an empty Optional.
+     * @return An Optional containing the initialised MatchEntityHolder if the match is present; otherwise, an empty Optional.
      */
     @Override
     public Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults) {
@@ -84,7 +83,14 @@ public class DomainServiceImpl implements DomainService {
         return optionalMatchEntityHolder.get();
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a Club entity based on the provided ClubDto.
+     * If the ClubDto contains a valid ID, attempts to find the existing Club entity in the repository.
+     * If not found, creates a new Club entity, populates it with data from the DTO, and returns it.
+     *
+     * @param clubDto the data transfer object containing data to initialise or update a Club entity
+     * @return an Optional containing the initialised Club entity if the input is valid, or an empty Optional if the input is null or invalid
+     */
     protected Optional<Club> initClubEntity(ClubDto clubDto) {
         if ((clubDto != null) && (clubDto.getId() != null)) {
             // Find the club entity if present
@@ -101,7 +107,12 @@ public class DomainServiceImpl implements DomainService {
         return Optional.empty();
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises and retrieves a Club entity based on the given ClubIdentifier.
+     *
+     * @param clubIdentifier the identifier used to look up the club; if null, an empty Optional is returned
+     * @return an Optional containing the club entity if found, or an empty Optional if no match is found
+     */
     protected Optional<Club> initClubEntity(ClubIdentifier clubIdentifier) {
         if (clubIdentifier != null) {
             // Find the club entity if present
@@ -111,7 +122,15 @@ public class DomainServiceImpl implements DomainService {
         return Optional.empty();
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises an instance of the {@code IpscMatch} entity using the provided DTO and links it to the given club entity.
+     * If a match with the specified ID in the DTO exists in the repository, it is retrieved and updated; otherwise,
+     * a new {@code IpscMatch} entity is created and initialised.
+     *
+     * @param matchDto   the data transfer object containing match details and an optional match ID for lookup.
+     * @param clubEntity the club entity to associate with the match entity.
+     * @return an {@code Optional} containing the initialised {@code IpscMatch} entity.
+     */
     protected Optional<IpscMatch> initMatchEntity(MatchDto matchDto, Club clubEntity) {
         // Find the match entity if present
         Optional<IpscMatch> optionalIpscMatchEntity = Optional.empty();
@@ -131,7 +150,14 @@ public class DomainServiceImpl implements DomainService {
         return Optional.of(matchEntity);
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a map of Competitor entities from a list of CompetitorDto objects.
+     * Each CompetitorDto is used to either find an existing Competitor entity or create a new one.
+     * The map is constructed with the UUID as the key and the corresponding Competitor entity as the value.
+     *
+     * @param competitorDtoList the list of CompetitorDto objects containing the data used to initialise or update Competitor entities
+     * @return a map where the key is the UUID from the CompetitorDto and the value is the corresponding Competitor entity
+     */
     protected Map<UUID, Competitor> initCompetitorEntities(List<CompetitorDto> competitorDtoList) {
         Map<UUID, Competitor> competitorMap = new HashMap<>();
         if (competitorDtoList != null) {
@@ -158,7 +184,18 @@ public class DomainServiceImpl implements DomainService {
         return competitorMap;
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises and maps IPSC match stage entities based on the provided list of MatchStageDto objects
+     * and the associated IpscMatch entity. If the DTO contains an ID, it attempts to retrieve the
+     * corresponding entity from the repository; otherwise, it creates a new entity. Each stage
+     * is then linked to the associated match entity and added to the map.
+     *
+     * @param matchStageDtoList the list of MatchStageDto objects containing data used to
+     *                          initialise or update the match stage entities.
+     * @param matchEntity       the IpscMatch entity that the match stages are associated with.
+     * @return a map where the keys are the UUIDs from the MatchStageDto objects and the values
+     * are the initialised or updated IpscMatchStage entities.
+     */
     protected Map<UUID, IpscMatchStage> initMatchStageEntities(List<MatchStageDto> matchStageDtoList,
                                                                IpscMatch matchEntity) {
         Map<UUID, IpscMatchStage> matchStageMap = new HashMap<>();
@@ -188,7 +225,18 @@ public class DomainServiceImpl implements DomainService {
         return matchStageMap;
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a map of match competitor entities based on the provided list of match competitor DTOs,
+     * a competitor map, and a club identifier. This method populates the map by either creating new match
+     * competitor entities or using existing ones retrieved from the repository, if available. It filters
+     * competitors by the specified club identifier when applicable.
+     *
+     * @param matchCompetitors the list of match competitor DTOs containing details for each match competitor
+     * @param competitorMap    a map of UUIDs to Competitor entities used to map DTOs to existing competitors
+     * @param clubIdentifier   the identifier of the club used to filter match competitors by their club reference
+     * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities. If a required
+     * competitor or match competitor cannot be found, an empty map is returned
+     */
     protected Map<UUID, MatchCompetitor> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitors,
                                                                      Map<UUID, Competitor> competitorMap,
                                                                      ClubIdentifier clubIdentifier) {
@@ -232,7 +280,17 @@ public class DomainServiceImpl implements DomainService {
         return matchCompetitorMap;
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises and maps match stage competitor DTOs to their corresponding `MatchStageCompetitor` entities.
+     * This method processes the provided list of match stage competitor DTOs, matches them with existing entities
+     * (if present), or creates new entities as required. If a club identifier is specified, filtering is applied
+     * to include only the match stage competitors associated with the specified club.
+     *
+     * @param matchStageCompetitors a list of `MatchStageCompetitorDto` objects representing the input data for match stage competitors.
+     * @param competitorMap         a map of `UUID` to `Competitor` entities used to resolve competitors by UUID.
+     * @param clubIdentifier        the `ClubIdentifier` to filter match stage competitors based on club information, or `null` to skip filtering.
+     * @return a map of `UUID` to `MatchStageCompetitor` entities representing the initialised and mapped match stage competitors.
+     */
     protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
                                                                                Map<UUID, Competitor> competitorMap,
                                                                                ClubIdentifier clubIdentifier) {
