@@ -1,7 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -593,8 +592,6 @@ public class IpscMatchResultServiceImplTest {
         assertEquals(5, result.get().getScores().size());
     }
 
-    // TODO: test with/without date updated
-    @Disabled("Currently the service does not update from database if club exists, it just uses the existing club data")
     @Test
     public void testInitMatchResults_withCompleteMatchAndExistingClub_thenUpdatesFromDatabase() {
         // Arrange
@@ -622,7 +619,8 @@ public class IpscMatchResultServiceImplTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.of(existingClub));
-        when(matchEntityService.findMatchByName("Match with Existing Club")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchResultService.initMatchResults(ipscResponse);
@@ -632,6 +630,338 @@ public class IpscMatchResultServiceImplTest {
         assertTrue(result.isPresent());
         assertNotNull(result.get().getClub());
         assertEquals("Existing Club", result.get().getClub().getName());
+    }
+
+    @Test
+    public void testInitMatchResults_withExistingMatchAndCompleteClub_thenUpdatesFromDatabase() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setScores(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        Club existingClub = new Club();
+        existingClub.setId(1L);
+        existingClub.setName("Existing Club");
+        existingClub.setAbbreviation("ABC");
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(100L);
+        existingMatch.setName("Match with Existing Club");
+
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.of(existingMatch));
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Match with Existing Club", result.get().getMatch().getName());
+    }
+
+
+    @Test
+    public void testInitMatchResults_withExistingMatchAndCompleteClubAndScoresEmpty_thenUpdatesFromDatabase() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+        ipscResponse.setScores(new ArrayList<>());
+
+        Club existingClub = new Club();
+        existingClub.setId(1L);
+        existingClub.setName("Existing Club");
+        existingClub.setAbbreviation("ABC");
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(100L);
+        existingMatch.setName("Match with Existing Club");
+
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.of(existingMatch));
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Match with Existing Club", result.get().getMatch().getName());
+    }
+
+    @Test
+    public void testInitMatchResults_withExistingMatchAndClubAndScoresNull_thenUpdatesFromDatabase() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+        ipscResponse.setScores(null);
+
+        Club existingClub = new Club();
+        existingClub.setId(1L);
+        existingClub.setName("Existing Club");
+        existingClub.setAbbreviation("ABC");
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(100L);
+        existingMatch.setName("Match with Existing Club");
+
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.of(existingClub));
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.of(existingMatch));
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Match with Existing Club", result.get().getMatch().getName());
+    }
+
+    // =====================================================================
+    // Tests for initMatchResults - Date Comparison
+    // =====================================================================
+
+    @Test
+    public void testInitMatchResults_withNoDate_thenUpdatesFromDatabase() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        ScoreResponse scoreResponse = new ScoreResponse();
+        scoreResponse.setMatchId(100);
+        scoreResponse.setStageId(200);
+        scoreResponse.setLastModified(LocalDateTime.of(2025, 2, 25, 10, 0, 0));
+        ipscResponse.setScores(List.of(scoreResponse));
+
+        Club existingClub = new Club();
+        existingClub.setId(1L);
+        existingClub.setName("Existing Club");
+        existingClub.setAbbreviation("ABC");
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(100L);
+        existingMatch.setName("Match with Existing Club");
+
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.of(existingClub));
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.of(existingMatch));
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Match with Existing Club", result.get().getMatch().getName());
+    }
+
+    @Test
+    public void testInitMatchResults_withSameDate_thenDontUpdateFromDatabase() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        ScoreResponse scoreResponse = new ScoreResponse();
+        scoreResponse.setMatchId(100);
+        scoreResponse.setStageId(200);
+        scoreResponse.setLastModified(LocalDateTime.of(2025, 2, 25, 10, 0, 0));
+        ipscResponse.setScores(List.of(scoreResponse));
+
+        Club existingClub = new Club();
+        existingClub.setId(1L);
+        existingClub.setName("Existing Club");
+        existingClub.setAbbreviation("ABC");
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(100L);
+        existingMatch.setName("Match with Existing Club");
+        existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 0, 0));
+
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.of(existingClub));
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.of(existingMatch));
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testInitMatchResults_withLaterScores_thenUpdatesFromDatabase() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        ScoreResponse scoreResponse = new ScoreResponse();
+        scoreResponse.setMatchId(100);
+        scoreResponse.setStageId(200);
+        scoreResponse.setLastModified(LocalDateTime.of(2025, 2, 25, 10, 15, 0));
+        ipscResponse.setScores(List.of(scoreResponse));
+
+        Club existingClub = new Club();
+        existingClub.setId(1L);
+        existingClub.setName("Existing Club");
+        existingClub.setAbbreviation("ABC");
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(100L);
+        existingMatch.setName("Match with Existing Club");
+        existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 0, 0));
+
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.of(existingClub));
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.of(existingMatch));
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertTrue(existingMatch.getDateUpdated().isBefore(scoreResponse.getLastModified()));
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Match with Existing Club", result.get().getMatch().getName());
+    }
+
+    @Test
+    public void testInitMatchResults_withoutLaterScores_thenDontUpdateFromDatabase() {
+        // Arrange
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+
+        ScoreResponse scoreResponse1 = new ScoreResponse();
+        scoreResponse1.setMatchId(100);
+        scoreResponse1.setStageId(200);
+        scoreResponse1.setLastModified(LocalDateTime.of(2025, 2, 25, 10, 0, 0));
+        ipscResponse.setScores(List.of(scoreResponse1));
+
+        Club existingClub = new Club();
+        existingClub.setId(1L);
+        existingClub.setName("Existing Club");
+        existingClub.setAbbreviation("ABC");
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(100L);
+        existingMatch.setName("Match with Existing Club");
+        existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 15, 0));
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.of(existingClub));
+        when(matchEntityService.findMatchByName("Match with Existing Club"))
+                .thenReturn(Optional.of(existingMatch));
+
+        // Act
+        var result = ipscMatchResultService.initMatchResults(ipscResponse);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     // =====================================================================

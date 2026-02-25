@@ -2,7 +2,6 @@ package za.co.hpsc.web.services.impl;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.models.ipsc.dto.*;
@@ -22,9 +21,6 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     protected final MatchStageEntityService matchStageEntityService;
     protected final MatchCompetitorEntityService matchCompetitorEntityService;
     protected final MatchStageCompetitorEntityService matchStageCompetitorEntityService;
-
-    @Value("${hpsc-web.results.init-match-result.ignore-updated-date:false}")
-    private Boolean ignoreDateUpdated;
 
     public IpscMatchResultServiceImpl(ClubEntityService clubEntityService,
                                       MatchEntityService matchEntityService,
@@ -57,6 +53,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         // Initialises match details
         MatchDto match = optionalMatch.get();
         MatchResultsDto matchResultsDto = new MatchResultsDto(match);
+        matchResultsDto.setClub(optionalClub.orElse(null));
         matchResultsDto.setStages(initStages(match, ipscResponse.getStages()));
 
         // Initialises match results
@@ -124,14 +121,17 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
         // Determines the last updated date of the match
         LocalDateTime matchLastUpdated = (optionalMatch.isPresent() ?
-                optionalMatch.get().getDateUpdated() : LocalDateTime.now());
+                optionalMatch.get().getDateUpdated() : LocalDateTime.MIN);
+        if (matchLastUpdated == null) {
+            matchLastUpdated = LocalDateTime.MIN;
+        }
 
         // Skips update if there are no newer scores in the IPSC response
-        boolean ignoreMatchDateUpdated = ((ignoreDateUpdated != null ? ignoreDateUpdated : false));
-        if ((!ignoreMatchDateUpdated) && (ipscMatchExists)) {
+        if ((ipscMatchExists) && (ipscResponse.getScores() != null) && (!ipscResponse.getScores().isEmpty())) {
+            LocalDateTime finalMatchLastUpdated = matchLastUpdated;
             ipscResponseHasNewerScore = ipscResponse.getScores().stream()
                     .filter(Objects::nonNull)
-                    .anyMatch(sr -> matchLastUpdated.isBefore(sr.getLastModified()));
+                    .allMatch(sr -> finalMatchLastUpdated.isBefore(sr.getLastModified()));
             if (!ipscResponseHasNewerScore) {
                 return Optional.empty();
             }
@@ -292,15 +292,15 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
                     // Creates a new match competitor DTO, from either the found entity or the
                     // competitor DTO
-            MatchCompetitorDto matchCompetitorDto = optionalMatchCompetitor
-                    .map(MatchCompetitorDto::new)
-                    .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch()));
-            matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
-            matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
+                    MatchCompetitorDto matchCompetitorDto = optionalMatchCompetitor
+                            .map(MatchCompetitorDto::new)
+                            .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch()));
+                    matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                    matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
 
                     // Initialises match competitor attributes
-            matchCompetitorDto.init(scores, enrolledResponseMap.get(memberIndex));
-            matchCompetitorDtoList.add(matchCompetitorDto);
+                    matchCompetitorDto.init(scores, enrolledResponseMap.get(memberIndex));
+                    matchCompetitorDtoList.add(matchCompetitorDto);
 
                     // Gets the match stage competitors from the match results DTO
                     // Iterates through each stage
@@ -323,8 +323,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                                     MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
                                             .map(MatchStageCompetitorDto::new)
                                             .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
-                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
-                    matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
+                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                                    matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                                     // Initialises the match stage attributes
                                     matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
@@ -342,8 +342,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                                     MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
                                             .map(MatchStageCompetitorDto::new)
                                             .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
-                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
-                    matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
+                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                                    matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                                     // Initialises the match stage attributes
                                     matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
