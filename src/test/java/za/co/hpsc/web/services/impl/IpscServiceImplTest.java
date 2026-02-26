@@ -35,8 +35,6 @@ public class IpscServiceImplTest {
     private IpscMatchService ipscMatchService;
     @Mock
     private IpscMatchResultService ipscMatchResultService;
-    @Mock
-    private DomainServiceImpl domainService;
 
     @InjectMocks
     private IpscServiceImpl ipscService;
@@ -587,8 +585,6 @@ public class IpscServiceImplTest {
 
         verify(ipscMatchService, times(1)).mapMatchResults(any());
         verify(ipscMatchResultService, times(2)).initMatchResults(any(IpscResponse.class));
-//        assertDoesNotThrow(() -> verify(transactionService,
-//                times(12)).saveMatchResults(any(DtoToEntityMapping.class)));
     }
 
     @Test

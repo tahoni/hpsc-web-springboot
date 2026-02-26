@@ -13,7 +13,6 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 
@@ -185,8 +184,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testSaveMatchResults_whenDomainServiceReturnsHolderWithNullMatch_thenReturnsEmpty() {
-        MatchDto matchDto = buildMatchDto(100, null);
-
         DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
         dtoToEntityMapping.setMatch(null);
 
@@ -297,14 +294,5 @@ public class TransactionServiceTest {
         matchDto.setName("Match " + matchIndex);
         matchDto.setScheduledDate(LocalDateTime.now());
         return matchDto;
-    }
-
-    private static MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageId, int stageNumber, Long stagePkId) {
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setMatch(matchDto);
-        stageDto.setIndex(stageId);
-        stageDto.setStageNumber(stageNumber);
-        stageDto.setId(stagePkId);
-        return stageDto;
     }
 }
