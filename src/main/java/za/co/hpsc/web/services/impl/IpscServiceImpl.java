@@ -59,9 +59,7 @@ public class IpscServiceImpl implements IpscService {
                 .map(MatchResultsDto::getIpscMatch)
                 .toList();
         ipscMatchList.stream().filter(Objects::nonNull)
-                .forEach(ipscMatch -> {
-                    holderList.add(ipscMatchService.generateIpscMatchRecordHolder(List.of(ipscMatch)));
-                });
+                .forEach(ipscMatch -> holderList.add(ipscMatchService.generateIpscMatchRecordHolder(List.of(ipscMatch))));
 
         return holderList;
     }
