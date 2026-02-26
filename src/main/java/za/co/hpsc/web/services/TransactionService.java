@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
 
 import java.util.Optional;
 
@@ -25,6 +25,6 @@ public interface TransactionService {
      * is successful, or an empty {@code Optional} if the save operation fails.
      * @throws FatalException if an unrecoverable error occurs during the operation.
      */
-    Optional<IpscMatch> saveMatchResults(MatchResultsDto matchResults)
+    Optional<IpscMatch> saveMatchResults(DtoToEntityMapping matchResults)
             throws FatalException;
 }

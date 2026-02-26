@@ -9,7 +9,6 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
-import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -88,7 +87,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        MatchEntityHolder holder = result.get();
+        var holder = result.get();
         assertNotNull(holder.getMatch());
         assertNull(holder.getClub());
     }
@@ -102,8 +101,11 @@ public class DomainServiceImplTest {
         Long matchId = 1L;
         MatchResultsDto matchResults = createMinimalMatchResults(matchId);
 
+        Club clubEntity = new Club();
+        clubEntity.setId(100L);
+
         when(ipscMatchRepository.findByIdWithClubStages(matchId)).thenReturn(Optional.empty());
-        when(clubRepository.findByAbbreviation(filterClub)).thenReturn(Optional.of(new Club()));
+        when(clubRepository.findByAbbreviation(filterClub)).thenReturn(Optional.of(clubEntity));
 
         // Act
         var result = domainService.initMatchEntities(matchResults, filterClub);
@@ -111,7 +113,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        MatchEntityHolder holder = result.get();
+        var holder = result.get();
         assertNotNull(holder.getMatch());
         assertNotNull(holder.getClub());
     }
@@ -173,11 +175,6 @@ public class DomainServiceImplTest {
 
         Long matchId = 1L;
         MatchResultsDto matchResults = createMinimalMatchResults(matchId);
-
-        ClubDto clubDto = new ClubDto();
-        clubDto.setId(null);
-        clubDto.setName("New Club");
-        matchResults.setClub(clubDto);
 
         Club hpscClub = new Club();
         when(clubRepository.findByAbbreviation(filterClub)).thenReturn(Optional.of(hpscClub));
@@ -253,7 +250,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().getCompetitors().isEmpty());
+        assertTrue(result.get().getCompetitorMap().isEmpty());
     }
 
     @Test
@@ -293,7 +290,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertFalse(result.get().getCompetitors().isEmpty());
+        assertFalse(result.get().getCompetitorMap().isEmpty());
     }
 
     @Test
@@ -314,7 +311,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().getCompetitors().isEmpty());
+        assertTrue(result.get().getMatchCompetitorMap().isEmpty());
     }
 
     // Test Group: Match Stage Entity Handling
@@ -336,7 +333,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchStages().isEmpty());
+        assertTrue(result.get().getMatchStageMap().isEmpty());
     }
 
     @Test
@@ -377,7 +374,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertFalse(result.get().getMatchStages().isEmpty());
+        assertFalse(result.get().getMatchStageMap().isEmpty());
     }
 
     @Test
@@ -398,7 +395,7 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchStages().isEmpty());
+        assertTrue(result.get().getMatchStageMap().isEmpty());
     }
 
     // Test Group: Full Data Scenario
@@ -455,11 +452,11 @@ public class DomainServiceImplTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        MatchEntityHolder holder = result.get();
+        var holder = result.get();
         assertNotNull(holder.getMatch());
         assertNotNull(holder.getClub());
-        assertFalse(holder.getCompetitors().isEmpty());
-        assertFalse(holder.getMatchStages().isEmpty());
+        assertFalse(holder.getCompetitorMap().isEmpty());
+        assertFalse(holder.getMatchStageMap().isEmpty());
     }
 
     // Test Group: Edge Cases

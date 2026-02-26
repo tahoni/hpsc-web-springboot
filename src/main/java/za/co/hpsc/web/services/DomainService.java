@@ -1,6 +1,6 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
+import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 
 import java.util.Optional;
@@ -27,5 +27,5 @@ public interface DomainService {
      * entities such as the match, club, stages, and competitors, or an empty {@code Optional}
      * if initialisation fails or the input data is invalid.
      */
-    Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation);
+    Optional<DtoToEntityMapping> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation);
 }

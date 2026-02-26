@@ -31,8 +31,6 @@ public class MatchResultsDto {
     private List<MatchCompetitorDto> matchCompetitors = new ArrayList<>();
     private List<MatchStageCompetitorDto> matchStageCompetitors = new ArrayList<>();
 
-//    private IpscMatch ipscMatch;
-
     /**
      * Constructs a new {@code MatchResultsDto} instance based on the provided match.
      *

@@ -12,16 +12,15 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
-import za.co.hpsc.web.services.IpscMatchResultService;
-import za.co.hpsc.web.services.IpscMatchService;
-import za.co.hpsc.web.services.IpscService;
-import za.co.hpsc.web.services.TransactionService;
+import za.co.hpsc.web.services.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,12 +34,14 @@ public class IpscServiceImpl implements IpscService {
 
     protected final IpscMatchService ipscMatchService;
     protected final IpscMatchResultService ipscMatchResultService;
+    protected final DomainService domainService;
     protected final TransactionService transactionService;
 
     public IpscServiceImpl(IpscMatchService ipscMatchService, IpscMatchResultService ipscMatchResultService,
-                           TransactionService transactionService) {
+                           DomainService domainService, TransactionService transactionService) {
         this.ipscMatchService = ipscMatchService;
         this.ipscMatchResultService = ipscMatchResultService;
+        this.domainService = domainService;
         this.transactionService = transactionService;
     }
 
@@ -54,12 +55,16 @@ public class IpscServiceImpl implements IpscService {
         }
 
         List<IpscMatchRecordHolder> holderList = new ArrayList<>();
-        List<IpscMatch> ipscMatchList = matchResultsDtoHolder.getMatches().stream()
+        List<MatchDto> ipscMatchList = matchResultsDtoHolder.getMatches().stream()
                 .filter(Objects::nonNull)
-                .map(MatchResultsDto::getIpscMatch)
+                .map(MatchResultsDto::getMatch)
                 .toList();
-        ipscMatchList.stream().filter(Objects::nonNull)
-                .forEach(ipscMatch -> holderList.add(ipscMatchService.generateIpscMatchRecordHolder(List.of(ipscMatch))));
+        for (MatchResultsDto matchResultsDto : matchResultsDtoHolder.getMatches()) {
+            Optional<DtoToEntityMapping> optionalMatch = domainService
+                    .initMatchEntities(matchResultsDto, "HPSC");
+            Optional<IpscMatch> ipscMatch = transactionService.saveMatchResults(optionalMatch.get());
+            holderList.add(ipscMatchService.generateIpscMatchRecordHolder(List.of(ipscMatch.get())));
+        }
 
         return holderList;
     }
@@ -107,10 +112,10 @@ public class IpscServiceImpl implements IpscService {
             if (optionalMatchResults.isPresent()) {
                 // Persists the match results
                 MatchResultsDto matchResults = optionalMatchResults.get();
-                Optional<IpscMatch> ipscMatch = transactionService.saveMatchResults(matchResults);
+//                Optional<IpscMatch> ipscMatch = transactionService.saveMatchResults(matchResults);
                 // Associates the persisted match with the match results
-                ipscMatch.ifPresent(matchResults::setIpscMatch);
-                matchResultsList.add(matchResults);
+//                ipscMatch.ifPresent(matchResults::setIpscMatch);
+//                matchResultsList.add(matchResults);
             }
         }
 

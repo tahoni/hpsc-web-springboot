@@ -23,6 +23,10 @@ public class IpscServiceIntegrationTest {
 
     @Autowired
     private CompetitorRepository competitorRepository;
+    @Autowired
+    private DomainService domainService;
+    @Autowired
+    private ClubRepository clubRepository;
 
     @Autowired
     private IpscService ipscService;
@@ -30,8 +34,10 @@ public class IpscServiceIntegrationTest {
     @Bean
     public IpscService winMssService(IpscMatchService ipscMatchService,
                                      IpscMatchResultService ipscMatchResultService,
+                                     DomainService domainService,
                                      TransactionService transactionService) {
-        return new IpscServiceImpl(ipscMatchService, ipscMatchResultService, transactionService);
+        return new IpscServiceImpl(ipscMatchService, ipscMatchResultService, domainService,
+                transactionService);
     }
 
     @Bean
