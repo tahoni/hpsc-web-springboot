@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.domain.IpscMatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class MatchResultsDto {
     private List<MatchCompetitorDto> matchCompetitors = new ArrayList<>();
     private List<MatchStageCompetitorDto> matchStageCompetitors = new ArrayList<>();
 
-    private IpscMatch ipscMatch;
+//    private IpscMatch ipscMatch;
 
     /**
      * Constructs a new {@code MatchResultsDto} instance based on the provided match.
