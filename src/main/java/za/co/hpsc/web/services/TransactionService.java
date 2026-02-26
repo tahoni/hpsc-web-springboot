@@ -18,13 +18,12 @@ public interface TransactionService {
     /**
      * Saves the results of a match into the system.
      *
-     * @param matchResults an instance of {@code MatchResultsDto} containing all the relevant
-     *                     information about the match, including competitors, scores, stages,
-     *                     and related metadata.
-     * @return an {@code Optional<IpscMatch>} containing the saved match object if the operation
-     * is successful, or an empty {@code Optional} if the save operation fails.
+     * @param dtoToEntityMapping an instance of {@link DtoToEntityMapping} containing all the relevant
+     *                           information about the match, including competitors, scores, stages,
+     *                           and related metadata.
+     * @return an {@link IpscMatch} containing the saved match object.
      * @throws FatalException if an unrecoverable error occurs during the operation.
      */
-    Optional<IpscMatch> saveMatchResults(DtoToEntityMapping matchResults)
+    Optional<IpscMatch> saveMatchResults(DtoToEntityMapping dtoToEntityMapping)
             throws FatalException;
 }

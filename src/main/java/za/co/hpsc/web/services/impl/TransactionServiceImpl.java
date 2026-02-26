@@ -1,7 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -31,9 +30,6 @@ public class TransactionServiceImpl implements TransactionService {
     protected final MatchCompetitorRepository matchCompetitorRepository;
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
-    @Value("${hpsc.web.app.club.filter.abbreviation:'HPSC'}")
-    protected String filterClubIdentifier;
-
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
                                   DomainService domainService,
                                   ClubRepository clubRepository,
@@ -54,10 +50,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<IpscMatch> saveMatchResults(DtoToEntityMapping matchEntityHolder)
+    public Optional<IpscMatch> saveMatchResults(DtoToEntityMapping dtoToEntityMapping)
             throws FatalException {
 
-        if ((matchEntityHolder == null) || (matchEntityHolder.getMatch() == null)) {
+        if ((dtoToEntityMapping == null) || (dtoToEntityMapping.getMatch() == null)) {
             return Optional.empty();
         }
 
@@ -66,25 +62,25 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            if (matchEntityHolder.getClub() != null) {
+            if (dtoToEntityMapping.getClub() != null) {
                 Club club = null;
-                if (matchEntityHolder.getClub().getId() != null) {
-                    club = clubRepository.findById(matchEntityHolder.getClub().getId()).orElseGet(Club::new);
+                if (dtoToEntityMapping.getClub().getId() != null) {
+                    club = clubRepository.findById(dtoToEntityMapping.getClub().getId()).orElseGet(Club::new);
                 } else {
                     return Optional.empty();
                 }
-                club.init(matchEntityHolder.getClub());
+                club.init(dtoToEntityMapping.getClub());
 
                 clubRepository.save(club);
             }
 
             IpscMatch matchEntity = null;
-            if (matchEntityHolder.getMatch().getId() != null) {
-                matchEntity = ipscMatchRepository.findById(matchEntityHolder.getMatch().getId()).orElseGet(IpscMatch::new);
+            if (dtoToEntityMapping.getMatch().getId() != null) {
+                matchEntity = ipscMatchRepository.findById(dtoToEntityMapping.getMatch().getId()).orElseGet(IpscMatch::new);
             } else {
                 matchEntity = new IpscMatch();
             }
-            matchEntity.init(matchEntityHolder.getMatch());
+            matchEntity.init(dtoToEntityMapping.getMatch());
             ipscMatchRepository.save(matchEntity);
 
             transactionManager.commit(transaction);
