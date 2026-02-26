@@ -57,7 +57,7 @@ public class TransactionServiceTest {
 
         assertFalse(result.isPresent());
         verify(transactionManager, never()).getTransaction(any());
-        verify(domainService, never()).initMatchEntities(any());
+        verify(domainService, never()).initMatchEntities(any(), isNull());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class TransactionServiceTest {
 
         assertFalse(result.isPresent());
         verify(transactionManager, never()).getTransaction(any());
-        verify(domainService, never()).initMatchEntities(any());
+        verify(domainService, never()).initMatchEntities(any(), isNull());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class TransactionServiceTest {
         MatchEntityHolder entityHolder = new MatchEntityHolder();
         entityHolder.setMatch(ipscMatch);
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.of(entityHolder));
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.of(entityHolder));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)
@@ -96,7 +96,7 @@ public class TransactionServiceTest {
         assertTrue(result.isPresent());
         assertEquals(ipscMatch, result.get());
         verify(transactionManager).getTransaction(any());
-        verify(domainService).initMatchEntities(matchResults);
+        verify(domainService).initMatchEntities(eq(matchResults), isNull());
         verify(ipscMatchRepository).save(ipscMatch);
         verify(clubRepository, never()).save(any());
         verify(transactionManager).commit(transactionStatus);
@@ -124,7 +124,7 @@ public class TransactionServiceTest {
         entityHolder.setMatch(ipscMatch);
         entityHolder.setClub(club);
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.of(entityHolder));
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.of(entityHolder));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)
@@ -167,7 +167,7 @@ public class TransactionServiceTest {
         entityHolder.setMatchCompetitors(new ArrayList<>());
         entityHolder.setMatchStageCompetitors(new ArrayList<>());
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.of(entityHolder));
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.of(entityHolder));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)
@@ -187,7 +187,7 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(100, null);
         MatchResultsDto matchResults = new MatchResultsDto(matchDto);
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.empty());
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.empty());
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)
@@ -195,7 +195,7 @@ public class TransactionServiceTest {
 
         assertFalse(result.isPresent());
         verify(transactionManager).getTransaction(any());
-        verify(domainService).initMatchEntities(matchResults);
+        verify(domainService).initMatchEntities(eq(matchResults), isNull());
         verify(ipscMatchRepository, never()).save(any());
         verify(clubRepository, never()).save(any());
         verify(transactionManager).commit(transactionStatus);
@@ -211,7 +211,7 @@ public class TransactionServiceTest {
         MatchEntityHolder entityHolder = new MatchEntityHolder();
         entityHolder.setMatch(null);
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.of(entityHolder));
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.of(entityHolder));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)
@@ -230,7 +230,7 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(100, null);
         MatchResultsDto matchResults = new MatchResultsDto(matchDto);
 
-        when(domainService.initMatchEntities(matchResults))
+        when(domainService.initMatchEntities(eq(matchResults), isNull()))
                 .thenThrow(new RuntimeException("Database error"));
 
         FatalException exception = assertThrows(FatalException.class, () ->
@@ -258,7 +258,7 @@ public class TransactionServiceTest {
         MatchEntityHolder entityHolder = new MatchEntityHolder();
         entityHolder.setMatch(ipscMatch);
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.of(entityHolder));
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.of(entityHolder));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)
@@ -291,7 +291,7 @@ public class TransactionServiceTest {
         entityHolder.setMatchCompetitors(new ArrayList<>());
         entityHolder.setMatchStageCompetitors(new ArrayList<>());
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.of(entityHolder));
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.of(entityHolder));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)
@@ -320,7 +320,7 @@ public class TransactionServiceTest {
         MatchEntityHolder entityHolder = new MatchEntityHolder();
         entityHolder.setMatch(ipscMatch);
 
-        when(domainService.initMatchEntities(matchResults)).thenReturn(Optional.of(entityHolder));
+        when(domainService.initMatchEntities(eq(matchResults), isNull())).thenReturn(Optional.of(entityHolder));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionServiceImpl.saveMatchResults(matchResults)

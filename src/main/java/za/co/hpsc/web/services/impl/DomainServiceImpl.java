@@ -38,14 +38,8 @@ public class DomainServiceImpl implements DomainService {
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;
     }
 
-    /**
-     * Initialises match entities based on the provided match results.
-     *
-     * @param matchResults The DTO containing match results, including match, club, competitors, and stages.
-     * @return An Optional containing the initialised MatchEntityHolder if the match is present; otherwise, an empty Optional.
-     */
     @Override
-    public Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults) {
+    public Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation) {
         if ((matchResults == null) || (matchResults.getMatch() == null)) {
             return Optional.empty();
         }
@@ -53,11 +47,12 @@ public class DomainServiceImpl implements DomainService {
         AtomicReference<Optional<MatchEntityHolder>> optionalMatchEntityHolder =
                 new AtomicReference<>(Optional.empty());
 
+        ClubIdentifier filterClubIdentifier = ClubIdentifier.getByName(filterClubAbbreviation).orElse(null);
         Optional<Club> optionalClub = initClubEntity(matchResults.getClub());
         if (optionalClub.isPresent()) {
             optionalClub.ifPresent(club -> club.init(matchResults.getClub()));
         } else {
-            optionalClub = initClubEntity(ClubIdentifier.HPSC);
+            optionalClub = initClubEntity(filterClubIdentifier);
         }
         Club club = optionalClub.orElse(null);
         Optional<IpscMatch> optionalMatch = initMatchEntity(matchResults.getMatch(), club);
@@ -67,11 +62,11 @@ public class DomainServiceImpl implements DomainService {
             Map<UUID, IpscMatchStage> matchStageMap = initMatchStageEntities(matchResults.getStages(), match);
 
             Map<UUID, MatchCompetitor> matchCompetitorMap =
-                    initMatchCompetitorEntities(matchResults.getMatchCompetitors(),
-                            competitorMap, ClubIdentifier.HPSC);
+                    initMatchCompetitorEntities(matchResults.getMatchCompetitors(), match,
+                            competitorMap, filterClubIdentifier);
             Map<UUID, MatchStageCompetitor> matchStageCompetitorMap =
                     initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(),
-                            matchStageMap, competitorMap, ClubIdentifier.HPSC);
+                            matchStageMap, competitorMap, filterClubIdentifier);
 
             optionalMatchEntityHolder.set(Optional.of(new MatchEntityHolder(match, club,
                     matchStageMap.values().stream().filter(Objects::nonNull).toList(),
@@ -232,12 +227,14 @@ public class DomainServiceImpl implements DomainService {
      * competitors by the specified club identifier when applicable.
      *
      * @param matchCompetitors the list of match competitor DTOs containing details for each match competitor
+     * @param matchEntity      the match entity to which the match competitors are associated
      * @param competitorMap    a map of UUIDs to Competitor entities used to map DTOs to existing competitors
      * @param clubIdentifier   the identifier of the club used to filter match competitors by their club reference
      * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities. If a required
      * competitor or match competitor cannot be found, an empty map is returned
      */
     protected Map<UUID, MatchCompetitor> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitors,
+                                                                     IpscMatch matchEntity,
                                                                      Map<UUID, Competitor> competitorMap,
                                                                      ClubIdentifier clubIdentifier) {
 
@@ -273,13 +270,13 @@ public class DomainServiceImpl implements DomainService {
                 }
 
                 // Add attributes to the match competitor
-//                matchCompetitorEntity.init(matchCompetitorDto, matchEntity, competitorEntity);
+                matchCompetitorEntity.init(matchCompetitorDto, matchEntity, competitorEntity);
                 // Link the match competitor to the match and competitor
-//                matchCompetitorEntity.setMatch(matchEntity);
-//                matchCompetitorEntity.setCompetitor(competitorEntity);
+                matchCompetitorEntity.setMatch(matchEntity);
+                matchCompetitorEntity.setCompetitor(competitorEntity);
 
                 // Update the map of match competitors
-//                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
+                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
             }
         }
 
@@ -298,7 +295,7 @@ public class DomainServiceImpl implements DomainService {
      * @return a map of `UUID` to `MatchStageCompetitor` entities representing the initialised and mapped match stage competitors.
      */
     protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
-                                                                               Map<UUID, IpscMatchStage>  matchStageMap,
+                                                                               Map<UUID, IpscMatchStage> matchStageMap,
                                                                                Map<UUID, Competitor> competitorMap,
                                                                                ClubIdentifier clubIdentifier) {
 

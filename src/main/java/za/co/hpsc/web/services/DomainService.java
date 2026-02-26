@@ -19,12 +19,13 @@ public interface DomainService {
     /**
      * Initialises and maps entities related to a match based on the provided match results data.
      *
-     * @param matchResults an instance of {@code MatchResultsDto} containing detailed information
-     *                     about a match, including the match itself, club, competitors, stages,
-     *                     and related entities.
+     * @param matchResults           an instance of {@code MatchResultsDto} containing detailed information
+     *                               about a match, including the match itself, club, competitors, stages,
+     *                               and related entities.
+     * @param filterClubAbbreviation the abbreviation of the club to filter matches by.
      * @return an {@code Optional<MatchEntityHolder>} that may contain the initialised match
      * entities such as the match, club, stages, and competitors, or an empty {@code Optional}
      * if initialisation fails or the input data is invalid.
      */
-    Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults);
+    Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation);
 }

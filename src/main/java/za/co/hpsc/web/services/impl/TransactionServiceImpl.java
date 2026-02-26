@@ -1,6 +1,7 @@
 package za.co.hpsc.web.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -29,6 +30,9 @@ public class TransactionServiceImpl implements TransactionService {
     protected final IpscMatchStageRepository ipscMatchStageRepository;
     protected final MatchCompetitorRepository matchCompetitorRepository;
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
+
+    @Value("${hpsc.web.app.club.filter.abbreviation:'HPSC'}")
+    protected String filterClubIdentifier;
 
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
                                   DomainService domainService,
@@ -62,7 +66,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            Optional<MatchEntityHolder> optionalMatch = domainService.initMatchEntities(matchResults)
+            Optional<MatchEntityHolder> optionalMatch = domainService
+                    .initMatchEntities(matchResults, filterClubIdentifier)
                     .filter(matchEntityHolder -> matchEntityHolder.getMatch() != null);
             optionalMatch.ifPresent(matchEntityHolder -> {
                 if (matchEntityHolder.getClub() != null) {

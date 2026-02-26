@@ -187,7 +187,6 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
      * @param ipscResponse    The response containing the scores, members, and other related data fetched
      *                        from the IPSC system. May include enrolled members and finalised scores.
      */
-    // TODO: update tests
     protected void initScores(@NotNull MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
         if ((ipscResponse == null) || (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
             return;
