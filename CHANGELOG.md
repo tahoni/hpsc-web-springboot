@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## 📑 Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
+- [🧾 Version 5.2.0](#-520---2026-02-27)
 - [🧾 Version 5.1.0](#-510---2026-02-25)
 - [🧾 Version 5.0.0](#-500---2026-02-24)
 - [🧾 Version 4.1.0](#-410---2026-02-13)
@@ -42,6 +43,167 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### 🗑️ Removed
 
 ### 🔐 Security
+
+---
+
+## 🧾 [5.2.0] - 2026-02-27
+
+### ➕ Added
+
+#### 🏗️ Architecture & Domain Model
+
+- **DtoMapping class:** New comprehensive DTO mapping with map-based storage for improved data organisation
+- **EntityMapping class:** New entity-level mapping structure for clear separation of persistence concerns
+- **DtoToEntityMapping class:** Bridge layer between DTOs and entities with Optional-based accessors (91
+  lines)
+- **MatchEntityHolder class:** Dedicated holder for match entity initialisation workflows
+- **MatchEntityService interface:** Contract for match entity operations
+- **MatchEntityServiceImpl:** Implementation with comprehensive initialisation logic
+
+#### 🧪 Test Coverage
+
+- **DtoToEntityMappingTest:** 716 lines of comprehensive tests covering all mapping scenarios
+    - Constructor tests (3 scenarios)
+    - MatchDto accessor tests (3 scenarios)
+    - MatchEntity accessor tests (2 scenarios)
+    - Competitor DTO list tests (6 scenarios)
+    - MatchStage DTO list tests (6 scenarios)
+    - MatchCompetitor DTO list tests (6 scenarios)
+    - MatchStageCompetitor DTO list tests (6 scenarios)
+    - Entity setter tests (12 scenarios covering all entity types)
+    - Comprehensive null, empty, partial, and full data coverage
+- **TransactionServiceTest:** 2,000+ lines with extensive edge case coverage
+    - Null/empty/blank input tests
+    - Partial and full input tests
+    - Edge case handling
+- **Enhanced test coverage** across all consolidated test suites with generateIpscMatchRecordHolder output
+  verification
+
+#### 📊 Service Enhancements
+
+- **Array initialisation:** All DTO arrays initialised to empty arrays instead of null to prevent NPE
+- **Club filtering:** Enhanced club abbreviation filtering logic in match entity initialisation
+- **Optional return types:** `importWinMssCabFile()` now returns Optional for better null handling
+- **Initialisation methods:** New dedicated methods for match-related entity initialisation
+
+### 🔄 Changed
+
+#### 🏗️ Core Services (Major Refactoring)
+
+- **IpscMatchServiceImpl:** 246 lines changed
+    - Refactored `generateIpscMatchRecordHolder()` with improved entity initialisation
+    - Enhanced club filtering with abbreviation-based logic
+    - Simplified OneToMany annotations for better JPA relationship management
+    - Removed match entity from DTOs for cleaner data separation
+- **IpscMatchResultServiceImpl:** 333 lines changed
+    - Comprehensive refactoring of `initMatchResults()` method
+    - Enhanced `initScores()` with better null handling
+    - Improved match results initialisation logic
+    - Better handling of multiple match results and stages
+- **IpscServiceImpl:** 106 lines changed
+    - Updated `importWinMssCabFile()` to return Optional
+    - Enhanced compatibility with a new mapping architecture
+- **TransactionServiceImpl:** 198 lines changed
+    - Added initialisation methods for match-related entities
+    - Improved transaction handling for complex match operations
+    - Better structuring of match DTO initialisation
+    - Enhanced filtering for match-related entities
+- **DomainServiceImpl:** Updated for new architecture
+
+#### 🗄️ Entity Models
+
+- **IpscMatch:** Simplified OneToMany annotations for better JPA relationships (7 lines changed)
+- **IpscMatchStage:** Enhanced entity relationships (19 lines changed)
+- **MatchCompetitor:** Updated relationships (22 lines changed)
+- **MatchStageCompetitor:** Improved entity mapping (24 lines changed)
+- **Club:** Minor updates (3 lines changed)
+- **Competitor:** Minor updates (2 lines changed)
+
+#### 📦 DTOs
+
+- **MatchCompetitorDto:** Array initialisation to prevent null (6 lines changed)
+- **MatchResultsDto:** Removed match entity reference (3 lines changed)
+
+#### 🗂️ Repository Layer
+
+- **IpscMatchRepository:** Updated for new entity structure (2 lines changed)
+
+#### 🌐 Controllers
+
+- **IpscController:** Updated for service changes (4 lines changed)
+
+#### 🧪 Test Suites (Comprehensive Consolidation)
+
+- **IpscMatchResultServiceImplTest:** 1,802 lines added – complete consolidation with enhanced coverage
+    - Direct testing of initScores alongside indirect testing through initMatchResults
+    - Null/empty/blank field edge cases
+    - Partial and full field scenarios
+    - Section-based organisation maintained from v5.1.0
+- **IpscMatchResultServiceTest:** 2,197 lines removed - migrated to ImplTest
+- **IpscServiceImplTest:** 2,010 lines changed – consolidated with improved test organisation
+- **IpscServiceTest:** 844 lines removed – duplicates eliminated
+- **IpscMatchServiceTest:** 2,197 lines changed – major consolidation including output verification tests
+- **TransactionServiceTest:** 326 lines added with Arrange-Act-Assert comments
+- **AwardServiceImplTest:** 302 lines added
+- **AwardServiceTest:** 369 lines removed – consolidated into ImplTest
+- **DomainServiceImplTest:** 387 lines changed – cleaned up and consolidated
+- **DomainServiceTest:** 504 lines removed – duplicates eliminated
+- **ImageServiceImplTest:** 186 lines added
+- **ImageServiceTest:** 281 lines removed – consolidated into ImplTest
+- **DateUtilTest:** 321 lines changed – complete consolidation
+- **NumberUtilTest:** 138 lines changed – unified structure
+- **StringUtilTest:** 128 lines changed – consolidated tests
+- **ValueUtilTest:** 140 lines changed – complete consolidation
+- **IpscServiceIntegrationTest:** 28 lines changed – removed unused DomainService
+- **MatchStageCompetitorEntityServiceImpl:** 10 lines changed
+
+### 🐛 Fixed
+
+#### 🛡️ Null Safety
+
+- **Array initialisation:** Initialised arrays to prevent null pointer exceptions in DTOs
+- **Enhanced null checks:** Improved null safety throughout match result processing
+- **Optional handling:** Better handling of Optional return types throughout the codebase
+
+#### 🧪 Test Quality
+
+- **Duplicate removal:** Eliminated duplicate test methods across multiple test suites
+- **Disabled tests:** Removed disabled test annotations, all tests now active or properly skipped
+- **Empty/partial handling:** Corrected handling of empty and partial match results
+- **Assertion clarity:** Enhanced test assertion precision and clarity
+
+#### 🧹 Code organisation
+
+- **Unused dependencies:** Removed unused DomainService from integration tests
+- **Mock clean-up:** Removed unused domain service mocks from test code
+- **Import optimisation:** Streamlined test imports for better clarity
+
+### ⚠️ Deprecated
+
+None.
+
+### 🗑️ Removed
+
+#### 🏗️ Deprecated Code
+
+- **Old MatchEntityHolder:** Replaced with new implementation
+- **Match entity in DTOs:** Removed from MatchResultsDto for cleaner separation
+
+#### 🧹 Configuration & IDE Files
+
+- **JetBrains .idea files:** Removed all .idea configuration files from version control
+- **Updated .gitignore:** Permanently exclude JetBrains config files
+- **Unused properties:** Cleaned up application.properties
+
+#### 🧪 Test Code
+
+- **Duplicate tests:** Removed across all test suites (estimated 3,000+ lines of duplicates)
+- **Unused mocks:** Removed unused DomainService mocks
+- **Old test files:** Consolidated into Impl test files
+
+### 🔐 Security
+
+No security-related changes in this release.
 
 ---
 

@@ -21,6 +21,21 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ## 📅 Historical Timeline
 
+### Version 5.2.0 (February 27, 2026)
+
+**Theme:** Match Results Processing Enhancement & Architecture Refactoring
+
+**Key Focus:**
+
+- New three-tier mapping system (DtoMapping, EntityMapping, DtoToEntityMapping)
+- Enhanced match entity handling with a dedicated MatchEntityService
+- Comprehensive test coverage: 716 lines of DtoToEntityMapping tests, 2,000+ lines of TransactionService tests
+- Consolidated test suites across all services and utilities
+- Enhanced null safety with array initialisation
+- Major service refactoring: IpscMatchServiceImpl (246 lines), IpscMatchResultServiceImpl (333 lines),
+  TransactionServiceImpl (198 lines)
+- Statistics: 26 commits, 61 files changed, +13,567 insertions, -5,898 deletions
+
 ### Version 5.1.0 (February 25, 2026)
 
 **Theme:** Test Suite Enhancement & Code Quality Consolidation
@@ -270,7 +285,7 @@ Comprehensive domain model restructuring for IPSC compliance and firearm-type cl
 
 - Firearm-type-based classification system
 - Club entity relationship management
-- IPSC-specific domain modeling
+- IPSC-specific domain modelling
 - Enhanced enum utility methods
 
 **Technical Focus:**
@@ -561,7 +576,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 - **IpscMatchServiceTest:** Renamed from `IpscMatchEntityServiceImplTest` for improved clarity and consistency
     - Enhanced test coverage for match results processing
-    - Improved test organization and naming conventions
+    - Improved test organisation and naming conventions
 - **IpscMatchResultServiceImpl:** Enhanced with comprehensive null handling and processing for match results
     - Additional edge case coverage
     - Improved robustness in match result transformation
@@ -612,6 +627,151 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 ---
 
+### 🧪 Phase 9: Test Quality Enhancement (v5.1.0)
+
+**Duration:** February 25, 2026
+
+Strategic focus on test suite quality, organisation, and maintainability.
+
+**Key Accomplishments:**
+
+**Test Suite Reorganisation**
+
+- Restructured `IpscMatchResultServiceImplTest` with 6 logical sections:
+    - Null Input Handling (2 tests)
+    - Null Collections and Fields (5 tests)
+    - Match Name Field Handling (3 tests)
+    - Club Fields Handling (2 tests)
+    - Partial and Complete Data Scenarios (6 tests)
+    - Edge Cases (4 tests)
+    - Database Interaction (1 skipped test)
+
+**Duplicate Test Elimination**
+
+- Identified and removed duplicate test methods
+- Reduced the test count from 24 to 23 while maintaining coverage
+- Eliminated redundant test code
+
+**Test Quality Improvements**
+
+- Standardised all tests naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
+- Enhanced test readability with clear section headers and visual separators
+- Improved code style and spacing for better navigation
+- Added comprehensive test documentation
+
+**Build Stability**
+
+- 23 passing tests, 0 failures, 1 skipped
+- Clean Maven builds with all dependencies resolved
+- AAA (Arrange-Act-Assert) pattern consistently applied
+
+**Architecture Highlights:**
+
+- Section-based test organisation
+- Improved test discoverability
+- Enhanced maintainability
+
+**Technical Focus:**
+
+- Test quality and clarity
+- Code organisation
+- Documentation standards
+- Maintainability improvements
+
+---
+
+### 🏗️ Phase 10: Architecture Refactoring (v5.2.0)
+
+**Duration:** February 27, 2026
+
+Major architectural improvement focused on match results processing, entity initialisation, and comprehensive
+test coverage.
+
+**Key Accomplishments:**
+
+**Three-Tier Mapping Architecture**
+
+- **DtoMapping:** Comprehensive DTO mapping with map-based storage
+- **EntityMapping:** Entity-level mapping structure for persistence layer
+- **DtoToEntityMapping:** Bridge layer with Optional-based accessors (91 lines)
+- Improved separation of concerns between DTOs and entities
+
+**Match Entity Handling Enhancement**
+
+- New `MatchEntityService` interface and implementation
+- `MatchEntityHolder` for dedicated entity initialisation workflows
+- Enhanced club filtering with abbreviation-based logic
+- Streamlined initialisation methods with single responsibilities
+
+**Service Layer Refactoring**
+
+- **IpscMatchServiceImpl:** 246 lines changed
+    - Refactored `generateIpscMatchRecordHolder()` with improved entity initialisation
+    - Simplified OneToMany annotations for better JPA relationships
+    - Removed match entity from DTOs for cleaner separation
+- **IpscMatchResultServiceImpl:** 333 lines changed
+    - Comprehensive refactoring of `initMatchResults()` method
+    - Enhanced `initScores()` with better null handling
+    - Improved handling of multiple match results and stages
+- **TransactionServiceImpl:** 198 lines changed
+    - Added initialisation methods for match-related entities
+    - Improved transaction handling for complex operations
+- **IpscServiceImpl:** 106 lines changed
+    - Updated `importWinMssCabFile()` to return Optional
+    - Enhanced compatibility with a new mapping architecture
+
+**Comprehensive Test Consolidation**
+
+- **DtoToEntityMappingTest:** 716 lines of comprehensive tests
+    - Constructor, accessor, and setter tests
+    - Null, empty, partial, and full data coverage
+- **TransactionServiceTest:** 2,000+ lines with extensive edge cases
+- Consolidated test suites across all services:
+    - IpscMatchResultServiceImplTest, IpscServiceTest, IpscMatchServiceTest
+    - AwardServiceTest, DomainServiceTest, ImageServiceTest
+- Utility test consolidation:
+    - DateUtilTest, NumberUtilTest, StringUtilTest, ValueUtilTest
+- Removed 3,000+ lines of duplicate tests
+- All tests follow `testMethod_whenCondition_thenExpectedBehavior` naming
+- AAA (Arrange-Act-Assert) comments throughout
+
+**Null Safety Improvements**
+
+- initialised arrays in DTOs to prevent NullPointerException
+- Enhanced null checks throughout match result processing
+- Optional return types for better null handling
+
+**Entity and DTO Updates**
+
+- Entity models: IpscMatch, IpscMatchStage, MatchCompetitor, MatchStageCompetitor
+- DTOs: MatchCompetitorDto, MatchResultsDto
+- Repository: IpscMatchRepository
+- Controller: IpscController
+
+**Statistics**
+
+- 26 commits
+- 61 files changed
+- +13,567 insertions
+- -5,898 deletions
+- Net: +7,669 lines
+
+**Architecture Highlights:**
+
+- Three-tier mapping system
+- Enhanced separation of concerns
+- Dedicated entity service layer
+- Comprehensive null safety
+
+**Technical Focus:**
+
+- Architectural modularity
+- Test consolidation and quality
+- Null safety and robustness
+- Code maintainability
+
+---
+
 ## 🎯 Major Milestones
 
 ### 🏁 Milestone 1: Project Foundation (v1.0.0)
@@ -636,7 +796,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 ---
 
-### 🔄 Milestone 3: Architectural Modernization (v2.0.0)
+### 🔄 Milestone 3: Architectural modernisation (v2.0.0)
 
 - ✅ Service-oriented architecture
 - ✅ Comprehensive DTO layer
@@ -650,7 +810,7 @@ testing.
 
 ### 🎯 Milestone 4: Domain Specialisation (v3.0.0)
 
-- ✅ IPSC-specific domain modeling
+- ✅ IPSC-specific domain modelling
 - ✅ Firearm-type classification
 - ✅ Club entity reintroduction
 - ✅ Comprehensive enum utilities
@@ -701,6 +861,30 @@ clarity.
 - ✅ Infrastructure consolidation
 
 **Achievement:** Adopted industry standards and consolidated infrastructure for long-term maintainability.
+
+---
+
+### 🧪 Milestone 9: Test Quality Enhancement (v5.1.0)
+
+- ✅ Test suite reorganisation with 6 logical sections
+- ✅ Duplicate test elimination
+- ✅ Standardised test naming conventions
+- ✅ Enhanced test documentation and readability
+
+**Achievement:** Improved test infrastructure quality through comprehensive reorganisation and consolidation.
+
+---
+
+### 🏗️ Milestone 10: Architecture Refactoring (v5.2.0)
+
+- ✅ Three-tier mapping system (DtoMapping, EntityMapping, DtoToEntityMapping)
+- ✅ Enhanced match entity handling with MatchEntityService
+- ✅ Comprehensive test consolidation (2,000+ lines across multiple suites)
+- ✅ Enhanced null safety and code quality
+- ✅ Major service refactoring (61 files, +13,567 lines)
+
+**Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null
+safety, and comprehensive test coverage across all services and utilities.
 
 ---
 
@@ -768,7 +952,7 @@ Repository  Repository
 
 **Characteristics:**
 
-- IPSC-specific domain modeling
+- IPSC-specific domain modelling
 - Firearm-type classification
 - Club entity relationship
 - Specialised enums for IPSC
@@ -825,6 +1009,38 @@ Repository Layer
 
 ---
 
+### v5.2.0: Three-Tier Mapping Architecture
+
+```
+       IpscController
+            ↓
+  ┌─────────┼─────────┐
+  ↓         ↓         ↓
+Service   Match     IPSC
+Layer    Entity   Services
+  ↓      Service     ↓
+  ↓         ↓    DtoMapping
+  ↓         ↓         ↓
+  ↓    DtoToEntity   ↓
+  ↓     Mapping      ↓
+  ↓         ↓        ↓
+  ↓   EntityMapping  ↓
+  ↓         ↓        ↓
+Repository Layer
+  ↓
+Entity Layer
+```
+
+**Characteristics:**
+
+- Three-tier mapping system (DTO → Bridge → Entity)
+- Dedicated MatchEntityService
+- Enhanced null safety with Optional
+- Comprehensive test consolidation
+- Cleaner separation of concerns
+
+---
+
 ## ✨ Feature Timeline
 
 ### 📊 Data Processing Features
@@ -835,6 +1051,7 @@ Repository Layer
 - **v3.0.0:** Firearm-type classification, enhanced scoring
 - **v4.0.0:** Enhanced entity mapping, validation layers
 - **v5.0.0:** Entity initialisation framework, record generation
+- **v5.2.0:** Three-tier mapping architecture, enhanced match entity handling
 
 ### 🏛️ Domain Management Features
 
@@ -844,6 +1061,7 @@ Repository Layer
 - **v3.0.0:** Club reintroduction, Firearm types
 - **v4.0.0:** IpscMatch, IpscMatchStage entities
 - **v5.0.0:** Advanced initialisation patterns
+- **v5.2.0:** DtoMapping, EntityMapping, DtoToEntityMapping, MatchEntityService
 
 ### 🌐 API Capabilities
 
@@ -854,6 +1072,7 @@ Repository Layer
 - **v4.0.0:** Refactored IPSC endpoints
 - **v4.1.0:** Complete CRUD endpoints
 - **v5.0.0:** Mature API with record generation
+- **v5.2.0:** Enhanced null safety with Optional return types
 
 ### 🧪 Testing Coverage
 
@@ -867,6 +1086,13 @@ Repository Layer
     - MatchStageDtoTest (48 tests): Constructors, init(), toString()
     - ScoreDtoTest (26 tests): All constructor patterns, edge cases
     - MatchStageCompetitorDtoTest (77 tests): Complete lifecycle coverage
+- **v5.1.0:** Test quality enhancement (section-based organisation, duplicate elimination)
+- **v5.2.0:** Comprehensive test consolidation
+    - DtoToEntityMappingTest (716 lines)
+    - TransactionServiceTest (2,000+ lines)
+    - Consolidated all service and utility tests
+    - Removed 3,000+ lines of duplicate tests
+    - All tests follow a standardised naming convention
     - Consolidated test structure across all DTO classes
     - Edge case testing: null/empty/blank fields, boundary values, enum mapping
     - Special character and Unicode support validation
@@ -886,6 +1112,7 @@ Repository Layer
 - **v1.1.2:** README and ARCHITECTURE guides
 - **v3.0.0:** Enhanced Javadoc across codebase
 - **v5.0.0:** RELEASE_NOTES, CHANGELOG, HISTORY
+- **v5.2.0:** Comprehensive release documentation with breaking changes analysis
 
 ---
 
@@ -918,13 +1145,24 @@ Repository Layer
 - Comprehensive testing
 - Production readiness
 
-### 🚀 Maturity Phase (v4.1.0 - v5.1.0)
+### 🚀 Maturity Phase (v4.1.0 - v5.0.0)
 
-**Focus:** Completeness, Standards & Code Quality
+**Focus:** Completeness, Standards & Infrastructure
 
 - Complete CRUD capabilities
 - Industry-standard versioning
 - Infrastructure consolidation
+- Entity initialisation framework
+
+### 🔬 Refinement Phase (v5.1.0 - v5.2.0)
+
+**Focus:** Quality, Architecture & Maintainability
+
+- Test suite enhancement and consolidation
+- Architectural refactoring with separation of concerns
+- Enhanced null safety and robustness
+- Comprehensive test coverage across all layers
+- Code quality and maintainability improvements
 - Test suite enhancement and refactoring
 - Improved code maintainability
 - Long-term maintainability
@@ -962,7 +1200,7 @@ Repository Layer
     - Edge case mastery: null, empty, blank, boundary values
     - Enum mapping validation across all enums (PowerFactor, Division, FirearmType, CompetitorCategory)
     - Special character and Unicode support verification
-    - Consistent test organization with AAA pattern and clear naming conventions
+    - Consistent test organisation with AAA pattern and clear naming conventions
 6. **Continuous Test Refinement:** Ongoing test improvements demonstrate commitment to quality
     - Test class renaming for clarity (IpscMatchEntityServiceImplTest → IpscMatchServiceTest)
     - Enhanced null handling in service implementations
@@ -978,37 +1216,52 @@ Repository Layer
     - All tests follow `testMethod_whenCondition_thenExpectedBehavior` naming pattern
     - Consolidated IpscMatchResultServiceImplTest from 24 to 23 tests with zero reduction in effective
       coverage
+8. **Architectural Refactoring (v5.2.0):** Major architectural improvements with comprehensive scope
+    - Three-tier mapping system (DtoMapping, EntityMapping, DtoToEntityMapping) for clear separation
+    - Dedicated MatchEntityService for specialised entity handling
+    - Comprehensive test consolidation across all services and utilities (removed 3,000+ duplicate lines)
+    - Enhanced null safety with array initialisation and Optional return types
+    - Major service refactoring: 61 files, +13,567 insertions, -5,898 deletions
+    - New comprehensive tests: DtoToEntityMappingTest (716 lines), TransactionServiceTest (2,000+ lines)
+    - All tests consistently follow the AAA pattern with standardised naming
 
 ---
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v5.1.0, the following areas are identified for future enhancement:
+Based on the evolution to v5.2.0, the following areas are identified for future enhancement:
 
-### ✅ Recently Completed (v5.1.0)
+### ✅ Recently Completed (v5.2.0)
 
-- ✅ Test suite reorganisation and consolidation
-- ✅ Elimination of duplicate test cases
-- ✅ Enhanced test readability with section-based grouping
-- ✅ Consistent test naming across large test suites
-- ✅ Improved test maintainability through better organisation
+- ✅ Three-tier mapping architecture (DtoMapping, EntityMapping, DtoToEntityMapping)
+- ✅ Enhanced match entity handling with MatchEntityService
+- ✅ Comprehensive test consolidation across all services and utilities
+- ✅ Enhanced null safety with array initialisation and Optional return types
+- ✅ Major service refactoring (IpscMatchServiceImpl, IpscMatchResultServiceImpl, TransactionServiceImpl)
+- ✅ DtoToEntityMappingTest with 716 lines of comprehensive coverage
+- ✅ TransactionServiceTest with 2,000+ lines of edge case testing
+- ✅ Removed 3,000+ lines of duplicate tests
+- ✅ All utility tests consolidated (DateUtil, NumberUtil, StringUtil, ValueUtil)
+- ✅ Test suite reorganisation and consolidation (from v5.1.0)
+- ✅ Elimination of duplicate test cases (from v5.1.0)
+- ✅ Enhanced test readability with section-based grouping (from v5.1.0)
+- ✅ Consistent test naming across large test suites (from v5.1.0)
+- ✅ Improved test maintainability through better organisation (from v5.1.0)
 
 ### 🔄 Short-term (Minor Releases)
 
 - Complete Javadoc documentation across all methods
-- Extended test scenarios for service layer edge cases
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
-- ✅ **Completed (151+ tests added, test consolidation in v5.1.0)**
+- Additional integration test scenarios
 
-### 📦 Medium-term (v5.2+)
+### 📦 Medium-term (v5.3+)
 
 - Additional IPSC data format support
 - Bulk match processing capabilities
 - Enhanced error reporting and recovery
 - Performance metrics and monitoring
-- Repository layer comprehensive testing
-- Extended service layer test coverage with section-based organisation patterns
+- Advanced query optimisation
 
 ### 🎯 Long-term (v6.0+)
 
@@ -1026,24 +1279,45 @@ platform for managing practical shooting competition data. This evolution demons
 
 - **Continuous Improvement:** Regular releases addressing quality, features, and standards
 - **Domain Alignment:** Progressive refinement toward IPSC compliance and specialisation
-- **Architectural Excellence:** Evolution from monolithic to modular, testable architecture
+- **Architectural Excellence:** Evolution from monolithic to modular, testable architecture with three-tier
+  mapping
 - **Standards Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
-- **Code Maintainability:** Systematic refinement of test organisation and consolidation (v5.1.0)
+- **Code Maintainability:** Systematic refinement of test organisation, consolidation, and architectural
+  separation (v5.1.0, v5.2.0)
+- **Null Safety:** Enhanced robustness through array initialisation and Optional patterns (v5.2.0)
 
-The transition to Semantic Versioning in v5.0.0 and the test suite consolidation in v5.1.0 mark a maturation
-point where the project is ready for stable, predictable releases. These releases serve as a foundation
-for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
+The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, and the major
+architectural refactoring in v5.2.0 mark significant maturation points where the project demonstrates stable,
+predictable releases with clear separation of concerns. These releases serve as a solid foundation for the
+shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
+
+Version 5.2.0 represents a significant architectural milestone with the introduction of a three-tier mapping
+system, dedicated entity services, and comprehensive test coverage that ensures robust behaviour across all
+scenarios.
 
 ---
 
-**Document Created:** February 24, 2026
-**Last Updated:** February 25, 2026
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.1.0 (February 25, 2026)
+**Document Created:** February 24, 2026  
+**Last Updated:** February 27, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.2.0 (February 27, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for
 detailed technical information
 
-**Recent Updates (v5.1.0):**
+**Recent Updates (v5.2.0):**
+
+- Three-tier mapping architecture (DtoMapping, EntityMapping, DtoToEntityMapping)
+- Enhanced match entity handling with a dedicated MatchEntityService
+- Comprehensive test consolidation: DtoToEntityMappingTest (716 lines), TransactionServiceTest (2,000+ lines)
+- Major service refactoring: IpscMatchServiceImpl (246 lines), IpscMatchResultServiceImpl (333 lines),
+  TransactionServiceImpl (198 lines)
+- Enhanced null safety with array initialisation and Optional return types
+- Removed 3,000+ lines of duplicate tests across all test suites
+- Consolidated utility tests: DateUtil, NumberUtil, StringUtil, ValueUtil
+- All tests follow consistent `testMethod_whenCondition_thenExpectedBehavior` naming pattern with AAA comments
+- Statistics: 26 commits, 61 files changed, +13,567 insertions, -5,898 deletions
+
+**Previous Update (v5.1.0):**
 
 - Test suite reorganisation with 6 logical sections
 - Duplicate test elimination (1 duplicate removed)

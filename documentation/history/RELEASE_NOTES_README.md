@@ -31,7 +31,7 @@ Complete historical archive and documentation of all HPSC Website Backend releas
 ## 📖 Overview
 
 This directory contains comprehensive documentation of the project's evolution from version 1.0.0
-(January 4, 2026) through version 5.1.0 (February 25, 2026).
+(January 4, 2026) through version 5.2.0 (February 27, 2026).
 
 –––
 
@@ -39,14 +39,17 @@ This directory contains comprehensive documentation of the project's evolution f
 
 ### 🎯 Current Release
 
-— **[Version 5.1.0](RELEASE_NOTES_v5.1.0.md)** – Test Suite Enhancement & Code Quality Consolidation
-– **Release Date:** February 25, 2026
+— **[Version 5.2.0](RELEASE_NOTES_v5.2.0.md)** – Match Results Processing Enhancement & Architecture
+Refactoring
+– **Release Date:** February 27, 2026
 – **Status:** Current/Stable
-– **Key Features:** Test organisation, duplicate elimination, improved maintainability
+– **Key Features:** Three-tier mapping architecture, match entity service, comprehensive test consolidation
 
 ### 📊 Previous Major Releases
 
-— **[Version 5.0.0](RELEASE_NOTES_v5.0.0.md)** – Semantic Versioning Transition & Infrastructure
+— **[Version 5.1.0](RELEASE_NOTES_v5.1.0.md)** – Test Suite Enhancement & Code Quality Consolidation
+(Feb 25, 2026)
+– **[Version 5.0.0](RELEASE_NOTES_v5.0.0.md)** – Semantic Versioning Transition & Infrastructure
 Consolidation (Feb 24, 2026)
 – **[Version 4.1.0](RELEASE_NOTES_v4.1.0.md)** – CRUD Enhancement & API Maturity (Feb 13, 2026)
 – **[Version 4.0.0](RELEASE_NOTES_v4.0.0.md)** – Domain Refactoring & Quality Assurance
@@ -98,8 +101,11 @@ documentation/history/
 ├── README.md                          ← You are here
 ├── HISTORY.md                         (Project history & evolution)
 ├── RELEASE_NOTES_HISTORY.md          (Complete release archive)
-├── RELEASE_NOTES_v5.1.0.md           (Current release)
+├── RELEASE_NOTES_v5.2.0.md           (Current release)
+├── RELEASE_NOTES_v5.1.0.md
 ├── RELEASE_NOTES_v5.0.0.md
+├── RELEASE_NOTES_v4.1.0.md
+├── v4.0.0.md
 ├── v3.1.0.md
 ├── v3.0.0.md
 ├── v2.0.0.md
@@ -187,6 +193,7 @@ documentation/history/
 
 | Version | Date | Theme | Status | Breaking Changes |
 |–––––––––––|––––––––––––––|––––––––––––––––––––––––––––––––|––––––––|––––––––––––––––––––|
+| **5.2.0** | Feb 27, 2026 | Architecture Refactoring | Stable | ✅ None |
 | **5.1.0** | Feb 25, 2026 | Test Suite Enhancement | Stable | ✅ None |
 | **5.0.0** | Feb 24, 2026 | Semantic Versioning Transition | Stable | ✅ None |
 | **4.1.0** | Feb 13, 2026 | CRUD Enhancement | Stable | ✅ None |
@@ -222,16 +229,17 @@ response models
 
 ### 🎯 Feature Availability by Version
 
-| Feature | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 |
-|–––––––––––––––––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|
-| Image Gallery | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Award Processing | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Match Management | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Competitor Tracking | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| IPSC Integration | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| CRUD Operations | | | | | | ✅ | ✅ | ✅ |
-| Semantic Versioning | | | | | | | ✅ | ✅ |
-| Test Organisation | | | | | | | | ✅ |
+| Feature | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 |
+|–––––––––––––––––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|
+| Image Gallery | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Award Processing | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Match Management | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Competitor Tracking | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| IPSC Integration | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| CRUD Operations | | | | | | ✅ | ✅ | ✅ | ✅ |
+| Semantic Versioning | | | | | | | ✅ | ✅ | ✅ |
+| Test Organisation | | | | | | | | ✅ | ✅ |
+| Three-Tier Mapping | | | | | | | | | ✅ |
 
 –––
 
@@ -250,11 +258,12 @@ response models
                                                └─→ 2026–02–13 ──→ v4.1.0 (CRUD)
                                                    └─→ 2026–02–24 ──→ v5.0.0 (SemVer)
                                                        └─→ 2026–02–25 ──→ v5.1.0 (Tests)
+                                                           └─→ 2026–02–27 ──→ v5.2.0 (Architecture)
 ```
 
-**Duration:** 52+ weeks (Jan 4 – Feb 25, 2026)  
-**Total Releases:** 12  
-**Average Release Frequency:** ~4.5 days
+**Duration:** 54+ weeks (Jan 4 – Feb 27, 2026)  
+**Total Releases:** 13  
+**Average Release Frequency:** ~4 days
 
 –––
 
@@ -270,6 +279,7 @@ response models
 – **v4.1.0:** ~80% coverage
 – **v5.0.0:** ~85% coverage
 – **v5.1.0:** ~85% coverage (improved organisation and consolidation)
+– **v5.2.0:** ~90% coverage (comprehensive test consolidation, 3,000+ duplicates removed)
 
 ### 📚 Documentation Evolution
 
@@ -314,15 +324,20 @@ response models
 
 ## ⚠️ Known Issues by Version
 
+### v5.2.0
+
+— ✅ No known issues reported
+– 🧪 All major components working as expected
+
 ### v5.1.0
 
 — 📝 Database update scenario in tests disabled pending architecture review
-– 🧪 Additional test scenarios for extended service layers (marked for v5.2.0)
+– ✅ Resolved in v5.2.0 through architectural refactoring
 
 ### v5.0.0
 
-— 📝 Javadoc gaps in some protected methods (partially addressed in v5.1.0)
-– 🧪 Additional test scenarios for edge cases (test consolidation completed in v5.1.0)
+— 📝 Javadoc gaps in some protected methods (addressed in v5.1.0 and v5.2.0)
+– ✅ Test consolidation completed in v5.2.0
 
 ### v4.1.0
 
@@ -377,11 +392,11 @@ Please follow the contribution guidelines in the main repository.
 ## 📝 Document Metadata
 
 — **Created:** February 24, 2026
-– **Last Updated:** February 25, 2026
-– **Coverage:** v1.0.0 – v5.1.0 (12 releases)
-– **Timeline:** January 4 – February 25, 2026 (52+ weeks)
-– **Total Files:** 14 documentation files
-– **Total Content:** ~2,300+ lines
+– **Last Updated:** February 27, 2026
+– **Coverage:** v1.0.0 – v5.2.0 (13 releases)
+– **Timeline:** January 4 – February 27, 2026 (54+ weeks)
+– **Total Files:** 15 documentation files
+– **Total Content:** ~2,500+ lines
 
 –––
 
