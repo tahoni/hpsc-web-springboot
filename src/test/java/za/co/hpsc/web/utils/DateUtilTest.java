@@ -9,8 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DateUtilTest {
 
+    // =====================================================================
+    // Tests for formatDate - Valid Data Processing
+    // =====================================================================
+
     @Test
-    void testFormatDate_withValidDateAndFormat_thenReturnsFormattedString() {
+    void testFormatDate_whenValidDateAndFormat_thenReturnsFormattedString() {
         // Arrange
         LocalDate date = LocalDate.of(2023, 10, 5);
         String format = "yyyy-MM-dd";
@@ -23,8 +27,12 @@ class DateUtilTest {
         assertEquals(expected, result);
     }
 
+    // =====================================================================
+    // Tests for formatDate - Input Validation and Error Handling
+    // =====================================================================
+
     @Test
-    void testFormatDate_withNullDate_thenReturnsEmptyString() {
+    void testFormatDate_whenNullDate_thenReturnsEmptyString() {
         // Arrange
         String format = "yyyy-MM-dd";
 
@@ -36,7 +44,7 @@ class DateUtilTest {
     }
 
     @Test
-    void testFormatDate_withNullFormat_thenReturnsEmptyString() {
+    void testFormatDate_whenNullFormat_thenReturnsEmptyString() {
         // Arrange
         LocalDate date = LocalDate.of(2023, 10, 5);
 
@@ -47,8 +55,12 @@ class DateUtilTest {
         assertEquals("", result);
     }
 
+    // =====================================================================
+    // Tests for formatDateTime - Valid Data Processing
+    // =====================================================================
+
     @Test
-    void testFormatDateTime_withValidDateAndFormat_thenReturnsFormattedString() {
+    void testFormatDateTime_whenValidDateTimeAndFormat_thenReturnsFormattedString() {
         // Arrange
         LocalDateTime dateTime = LocalDateTime.of(2023, 10, 5, 14, 30, 0);
         String format = "yyyy-MM-dd HH:mm:ss";
@@ -61,8 +73,12 @@ class DateUtilTest {
         assertEquals(expected, result);
     }
 
+    // =====================================================================
+    // Tests for formatDateTime - Input Validation and Error Handling
+    // =====================================================================
+
     @Test
-    void testFormatDateTime_withNullDate_thenReturnsEmptyString() {
+    void testFormatDateTime_whenNullDateTime_thenReturnsEmptyString() {
         // Arrange
         String format = "yyyy-MM-dd HH:mm:ss";
 
@@ -74,7 +90,7 @@ class DateUtilTest {
     }
 
     @Test
-    void testFormatDateTime_withNullFormat_thenReturnsEmptyString() {
+    void testFormatDateTime_whenNullFormat_thenReturnsEmptyString() {
         // Arrange
         LocalDateTime dateTime = LocalDateTime.of(2023, 10, 5, 14, 30, 0);
 

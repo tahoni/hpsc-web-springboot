@@ -11,17 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ValueUtilTest {
 
-    @Test
-    void testNullAsEmptyString_withNullValue_thenReturnsEmptyString() {
-        // Act
-        String result = ValueUtil.nullAsEmptyString(null);
-
-        // Assert
-        assertEquals("", result);
-    }
+    // =====================================================================
+    // Tests for nullAsEmptyString (String) - Valid Data Processing
+    // =====================================================================
 
     @Test
-    void testNullAsEmptyString_withNonNullValue_thenReturnsSameString() {
+    void testNullAsEmptyString_whenNonNullString_thenReturnsSameString() {
         // Arrange
         String input = "Hello, World!";
 
@@ -33,7 +28,7 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsEmptyString_withEmptyString_thenReturnsSameString() {
+    void testNullAsEmptyString_whenEmptyString_thenReturnsSameString() {
         // Arrange
         String input = "";
 
@@ -45,7 +40,7 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsEmptyString_withWhitespace_thenReturnsSameString() {
+    void testNullAsEmptyString_whenWhitespace_thenReturnsSameString() {
         // Arrange
         String input = "   ";
 
@@ -57,7 +52,7 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsEmptyString_withSpecialCharacterString_thenReturnsSameString() {
+    void testNullAsEmptyString_whenSpecialCharacterString_thenReturnsSameString() {
         // Arrange
         String input = "@#$%^&*()";
 
@@ -68,75 +63,25 @@ class ValueUtilTest {
         assertEquals(input, result);
     }
 
+    // =====================================================================
+    // Tests for nullAsEmptyString (String) - Input Validation and Error Handling
+    // =====================================================================
+
     @Test
-    void testNullAsRandomUuid_withNullValue_thenReturnsRandomUuid() {
+    void testNullAsEmptyString_whenNullString_thenReturnsEmptyString() {
         // Act
-        UUID result = ValueUtil.nullAsRandomUuid(null);
+        String result = ValueUtil.nullAsEmptyString((String) null);
 
         // Assert
-        assertNotNull(result);
+        assertEquals("", result);
     }
 
-    @Test
-    void testNullAsRandomUuid_withNonNullUuid_thenReturnsSameUuid() {
-        // Arrange
-        UUID input = UUID.randomUUID();
-
-        // Act
-        UUID result = ValueUtil.nullAsRandomUuid(input);
-
-        // Assert
-        assertEquals(input, result);
-    }
+    // =====================================================================
+    // Tests for nullAsEmptyString (Object) - Valid Data Processing
+    // =====================================================================
 
     @Test
-    void testNullAsEmptyList_withNullList_thenReturnsEmptyList() {
-        // Act
-        List<String> result = ValueUtil.nullAsEmptyList(null);
-
-        // Assert
-        assertEquals(new ArrayList<>(), result);
-    }
-
-    @Test
-    void testNullAsEmptyList_withNonNullList_thenReturnsSameList() {
-        // Arrange
-        List<String> input = List.of("a", "b", "c");
-
-        // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
-
-        // Assert
-        assertEquals(input, result);
-    }
-
-    @Test
-    void testNullAsEmptyList_withEmptyList_thenReturnsSameList() {
-        // Arrange
-        List<String> input = new ArrayList<>();
-
-        // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
-
-        // Assert
-        assertEquals(input, result);
-    }
-
-    @Test
-    void testNullAsEmptyList_withModifiableList_thenReturnsSameList() {
-        // Arrange
-        List<String> input = new ArrayList<>(List.of("x", "y", "z"));
-
-        // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
-
-        // Assert
-        assertEquals(input, result);
-        assertEquals(List.of("x", "y", "z"), input);
-    }
-
-    @Test
-    void testNullAsEmptyString_withNonNullObject_ShouldReturnToStringValue() {
+    void testNullAsEmptyString_whenNonNullObject_thenReturnsToStringValue() {
         // Arrange
         Object value = 123;
         String expected = "123";
@@ -149,16 +94,7 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsEmptyString_withNullObject_ShouldReturnEmptyString() {
-        // Act
-        String result = ValueUtil.nullAsEmptyString(null);
-
-        // Assert
-        assertEquals("", result);
-    }
-
-    @Test
-    void testNullAsEmptyString_withCustomObject_ShouldReturnToStringValue() {
+    void testNullAsEmptyString_whenCustomObject_thenReturnsToStringValue() {
         // Arrange
         Object value = new Object() {
             @Override
@@ -173,5 +109,101 @@ class ValueUtilTest {
 
         // Assert
         assertEquals(expected, result);
+    }
+
+    // =====================================================================
+    // Tests for nullAsEmptyString (Object) - Input Validation and Error Handling
+    // =====================================================================
+
+    @Test
+    void testNullAsEmptyString_whenNullObject_thenReturnsEmptyString() {
+        // Act
+        String result = ValueUtil.nullAsEmptyString((Object) null);
+
+        // Assert
+        assertEquals("", result);
+    }
+
+    // =====================================================================
+    // Tests for nullAsRandomUuid - Valid Data Processing
+    // =====================================================================
+
+    @Test
+    void testNullAsRandomUuid_whenNonNullUuid_thenReturnsSameUuid() {
+        // Arrange
+        UUID input = UUID.randomUUID();
+
+        // Act
+        UUID result = ValueUtil.nullAsRandomUuid(input);
+
+        // Assert
+        assertEquals(input, result);
+    }
+
+    // =====================================================================
+    // Tests for nullAsRandomUuid - Input Validation and Error Handling
+    // =====================================================================
+
+    @Test
+    void testNullAsRandomUuid_whenNullValue_thenReturnsRandomUuid() {
+        // Act
+        UUID result = ValueUtil.nullAsRandomUuid(null);
+
+        // Assert
+        assertNotNull(result);
+    }
+
+    // =====================================================================
+    // Tests for nullAsEmptyList - Valid Data Processing
+    // =====================================================================
+
+    @Test
+    void testNullAsEmptyList_whenNonNullList_thenReturnsSameList() {
+        // Arrange
+        List<String> input = List.of("a", "b", "c");
+
+        // Act
+        List<String> result = ValueUtil.nullAsEmptyList(input);
+
+        // Assert
+        assertEquals(input, result);
+    }
+
+    @Test
+    void testNullAsEmptyList_whenEmptyList_thenReturnsSameList() {
+        // Arrange
+        List<String> input = new ArrayList<>();
+
+        // Act
+        List<String> result = ValueUtil.nullAsEmptyList(input);
+
+        // Assert
+        assertEquals(input, result);
+    }
+
+    @Test
+    void testNullAsEmptyList_whenModifiableList_thenReturnsSameList() {
+        // Arrange
+        List<String> input = new ArrayList<>(List.of("x", "y", "z"));
+
+        // Act
+        List<String> result = ValueUtil.nullAsEmptyList(input);
+
+        // Assert
+        assertEquals(input, result);
+        assertEquals(List.of("x", "y", "z"), input);
+    }
+
+    // =====================================================================
+    // Tests for nullAsEmptyList - Input Validation and Error Handling
+    // =====================================================================
+
+    @Test
+    void testNullAsEmptyList_whenNullList_thenReturnsEmptyList() {
+        // Act
+        List<String> result = ValueUtil.nullAsEmptyList(null);
+
+        // Assert
+        assertEquals(new ArrayList<>(), result);
     }
 }

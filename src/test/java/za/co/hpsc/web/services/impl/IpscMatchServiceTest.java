@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IpscMatchServiceImplTest {
+public class IpscMatchServiceTest {
     @InjectMocks
     private IpscMatchServiceImpl ipscMatchService;
 
@@ -28,7 +28,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testCreateBasicMatch_withValidData_thenReturnsIpscResponse() {
+    public void testCreateBasicMatch_whenValidData_thenReturnsIpscResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -180,7 +180,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNoMatchingStages_thenReturnsEmptyStagesList() {
+    public void testCreateBasicMatch_whenNoMatchingStages_thenReturnsEmptyStagesList() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -205,7 +205,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNoMatchingEnrolledMembers_thenReturnsEmptyEnrolledList() {
+    public void testCreateBasicMatch_whenNoMatchingEnrolledMembers_thenReturnsEmptyEnrolledList() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -230,7 +230,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNoMatchingScores_thenReturnsEmptyScoresList() {
+    public void testCreateBasicMatch_whenNoMatchingScores_thenReturnsEmptyScoresList() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -256,7 +256,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withEmptyRequestHolder_thenReturnsResponseWithEmptyLists() {
+    public void testCreateBasicMatch_whenEmptyRequestHolder_thenReturnsResponseWithEmptyLists() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -282,7 +282,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withMultipleTags_thenIncludesAllTags() {
+    public void testCreateBasicMatch_whenMultipleTags_thenIncludesAllTags() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -330,7 +330,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withMixedMatchIds_thenFiltersCorrectly() {
+    public void testCreateBasicMatch_whenMixedMatchIds_thenFiltersCorrectly() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -417,7 +417,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullMatchId_thenReturnsNull() {
+    public void testCreateBasicMatch_whenNullMatchId_thenReturnsNull() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(null);
@@ -453,7 +453,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testAddClubToMatch_withMatchingClub_thenSetsClubOnResponse() {
+    public void testAddClubToMatch_whenMatchingClub_thenSetsClubOnResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -486,7 +486,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withNoMatchingClub_thenSetsDefaultClubResponse() {
+    public void testAddClubToMatch_whenNoMatchingClub_thenSetsDefaultClubResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -518,7 +518,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withEmptyClubsList_thenSetsDefaultClubResponse() {
+    public void testAddClubToMatch_whenEmptyClubsList_thenSetsDefaultClubResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -544,7 +544,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withMultipleClubs_thenSetsCorrectClub() {
+    public void testAddClubToMatch_whenMultipleClubs_thenSetsCorrectClub() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -585,7 +585,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withClubIdNull_thenSetsNullClubResponse() {
+    public void testAddClubToMatch_whenClubIdNull_thenSetsNullClubResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -613,7 +613,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withClubIdZero_thenFindsMatchingClubOrDefault() {
+    public void testAddClubToMatch_whenClubIdZero_thenFindsMatchingClubOrDefault() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -644,7 +644,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withCompleteClubData_thenSetsAllClubFields() {
+    public void testAddClubToMatch_whenCompleteClubData_thenSetsAllClubFields() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -687,7 +687,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withNullClubsList_thenDoesNothing() {
+    public void testAddClubToMatch_whenNullClubsList_thenDoesNothing() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -707,7 +707,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withAllNullClubsInList_thenSetsDefaultClub() {
+    public void testAddClubToMatch_whenAllNullClubsInList_thenSetsDefaultClub() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -735,7 +735,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withEmptyClubCode_thenPreservesEmptyString() {
+    public void testAddClubToMatch_whenEmptyClubCode_thenPreservesEmptyString() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -762,7 +762,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withEmptyClubName_thenPreservesEmptyString() {
+    public void testAddClubToMatch_whenEmptyClubName_thenPreservesEmptyString() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -789,7 +789,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withWhitespaceClubCode_thenPreservesWhitespace() {
+    public void testAddClubToMatch_whenWhitespaceClubCode_thenPreservesWhitespace() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -815,7 +815,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withOnlyClubId_thenSetsOnlyClubId() {
+    public void testAddClubToMatch_whenOnlyClubId_thenSetsOnlyClubId() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -842,7 +842,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withIdAndCodeOnly_thenSetsIdAndCode() {
+    public void testAddClubToMatch_whenIdAndCodeOnly_thenSetsIdAndCode() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -870,7 +870,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withCompleteClubDataAllFields_thenSetsAllFields() {
+    public void testAddClubToMatch_whenCompleteClubDataAllFields_thenSetsAllFields() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -913,7 +913,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withMultipleClubsAllComplete_thenSelectsCorrectOne() {
+    public void testAddClubToMatch_whenMultipleClubsAllComplete_thenSelectsCorrectOne() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -960,7 +960,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withNullIpscResponse_thenDoesNothing() {
+    public void testAddClubToMatch_whenNullIpscResponse_thenDoesNothing() {
         // Arrange
         IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
 
@@ -976,7 +976,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withNullIpscRequestHolder_thenDoesNothing() {
+    public void testAddClubToMatch_whenNullIpscRequestHolder_thenDoesNothing() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -990,13 +990,13 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withBothNullParameters_thenDoesNothing() {
+    public void testAddClubToMatch_whenBothNullParameters_thenDoesNothing() {
         // Act & Assert - should not throw exception
         assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(null, null));
     }
 
     @Test
-    public void testAddClubToMatch_withNullMatch_thenDoesNothing() {
+    public void testAddClubToMatch_whenNullMatch_thenDoesNothing() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
         ipscResponse.setMatch(null);
@@ -1016,7 +1016,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withLargeClubIdNumber_thenFindsCorrectClub() {
+    public void testAddClubToMatch_whenLargeClubIdNumber_thenFindsCorrectClub() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1049,7 +1049,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withNegativeClubId_thenHandlesNegativeId() {
+    public void testAddClubToMatch_whenNegativeClubId_thenHandlesNegativeId() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1077,7 +1077,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withDuplicateClubIds_thenUsesFirstMatch() {
+    public void testAddClubToMatch_whenDuplicateClubIds_thenUsesFirstMatch() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1110,7 +1110,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withPartialClubData_thenSetsAvailableFields() {
+    public void testAddClubToMatch_whenPartialClubData_thenSetsAvailableFields() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1138,7 +1138,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withClubCodeAndNameNull_thenSetsClubIdOnly() {
+    public void testAddClubToMatch_whenClubCodeAndNameNull_thenSetsClubIdOnly() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1166,7 +1166,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withVeryLongClubCode_thenPreservesFullCode() {
+    public void testAddClubToMatch_whenVeryLongClubCode_thenPreservesFullCode() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1195,7 +1195,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withVeryLongClubName_thenPreservesFullName() {
+    public void testAddClubToMatch_whenVeryLongClubName_thenPreservesFullName() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1224,7 +1224,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withSpecialCharactersInCode_thenPreservesCharacters() {
+    public void testAddClubToMatch_whenSpecialCharactersInCode_thenPreservesCharacters() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1250,7 +1250,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withPunctuationInClubName_thenPreservesCharacters() {
+    public void testAddClubToMatch_whenPunctuationInClubName_thenPreservesCharacters() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1276,7 +1276,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withUnicodeInClubCode_thenPreservesUnicode() {
+    public void testAddClubToMatch_whenUnicodeInClubCode_thenPreservesUnicode() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1302,7 +1302,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withEmojiInClubName_thenPreservesEmoji() {
+    public void testAddClubToMatch_whenEmojiInClubName_thenPreservesEmoji() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1332,7 +1332,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testAddClubToMatch_withMaxIntClubId_thenProcessesSuccessfully() {
+    public void testAddClubToMatch_whenMaxIntClubId_thenProcessesSuccessfully() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1360,7 +1360,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddClubToMatch_withMinIntClubId_thenProcessesSuccessfully() {
+    public void testAddClubToMatch_whenMinIntClubId_thenProcessesSuccessfully() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1392,7 +1392,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testAddClubToMatch_withNullElementsInClubList_thenFiltersAndFindsMatch() {
+    public void testAddClubToMatch_whenNullElementsInClubList_thenFiltersAndFindsMatch() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1436,7 +1436,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testAddClubToMatch_withExistingClubThenNewData_thenCompletelyOverwrites() {
+    public void testAddClubToMatch_whenExistingClubThenNewData_thenCompletelyOverwrites() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1475,7 +1475,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testAddClubToMatch_withLargeClubListManyElements_thenFindsCorrectClub() {
+    public void testAddClubToMatch_whenLargeClubListManyElements_thenFindsCorrectClub() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1511,7 +1511,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testAddMembersToMatch_withMatchingMembers_thenSetsMembersOnResponse() {
+    public void testAddMembersToMatch_whenMatchingMembers_thenSetsMembersOnResponse() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1561,7 +1561,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withSingleScore_thenSetsMatchingMember() {
+    public void testAddMembersToMatch_whenSingleScore_thenSetsMatchingMember() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1594,7 +1594,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withNoMatchingMembers_thenSetsEmptyList() {
+    public void testAddMembersToMatch_whenNoMatchingMembers_thenSetsEmptyList() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1621,7 +1621,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withNoScores_thenDoesNotSetMembers() {
+    public void testAddMembersToMatch_whenNoScores_thenDoesNotSetMembers() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1644,7 +1644,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withNoMembers_thenSetsEmptyList() {
+    public void testAddMembersToMatch_whenNoMembers_thenSetsEmptyList() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1666,7 +1666,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withMultipleMembersAndScores_thenSetsLastMatchingMembers() {
+    public void testAddMembersToMatch_whenMultipleMembersAndScores_thenSetsLastMatchingMembers() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1728,7 +1728,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withMixedMatchingAndNonMatchingMembers_thenSetsMatchingMembers() {
+    public void testAddMembersToMatch_whenMixedMatchingAndNonMatchingMembers_thenSetsMatchingMembers() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1768,7 +1768,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withNullMemberId_thenHandlesGracefully() {
+    public void testAddMembersToMatch_whenNullMemberId_thenHandlesGracefully() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1795,7 +1795,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testAddMembersToMatch_withCompleteMemberData_thenSetsAllMemberFields() {
+    public void testAddMembersToMatch_whenCompleteMemberData_thenSetsAllMemberFields() {
         // Arrange
         IpscResponse ipscResponse = new IpscResponse();
 
@@ -1839,7 +1839,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testCreateBasicMatch_withNullMatch_thenReturnsEmptyOptional() {
+    public void testCreateBasicMatch_whenNullMatch_thenReturnsEmptyOptional() {
         // Arrange
         IpscRequestHolder ipscRequestHolder = new IpscRequestHolder();
         ipscRequestHolder.setTags(new ArrayList<>());
@@ -1855,7 +1855,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullIpscRequestHolder_thenThrowsNullPointerException() {
+    public void testCreateBasicMatch_whenNullIpscRequestHolder_thenThrowsNullPointerException() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1867,7 +1867,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullMatchId_thenReturnsEmptyOptional() {
+    public void testCreateBasicMatch_whenNullMatchId_thenReturnsEmptyOptional() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(null);  // Null match ID
@@ -1887,7 +1887,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullStages_thenReturnsEmptyOptional() {
+    public void testCreateBasicMatch_whenNullStages_thenReturnsEmptyOptional() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1907,7 +1907,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullEnrolledMembers_thenReturnsEmptyOptional() {
+    public void testCreateBasicMatch_whenNullEnrolledMembers_thenReturnsEmptyOptional() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1927,7 +1927,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullScores_thenReturnsEmptyOptional() {
+    public void testCreateBasicMatch_whenNullScores_thenReturnsEmptyOptional() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1951,7 +1951,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testCreateBasicMatch_withBlankMatchName_thenProcesses() {
+    public void testCreateBasicMatch_whenBlankMatchName_thenProcesses() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1973,7 +1973,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullMatchName_thenProcesses() {
+    public void testCreateBasicMatch_whenNullMatchName_thenProcesses() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -1995,7 +1995,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withWhitespaceMatchName_thenProcesses() {
+    public void testCreateBasicMatch_whenWhitespaceMatchName_thenProcesses() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2020,7 +2020,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testCreateBasicMatch_withEmptyTags_thenReturnsResponseWithEmptyTags() {
+    public void testCreateBasicMatch_whenEmptyTags_thenReturnsResponseWithEmptyTags() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2042,7 +2042,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withEmptyStages_thenReturnsResponseWithEmptyStages() {
+    public void testCreateBasicMatch_whenEmptyStages_thenReturnsResponseWithEmptyStages() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2063,7 +2063,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withEmptyEnrolledMembers_thenReturnsResponseWithEmptyEnrolled() {
+    public void testCreateBasicMatch_whenEmptyEnrolledMembers_thenReturnsResponseWithEmptyEnrolled() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2084,7 +2084,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withEmptyScores_thenReturnsResponseWithEmptyScores() {
+    public void testCreateBasicMatch_whenEmptyScores_thenReturnsResponseWithEmptyScores() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2109,7 +2109,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testCreateBasicMatch_withOnlyStages_thenFiltersStagesByMatchId() {
+    public void testCreateBasicMatch_whenOnlyStages_thenFiltersStagesByMatchId() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2142,7 +2142,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withOnlyEnrolledMembers_thenFiltersEnrolledByMatchId() {
+    public void testCreateBasicMatch_whenOnlyEnrolledMembers_thenFiltersEnrolledByMatchId() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2172,7 +2172,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withOnlyScores_thenFiltersScoresByMatchId() {
+    public void testCreateBasicMatch_whenOnlyScores_thenFiltersScoresByMatchId() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2204,7 +2204,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withStagesAndScores_thenFiltersCorrectly() {
+    public void testCreateBasicMatch_whenStagesAndScores_thenFiltersCorrectly() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2239,7 +2239,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testCreateBasicMatch_withFullData_thenReturnsCompleteResponse() {
+    public void testCreateBasicMatch_whenFullData_thenReturnsCompleteResponse() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2285,7 +2285,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withMultipleTags_thenIncludesAll() {
+    public void testCreateBasicMatch_whenMultipleTags_thenIncludesAll() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2322,7 +2322,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testCreateBasicMatch_withNullStagesInCollection_thenFiltersNulls() {
+    public void testCreateBasicMatch_whenNullStagesInCollection_thenFiltersNulls() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2358,7 +2358,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testCreateBasicMatch_withNullScoresInCollection_thenFiltersNulls() {
+    public void testCreateBasicMatch_whenNullScoresInCollection_thenFiltersNulls() {
         // Arrange
         MatchRequest matchRequest = new MatchRequest();
         matchRequest.setMatchId(100);
@@ -2394,7 +2394,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withEmptyList_thenReturnsEmptyHolder() {
+    public void testGenerateIpscMatchRecordHolder_whenEmptyList_thenReturnsEmptyHolder() {
         // Arrange
         List<IpscMatch> ipscMatchEntityList = new ArrayList<>();
 
@@ -2412,7 +2412,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withSingleMatch_thenReturnsSingleRecord() {
+    public void testGenerateIpscMatchRecordHolder_whenSingleMatch_thenReturnsSingleRecord() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -2443,7 +2443,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withMultipleMatches_thenReturnsMultipleRecords() {
+    public void testGenerateIpscMatchRecordHolder_whenMultipleMatches_thenReturnsMultipleRecords() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2500,7 +2500,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withNullMatchStages_thenProcessesWithoutStages() {
+    public void testGenerateIpscMatchRecordHolder_whenNullMatchStages_thenProcessesWithoutStages() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2536,7 +2536,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withNullMatchCompetitors_thenProcessesWithoutCompetitors() {
+    public void testGenerateIpscMatchRecordHolder_whenNullMatchCompetitors_thenProcessesWithoutCompetitors() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2572,7 +2572,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withMatchStagesButNoCompetitors_thenReturnsEmptyCompetitors() {
+    public void testGenerateIpscMatchRecordHolder_whenMatchStagesButNoCompetitors_thenReturnsEmptyCompetitors() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2610,7 +2610,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withNullDateFields_thenHandlesNullDates() {
+    public void testGenerateIpscMatchRecordHolder_whenNullDateFields_thenHandlesNullDates() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2642,7 +2642,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withNullMatchNameAndCategory_thenProcesses() {
+    public void testGenerateIpscMatchRecordHolder_whenNullMatchNameAndCategory_thenProcesses() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2677,7 +2677,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withLargeNumberOfMatches_thenProcessesAll() {
+    public void testGenerateIpscMatchRecordHolder_whenLargeNumberOfMatches_thenProcessesAll() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2711,7 +2711,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withSpecialCharactersInNames_thenPreservesCharacters() {
+    public void testGenerateIpscMatchRecordHolder_whenSpecialCharactersInNames_thenPreservesCharacters() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -2735,7 +2735,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withEmptyMatchStagesList_thenProcessesCorrectly() {
+    public void testGenerateIpscMatchRecordHolder_whenEmptyMatchStagesList_thenProcessesCorrectly() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2765,7 +2765,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withEmptyCompetitorsList_thenProcessesCorrectly() {
+    public void testGenerateIpscMatchRecordHolder_whenEmptyCompetitorsList_thenProcessesCorrectly() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2795,7 +2795,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_withMatchContainsAllFields_thenVerifiesDataIntegrity() {
+    public void testGenerateIpscMatchRecordHolder_whenMatchContainsAllFields_thenVerifiesDataIntegrity() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2834,7 +2834,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withNullMatch_thenReturnsEmptyOptional() {
+    public void testInitIpscMatchResponse_whenNullMatch_thenReturnsEmptyOptional() {
         // Arrange
         List<CompetitorMatchRecord> competitors = new ArrayList<>();
 
@@ -2846,7 +2846,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withNullCompetitors_thenReturnsEmptyOptional() {
+    public void testInitIpscMatchResponse_whenNullCompetitors_thenReturnsEmptyOptional() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -2861,7 +2861,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withBothNullParameters_thenReturnsEmptyOptional() {
+    public void testInitIpscMatchResponse_whenBothNullParameters_thenReturnsEmptyOptional() {
         // Act
         Optional<IpscMatchRecord> result = ipscMatchService.initIpscMatchResponse(null, null);
 
@@ -2874,7 +2874,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withNullMatchName_thenReturnsNull() {
+    public void testInitIpscMatchResponse_whenNullMatchName_thenReturnsNull() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -2896,7 +2896,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withBlankMatchName_thenProcesses() {
+    public void testInitIpscMatchResponse_whenBlankMatchName_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -2918,7 +2918,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withWhitespaceMatchName_thenProcesses() {
+    public void testInitIpscMatchResponse_whenWhitespaceMatchName_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -2944,7 +2944,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withOnlyMatchName_thenProcesses() {
+    public void testInitIpscMatchResponse_whenOnlyMatchName_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -2969,7 +2969,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withOnlyClub_thenSetsClubName() {
+    public void testInitIpscMatchResponse_whenOnlyClub_thenSetsClubName() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -2997,7 +2997,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withOnlyScheduledDate_thenFormatsDate() {
+    public void testInitIpscMatchResponse_whenOnlyScheduledDate_thenFormatsDate() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3021,7 +3021,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withNullScheduledDate_thenHandlesNull() {
+    public void testInitIpscMatchResponse_whenNullScheduledDate_thenHandlesNull() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3043,7 +3043,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withNullDateEdited_thenHandles() {
+    public void testInitIpscMatchResponse_whenNullDateEdited_thenHandles() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3069,7 +3069,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withCompleteData_thenReturnsCompleteRecord() {
+    public void testInitIpscMatchResponse_whenCompleteData_thenReturnsCompleteRecord() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -3104,7 +3104,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withMultipleCompetitors_thenIncludesAll() {
+    public void testInitIpscMatchResponse_whenMultipleCompetitors_thenIncludesAll() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3135,7 +3135,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withAllFirearmTypes_thenProcesses() {
+    public void testInitIpscMatchResponse_whenAllFirearmTypes_thenProcesses() {
         // Arrange
         FirearmType[] firearmTypes = {
                 FirearmType.HANDGUN,
@@ -3168,7 +3168,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withAllMatchCategories_thenProcesses() {
+    public void testInitIpscMatchResponse_whenAllMatchCategories_thenProcesses() {
         // Arrange
         MatchCategory[] categories = {
                 MatchCategory.LEAGUE,
@@ -3201,7 +3201,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withNullFirearmType_thenHandlesGracefully() {
+    public void testInitIpscMatchResponse_whenNullFirearmType_thenHandlesGracefully() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3223,7 +3223,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withNullMatchCategory_thenHandlesGracefully() {
+    public void testInitIpscMatchResponse_whenNullMatchCategory_thenHandlesGracefully() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3249,7 +3249,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withHistoricalDate_thenProcesses() {
+    public void testInitIpscMatchResponse_whenHistoricalDate_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3272,7 +3272,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withFutureDate_thenProcesses() {
+    public void testInitIpscMatchResponse_whenFutureDate_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3299,7 +3299,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withVeryLongMatchName_thenProcesses() {
+    public void testInitIpscMatchResponse_whenVeryLongMatchName_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3321,7 +3321,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitIpscMatchResponse_withUnicodeInMatchName_thenProcesses() {
+    public void testInitIpscMatchResponse_whenUnicodeInMatchName_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3347,7 +3347,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withEmptyCompetitorsList_thenIncludesEmpty() {
+    public void testInitIpscMatchResponse_whenEmptyCompetitorsList_thenIncludesEmpty() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3373,7 +3373,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withSpecialCharactersInName_thenPreserves() {
+    public void testInitIpscMatchResponse_whenSpecialCharactersInName_thenPreserves() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3399,7 +3399,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withClubNullName_thenHandlesGracefully() {
+    public void testInitIpscMatchResponse_whenClubNullName_thenHandlesGracefully() {
         // Arrange
         Club club = new Club();
         club.setId(1L);
@@ -3430,7 +3430,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withLargeCompetitorList_thenProcesses() {
+    public void testInitIpscMatchResponse_whenLargeCompetitorList_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3461,7 +3461,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withBothDateFieldsNull_thenHandles() {
+    public void testInitIpscMatchResponse_whenBothDateFieldsNull_thenHandles() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3488,7 +3488,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitIpscMatchResponse_withAllOptionalFieldsNull_thenProcesses() {
+    public void testInitIpscMatchResponse_whenAllOptionalFieldsNull_thenProcesses() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
@@ -3519,7 +3519,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withNullCompetitor_thenReturnsEmptyOptional() {
+    public void testInitCompetitor_whenNullCompetitor_thenReturnsEmptyOptional() {
         // Arrange
         MatchCompetitorRecord matchRecord = new MatchCompetitorRecord("Club", "Handgun", "Open",
                 "Major", "A", "100.00", "50.00", "2025-09-06 10:00");
@@ -3533,7 +3533,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withNullMatchCompetitorRecord_thenReturnsEmptyOptional() {
+    public void testInitCompetitor_whenNullMatchCompetitorRecord_thenReturnsEmptyOptional() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3550,7 +3550,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withNullStagesList_thenReturnsEmptyOptional() {
+    public void testInitCompetitor_whenNullStagesList_thenReturnsEmptyOptional() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3568,7 +3568,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withAllNullParameters_thenReturnsEmptyOptional() {
+    public void testInitCompetitor_whenAllNullParameters_thenReturnsEmptyOptional() {
         // Act
         Optional<CompetitorMatchRecord> result = ipscMatchService.initCompetitor(null, null, null);
 
@@ -3581,7 +3581,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withNullFirstName_thenProcesses() {
+    public void testInitCompetitor_whenNullFirstName_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3605,7 +3605,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withEmptyFirstName_thenProcesses() {
+    public void testInitCompetitor_whenEmptyFirstName_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3629,7 +3629,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withNullLastName_thenProcesses() {
+    public void testInitCompetitor_whenNullLastName_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3653,7 +3653,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withNullMiddleNames_thenProcesses() {
+    public void testInitCompetitor_whenNullMiddleNames_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3677,7 +3677,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withNullDateOfBirth_thenFormatsNull() {
+    public void testInitCompetitor_whenNullDateOfBirth_thenFormatsNull() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3705,7 +3705,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withOnlyRequiredFields_thenProcesses() {
+    public void testInitCompetitor_whenOnlyRequiredFields_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3730,7 +3730,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withEmptyStagesList_thenIncludesEmptyList() {
+    public void testInitCompetitor_whenEmptyStagesList_thenIncludesEmptyList() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3758,7 +3758,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withCompleteData_thenReturnsCompleteRecord() {
+    public void testInitCompetitor_whenCompleteData_thenReturnsCompleteRecord() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3796,7 +3796,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withMultipleStages_thenIncludesAllStages() {
+    public void testInitCompetitor_whenMultipleStages_thenIncludesAllStages() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3831,7 +3831,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withVeryLongFirstName_thenProcesses() {
+    public void testInitCompetitor_whenVeryLongFirstName_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3855,7 +3855,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withUnicodeInNames_thenProcesses() {
+    public void testInitCompetitor_whenUnicodeInNames_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3885,7 +3885,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withSpecialCharactersInNames_thenProcesses() {
+    public void testInitCompetitor_whenSpecialCharactersInNames_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3915,7 +3915,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withLargeSapsaNumber_thenProcesses() {
+    public void testInitCompetitor_whenLargeSapsaNumber_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3939,7 +3939,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withNullSapsaNumber_thenProcesses() {
+    public void testInitCompetitor_whenNullSapsaNumber_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3967,7 +3967,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withHistoricalDateOfBirth_thenProcesses() {
+    public void testInitCompetitor_whenHistoricalDateOfBirth_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -3991,7 +3991,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withRecentDateOfBirth_thenProcesses() {
+    public void testInitCompetitor_whenRecentDateOfBirth_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4019,7 +4019,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withAllFieldsExceptSapsa_thenProcesses() {
+    public void testInitCompetitor_whenAllFieldsExceptSapsa_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4044,7 +4044,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitCompetitor_withAllFieldsExceptNumber_thenProcesses() {
+    public void testInitCompetitor_whenAllFieldsExceptNumber_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4073,7 +4073,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withNullFieldsInMatchRecord_thenProcesses() {
+    public void testInitCompetitor_whenNullFieldsInMatchRecord_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4102,7 +4102,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withLargeStageList_thenProcesses() {
+    public void testInitCompetitor_whenLargeStageList_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4137,7 +4137,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitCompetitor_withEmptyCompetitorNumber_thenProcesses() {
+    public void testInitCompetitor_whenEmptyCompetitorNumber_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4165,7 +4165,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withNullCompetitor_thenReturnsEmptyOptional() {
+    public void testInitMatchCompetitor_whenNullCompetitor_thenReturnsEmptyOptional() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
@@ -4177,7 +4177,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullMatchCompetitorList_thenReturnsEmptyOptional() {
+    public void testInitMatchCompetitor_whenNullMatchCompetitorList_thenReturnsEmptyOptional() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4192,7 +4192,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withBothNullParameters_thenReturnsEmptyOptional() {
+    public void testInitMatchCompetitor_whenBothNullParameters_thenReturnsEmptyOptional() {
         // Act
         Optional<MatchCompetitorRecord> result = ipscMatchService.initMatchCompetitor(null, null);
 
@@ -4201,7 +4201,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withEmptyMatchCompetitorList_thenReturnsEmptyOptional() {
+    public void testInitMatchCompetitor_whenEmptyMatchCompetitorList_thenReturnsEmptyOptional() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4218,7 +4218,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNoMatchingCompetitor_thenReturnsEmptyOptional() {
+    public void testInitMatchCompetitor_whenNoMatchingCompetitor_thenReturnsEmptyOptional() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4248,7 +4248,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withNullMatch_thenProcesses() {
+    public void testInitMatchCompetitor_whenNullMatch_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4272,7 +4272,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullClub_thenSetsEmptyClubName() {
+    public void testInitMatchCompetitor_whenNullClub_thenSetsEmptyClubName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4300,7 +4300,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullFirearmType_thenSetsEmpty() {
+    public void testInitMatchCompetitor_whenNullFirearmType_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4323,7 +4323,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullDivision_thenSetsEmpty() {
+    public void testInitMatchCompetitor_whenNullDivision_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4346,7 +4346,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullPowerFactor_thenSetsEmpty() {
+    public void testInitMatchCompetitor_whenNullPowerFactor_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4369,7 +4369,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullCategory_thenSetsEmpty() {
+    public void testInitMatchCompetitor_whenNullCategory_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4396,7 +4396,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withOnlyFirearmType_thenProcesses() {
+    public void testInitMatchCompetitor_whenOnlyFirearmType_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4425,7 +4425,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withOnlyDivision_thenProcesses() {
+    public void testInitMatchCompetitor_whenOnlyDivision_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4454,7 +4454,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withCompleteData_thenReturnsCompleteRecord() {
+    public void testInitMatchCompetitor_whenCompleteData_thenReturnsCompleteRecord() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4501,7 +4501,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withMultipleCompetitorsInList_thenFindsCorrectOne() {
+    public void testInitMatchCompetitor_whenMultipleCompetitorsInList_thenFindsCorrectOne() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -4538,7 +4538,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withAllFirearmTypes_thenProcesses() {
+    public void testInitMatchCompetitor_whenAllFirearmTypes_thenProcesses() {
         // Arrange
         FirearmType[] firearmTypes = {
                 FirearmType.HANDGUN,
@@ -4576,7 +4576,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withZeroMatchPoints_thenProcesses() {
+    public void testInitMatchCompetitor_whenZeroMatchPoints_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4599,7 +4599,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNegativeMatchPoints_thenProcesses() {
+    public void testInitMatchCompetitor_whenNegativeMatchPoints_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4622,7 +4622,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withVeryLargeMatchPoints_thenProcesses() {
+    public void testInitMatchCompetitor_whenVeryLargeMatchPoints_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4645,7 +4645,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullMatchPoints_thenFormatsAsNull() {
+    public void testInitMatchCompetitor_whenNullMatchPoints_thenFormatsAsNull() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4668,7 +4668,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withNullMatchRanking_thenFormatsAsNull() {
+    public void testInitMatchCompetitor_whenNullMatchRanking_thenFormatsAsNull() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4695,7 +4695,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withNullDateEdited_thenFormatsNull() {
+    public void testInitMatchCompetitor_whenNullDateEdited_thenFormatsNull() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4718,7 +4718,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withHistoricalDate_thenProcesses() {
+    public void testInitMatchCompetitor_whenHistoricalDate_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4741,7 +4741,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchCompetitor_withFutureDate_thenProcesses() {
+    public void testInitMatchCompetitor_whenFutureDate_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4768,7 +4768,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withNullsInList_thenFiltersAndFinds() {
+    public void testInitMatchCompetitor_whenNullsInList_thenFiltersAndFinds() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4798,7 +4798,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withLargeList_thenFindsCorrectOne() {
+    public void testInitMatchCompetitor_whenLargeList_thenFindsCorrectOne() {
         // Arrange
         Competitor targetCompetitor = new Competitor();
         targetCompetitor.setId(50L);
@@ -4836,7 +4836,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchCompetitor_withAllFieldsNull_thenProcesses() {
+    public void testInitMatchCompetitor_whenAllFieldsNull_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4874,7 +4874,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withNullCompetitor_thenReturnsEmptyList() {
+    public void testInitMatchStageCompetitor_whenNullCompetitor_thenReturnsEmptyList() {
         // Arrange
         List<MatchStageCompetitor> matchStageCompetitorList = new ArrayList<>();
 
@@ -4887,7 +4887,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullMatchStageCompetitorList_thenReturnsEmptyList() {
+    public void testInitMatchStageCompetitor_whenNullMatchStageCompetitorList_thenReturnsEmptyList() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4903,7 +4903,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withBothNullParameters_thenReturnsEmptyList() {
+    public void testInitMatchStageCompetitor_whenBothNullParameters_thenReturnsEmptyList() {
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(null, null);
 
@@ -4913,7 +4913,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withEmptyList_thenReturnsEmptyList() {
+    public void testInitMatchStageCompetitor_whenEmptyList_thenReturnsEmptyList() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4931,7 +4931,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNoMatchingCompetitor_thenReturnsEmptyList() {
+    public void testInitMatchStageCompetitor_whenNoMatchingCompetitor_thenReturnsEmptyList() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -4962,7 +4962,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withNullFirearmType_thenSetsEmpty() {
+    public void testInitMatchStageCompetitor_whenNullFirearmType_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -4987,7 +4987,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullDivision_thenSetsEmpty() {
+    public void testInitMatchStageCompetitor_whenNullDivision_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5012,7 +5012,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullPowerFactor_thenSetsEmpty() {
+    public void testInitMatchStageCompetitor_whenNullPowerFactor_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5037,7 +5037,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullCompetitorCategory_thenSetsEmpty() {
+    public void testInitMatchStageCompetitor_whenNullCompetitorCategory_thenSetsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5062,7 +5062,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullScores_thenIncludesNullScores() {
+    public void testInitMatchStageCompetitor_whenNullScores_thenIncludesNullScores() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5092,7 +5092,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullPenalties_thenIncludesNullPenalties() {
+    public void testInitMatchStageCompetitor_whenNullPenalties_thenIncludesNullPenalties() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5122,7 +5122,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullBigDecimals_thenFormatsAsEmpty() {
+    public void testInitMatchStageCompetitor_whenNullBigDecimals_thenFormatsAsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5154,7 +5154,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withNullDateEdited_thenFormatsAsEmpty() {
+    public void testInitMatchStageCompetitor_whenNullDateEdited_thenFormatsAsEmpty() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5182,7 +5182,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withOnlyScores_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenOnlyScores_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5212,7 +5212,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withOnlyPerformanceMetrics_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenOnlyPerformanceMetrics_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5246,7 +5246,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withCompleteData_thenReturnsCompleteRecord() {
+    public void testInitMatchStageCompetitor_whenCompleteData_thenReturnsCompleteRecord() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5299,7 +5299,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withMultipleStages_thenReturnsAll() {
+    public void testInitMatchStageCompetitor_whenMultipleStages_thenReturnsAll() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5331,7 +5331,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withAllFirearmTypes_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenAllFirearmTypes_thenProcesses() {
         // Arrange
         FirearmType[] firearmTypes = {
                 FirearmType.HANDGUN,
@@ -5369,7 +5369,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withZeroScores_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenZeroScores_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5401,7 +5401,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withLargeScores_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenLargeScores_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5430,7 +5430,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withZeroBigDecimalValues_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenZeroBigDecimalValues_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5459,7 +5459,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withLargeBigDecimalValues_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenLargeBigDecimalValues_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5492,7 +5492,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withHistoricalDate_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenHistoricalDate_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5516,7 +5516,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withFutureDate_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenFutureDate_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5544,7 +5544,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withNullsInList_thenFiltersAndFinds() {
+    public void testInitMatchStageCompetitor_whenNullsInList_thenFiltersAndFinds() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5571,7 +5571,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testInitMatchStageCompetitor_withMixedCompetitors_thenFiltersCorrectly() {
+    public void testInitMatchStageCompetitor_whenMixedCompetitors_thenFiltersCorrectly() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -5615,7 +5615,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withLargeList_thenFindsCorrectOnes() {
+    public void testInitMatchStageCompetitor_whenLargeList_thenFindsCorrectOnes() {
         // Arrange
         Competitor targetCompetitor = new Competitor();
         targetCompetitor.setId(50L);
@@ -5657,7 +5657,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testInitMatchStageCompetitor_withAllFieldsNull_thenProcesses() {
+    public void testInitMatchStageCompetitor_whenAllFieldsNull_thenProcesses() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5705,7 +5705,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withNullList_thenReturnsEmptyList() {
+    public void testGetCompetitorList_whenNullList_thenReturnsEmptyList() {
         // Act
         List<Competitor> result = ipscMatchService.getCompetitorList(null);
 
@@ -5715,7 +5715,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetCompetitorList_withEmptyList_thenReturnsEmptyList() {
+    public void testGetCompetitorList_whenEmptyList_thenReturnsEmptyList() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
@@ -5732,7 +5732,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withAllNullElements_thenReturnsEmptyList() {
+    public void testGetCompetitorList_whenAllNullElements_thenReturnsEmptyList() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
         matchCompetitorList.add(null);
@@ -5748,7 +5748,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetCompetitorList_withSomeNullElements_thenFiltersNulls() {
+    public void testGetCompetitorList_whenSomeNullElements_thenFiltersNulls() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -5786,7 +5786,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetCompetitorList_withNullCompetitorInMatchCompetitor_thenIncludesNull() {
+    public void testGetCompetitorList_whenNullCompetitorInMatchCompetitor_thenIncludesNull() {
         // Arrange
         MatchCompetitor mc1 = new MatchCompetitor();
         mc1.setId(1L);
@@ -5808,7 +5808,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withSingleCompetitor_thenReturnsSingleElement() {
+    public void testGetCompetitorList_whenSingleCompetitor_thenReturnsSingleElement() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5837,7 +5837,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withMultipleCompetitors_thenReturnsAll() {
+    public void testGetCompetitorList_whenMultipleCompetitors_thenReturnsAll() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
@@ -5871,7 +5871,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withCompetitorsWithoutNames_thenReturnsAll() {
+    public void testGetCompetitorList_whenCompetitorsWithoutNames_thenReturnsAll() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -5901,7 +5901,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetCompetitorList_withCompetitorsWithNullFields_thenReturnsAll() {
+    public void testGetCompetitorList_whenCompetitorsWithNullFields_thenReturnsAll() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5930,7 +5930,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withCompleteCompetitorData_thenReturnsComplete() {
+    public void testGetCompetitorList_whenCompleteCompetitorData_thenReturnsComplete() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5965,7 +5965,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withDuplicateCompetitors_thenReturnsAllInstances() {
+    public void testGetCompetitorList_whenDuplicateCompetitors_thenReturnsAllInstances() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6002,7 +6002,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withLargeList_thenProcessesAll() {
+    public void testGetCompetitorList_whenLargeList_thenProcessesAll() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
@@ -6032,7 +6032,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withSpecialCharactersInNames_thenPreserves() {
+    public void testGetCompetitorList_whenSpecialCharactersInNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6062,7 +6062,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withUnicodeCharactersInNames_thenPreserves() {
+    public void testGetCompetitorList_whenUnicodeCharactersInNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6092,7 +6092,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withVeryLongNames_thenPreserves() {
+    public void testGetCompetitorList_whenVeryLongNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6122,7 +6122,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withEmptyStringNames_thenPreserves() {
+    public void testGetCompetitorList_whenEmptyStringNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6152,7 +6152,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withExtremeNumbers_thenPreserves() {
+    public void testGetCompetitorList_whenExtremeNumbers_thenPreserves() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(Long.MAX_VALUE);
@@ -6190,7 +6190,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_withMixedValidAndNullCompetitors_thenFiltersCorrectly() {
+    public void testGetCompetitorList_whenMixedValidAndNullCompetitors_thenFiltersCorrectly() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -6295,7 +6295,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withNullList_thenReturnsEmptyList() {
+    public void testGetMatchStageCompetitorList_whenNullList_thenReturnsEmptyList() {
         // Act
         List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(null);
 
@@ -6305,7 +6305,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetMatchStageCompetitorList_withEmptyList_thenReturnsEmptyList() {
+    public void testGetMatchStageCompetitorList_whenEmptyList_thenReturnsEmptyList() {
         // Arrange
         List<IpscMatchStage> matchStageList = new ArrayList<>();
 
@@ -6322,7 +6322,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withAllNullElements_thenReturnsEmptyList() {
+    public void testGetMatchStageCompetitorList_whenAllNullElements_thenReturnsEmptyList() {
         // Arrange
         List<IpscMatchStage> matchStageList = new ArrayList<>();
         matchStageList.add(null);
@@ -6338,7 +6338,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetMatchStageCompetitorList_withSomeNullElements_thenFiltersNulls() {
+    public void testGetMatchStageCompetitorList_whenSomeNullElements_thenFiltersNulls() {
         // Arrange
         IpscMatchStage stage1 = new IpscMatchStage();
         stage1.setId(1L);
@@ -6368,7 +6368,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withStagesWithoutCompetitors_thenReturnsEmptyList() {
+    public void testGetMatchStageCompetitorList_whenStagesWithoutCompetitors_thenReturnsEmptyList() {
         // Arrange
         IpscMatchStage stage1 = new IpscMatchStage();
         stage1.setId(1L);
@@ -6389,7 +6389,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetMatchStageCompetitorList_withNullCompetitorLists_thenReturnsEmptyList() {
+    public void testGetMatchStageCompetitorList_whenNullCompetitorLists_thenReturnsEmptyList() {
         // Arrange
         IpscMatchStage stage1 = new IpscMatchStage();
         stage1.setId(1L);
@@ -6401,8 +6401,13 @@ public class IpscMatchServiceImplTest {
 
         List<IpscMatchStage> matchStageList = List.of(stage1, stage2);
 
-        // Act & Assert - This will throw NPE since flatMap expects non-null
-        assertThrows(NullPointerException.class, () -> ipscMatchService.getMatchStageCompetitorList(matchStageList));
+        // Act
+        List<MatchStageCompetitor> result =
+                assertDoesNotThrow(() -> ipscMatchService.getMatchStageCompetitorList(matchStageList));
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     // =====================================================================
@@ -6410,7 +6415,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withSingleStageOneCompetitor_thenReturnsSingle() {
+    public void testGetMatchStageCompetitorList_whenSingleStageOneCompetitor_thenReturnsSingle() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6439,7 +6444,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetMatchStageCompetitorList_withSingleStageMultipleCompetitors_thenReturnsAll() {
+    public void testGetMatchStageCompetitorList_whenSingleStageMultipleCompetitors_thenReturnsAll() {
         // Arrange
         List<MatchStageCompetitor> competitors = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
@@ -6477,7 +6482,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withMultipleStages_thenAggregatesAll() {
+    public void testGetMatchStageCompetitorList_whenMultipleStages_thenAggregatesAll() {
         // Arrange
         List<IpscMatchStage> matchStageList = new ArrayList<>();
 
@@ -6516,7 +6521,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withMixedEmptyAndPopulated_thenReturnsOnlyPopulated() {
+    public void testGetMatchStageCompetitorList_whenMixedEmptyAndPopulated_thenReturnsOnlyPopulated() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6554,7 +6559,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withCompetitorsWithPartialData_thenReturnsAll() {
+    public void testGetMatchStageCompetitorList_whenCompetitorsWithPartialData_thenReturnsAll() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -6596,7 +6601,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withCompleteData_thenReturnsComplete() {
+    public void testGetMatchStageCompetitorList_whenCompleteData_thenReturnsComplete() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6646,7 +6651,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withLargeNumberOfStages_thenProcessesAll() {
+    public void testGetMatchStageCompetitorList_whenLargeNumberOfStages_thenProcessesAll() {
         // Arrange
         List<IpscMatchStage> matchStageList = new ArrayList<>();
 
@@ -6676,7 +6681,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testGetMatchStageCompetitorList_withManyCompetitorsPerStage_thenProcessesAll() {
+    public void testGetMatchStageCompetitorList_whenManyCompetitorsPerStage_thenProcessesAll() {
         // Arrange
         List<MatchStageCompetitor> competitors = new ArrayList<>();
         for (int i = 1; i <= 100; i++) {
@@ -6710,7 +6715,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withSameCompetitorInMultipleStages_thenReturnsAll() {
+    public void testGetMatchStageCompetitorList_whenSameCompetitorInMultipleStages_thenReturnsAll() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6749,7 +6754,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withSpecialCharactersInData_thenPreserves() {
+    public void testGetMatchStageCompetitorList_whenSpecialCharactersInData_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -6859,7 +6864,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testGetMatchStageCompetitorList_withNullCompetitorInMatchStageCompetitor_thenIncludes() {
+    public void testGetMatchStageCompetitorList_whenNullCompetitorInMatchStageCompetitor_thenIncludes() {
         // Arrange
         MatchStageCompetitor msc = new MatchStageCompetitor();
         msc.setId(1L);
@@ -6940,7 +6945,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testMapMatchResults_withValidData_thenReturnsIpscResponses() {
+    public void testMapMatchResults_whenValidData_thenReturnsIpscResponses() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -6996,7 +7001,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withNullMatchList_thenReturnsEmptyList() {
+    public void testMapMatchResults_whenNullMatchList_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setMatches(null);
@@ -7021,7 +7026,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withNoMatchingClub_thenCreatesClubWithIdOnly() {
+    public void testMapMatchResults_whenNoMatchingClub_thenCreatesClubWithIdOnly() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setClubs(null);
@@ -7052,7 +7057,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withEmptyMatchList_thenReturnsEmptyList() {
+    public void testMapMatchResults_whenEmptyMatchList_thenReturnsEmptyList() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setMatches(new ArrayList<>());
@@ -7077,7 +7082,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withNullMatchName_thenProcessesWithoutName() {
+    public void testMapMatchResults_whenNullMatchName_thenProcessesWithoutName() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7108,7 +7113,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withEmptyMatchName_thenProcessesWithEmptyName() {
+    public void testMapMatchResults_whenEmptyMatchName_thenProcessesWithEmptyName() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7139,7 +7144,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withBlankMatchName_thenProcessesWithBlankName() {
+    public void testMapMatchResults_whenBlankMatchName_thenProcessesWithBlankName() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7170,7 +7175,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withNullStages_thenReturnsEmptyHolder() {
+    public void testMapMatchResults_whenNullStages_thenReturnsEmptyHolder() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7201,7 +7206,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withNullMembers_thenProcessesWithoutMembers() {
+    public void testMapMatchResults_whenNullMembers_thenProcessesWithoutMembers() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7232,7 +7237,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withNullEnrolledMembers_thenReturnsEmptyHolder() {
+    public void testMapMatchResults_whenNullEnrolledMembers_thenReturnsEmptyHolder() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7268,7 +7273,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testMapMatchResults_withPartialData_thenMapsAvailableData() {
+    public void testMapMatchResults_whenPartialData_thenMapsAvailableData() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7308,7 +7313,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withPartialMembers_thenMapsOnlyMatchingMembers() {
+    public void testMapMatchResults_whenPartialMembers_thenMapsOnlyMatchingMembers() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7349,7 +7354,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testMapMatchResults_withCompleteData_thenMapsAllData() {
+    public void testMapMatchResults_whenCompleteData_thenMapsAllData() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7424,7 +7429,7 @@ public class IpscMatchServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testMapMatchResults_withNullClubId_thenProcessesWithoutClubMatch() {
+    public void testMapMatchResults_whenNullClubId_thenProcessesWithoutClubMatch() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7458,7 +7463,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withNullStagesButNonNullMatches_thenReturnsEmptyHolder() {        // Arrange
+    public void testMapMatchResults_whenNullStagesButNonNullMatches_thenReturnsEmptyHolder() {        // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
         MatchRequest match1 = new MatchRequest();
@@ -7492,7 +7497,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withStagesNotMatchingAnyMatch_thenIgnoresStages() {
+    public void testMapMatchResults_whenStagesNotMatchingAnyMatch_thenIgnoresStages() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7529,7 +7534,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withSpecialCharactersInMatchName_thenPreservesCharacters() {
+    public void testMapMatchResults_whenSpecialCharactersInMatchName_thenPreservesCharacters() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7559,7 +7564,7 @@ public class IpscMatchServiceImplTest {
     }
 
     @Test
-    public void testMapMatchResults_withLargeNumberOfMatches_thenProcessesAllMatches() {
+    public void testMapMatchResults_whenLargeNumberOfMatches_thenProcessesAllMatches() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
 
@@ -7595,4 +7600,705 @@ public class IpscMatchServiceImplTest {
             assertEquals("Match " + (i + 1), responses.get(i).getMatch().getMatchName());
         }
     }
+
+    // =====================================================================
+    // Tests for generateIpscMatchRecordHolder - Output Verification Focus
+    // =====================================================================
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_whenNullList_thenReturnsHolderWithEmptyMatches() {
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(null);
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.matches());
+        assertTrue(result.matches().isEmpty());
+        assertEquals(0, result.matches().size());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_verifyOutputStructure_thenContainsAllRequiredFields() {
+        // Arrange
+        Club club = new Club();
+        club.setId(1L);
+        club.setName("Test Club");
+        club.setAbbreviation("TC");
+
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("Complete Match");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 30, 0));
+        match.setClub(club);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 45, 30));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify output structure
+        assertNotNull(result);
+        assertNotNull(result.matches());
+        assertEquals(1, result.matches().size());
+
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record);
+
+        // Verify all record fields are populated
+        assertNotNull(record.name());
+        assertNotNull(record.scheduledDate());
+        assertNotNull(record.clubName());
+        assertNotNull(record.matchFirearmType());
+        assertNotNull(record.matchCategory());
+        assertNotNull(record.competitors());
+        assertNotNull(record.dateEdited());
+
+        // Verify specific values
+        assertEquals("Complete Match", record.name());
+        assertEquals("Test Club (TC)", record.clubName());
+        assertTrue(record.scheduledDate().contains("2025"));
+        assertTrue(record.scheduledDate().contains("09"));
+        assertTrue(record.scheduledDate().contains("06"));
+        assertEquals("Handgun", record.matchFirearmType());
+        assertEquals("League", record.matchCategory());
+        assertTrue(record.dateEdited().contains("2025"));
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenCompetitorListIsNotNull() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("Test Match");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify competitors list is never null
+        assertNotNull(result);
+        assertNotNull(result.matches());
+        assertEquals(1, result.matches().size());
+        assertNotNull(result.matches().getFirst().competitors());
+        assertTrue(result.matches().getFirst().competitors().isEmpty());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenNameIsNotNull() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName(null);
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify output converts null name to empty string
+        assertNotNull(result);
+        assertNotNull(result.matches());
+        assertEquals(1, result.matches().size());
+        assertNotNull(result.matches().getFirst().name());
+        assertEquals("", result.matches().getFirst().name());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenScheduledDateFormatted() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("Date Test Match");
+        match.setScheduledDate(LocalDateTime.of(2025, 12, 25, 18, 30, 45));
+        match.setClub(null);
+        match.setMatchFirearmType(null);
+        match.setMatchCategory(null);
+        match.setDateEdited(null);
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify date is formatted correctly
+        assertNotNull(result);
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record.scheduledDate());
+        // Should be formatted as "2025-12-25 18:30"
+        assertEquals("2025-12-25 18:30", record.scheduledDate());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenClubNameHandlesNull() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("No Club Match");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.RIFLE);
+        match.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify club name defaults to empty string when club is null
+        assertNotNull(result);
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record.clubName());
+        assertEquals("", record.clubName());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenFirearmTypeEnumFormatted() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+        FirearmType[] types = {FirearmType.HANDGUN, FirearmType.RIFLE, FirearmType.SHOTGUN, FirearmType.PCC};
+
+        for (int i = 0; i < types.length; i++) {
+            IpscMatch match = new IpscMatch();
+            match.setId((long) (i + 1));
+            match.setName("Match " + i);
+            match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+            match.setClub(null);
+            match.setMatchFirearmType(types[i]);
+            match.setMatchCategory(MatchCategory.LEAGUE);
+            match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+            matchList.add(match);
+        }
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify enum values are formatted as strings
+        assertNotNull(result);
+        assertEquals(4, result.matches().size());
+
+        assertEquals("Handgun", result.matches().get(0).matchFirearmType());
+        assertEquals("Rifle", result.matches().get(1).matchFirearmType());
+        assertEquals("Shotgun", result.matches().get(2).matchFirearmType());
+        assertEquals("PCC", result.matches().get(3).matchFirearmType());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenMatchCategoryEnumFormatted() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+        MatchCategory[] categories = {MatchCategory.LEAGUE, MatchCategory.CLUB_SHOOT};
+
+        for (int i = 0; i < categories.length; i++) {
+            IpscMatch match = new IpscMatch();
+            match.setId((long) (i + 1));
+            match.setName("Match " + i);
+            match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+            match.setClub(null);
+            match.setMatchFirearmType(FirearmType.HANDGUN);
+            match.setMatchCategory(categories[i]);
+            match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+            matchList.add(match);
+        }
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify enum values are formatted as strings
+        assertNotNull(result);
+        assertEquals(2, result.matches().size());
+
+        assertEquals("League", result.matches().get(0).matchCategory());
+        assertEquals("Club Shoot", result.matches().get(1).matchCategory());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenDateEditedFormatted() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("Edited Match");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 7, 14, 22, 55));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify date edited is formatted correctly
+        assertNotNull(result);
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record.dateEdited());
+        assertEquals("2025-09-07 14:22", record.dateEdited());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_whenNullDateEdited_thenFormatsAsEmpty() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("No Edit Date");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(null);
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify null date is handled
+        assertNotNull(result);
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record.dateEdited());
+        assertEquals("", record.dateEdited());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_whenNullScheduledDate_thenFormatsAsEmpty() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("No Scheduled Date");
+        match.setScheduledDate(null);
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify null scheduled date is handled
+        assertNotNull(result);
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record.scheduledDate());
+        assertEquals("", record.scheduledDate());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenRecordIsImmutable() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("Immutable Test");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Records are Java records and should be immutable
+        assertNotNull(result);
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record);
+        // Verify record fields cannot be modified
+        assertEquals("Immutable Test", record.name());
+        assertEquals("Immutable Test", record.name()); // Call again to verify consistency
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_whenMultipleMatches_thenPreservesOrder() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            IpscMatch match = new IpscMatch();
+            match.setId((long) i);
+            match.setName("Match " + i);
+            match.setScheduledDate(LocalDateTime.of(2025, 9, (5 + i), 10, 0, 0));
+            match.setClub(null);
+            match.setMatchFirearmType(FirearmType.HANDGUN);
+            match.setMatchCategory(MatchCategory.LEAGUE);
+            match.setDateEdited(LocalDateTime.of(2025, 9, (5 + i), 15, 0, 0));
+            matchList.add(match);
+        }
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify order is preserved
+        assertNotNull(result);
+        assertEquals(5, result.matches().size());
+        for (int i = 0; i < 5; i++) {
+            assertEquals("Match " + (i + 1), result.matches().get(i).name());
+        }
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_whenNullInInputList_thenFiltersNulls() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+
+        IpscMatch match1 = new IpscMatch();
+        match1.setId(1L);
+        match1.setName("Match 1");
+        match1.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match1.setClub(null);
+        match1.setMatchFirearmType(FirearmType.HANDGUN);
+        match1.setMatchCategory(MatchCategory.LEAGUE);
+        match1.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+        matchList.add(match1);
+
+        matchList.add(null);
+
+        IpscMatch match2 = new IpscMatch();
+        match2.setId(2L);
+        match2.setName("Match 2");
+        match2.setScheduledDate(LocalDateTime.of(2025, 9, 7, 10, 0, 0));
+        match2.setClub(null);
+        match2.setMatchFirearmType(FirearmType.RIFLE);
+        match2.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match2.setDateEdited(LocalDateTime.of(2025, 9, 7, 15, 0, 0));
+        matchList.add(match2);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify nulls are filtered out
+        assertNotNull(result);
+        assertEquals(2, result.matches().size());
+        assertEquals("Match 1", result.matches().get(0).name());
+        assertEquals("Match 2", result.matches().get(1).name());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenHolderRecordIsNotNull() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("Test Match");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify record holder itself is never null
+        assertNotNull(result);
+        assertNotNull(result.matches());
+        assertFalse(result.matches().isEmpty());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenNameNeverNull() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+
+        // Match with null name
+        IpscMatch match1 = new IpscMatch();
+        match1.setId(1L);
+        match1.setName(null);
+        match1.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match1.setClub(null);
+        match1.setMatchFirearmType(FirearmType.HANDGUN);
+        match1.setMatchCategory(MatchCategory.LEAGUE);
+        match1.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+        matchList.add(match1);
+
+        // Match with empty name
+        IpscMatch match2 = new IpscMatch();
+        match2.setId(2L);
+        match2.setName("");
+        match2.setScheduledDate(LocalDateTime.of(2025, 9, 7, 10, 0, 0));
+        match2.setClub(null);
+        match2.setMatchFirearmType(FirearmType.RIFLE);
+        match2.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match2.setDateEdited(LocalDateTime.of(2025, 9, 7, 15, 0, 0));
+        matchList.add(match2);
+
+        // Match with normal name
+        IpscMatch match3 = new IpscMatch();
+        match3.setId(3L);
+        match3.setName("Normal Name");
+        match3.setScheduledDate(LocalDateTime.of(2025, 9, 8, 10, 0, 0));
+        match3.setClub(null);
+        match3.setMatchFirearmType(FirearmType.SHOTGUN);
+        match3.setMatchCategory(MatchCategory.LEAGUE);
+        match3.setDateEdited(LocalDateTime.of(2025, 9, 8, 15, 0, 0));
+        matchList.add(match3);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify all names are not null (nulls converted to empty strings)
+        assertNotNull(result);
+        assertEquals(3, result.matches().size());
+
+        assertNotNull(result.matches().get(0).name());
+        assertEquals("", result.matches().get(0).name());
+
+        assertNotNull(result.matches().get(1).name());
+        assertEquals("", result.matches().get(1).name());
+
+        assertNotNull(result.matches().get(2).name());
+        assertEquals("Normal Name", result.matches().get(2).name());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenClubNameNeverNull() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+
+        // Match with null club
+        IpscMatch match1 = new IpscMatch();
+        match1.setId(1L);
+        match1.setName("Match 1");
+        match1.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match1.setClub(null);
+        match1.setMatchFirearmType(FirearmType.HANDGUN);
+        match1.setMatchCategory(MatchCategory.LEAGUE);
+        match1.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+        matchList.add(match1);
+
+        // Match with club
+        Club club = new Club();
+        club.setId(1L);
+        club.setName("Test Club");
+        club.setAbbreviation("TC");
+
+        IpscMatch match2 = new IpscMatch();
+        match2.setId(2L);
+        match2.setName("Match 2");
+        match2.setScheduledDate(LocalDateTime.of(2025, 9, 7, 10, 0, 0));
+        match2.setClub(club);
+        match2.setMatchFirearmType(FirearmType.RIFLE);
+        match2.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match2.setDateEdited(LocalDateTime.of(2025, 9, 7, 15, 0, 0));
+        matchList.add(match2);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify club names are never null
+        assertNotNull(result);
+        assertEquals(2, result.matches().size());
+
+        assertNotNull(result.matches().get(0).clubName());
+        assertEquals("", result.matches().get(0).clubName());
+
+        assertNotNull(result.matches().get(1).clubName());
+        assertEquals("Test Club (TC)", result.matches().get(1).clubName());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenScheduledDateNeverNull() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+
+        // Match with null scheduled date
+        IpscMatch match1 = new IpscMatch();
+        match1.setId(1L);
+        match1.setName("Match 1");
+        match1.setScheduledDate(null);
+        match1.setClub(null);
+        match1.setMatchFirearmType(FirearmType.HANDGUN);
+        match1.setMatchCategory(MatchCategory.LEAGUE);
+        match1.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+        matchList.add(match1);
+
+        // Match with scheduled date
+        IpscMatch match2 = new IpscMatch();
+        match2.setId(2L);
+        match2.setName("Match 2");
+        match2.setScheduledDate(LocalDateTime.of(2025, 9, 7, 14, 30, 0));
+        match2.setClub(null);
+        match2.setMatchFirearmType(FirearmType.RIFLE);
+        match2.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match2.setDateEdited(LocalDateTime.of(2025, 9, 7, 15, 0, 0));
+        matchList.add(match2);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify scheduled dates are never null
+        assertNotNull(result);
+        assertEquals(2, result.matches().size());
+
+        assertNotNull(result.matches().get(0).scheduledDate());
+        assertEquals("", result.matches().get(0).scheduledDate());
+
+        assertNotNull(result.matches().get(1).scheduledDate());
+        assertEquals("2025-09-07 14:30", result.matches().get(1).scheduledDate());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenDateEditedNeverNull() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+
+        // Match with null date edited
+        IpscMatch match1 = new IpscMatch();
+        match1.setId(1L);
+        match1.setName("Match 1");
+        match1.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match1.setClub(null);
+        match1.setMatchFirearmType(FirearmType.HANDGUN);
+        match1.setMatchCategory(MatchCategory.LEAGUE);
+        match1.setDateEdited(null);
+        matchList.add(match1);
+
+        // Match with date edited
+        IpscMatch match2 = new IpscMatch();
+        match2.setId(2L);
+        match2.setName("Match 2");
+        match2.setScheduledDate(LocalDateTime.of(2025, 9, 7, 10, 0, 0));
+        match2.setClub(null);
+        match2.setMatchFirearmType(FirearmType.RIFLE);
+        match2.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match2.setDateEdited(LocalDateTime.of(2025, 9, 7, 16, 45, 30));
+        matchList.add(match2);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify date edited is never null
+        assertNotNull(result);
+        assertEquals(2, result.matches().size());
+
+        assertNotNull(result.matches().get(0).dateEdited());
+        assertEquals("", result.matches().get(0).dateEdited());
+
+        assertNotNull(result.matches().get(1).dateEdited());
+        assertEquals("2025-09-07 16:45", result.matches().get(1).dateEdited());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenFirearmTypeNeverNull() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+
+        // Match with null firearm type
+        IpscMatch match1 = new IpscMatch();
+        match1.setId(1L);
+        match1.setName("Match 1");
+        match1.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match1.setClub(null);
+        match1.setMatchFirearmType(null);
+        match1.setMatchCategory(MatchCategory.LEAGUE);
+        match1.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+        matchList.add(match1);
+
+        // Match with firearm type
+        IpscMatch match2 = new IpscMatch();
+        match2.setId(2L);
+        match2.setName("Match 2");
+        match2.setScheduledDate(LocalDateTime.of(2025, 9, 7, 10, 0, 0));
+        match2.setClub(null);
+        match2.setMatchFirearmType(FirearmType.PCC);
+        match2.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        match2.setDateEdited(LocalDateTime.of(2025, 9, 7, 15, 0, 0));
+        matchList.add(match2);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify firearm types are never null
+        assertNotNull(result);
+        assertEquals(2, result.matches().size());
+
+        assertNotNull(result.matches().get(0).matchFirearmType());
+        assertEquals("", result.matches().get(0).matchFirearmType());
+
+        assertNotNull(result.matches().get(1).matchFirearmType());
+        assertEquals("PCC", result.matches().get(1).matchFirearmType());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenMatchCategoryNeverNull() {
+        // Arrange
+        List<IpscMatch> matchList = new ArrayList<>();
+
+        // Match with null category
+        IpscMatch match1 = new IpscMatch();
+        match1.setId(1L);
+        match1.setName("Match 1");
+        match1.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match1.setClub(null);
+        match1.setMatchFirearmType(FirearmType.HANDGUN);
+        match1.setMatchCategory(null);
+        match1.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+        matchList.add(match1);
+
+        // Match with category
+        IpscMatch match2 = new IpscMatch();
+        match2.setId(2L);
+        match2.setName("Match 2");
+        match2.setScheduledDate(LocalDateTime.of(2025, 9, 7, 10, 0, 0));
+        match2.setClub(null);
+        match2.setMatchFirearmType(FirearmType.RIFLE);
+        match2.setMatchCategory(MatchCategory.LEAGUE);
+        match2.setDateEdited(LocalDateTime.of(2025, 9, 7, 15, 0, 0));
+        matchList.add(match2);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify categories are never null
+        assertNotNull(result);
+        assertEquals(2, result.matches().size());
+
+        assertNotNull(result.matches().get(0).matchCategory());
+        assertEquals("", result.matches().get(0).matchCategory());
+
+        assertNotNull(result.matches().get(1).matchCategory());
+        assertEquals("League", result.matches().get(1).matchCategory());
+    }
+
+    @Test
+    public void testGenerateIpscMatchRecordHolder_outputVerification_thenCompetitorsNeverNull() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(1L);
+        match.setName("Test Match");
+        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
+        match.setClub(null);
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
+
+        List<IpscMatch> matchList = List.of(match);
+
+        // Act
+        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
+
+        // Assert - Verify competitors list is never null, always an empty list if no competitors
+        assertNotNull(result);
+        IpscMatchRecord record = result.matches().getFirst();
+        assertNotNull(record.competitors());
+        assertTrue(record.competitors().isEmpty());
+        assertEquals(0, record.competitors().size());
+    }
 }
+

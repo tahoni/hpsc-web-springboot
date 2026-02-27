@@ -12,8 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NumberUtilTest {
 
+    // =====================================================================
+    // Tests for calculatePercentage - Valid Data Processing
+    // =====================================================================
+
     @Test
-    void testCalculatePercentage_withValidInputs_thenReturnsCorrectPercentage() {
+    void testCalculatePercentage_whenValidInputs_thenReturnsCorrectPercentage() {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(25);
         BigDecimal total = BigDecimal.valueOf(100);
@@ -28,7 +32,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testCalculatePercentage_withPartZero_thenReturnsZero() {
+    void testCalculatePercentage_whenPartZero_thenReturnsZero() {
         // Arrange
         BigDecimal part = BigDecimal.ZERO;
         BigDecimal total = BigDecimal.valueOf(100);
@@ -43,36 +47,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testCalculatePercentage_withTotalZero_thenReturnsZero() {
-        // Arrange
-        BigDecimal part = BigDecimal.valueOf(25);
-        BigDecimal total = BigDecimal.ZERO;
-        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE,
-                RoundingMode.HALF_UP);
-
-        // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
-
-        // Assert
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void testCalculatePercentage_withNullTotal_thenReturnsZero() {
-        // Arrange
-        BigDecimal part = BigDecimal.valueOf(25);
-        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE,
-                RoundingMode.HALF_UP);
-
-        // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, null);
-
-        // Assert
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void testCalculatePercentage_withNegativeValues_thenReturnsCorrectPercentage() {
+    void testCalculatePercentage_whenNegativeValues_thenReturnsCorrectPercentage() {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(-25);
         BigDecimal total = BigDecimal.valueOf(100);
@@ -87,7 +62,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testCalculatePercentage_withRounding_thenReturnsRoundedPercentage() {
+    void testCalculatePercentage_whenRoundingNeeded_thenReturnsRoundedPercentage() {
         // Arrange
         BigDecimal part = BigDecimal.valueOf(33);
         BigDecimal total = BigDecimal.valueOf(200);
@@ -101,8 +76,45 @@ public class NumberUtilTest {
         assertEquals(expected, result);
     }
 
+    // =====================================================================
+    // Tests for calculatePercentage - Input Validation and Error Handling
+    // =====================================================================
+
     @Test
-    void testCalculateSum_withPositiveNumbers_thenReturnsCorrectSum() {
+    void testCalculatePercentage_whenTotalZero_thenReturnsZero() {
+        // Arrange
+        BigDecimal part = BigDecimal.valueOf(25);
+        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
+
+        // Act
+        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testCalculatePercentage_whenNullTotal_thenReturnsZero() {
+        // Arrange
+        BigDecimal part = BigDecimal.valueOf(25);
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE,
+                RoundingMode.HALF_UP);
+
+        // Act
+        BigDecimal result = NumberUtil.calculatePercentage(part, null);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    // =====================================================================
+    // Tests for calculateSum - Valid Data Processing
+    // =====================================================================
+
+    @Test
+    void testCalculateSum_whenPositiveNumbers_thenReturnsCorrectSum() {
         // Arrange
         List<BigDecimal> values = List.of(
                 new BigDecimal("10.5"),
@@ -120,32 +132,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testCalculateSum_withEmptyList_thenReturnsZero() {
-        // Arrange
-        List<BigDecimal> values = Collections.emptyList();
-        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
-
-        // Act
-        BigDecimal result = NumberUtil.calculateSum(values);
-
-        // Assert
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void testCalculateSum_withNullList_thenReturnZero() {
-        // Arrange
-        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
-
-        // Act
-        BigDecimal result = NumberUtil.calculateSum(null);
-
-        // Assert
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void testCalculateSum_withNumbersNeedingScaling_thenReturnsScaledSum() {
+    void testCalculateSum_whenNumbersNeedingScaling_thenReturnsScaledSum() {
         // Arrange
         List<BigDecimal> values = List.of(
                 new BigDecimal("10.123"),
@@ -162,36 +149,41 @@ public class NumberUtilTest {
         assertEquals(expected, result);
     }
 
+    // =====================================================================
+    // Tests for calculateSum - Input Validation and Error Handling
+    // =====================================================================
+
     @Test
-    void testFormatBigDecimal_withNullValue_thenReturnsZeroString() {
+    void testCalculateSum_whenEmptyList_thenReturnsZero() {
         // Arrange
-        int scale = 2;
-        String expected = "0.00";
+        List<BigDecimal> values = Collections.emptyList();
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
 
         // Act
-        String result = NumberUtil.formatBigDecimal(null, scale);
+        BigDecimal result = NumberUtil.calculateSum(values);
 
         // Assert
         assertEquals(expected, result);
     }
 
     @Test
-    void testFormatBigDecimal_withZeroScale_thenReturnsIntegerString() {
+    void testCalculateSum_whenNullList_thenReturnsZero() {
         // Arrange
-        BigDecimal value = BigDecimal.valueOf(123.75);
-        int scale = 0;
-        String expected = "124";
+        BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
 
         // Act
-        String result = NumberUtil.formatBigDecimal(value, scale);
+        BigDecimal result = NumberUtil.calculateSum(null);
 
         // Assert
         assertEquals(expected, result);
     }
 
+    // =====================================================================
+    // Tests for formatBigDecimal - Valid Data Processing
+    // =====================================================================
 
     @Test
-    void testFormatBigDecimal_withNonNullValue_thenReturnsFormattedString() {
+    void testFormatBigDecimal_whenNonNullValue_thenReturnsFormattedString() {
         // Arrange
         BigDecimal value = new BigDecimal("123.456");
         int scale = 2;
@@ -205,20 +197,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testFormatBigDecimal_withNullValue_thenReturnsZeroFormattedString() {
-        // Arrange
-        int scale = 2;
-        String expected = "0.00";
-
-        // Act
-        String result = NumberUtil.formatBigDecimal(null, scale);
-
-        // Assert
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void testFormatBigDecimal_withRoundingUp_thenReturnsFormattedString() {
+    void testFormatBigDecimal_whenRoundingUp_thenReturnsFormattedString() {
         // Arrange
         BigDecimal value = new BigDecimal("99.995");
         int scale = 2;
@@ -232,7 +211,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testFormatBigDecimal_withRoundingDown_thenReturnsFormattedString() {
+    void testFormatBigDecimal_whenRoundingDown_thenReturnsFormattedString() {
         // Arrange
         BigDecimal value = new BigDecimal("123.454");
         int scale = 2;
@@ -246,7 +225,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    void testFormatBigDecimal_withZeroScale_thenReturnsFormattedString() {
+    void testFormatBigDecimal_whenZeroScale_thenReturnsIntegerString() {
         // Arrange
         BigDecimal value = new BigDecimal("123.5");
         int scale = 0;
@@ -254,6 +233,23 @@ public class NumberUtilTest {
 
         // Act
         String result = NumberUtil.formatBigDecimal(value, scale);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    // =====================================================================
+    // Tests for formatBigDecimal - Input Validation and Error Handling
+    // =====================================================================
+
+    @Test
+    void testFormatBigDecimal_whenNullValue_thenReturnsZeroString() {
+        // Arrange
+        int scale = 2;
+        String expected = "0.00";
+
+        // Act
+        String result = NumberUtil.formatBigDecimal(null, scale);
 
         // Assert
         assertEquals(expected, result);

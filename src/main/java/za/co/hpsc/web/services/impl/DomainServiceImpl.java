@@ -119,9 +119,7 @@ public class DomainServiceImpl implements DomainService {
         if (clubIdentifier != null) {
             // Find the club entity if present
             ClubDto clubDto = new ClubDto();
-            clubRepository.findByAbbreviation(clubIdentifier.getName()).ifPresent(club -> {
-                clubDto.setId(club.getId());
-            });
+            clubRepository.findByAbbreviation(clubIdentifier.getName()).ifPresent(club -> clubDto.setId(club.getId()));
             if (clubDto.getId() != null) {
                 return Optional.of(clubDto);
             } else {
@@ -177,12 +175,8 @@ public class DomainServiceImpl implements DomainService {
                         // Initialise the competitor entity from DTO or create a new entity
                         optionalCompetitorEntity.ifPresent(competitor ->
                                 competitor.setId(competitorDto.getId()));
-                        // Add attributes to the competitor
-//                        competitorDto.setId(competitorEntity.getId());
-//                        competitorDto.setId(competitorEntity.getId());
 
                         // Update the map of competitors
-//                        competitorMap.put(competitorDto.getUuid(), competitorEntity);
                         competitorMap.put(competitorDto.getUuid(), competitorDto);
                     });
         }
@@ -218,10 +212,6 @@ public class DomainServiceImpl implements DomainService {
 
                         // Initialise the match stage entity from DTO or create a new entity
                         IpscMatchStage matchStageEntity = optionalIpscMatchStageEntity.orElse(new IpscMatchStage());
-                        // Add attributes to the match stage
-//                        matchStageEntity.init(stage, matchEntity);
-                        // Link the match stage to the match
-//                        matchStageEntity.setMatch(matchEntity);
 
                         // Update the map of match stages
                         matchStageMap.put(stage.getUuid(), stage);
@@ -283,12 +273,6 @@ public class DomainServiceImpl implements DomainService {
                 }
 */
 
-                // Add attributes to the match competitor
-//                matchCompetitorEntity.init(matchCompetitorDto, matchEntity, competitorEntity);
-                // Link the match competitor to the match and competitor
-//                matchCompetitorEntity.setMatch(matchEntity);
-//                matchCompetitorEntity.setCompetitor(competitorEntity);
-
                 // Update the map of match competitors
                 matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorDto);
             }
@@ -323,10 +307,6 @@ public class DomainServiceImpl implements DomainService {
                     return new HashMap<>();
                 }
 
-                // Find the match stage entity
-//                IpscMatchStage matchStageEntity =
-//                        matchStageMap.get(matchStageCompetitorDto.getMatchStage().getUuid());
-
                 // Find the match stage competitor entity if present
                 Optional<MatchStageCompetitor> optionalMatchStageEntity = Optional.empty();
                 if (matchStageCompetitorDto.getId() != null) {
@@ -345,12 +325,6 @@ public class DomainServiceImpl implements DomainService {
                         }
                     }
                 }
-
-                // Add attributes to the match stage competitor
-//                matchStageCompetitorEntity.init(matchStageCompetitorDto, matchStageEntity, competitorEntity);
-                // Link the match stage competitor to the match stage and competitor
-//                matchStageCompetitorEntity.setMatchStage(matchStageEntity);
-//                matchStageCompetitorEntity.setCompetitor(competitorEntity);
 
                 // Update the map of match stage competitors
                 matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorDto);

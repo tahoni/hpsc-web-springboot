@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DomainServiceImplTest {
+public class DomainServiceTest {
     @Mock
     private ClubRepository clubRepository;
 
@@ -41,10 +41,8 @@ public class DomainServiceImplTest {
     private final String DEFAULT_FILTER_CLUB_ABBREVIATION = "HPSC";
 
     // =====================================================================
-    // Tests for initMatchEntities - Match entity initialization
+    // Tests for initMatchEntities - Input Validation and Error Handling
     // =====================================================================
-
-    // Test Group: Null/Empty Input Handling
     @Test
     public void testInitMatchEntities_whenMatchResultsIsNull_thenReturnsEmptyOptional() {
         // Act
@@ -92,33 +90,10 @@ public class DomainServiceImplTest {
         assertNull(holder.getClub());
     }
 
-    // Test Group: Minimal Valid Data
-    @Test
-    public void testInitMatchEntities_whenMinimalMatchData_thenReturnsMatchEntityHolder() {
-        // Arrange
-        String filterClub = DEFAULT_FILTER_CLUB_ABBREVIATION;
+    // =====================================================================
+    // Tests for initMatchEntities - Club Entity Handling
+    // =====================================================================
 
-        Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
-
-        Club clubEntity = new Club();
-        clubEntity.setId(100L);
-
-        when(ipscMatchRepository.findByIdWithClubStages(matchId)).thenReturn(Optional.empty());
-        when(clubRepository.findByAbbreviation(filterClub)).thenReturn(Optional.of(clubEntity));
-
-        // Act
-        var result = domainService.initMatchEntities(matchResults, filterClub);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
-        var holder = result.get();
-        assertNotNull(holder.getMatch());
-        assertNotNull(holder.getClub());
-    }
-
-    // Test Group: Club Entity Handling
     @Test
     public void testInitMatchEntities_whenClubDtoIsPresent_thenInitializesClubFromDto() {
         // Arrange
@@ -188,7 +163,10 @@ public class DomainServiceImplTest {
         assertTrue(result.isPresent());
     }
 
-    // Test Group: Match Entity Handling
+    // =====================================================================
+    // Tests for initMatchEntities - Match Entity Handling
+    // =====================================================================
+
     @Test
     public void testInitMatchEntities_whenExistingMatch_thenLoadsFromRepository() {
         // Arrange
@@ -231,7 +209,10 @@ public class DomainServiceImplTest {
         assertTrue(result.isPresent());
     }
 
-    // Test Group: Competitor Entity Handling
+    // =====================================================================
+    // Tests for initMatchEntities - Competitor Entity Handling
+    // =====================================================================
+
     @Test
     public void testInitMatchEntities_whenEmptyCompetitorList_thenReturnsEmptyCompetitorList() {
         // Arrange
@@ -314,7 +295,10 @@ public class DomainServiceImplTest {
         assertTrue(result.get().getMatchCompetitorMap().isEmpty());
     }
 
-    // Test Group: Match Stage Entity Handling
+    // =====================================================================
+    // Tests for initMatchEntities - Match Stage Entity Handling
+    // =====================================================================
+
     @Test
     public void testInitMatchEntities_whenEmptyStageList_thenReturnsEmptyStageList() {
         // Arrange
@@ -398,7 +382,10 @@ public class DomainServiceImplTest {
         assertTrue(result.get().getMatchStageMap().isEmpty());
     }
 
-    // Test Group: Full Data Scenario
+    // =====================================================================
+    // Tests for initMatchEntities - Complete Data Processing
+    // =====================================================================
+
     @Test
     public void testInitMatchEntities_whenCompleteMatchData_thenReturnsFullMatchEntityHolder() {
         // Arrange
@@ -459,7 +446,10 @@ public class DomainServiceImplTest {
         assertFalse(holder.getMatchStageMap().isEmpty());
     }
 
-    // Test Group: Edge Cases
+    // =====================================================================
+    // Tests for initMatchEntities - Edge Cases and Boundary Conditions
+    // =====================================================================
+
     @Test
     public void testInitMatchEntities_whenNullCompetitorInList_thenFiltersOutNull() {
         // Arrange

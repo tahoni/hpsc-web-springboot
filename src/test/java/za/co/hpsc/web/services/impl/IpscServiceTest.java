@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IpscServiceImplTest {
+public class IpscServiceTest {
 
     @Mock
     private TransactionService transactionService;
@@ -128,7 +128,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Valid Complete Data Processing
     @Test
-    public void testImportWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
+    public void testImportWinMssCabFile_whenCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -168,7 +168,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Partial Data Processing
     @Test
-    public void testImportWinMssCabFile_withPartialMatchData_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_whenPartialMatchData_thenProcessesSuccessfully() {
         // Arrange - Only match required fields, other sections mostly empty
         String cabFileContent = """
                 {
@@ -204,7 +204,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Empty XML Sections Handling
     @Test
-    public void testImportWinMssCabFile_withEmptyXmlSections_thenProcessesWithEmptyData() {
+    public void testImportWinMssCabFile_whenEmptyXmlSections_thenProcessesWithEmptyData() {
         // Arrange
         String cabFileContent = """
                 {
@@ -246,7 +246,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Multiple Records Processing
     @Test
-    public void testImportWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() {
+    public void testImportWinMssCabFile_whenMultipleMatches_thenProcessesAllMatches() {
         // Arrange
         String cabFileContent = """
                 {
@@ -320,7 +320,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Mixed Match Results (Some Present, Some Empty)
     @Test
-    public void testImportWinMssCabFile_withMixedMatchResults_thenProcessesPresentResultsOnly() {
+    public void testImportWinMssCabFile_whenMixedMatchResults_thenProcessesPresentResultsOnly() {
         // Arrange
         String cabFileContent = """
                 {
@@ -364,7 +364,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Empty Strings vs Null Values in XML
     @Test
-    public void testImportWinMssCabFile_withEmptyStringXmlFields_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_whenEmptyStringXmlFields_thenProcessesSuccessfully() {
         // Arrange
         String cabFileContent = """
                 {
@@ -400,7 +400,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Special Characters and Unicode Handling
     @Test
-    public void testImportWinMssCabFile_withSpecialCharactersInData_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_whenSpecialCharactersInData_thenProcessesSuccessfully() {
         // Arrange
         String cabFileContent = """
                 {
@@ -440,7 +440,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Null/Empty/Blank Input Validation
     @Test
-    public void testImportWinMssCabFileContent_withValidCabFile_thenReturnsMatches() {
+    public void testImportWinMssCabFileContent_whenValidCabFile_thenReturnsMatches() {
         // Arrange
         String cabFileContent = """
                 {
@@ -480,7 +480,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withNullCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_whenNullCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(null)
@@ -493,7 +493,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withEmptyCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_whenEmptyCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("")
@@ -506,7 +506,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withBlankCabFileContent_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_whenBlankCabFileContent_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("   ")
@@ -518,7 +518,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withNullResponseHolder_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_whenNullResponseHolder_thenThrowsValidationException() {
         // Arrange
         String cabFileContent = """
                 {
@@ -549,7 +549,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withMultipleMatches_thenProcessesAllMatches() {
+    public void testImportWinMssCabFileContent_whenMultipleMatches_thenProcessesAllMatches() {
         // Arrange
         String cabFileContent = """
                 {
@@ -590,7 +590,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withEmptyMatchResults_thenSkipsSaving() {
+    public void testImportWinMssCabFileContent_whenEmptyMatchResults_thenSkipsSaving() {
         // Arrange
         String cabFileContent = """
                 {
@@ -625,7 +625,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withInvalidJson_thenThrowsFatalException() {
+    public void testImportWinMssCabFileContent_whenInvalidJson_thenThrowsFatalException() {
         // Arrange
         String invalidCabFileContent = "This is not valid JSON content";
 
@@ -641,7 +641,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withInvalidXml_thenThrowsValidationException() {
+    public void testImportWinMssCabFileContent_whenInvalidXml_thenThrowsValidationException() {
         // Arrange
         String invalidCabFileContent = """
                 {
@@ -668,7 +668,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testImportWinMssCabFileContent_withCabFile_thenReturnsMatch() {
+    public void testImportWinMssCabFileContent_whenCabFile_thenReturnsMatch() {
         // Arrange
         String cabFileContent = """
                 {
@@ -712,7 +712,7 @@ public class IpscServiceImplTest {
     // =====================================================================
 
     @Test
-    public void testReadIpscRequests_withValidJson_thenReturnsIpscRequestHolder() {
+    public void testReadIpscRequests_whenValidJson_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -802,7 +802,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadIpscRequests_withEmptyXmlSectionData_thenReturnsEmptyLists() {
+    public void testReadIpscRequests_whenEmptyXmlSectionData_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -834,7 +834,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadIpscRequests_withEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() {
+    public void testReadIpscRequests_whenEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -888,7 +888,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadIpscRequests_withMissingXml_thenReturnsIpscRequestHolder() {
+    public void testReadIpscRequests_whenMissingXml_thenReturnsIpscRequestHolder() {
         // Arrange
         String cabFileContent = """
                 {
@@ -922,7 +922,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadIpscRequests_withEmptyXmlSections_thenReturnsEmptyLists() {
+    public void testReadIpscRequests_whenEmptyXmlSections_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -957,7 +957,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadIpscRequests_withNullXmlSections_thenReturnsEmptyLists() {
+    public void testReadIpscRequests_whenNullXmlSections_thenReturnsEmptyLists() {
         // Arrange
         String cabFileContent = """
                 {
@@ -992,7 +992,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadIpscRequests_withInvalidJson_thenThrowsException() {
+    public void testReadIpscRequests_whenInvalidJson_thenThrowsException() {
         // Arrange
         String cabFileContent = "Invalid JSON Content";
 
@@ -1009,7 +1009,7 @@ public class IpscServiceImplTest {
     // --- Existing readRequests tests (original) ---
 
     @Test
-    public void testReadRequests_withValidXml_thenReturnsRequests() {
+    public void testReadRequests_whenValidXml_thenReturnsRequests() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -1062,7 +1062,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withValidNamespaceClubXml_thenReturnsClubRequest() {
+    public void testReadRequests_whenValidNamespaceClubXml_thenReturnsClubRequest() {
         // Arrange
         String xmlData = """
                     <xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
@@ -1118,7 +1118,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withEmptyXmlData_thenReturnsEmptyList() {
+    public void testReadRequests_whenEmptyXmlData_thenReturnsEmptyList() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1136,7 +1136,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withInvalidXml_thenThrowsException() {
+    public void testReadRequests_whenInvalidXml_thenThrowsException() {
         // Arrange
         String xmlData = "Invalid XML Content";
 
@@ -1146,7 +1146,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withEmptyXml_thenReturnsEmptyList() {
+    public void testReadRequests_whenEmptyXml_thenReturnsEmptyList() {
         // Arrange
         String xmlData = "";
 
@@ -1160,7 +1160,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withPartialData_thenReturnsRequestsWithPartialData() {
+    public void testReadRequests_whenPartialData_thenReturnsRequestsWithPartialData() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -1217,7 +1217,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withMixedDataCompleteness_thenProcessesAllRowsCorrectly() {
+    public void testReadRequests_whenMixedDataCompleteness_thenProcessesAllRowsCorrectly() {
         // Arrange
         String xmlData = """
                     <xml>
@@ -1344,7 +1344,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withNumericAttributes_thenParsesCorrectly() {
+    public void testReadRequests_whenNumericAttributes_thenParsesCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1374,7 +1374,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withBooleanAttributes_thenParsesBooleanCorrectly() {
+    public void testReadRequests_whenBooleanAttributes_thenParsesBooleanCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1402,7 +1402,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withDateTimeAttributes_thenParsesDateTimeCorrectly() {
+    public void testReadRequests_whenDateTimeAttributes_thenParsesDateTimeCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1428,7 +1428,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withCompleteScoreFields_thenReturnsAllFieldsPopulated() {
+    public void testReadRequests_whenCompleteScoreFields_thenReturnsAllFieldsPopulated() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1567,7 +1567,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withOnlyRequiredMemberId_thenReturnsRequest() {
+    public void testReadRequests_whenOnlyRequiredMemberId_thenReturnsRequest() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1591,7 +1591,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withCompleteMatchFields_thenReturnsAllFieldsPopulated() {
+    public void testReadRequests_whenCompleteMatchFields_thenReturnsAllFieldsPopulated() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1620,7 +1620,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withPartialMatchFields_thenReturnsOnlyPopulatedFields() {
+    public void testReadRequests_whenPartialMatchFields_thenReturnsOnlyPopulatedFields() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1645,7 +1645,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withCompleteStageFields_thenReturnsAllFieldsPopulated() {
+    public void testReadRequests_whenCompleteStageFields_thenReturnsAllFieldsPopulated() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1674,7 +1674,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void testReadRequests_withCompleteEnrolledFields_thenReturnsAllFieldsPopulated() {
+    public void testReadRequests_whenCompleteEnrolledFields_thenReturnsAllFieldsPopulated() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -1977,7 +1977,7 @@ public class IpscServiceImplTest {
 
     // Test Group: Data Type Handling (Numeric, Boolean, DateTime)
     @Test
-    public void readRequests_withNumericFields_thenParsesCorrectly() {
+    public void readRequests_whenNumericFields_thenParsesCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -2004,7 +2004,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void readRequests_withBooleanFields_thenParsesBooleanCorrectly() {
+    public void readRequests_whenBooleanFields_thenParsesBooleanCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -2026,7 +2026,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void readRequests_withDateTimeFields_thenParsesDateTimeCorrectly() {
+    public void readRequests_whenDateTimeFields_thenParsesDateTimeCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -2048,7 +2048,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void readRequests_withCompleteMatchRecord_thenMapsAllFieldsCorrectly() {
+    public void readRequests_whenCompleteMatchRecord_thenMapsAllFieldsCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -2077,7 +2077,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void readRequests_withCompleteScoreRecord_thenMapsAllScoreFieldsCorrectly() {
+    public void readRequests_whenCompleteScoreRecord_thenMapsAllScoreFieldsCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -2109,7 +2109,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void readRequests_withPartialScoreRecord_thenMapsOnlyPopulatedScoreFields() {
+    public void readRequests_whenPartialScoreRecord_thenMapsOnlyPopulatedScoreFields() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -2135,7 +2135,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void readRequests_withCompleteEnrolledRecord_thenMapsAllEnrolledFieldsCorrectly() {
+    public void readRequests_whenCompleteEnrolledRecord_thenMapsAllEnrolledFieldsCorrectly() {
         // Arrange
         String xmlData = """
                 <xml>
@@ -2165,7 +2165,7 @@ public class IpscServiceImplTest {
     }
 
     @Test
-    public void readRequests_withPartialEnrolledRecord_thenMapsOnlyPopulatedEnrolledFields() {
+    public void readRequests_whenPartialEnrolledRecord_thenMapsOnlyPopulatedEnrolledFields() {
         // Arrange
         String xmlData = """
                 <xml>

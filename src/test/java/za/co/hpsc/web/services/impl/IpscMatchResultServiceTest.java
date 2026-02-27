@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-public class IpscMatchResultServiceImplTest {
+public class IpscMatchResultServiceTest {
 
     @Mock
     private ClubEntityService clubEntityService;
@@ -838,68 +838,6 @@ public class IpscMatchResultServiceImplTest {
         assertEquals(1, result.get().getCompetitors().size());
         assertEquals(1, result.get().getMatchCompetitors().size());
         assertFalse(result.get().getMatchStageCompetitors().isEmpty());
-    }
-
-    // =====================================================================
-    // Helper methods for building test data
-    // =====================================================================
-
-    private static MatchDto buildMatchDto(int matchIndex, Long matchId) {
-        MatchDto matchDto = new MatchDto();
-        matchDto.setIndex(matchIndex);
-        matchDto.setId(matchId);
-        matchDto.setName("Match " + matchIndex);
-        matchDto.setScheduledDate(LocalDateTime.now());
-        return matchDto;
-    }
-
-    private static MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageId, int stageNumber, Long stagePkId) {
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setMatch(matchDto);
-        stageDto.setIndex(stageId);
-        stageDto.setStageNumber(stageNumber);
-        stageDto.setId(stagePkId);
-        return stageDto;
-    }
-
-    private static ScoreResponse buildScoreResponse(int matchId, int stageId, int memberId, Integer finalScore) {
-        ScoreResponse score = new ScoreResponse();
-        score.setMatchId(matchId);
-        score.setStageId(stageId);
-        score.setMemberId(memberId);
-        score.setFinalScore(finalScore);
-        return score;
-    }
-
-    private static MemberResponse buildMemberResponse(int memberId, String firstName, String lastName) {
-        MemberResponse member = new MemberResponse();
-        member.setMemberId(memberId);
-        member.setFirstName(firstName);
-        member.setLastName(lastName);
-        member.setIsRegisteredForMatch(true);
-        return member;
-    }
-
-    private static EnrolledResponse buildEnrolledResponse(int memberId, int matchId) {
-        EnrolledResponse enrolled = new EnrolledResponse();
-        enrolled.setMemberId(memberId);
-        enrolled.setMatchId(matchId);
-        return enrolled;
-    }
-
-    private static MatchResponse buildMatchResponse(int matchId, String matchName) {
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(matchId);
-        matchResponse.setMatchName(matchName);
-        return matchResponse;
-    }
-
-    private static StageResponse buildStageResponse(int matchId, int stageId, String stageName) {
-        StageResponse stageResponse = new StageResponse();
-        stageResponse.setMatchId(matchId);
-        stageResponse.setStageId(stageId);
-        stageResponse.setStageName(stageName);
-        return stageResponse;
     }
 
     // =====================================================================
@@ -1797,6 +1735,68 @@ public class IpscMatchResultServiceImplTest {
         assertEquals("Complete Match", matchResults.getMatch().getName());
         assertEquals(1, matchResults.getStages().size());
         assertEquals(1, matchResults.getScores().size());
+    }
+
+    // =====================================================================
+    // Helper methods for building test data
+    // =====================================================================
+
+    private static MatchDto buildMatchDto(int matchIndex, Long matchId) {
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(matchIndex);
+        matchDto.setId(matchId);
+        matchDto.setName("Match " + matchIndex);
+        matchDto.setScheduledDate(LocalDateTime.now());
+        return matchDto;
+    }
+
+    private static MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageId, int stageNumber, Long stagePkId) {
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setIndex(stageId);
+        stageDto.setStageNumber(stageNumber);
+        stageDto.setId(stagePkId);
+        return stageDto;
+    }
+
+    private static ScoreResponse buildScoreResponse(int matchId, int stageId, int memberId, Integer finalScore) {
+        ScoreResponse score = new ScoreResponse();
+        score.setMatchId(matchId);
+        score.setStageId(stageId);
+        score.setMemberId(memberId);
+        score.setFinalScore(finalScore);
+        return score;
+    }
+
+    private static MemberResponse buildMemberResponse(int memberId, String firstName, String lastName) {
+        MemberResponse member = new MemberResponse();
+        member.setMemberId(memberId);
+        member.setFirstName(firstName);
+        member.setLastName(lastName);
+        member.setIsRegisteredForMatch(true);
+        return member;
+    }
+
+    private static EnrolledResponse buildEnrolledResponse(int memberId, int matchId) {
+        EnrolledResponse enrolled = new EnrolledResponse();
+        enrolled.setMemberId(memberId);
+        enrolled.setMatchId(matchId);
+        return enrolled;
+    }
+
+    private static MatchResponse buildMatchResponse(int matchId, String matchName) {
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(matchId);
+        matchResponse.setMatchName(matchName);
+        return matchResponse;
+    }
+
+    private static StageResponse buildStageResponse(int matchId, int stageId, String stageName) {
+        StageResponse stageResponse = new StageResponse();
+        stageResponse.setMatchId(matchId);
+        stageResponse.setStageId(stageId);
+        stageResponse.setStageName(stageName);
+        return stageResponse;
     }
 }
 
