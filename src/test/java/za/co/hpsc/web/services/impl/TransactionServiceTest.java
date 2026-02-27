@@ -10,7 +10,7 @@ import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -60,12 +60,12 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenMatchIsNull_thenReturnsEmpty() {
         // Arrange
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(null);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(null);
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -76,12 +76,12 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenDomainServiceReturnsHolderWithNullMatch_thenReturnsEmpty() {
         // Arrange
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(null);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(null);
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -100,14 +100,14 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(100, null);
         IpscMatch ipscMatch = new IpscMatch();
         ipscMatch.setName(matchDto.getName());
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -132,16 +132,16 @@ public class TransactionServiceTest {
         Club club = new Club();
         club.setId(clubDto.getId());
         club.setName(clubDto.getName());
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
-        dtoToEntityMapping.setClub(clubDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        dtoMapping.setClub(clubDto);
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
         when(clubRepository.findById(clubDto.getId())).thenReturn(Optional.of(club));
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -165,13 +165,13 @@ public class TransactionServiceTest {
         Club club = new Club();
         club.setId(clubDto.getId());
         club.setName(clubDto.getName());
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
-        dtoToEntityMapping.setClub(clubDto);
-        dtoToEntityMapping.setCompetitorMap(new HashMap<>());
-        dtoToEntityMapping.setMatchStageMap(new HashMap<>());
-        dtoToEntityMapping.setMatchCompetitorMap(new HashMap<>());
-        dtoToEntityMapping.setMatchStageCompetitorMap(new HashMap<>());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        dtoMapping.setClub(clubDto);
+        dtoMapping.setCompetitorMap(new HashMap<>());
+        dtoMapping.setMatchStageMap(new HashMap<>());
+        dtoMapping.setMatchCompetitorMap(new HashMap<>());
+        dtoMapping.setMatchStageCompetitorMap(new HashMap<>());
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
         when(clubRepository.findById(clubDto.getId())).thenReturn(Optional.of(club));
@@ -179,7 +179,7 @@ public class TransactionServiceTest {
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -194,14 +194,14 @@ public class TransactionServiceTest {
     public void testSaveMatchResults_whenDomainServiceReturnsResults_thenReturnsResults() {
         // Arrange
         MatchDto matchDto = buildMatchDto(100, null);
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -220,15 +220,15 @@ public class TransactionServiceTest {
     public void testSaveMatchResults_whenExceptionOccurs_thenRollsBackAndThrowsFatalException() {
         // Arrange
         MatchDto matchDto = buildMatchDto(100, 1L);
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
         when(ipscMatchRepository.findById(100L)).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
         assertThrows(FatalException.class, () ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
         verify(transactionManager).getTransaction(any());
         verify(transactionManager).rollback(transactionStatus);
@@ -242,14 +242,14 @@ public class TransactionServiceTest {
         matchDto.setName("   ");
         IpscMatch ipscMatch = new IpscMatch();
         ipscMatch.setName("   ");
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -265,18 +265,18 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(100, null);
         IpscMatch ipscMatch = new IpscMatch();
         ipscMatch.setName(matchDto.getName());
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
-        dtoToEntityMapping.setMatchStageMap(new HashMap<>());
-        dtoToEntityMapping.setCompetitorMap(new HashMap<>());
-        dtoToEntityMapping.setMatchCompetitorMap(new HashMap<>());
-        dtoToEntityMapping.setMatchStageCompetitorMap(new HashMap<>());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        dtoMapping.setMatchStageMap(new HashMap<>());
+        dtoMapping.setCompetitorMap(new HashMap<>());
+        dtoMapping.setMatchCompetitorMap(new HashMap<>());
+        dtoMapping.setMatchStageCompetitorMap(new HashMap<>());
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert
@@ -292,14 +292,14 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(100, null);
         IpscMatch ipscMatch = new IpscMatch();
         ipscMatch.setName(matchDto.getName());
-        DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-        dtoToEntityMapping.setMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoToEntityMapping)
+                transactionService.saveMatchResults(dtoMapping)
         );
 
         // Assert

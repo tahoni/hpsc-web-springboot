@@ -48,7 +48,7 @@ public class IpscServiceIntegrationTest {
                                                  IpscMatchStageRepository ipscMatchStageRepository,
                                                  MatchCompetitorRepository matchCompetitorRepository,
                                                  MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, domainService, clubRepository,
+        return new TransactionServiceImpl(platformTransactionManager, clubRepository,
                 competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
                 matchCompetitorRepository, matchStageCompetitorRepository);
     }

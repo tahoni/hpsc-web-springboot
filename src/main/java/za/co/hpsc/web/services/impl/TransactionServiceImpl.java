@@ -1,5 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -8,22 +9,21 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.FatalException;
+import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
 import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.DomainService;
 import za.co.hpsc.web.services.TransactionService;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-// TODO: finish this
 @Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {
     protected final PlatformTransactionManager transactionManager;
-
-    protected final DomainService domainService;
 
     protected final ClubRepository clubRepository;
     protected final CompetitorRepository competitorRepository;
@@ -33,7 +33,6 @@ public class TransactionServiceImpl implements TransactionService {
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
-                                  DomainService domainService,
                                   ClubRepository clubRepository,
                                   CompetitorRepository competitorRepository,
                                   IpscMatchRepository ipscMatchRepository,
@@ -42,7 +41,6 @@ public class TransactionServiceImpl implements TransactionService {
                                   MatchStageCompetitorRepository matchStageCompetitorRepository) {
 
         this.transactionManager = transactionManager;
-        this.domainService = domainService;
         this.clubRepository = clubRepository;
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
@@ -52,10 +50,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<IpscMatch> saveMatchResults(DtoToEntityMapping dtoToEntityMapping)
+    public Optional<IpscMatch> saveMatchResults(DtoMapping dtoMapping)
             throws FatalException {
 
-        if ((dtoToEntityMapping == null) || (dtoToEntityMapping.getMatch() == null)) {
+        if ((dtoMapping == null) || (dtoMapping.getMatch() == null)) {
             return Optional.empty();
         }
 
@@ -64,49 +62,37 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Executes transactional match result persistence; rolls back on failure
         try {
-            getClub(dtoToEntityMapping.getClub())
-                    .ifPresent(clubRepository::save);
+            DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
 
-            Optional<IpscMatch> optionalMatchEntity = getIpscMatch(dtoToEntityMapping.getMatch());
-            AtomicReference<IpscMatch> atomicMatchSEntity = new AtomicReference<>();
-            optionalMatchEntity.ifPresent(match -> {
-                ipscMatchRepository.save(match);
-                atomicMatchSEntity.set(match);
-            });
+            getClub(dtoMapping.getClub()).ifPresent(clubRepository::save);
+            getIpscMatch(dtoToEntityMapping).ifPresent(ipscMatchRepository::save);
 
-            IpscMatch matchEntity = atomicMatchSEntity.get();
-            if (matchEntity == null) {
+            if (dtoMapping.getMatch() == null) {
                 return Optional.empty();
             }
 
-            Map<UUID, IpscMatchStage> matchStageEntityMap =
-                    getIpscMatchStages(dtoToEntityMapping.getMatchStageMap().values(), matchEntity);
-            if (!matchStageEntityMap.isEmpty()) {
-                ipscMatchStageRepository.saveAll(matchStageEntityMap.values());
+            List<Competitor> competitorList = getCompetitors(dtoToEntityMapping);
+            if (!competitorList.isEmpty()) {
+                competitorRepository.saveAll(competitorList);
             }
 
-            Map<UUID, Competitor> competitorEntityMap =
-                    getCompetitors(dtoToEntityMapping.getCompetitorMap().values());
-            if (!competitorEntityMap.isEmpty()) {
-                competitorRepository.saveAll(competitorEntityMap.values());
+            List<IpscMatchStage> ipscMatchStageList = getIpscMatchStages(dtoToEntityMapping);
+            if (!ipscMatchStageList.isEmpty()) {
+                ipscMatchStageRepository.saveAll(ipscMatchStageList);
             }
 
-            List<MatchCompetitor> matchCompetitorList =
-                    getMatchCompetitors(dtoToEntityMapping.getMatchCompetitorMap().values(),
-                            matchEntity, competitorEntityMap);
+            List<MatchCompetitor> matchCompetitorList = getMatchCompetitors(dtoToEntityMapping);
             if (!matchCompetitorList.isEmpty()) {
                 matchCompetitorRepository.saveAll(matchCompetitorList);
             }
 
-            List<MatchStageCompetitor> matchStageCompetitorList =
-                    getMatchStageCompetitors(dtoToEntityMapping.getMatchStageCompetitorMap().values(),
-                            matchStageEntityMap, competitorEntityMap);
+            List<MatchStageCompetitor> matchStageCompetitorList = getAllMatchStageCompetitors(dtoToEntityMapping);
             if (!matchStageCompetitorList.isEmpty()) {
                 matchStageCompetitorRepository.saveAll(matchStageCompetitorList);
             }
 
             transactionManager.commit(transaction);
-            return optionalMatchEntity;
+            return dtoToEntityMapping.getMatchEntity();
 
         } catch (Exception e) {
             transactionManager.rollback(transaction);
@@ -122,35 +108,37 @@ public class TransactionServiceImpl implements TransactionService {
 
         Club clubEntity = new Club();
         if (clubDto.getId() != null) {
-            clubEntity = clubRepository.findById(clubDto.getId())
-                    .orElseGet(Club::new);
+            clubEntity = clubRepository.findById(clubDto.getId()).orElseGet(Club::new);
         }
         clubEntity.init(clubDto);
         return Optional.of(clubEntity);
     }
 
-    protected Optional<IpscMatch> getIpscMatch(MatchDto matchDto) {
+    protected Optional<IpscMatch> getIpscMatch(@NotNull DtoToEntityMapping dtoToEntityMapping) {
+        MatchDto matchDto = dtoToEntityMapping.getMatchDto().orElse(null);
         if (matchDto == null) {
             return Optional.empty();
         }
 
         IpscMatch matchEntity = new IpscMatch();
         if (matchDto.getId() != null) {
-            matchEntity = ipscMatchRepository.findById(matchDto.getId())
-                    .orElseGet(IpscMatch::new);
+            matchEntity = ipscMatchRepository.findById(matchDto.getId()).orElseGet(IpscMatch::new);
         }
         matchEntity.init(matchDto);
+
+        dtoToEntityMapping.setMatch(matchEntity);
         return Optional.of(matchEntity);
     }
 
-    protected Map<UUID, IpscMatchStage> getIpscMatchStages(Collection<MatchStageDto> matchStageDtoList,
-                                                           IpscMatch matchEntity) {
-        if (matchStageDtoList == null) {
-            return new HashMap<>();
+    protected List<IpscMatchStage> getIpscMatchStages(@NotNull DtoToEntityMapping dtoToEntityMapping) {
+
+        IpscMatch matchEntity = dtoToEntityMapping.getMatchEntity().orElse(null);
+        if (matchEntity == null) {
+            return new ArrayList<>();
         }
 
-        Map<UUID, IpscMatchStage> matchStageEntityMap = new HashMap<>();
-        List<MatchStageDto> filteredMatchStageDtoList = matchStageDtoList.stream()
+        List<IpscMatchStage> matchStageEntityList = new ArrayList<>();
+        List<MatchStageDto> filteredMatchStageDtoList = dtoToEntityMapping.getMatchStageDtoList().stream()
                 .filter(Objects::nonNull).toList();
 
         filteredMatchStageDtoList.forEach(matchStageDto -> {
@@ -161,98 +149,89 @@ public class TransactionServiceImpl implements TransactionService {
             }
             matchStageEntity.init(matchStageDto);
             matchStageEntity.setMatch(matchEntity);
-            matchStageEntityMap.put(matchStageDto.getUuid(), matchStageEntity);
+
+            dtoToEntityMapping.setMatchStage(matchStageDto, matchStageEntity);
+            matchStageEntityList.add(matchStageEntity);
         });
 
-        return matchStageEntityMap;
+        return matchStageEntityList;
     }
 
-    protected Map<UUID, Competitor> getCompetitors(Collection<CompetitorDto> competitorDtoList) {
-        if (competitorDtoList == null) {
-            return new HashMap<>();
-        }
+    protected List<Competitor> getCompetitors(@NotNull DtoToEntityMapping dtoToEntityMapping) {
+
+        List<CompetitorDto> competitorDtoList = dtoToEntityMapping.getCompetitorDtoList();
 
         List<Competitor> competitorEntityList = new ArrayList<>();
-        List<CompetitorDto> filteredCompetitorDtoList = competitorDtoList.stream()
-                .filter(Objects::nonNull).toList();
-
-        Map<UUID, Competitor> competitorEntityMap = new HashMap<>();
-        filteredCompetitorDtoList.forEach(competitorDto -> {
+        competitorDtoList.forEach(competitorDto -> {
             Competitor competitorEntity = new Competitor();
             if (competitorDto.getId() != null) {
                 competitorEntity = competitorRepository.findById(competitorDto.getId())
                         .orElseGet(Competitor::new);
             }
             competitorEntity.init(competitorDto);
-            competitorEntityMap.put(competitorDto.getUuid(), competitorEntity);
+
+            dtoToEntityMapping.setCompetitor(competitorDto, competitorEntity);
+            competitorEntityList.add(competitorEntity);
         });
 
-        return competitorEntityMap;
+        return competitorEntityList;
     }
 
-    protected List<MatchCompetitor> getMatchCompetitors(Collection<MatchCompetitorDto> matchCompetitorDtoList,
-                                                        IpscMatch matchEntity,
-                                                        Map<UUID, Competitor> competitorEntityMap) {
+    protected List<MatchCompetitor> getMatchCompetitors(@NotNull DtoToEntityMapping dtoToEntityMapping) {
 
-        if ((matchCompetitorDtoList == null) || (matchEntity == null) || (competitorEntityMap == null)) {
-            return new ArrayList<>();
-        }
+        List<MatchCompetitorDto> matchCompetitorDtoList = dtoToEntityMapping.getMatchCompetitorDtoList();
 
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
-        List<MatchCompetitorDto> filteredMatchCompetitorDtoList = matchCompetitorDtoList.stream()
-                .filter(Objects::nonNull).toList();
-
-        filteredMatchCompetitorDtoList.forEach(matchCompetitorDto -> {
+        matchCompetitorDtoList.forEach(matchCompetitorDto -> {
             MatchCompetitor matchCompetitorEntity = new MatchCompetitor();
             if (matchCompetitorDto.getId() != null) {
                 matchCompetitorEntity.setId(matchCompetitorDto.getId());
             }
             matchCompetitorEntity.init(matchCompetitorDto);
-            matchCompetitorEntity.setMatch(matchEntity);
-            matchCompetitorEntity.setCompetitor(competitorEntityMap.get(matchCompetitorDto.getCompetitor().getUuid()));
+
+            dtoToEntityMapping.setMatchCompetitor(matchCompetitorDto, matchCompetitorEntity);
             matchCompetitorList.add(matchCompetitorEntity);
         });
 
         return matchCompetitorList;
     }
 
-    protected List<MatchStageCompetitor> getMatchStageCompetitors(Collection<MatchStageCompetitorDto> matchStageCompetitorDtoList,
-                                                                  Map<UUID, IpscMatchStage> matchStageMap,
-                                                                  Map<UUID, Competitor> competitorEntityMap) {
-        if ((matchStageCompetitorDtoList == null) || (matchStageMap == null) || (competitorEntityMap == null)) {
-            return new ArrayList<>();
-        }
+    protected List<MatchStageCompetitor> getAllMatchStageCompetitors(@NotNull DtoToEntityMapping dtoToEntityMapping) {
+
+        List<MatchStageDto> filteredMatchStageDtoList = dtoToEntityMapping.getMatchStageDtoList();
 
         List<MatchStageCompetitor> matchStageCompetitorList = new ArrayList<>();
-        matchStageMap.values().forEach(matchStageEntity -> {
-            List<MatchStageCompetitor> matchStageCompetitorsForStage = getMatchStageCompetitors(
-                    matchStageCompetitorDtoList, matchStageEntity, competitorEntityMap);
+        filteredMatchStageDtoList.forEach(matchStageDto -> {
+            List<MatchStageCompetitor> matchStageCompetitorsForStage =
+                    getMatchStageCompetitors(matchStageDto, dtoToEntityMapping);
+
             matchStageCompetitorList.addAll(matchStageCompetitorsForStage);
         });
 
         return matchStageCompetitorList;
     }
 
-    protected List<MatchStageCompetitor> getMatchStageCompetitors(Collection<MatchStageCompetitorDto> matchStageCompetitorDtoList,
-                                                                  IpscMatchStage matchStageEntity,
-                                                                  Map<UUID, Competitor> competitorEntityMap) {
+    protected List<MatchStageCompetitor> getMatchStageCompetitors(MatchStageDto matchStageDto,
+                                                                  @NotNull DtoToEntityMapping dtoToEntityMapping) {
 
-        if ((matchStageCompetitorDtoList == null) || (matchStageEntity == null) || (competitorEntityMap == null)) {
-            return new ArrayList<>();
-        }
+        List<MatchStageCompetitorDto> matchStageCompetitoDtoList =
+                dtoToEntityMapping.getMatchStageCompetitorDtoList();
+        List<MatchStageCompetitorDto> filteredMatchStageCompetitorDtoList =
+                matchStageCompetitoDtoList.stream()
+                        .filter(matchStageCompetitorDto -> matchStageCompetitorDto.getMatchStage() != null)
+                        .filter(matchStageCompetitorDto -> matchStageDto.getUuid()
+                                .equals(matchStageCompetitorDto.getMatchStage().getUuid()))
+                        .toList();
 
         List<MatchStageCompetitor> matchStageCompetitorList = new ArrayList<>();
-        List<MatchStageCompetitorDto> filteredMatchStageCompetitorDtoList = matchStageCompetitorDtoList.stream()
-                .filter(Objects::nonNull).toList();
-
         filteredMatchStageCompetitorDtoList.forEach(matchStageCompetitorDto -> {
             MatchStageCompetitor matchStageCompetitorEntity = new MatchStageCompetitor();
             if (matchStageCompetitorDto.getId() != null) {
                 matchStageCompetitorEntity.setId(matchStageCompetitorDto.getId());
             }
             matchStageCompetitorEntity.init(matchStageCompetitorDto);
-            matchStageCompetitorEntity.setMatchStage(matchStageEntity);
-            matchStageCompetitorEntity.setCompetitor(competitorEntityMap.get(matchStageCompetitorDto.getCompetitor().getUuid()));
+
+            dtoToEntityMapping.setMatchStageCompetitor(matchStageCompetitorDto, matchStageCompetitorEntity);
             matchStageCompetitorList.add(matchStageCompetitorEntity);
         });
 

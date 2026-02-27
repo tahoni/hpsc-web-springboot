@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.DomainService;
@@ -38,8 +38,8 @@ public class DomainServiceImpl implements DomainService {
     }
 
     @Override
-    public Optional<DtoToEntityMapping> initMatchEntities(MatchResultsDto matchResults,
-                                                          String filterClubAbbreviation) {
+    public Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults,
+                                                  String filterClubAbbreviation) {
         if ((matchResults == null) || (matchResults.getMatch() == null)) {
             return Optional.empty();
         }
@@ -73,15 +73,15 @@ public class DomainServiceImpl implements DomainService {
                             matchStageMap, competitorMap, filterClubIdentifier);
 
             // Initialise the mapping of the DTO to an entity
-            DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping();
-            dtoToEntityMapping.setClub(clubDto);
-            dtoToEntityMapping.setMatch(matchDto);
-            dtoToEntityMapping.setCompetitorMap(competitorMap);
-            dtoToEntityMapping.setMatchStageMap(matchStageMap);
-            dtoToEntityMapping.setMatchCompetitorMap(matchCompetitorMap);
-            dtoToEntityMapping.setMatchStageCompetitorMap(matchStageCompetitorMap);
+            DtoMapping dtoMapping = new DtoMapping();
+            dtoMapping.setClub(clubDto);
+            dtoMapping.setMatch(matchDto);
+            dtoMapping.setCompetitorMap(competitorMap);
+            dtoMapping.setMatchStageMap(matchStageMap);
+            dtoMapping.setMatchCompetitorMap(matchCompetitorMap);
+            dtoMapping.setMatchStageCompetitorMap(matchStageCompetitorMap);
 
-            return Optional.of(dtoToEntityMapping);
+            return Optional.of(dtoMapping);
         }
 
         return Optional.empty();

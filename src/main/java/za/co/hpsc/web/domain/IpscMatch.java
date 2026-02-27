@@ -67,9 +67,6 @@ public class IpscMatch {
 
     public void init(MatchDto matchDto) {
         if (matchDto != null) {
-            // Initialises the match details
-//            this.id = matchDto.getId();
-
             // Initialises the match attributes
             this.name = matchDto.getName();
             this.scheduledDate = ((matchDto.getScheduledDate() != null) ?

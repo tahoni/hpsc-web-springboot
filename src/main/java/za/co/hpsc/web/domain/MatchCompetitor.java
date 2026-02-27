@@ -64,35 +64,6 @@ public class MatchCompetitor {
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
-    /**
-     * Initialises the current {@code MatchStageCompetitor} entity with data from a DTO
-     * and associated entities.
-     *
-     * <p>
-     * This method sets the relevant fields in the entity, including association with a match,
-     * competitor information, performance metrics, and date attributes.
-     * </p>
-     *
-     * @param matchCompetitorDto the DTO containing data needed to populate the entity fields.
-     * @param matchEntity        the associated match entity.
-     * @param competitorEntity   the associated competitor entity.
-     */
-    public void init(MatchCompetitorDto matchCompetitorDto, IpscMatch matchEntity, Competitor competitorEntity) {
-        // Initialises the competitor details
-        this.match = matchEntity;
-        this.competitor = competitorEntity;
-
-        // Initialises the competitor attributes
-        this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
-        this.firearmType = matchCompetitorDto.getFirearmType();
-        this.division = matchCompetitorDto.getDivision();
-        this.powerFactor = matchCompetitorDto.getPowerFactor();
-
-        // Initialises the match scoring attributes
-        this.matchPoints = matchCompetitorDto.getMatchPoints();
-        this.matchRanking = matchCompetitorDto.getMatchRanking();
-    }
-
     // TODO: Javadoc
     public void init(MatchCompetitorDto matchCompetitorDto) {
         // Initialises the competitor attributes

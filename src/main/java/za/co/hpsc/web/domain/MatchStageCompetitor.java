@@ -84,61 +84,6 @@ public class MatchStageCompetitor {
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
-    /**
-     * Initialises the current {@code MatchStageCompetitor} entity with data from a DTO
-     * and associated entities.
-     *
-     * <p>
-     * This method sets the relevant fields in the entity, including association with a stage,
-     * competitor information, performance metrics, and date attributes.
-     * </p>
-     *
-     * @param matchStageCompetitorDto the DTO containing data needed to populate the entity fields.
-     * @param matchStageEntity        the associated match stage entity.
-     * @param competitorEntity        the associated competitor entity.
-     */
-    public void init(MatchStageCompetitorDto matchStageCompetitorDto, IpscMatchStage matchStageEntity,
-                     Competitor competitorEntity) {
-
-        // Initialises the match stage and competitor details
-        this.matchStage = matchStageEntity;
-        this.competitor = competitorEntity;
-
-        // Initialises the match stage and competitor attributes
-        this.competitorCategory = matchStageCompetitorDto.getCompetitorCategory();
-        this.firearmType = matchStageCompetitorDto.getFirearmType();
-        this.division = matchStageCompetitorDto.getDivision();
-        this.powerFactor = matchStageCompetitorDto.getPowerFactor();
-
-        // Initialises the detailed breakdown of the score
-        this.scoreA = matchStageCompetitorDto.getScoreA();
-        this.scoreB = matchStageCompetitorDto.getScoreB();
-        this.scoreC = matchStageCompetitorDto.getScoreC();
-        this.scoreD = matchStageCompetitorDto.getScoreD();
-
-        // Initialises the overall performance metrics
-        this.points = matchStageCompetitorDto.getPoints();
-        this.misses = matchStageCompetitorDto.getMisses();
-        this.penalties = matchStageCompetitorDto.getPenalties();
-        this.procedurals = matchStageCompetitorDto.getProcedurals();
-
-        // Initialises the deduction details, if applicable
-        this.hasDeduction = matchStageCompetitorDto.getHasDeduction();
-        this.deductionPercentage = matchStageCompetitorDto.getDeductionPercentage();
-
-        // Initialises whether the competitor is disqualified
-        this.isDisqualified = matchStageCompetitorDto.getIsDisqualified();
-
-        // Initialises the time and hit factor details
-        this.time = matchStageCompetitorDto.getTime();
-        this.hitFactor = matchStageCompetitorDto.getHitFactor();
-
-        // Initialises the stage ranking and percentage
-        this.stagePoints = matchStageCompetitorDto.getStagePoints();
-        this.stagePercentage = matchStageCompetitorDto.getStagePercentage();
-        this.stageRanking = matchStageCompetitorDto.getStageRanking();
-    }
-
     // TODO: Javadoc
     public void init(MatchStageCompetitorDto matchStageCompetitorDto) {
         // Initialises the match stage and competitor attributes
