@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO: check
 @Slf4j
 @Service
 public class IpscMatchResultServiceImpl implements IpscMatchResultService {
@@ -193,9 +194,13 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         }
 
         // Filters score responses to those relevant to the current match
+        if (matchResultsDto.getMatch() == null) {
+            return;
+        }
         List<ScoreResponse> scoreResponses = ipscResponse.getScores().stream()
                 .filter(Objects::nonNull)
-                .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), matchResultsDto.getMatch().getIndex()))
+                .filter(scoreResponse -> scoreResponse.getMatchId() != null)
+                .filter(scoreResponse -> scoreResponse.getMatchId().equals(matchResultsDto.getMatch().getIndex()))
                 .toList();
         List<ScoreDto> scoreDtos = scoreResponses.stream()
                 .filter(Objects::nonNull)
@@ -239,6 +244,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                     // competitor per match and stage
                     EnrolledResponse enrolledResponse = ipscResponse.getEnrolledMembers().stream()
                             .filter(Objects::nonNull)
+                            .filter(er -> er.getMemberId() != null)
                             .filter(er -> er.getMemberId().equals(memberResponse.getMemberId()))
                             .findFirst()
                             .orElse(null);
@@ -304,8 +310,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                                 // Filters scores by stage ID (already filtered by member ID)
                                 Optional<ScoreResponse> optionalStageScoreResponse = scores.stream()
                                         .filter(Objects::nonNull)
-                                        .filter(scoreResponse -> stageDto.getStageNumber()
-                                                .equals(scoreResponse.getStageId()))
+                                        .filter(scoreResponse -> scoreResponse.getStageId() != null)
+                                        .filter(scoreResponse -> scoreResponse.getStageId().equals(stageDto.getStageNumber()))
                                         .findFirst();
                                 optionalStageScoreResponse.ifPresent(stageScoreResponse -> {
                                     // Attempts to find the match stage competitor by competitor ID, stage ID,

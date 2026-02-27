@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+// TODO: add more tests
 @ExtendWith(MockitoExtension.class)
 public class DomainServiceTest {
     @Mock
@@ -335,17 +336,21 @@ public class DomainServiceTest {
         stage1.setId(stage1Id);
         stage1.setUuid(UUID.randomUUID());
         stage1.setStageName("Stage 1");
+        stage1.setMatch(matchResults.getMatch());
 
         MatchStageDto stage2 = new MatchStageDto();
         stage2.setId(stage2Id);
         stage2.setUuid(UUID.randomUUID());
         stage2.setStageName("Stage 2");
+        stage2.setMatch(matchResults.getMatch());
 
         matchResults.setStages(List.of(stage1, stage2));
 
         IpscMatch match = new IpscMatch();
         IpscMatchStage stageEntity1 = new IpscMatchStage();
+        stageEntity1.setMatch(match);
         IpscMatchStage stageEntity2 = new IpscMatchStage();
+        stageEntity2.setMatch(match);
 
         when(ipscMatchRepository.findByIdWithClubStages(matchId)).thenReturn(Optional.of(match));
         when(ipscMatchStageRepository.findById(stage1Id)).thenReturn(Optional.of(stageEntity1));
@@ -418,6 +423,7 @@ public class DomainServiceTest {
         stageDto.setId(stage1Id);
         stageDto.setUuid(UUID.randomUUID());
         stageDto.setStageName("Stage 1");
+        stageDto.setMatch(matchDto);
         matchResults.setStages(List.of(stageDto));
 
         matchResults.setMatchCompetitors(Collections.emptyList());
@@ -427,6 +433,7 @@ public class DomainServiceTest {
         Competitor competitor = new Competitor();
         IpscMatch match = new IpscMatch();
         IpscMatchStage stage = new IpscMatchStage();
+        stage.setMatch(match);
 
         when(clubRepository.findById(clubId)).thenReturn(Optional.of(club));
         when(competitorRepository.findById(competitor1Id)).thenReturn(Optional.of(competitor));
@@ -497,7 +504,6 @@ public class DomainServiceTest {
 
         IpscMatch match = new IpscMatch();
         IpscMatchStage stageEntity = new IpscMatchStage();
-        when(ipscMatchStageRepository.findById(any())).thenReturn(Optional.of(stageEntity));
         when(ipscMatchRepository.findByIdWithClubStages(matchId)).thenReturn(Optional.of(match));
         when(clubRepository.findByAbbreviation(filterClub)).thenReturn(Optional.of(new Club()));
 
