@@ -55,9 +55,9 @@ public class IpscMatch {
     @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<IpscMatchStage> matchStages = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
     private LocalDateTime dateCreated;
@@ -67,9 +67,6 @@ public class IpscMatch {
 
     public void init(MatchDto matchDto) {
         if (matchDto != null) {
-            // Initialises the match details
-            this.id = matchDto.getId();
-
             // Initialises the match attributes
             this.name = matchDto.getName();
             this.scheduledDate = ((matchDto.getScheduledDate() != null) ?

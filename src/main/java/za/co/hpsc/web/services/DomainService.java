@@ -1,6 +1,6 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
+import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 
 import java.util.Optional;
@@ -19,12 +19,12 @@ public interface DomainService {
     /**
      * Initialises and maps entities related to a match based on the provided match results data.
      *
-     * @param matchResults an instance of {@code MatchResultsDto} containing detailed information
-     *                     about a match, including the match itself, club, competitors, stages,
-     *                     and related entities.
-     * @return an {@code Optional<MatchEntityHolder>} that may contain the initialised match
-     * entities such as the match, club, stages, and competitors, or an empty {@code Optional}
-     * if initialisation fails or the input data is invalid.
+     * @param matchResults           an instance of {@code MatchResultsDto} containing detailed information
+     *                               about a match, including the match itself, club, competitors, stages,
+     *                               and related entities.
+     * @param filterClubAbbreviation the abbreviation of the club to filter matches by.
+     * @return a {@link DtoMapping} that contains the initialised match
+     * entities such as the match, club, stages, and competitors.
      */
-    Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults);
+    Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation);
 }

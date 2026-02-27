@@ -72,9 +72,6 @@ public class Club {
      */
     public void init(@NotNull ClubDto clubDto) {
         if (clubDto != null) {
-            // Initialises club details
-            this.id = clubDto.getId();
-
             // Initialises club attributes
             this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
                     clubDto.getName() : this.name);
