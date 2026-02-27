@@ -3,8 +3,6 @@ package za.co.hpsc.web.services.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
-import za.co.hpsc.web.repositories.CompetitorRepository;
-import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
 import za.co.hpsc.web.services.MatchStageCompetitorEntityService;
 
@@ -13,15 +11,9 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetitorEntityService {
-    protected final IpscMatchStageRepository ipscMatchStageRepository;
-    protected final CompetitorRepository competitorRepository;
     protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
-    public MatchStageCompetitorEntityServiceImpl(IpscMatchStageRepository ipscMatchStageRepository,
-                                                 CompetitorRepository competitorRepository,
-                                                 MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        this.ipscMatchStageRepository = ipscMatchStageRepository;
-        this.competitorRepository = competitorRepository;
+    public MatchStageCompetitorEntityServiceImpl(MatchStageCompetitorRepository matchStageCompetitorRepository) {
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;
     }
 

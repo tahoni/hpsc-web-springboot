@@ -61,23 +61,8 @@ public class IpscMatchStage {
     @OneToMany(fetch = FetchType.LAZY)
     private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 
-    /**
-     * Initialises the current {@code MatchStage} entity with data from a DTO
-     * and associated entities.
-     *
-     * <p>
-     * This method sets the stage's unique identifier, match association, stage number,
-     * name, range number, target details, and point constraints based on the input data.
-     * </p>
-     *
-     * @param stage       The {@code MatchStageDto} containing stage details such as ID, stage number,
-     *                    range number, target metrics, and point constraints.
-     * @param matchEntity The {@code Match} entity representing the match associated with the stage.
-     */
-    public void init(MatchStageDto stage, IpscMatch matchEntity) {
-        // Initialises the stage details
-        this.match = matchEntity;
-
+    // TODOL Javadoc
+    public void init(MatchStageDto stage) {
         // Initialises the stage attributes
         this.stageNumber = stage.getStageNumber();
         this.stageName = stage.getStageName();

@@ -5,13 +5,12 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.models.ipsc.domain.MatchEntityHolder;
+import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.DomainService;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -38,70 +37,77 @@ public class DomainServiceImpl implements DomainService {
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;
     }
 
-    /**
-     * Initialises match entities based on the provided match results.
-     *
-     * @param matchResults The DTO containing match results, including match, club, competitors, and stages.
-     * @return An Optional containing the initialised MatchEntityHolder if the match is present; otherwise, an empty Optional.
-     */
     @Override
-    public Optional<MatchEntityHolder> initMatchEntities(MatchResultsDto matchResults) {
+    public Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults,
+                                                  String filterClubAbbreviation) {
         if ((matchResults == null) || (matchResults.getMatch() == null)) {
             return Optional.empty();
         }
 
-        AtomicReference<Optional<MatchEntityHolder>> optionalMatchEntityHolder =
-                new AtomicReference<>(Optional.empty());
+        // Find the club entity based on the filter club abbreviation if specified;
+        // otherwise, use the club from match results
+        ClubIdentifier filterClubIdentifier = ClubIdentifier.getByName(filterClubAbbreviation)
+                .orElse(null);
+        Optional<ClubDto> optionalClub = ((matchResults.getClub() != null) ?
+                initClubEntity(matchResults.getClub()) : initClubEntity(filterClubIdentifier));
+        ClubDto clubDto = optionalClub.orElse(null);
+        optionalClub.ifPresent(c -> clubDto.setId(c.getId()));
 
-        Optional<Club> optionalClub = initClubEntity(matchResults.getClub());
-        if (optionalClub.isPresent()) {
-            optionalClub.ifPresent(club -> club.init(matchResults.getClub()));
-        } else {
-            optionalClub = initClubEntity(ClubIdentifier.HPSC);
-        }
-        Club club = optionalClub.orElse(null);
-        Optional<IpscMatch> optionalMatch = initMatchEntity(matchResults.getMatch(), club);
+        // Initialise the match DTO based on match results
+        Optional<MatchDto> optionalMatchDto = initMatchEntity(matchResults.getMatch());
 
-        optionalMatch.ifPresent(match -> {
-            Map<UUID, Competitor> competitorMap = initCompetitorEntities(matchResults.getCompetitors());
-            Map<UUID, IpscMatchStage> matchStageMap = initMatchStageEntities(matchResults.getStages(), match);
+        if (optionalMatchDto.isPresent()) {
+            // Caches of DTOs with their UUIDs
+            MatchDto matchDto = optionalMatchDto.get();
+            Map<UUID, CompetitorDto> competitorMap =
+                    initCompetitorEntities(matchResults.getCompetitors());
+            Map<UUID, MatchStageDto> matchStageMap =
+                    initMatchStageEntities(matchResults.getStages(), matchDto);
 
-            Map<UUID, MatchCompetitor> matchCompetitorMap =
-                    initMatchCompetitorEntities(matchResults.getMatchCompetitors(),
-                            competitorMap, ClubIdentifier.HPSC);
-            Map<UUID, MatchStageCompetitor> matchStageCompetitorMap =
+            // Generate caches of DTOs with their UUIDs
+            Map<UUID, MatchCompetitorDto> matchCompetitorMap =
+                    initMatchCompetitorEntities(matchResults.getMatchCompetitors(), matchDto,
+                            competitorMap, filterClubIdentifier);
+            Map<UUID, MatchStageCompetitorDto> matchStageCompetitorMap =
                     initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(),
-                            competitorMap, ClubIdentifier.HPSC);
+                            matchStageMap, competitorMap, filterClubIdentifier);
 
-            optionalMatchEntityHolder.set(Optional.of(new MatchEntityHolder(match, club,
-                    matchStageMap.values().stream().filter(Objects::nonNull).toList(),
-                    competitorMap.values().stream().filter(Objects::nonNull).toList(),
-                    matchCompetitorMap.values().stream().filter(Objects::nonNull).toList(),
-                    matchStageCompetitorMap.values().stream().filter(Objects::nonNull).toList())));
-        });
+            // Initialise the mapping of the DTO to an entity
+            DtoMapping dtoMapping = new DtoMapping();
+            dtoMapping.setClub(clubDto);
+            dtoMapping.setMatch(matchDto);
+            dtoMapping.setCompetitorMap(competitorMap);
+            dtoMapping.setMatchStageMap(matchStageMap);
+            dtoMapping.setMatchCompetitorMap(matchCompetitorMap);
+            dtoMapping.setMatchStageCompetitorMap(matchStageCompetitorMap);
 
-        return optionalMatchEntityHolder.get();
+            return Optional.of(dtoMapping);
+        }
+
+        return Optional.empty();
     }
 
     /**
      * Initialises a Club entity based on the provided ClubDto.
-     * If the ClubDto contains a valid ID, attempts to find the existing Club entity in the repository.
+     * If the ClubDto contains a valid ID, attempts to find the existing Club entity
+     * in the repository.
      * If not found, creates a new Club entity, populates it with data from the DTO, and returns it.
      *
      * @param clubDto the data transfer object containing data to initialise or update a Club entity
-     * @return an Optional containing the initialised Club entity if the input is valid, or an empty Optional if the input is null or invalid
+     * @return an Optional containing the initialised Club entity if the input is valid,
+     * or an empty Optional if the input is null or invalid
      */
-    protected Optional<Club> initClubEntity(ClubDto clubDto) {
+    protected Optional<ClubDto> initClubEntity(ClubDto clubDto) {
         if ((clubDto != null) && (clubDto.getId() != null)) {
             // Find the club entity if present
             Optional<Club> optionalClubEntity = clubRepository.findById(clubDto.getId());
 
             // Initialise the club entity from DTO or create a new entity
-            Club clubEntity = optionalClubEntity.orElse(new Club());
-            clubEntity.init(clubDto);
+            optionalClubEntity.ifPresent(competitor ->
+                    clubDto.setId(competitor.getId()));
 
             // Add attributes to the club
-            return Optional.of(clubEntity);
+            return Optional.of(clubDto);
         }
 
         return Optional.empty();
@@ -110,28 +116,37 @@ public class DomainServiceImpl implements DomainService {
     /**
      * Initialises and retrieves a Club entity based on the given ClubIdentifier.
      *
-     * @param clubIdentifier the identifier used to look up the club; if null, an empty Optional is returned
-     * @return an Optional containing the club entity if found, or an empty Optional if no match is found
+     * @param clubIdentifier the identifier used to look up the club;
+     * @return an Optional containing the club entity if found, or an empty Optional
+     * if no match is found
      */
-    protected Optional<Club> initClubEntity(ClubIdentifier clubIdentifier) {
+    protected Optional<ClubDto> initClubEntity(ClubIdentifier clubIdentifier) {
         if (clubIdentifier != null) {
             // Find the club entity if present
-            return clubRepository.findByAbbreviation(clubIdentifier.getName());
+            ClubDto clubDto = new ClubDto();
+            clubRepository.findByAbbreviation(clubIdentifier.getName())
+                    .ifPresent(club -> clubDto.setId(club.getId()));
+            if (clubDto.getId() != null) {
+                return Optional.of(clubDto);
+            } else {
+                return Optional.empty();
+            }
         }
 
         return Optional.empty();
     }
 
     /**
-     * Initialises an instance of the {@code IpscMatch} entity using the provided DTO and links it to the given club entity.
-     * If a match with the specified ID in the DTO exists in the repository, it is retrieved and updated; otherwise,
-     * a new {@code IpscMatch} entity is created and initialised.
+     * Initialises an instance of the {@code IpscMatch} entity using the provided DTO and
+     * links it to the given club entity.
+     * If a match with the specified ID in the DTO exists in the repository, it is
+     * retrieved and updated; otherwise, a new {@code IpscMatch} entity is created and initialised.
      *
-     * @param matchDto   the data transfer object containing match details and an optional match ID for lookup.
-     * @param clubEntity the club entity to associate with the match entity.
+     * @param matchDto the data transfer object containing match details and an optional
+     *                 match ID for lookup.
      * @return an {@code Optional} containing the initialised {@code IpscMatch} entity.
      */
-    protected Optional<IpscMatch> initMatchEntity(MatchDto matchDto, Club clubEntity) {
+    protected Optional<MatchDto> initMatchEntity(MatchDto matchDto) {
         // Find the match entity if present
         Optional<IpscMatch> optionalIpscMatchEntity = Optional.empty();
         if ((matchDto != null) && (matchDto.getId() != null)) {
@@ -139,27 +154,24 @@ public class DomainServiceImpl implements DomainService {
         }
 
         // Initialise the match entity from DTO or create a new entity
-        IpscMatch matchEntity = optionalIpscMatchEntity.orElse(new IpscMatch());
+        optionalIpscMatchEntity.ifPresent(match -> matchDto.setId(match.getId()));
 
-        // Add attributes to the match
-        matchEntity.init(matchDto);
-
-        // Link the match to the club
-        matchEntity.setClub(clubEntity);
-
-        return Optional.of(matchEntity);
+        return Optional.ofNullable(matchDto);
     }
 
     /**
      * Initialises a map of Competitor entities from a list of CompetitorDto objects.
      * Each CompetitorDto is used to either find an existing Competitor entity or create a new one.
-     * The map is constructed with the UUID as the key and the corresponding Competitor entity as the value.
+     * The map is constructed with the UUID as the key and the corresponding Competitor entity
+     * as the value.
      *
-     * @param competitorDtoList the list of CompetitorDto objects containing the data used to initialise or update Competitor entities
-     * @return a map where the key is the UUID from the CompetitorDto and the value is the corresponding Competitor entity
+     * @param competitorDtoList the list of CompetitorDto objects containing the data used to
+     *                          initialise or update Competitor entities
+     * @return a map where the key is the UUID from the CompetitorDto and the value is the
+     * corresponding Competitor entity
      */
-    protected Map<UUID, Competitor> initCompetitorEntities(List<CompetitorDto> competitorDtoList) {
-        Map<UUID, Competitor> competitorMap = new HashMap<>();
+    protected Map<UUID, CompetitorDto> initCompetitorEntities(List<CompetitorDto> competitorDtoList) {
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
         if (competitorDtoList != null) {
 
             // Initialise and accumulate competitor entities from DTOs
@@ -172,12 +184,11 @@ public class DomainServiceImpl implements DomainService {
                         }
 
                         // Initialise the competitor entity from DTO or create a new entity
-                        Competitor competitorEntity = optionalCompetitorEntity.orElse(new Competitor());
-                        // Add attributes to the competitor
-                        competitorEntity.init(competitorDto);
+                        optionalCompetitorEntity.ifPresent(competitor ->
+                                competitor.setId(competitorDto.getId()));
 
                         // Update the map of competitors
-                        competitorMap.put(competitorDto.getUuid(), competitorEntity);
+                        competitorMap.put(competitorDto.getUuid(), competitorDto);
                     });
         }
 
@@ -185,10 +196,11 @@ public class DomainServiceImpl implements DomainService {
     }
 
     /**
-     * Initialises and maps IPSC match stage entities based on the provided list of MatchStageDto objects
-     * and the associated IpscMatch entity. If the DTO contains an ID, it attempts to retrieve the
-     * corresponding entity from the repository; otherwise, it creates a new entity. Each stage
-     * is then linked to the associated match entity and added to the map.
+     * Initialises and maps IPSC match stage entities based on the provided list of
+     * MatchStageDto objects and the associated IpscMatch entity.
+     * If the DTO contains an ID, it attempts to retrieve the corresponding entity
+     * from the repository; otherwise, it creates a new entity.
+     * Each stage is then linked to the associated match entity and added to the map.
      *
      * @param matchStageDtoList the list of MatchStageDto objects containing data used to
      *                          initialise or update the match stage entities.
@@ -196,84 +208,104 @@ public class DomainServiceImpl implements DomainService {
      * @return a map where the keys are the UUIDs from the MatchStageDto objects and the values
      * are the initialised or updated IpscMatchStage entities.
      */
-    protected Map<UUID, IpscMatchStage> initMatchStageEntities(List<MatchStageDto> matchStageDtoList,
-                                                               IpscMatch matchEntity) {
-        Map<UUID, IpscMatchStage> matchStageMap = new HashMap<>();
+    protected Map<UUID, MatchStageDto> initMatchStageEntities(List<MatchStageDto> matchStageDtoList,
+                                                              MatchDto matchEntity) {
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
         if (matchStageDtoList != null) {
 
             // Initialise and accumulate match stages from DTOs
-            matchStageDtoList.stream().filter(Objects::nonNull)
-                    .forEach(stage -> {
-                        // Find the match stage entity if present
-                        Optional<IpscMatchStage> optionalIpscMatchStageEntity = Optional.empty();
-                        if (stage.getId() != null) {
-                            optionalIpscMatchStageEntity = ipscMatchStageRepository.findById(stage.getId());
-                        }
+            List<MatchStageDto> filteredMatchStageDtoList = matchStageDtoList.stream()
+                    .filter(Objects::nonNull)
+                    .filter(matchStageDto -> matchStageDto.getMatch() != null)
+                    .filter(matchCompetitorDto -> matchCompetitorDto.getMatch().getUuid()
+                            .equals(matchEntity.getUuid()))
+                    .toList();
+            filteredMatchStageDtoList.forEach(matchDto -> {
+                // Find the match stage entity if present
+                Optional<IpscMatchStage> optionalIpscMatchStageEntity = Optional.empty();
+                if (matchDto.getId() != null) {
+                    optionalIpscMatchStageEntity = ipscMatchStageRepository.findById(matchDto.getId());
+                }
 
-                        // Initialise the match stage entity from DTO or create a new entity
-                        IpscMatchStage matchStageEntity = optionalIpscMatchStageEntity.orElse(new IpscMatchStage());
-                        // Add attributes to the match stage
-                        matchStageEntity.init(stage, matchEntity);
-                        // Link the match stage to the match
-                        matchStageEntity.setMatch(matchEntity);
+                // Initialise the match stage entity from DTO or create a new entity
+                IpscMatchStage matchStageEntity = optionalIpscMatchStageEntity.orElse(null);
+                MatchStageDto matchStageDto = null;
+                if (matchStageEntity != null) {
+                    matchStageDto = new MatchStageDto(matchStageEntity);
+                }
 
-                        // Update the map of match stages
-                        matchStageMap.put(stage.getUuid(), matchStageEntity);
-                    });
+                // Update the map of match stages
+                matchStageMap.put(matchDto.getUuid(), matchStageDto);
+            });
         }
 
         return matchStageMap;
     }
 
     /**
-     * Initialises a map of match competitor entities based on the provided list of match competitor DTOs,
-     * a competitor map, and a club identifier. This method populates the map by either creating new match
-     * competitor entities or using existing ones retrieved from the repository, if available. It filters
-     * competitors by the specified club identifier when applicable.
+     * Initialises a map of match competitor entities based on the provided list of
+     * match competitor DTOs, a competitor map, and a club identifier. This method populates the
+     * map by either creating new match competitor entities or using existing ones retrieved
+     * from the repository, if available.
+     * It filters competitors by the specified club identifier when applicable.
      *
-     * @param matchCompetitors the list of match competitor DTOs containing details for each match competitor
-     * @param competitorMap    a map of UUIDs to Competitor entities used to map DTOs to existing competitors
-     * @param clubIdentifier   the identifier of the club used to filter match competitors by their club reference
-     * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities. If a required
-     * competitor or match competitor cannot be found, an empty map is returned
+     * @param matchCompetitorDtoList the list of match competitor DTOs containing details for each
+     *                               match competitor
+     * @param matchDto               the match entity with which the match competitors are associated
+     * @param competitorMap          a map of UUIDs to Competitor entities used to map DTOs to
+     *                               existing competitors
+     * @param clubIdentifier         the identifier of the club used to filter match competitors
+     *                               by their club reference
+     * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities.
+     * If a required competitor or match competitor cannot be found, an empty map is returned
      */
-    protected Map<UUID, MatchCompetitor> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitors,
-                                                                     Map<UUID, Competitor> competitorMap,
-                                                                     ClubIdentifier clubIdentifier) {
+    protected Map<UUID, MatchCompetitorDto> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitorDtoList,
+                                                                        MatchDto matchDto,
+                                                                        Map<UUID, CompetitorDto> competitorMap,
+                                                                        ClubIdentifier clubIdentifier) {
 
-        Map<UUID, MatchCompetitor> matchCompetitorMap = new HashMap<>();
-        if (matchCompetitors != null) {
+        Map<UUID, MatchCompetitorDto> matchCompetitorMap = new HashMap<>();
+        if (matchCompetitorDtoList != null) {
 
             // Initialise and accumulate match competitors from DTOs
-            for (MatchCompetitorDto matchCompetitorDto : matchCompetitors) {
+            List<MatchCompetitorDto> filteredMapCompetitorDtoList = matchCompetitorDtoList.stream()
+                    .filter(Objects::nonNull)
+                    .filter(matchCompetitorDto -> matchCompetitorDto.getMatch() != null)
+                    .filter(matchCompetitorDto -> matchCompetitorDto.getMatch().getUuid()
+                            .equals(matchDto.getUuid()))
+                    .toList();
+            for (MatchCompetitorDto matchCompetitorDto : filteredMapCompetitorDtoList) {
                 // Find the competitor entity
-                Competitor competitorEntity = competitorMap.get(matchCompetitorDto.getCompetitor().getUuid());
-                if (competitorEntity == null) {
+                CompetitorDto competitorDto = competitorMap.get(matchCompetitorDto.getCompetitor().getUuid());
+                if (competitorDto == null) {
                     return new HashMap<>();
                 }
 
                 // Find the match competitor entity if present
                 Optional<MatchCompetitor> optionalMatchCompetitorEntity = Optional.empty();
                 if (matchCompetitorDto.getId() != null) {
-                    optionalMatchCompetitorEntity =
-                            matchCompetitorRepository.findById(matchCompetitorDto.getId());
+                    optionalMatchCompetitorEntity = matchCompetitorRepository
+                            .findById(matchCompetitorDto.getId());
                 }
 
                 // Initialise the match competitor entity from DTO or create a new entity
-                MatchCompetitor matchCompetitorEntity = optionalMatchCompetitorEntity
-                        .orElse(new MatchCompetitor());
+                optionalMatchCompetitorEntity.ifPresent(matchCompetitor ->
+                        matchCompetitorDto.setId(matchCompetitor.getId()));
 
                 // Filter by club reference if specified
-                if ((matchCompetitorDto.getMatch() != null) && (matchCompetitorEntity.getMatch().getClub() != null)) {
+/*
+                if (matchCompetitorDto.getMatch() != null) {
                     if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                        if (!clubIdentifier.getName().equals(matchCompetitorDto.getMatch().getClub().getAbbreviation())) {
+                        String clubName = matchEntity.getClub().getName();
+                        if (!clubName.equalsIgnoreCase(clubIdentifier.getName())) {
                             continue;
                         }
                     }
                 }
+*/
 
                 // Update the map of match competitors
-                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorEntity);
+                matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorDto);
             }
         }
 
@@ -281,27 +313,49 @@ public class DomainServiceImpl implements DomainService {
     }
 
     /**
-     * Initialises and maps match stage competitor DTOs to their corresponding `MatchStageCompetitor` entities.
-     * This method processes the provided list of match stage competitor DTOs, matches them with existing entities
-     * (if present), or creates new entities as required. If a club identifier is specified, filtering is applied
-     * to include only the match stage competitors associated with the specified club.
+     * Initialises and maps match stage competitor DTOs to their corresponding
+     * `MatchStageCompetitor` entities.
+     * This method processes the provided list of match stage competitor DTOs, matches them with
+     * existing entities (if present), or creates new entities as required.
+     * If a club identifier is specified, filtering is applied to include only the match
+     * stage competitors associated with the specified club.
      *
-     * @param matchStageCompetitors a list of `MatchStageCompetitorDto` objects representing the input data for match stage competitors.
-     * @param competitorMap         a map of `UUID` to `Competitor` entities used to resolve competitors by UUID.
-     * @param clubIdentifier        the `ClubIdentifier` to filter match stage competitors based on club information, or `null` to skip filtering.
-     * @return a map of `UUID` to `MatchStageCompetitor` entities representing the initialised and mapped match stage competitors.
+     * @param matchStageCompetitorDtoList a list of `MatchStageCompetitorDto` objects representing
+     *                                    the input data for match stage competitors.
+     * @param competitorMap               a map of `UUID` to `Competitor` entities used to resolve
+     *                                    competitors by UUID.
+     * @param clubIdentifier              the `ClubIdentifier` to filter match stage competitors
+     *                                    based on club information, or `null` to skip filtering.
+     * @return a map of `UUID` to `MatchStageCompetitor` entities representing the initialised and
+     * mapped match stage competitors.
      */
-    protected Map<UUID, MatchStageCompetitor> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitors,
-                                                                               Map<UUID, Competitor> competitorMap,
-                                                                               ClubIdentifier clubIdentifier) {
+    protected Map<UUID, MatchStageCompetitorDto> initMatchStageCompetitorEntities(List<MatchStageCompetitorDto> matchStageCompetitorDtoList,
+                                                                                  Map<UUID, MatchStageDto> matchStageMap,
+                                                                                  Map<UUID, CompetitorDto> competitorMap,
+                                                                                  ClubIdentifier clubIdentifier) {
 
-        Map<UUID, MatchStageCompetitor> matchStageCompetitorMap = new HashMap<>();
-        if (matchStageCompetitors != null) {
+        if (matchStageCompetitorDtoList == null) {
+            return new HashMap<>();
+        }
+
+        Map<UUID, MatchStageCompetitorDto> matchStageCompetitorMap = new HashMap<>();
+        List<MatchStageDto> filteredMatchStageDtoList = matchStageMap.values().stream()
+                .filter(Objects::nonNull).toList();
+        for (MatchStageDto matchStageDto : filteredMatchStageDtoList) {
+
             // Initialises and accumulates match stage competitors from DTOs
-            for (MatchStageCompetitorDto matchStageCompetitorDto : matchStageCompetitors) {
+            List<MatchStageCompetitorDto> filteredMatchCompetitors = matchStageCompetitorDtoList.stream()
+                    .filter(Objects::nonNull)
+                    .filter(matchStageCompetitorDto ->
+                            matchStageCompetitorDto.getMatchStage() != null)
+                    .filter(matchStageCompetitorDto ->
+                            matchStageCompetitorDto.getMatchStage().getUuid().equals(matchStageDto.getUuid()))
+                    .toList();
+            for (MatchStageCompetitorDto matchStageCompetitorDto : filteredMatchCompetitors) {
                 // Find the competitor entity
-                Competitor competitorEntity = competitorMap.get(matchStageCompetitorDto.getCompetitor().getUuid());
-                if (competitorEntity == null) {
+                CompetitorDto competitorDto =
+                        competitorMap.get(matchStageCompetitorDto.getCompetitor().getUuid());
+                if (competitorDto == null) {
                     return new HashMap<>();
                 }
 
@@ -313,11 +367,14 @@ public class DomainServiceImpl implements DomainService {
                 }
 
                 // Initialises the match stage competitor entity from DTO or create a new entity
-                MatchStageCompetitor matchStageCompetitorEntity = optionalMatchStageEntity
-                        .orElse(new MatchStageCompetitor());
+                MatchStageCompetitor matchStageCompetitorEntity = optionalMatchStageEntity.orElse(null);
+                if (matchStageCompetitorEntity == null) {
+                    continue;
+                }
 
                 // Filter by club reference if specified
-                if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+                if ((clubIdentifier != null) &&
+                        (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
                     if (matchStageCompetitorDto.getClub() != null) {
                         if (!clubIdentifier.getName().equals(matchStageCompetitorDto.getClub().getName())) {
                             continue;
@@ -326,7 +383,7 @@ public class DomainServiceImpl implements DomainService {
                 }
 
                 // Update the map of match stage competitors
-                matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorEntity);
+                matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorDto);
             }
         }
 

@@ -1,14 +1,15 @@
 # Release Notes History
 
 A complete archive of all release notes for the HPSC Website Backend project from version 1.0.0 through
-version 5.1.0, documenting the evolution of features, improvements, and changes across the entire project
+version 5.2.0, documenting the evolution of features, improvements, and changes across the entire project
 lifecycle.
 
 ---
 
 ## 📑 Table of Contents
 
-- [🧾 Version 5.1.0](#-version-510---february-25-2026) ← Current Release
+- [🧾 Version 5.2.0](#-version-520---february-27-2026) ← Current Release
+- [🧾 Version 5.1.0](#-version-510---february-25-2026)
 - [🧾 Version 5.0.0](#-version-500---february-24-2026)
 - [🧾 Version 4.1.0](#-version-410---february-13-2026)
 - [🧾 Version 4.0.0](#-version-400---february-11-2026)
@@ -20,6 +21,54 @@ lifecycle.
 - [🧾 Version 1.1.1](#-version-111---january-16-2026)
 - [🧾 Version 1.1.0](#-version-110---january-14-2026)
 - [🧾 Version 1.0.0](#-version-100---january-4-2026)
+
+---
+
+## 🧾 Version 5.2.0 - February 27, 2026
+
+**Theme:** Match Results Processing Enhancement & Architecture Refactoring
+
+### 📖 Overview
+
+Version 5.2.0 represents a significant architectural improvement focused on match results processing, entity
+initialisation, and comprehensive test coverage. This release introduces new domain mapping structures;
+refactors match entity handling, and consolidates test suites across multiple services and utilities. The
+changes emphasise null safety, improved data flow, and cleaner separation of concerns between DTOs and
+entities while maintaining full backward compatibility.
+
+### ⭐ Key Highlights
+
+#### 🏗️ Architecture & Domain Model Enhancements
+
+- **New Mapping Architecture:** Three-tier mapping system (DtoMapping, EntityMapping, DtoToEntityMapping)
+- **Enhanced Match Entity Handling:** Complete refactoring with a dedicated MatchEntityService
+- **Null Safety Improvements:** Array initialisation and Optional return types
+- **Service Layer Refactoring:** 246–333 lines changed across major services
+
+#### 🧪 Comprehensive Test Consolidation
+
+- **DtoToEntityMappingTest:** 716 lines of comprehensive coverage
+- **TransactionServiceTest:** 2,000+ lines with extensive edge cases
+- **All Service Tests:** Consolidated across all services and utilities
+- **Removed:** 3,000+ lines of duplicate tests
+- **Naming:** All tests follow `testMethod_whenCondition_thenExpectedBehavior` pattern
+
+#### 🔧 Service Layer Refactoring
+
+- **IpscMatchServiceImpl:** 246 lines changed
+- **IpscMatchResultServiceImpl:** 333 lines changed
+- **TransactionServiceImpl:** 198 lines changed
+- **IpscServiceImpl:** 106 lines changed
+
+### 📊 Statistics
+
+- **26 commits**, **61 files changed**
+- **+13,567 insertions**, **-5,898 deletions**
+- **Net: +7,669 lines**
+
+### 🔄 Backward Compatibility
+
+✅ **FULLY BACKWARD COMPATIBLE** – No breaking changes, safe for direct upgrade
 
 ---
 

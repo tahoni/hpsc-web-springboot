@@ -85,25 +85,17 @@ public class MatchStageCompetitor {
     private LocalDateTime dateEdited;
 
     /**
-     * Initialises the current {@code MatchStageCompetitor} entity with data from a DTO
-     * and associated entities.
-     *
+     * Initialises a {@code MatchStageCompetitor} instance using the data provided
+     * in the {@code MatchStageCompetitorDto}.
      * <p>
-     * This method sets the relevant fields in the entity, including association with a stage,
-     * competitor information, performance metrics, and date attributes.
-     * </p>
+     * The method sets various attributes related to the competitor's performance
+     * in a specific match stage, such as scores, penalties, disqualification status,
+     * and rankings, based on the data from the provided DTO object.
      *
-     * @param matchStageCompetitorDto the DTO containing data needed to populate the entity fields.
-     * @param matchStageEntity        the associated match stage entity.
-     * @param competitorEntity        the associated competitor entity.
+     * @param matchStageCompetitorDto the data transfer object containing the
+     *                                values to initialize the fields of this object
      */
-    public void init(MatchStageCompetitorDto matchStageCompetitorDto, IpscMatchStage matchStageEntity,
-                     Competitor competitorEntity) {
-
-        // Initialises the match stage and competitor details
-        this.matchStage = matchStageEntity;
-        this.competitor = competitorEntity;
-
+    public void init(MatchStageCompetitorDto matchStageCompetitorDto) {
         // Initialises the match stage and competitor attributes
         this.competitorCategory = matchStageCompetitorDto.getCompetitorCategory();
         this.firearmType = matchStageCompetitorDto.getFirearmType();
