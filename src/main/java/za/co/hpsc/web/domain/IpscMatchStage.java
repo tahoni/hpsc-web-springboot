@@ -95,6 +95,25 @@ public class IpscMatchStage {
         this.maxPoints = stage.getMaxPoints();
     }
 
+    // TODOL Javadoc
+    public void init(MatchStageDto stage) {
+        // Initialises the stage attributes
+        this.stageNumber = stage.getStageNumber();
+        this.stageName = stage.getStageName();
+        this.rangeNumber = stage.getRangeNumber();
+
+        // Initialises the target details
+        this.targetPaper = stage.getTargetPaper();
+        this.targetPopper = stage.getTargetPopper();
+        this.targetPlates = stage.getTargetPlates();
+        this.targetDisappear = stage.getTargetDisappear();
+        this.targetPenalty = stage.getTargetPenalty();
+
+        // Initialises the possible points details
+        this.minRounds = stage.getMinRounds();
+        this.maxPoints = stage.getMaxPoints();
+    }
+
     @Override
     public String toString() {
         return this.stageName + " (" + this.stageNumber + ")";

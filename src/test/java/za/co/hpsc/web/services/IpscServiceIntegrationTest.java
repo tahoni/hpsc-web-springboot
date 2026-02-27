@@ -8,9 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.repositories.CompetitorRepository;
-import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
@@ -44,9 +42,15 @@ public class IpscServiceIntegrationTest {
     }
 
     @Bean
-    public TransactionService transactionService(ClubRepository clubRepository,
-                                                 IpscMatchRepository ipscMatchRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, clubRepository, ipscMatchRepository);
+    public TransactionService transactionService(DomainService domainService,
+                                                 ClubRepository clubRepository,
+                                                 IpscMatchRepository ipscMatchRepository,
+                                                 IpscMatchStageRepository ipscMatchStageRepository,
+                                                 MatchCompetitorRepository matchCompetitorRepository,
+                                                 MatchStageCompetitorRepository matchStageCompetitorRepository) {
+        return new TransactionServiceImpl(platformTransactionManager, domainService, clubRepository,
+                competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
+                matchCompetitorRepository, matchStageCompetitorRepository);
     }
 
     // =====================================================================
@@ -114,7 +118,7 @@ public class IpscServiceIntegrationTest {
                     "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True'/></data></xml>",
                     "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
                     "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
-                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00'/></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00' IcsAlias='1500'/></data></xml>",
                     "classify": "<xml><data><row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/></data></xml>",
                     "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100'/></data></xml>",
                     "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='100'/></data></xml>",

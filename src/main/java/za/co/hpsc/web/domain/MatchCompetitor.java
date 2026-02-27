@@ -93,6 +93,19 @@ public class MatchCompetitor {
         this.matchRanking = matchCompetitorDto.getMatchRanking();
     }
 
+    // TODO: Javadoc
+    public void init(MatchCompetitorDto matchCompetitorDto) {
+        // Initialises the competitor attributes
+        this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
+        this.firearmType = matchCompetitorDto.getFirearmType();
+        this.division = matchCompetitorDto.getDivision();
+        this.powerFactor = matchCompetitorDto.getPowerFactor();
+
+        // Initialises the match scoring attributes
+        this.matchPoints = matchCompetitorDto.getMatchPoints();
+        this.matchRanking = matchCompetitorDto.getMatchRanking();
+    }
+
     public String toString() {
         return this.match.toString() + ": " + this.competitor.toString();
     }
