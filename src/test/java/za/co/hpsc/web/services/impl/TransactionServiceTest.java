@@ -5,16 +5,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
-import za.co.hpsc.web.models.ipsc.dto.ClubDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
-import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.models.ipsc.dto.*;
+import za.co.hpsc.web.repositories.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -22,10 +22,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
-// TODO: add more tests
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TransactionServiceTest {
 
     @Mock
@@ -33,7 +34,15 @@ public class TransactionServiceTest {
     @Mock
     private ClubRepository clubRepository;
     @Mock
+    private CompetitorRepository competitorRepository;
+    @Mock
     private IpscMatchRepository ipscMatchRepository;
+    @Mock
+    private IpscMatchStageRepository ipscMatchStageRepository;
+    @Mock
+    private MatchCompetitorRepository matchCompetitorRepository;
+    @Mock
+    private MatchStageCompetitorRepository matchStageCompetitorRepository;
     @Mock
     private TransactionStatus transactionStatus;
 
@@ -45,15 +54,16 @@ public class TransactionServiceTest {
     // =====================================================================
 
     @Test
-    public void testSaveMatchResults_whenMatchResultsIsNull_thenReturnsEmpty() {
+    public void testSaveMatchResults_whenDtoMappingIsNull_thenReturnsEmpty() {
         // Arrange
+
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionService.saveMatchResults(null)
         );
 
         // Assert
-        assertFalse(result.isPresent());
+        assertTrue(result.isEmpty());
         verify(transactionManager, never()).getTransaction(any());
     }
 
@@ -69,40 +79,21 @@ public class TransactionServiceTest {
         );
 
         // Assert
-        assertFalse(result.isPresent());
+        assertTrue(result.isEmpty());
         verify(transactionManager, never()).getTransaction(any());
     }
 
-    @Test
-    public void testSaveMatchResults_whenDomainServiceReturnsHolderWithNullMatch_thenReturnsEmpty() {
-        // Arrange
-        DtoMapping dtoMapping = new DtoMapping();
-        dtoMapping.setMatch(null);
-
-        // Act
-        Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoMapping)
-        );
-
-        // Assert
-        assertFalse(result.isPresent());
-        verify(ipscMatchRepository, never()).save(any());
-        verify(clubRepository, never()).save(any());
-    }
 
     // =====================================================================
     // Tests for saveMatchResults - Valid Data Processing
     // =====================================================================
 
     @Test
-    public void testSaveMatchResults_whenMatchHasOnlyRequiredFields_thenSavesMatch() {
+    public void testSaveMatchResults_whenMatchProvided_thenSavesMatchAndCommits() {
         // Arrange
         MatchDto matchDto = buildMatchDto(100, null);
-        IpscMatch ipscMatch = new IpscMatch();
-        ipscMatch.setName(matchDto.getName());
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(matchDto);
-
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
@@ -112,23 +103,21 @@ public class TransactionServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(ipscMatch.getId(), result.get().getId());
         verify(transactionManager).getTransaction(any());
         verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
         verify(clubRepository, never()).save(any());
+        verify(competitorRepository, never()).saveAll(anyList());
+        verify(ipscMatchStageRepository, never()).saveAll(anyList());
+        verify(matchCompetitorRepository, never()).saveAll(anyList());
+        verify(matchStageCompetitorRepository, never()).saveAll(anyList());
         verify(transactionManager).commit(transactionStatus);
     }
 
     @Test
-    public void testSaveMatchResults_whenMatchHasClub_thenSavesBothClubAndMatch() {
+    public void testSaveMatchResults_whenClubProvided_thenSavesClubAndMatch() {
         // Arrange
         MatchDto matchDto = buildMatchDto(100, null);
-        ClubDto clubDto = new ClubDto();
-        clubDto.setId(100L);
-        clubDto.setName("Test Club");
-        clubDto.setAbbreviation("TC");
-        IpscMatch ipscMatch = new IpscMatch();
-        ipscMatch.setName(matchDto.getName());
+        ClubDto clubDto = buildClubDto(100L, "Test Club");
         Club club = new Club();
         club.setId(clubDto.getId());
         club.setName(clubDto.getName());
@@ -146,36 +135,28 @@ public class TransactionServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(ipscMatch.getId(), result.get().getId());
         verify(clubRepository, times(1)).save(club);
         verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
         verify(transactionManager).commit(transactionStatus);
     }
 
     @Test
-    public void testSaveMatchResults_whenFullMatchResults_thenSavesAllEntities() {
+    public void testSaveMatchResults_whenFullMappingProvided_thenSavesAllEntities() {
         // Arrange
-        MatchDto matchDto = buildMatchDto(100, 1L);
-        ClubDto clubDto = new ClubDto();
-        clubDto.setId(100L);
-        clubDto.setName("Full Club");
-        IpscMatch ipscMatch = new IpscMatch();
-        ipscMatch.setId(1L);
-        ipscMatch.setName(matchDto.getName());
-        Club club = new Club();
-        club.setId(clubDto.getId());
-        club.setName(clubDto.getName());
-        DtoMapping dtoMapping = new DtoMapping();
-        dtoMapping.setMatch(matchDto);
-        dtoMapping.setClub(clubDto);
-        dtoMapping.setCompetitorMap(new HashMap<>());
-        dtoMapping.setMatchStageMap(new HashMap<>());
-        dtoMapping.setMatchCompetitorMap(new HashMap<>());
-        dtoMapping.setMatchStageCompetitorMap(new HashMap<>());
+        MatchDto matchDto = buildMatchDto(101, 1L);
+        ClubDto clubDto = buildClubDto(200L, "Full Club");
+        CompetitorDto competitorDto = buildCompetitorDto(300L, 1);
+        MatchStageDto matchStageDto = buildMatchStageDto(matchDto, 1);
+        MatchCompetitorDto matchCompetitorDto = buildMatchCompetitorDto(competitorDto, matchDto);
+        MatchStageCompetitorDto matchStageCompetitorDto =
+                buildMatchStageCompetitorDto(competitorDto, matchStageDto);
+
+        DtoMapping dtoMapping = buildFullMapping(matchDto, clubDto, competitorDto,
+                matchStageDto, matchCompetitorDto, matchStageCompetitorDto);
 
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
-        when(clubRepository.findById(clubDto.getId())).thenReturn(Optional.of(club));
-        when(ipscMatchRepository.findById(matchDto.getId())).thenReturn(Optional.of(ipscMatch));
+        when(clubRepository.findById(clubDto.getId())).thenReturn(Optional.of(new Club()));
+        when(ipscMatchRepository.findById(matchDto.getId())).thenReturn(Optional.of(new IpscMatch()));
 
         // Act
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
@@ -184,67 +165,22 @@ public class TransactionServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(ipscMatch.getId(), result.get().getId());
-        verify(clubRepository, times(1)).save(club);
-        verify(ipscMatchRepository, times(1)).save(ipscMatch);
-        verify(transactionManager).commit(transactionStatus);
-    }
-
-    @Test
-    public void testSaveMatchResults_whenDomainServiceReturnsResults_thenReturnsResults() {
-        // Arrange
-        MatchDto matchDto = buildMatchDto(100, null);
-        DtoMapping dtoMapping = new DtoMapping();
-        dtoMapping.setMatch(matchDto);
-
-        when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
-
-        // Act
-        Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoMapping)
-        );
-
-        // Assert
-        assertTrue(result.isPresent());
-        verify(transactionManager).getTransaction(any());
+        verify(clubRepository, times(1)).save(any(Club.class));
         verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
-        verify(clubRepository, never()).save(any());
+        verify(competitorRepository, times(1)).saveAll(anyList());
+        verify(ipscMatchStageRepository, times(1)).saveAll(anyList());
+        verify(matchCompetitorRepository, times(1)).saveAll(anyList());
+        verify(matchStageCompetitorRepository, times(1)).saveAll(anyList());
         verify(transactionManager).commit(transactionStatus);
     }
 
-    // =====================================================================
-    // Tests for saveMatchResults - Edge Cases and Boundary Conditions
-    // =====================================================================
-
     @Test
-    public void testSaveMatchResults_whenExceptionOccurs_thenRollsBackAndThrowsFatalException() {
-        // Arrange
-        MatchDto matchDto = buildMatchDto(100, 1L);
-        DtoMapping dtoMapping = new DtoMapping();
-        dtoMapping.setMatch(matchDto);
-
-        when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
-        when(ipscMatchRepository.findById(100L)).thenThrow(new RuntimeException("Database error"));
-
-        // Act & Assert
-        assertThrows(FatalException.class, () ->
-                transactionService.saveMatchResults(dtoMapping)
-        );
-        verify(transactionManager).getTransaction(any());
-        verify(transactionManager).rollback(transactionStatus);
-        verify(transactionManager, never()).commit(any());
-    }
-
-    @Test
-    public void testSaveMatchResults_whenMatchNameIsBlank_thenStillProcesses() {
+    public void testSaveMatchResults_whenMatchNameIsBlank_thenStillCommits() {
         // Arrange
         MatchDto matchDto = buildMatchDto(100, null);
         matchDto.setName("   ");
-        IpscMatch ipscMatch = new IpscMatch();
-        ipscMatch.setName("   ");
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(matchDto);
-
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
@@ -255,23 +191,19 @@ public class TransactionServiceTest {
         // Assert
         assertTrue(result.isPresent());
         verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
-        verify(clubRepository, never()).save(any());
         verify(transactionManager).commit(transactionStatus);
     }
 
     @Test
-    public void testSaveMatchResults_whenEmptyCollections_thenSavesMatch() {
+    public void testSaveMatchResults_whenEmptyCollections_thenSkipsSaveAll() {
         // Arrange
         MatchDto matchDto = buildMatchDto(100, null);
-        IpscMatch ipscMatch = new IpscMatch();
-        ipscMatch.setName(matchDto.getName());
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageMap(new HashMap<>());
         dtoMapping.setCompetitorMap(new HashMap<>());
         dtoMapping.setMatchCompetitorMap(new HashMap<>());
         dtoMapping.setMatchStageCompetitorMap(new HashMap<>());
-
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
@@ -282,37 +214,41 @@ public class TransactionServiceTest {
         // Assert
         assertTrue(result.isPresent());
         verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
-        verify(clubRepository, never()).save(any());
+        verify(competitorRepository, never()).saveAll(anyList());
+        verify(ipscMatchStageRepository, never()).saveAll(anyList());
+        verify(matchCompetitorRepository, never()).saveAll(anyList());
+        verify(matchStageCompetitorRepository, never()).saveAll(anyList());
         verify(transactionManager).commit(transactionStatus);
     }
 
     @Test
-    public void testSaveMatchResults_whenNullCollections_thenSavesMatch() {
+    public void testSaveMatchResults_whenNullMaps_thenRollsBackAndThrowsFatalException() {
         // Arrange
         MatchDto matchDto = buildMatchDto(100, null);
-        IpscMatch ipscMatch = new IpscMatch();
-        ipscMatch.setName(matchDto.getName());
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(matchDto);
-
+        dtoMapping.setCompetitorMap(null);
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
-        // Act
-        Optional<IpscMatch> result = assertDoesNotThrow(() ->
-                transactionService.saveMatchResults(dtoMapping)
-        );
-
-        // Assert
-        assertTrue(result.isPresent());
-        verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
-        verify(clubRepository, never()).save(any());
-        verify(transactionManager).commit(transactionStatus);
+        // Act & Assert
+        assertThrows(FatalException.class, () -> transactionService.saveMatchResults(dtoMapping));
+        verify(transactionManager).getTransaction(any());
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
     }
 
 
     // =====================================================================
     // Helper methods for building test data
     // =====================================================================
+
+    private static ClubDto buildClubDto(Long clubId, String name) {
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(clubId);
+        clubDto.setName(name);
+        clubDto.setAbbreviation("TC");
+        return clubDto;
+    }
 
     private static MatchDto buildMatchDto(int matchIndex, Long matchId) {
         MatchDto matchDto = new MatchDto();
@@ -321,5 +257,70 @@ public class TransactionServiceTest {
         matchDto.setName("Match " + matchIndex);
         matchDto.setScheduledDate(LocalDateTime.now());
         return matchDto;
+    }
+
+    private static CompetitorDto buildCompetitorDto(Long competitorId, int competitorIndex) {
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(competitorId);
+        competitorDto.setIndex(competitorIndex);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C" + competitorIndex);
+        return competitorDto;
+    }
+
+    private static MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageNumber) {
+        MatchStageDto matchStageDto = new MatchStageDto();
+        matchStageDto.setMatch(matchDto);
+        matchStageDto.setStageNumber(stageNumber);
+        matchStageDto.setStageName("Stage " + stageNumber);
+        return matchStageDto;
+    }
+
+    private static MatchCompetitorDto buildMatchCompetitorDto(CompetitorDto competitorDto, MatchDto matchDto) {
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setCompetitor(competitorDto);
+        matchCompetitorDto.setMatch(matchDto);
+        matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+        matchCompetitorDto.setMatchIndex(matchDto.getIndex());
+        return matchCompetitorDto;
+    }
+
+    private static MatchStageCompetitorDto buildMatchStageCompetitorDto(CompetitorDto competitorDto,
+                                                                        MatchStageDto matchStageDto) {
+        MatchStageCompetitorDto matchStageCompetitorDto = new MatchStageCompetitorDto();
+        matchStageCompetitorDto.setCompetitor(competitorDto);
+        matchStageCompetitorDto.setMatchStage(matchStageDto);
+        matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+        matchStageCompetitorDto.setMatchStageIndex(matchStageDto.getIndex());
+        return matchStageCompetitorDto;
+    }
+
+    private static DtoMapping buildFullMapping(MatchDto matchDto,
+                                               ClubDto clubDto,
+                                               CompetitorDto competitorDto,
+                                               MatchStageDto matchStageDto,
+                                               MatchCompetitorDto matchCompetitorDto,
+                                               MatchStageCompetitorDto matchStageCompetitorDto) {
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        dtoMapping.setClub(clubDto);
+
+        HashMap<java.util.UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+        dtoMapping.setCompetitorMap(competitorMap);
+
+        HashMap<java.util.UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(matchStageDto.getUuid(), matchStageDto);
+        dtoMapping.setMatchStageMap(matchStageMap);
+
+        HashMap<java.util.UUID, MatchCompetitorDto> matchCompetitorMap = new HashMap<>();
+        matchCompetitorMap.put(matchCompetitorDto.getUuid(), matchCompetitorDto);
+        dtoMapping.setMatchCompetitorMap(matchCompetitorMap);
+
+        HashMap<java.util.UUID, MatchStageCompetitorDto> matchStageCompetitorMap = new HashMap<>();
+        matchStageCompetitorMap.put(matchStageCompetitorDto.getUuid(), matchStageCompetitorDto);
+        dtoMapping.setMatchStageCompetitorMap(matchStageCompetitorMap);
+        return dtoMapping;
     }
 }

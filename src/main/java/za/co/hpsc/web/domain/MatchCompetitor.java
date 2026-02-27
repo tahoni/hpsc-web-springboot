@@ -64,7 +64,15 @@ public class MatchCompetitor {
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
-    // TODO: Javadoc
+    /**
+     * Initialises the attributes of the MatchCompetitor instance using data from the
+     * provided MatchCompetitorDto.
+     *
+     * @param matchCompetitorDto an instance of MatchCompetitorDto containing the
+     *                           competitor's category, firearm type, division,
+     *                           power factor, match points, and match ranking to be assigned to
+     *                           this MatchCompetitor.
+     */
     public void init(MatchCompetitorDto matchCompetitorDto) {
         // Initialises the competitor attributes
         this.competitorCategory = matchCompetitorDto.getCompetitorCategory();

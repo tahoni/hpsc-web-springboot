@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-// TODO: add more tests
 @ExtendWith(MockitoExtension.class)
 public class DomainServiceTest {
     @Mock

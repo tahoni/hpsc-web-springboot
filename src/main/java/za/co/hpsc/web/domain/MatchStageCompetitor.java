@@ -84,7 +84,17 @@ public class MatchStageCompetitor {
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
 
-    // TODO: Javadoc
+    /**
+     * Initialises a {@code MatchStageCompetitor} instance using the data provided
+     * in the {@code MatchStageCompetitorDto}.
+     * <p>
+     * The method sets various attributes related to the competitor's performance
+     * in a specific match stage, such as scores, penalties, disqualification status,
+     * and rankings, based on the data from the provided DTO object.
+     *
+     * @param matchStageCompetitorDto the data transfer object containing the
+     *                                values to initialize the fields of this object
+     */
     public void init(MatchStageCompetitorDto matchStageCompetitorDto) {
         // Initialises the match stage and competitor attributes
         this.competitorCategory = matchStageCompetitorDto.getCompetitorCategory();
