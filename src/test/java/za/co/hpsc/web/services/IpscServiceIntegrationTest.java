@@ -8,7 +8,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.repositories.*;
+import za.co.hpsc.web.repositories.ClubRepository;
+import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
@@ -42,15 +44,9 @@ public class IpscServiceIntegrationTest {
     }
 
     @Bean
-    public TransactionService transactionService(DomainService domainService,
-                                                 ClubRepository clubRepository,
-                                                 IpscMatchRepository ipscMatchRepository,
-                                                 IpscMatchStageRepository ipscMatchStageRepository,
-                                                 MatchCompetitorRepository matchCompetitorRepository,
-                                                 MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, domainService, clubRepository,
-                competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
-                matchCompetitorRepository, matchStageCompetitorRepository);
+    public TransactionService transactionService(ClubRepository clubRepository,
+                                                 IpscMatchRepository ipscMatchRepository) {
+        return new TransactionServiceImpl(platformTransactionManager, clubRepository, ipscMatchRepository);
     }
 
     // =====================================================================

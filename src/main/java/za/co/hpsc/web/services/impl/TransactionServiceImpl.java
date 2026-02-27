@@ -10,8 +10,8 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
-import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.DomainService;
+import za.co.hpsc.web.repositories.ClubRepository;
+import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.util.Optional;
@@ -22,32 +22,16 @@ import java.util.Optional;
 public class TransactionServiceImpl implements TransactionService {
     protected final PlatformTransactionManager transactionManager;
 
-    protected final DomainService domainService;
-
     protected final ClubRepository clubRepository;
-    protected final CompetitorRepository competitorRepository;
     protected final IpscMatchRepository ipscMatchRepository;
-    protected final IpscMatchStageRepository ipscMatchStageRepository;
-    protected final MatchCompetitorRepository matchCompetitorRepository;
-    protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
 
     public TransactionServiceImpl(PlatformTransactionManager transactionManager,
-                                  DomainService domainService,
                                   ClubRepository clubRepository,
-                                  CompetitorRepository competitorRepository,
-                                  IpscMatchRepository ipscMatchRepository,
-                                  IpscMatchStageRepository ipscMatchStageRepository,
-                                  MatchCompetitorRepository matchCompetitorRepository,
-                                  MatchStageCompetitorRepository matchStageCompetitorRepository) {
+                                  IpscMatchRepository ipscMatchRepository) {
 
         this.transactionManager = transactionManager;
-        this.domainService = domainService;
         this.clubRepository = clubRepository;
-        this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
-        this.ipscMatchStageRepository = ipscMatchStageRepository;
-        this.matchCompetitorRepository = matchCompetitorRepository;
-        this.matchStageCompetitorRepository = matchStageCompetitorRepository;
     }
 
     @Override

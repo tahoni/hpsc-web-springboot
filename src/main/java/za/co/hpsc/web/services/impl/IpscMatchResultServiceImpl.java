@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// TODO: check
 @Slf4j
 @Service
 public class IpscMatchResultServiceImpl implements IpscMatchResultService {
@@ -72,10 +71,11 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
      * using the club response.
      * </p>
      *
-     * @param clubResponse the response containing club information, which may be used to initialise the DTO.
+     * @param clubResponse the response containing club information, which may be used to
+     *                     initialise the DTO.
      *                     If null, the method will return an empty optional.
-     * @return an {@code Optional} containing the initialized {@link ClubDto}, or {@code Optional.empty}
-     * if the provided clubResponse is null.
+     * @return an {@code Optional} containing the initialized {@link ClubDto},
+     * or {@code Optional.empty} if the provided clubResponse is null.
      */
     protected Optional<ClubDto> initClub(ClubResponse clubResponse) {
         if (clubResponse == null) {
@@ -99,13 +99,15 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
      * Initialises a {@link MatchDto} object based on the provided IPSC response data
      * and club information.
      *
-     * <p>The method checks if the match exists in the database, determines whether the response contains
-     * newer scores, and skips updates if applicable. If the match is valid, it creates or updates the
-     * match DTO and initialises its attributes.
+     * <p>The method checks if the match exists in the database, determines whether the response
+     * contains newer scores, and skips updates if applicable. If the match is valid,
+     * it creates or updates the match DTO and initialises its attributes.
      * </p>
      *
-     * @param ipscResponse The response object containing match details and scores from the IPSC system.
-     * @param clubDto      The club data transfer object containing information about the club associated with the match.
+     * @param ipscResponse The response object containing match details and scores from
+     *                     the IPSC system.
+     * @param clubDto      The club data transfer object containing information about the club
+     *                     associated with the match.
      * @return An {@code Optional} containing the initialised {@link MatchDto} if the match is valid
      * and meets the update criteria, or {@code Optional.empty()} if no match is initialised.
      */
@@ -165,8 +167,9 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         stageResponses.stream().filter(Objects::nonNull)
                 .forEach(stageResponse -> {
                     // Attempts to find the match stage by match ID and stage ID in the database
-                    Optional<IpscMatchStage> optionalMatchStage = matchStageEntityService.findMatchStage(matchDto.getId(),
-                            stageResponse.getStageId());
+                    Optional<IpscMatchStage> optionalMatchStage =
+                            matchStageEntityService.findMatchStage(matchDto.getId(),
+                                    stageResponse.getStageId());
                     // Creates a new stage DTO, from either the found entity or the stage response
                     MatchStageDto matchStageDto = optionalMatchStage
                             .map(ms -> new MatchStageDto(ms, matchDto))
@@ -181,12 +184,14 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
     }
 
     /**
-     * Initialises the scores and competitors for a match based on the provided match results and IPSC response data.
+     * Initialises the scores and competitors for a match based on the provided match results
+     * and IPSC response data.
      *
-     * @param matchResultsDto The data transfer object containing information about the current match,
-     *                        including scores, competitors, and stages, to be updated.
-     * @param ipscResponse    The response containing the scores, members, and other related data fetched
-     *                        from the IPSC system. May include enrolled members and finalised scores.
+     * @param matchResultsDto The data transfer object containing information about the current
+     *                        match, including scores, competitors, and stages, to be updated.
+     * @param ipscResponse    The response containing the scores, members, and other related data
+     *                        fetched from the IPSC system.
+     *                        May include enrolled members and finalised scores.
      */
     protected void initScores(@NotNull MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
         if ((ipscResponse == null) || (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
@@ -200,15 +205,17 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         List<ScoreResponse> scoreResponses = ipscResponse.getScores().stream()
                 .filter(Objects::nonNull)
                 .filter(scoreResponse -> scoreResponse.getMatchId() != null)
-                .filter(scoreResponse -> scoreResponse.getMatchId().equals(matchResultsDto.getMatch().getIndex()))
+                .filter(scoreResponse -> scoreResponse.getMatchId()
+                        .equals(matchResultsDto.getMatch().getIndex()))
                 .toList();
-        List<ScoreDto> scoreDtos = scoreResponses.stream()
+        List<ScoreDto> scoreDtoList = scoreResponses.stream()
                 .filter(Objects::nonNull)
                 .map(ScoreDto::new)
                 .toList();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
 
-        // Maps score responses to corresponding member responses, excluding members who didn't participate
+        // Maps score responses to corresponding member responses,
+        // excluding members who didn't participate
         Set<Integer> memberIdsWithScores = scoreResponses.stream()
                 .filter(Objects::nonNull)
                 .filter(scoreResponse -> scoreResponse.getFinalScore() != null)
@@ -221,7 +228,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                         .contains(memberResponse.getMemberId()))
                 .toList();
 
-        matchResultsDto.setScores(scoreDtos);
+        matchResultsDto.setScores(scoreDtoList);
 
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
         Map<Integer, EnrolledResponse> enrolledResponseMap = new HashMap<>();
@@ -234,7 +241,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                             competitorEntityService.findCompetitor(memberResponse.getIcsAlias(),
                                     memberResponse.getFirstName(), memberResponse.getLastName(),
                                     memberResponse.getDateOfBirth());
-                    // Creates a new competitor DTO, from either the found entity or the member response
+                    // Creates a new competitor DTO, from either the found entity or
+                    // the member response
                     CompetitorDto competitorDto = optionalCompetitor
                             .map(CompetitorDto::new)
                             .orElseGet(CompetitorDto::new);
@@ -245,7 +253,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                     EnrolledResponse enrolledResponse = ipscResponse.getEnrolledMembers().stream()
                             .filter(Objects::nonNull)
                             .filter(er -> er.getMemberId() != null)
-                            .filter(er -> er.getMemberId().equals(memberResponse.getMemberId()))
+                            .filter(er -> er.getMemberId()
+                                    .equals(memberResponse.getMemberId()))
                             .findFirst()
                             .orElse(null);
 
@@ -283,7 +292,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                             .filter(sr -> Objects.equals(sr.getMemberId(), memberIndex))
                             .toList();
 
-                    // Attempts to find the match competitor by competitor ID and match ID in the database
+                    // Attempts to find the match competitor by competitor ID and match ID
+                    // in the database
                     Optional<MatchCompetitor> optionalMatchCompetitor = Optional.empty();
                     if (matchResultsDto.getMatch().getId() != null) {
                         optionalMatchCompetitor =
@@ -314,16 +324,18 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                                         .filter(scoreResponse -> scoreResponse.getStageId().equals(stageDto.getStageNumber()))
                                         .findFirst();
                                 optionalStageScoreResponse.ifPresent(stageScoreResponse -> {
-                                    // Attempts to find the match stage competitor by competitor ID, stage ID,
-                                    // and match ID
+                                    // Attempts to find the match stage competitor by competitor ID,
+                                    // stage ID, and match ID
                                     Optional<MatchStageCompetitor> optionalMatchStageCompetitor =
-                                            matchStageCompetitorEntityService.findMatchStageCompetitor(stageDto.getId(),
-                                                    competitorDto.getId());
-                                    // Creates a new match stage competitor DTO, from either the found entity
-                                    // or the competitor DTO
-                                    MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
-                                            .map(MatchStageCompetitorDto::new)
-                                            .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
+                                            matchStageCompetitorEntityService
+                                                    .findMatchStageCompetitor(stageDto.getId(),
+                                                            competitorDto.getId());
+                                    // Creates a new match stage competitor DTO, from either
+                                    // the found entity or the competitor DTO
+                                    MatchStageCompetitorDto matchStageCompetitorDto =
+                                            optionalMatchStageCompetitor
+                                                    .map(MatchStageCompetitorDto::new)
+                                                    .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
                                     matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
                                     matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
@@ -333,16 +345,18 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
                                 });
                                 if (optionalStageScoreResponse.isPresent()) {
-                                    // Attempts to find the match stage competitor by competitor ID, stage ID,
-                                    // and match ID
+                                    // Attempts to find the match stage competitor by competitor ID,
+                                    // stage ID, and match ID
                                     Optional<MatchStageCompetitor> optionalMatchStageCompetitor =
-                                            matchStageCompetitorEntityService.findMatchStageCompetitor(stageDto.getId(),
-                                                    competitorDto.getId());
-                                    // Creates a new match stage competitor DTO, from either the found entity
-                                    // or the competitor DTO
-                                    MatchStageCompetitorDto matchStageCompetitorDto = optionalMatchStageCompetitor
-                                            .map(MatchStageCompetitorDto::new)
-                                            .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
+                                            matchStageCompetitorEntityService
+                                                    .findMatchStageCompetitor(stageDto.getId(),
+                                                            competitorDto.getId());
+                                    // Creates a new match stage competitor DTO, from either
+                                    // the found entity or the competitor DTO
+                                    MatchStageCompetitorDto matchStageCompetitorDto =
+                                            optionalMatchStageCompetitor
+                                                    .map(MatchStageCompetitorDto::new)
+                                                    .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
                                     matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
                                     matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 

@@ -48,30 +48,35 @@ public class IpscServiceImpl implements IpscService {
         this.transactionService = transactionService;
     }
 
-    // TODO: comment
     @Override
     public List<IpscMatchRecordHolder> importWinMssCabFile(String cabFileContent)
             throws ValidationException, FatalException {
 
+        // Map the CAB file content to DTOs
         MatchResultsDtoHolder matchResultsDtoHolder = importWinMssCabFileContent(cabFileContent);
         if ((matchResultsDtoHolder == null) || (matchResultsDtoHolder.getMatches() == null)) {
             return new ArrayList<>();
         }
 
+        // Filter out null matches
         List<IpscMatchRecordHolder> ipscMatchRecordHolders = new ArrayList<>();
         List<MatchResultsDto> ipscResultsList = matchResultsDtoHolder.getMatches().stream()
                 .filter(Objects::nonNull)
                 .toList();
 
         List<IpscMatch> ipscMatchList = new ArrayList<>();
+        // Iterates the DTOs, maps them to entities, and persists the results
         for (MatchResultsDto matchResultsDto : ipscResultsList) {
+            // Maps the DTO to an entity
             Optional<DtoToEntityMapping> optionalDtoToEntityMapping =
                     domainService.initMatchEntities(matchResultsDto, filterClubIdentifier);
             if (optionalDtoToEntityMapping.isPresent()) {
+                // Persists the entity
                 DtoToEntityMapping dtoToEntityMapping = optionalDtoToEntityMapping.get();
                 transactionService.saveMatchResults(dtoToEntityMapping).ifPresent(ipscMatchList::add);
             }
 
+            // Generates a match record holder for the current match and adds it to the list
             IpscMatchRecordHolder ipscMatchRecordHolder =
                     ipscMatchService.generateIpscMatchRecordHolder(ipscMatchList);
             ipscMatchRecordHolders.add(ipscMatchRecordHolder);
@@ -118,7 +123,8 @@ public class IpscServiceImpl implements IpscService {
         List<MatchResultsDto> matchResultsList = new ArrayList<>();
         // Iterates responses and accumulates DTOs
         for (IpscResponse ipscResponse : ipscResponseHolder.getIpscList()) {
-            Optional<MatchResultsDto> optionalMatchResults = ipscMatchResultService.initMatchResults(ipscResponse);
+            Optional<MatchResultsDto> optionalMatchResults =
+                    ipscMatchResultService.initMatchResults(ipscResponse);
             optionalMatchResults.ifPresent(matchResultsList::add);
         }
 
