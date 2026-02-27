@@ -35,6 +35,8 @@ public class IpscServiceImplTest {
     private IpscMatchService ipscMatchService;
     @Mock
     private IpscMatchResultService ipscMatchResultService;
+    @Mock
+    private DomainServiceImpl domainService;
 
     @InjectMocks
     private IpscServiceImpl ipscService;

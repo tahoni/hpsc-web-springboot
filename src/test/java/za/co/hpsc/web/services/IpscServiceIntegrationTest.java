@@ -23,10 +23,6 @@ public class IpscServiceIntegrationTest {
 
     @Autowired
     private CompetitorRepository competitorRepository;
-    @Autowired
-    private DomainService domainService;
-    @Autowired
-    private ClubRepository clubRepository;
 
     @Autowired
     private IpscService ipscService;
