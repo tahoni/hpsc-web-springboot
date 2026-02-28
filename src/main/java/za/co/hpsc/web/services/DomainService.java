@@ -27,4 +27,8 @@ public interface DomainService {
      * entities such as the match, club, stages, and competitors.
      */
     Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation);
+
+    // TODO: Javadoc
+    Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String matchClubAbbreviation,
+                                           String filterClubAbbreviation);
 }

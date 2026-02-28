@@ -121,8 +121,9 @@ public class DomainServiceTest {
         assertTrue(result.isPresent());
     }
 
+    // TODO:
     @Test
-    public void testInitMatchEntities_whenClubDtoIsAbsent_thenUsesHpscClub() {
+    public void testInitMatchEntities_whenClubDtoIsAbsent_thenDontSetClub() {
         // Arrange
         String filterClub = DEFAULT_FILTER_CLUB_ABBREVIATION;
 
@@ -132,7 +133,6 @@ public class DomainServiceTest {
 
         Club hpscClub = new Club();
         hpscClub.setAbbreviation(filterClub);
-        when(clubRepository.findByAbbreviation(filterClub)).thenReturn(Optional.of(hpscClub));
         when(ipscMatchRepository.findByIdWithClubStages(matchId)).thenReturn(Optional.empty());
 
         // Act
@@ -323,7 +323,7 @@ public class DomainServiceTest {
     @Test
     public void testInitMatchEntities_whenStageList_thenInitializesAllStages() {
         // Arrange
-        String filterClub = DEFAULT_FILTER_CLUB_ABBREVIATION;
+        String filterClub = null;
 
         Long matchId = 1L;
         Long stage1Id = 200L;
@@ -354,7 +354,6 @@ public class DomainServiceTest {
         when(ipscMatchRepository.findByIdWithClubStages(matchId)).thenReturn(Optional.of(match));
         when(ipscMatchStageRepository.findById(stage1Id)).thenReturn(Optional.of(stageEntity1));
         when(ipscMatchStageRepository.findById(stage2Id)).thenReturn(Optional.of(stageEntity2));
-        when(clubRepository.findByAbbreviation(filterClub)).thenReturn(Optional.of(new Club()));
 
         // Act
         var result = domainService.initMatchEntities(matchResults, filterClub);
@@ -393,7 +392,7 @@ public class DomainServiceTest {
     @Test
     public void testInitMatchEntities_whenCompleteMatchData_thenReturnsFullMatchEntityHolder() {
         // Arrange
-        String filterClub = "TEST";
+        String filterClub = null;
 
         Long matchId = 1L;
         Long clubId = 100L;
