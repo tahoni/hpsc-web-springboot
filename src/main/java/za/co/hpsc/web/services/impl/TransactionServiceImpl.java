@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+// TODO: add unit tests
 @Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -64,14 +65,14 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
 
-            getClub(dtoMapping.getClub()).ifPresent(clubRepository::save);
+            getClub(dtoMapping.getClub(), dtoToEntityMapping).ifPresent(clubRepository::save);
 
-            getIpscMatch(dtoToEntityMapping).ifPresent(ipscMatchRepository::save);
-            IpscMatch ipscMatch = dtoToEntityMapping.getMatchEntity().orElse(null);
-            if (ipscMatch == null) {
-                transactionManager.rollback(transaction);
-                return Optional.empty();
+            Optional<IpscMatch> optionalIpscMatch = getIpscMatch(dtoToEntityMapping);
+            if (optionalIpscMatch.isEmpty()) {
+                throw new FatalException("Unable to save the match: Match is null");
             }
+            IpscMatch ipscMatch = optionalIpscMatch.get();
+            ipscMatchRepository.save(ipscMatch);
 
             List<Competitor> competitorList = getCompetitors(dtoToEntityMapping);
             if (!competitorList.isEmpty()) {
@@ -104,7 +105,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    protected Optional<Club> getClub(ClubDto clubDto) {
+    protected Optional<Club> getClub(ClubDto clubDto, @NotNull DtoToEntityMapping dtoToEntityMapping) {
         if (clubDto == null) {
             return Optional.empty();
         }
@@ -114,6 +115,8 @@ public class TransactionServiceImpl implements TransactionService {
             clubEntity = clubRepository.findById(clubDto.getId()).orElseGet(Club::new);
         }
         clubEntity.init(clubDto);
+        dtoToEntityMapping.setClub(clubEntity);
+
         return Optional.of(clubEntity);
     }
 

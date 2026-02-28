@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+// TODO: add unit tests
 // TODO: add comments
 public class DtoToEntityMapping {
     @Getter
@@ -29,6 +30,10 @@ public class DtoToEntityMapping {
 
     public Optional<MatchDto> getMatchDto() {
         return Optional.ofNullable(dtoMapping.getMatch());
+    }
+
+    public Optional<ClubDto> getClubDto() {
+        return Optional.ofNullable(dtoMapping.getClub());
     }
 
     public Optional<IpscMatch> getMatchEntity() {
@@ -67,13 +72,20 @@ public class DtoToEntityMapping {
         return dtoMapping.getMatchStageCompetitorMap().values().stream().filter(Objects::nonNull).toList();
     }
 
+    public void setClub(Club clubEntity) {
+        if (clubEntity == null) {
+            throw new ValidationException("clubEntity cannot be null");
+        }
+        entityMapping.setClub(clubEntity);
+    }
+
     public void setMatch(IpscMatch matchEntity) {
         if (matchEntity == null) {
             throw new ValidationException("matchEntity cannot be null");
         }
 
-        entityMapping.setMatch(matchEntity);
         matchEntity.setClub(entityMapping.getClub());
+        entityMapping.setMatch(matchEntity);
     }
 
     public void setCompetitor(CompetitorDto competitorDto, Competitor competitorEntity) {

@@ -55,9 +55,9 @@ public class IpscMatch {
     @Enumerated(EnumType.STRING)
     private MatchCategory matchCategory;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<IpscMatchStage> matchStages = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
     private LocalDateTime dateCreated;

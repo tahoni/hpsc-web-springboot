@@ -147,7 +147,7 @@ public class IpscServiceIntegrationTest {
         IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
         assertEquals("Test Match", matchRecord.name());
         assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
-        assertEquals("Test Club (TC)", matchRecord.clubName());
+        assertEquals("Test Club (ABC)", matchRecord.clubName());
 
         assertFalse(matchRecord.competitors().isEmpty());
         CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
