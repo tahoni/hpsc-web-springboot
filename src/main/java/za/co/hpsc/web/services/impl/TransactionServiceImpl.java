@@ -65,9 +65,11 @@ public class TransactionServiceImpl implements TransactionService {
             DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
 
             getClub(dtoMapping.getClub()).ifPresent(clubRepository::save);
-            getIpscMatch(dtoToEntityMapping).ifPresent(ipscMatchRepository::save);
 
-            if (dtoMapping.getMatch() == null) {
+            getIpscMatch(dtoToEntityMapping).ifPresent(ipscMatchRepository::save);
+            IpscMatch ipscMatch = dtoToEntityMapping.getMatchEntity().orElse(null);
+            if (ipscMatch == null) {
+                transactionManager.rollback(transaction);
                 return Optional.empty();
             }
 
@@ -91,6 +93,7 @@ public class TransactionServiceImpl implements TransactionService {
                 matchStageCompetitorRepository.saveAll(matchStageCompetitorList);
             }
 
+            ipscMatchRepository.save(ipscMatch);
             transactionManager.commit(transaction);
             return dtoToEntityMapping.getMatchEntity();
 

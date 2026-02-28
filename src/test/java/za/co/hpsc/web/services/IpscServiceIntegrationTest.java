@@ -8,10 +8,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -115,7 +120,7 @@ public class IpscServiceIntegrationTest {
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club' Contact='Admin'/></data></xml>",
-                    "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True' ClubId='1'/></data></xml>",
                     "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
                     "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
                     "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00' IcsAlias='1500'/></data></xml>",
@@ -128,12 +133,30 @@ public class IpscServiceIntegrationTest {
                 """;
 
         // Act
-        var recordHolder = assertDoesNotThrow(() ->
+        List<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
         // Assert
         assertNotNull(recordHolder);
+        assertFalse(recordHolder.isEmpty());
+        assertNotNull(recordHolder.getFirst());
+        IpscMatchRecordHolder firstRecord = recordHolder.getFirst();
+
+        assertFalse(firstRecord.matches().isEmpty());
+        IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
+        assertEquals("Test Match", matchRecord.name());
+        assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
+        assertEquals("Test Club (TC)", matchRecord.clubName());
+
+        assertFalse(matchRecord.competitors().isEmpty());
+        CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
+        assertEquals("John", competitorRecord.firstName());
+        assertEquals("Doe", competitorRecord.lastName());
+        assertEquals("1973-02-17", competitorRecord.dateOfBirth());
+        assertEquals("", competitorRecord.middleNames());
+        assertNull(competitorRecord.sapsaNumber());
+        assertEquals("1500", competitorRecord.competitorNumber());
     }
 
     // Test Group: Partial Data Processing

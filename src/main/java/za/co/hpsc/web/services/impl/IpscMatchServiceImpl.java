@@ -79,6 +79,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         for (IpscMatch match : ipscMatchEntityList.stream().filter(Objects::nonNull).toList()) {
             // Get the match stages and competitors
             match.setName(ValueUtil.nullAsEmptyString(match.getName()));
+            match.setClub(match.getClub());
             List<IpscMatchStage> matchStageList = new ArrayList<>();
             List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
