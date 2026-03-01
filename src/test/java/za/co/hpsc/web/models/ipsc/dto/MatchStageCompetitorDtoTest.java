@@ -2,10 +2,7 @@ package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
@@ -571,7 +568,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("John");
         competitorDto.setLastName("Doe");
-        competitorDto.setDefaultCompetitorCategory(CompetitorCategory.SENIOR);
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(competitorDto, null);
@@ -592,7 +588,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("Jane");
         competitorDto.setLastName("Smith");
-        competitorDto.setDefaultCompetitorCategory(CompetitorCategory.GRAND_SENIOR);
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setStageNumber(3);
@@ -619,7 +614,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("Test");
         competitorDto.setLastName("User");
-        competitorDto.setDefaultCompetitorCategory(null);
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setStageNumber(1);
@@ -638,7 +632,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("New");
         competitorDto.setLastName("Shooter");
-        competitorDto.setDefaultCompetitorCategory(CompetitorCategory.NONE);
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setStageNumber(1);
@@ -677,7 +670,7 @@ public class MatchStageCompetitorDtoTest {
                 competitorDto,
                 matchStageDto,
                 CompetitorCategory.SUPER_SENIOR,
-                clubDto,
+                ClubIdentifier.HPSC,
                 FirearmType.HANDGUN,
                 Division.STANDARD,
                 PowerFactor.MAJOR,

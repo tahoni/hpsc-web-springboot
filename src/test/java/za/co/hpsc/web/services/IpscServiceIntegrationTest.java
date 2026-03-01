@@ -20,7 +20,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: add  more tests for the service methods
 @ActiveProfiles("test")
 @SpringBootTest
 public class IpscServiceIntegrationTest {
@@ -126,7 +125,7 @@ public class IpscServiceIntegrationTest {
                     "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
                     "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00' IcsAlias='1500'/></data></xml>",
                     "classify": "<xml><data><row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/></data></xml>",
-                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' ClubId='BBB'/></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' RefNo='BBB'/></data></xml>",
                     "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='100'/></data></xml>",
                     "team": "<xml><data><row TeamId='20' Team='Team A' MatchId='100'/></data></xml>",
                     "score": "<xml><data><row MemberId='50' StageId='200' MatchId='100' HitFactor='6.08433734939759' FinalScore='101'/></data></xml>"

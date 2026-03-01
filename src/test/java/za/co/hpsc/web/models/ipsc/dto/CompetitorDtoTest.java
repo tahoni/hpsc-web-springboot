@@ -2,7 +2,6 @@ package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.Competitor;
-import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
@@ -34,7 +33,6 @@ class CompetitorDtoTest {
         assertNull(dto.getDateOfBirth());
         assertNull(dto.getSapsaNumber());
         assertNull(dto.getCompetitorNumber());
-        assertEquals(CompetitorCategory.NONE, dto.getDefaultCompetitorCategory());
     }
 
     @Test
@@ -48,7 +46,6 @@ class CompetitorDtoTest {
         competitor.setDateOfBirth(null);
         competitor.setSapsaNumber(null);
         competitor.setCompetitorNumber(null);
-        competitor.setDefaultCompetitorCategory(null);
 
         // Act
         CompetitorDto dto = new CompetitorDto(competitor);
@@ -61,7 +58,6 @@ class CompetitorDtoTest {
         assertNull(dto.getDateOfBirth());
         assertNull(dto.getSapsaNumber());
         assertNull(dto.getCompetitorNumber());
-        assertNull(dto.getDefaultCompetitorCategory());
     }
 
     // Fully Populated
@@ -76,7 +72,6 @@ class CompetitorDtoTest {
         competitor.setDateOfBirth(java.time.LocalDate.of(1990, 5, 12));
         competitor.setSapsaNumber(12345);
         competitor.setCompetitorNumber("C-001");
-        competitor.setDefaultCompetitorCategory(CompetitorCategory.SENIOR);
 
         // Act
         CompetitorDto dto = new CompetitorDto(competitor);
@@ -89,7 +84,6 @@ class CompetitorDtoTest {
         assertEquals(java.time.LocalDate.of(1990, 5, 12), dto.getDateOfBirth());
         assertEquals(12345, dto.getSapsaNumber());
         assertEquals("C-001", dto.getCompetitorNumber());
-        assertEquals(CompetitorCategory.SENIOR, dto.getDefaultCompetitorCategory());
     }
 
     @Test
@@ -103,7 +97,6 @@ class CompetitorDtoTest {
         competitor.setDateOfBirth(java.time.LocalDate.of(1988, 9, 3));
         competitor.setSapsaNumber(22222);
         competitor.setCompetitorNumber("C-101");
-        competitor.setDefaultCompetitorCategory(CompetitorCategory.LADY);
 
         // Act
         CompetitorDto dto = new CompetitorDto(competitor);
@@ -120,7 +113,6 @@ class CompetitorDtoTest {
         competitor.setId(7L);
         competitor.setFirstName("Lara");
         competitor.setCompetitorNumber("C-777");
-        competitor.setDefaultCompetitorCategory(CompetitorCategory.JUNIOR);
 
         // Act
         CompetitorDto dto = new CompetitorDto(competitor);
@@ -129,7 +121,6 @@ class CompetitorDtoTest {
         assertEquals(7L, dto.getId());
         assertEquals("Lara", dto.getFirstName());
         assertEquals("C-777", dto.getCompetitorNumber());
-        assertEquals(CompetitorCategory.JUNIOR, dto.getDefaultCompetitorCategory());
         assertNull(dto.getLastName());
         assertNull(dto.getMiddleNames());
         assertNull(dto.getDateOfBirth());
@@ -143,7 +134,6 @@ class CompetitorDtoTest {
         competitor.setId(102L);
         competitor.setFirstName("Nina");
         competitor.setCompetitorNumber("C-102");
-        competitor.setDefaultCompetitorCategory(CompetitorCategory.LADY);
 
         // Act
         CompetitorDto dto = new CompetitorDto(competitor);
@@ -161,7 +151,6 @@ class CompetitorDtoTest {
         competitor.setFirstName("Sam");
         competitor.setCompetitorNumber(null);
         competitor.setSapsaNumber(54321);
-        competitor.setDefaultCompetitorCategory(CompetitorCategory.SENIOR);
 
         // Act
         CompetitorDto dto = new CompetitorDto(competitor);
@@ -171,7 +160,6 @@ class CompetitorDtoTest {
         assertEquals("Sam", dto.getFirstName());
         assertNull(dto.getCompetitorNumber());
         assertEquals(54321, dto.getSapsaNumber());
-        assertEquals(CompetitorCategory.SENIOR, dto.getDefaultCompetitorCategory());
     }
 
     @Test
@@ -182,7 +170,6 @@ class CompetitorDtoTest {
         competitor.setFirstName("Alex");
         competitor.setCompetitorNumber(null);
         competitor.setSapsaNumber(null);
-        competitor.setDefaultCompetitorCategory(CompetitorCategory.JUNIOR);
 
         // Act
         CompetitorDto dto = new CompetitorDto(competitor);
@@ -192,7 +179,6 @@ class CompetitorDtoTest {
         assertEquals("Alex", dto.getFirstName());
         assertNull(dto.getCompetitorNumber());
         assertNull(dto.getSapsaNumber());
-        assertEquals(CompetitorCategory.JUNIOR, dto.getDefaultCompetitorCategory());
     }
 
     // init() mapping
@@ -209,10 +195,9 @@ class CompetitorDtoTest {
         dto.setDateOfBirth(LocalDate.of(2000, 1, 2));
         dto.setCompetitorNumber("C-EX");
         dto.setSapsaNumber(11111);
-        dto.setDefaultCompetitorCategory(CompetitorCategory.SENIOR);
 
         // Act
-        dto.init(null, null);
+        dto.init(null);
 
         // Assert
         assertEquals(5, dto.getIndex());
@@ -222,7 +207,6 @@ class CompetitorDtoTest {
         assertEquals(LocalDate.of(2000, 1, 2), dto.getDateOfBirth());
         assertEquals("C-EX", dto.getCompetitorNumber());
         assertEquals(11111, dto.getSapsaNumber());
-        assertEquals(CompetitorCategory.SENIOR, dto.getDefaultCompetitorCategory());
     }
 
     @Test
@@ -237,7 +221,7 @@ class CompetitorDtoTest {
         memberResponse.setIcsAlias("999");
 
         // Act
-        dto.init(memberResponse, null);
+        dto.init(memberResponse);
 
         // Assert
         assertNull(dto.getDateOfBirth());
@@ -256,7 +240,7 @@ class CompetitorDtoTest {
         memberResponse.setIcsAlias("12345");
 
         // Act
-        dto.init(memberResponse, null);
+        dto.init(memberResponse);
 
         // Assert
         assertEquals(12, dto.getIndex());
@@ -265,7 +249,6 @@ class CompetitorDtoTest {
         assertEquals(LocalDate.of(1995, 3, 10), dto.getDateOfBirth());
         assertEquals("12345", dto.getCompetitorNumber());
         assertEquals(12345, dto.getSapsaNumber());
-        assertEquals(CompetitorCategory.NONE, dto.getDefaultCompetitorCategory());
     }
 
     // Category Mapping
@@ -282,49 +265,10 @@ class CompetitorDtoTest {
         enrolledResponse.setCompetitorCategoryId(2);
 
         // Act
-        dto.init(memberResponse, enrolledResponse);
+        dto.init(memberResponse);
 
         // Assert
         assertEquals(20, dto.getIndex());
-        assertEquals(CompetitorCategory.JUNIOR, dto.getDefaultCompetitorCategory());
-    }
-
-    @Test
-    void testInit_whenCompetitorCategoryIdNull_thenDefaultsToNone() {
-        // Arrange
-        CompetitorDto dto = new CompetitorDto();
-        MemberResponse memberResponse = new MemberResponse();
-        memberResponse.setMemberId(24);
-        memberResponse.setFirstName("Ivy");
-        memberResponse.setLastName("Lane");
-        memberResponse.setIcsAlias("888");
-        EnrolledResponse enrolledResponse = new EnrolledResponse();
-        enrolledResponse.setCompetitorCategoryId(null);
-
-        // Act
-        dto.init(memberResponse, enrolledResponse);
-
-        // Assert
-        assertEquals(CompetitorCategory.NONE, dto.getDefaultCompetitorCategory());
-    }
-
-    @Test
-    void testInit_whenCompetitorCategoryIdZero_thenDefaultsToNone() {
-        // Arrange
-        CompetitorDto dto = new CompetitorDto();
-        MemberResponse memberResponse = new MemberResponse();
-        memberResponse.setMemberId(25);
-        memberResponse.setFirstName("Owen");
-        memberResponse.setLastName("Park");
-        memberResponse.setIcsAlias("889");
-        EnrolledResponse enrolledResponse = new EnrolledResponse();
-        enrolledResponse.setCompetitorCategoryId(0);
-
-        // Act
-        dto.init(memberResponse, enrolledResponse);
-
-        // Assert
-        assertEquals(CompetitorCategory.NONE, dto.getDefaultCompetitorCategory());
     }
 
     // ICS Alias and SAPSA Number Handling
@@ -339,7 +283,7 @@ class CompetitorDtoTest {
         memberResponse.setIcsAlias("ABC123");
 
         // Act
-        dto.init(memberResponse, null);
+        dto.init(memberResponse);
 
         // Assert
         assertEquals("ABC123", dto.getCompetitorNumber());
@@ -357,7 +301,7 @@ class CompetitorDtoTest {
         memberResponse.setIcsAlias("15000");
 
         // Act
-        dto.init(memberResponse, null);
+        dto.init(memberResponse);
 
         // Assert
         assertEquals("15000", dto.getCompetitorNumber());
@@ -797,7 +741,6 @@ class CompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("David");
         competitorDto.setLastName("Green");
-        competitorDto.setDefaultCompetitorCategory(CompetitorCategory.SENIOR);
 
         // Act
         String result = competitorDto.toString();

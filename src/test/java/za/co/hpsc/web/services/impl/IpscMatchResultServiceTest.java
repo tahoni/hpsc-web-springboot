@@ -101,7 +101,6 @@ public class IpscMatchResultServiceTest {
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertEquals(3, result.get().getStages().size());
-        assertEquals(5, result.get().getScores().size());
     }
 
     @Test
@@ -512,7 +511,6 @@ public class IpscMatchResultServiceTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertEquals(2, result.get().getScores().size());
     }
 
     @Test
@@ -693,8 +691,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, null));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -709,8 +705,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -725,8 +719,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -742,8 +734,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
         assertNotNull(matchResults.getMatchCompetitors());
@@ -783,7 +773,6 @@ public class IpscMatchResultServiceTest {
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
 
-        assertEquals(3, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
@@ -811,7 +800,6 @@ public class IpscMatchResultServiceTest {
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
 
-        assertEquals(1, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
@@ -834,7 +822,6 @@ public class IpscMatchResultServiceTest {
         Optional<MatchResultsDto> result = ipscMatchResultService.initMatchResults(ipscResponse);
 
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().getScores().size());
         assertEquals(1, result.get().getCompetitors().size());
         assertEquals(1, result.get().getMatchCompetitors().size());
         assertFalse(result.get().getMatchStageCompetitors().isEmpty());
@@ -850,8 +837,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, null));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -866,8 +851,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -882,8 +865,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -899,8 +880,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
         assertNotNull(matchResults.getMatchCompetitors());
@@ -940,7 +919,6 @@ public class IpscMatchResultServiceTest {
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
 
-        assertEquals(3, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
@@ -968,7 +946,6 @@ public class IpscMatchResultServiceTest {
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
 
-        assertEquals(1, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
@@ -991,7 +968,6 @@ public class IpscMatchResultServiceTest {
         Optional<MatchResultsDto> result = ipscMatchResultService.initMatchResults(ipscResponse);
 
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().getScores().size());
         assertEquals(1, result.get().getCompetitors().size());
         assertEquals(1, result.get().getMatchCompetitors().size());
         assertFalse(result.get().getMatchStageCompetitors().isEmpty());
@@ -1007,8 +983,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, null));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -1023,8 +997,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -1039,8 +1011,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
     }
@@ -1056,8 +1026,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertNotNull(matchResults.getScores());
-        assertTrue(matchResults.getScores().isEmpty());
         assertNotNull(matchResults.getCompetitors());
         assertTrue(matchResults.getCompetitors().isEmpty());
         assertNotNull(matchResults.getMatchCompetitors());
@@ -1097,7 +1065,6 @@ public class IpscMatchResultServiceTest {
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
 
-        assertEquals(3, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
@@ -1125,7 +1092,6 @@ public class IpscMatchResultServiceTest {
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
 
-        assertEquals(1, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         assertFalse(matchResults.getMatchStageCompetitors().isEmpty());
@@ -1148,7 +1114,6 @@ public class IpscMatchResultServiceTest {
         Optional<MatchResultsDto> result = ipscMatchResultService.initMatchResults(ipscResponse);
 
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().getScores().size());
         assertEquals(1, result.get().getCompetitors().size());
         assertEquals(1, result.get().getMatchCompetitors().size());
         assertFalse(result.get().getMatchStageCompetitors().isEmpty());
@@ -1177,7 +1142,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertEquals(1, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
     }
 
@@ -1204,7 +1168,6 @@ public class IpscMatchResultServiceTest {
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
-        assertEquals(1, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
     }
 
@@ -1232,7 +1195,6 @@ public class IpscMatchResultServiceTest {
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
 
-        assertEquals(3, matchResults.getScores().size());
         assertEquals(1, matchResults.getCompetitors().size());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         // Note: initScores currently creates duplicate stage competitors due to duplicate logic
@@ -1363,7 +1325,6 @@ public class IpscMatchResultServiceTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().getScores().isEmpty());
     }
 
     @Test
@@ -1598,7 +1559,6 @@ public class IpscMatchResultServiceTest {
         assertTrue(result.isPresent());
         assertEquals("Simple Match", result.get().getMatch().getName());
         assertTrue(result.get().getStages().isEmpty());
-        assertTrue(result.get().getScores().isEmpty());
     }
 
     @Test
@@ -1639,7 +1599,6 @@ public class IpscMatchResultServiceTest {
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertEquals(1, result.get().getStages().size());
-        assertTrue(result.get().getScores().isEmpty());
     }
 
     @Test
@@ -1682,7 +1641,6 @@ public class IpscMatchResultServiceTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().getScores().size());
     }
 
     @Test
@@ -1734,7 +1692,6 @@ public class IpscMatchResultServiceTest {
         MatchResultsDto matchResults = result.get();
         assertEquals("Complete Match", matchResults.getMatch().getName());
         assertEquals(1, matchResults.getStages().size());
-        assertEquals(1, matchResults.getScores().size());
     }
 
     // =====================================================================

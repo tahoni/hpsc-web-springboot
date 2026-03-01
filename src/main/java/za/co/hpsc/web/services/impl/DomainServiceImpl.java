@@ -13,7 +13,6 @@ import za.co.hpsc.web.services.DomainService;
 import java.util.*;
 
 // TODO: add comments
-// TODO: add tests
 @Slf4j
 @Service
 public class DomainServiceImpl implements DomainService {
@@ -63,8 +62,12 @@ public class DomainServiceImpl implements DomainService {
         ClubIdentifier matchClubIdentifier = ClubIdentifier.getByName(matchClubAbbreviation)
                 .orElse(null);
         ClubDto matchClub = matchResults.getClub();
-        ClubDto clubDto = ((matchClub != null) ?
-                initClubEntity(matchClub) : initClubEntity(matchClubIdentifier)).orElse(null);
+        Optional<ClubDto> optionalClubDto = Optional.empty();
+        if (matchClub != null) {
+            optionalClubDto = initClubEntity(matchClub);
+        }
+        ClubDto clubDto = optionalClubDto.orElseGet(() -> initClubEntity(matchClubIdentifier)
+                .orElse(null));
 
         // Initialise the match DTO based on match results
         Optional<MatchDto> optionalMatchDto = initMatchEntity(matchResults.getMatch());
@@ -115,15 +118,17 @@ public class DomainServiceImpl implements DomainService {
             return Optional.empty();
         }
 
-        // Find the club entity if present
         Optional<Club> optionalClubEntity = Optional.empty();
         if (clubDto.getId() != null) {
+            // Find the club entity if present
             optionalClubEntity = clubRepository.findById(clubDto.getId());
         }
 
         // Initialise the club entity from DTO or create a new entity
-        optionalClubEntity.ifPresent(club -> clubDto.setId(club.getId()));
+        optionalClubEntity.ifPresent(competitor ->
+                clubDto.setId(competitor.getId()));
 
+        // Add attributes to the club
         return Optional.of(clubDto);
     }
 
@@ -135,22 +140,18 @@ public class DomainServiceImpl implements DomainService {
      * if no match is found
      */
     protected Optional<ClubDto> initClubEntity(ClubIdentifier clubIdentifier) {
-        if (clubIdentifier == null) {
-            return Optional.empty();
-        }
-
-        // Don't save an empty club identifier
-        if (clubIdentifier.equals(ClubIdentifier.UNKNOWN)) {
+        if ((clubIdentifier == null) || (IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
             return Optional.empty();
         }
 
         // Find the club entity if present
-        Optional<Club> optionalClubEntity = clubRepository.findByAbbreviation(clubIdentifier.getName());
+        ClubDto clubDto = null;
+        Optional<Club> optionalClub = clubRepository.findByAbbreviation(clubIdentifier.getName());
+        if (optionalClub.isPresent()) {
+            clubDto = new ClubDto(optionalClub.get());
+        }
 
-        // Initialise the club entity from DTO or create a new entity
-        ClubDto clubDto = optionalClubEntity.map(ClubDto::new).orElseGet(() -> new ClubDto(clubIdentifier));
-
-        return Optional.of(clubDto);
+        return Optional.ofNullable(clubDto);
     }
 
     /**
@@ -164,21 +165,16 @@ public class DomainServiceImpl implements DomainService {
      * @return an {@code Optional} containing the initialised {@code IpscMatch} entity.
      */
     protected Optional<MatchDto> initMatchEntity(MatchDto matchDto) {
-        if (matchDto == null) {
-            return Optional.empty();
-        }
-
         // Find the match entity if present
         Optional<IpscMatch> optionalIpscMatchEntity = Optional.empty();
-        if (matchDto.getId() != null) {
+        if ((matchDto != null) && (matchDto.getId() != null)) {
             optionalIpscMatchEntity = ipscMatchRepository.findByIdWithClubStages(matchDto.getId());
         }
 
         // Initialise the match entity from DTO or create a new entity
         optionalIpscMatchEntity.ifPresent(match -> matchDto.setId(match.getId()));
-        MatchDto matchDtoResult = optionalIpscMatchEntity.map(MatchDto::new).orElseGet(MatchDto::new);
 
-        return Optional.of(matchDtoResult);
+        return Optional.ofNullable(matchDto);
     }
 
     /**
@@ -327,14 +323,11 @@ public class DomainServiceImpl implements DomainService {
             optionalMatchCompetitorEntity.ifPresent(matchCompetitor ->
                     matchCompetitorDto.setId(matchCompetitor.getId()));
 
-            // Filter by club reference if specified
 /*
-            if (matchCompetitorDto.getMatch() != null) {
-                if ((clubIdentifier != null) && (!clubIdentifier.equals(ClubIdentifier.UNKNOWN))) {
-                    String clubName = matchEntity.getClub().getName();
-                    if (!clubName.equalsIgnoreCase(clubIdentifier.getName())) {
-                        continue;
-                    }
+            // Filter by club reference if specified
+            if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+                if (!clubIdentifier.equals(matchCompetitorDto.getClubIdentifier())) {
+                    continue;
                 }
             }
 */
@@ -411,12 +404,9 @@ public class DomainServiceImpl implements DomainService {
                 }
 
                 // Filter by club reference if specified
-                if ((clubIdentifier != null) &&
-                        (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
-                    if (matchStageCompetitorDto.getClub() != null) {
-                        if (!clubIdentifier.getName().equals(matchStageCompetitorDto.getClub().getName())) {
-                            continue;
-                        }
+                if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
+                    if (!clubIdentifier.equals(matchStageCompetitorDto.getClub())) {
+                        continue;
                     }
                 }
 

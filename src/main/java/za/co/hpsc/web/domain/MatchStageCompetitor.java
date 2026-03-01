@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
@@ -39,16 +36,21 @@ public class MatchStageCompetitor {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "competitor_id")
     private Competitor competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "match_stage_id")
     private IpscMatchStage matchStage;
 
+    @Enumerated(EnumType.STRING)
+    private ClubIdentifier matchClub;
+    @Enumerated(EnumType.STRING)
     private FirearmType firearmType;
+    @Enumerated(EnumType.STRING)
     private Division division;
+    @Enumerated(EnumType.STRING)
     private PowerFactor powerFactor;
 
     @Column(name = "score_a")

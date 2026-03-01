@@ -8,8 +8,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.math.NumberUtils;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
@@ -46,8 +44,6 @@ public class CompetitorDto {
     @NotNull
     private String competitorNumber;
 
-    private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
-
     /**
      * Constructs a new {@code CompetitorDto} instance using the provided
      * {@link Competitor} entity.
@@ -73,22 +69,17 @@ public class CompetitorDto {
         // Initialises competitor number and SAPSA number
         this.sapsaNumber = competitorEntity.getSapsaNumber();
         this.competitorNumber = competitorEntity.getCompetitorNumber();
-
-        // Initialises competitor category
-        this.defaultCompetitorCategory = competitorEntity.getDefaultCompetitorCategory();
     }
 
     /**
      * Initialises the current {@code CompetitorDto} instance with data from the provided
-     * {@link MemberResponse} and {@link EnrolledResponse} objects.
+     * {@link MemberResponse} object.
      *
-     * @param memberResponse   the {@link MemberResponse} object containing competitor-related
-     *                         information, such as the competitor's first name, last name,
-     *                         date of birth, and SAPSA number.
-     * @param enrolledResponse the {@link EnrolledResponse} object containing information about the
-     *                         competitor category.
+     * @param memberResponse the {@link MemberResponse} object containing competitor-related
+     *                       information, such as the competitor's first name, last name,
+     *                       date of birth, and SAPSA number.
      */
-    public void init(MemberResponse memberResponse, EnrolledResponse enrolledResponse) {
+    public void init(MemberResponse memberResponse) {
         if (memberResponse != null) {
             // Initialises competitor details
             this.index = memberResponse.getMemberId();
@@ -109,14 +100,6 @@ public class CompetitorDto {
                 this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
             } else {
                 this.sapsaNumber = null;
-            }
-
-            // Initialises competitor category based on the member's category code'
-            if (enrolledResponse != null) {
-                this.defaultCompetitorCategory = CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
-                        .orElse(CompetitorCategory.NONE);
-            } else {
-                this.defaultCompetitorCategory = CompetitorCategory.NONE;
             }
         }
     }

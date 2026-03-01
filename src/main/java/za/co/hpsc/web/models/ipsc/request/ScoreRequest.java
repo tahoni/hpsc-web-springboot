@@ -113,7 +113,6 @@ public class ScoreRequest {
     @JsonProperty(value = "FlagDelete")
     private Boolean flagForDeletion;
 
-
     @Getter
     @Setter
     @NoArgsConstructor

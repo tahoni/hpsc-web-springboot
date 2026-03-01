@@ -32,6 +32,7 @@ public class MatchStageDto {
 
     @NotNull
     private MatchDto match;
+    private Integer matchIndex;
 
     @NotNull
     private Integer stageNumber = 0;
@@ -124,6 +125,7 @@ public class MatchStageDto {
             // Initialises the stage details
             this.index = stageResponse.getStageId();
             this.match = matchDto;
+            this.matchIndex = stageResponse.getMatchId();
 
             // Initialises the stage attributes
             this.stageNumber = stageResponse.getStageId();

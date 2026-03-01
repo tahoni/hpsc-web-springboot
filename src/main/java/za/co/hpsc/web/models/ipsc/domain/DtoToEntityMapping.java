@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-// TODO: add unit tests
 // TODO: add comments
 public class DtoToEntityMapping {
     @Getter
@@ -32,6 +31,7 @@ public class DtoToEntityMapping {
         return Optional.ofNullable(dtoMapping.getMatch());
     }
 
+    // TODO: add unit tests
     public Optional<ClubDto> getClubDto() {
         return Optional.ofNullable(dtoMapping.getClub());
     }

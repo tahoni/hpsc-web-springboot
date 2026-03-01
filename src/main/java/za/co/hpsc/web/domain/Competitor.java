@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
 
 import java.time.LocalDate;
@@ -52,13 +51,10 @@ public class Competitor {
     @Column(nullable = false)
     private String competitorNumber;
 
-    @Enumerated(EnumType.STRING)
-    private CompetitorCategory defaultCompetitorCategory = CompetitorCategory.NONE;
-
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.LAZY)
     private List<MatchCompetitor> competitorMatches = new ArrayList<>();
 
     /**
@@ -81,9 +77,6 @@ public class Competitor {
         this.sapsaNumber = competitorDto.getSapsaNumber();
         this.competitorNumber = competitorDto.getCompetitorNumber();
         this.dateOfBirth = competitorDto.getDateOfBirth();
-
-        // Initialises competitor category
-        this.defaultCompetitorCategory = competitorDto.getDefaultCompetitorCategory();
     }
 
     @Override
