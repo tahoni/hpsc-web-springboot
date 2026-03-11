@@ -123,26 +123,31 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
         Optional<IpscMatch> optionalMatch =
                 matchEntityService.findMatchByName(ipscResponse.getMatch().getMatchName());
         boolean ipscMatchExists = optionalMatch.isPresent();
-        boolean ipscResponseHasNewerScore = false;
 
         // Determines the last updated date of the match\
         LocalDateTime matchLastUpdated = LocalDateTime.MIN;
         if (optionalMatch.isPresent()) {
-            matchLastUpdated = ((optionalMatch.get().getDateUpdated()) != null) ?
-                    optionalMatch.get().getDateUpdated() : optionalMatch.get().getDateCreated();
+            LocalDateTime dateUpdated = optionalMatch.get().getDateUpdated();
+            LocalDateTime dateCreated = optionalMatch.get().getDateCreated();
             LocalDateTime matchLastEdited = optionalMatch.get().getDateEdited();
+
+            matchLastUpdated = ((dateUpdated != null) ? dateUpdated : dateCreated);
+            matchLastUpdated = ((matchLastUpdated != null) ? matchLastUpdated : LocalDateTime.MIN);
             matchLastUpdated = ((matchLastEdited != null) ? matchLastEdited : matchLastUpdated);
         }
 
         // Skips update if there are no newer scores in the IPSC response
         if ((ipscMatchExists) && (ipscResponse.getScores() != null)) {
+            Integer matchIndex = ipscResponse.getMatch().getMatchId();
             Optional<LocalDateTime> scoreLastUpdated =
                     ipscResponse.getScores().stream()
                             .filter(Objects::nonNull)
+                            .filter(scoreResponse -> scoreResponse.getMatchId() != null)
+                            .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), matchIndex))
                             .map(ScoreResponse::getLastModified)
                             .filter(Objects::nonNull)
                             .max(LocalDateTime::compareTo);
-            if ((scoreLastUpdated.isPresent()) && (matchLastUpdated.isAfter(scoreLastUpdated.get()))) {
+            if ((scoreLastUpdated.isPresent()) && (!scoreLastUpdated.get().isAfter(matchLastUpdated))) {
                 return Optional.empty();
             }
         }
@@ -278,14 +283,21 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                         .equals(matchResultsDto.getMatch().getIndex()))
                 .toList();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
+        List<EnrolledResponse> enrolledResponses =
+                ((ipscResponse.getEnrolledMembers() != null) ? ipscResponse.getEnrolledMembers() : new ArrayList<>());
 
         // Ensure the match and stage competitor list fields are not null
         List<MatchCompetitorDto> matchCompetitorDtoList =
                 ((matchResultsDto.getMatchCompetitors() != null) ?
-                        matchResultsDto.getMatchCompetitors() : new ArrayList<>());
+                        new ArrayList<>(matchResultsDto.getMatchCompetitors()) : new ArrayList<>());
         List<MatchStageCompetitorDto> matchStageCompetitorDtoList =
                 ((matchResultsDto.getMatchStageCompetitors() != null) ?
-                        matchResultsDto.getMatchStageCompetitors() : new ArrayList<>());
+                        new ArrayList<>(matchResultsDto.getMatchStageCompetitors()) : new ArrayList<>());
+
+        // initScores can be called directly; seed competitors when not already initialized.
+        if ((matchResultsDto.getCompetitors() == null) || (matchResultsDto.getCompetitors().isEmpty())) {
+            matchResultsDto.setCompetitors(initCompetitors(matchResultsDto, ipscResponse));
+        }
 
         // Maps score responses to corresponding member responses,
         // excluding members who didn't participate
@@ -306,7 +318,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                 .forEach(competitorDto -> {
                     // Initialises the enrolled response to use to initialise the scores for each
                     // competitor per match and stage
-                    Optional<EnrolledResponse> enrolledResponse = ipscResponse.getEnrolledMembers().stream()
+                    Optional<EnrolledResponse> enrolledResponse = enrolledResponses.stream()
                             .filter(Objects::nonNull)
                             .filter(er -> er.getMemberId() != null)
                             .filter(er -> er.getMemberId()
@@ -331,8 +343,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                     Optional<MatchCompetitor> optionalMatchCompetitor = Optional.empty();
                     if (matchResultsDto.getMatch().getId() != null) {
                         optionalMatchCompetitor =
-                                matchCompetitorEntityService.findMatchCompetitor(competitorDto.getId(),
-                                        matchResultsDto.getMatch().getId());
+                                matchCompetitorEntityService.findMatchCompetitor(matchResultsDto.getMatch().getId(),
+                                        competitorDto.getId());
                     }
 
                     // Creates a new match competitor DTO, from either the found entity or the
@@ -381,7 +393,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                                     matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                                     // Initialises the match stage attributes
-                                    matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
+                                    matchStageCompetitorDto.init(stageScoreResponse,
                                             enrolledResponseMap.get(memberIndex), stageDto);
                                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
                                 });
@@ -411,8 +423,8 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                 });
 
         // Collects all match competitors in the match results DTO
-        matchResultsDto.getMatchCompetitors().addAll(matchCompetitorDtoList);
+        matchResultsDto.setMatchCompetitors(matchCompetitorDtoList);
         // Collects all stage competitors in the match results DTO
-        matchResultsDto.getMatchStageCompetitors().addAll(matchStageCompetitorDtoList);
+        matchResultsDto.setMatchStageCompetitors(matchStageCompetitorDtoList);
     }
 }

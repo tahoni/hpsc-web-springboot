@@ -56,6 +56,8 @@ public class Competitor {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "competitor")
     private List<MatchCompetitor> competitorMatches = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "competitor")
+    private List<MatchStageCompetitor> competitorStageMatches = new ArrayList<>();
 
     /**
      * Initialises the current {@code Competitor} entity with data from a DTO.

@@ -80,8 +80,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             // Get the match stages and competitors
             match.setName(ValueUtil.nullAsEmptyString(match.getName()));
             match.setClub(match.getClub());
-            List<IpscMatchStage> matchStageList = new ArrayList<>();
-            List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
+            List<IpscMatchStage> matchStageList =
+                    ((match.getMatchStages() != null) ? match.getMatchStages() : new ArrayList<>());
+            List<MatchCompetitor> matchCompetitorList =
+                    ((match.getMatchCompetitors() != null) ? match.getMatchCompetitors() : new ArrayList<>());
 
             // Get the competitors
             List<MatchStageCompetitor> matchStageCompetitorList = getMatchStageCompetitorList(matchStageList);

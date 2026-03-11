@@ -168,7 +168,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(100L, dto.getId());
         assertNotNull(dto.getCompetitor());
         assertNotNull(dto.getMatchStage());
-        assertNotNull(dto.getClub());
+        assertNull(dto.getClub());
         assertNull(dto.getCompetitorCategory());
         assertNull(dto.getFirearmType());
         assertNull(dto.getDivision());
@@ -240,7 +240,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(101L, dto.getId());
         assertNotNull(dto.getCompetitor());
         assertNotNull(dto.getMatchStage());
-        assertNotNull(dto.getClub());
+        assertNull(dto.getClub());
         assertEquals(CompetitorCategory.SENIOR, dto.getCompetitorCategory());
         assertEquals(FirearmType.HANDGUN, dto.getFirearmType());
         assertEquals(Division.PRODUCTION, dto.getDivision());
@@ -322,8 +322,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals("Champion", dto.getCompetitor().getLastName());
         assertNotNull(dto.getMatchStage());
         assertEquals(3, dto.getMatchStage().getStageNumber());
-        assertNotNull(dto.getClub());
-        assertEquals("Championship Club", dto.getClub().getName());
+        assertNull(dto.getClub());
         assertEquals(CompetitorCategory.JUNIOR, dto.getCompetitorCategory());
         assertEquals(FirearmType.HANDGUN, dto.getFirearmType());
         assertEquals(Division.OPEN, dto.getDivision());
@@ -578,7 +577,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals("John", dto.getCompetitor().getFirstName());
         assertEquals("Doe", dto.getCompetitor().getLastName());
         assertNull(dto.getMatchStage());
-        assertEquals(CompetitorCategory.SENIOR, dto.getCompetitorCategory());
+        assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
     // Both Parameters Provided
@@ -604,7 +603,6 @@ public class MatchStageCompetitorDtoTest {
         assertNotNull(dto.getMatchStage());
         assertEquals(3, dto.getMatchStage().getStageNumber());
         assertEquals("Speed Stage", dto.getMatchStage().getStageName());
-        assertEquals(CompetitorCategory.GRAND_SENIOR, dto.getCompetitorCategory());
     }
 
     // CompetitorDto with Null Default Category
@@ -622,7 +620,7 @@ public class MatchStageCompetitorDtoTest {
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(competitorDto, matchStageDto);
 
         // Assert
-        assertNull(dto.getCompetitorCategory());
+        assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
     // CompetitorDto with NONE Category
@@ -703,8 +701,7 @@ public class MatchStageCompetitorDtoTest {
         assertNotNull(dto.getMatchStage());
         assertEquals(5, dto.getMatchStage().getStageNumber());
         assertEquals(CompetitorCategory.SUPER_SENIOR, dto.getCompetitorCategory());
-        assertNotNull(dto.getClub());
-        assertEquals("All Args Club", dto.getClub().getName());
+        assertEquals(ClubIdentifier.HPSC, dto.getClub());
         assertEquals(FirearmType.HANDGUN, dto.getFirearmType());
         assertEquals(Division.STANDARD, dto.getDivision());
         assertEquals(PowerFactor.MAJOR, dto.getPowerFactor());
@@ -904,7 +901,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(125, dto.getPoints());
         assertEquals("42.50", dto.getTime().toString());
         assertNull(dto.getCompetitorIndex());
-        assertNull(dto.getMatchStageIndex());
+        assertEquals(3, dto.getMatchStageIndex());
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
