@@ -1,6 +1,5 @@
 package za.co.hpsc.web.services;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -115,7 +114,6 @@ public class IpscServiceIntegrationTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    @Disabled
     @Test
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange
@@ -162,7 +160,6 @@ public class IpscServiceIntegrationTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    @Disabled
     @Test
     public void importWinMssCabFile_withCompleteValidDataClubNullAndFilter_thenReturnsIpscMatchRecordHolder() {
         // Arrange

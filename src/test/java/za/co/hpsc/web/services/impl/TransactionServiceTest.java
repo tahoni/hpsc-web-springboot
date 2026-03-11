@@ -1,6 +1,5 @@
 package za.co.hpsc.web.services.impl;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -90,7 +89,6 @@ public class TransactionServiceTest {
     // Tests for saveMatchResults - Valid Data Processing
     // =====================================================================
 
-    @Disabled
     @Test
     public void testSaveMatchResults_whenMatchProvided_thenSavesMatchAndCommits() {
         // Arrange
@@ -107,7 +105,7 @@ public class TransactionServiceTest {
         // Assert
         assertTrue(result.isPresent());
         verify(transactionManager).getTransaction(any());
-        verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
+        verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
         verify(clubRepository, never()).save(any());
         verify(competitorRepository, never()).saveAll(anyList());
         verify(ipscMatchStageRepository, never()).saveAll(anyList());
@@ -116,7 +114,6 @@ public class TransactionServiceTest {
         verify(transactionManager).commit(transactionStatus);
     }
 
-    @Disabled
     @Test
     public void testSaveMatchResults_whenClubProvided_thenSavesClubAndMatch() {
         // Arrange
@@ -140,11 +137,10 @@ public class TransactionServiceTest {
         // Assert
         assertTrue(result.isPresent());
         verify(clubRepository, times(1)).save(club);
-        verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
+        verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
         verify(transactionManager).commit(transactionStatus);
     }
 
-    @Disabled
     @Test
     public void testSaveMatchResults_whenFullMappingProvided_thenSavesAllEntities() {
         // Arrange
@@ -171,7 +167,7 @@ public class TransactionServiceTest {
         // Assert
         assertTrue(result.isPresent());
         verify(clubRepository, times(1)).save(any(Club.class));
-        verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
+        verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
         verify(competitorRepository, times(1)).saveAll(anyList());
         verify(ipscMatchStageRepository, times(1)).saveAll(anyList());
         verify(matchCompetitorRepository, times(1)).saveAll(anyList());
@@ -179,7 +175,6 @@ public class TransactionServiceTest {
         verify(transactionManager).commit(transactionStatus);
     }
 
-    @Disabled
     @Test
     public void testSaveMatchResults_whenMatchNameIsBlank_thenStillCommits() {
         // Arrange
@@ -196,11 +191,10 @@ public class TransactionServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
+        verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
         verify(transactionManager).commit(transactionStatus);
     }
 
-    @Disabled
     @Test
     public void testSaveMatchResults_whenEmptyCollections_thenSkipsSaveAll() {
         // Arrange
@@ -220,7 +214,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository, times(1)).save(any(IpscMatch.class));
+        verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
         verify(competitorRepository, never()).saveAll(anyList());
         verify(ipscMatchStageRepository, never()).saveAll(anyList());
         verify(matchCompetitorRepository, never()).saveAll(anyList());
