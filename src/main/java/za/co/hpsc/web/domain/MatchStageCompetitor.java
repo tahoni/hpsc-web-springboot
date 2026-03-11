@@ -95,7 +95,7 @@ public class MatchStageCompetitor {
      * and rankings, based on the data from the provided DTO object.
      *
      * @param matchStageCompetitorDto the data transfer object containing the
-     *                                values to initialize the fields of this object
+     *                                values to initialise the fields of this object
      */
     public void init(MatchStageCompetitorDto matchStageCompetitorDto) {
         // Initialises the match stage and competitor attributes

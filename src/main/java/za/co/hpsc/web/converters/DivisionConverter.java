@@ -5,7 +5,7 @@ import jakarta.persistence.Converter;
 import za.co.hpsc.web.enums.Division;
 
 @Converter(autoApply = true)
-public class DivisionConvweter implements AttributeConverter<Division, String> {
+public class DivisionConverter implements AttributeConverter<Division, String> {
     @Override
     public String convertToDatabaseColumn(Division division) {
         return ((division != null) ? division.getName() : null);

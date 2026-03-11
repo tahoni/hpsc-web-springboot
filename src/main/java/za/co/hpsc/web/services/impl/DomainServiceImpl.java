@@ -83,7 +83,7 @@ public class DomainServiceImpl implements DomainService {
             // Generate caches of DTOs with their UUIDs
             Map<UUID, MatchCompetitorDto> matchCompetitorMap =
                     initMatchCompetitorEntities(matchResults.getMatchCompetitors(), matchDto,
-                            competitorMap, filterClubIdentifier);
+                            competitorMap);
             Map<UUID, MatchStageCompetitorDto> matchStageCompetitorMap =
                     initMatchStageCompetitorEntities(matchResults.getMatchStageCompetitors(),
                             matchStageMap, competitorMap, filterClubIdentifier);
@@ -280,15 +280,12 @@ public class DomainServiceImpl implements DomainService {
      * @param matchDto               the match entity with which the match competitors are associated
      * @param competitorMap          a map of UUIDs to Competitor entities used to map DTOs to
      *                               existing competitors
-     * @param clubIdentifier         the identifier of the club used to filter match competitors
-     *                               by their club reference
      * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities.
      * If a required competitor or match competitor cannot be found, an empty map is returned
      */
     protected Map<UUID, MatchCompetitorDto> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitorDtoList,
                                                                         MatchDto matchDto,
-                                                                        Map<UUID, CompetitorDto> competitorMap,
-                                                                        ClubIdentifier clubIdentifier) {
+                                                                        Map<UUID, CompetitorDto> competitorMap) {
 
         if (matchCompetitorDtoList == null) {
             return new HashMap<>();

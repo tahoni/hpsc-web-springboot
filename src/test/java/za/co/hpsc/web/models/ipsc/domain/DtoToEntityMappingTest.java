@@ -48,8 +48,8 @@ public class DtoToEntityMappingTest {
 
         // Assert
         assertNotNull(mapping);
-        assertNotNull(mapping.getDtoMapping());
-        assertNotNull(mapping.getEntityMapping());
+        assertNotNull(mapping.dtoMapping());
+        assertNotNull(mapping.entityMapping());
     }
 
     @Test
@@ -63,8 +63,8 @@ public class DtoToEntityMappingTest {
 
         // Assert
         assertNotNull(mapping);
-        assertNotNull(mapping.getDtoMapping());
-        assertNotNull(mapping.getEntityMapping());
+        assertNotNull(mapping.dtoMapping());
+        assertNotNull(mapping.entityMapping());
     }
 
     // =====================================================================

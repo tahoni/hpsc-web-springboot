@@ -118,7 +118,7 @@ public class ClubDto {
     }
 
     /**
-     * Initializes the current {@code ClubDto} instance with data from the provided
+     * Initialises the current {@code ClubDto} instance with data from the provided
      * {@code ClubResponse} object.
      *
      * @param clubResponse the {@code ClubResponse} object containing the club's information,
@@ -155,7 +155,7 @@ public class ClubDto {
         }
 
         // Appends the club abbreviation in parentheses if it is not null, not blank,
-        // and not the same as the name
+        // and different from the name
         if ((this.abbreviation != null) && (!this.abbreviation.isBlank()) &&
                 (!this.abbreviation.equalsIgnoreCase(this.name))) {
             sb.append("(");
@@ -163,7 +163,7 @@ public class ClubDto {
             sb.append(")");
         }
 
-        // Trim all leading and trailing whitespace, and remove parentheses
+        // Trim all leading and trailing whitespace and remove parentheses
         // if they are the leading and trailing characters
         String result = sb.toString().trim();
         if (result.startsWith("(") && result.endsWith(")")) {

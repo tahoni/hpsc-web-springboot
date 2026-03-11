@@ -1,6 +1,5 @@
 package za.co.hpsc.web.models.ipsc.domain;
 
-import lombok.Getter;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.dto.*;
@@ -11,20 +10,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 // TODO: add comments
-public class DtoToEntityMapping {
-    @Getter
-    protected final DtoMapping dtoMapping;
-    @Getter
-    protected final EntityMapping entityMapping;
-
+public record DtoToEntityMapping(
+        DtoMapping dtoMapping,
+        EntityMapping entityMapping
+) {
     public DtoToEntityMapping(DtoMapping dtoToMapping) {
-        this.dtoMapping = Objects.requireNonNullElseGet(dtoToMapping, DtoMapping::new);
-        this.entityMapping = new EntityMapping();
-    }
-
-    public DtoToEntityMapping(DtoMapping dtoToMapping, EntityMapping entityMapping) {
-        this.dtoMapping = Objects.requireNonNullElseGet(dtoToMapping, DtoMapping::new);
-        this.entityMapping = Objects.requireNonNullElseGet(entityMapping, EntityMapping::new);
+        this(Objects.requireNonNullElseGet(dtoToMapping, DtoMapping::new), new EntityMapping());
     }
 
     public Optional<MatchDto> getMatchDto() {

@@ -70,7 +70,7 @@ class ValueUtilTest {
     @Test
     void testNullAsEmptyString_whenNullString_thenReturnsEmptyString() {
         // Act
-        String result = ValueUtil.nullAsEmptyString((String) null);
+        String result = ValueUtil.nullAsEmptyString(null);
 
         // Assert
         assertEquals("", result);
