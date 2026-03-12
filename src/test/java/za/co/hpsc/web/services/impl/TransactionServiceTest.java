@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 // TODO: add more checks
@@ -239,8 +237,9 @@ public class TransactionServiceTest {
     }
 
 
+
     // =====================================================================
-    // Helper methods for building test data
+    // Helper Methods
     // =====================================================================
 
     private static ClubDto buildClubDto(Long clubId, String name) {
@@ -324,4 +323,5 @@ public class TransactionServiceTest {
         dtoMapping.setMatchStageCompetitorMap(matchStageCompetitorMap);
         return dtoMapping;
     }
+
 }

@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -60,19 +61,7 @@ public class MatchDtoTest {
     @Test
     void testConstructor_whenIpscMatchFullyPopulated_thenMapsAllFields() {
         // Arrange
-        Club club = new Club();
-        club.setId(10L);
-        club.setName("Test Club");
-        club.setAbbreviation("TC");
-
-        IpscMatch match = new IpscMatch();
-        match.setId(99L);
-        match.setName("Championship Match");
-        match.setScheduledDate(LocalDateTime.of(2026, 6, 15, 9, 0));
-        match.setMatchFirearmType(FirearmType.HANDGUN);
-        match.setMatchCategory(MatchCategory.LEAGUE);
-        match.setClub(club);
-        match.setDateEdited(LocalDateTime.of(2026, 6, 10, 14, 30));
+        IpscMatch match = getIpscMatch();
 
         // Act
         MatchDto dto = new MatchDto(match);
@@ -87,6 +76,23 @@ public class MatchDtoTest {
         assertEquals(10L, dto.getClub().getId());
         assertEquals("Test Club", dto.getClub().getName());
         assertEquals(LocalDateTime.of(2026, 6, 10, 14, 30), dto.getDateEdited());
+    }
+
+    private static @NonNull IpscMatch getIpscMatch() {
+        Club club = new Club();
+        club.setId(10L);
+        club.setName("Test Club");
+        club.setAbbreviation("TC");
+
+        IpscMatch match = new IpscMatch();
+        match.setId(99L);
+        match.setName("Championship Match");
+        match.setScheduledDate(LocalDateTime.of(2026, 6, 15, 9, 0));
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setClub(club);
+        match.setDateEdited(LocalDateTime.of(2026, 6, 10, 14, 30));
+        return match;
     }
 
     @Test

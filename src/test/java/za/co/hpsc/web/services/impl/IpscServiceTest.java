@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,8 +34,6 @@ public class IpscServiceTest {
     private IpscMatchService ipscMatchService;
     @Mock
     private IpscMatchResultService ipscMatchResultService;
-    @Mock
-    private DomainServiceImpl domainService;
 
     @InjectMocks
     private IpscServiceImpl ipscService;

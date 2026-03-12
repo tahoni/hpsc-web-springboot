@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
@@ -30,23 +31,7 @@ public class MatchStageDtoTest {
     @Test
     void testConstructor_whenIpscMatchStageHasNullFields_thenMapsNulls() {
         // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setId(10L);
-        match.setName("Test Match");
-
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setId(42L);
-        stage.setMatch(match);
-        stage.setStageNumber(null);
-        stage.setStageName(null);
-        stage.setRangeNumber(null);
-        stage.setTargetPaper(null);
-        stage.setTargetPopper(null);
-        stage.setTargetPlates(null);
-        stage.setTargetDisappear(null);
-        stage.setTargetPenalty(null);
-        stage.setMinRounds(null);
-        stage.setMaxPoints(null);
+        IpscMatchStage stage = getIpscMatchStage();
 
         // Act
         MatchStageDto dto = new MatchStageDto(stage);
@@ -64,6 +49,27 @@ public class MatchStageDtoTest {
         assertNull(dto.getTargetPenalty());
         assertNull(dto.getMinRounds());
         assertNull(dto.getMaxPoints());
+    }
+
+    private static @NonNull IpscMatchStage getIpscMatchStage() {
+        IpscMatch match = new IpscMatch();
+        match.setId(10L);
+        match.setName("Test Match");
+
+        IpscMatchStage stage = new IpscMatchStage();
+        stage.setId(42L);
+        stage.setMatch(match);
+        stage.setStageNumber(null);
+        stage.setStageName(null);
+        stage.setRangeNumber(null);
+        stage.setTargetPaper(null);
+        stage.setTargetPopper(null);
+        stage.setTargetPlates(null);
+        stage.setTargetDisappear(null);
+        stage.setTargetPenalty(null);
+        stage.setMinRounds(null);
+        stage.setMaxPoints(null);
+        return stage;
     }
 
     @Test
@@ -136,6 +142,25 @@ public class MatchStageDtoTest {
     @Test
     void testConstructor_whenIpscMatchStageFullyPopulated_thenMapsAllFields() {
         // Arrange
+        MatchStageDto dto = getMatchStageDto();
+
+        // Assert
+        assertEquals(99L, dto.getId());
+        assertNotNull(dto.getMatch());
+        assertEquals("Championship Match", dto.getMatch().getName());
+        assertEquals(5, dto.getStageNumber());
+        assertNull(dto.getStageName()); // Single param constructor doesn't map stageName
+        assertEquals(2, dto.getRangeNumber());
+        assertEquals(8, dto.getTargetPaper());
+        assertEquals(4, dto.getTargetPopper());
+        assertEquals(6, dto.getTargetPlates());
+        assertEquals(2, dto.getTargetDisappear());
+        assertEquals(0, dto.getTargetPenalty());
+        assertEquals(20, dto.getMinRounds());
+        assertEquals(100, dto.getMaxPoints());
+    }
+
+    private static @NonNull MatchStageDto getMatchStageDto() {
         IpscMatch match = new IpscMatch();
         match.setId(10L);
         match.setName("Championship Match");
@@ -155,22 +180,7 @@ public class MatchStageDtoTest {
         stage.setMaxPoints(100);
 
         // Act
-        MatchStageDto dto = new MatchStageDto(stage);
-
-        // Assert
-        assertEquals(99L, dto.getId());
-        assertNotNull(dto.getMatch());
-        assertEquals("Championship Match", dto.getMatch().getName());
-        assertEquals(5, dto.getStageNumber());
-        assertNull(dto.getStageName()); // Single param constructor doesn't map stageName
-        assertEquals(2, dto.getRangeNumber());
-        assertEquals(8, dto.getTargetPaper());
-        assertEquals(4, dto.getTargetPopper());
-        assertEquals(6, dto.getTargetPlates());
-        assertEquals(2, dto.getTargetDisappear());
-        assertEquals(0, dto.getTargetPenalty());
-        assertEquals(20, dto.getMinRounds());
-        assertEquals(100, dto.getMaxPoints());
+        return new MatchStageDto(stage);
     }
 
     @Test
@@ -273,6 +283,24 @@ public class MatchStageDtoTest {
     @Test
     void testConstructor_whenIpscMatchStageAndMatchDtoFullyPopulated_thenMapsAllFields() {
         // Arrange
+        MatchStageDto dto = getStageDto();
+
+        // Assert
+        assertEquals(30L, dto.getId());
+        assertEquals("Full Match", dto.getMatch().getName());
+        assertEquals(7, dto.getStageNumber());
+        assertEquals("Precision Stage", dto.getStageName());
+        assertEquals(3, dto.getRangeNumber());
+        assertEquals(10, dto.getTargetPaper());
+        assertEquals(5, dto.getTargetPopper());
+        assertEquals(8, dto.getTargetPlates());
+        assertEquals(3, dto.getTargetDisappear());
+        assertEquals(1, dto.getTargetPenalty());
+        assertEquals(25, dto.getMinRounds());
+        assertEquals(150, dto.getMaxPoints());
+    }
+
+    private static @NonNull MatchStageDto getStageDto() {
         IpscMatch match = new IpscMatch();
         match.setId(10L);
 
@@ -294,21 +322,7 @@ public class MatchStageDtoTest {
         matchDto.setName("Full Match");
 
         // Act
-        MatchStageDto dto = new MatchStageDto(stage, matchDto);
-
-        // Assert
-        assertEquals(30L, dto.getId());
-        assertEquals("Full Match", dto.getMatch().getName());
-        assertEquals(7, dto.getStageNumber());
-        assertEquals("Precision Stage", dto.getStageName());
-        assertEquals(3, dto.getRangeNumber());
-        assertEquals(10, dto.getTargetPaper());
-        assertEquals(5, dto.getTargetPopper());
-        assertEquals(8, dto.getTargetPlates());
-        assertEquals(3, dto.getTargetDisappear());
-        assertEquals(1, dto.getTargetPenalty());
-        assertEquals(25, dto.getMinRounds());
-        assertEquals(150, dto.getMaxPoints());
+        return new MatchStageDto(stage, matchDto);
     }
 
     // init() mappings
@@ -372,6 +386,24 @@ public class MatchStageDtoTest {
     @Test
     void testInit_whenMatchDtoAndStageResponseProvided_thenMapsAllFields() {
         // Arrange
+        MatchStageDto dto = getDto();
+
+        // Assert
+        assertEquals(12, dto.getIndex());
+        assertEquals("Spring Championship", dto.getMatch().getName());
+        assertEquals(12, dto.getStageNumber());
+        assertEquals("Stage 12 - Accuracy", dto.getStageName());
+        assertEquals(0, dto.getRangeNumber());
+        assertEquals(6, dto.getTargetPaper());
+        assertEquals(3, dto.getTargetPopper());
+        assertEquals(4, dto.getTargetPlates());
+        assertEquals(1, dto.getTargetDisappear());
+        assertEquals(0, dto.getTargetPenalty());
+        assertEquals(15, dto.getMinRounds());
+        assertEquals(75, dto.getMaxPoints());
+    }
+
+    private static @NonNull MatchStageDto getDto() {
         MatchStageDto dto = new MatchStageDto();
 
         MatchDto matchDto = new MatchDto();
@@ -390,20 +422,7 @@ public class MatchStageDtoTest {
 
         // Act
         dto.init(matchDto, stageResponse);
-
-        // Assert
-        assertEquals(12, dto.getIndex());
-        assertEquals("Spring Championship", dto.getMatch().getName());
-        assertEquals(12, dto.getStageNumber());
-        assertEquals("Stage 12 - Accuracy", dto.getStageName());
-        assertEquals(0, dto.getRangeNumber());
-        assertEquals(6, dto.getTargetPaper());
-        assertEquals(3, dto.getTargetPopper());
-        assertEquals(4, dto.getTargetPlates());
-        assertEquals(1, dto.getTargetDisappear());
-        assertEquals(0, dto.getTargetPenalty());
-        assertEquals(15, dto.getMinRounds());
-        assertEquals(75, dto.getMaxPoints());
+        return dto;
     }
 
     // Edge Cases - Null/Empty/Blank Stage Name
@@ -530,6 +549,24 @@ public class MatchStageDtoTest {
     @Test
     void testInit_whenStageResponseFullyPopulated_thenMapsAllFields() {
         // Arrange
+        MatchStageDto dto = getMatchStageDto1();
+
+        // Assert
+        assertEquals(60, dto.getIndex());
+        assertEquals("Complete Match", dto.getMatch().getName());
+        assertEquals(60, dto.getStageNumber());
+        assertEquals("Stage 60 - Complete", dto.getStageName());
+        assertEquals(0, dto.getRangeNumber());
+        assertEquals(12, dto.getTargetPaper());
+        assertEquals(8, dto.getTargetPopper());
+        assertEquals(10, dto.getTargetPlates());
+        assertEquals(4, dto.getTargetDisappear());
+        assertEquals(2, dto.getTargetPenalty());
+        assertEquals(30, dto.getMinRounds());
+        assertEquals(200, dto.getMaxPoints());
+    }
+
+    private static @NonNull MatchStageDto getMatchStageDto1() {
         MatchStageDto dto = new MatchStageDto();
 
         MatchDto matchDto = new MatchDto();
@@ -548,26 +585,27 @@ public class MatchStageDtoTest {
 
         // Act
         dto.init(matchDto, stageResponse);
-
-        // Assert
-        assertEquals(60, dto.getIndex());
-        assertEquals("Complete Match", dto.getMatch().getName());
-        assertEquals(60, dto.getStageNumber());
-        assertEquals("Stage 60 - Complete", dto.getStageName());
-        assertEquals(0, dto.getRangeNumber());
-        assertEquals(12, dto.getTargetPaper());
-        assertEquals(8, dto.getTargetPopper());
-        assertEquals(10, dto.getTargetPlates());
-        assertEquals(4, dto.getTargetDisappear());
-        assertEquals(2, dto.getTargetPenalty());
-        assertEquals(30, dto.getMinRounds());
-        assertEquals(200, dto.getMaxPoints());
+        return dto;
     }
 
     // Special Cases - Zero and Max Values
     @Test
     void testInit_whenStageResponseHasAllZeroTargets_thenMapsZeros() {
         // Arrange
+        MatchStageDto dto = getMatchStageDto2();
+
+        // Assert
+        assertEquals(70, dto.getIndex());
+        assertEquals(0, dto.getTargetPaper());
+        assertEquals(0, dto.getTargetPopper());
+        assertEquals(0, dto.getTargetPlates());
+        assertEquals(0, dto.getTargetDisappear());
+        assertEquals(0, dto.getTargetPenalty());
+        assertEquals(0, dto.getMinRounds());
+        assertEquals(0, dto.getMaxPoints());
+    }
+
+    private static @NonNull MatchStageDto getMatchStageDto2() {
         MatchStageDto dto = new MatchStageDto();
 
         MatchDto matchDto = new MatchDto();
@@ -586,21 +624,27 @@ public class MatchStageDtoTest {
 
         // Act
         dto.init(matchDto, stageResponse);
-
-        // Assert
-        assertEquals(70, dto.getIndex());
-        assertEquals(0, dto.getTargetPaper());
-        assertEquals(0, dto.getTargetPopper());
-        assertEquals(0, dto.getTargetPlates());
-        assertEquals(0, dto.getTargetDisappear());
-        assertEquals(0, dto.getTargetPenalty());
-        assertEquals(0, dto.getMinRounds());
-        assertEquals(0, dto.getMaxPoints());
+        return dto;
     }
 
     @Test
     void testInit_whenStageResponseHasMaxValues_thenMapsCorrectly() {
         // Arrange
+        MatchStageDto dto = getMatchStageDto3();
+
+        // Assert
+        assertEquals(100, dto.getIndex());
+        assertEquals(100, dto.getStageNumber());
+        assertEquals(999, dto.getTargetPaper());
+        assertEquals(999, dto.getTargetPopper());
+        assertEquals(999, dto.getTargetPlates());
+        assertEquals(999, dto.getTargetDisappear());
+        assertEquals(999, dto.getTargetPenalty());
+        assertEquals(999, dto.getMinRounds());
+        assertEquals(99999, dto.getMaxPoints());
+    }
+
+    private static @NonNull MatchStageDto getMatchStageDto3() {
         MatchStageDto dto = new MatchStageDto();
         dto.setIndex(999);
         dto.setStageNumber(99);
@@ -621,17 +665,7 @@ public class MatchStageDtoTest {
 
         // Act
         dto.init(matchDto, stageResponse);
-
-        // Assert
-        assertEquals(100, dto.getIndex());
-        assertEquals(100, dto.getStageNumber());
-        assertEquals(999, dto.getTargetPaper());
-        assertEquals(999, dto.getTargetPopper());
-        assertEquals(999, dto.getTargetPlates());
-        assertEquals(999, dto.getTargetDisappear());
-        assertEquals(999, dto.getTargetPenalty());
-        assertEquals(999, dto.getMinRounds());
-        assertEquals(99999, dto.getMaxPoints());
+        return dto;
     }
 
     // Selective Field Population

@@ -1,5 +1,7 @@
 package za.co.hpsc.web.services.impl;
 
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -42,10 +44,11 @@ public class IpscMatchResultServiceTest {
     private MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
     private IpscMatchResultServiceImpl ipscMatchResultService;
+    private AutoCloseable mocks;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         ipscMatchResultService = new IpscMatchResultServiceImpl(
                 clubEntityService,
                 matchEntityService,
@@ -54,6 +57,11 @@ public class IpscMatchResultServiceTest {
                 matchCompetitorEntityService,
                 matchStageCompetitorEntityService
         );
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        mocks.close();
     }
 
     // =====================================================================
@@ -106,22 +114,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_withCompleteMatchAndExistingClub_thenUpdatesFromDatabase() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        clubResponse.setClubName("Existing Club");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Match with Existing Club");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse("ABC", "Existing Club", "Match with Existing Club");
 
         Club existingClub = new Club();
         existingClub.setId(1L);
@@ -146,22 +139,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_withExistingMatchAndCompleteClub_thenUpdatesFromDatabase() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        clubResponse.setClubName("Existing Club");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Match with Existing Club");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse("ABC", "Existing Club", "Match with Existing Club");
 
         Club existingClub = new Club();
         existingClub.setId(1L);
@@ -191,22 +169,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_withExistingMatchAndCompleteClubAndScoresEmpty_thenUpdatesFromDatabase() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        clubResponse.setClubName("Existing Club");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Match with Existing Club");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse(new ArrayList<>());
 
         Club existingClub = new Club();
         existingClub.setId(1L);
@@ -235,22 +198,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_withExistingMatchAndClubAndScoresNull_thenUpdatesFromDatabase() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        clubResponse.setClubName("Existing Club");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Match with Existing Club");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
-        ipscResponse.setScores(null);
+        IpscResponse ipscResponse = getIpscResponse(null);
 
         Club existingClub = new Club();
         existingClub.setId(1L);
@@ -687,7 +635,7 @@ public class IpscMatchResultServiceTest {
 
     @Test
     public void initScores_whenResponseIsNull_thenNoChangesApplied() {
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, null));
 
@@ -701,7 +649,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(null);
         ipscResponse.setMembers(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
@@ -715,7 +663,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setMembers(null);
         ipscResponse.setScores(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
@@ -729,7 +677,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
         matchResults.setStages(new ArrayList<>());
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
@@ -768,7 +716,7 @@ public class IpscMatchResultServiceTest {
                 buildEnrolledResponse(4, 999)
         ));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 10, 10, 10L)));
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
@@ -795,7 +743,7 @@ public class IpscMatchResultServiceTest {
                 buildEnrolledResponse(7, 100)
         ));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 11, 11, 11L)));
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
@@ -813,8 +761,8 @@ public class IpscMatchResultServiceTest {
         when(matchStageCompetitorEntityService.findMatchStageCompetitor(any(), any())).thenReturn(Optional.empty());
 
         IpscResponse ipscResponse = new IpscResponse();
-        ipscResponse.setMatch(buildMatchResponse(100, "Match 100"));
-        ipscResponse.setStages(List.of(buildStageResponse(100, 21, "Stage 21")));
+        ipscResponse.setMatch(buildMatchResponse());
+        ipscResponse.setStages(List.of(buildStageResponse()));
         ipscResponse.setScores(List.of(buildScoreResponse(100, 21, 9, 95)));
         ipscResponse.setMembers(List.of(buildMemberResponse(9, "Bob", "Smith")));
         ipscResponse.setEnrolledMembers(List.of(buildEnrolledResponse(9, 100)));
@@ -833,7 +781,7 @@ public class IpscMatchResultServiceTest {
 
     @Test
     public void testInitScores_whenResponseIsNull_thenNoChangesApplied() {
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, null));
 
@@ -847,7 +795,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(null);
         ipscResponse.setMembers(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
@@ -861,7 +809,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setMembers(null);
         ipscResponse.setScores(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
@@ -875,7 +823,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
         matchResults.setStages(new ArrayList<>());
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
@@ -914,7 +862,7 @@ public class IpscMatchResultServiceTest {
                 buildEnrolledResponse(4, 999)
         ));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 10, 10, 10L)));
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
@@ -941,7 +889,7 @@ public class IpscMatchResultServiceTest {
                 buildEnrolledResponse(7, 100)
         ));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 11, 11, 11L)));
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
@@ -959,8 +907,8 @@ public class IpscMatchResultServiceTest {
         when(matchStageCompetitorEntityService.findMatchStageCompetitor(any(), any())).thenReturn(Optional.empty());
 
         IpscResponse ipscResponse = new IpscResponse();
-        ipscResponse.setMatch(buildMatchResponse(100, "Match 100"));
-        ipscResponse.setStages(List.of(buildStageResponse(100, 21, "Stage 21")));
+        ipscResponse.setMatch(buildMatchResponse());
+        ipscResponse.setStages(List.of(buildStageResponse()));
         ipscResponse.setScores(List.of(buildScoreResponse(100, 21, 9, 95)));
         ipscResponse.setMembers(List.of(buildMemberResponse(9, "Bob", "Smith")));
         ipscResponse.setEnrolledMembers(List.of(buildEnrolledResponse(9, 100)));
@@ -979,7 +927,7 @@ public class IpscMatchResultServiceTest {
 
     @Test
     public void testInitScores_whenResponseIsNull_thenNoChangesApplied_fromConsolidated() {
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, null));
 
@@ -993,7 +941,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(null);
         ipscResponse.setMembers(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
@@ -1007,7 +955,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setMembers(null);
         ipscResponse.setScores(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
 
@@ -1021,7 +969,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, null));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(null));
         matchResults.setStages(new ArrayList<>());
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
@@ -1060,7 +1008,7 @@ public class IpscMatchResultServiceTest {
                 buildEnrolledResponse(4, 999)
         ));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 10, 10, 10L)));
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
@@ -1087,7 +1035,7 @@ public class IpscMatchResultServiceTest {
                 buildEnrolledResponse(7, 100)
         ));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 11, 11, 11L)));
 
         ipscMatchResultService.initScores(matchResults, ipscResponse);
@@ -1105,8 +1053,8 @@ public class IpscMatchResultServiceTest {
         when(matchStageCompetitorEntityService.findMatchStageCompetitor(any(), any())).thenReturn(Optional.empty());
 
         IpscResponse ipscResponse = new IpscResponse();
-        ipscResponse.setMatch(buildMatchResponse(100, "Match 100"));
-        ipscResponse.setStages(List.of(buildStageResponse(100, 21, "Stage 21")));
+        ipscResponse.setMatch(buildMatchResponse());
+        ipscResponse.setStages(List.of(buildStageResponse()));
         ipscResponse.setScores(List.of(buildScoreResponse(100, 21, 9, 95)));
         ipscResponse.setMembers(List.of(buildMemberResponse(9, "Bob", "Smith")));
         ipscResponse.setEnrolledMembers(List.of(buildEnrolledResponse(9, 100)));
@@ -1137,7 +1085,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setMembers(List.of(buildMemberResponse(5, "Test", "User")));
         ipscResponse.setEnrolledMembers(List.of(buildEnrolledResponse(5, 100)));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 10, 10, 10L)));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
@@ -1163,7 +1111,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setMembers(List.of(memberWithBlankName));
         ipscResponse.setEnrolledMembers(List.of(buildEnrolledResponse(6, 100)));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(buildMatchStageDto(matchResults.getMatch(), 10, 10, 10L)));
 
         assertDoesNotThrow(() -> ipscMatchResultService.initScores(matchResults, ipscResponse));
@@ -1186,7 +1134,7 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setMembers(List.of(buildMemberResponse(8, "Multi", "Stage")));
         ipscResponse.setEnrolledMembers(List.of(buildEnrolledResponse(8, 100)));
 
-        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(100, 1L));
+        MatchResultsDto matchResults = new MatchResultsDto(buildMatchDto(1L));
         matchResults.setStages(List.of(
                 buildMatchStageDto(matchResults.getMatch(), 10, 10, 10L),
                 buildMatchStageDto(matchResults.getMatch(), 11, 11, 11L),
@@ -1266,21 +1214,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenStagesAreNull_thenReturnsEmptyStagesList() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Test Match");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(null);
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse();
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
@@ -1299,21 +1233,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenScoresAreNull_thenReturnsEmptyScoresList() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Test Match");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(null);
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getResponse();
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
@@ -1330,21 +1250,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenMembersAreNull_thenProcessesWithoutMembers() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Test Match");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(null);
+        IpscResponse ipscResponse = getIpscResponse1();
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
@@ -1366,21 +1272,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenMatchNameIsNull_thenProcessesWithNullName() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName(null);
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse2(null, new ArrayList<>());
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
@@ -1399,22 +1291,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenMatchNameIsEmpty_thenProcessesWithEmptyName() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse2("", new ArrayList<>());
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
@@ -1433,21 +1310,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenMatchNameIsBlank_thenProcessesWithBlankName() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("   ");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse2("   ", new ArrayList<>());
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
@@ -1469,22 +1332,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenClubNameIsNull_thenProcessesWithNullClubName() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        clubResponse.setClubName(null);
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Test Match");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse("ABC", null, "Test Match");
 
         when(clubEntityService.findClubByNameOrAbbreviation(null, "ABC"))
                 .thenReturn(Optional.empty());
@@ -1501,22 +1349,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_whenClubCodeIsNull_thenProcessesWithNullClubCode() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode(null);
-        clubResponse.setClubName("Test Club");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Test Match");
-        ipscResponse.setMatch(matchResponse);
-
-        ipscResponse.setStages(new ArrayList<>());
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse(null, "Test Club", "Test Match");
 
         when(clubEntityService.findClubByNameOrAbbreviation("Test Club", null))
                 .thenReturn(Optional.empty());
@@ -1564,28 +1397,7 @@ public class IpscMatchResultServiceTest {
     @Test
     public void testInitMatchResults_withPartialData_thenMapsAvailableData() {
         // Arrange
-        IpscResponse ipscResponse = new IpscResponse();
-
-        ClubResponse clubResponse = new ClubResponse();
-        clubResponse.setClubId(1);
-        clubResponse.setClubCode("ABC");
-        clubResponse.setClubName("Test Club");
-        ipscResponse.setClub(clubResponse);
-
-        MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(100);
-        matchResponse.setMatchName("Partial Match");
-        ipscResponse.setMatch(matchResponse);
-
-        // Only stages, no scores
-        StageResponse stageResponse = new StageResponse();
-        stageResponse.setStageId(200);
-        stageResponse.setStageName("Stage 1");
-        stageResponse.setMatchId(100);
-        ipscResponse.setStages(List.of(stageResponse));
-
-        ipscResponse.setScores(new ArrayList<>());
-        ipscResponse.setMembers(new ArrayList<>());
+        IpscResponse ipscResponse = getIpscResponse2();
 
         when(clubEntityService.findClubByNameOrAbbreviation("Test Club", "ABC"))
                 .thenReturn(Optional.empty());
@@ -1694,9 +1506,117 @@ public class IpscMatchResultServiceTest {
         assertEquals(1, matchResults.getStages().size());
     }
 
+
     // =====================================================================
-    // Helper methods for building test data
+    // Helper Methods
     // =====================================================================
+
+    private static @NonNull IpscResponse getIpscResponse(String ABC, String Existing_Club, String Match_with_Existing_Club) {
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode(ABC);
+        clubResponse.setClubName(Existing_Club);
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName(Match_with_Existing_Club);
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setScores(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+        return ipscResponse;
+    }
+
+    private static @NonNull IpscResponse getIpscResponse(ArrayList<ScoreResponse> scores) {
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Existing Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match with Existing Club");
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+        ipscResponse.setScores(scores);
+        return ipscResponse;
+    }
+
+    private static @NonNull IpscResponse getIpscResponse() {
+        return getIpscResponse2("Test Match", null);
+    }
+
+    private static @NonNull IpscResponse getResponse() {
+        return getIpscResponse2("Test Match", new ArrayList<>());
+    }
+
+    private static @NonNull IpscResponse getIpscResponse1() {
+        return getIpscResponse2("Test Match", new ArrayList<>());
+    }
+
+    private static @NonNull IpscResponse getIpscResponse2(String matchName, ArrayList<StageResponse> stages) {
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName(matchName);
+        ipscResponse.setMatch(matchResponse);
+
+        ipscResponse.setStages(stages);
+        ipscResponse.setScores(stages);
+
+        ipscResponse.setMembers(stages);
+        return ipscResponse;
+    }
+
+    private static @NonNull IpscResponse getIpscResponse2() {
+        IpscResponse ipscResponse = new IpscResponse();
+
+        ClubResponse clubResponse = new ClubResponse();
+        clubResponse.setClubId(1);
+        clubResponse.setClubCode("ABC");
+        clubResponse.setClubName("Test Club");
+        ipscResponse.setClub(clubResponse);
+
+        MatchResponse matchResponse = new MatchResponse();
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Partial Match");
+        ipscResponse.setMatch(matchResponse);
+
+        // Only stages, no scores
+        StageResponse stageResponse = new StageResponse();
+        stageResponse.setStageId(200);
+        stageResponse.setStageName("Stage 1");
+        stageResponse.setMatchId(100);
+        ipscResponse.setStages(List.of(stageResponse));
+
+        ipscResponse.setScores(new ArrayList<>());
+        ipscResponse.setMembers(new ArrayList<>());
+        return ipscResponse;
+    }
+
+    private static MatchDto buildMatchDto(Long matchId) {
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(100);
+        matchDto.setId(matchId);
+        matchDto.setName("Match 100");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        return matchDto;
+    }
 
     private static MatchDto buildMatchDto(int matchIndex, Long matchId) {
         MatchDto matchDto = new MatchDto();
@@ -1741,19 +1661,22 @@ public class IpscMatchResultServiceTest {
         return enrolled;
     }
 
-    private static MatchResponse buildMatchResponse(int matchId, String matchName) {
+    private static MatchResponse buildMatchResponse() {
         MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setMatchId(matchId);
-        matchResponse.setMatchName(matchName);
+        matchResponse.setMatchId(100);
+        matchResponse.setMatchName("Match 100");
         return matchResponse;
     }
 
-    private static StageResponse buildStageResponse(int matchId, int stageId, String stageName) {
+    private static StageResponse buildStageResponse() {
         StageResponse stageResponse = new StageResponse();
-        stageResponse.setMatchId(matchId);
-        stageResponse.setStageId(stageId);
-        stageResponse.setStageName(stageName);
+        stageResponse.setMatchId(100);
+        stageResponse.setStageId(21);
+        stageResponse.setStageName("Stage 21");
         return stageResponse;
     }
+
 }
+
+
 

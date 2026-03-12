@@ -16,10 +16,8 @@ public class StringUtilTest {
     @Test
     void testFormatStringWithNamedParameters_whenValidTemplateAndParameters_thenReplacesPlaceholders() {
         // Arrange
-        String template = "Hello, ${name}! Welcome to ${place}.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", "Alice");
-        parameters.put("place", "Wonderland");
+        String template = standardTemplate();
+        Map<String, String> parameters = mapOf("name", "Alice", "place", "Wonderland");
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -32,8 +30,7 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenDuplicatePlaceholders_thenReplacesAllOccurrences() {
         // Arrange
         String template = "Hello, ${name}! ${name}, you are amazing!";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", "Alice");
+        Map<String, String> parameters = mapOf("name", "Alice");
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -46,9 +43,7 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenAdjacentPlaceholders_thenReplacesCorrectly() {
         // Arrange
         String template = "Welcome, ${firstName}${lastName}!";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("firstName", "John");
-        parameters.put("lastName", "Doe");
+        Map<String, String> parameters = mapOf("firstName", "John", "lastName", "Doe");
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -60,9 +55,8 @@ public class StringUtilTest {
     @Test
     void testFormatStringWithNamedParameters_whenMissingKeysInParameters_thenLeavesPlaceholdersUnchanged() {
         // Arrange
-        String template = "Hello, ${name}! Welcome to ${place}.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", "Alice");
+        String template = standardTemplate();
+        Map<String, String> parameters = mapOf("name", "Alice");
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -75,8 +69,7 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenNonExistentPlaceholder_thenLeavesItUnchanged() {
         // Arrange
         String template = "Hello, ${missingKey}.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        Map<String, String> parameters = mapOf("key", "value");
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -89,8 +82,7 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenNonPlaceholderTextOnly_thenReturnsTemplate() {
         // Arrange
         String template = "Simple text without placeholders.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        Map<String, String> parameters = mapOf("key", "value");
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -107,8 +99,7 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenEmptyTemplate_thenReturnsEmptyString() {
         // Arrange
         String template = "";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        Map<String, String> parameters = mapOf("key", "value");
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -120,7 +111,7 @@ public class StringUtilTest {
     @Test
     void testFormatStringWithNamedParameters_whenEmptyParametersMap_thenReturnsOriginalTemplate() {
         // Arrange
-        String template = "Hello, ${name}! Welcome to ${place}.";
+        String template = standardTemplate();
         Map<String, String> parameters = new HashMap<>();
 
         // Act
@@ -137,7 +128,7 @@ public class StringUtilTest {
     @Test
     void testFormatStringWithNamedParameters_whenNullParameters_thenReturnsOriginalTemplate() {
         // Arrange
-        String template = "Hello, ${name}! Welcome to ${place}.";
+        String template = standardTemplate();
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, null);
@@ -149,8 +140,7 @@ public class StringUtilTest {
     @Test
     void testFormatStringWithNamedParameters_whenNullTemplate_thenThrowsNullPointerException() {
         // Arrange
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        Map<String, String> parameters = mapOf("key", "value");
 
         // Act & Assert
         assertThrows(NullPointerException.class, () ->
@@ -196,14 +186,23 @@ public class StringUtilTest {
 
     @Test
     void testToString_whenNullObject_thenReturnsNull() {
-        // Arrange
-        Object obj = null;
-
         // Act
-        String result = StringUtil.toString(obj);
+        String result = StringUtil.toString(null);
 
         // Assert
         assertNull(result);
+    }
+
+    private static String standardTemplate() {
+        return "Hello, ${name}! Welcome to ${place}.";
+    }
+
+    private static Map<String, String> mapOf(String... entries) {
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        return map;
     }
 }
 

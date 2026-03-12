@@ -1,5 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -397,16 +398,7 @@ public class AwardServiceTest {
     @Test
     public void testMapAwards_whenValidAwardRequests_thenReturnsAwardCeremonyResponseList() {
         // Arrange
-        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony A", "Alice", "Bob", "Charlie");
-        request1.setImageFilePath("/path/to/images1");
-
-        AwardRequest request2 = new AwardRequest("Award 2", "Ceremony A", "Dan", "Eve", "Frank");
-        request2.setImageFilePath("/path/to/images2.png");
-
-        AwardRequest request3 = new AwardRequest("Award 3", "Ceremony B", "Grace", "Heidi", "Ivan");
-        request3.setImageFilePath("/path/to/images3");
-
-        List<AwardRequest> awardRequests = List.of(request1, request2, request3);
+        List<AwardRequest> awardRequests = getAwardRequests();
 
         // Act
         List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
@@ -468,5 +460,23 @@ public class AwardServiceTest {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
     }
+
+    // =====================================================================
+    // Helper Methods
+    // =====================================================================
+
+    private static @NonNull List<AwardRequest> getAwardRequests() {
+        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony A", "Alice", "Bob", "Charlie");
+        request1.setImageFilePath("/path/to/images1");
+
+        AwardRequest request2 = new AwardRequest("Award 2", "Ceremony A", "Dan", "Eve", "Frank");
+        request2.setImageFilePath("/path/to/images2.png");
+
+        AwardRequest request3 = new AwardRequest("Award 3", "Ceremony B", "Grace", "Heidi", "Ivan");
+        request3.setImageFilePath("/path/to/images3");
+
+        return List.of(request1, request2, request3);
+    }
+
 }
 

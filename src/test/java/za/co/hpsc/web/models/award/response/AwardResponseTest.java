@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.award.response;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.models.award.request.AwardRequest;
 
@@ -142,24 +143,7 @@ class AwardResponseTest {
     @Test
     void testConstructor_withAwardRequest_thenInitialisesAllFields() {
         // Arrange
-        AwardRequest request = new AwardRequest("Request Title", "Request Ceremony",
-                "Winner 1", "Winner 2", "Winner 3");
-        request.setSummary("Request Sum");
-        request.setDescription("Request Desc");
-        request.setCategory("Request Cat");
-        request.setTags(List.of("Request-tag"));
-        request.setImageFilePath("/path/to/img");
-        request.setDate(LocalDate.of(2023, 10, 10));
-        request.setCeremonyDescription("Ceremony Desc");
-        request.setCeremonySummary("Ceremony Sum");
-        request.setCeremonyCategory("Ceremony Cat");
-        request.setCeremonyTags(List.of("ceremony-tag"));
-        request.setFirstPlaceName("Winner 1");
-        request.setSecondPlaceName("Winner 2");
-        request.setThirdPlaceName("Winner 3");
-        request.setFirstPlaceImageFileName("win1.png");
-        request.setSecondPlaceImageFileName("win2.png");
-        request.setThirdPlaceImageFileName("win3.png");
+        AwardRequest request = getAwardRequest();
 
         // Act
         AwardResponse response = new AwardResponse(request);
@@ -184,5 +168,27 @@ class AwardResponseTest {
         assertEquals(1, response.getFirstPlace().getPlace());
         assertEquals(2, response.getSecondPlace().getPlace());
         assertEquals(3, response.getThirdPlace().getPlace());
+    }
+
+    private static @NonNull AwardRequest getAwardRequest() {
+        AwardRequest request = new AwardRequest("Request Title", "Request Ceremony",
+                "Winner 1", "Winner 2", "Winner 3");
+        request.setSummary("Request Sum");
+        request.setDescription("Request Desc");
+        request.setCategory("Request Cat");
+        request.setTags(List.of("Request-tag"));
+        request.setImageFilePath("/path/to/img");
+        request.setDate(LocalDate.of(2023, 10, 10));
+        request.setCeremonyDescription("Ceremony Desc");
+        request.setCeremonySummary("Ceremony Sum");
+        request.setCeremonyCategory("Ceremony Cat");
+        request.setCeremonyTags(List.of("ceremony-tag"));
+        request.setFirstPlaceName("Winner 1");
+        request.setSecondPlaceName("Winner 2");
+        request.setThirdPlaceName("Winner 3");
+        request.setFirstPlaceImageFileName("win1.png");
+        request.setSecondPlaceImageFileName("win2.png");
+        request.setThirdPlaceImageFileName("win3.png");
+        return request;
     }
 }
