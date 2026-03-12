@@ -61,7 +61,14 @@ public class IpscMatchStage {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "matchStage")
     private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 
-    // TODO Javadoc
+    /**
+     * Initialises the current stage with details provided by the given MatchStageDto object.
+     * The method sets the stage number, stage name, and range number and copies the targets
+     * and scoring information from the provided DTO to the current stage.
+     *
+     * @param stage the {@code MatchStageDto} object containing the stage attributes and
+     *              target/scoring details to be copied to the current stage
+     */
     public void init(MatchStageDto stage) {
         // Initialises the stage attributes
         this.stageNumber = stage.getStageNumber();
