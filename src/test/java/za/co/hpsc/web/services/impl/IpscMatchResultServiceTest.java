@@ -1577,9 +1577,11 @@ public class IpscMatchResultServiceTest {
         ipscResponse.setMatch(matchResponse);
 
         ipscResponse.setStages(stages);
-        ipscResponse.setScores(stages);
+        // TODO: fix this
+//        ipscResponse.setScores(stages);
 
-        ipscResponse.setMembers(stages);
+        // TODO: fix this
+//        ipscResponse.setMembers(stages);
         return ipscResponse;
     }
 

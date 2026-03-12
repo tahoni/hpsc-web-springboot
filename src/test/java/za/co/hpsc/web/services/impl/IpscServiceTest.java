@@ -13,6 +13,7 @@ import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
+import za.co.hpsc.web.services.DomainService;
 import za.co.hpsc.web.services.IpscMatchResultService;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
@@ -34,6 +35,9 @@ public class IpscServiceTest {
     private IpscMatchService ipscMatchService;
     @Mock
     private IpscMatchResultService ipscMatchResultService;
+
+    @Mock
+    private DomainService domainService;
 
     @InjectMocks
     private IpscServiceImpl ipscService;
