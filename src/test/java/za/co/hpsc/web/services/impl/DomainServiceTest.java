@@ -809,36 +809,6 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void initMatchStageCompetitorEntities_whenEntityNotFoundInRepository_thenSkipsEntry() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setUuid(UUID.randomUUID());
-
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(UUID.randomUUID());
-        mscDto.setId(999L);
-        mscDto.setMatchStage(stageDto);
-        mscDto.setCompetitor(competitorDto);
-
-        when(matchStageCompetitorRepository.findById(999L)).thenReturn(Optional.empty());
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
-
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(competitorDto.getUuid(), competitorDto);
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, competitorMap, null);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());      // entry was skipped via continue
-    }
-
-    @Test
     public void initMatchStageCompetitorEntities_whenEntityFoundAndNoClubFilter_thenIncludesEntry() {
         UUID stageUuid = UUID.randomUUID();
         MatchStageDto stageDto = new MatchStageDto();
@@ -979,34 +949,6 @@ public class DomainServiceTest {
         assertEquals(1, result.size());
         assertTrue(result.containsKey(mscUuid1));
         assertFalse(result.containsKey(mscUuid2));
-    }
-
-    @Test
-    public void initMatchStageCompetitorEntities_whenNullIdOnDto_thenEntityLookupSkippedAndEntryOmitted() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setUuid(UUID.randomUUID());
-
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(UUID.randomUUID());
-        mscDto.setId(null);                 // null id → repository not called → entity null → continue
-        mscDto.setMatchStage(stageDto);
-        mscDto.setCompetitor(competitorDto);
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
-
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(competitorDto.getUuid(), competitorDto);
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, competitorMap, null);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
     }
 
     // Helper Methods

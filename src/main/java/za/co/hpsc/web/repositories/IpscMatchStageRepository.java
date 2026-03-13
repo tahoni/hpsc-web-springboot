@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface IpscMatchStageRepository extends JpaRepository<IpscMatchStage, Long> {
     @Query("SELECT ms FROM IpscMatchStage ms " +
-            "JOIN FETCH ms.match m " +
-            "WHERE ms.id = :matchStageId")
-    Optional<IpscMatchStage> findByIdWithMatch(Long matchStageId);
+            "JOIN FETCH ms.matchStageCompetitors mscc " +
+            "WHERE ms.id = :id")
+    Optional<IpscMatchStage> findByIdWithCompetitorAndMatch(Long id);
 
     @Query("SELECT ms FROM IpscMatchStage ms " +
             "JOIN FETCH ms.match m JOIN FETCH ms.matchStageCompetitors cc " +

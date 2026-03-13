@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface MatchStageCompetitorRepository extends JpaRepository<MatchStageCompetitor, Long> {
     @Query("SELECT msc FROM MatchStageCompetitor msc " +
-            "JOIN FETCH msc.matchStage ms JOIN FETCH ms.match m JOIN FETCH msc.competitor cc  " +
+            "JOIN FETCH msc.matchStage ms JOIN FETCH ms.match m JOIN FETCH ms.matchStageCompetitors mscc " +
             "WHERE msc.matchStage.id = :matchStageId AND msc.competitor.id = :competitorId")
     Optional<MatchStageCompetitor> findByMatchStageIdAndCompetitorIdWithMatchStageAndCompetitor(Long matchStageId, Long competitorId);
 }

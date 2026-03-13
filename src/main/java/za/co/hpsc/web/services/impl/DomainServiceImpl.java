@@ -228,6 +228,7 @@ public class DomainServiceImpl implements DomainService {
      * @return a map where the keys are the UUIDs from the MatchStageDto objects and the values
      * are the initialised or updated IpscMatchStage entities.
      */
+    // TODO: add/modify tests
     protected Map<UUID, MatchStageDto> initMatchStageEntities(List<MatchStageDto> matchStageDtoList,
                                                               MatchDto matchEntity) {
         if (matchStageDtoList == null) {
@@ -245,22 +246,20 @@ public class DomainServiceImpl implements DomainService {
 
         // Initialise and accumulate match stages from DTOs
         Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        filteredMatchStageDtoList.forEach(matchDto -> {
+        filteredMatchStageDtoList.forEach(matchStageDto -> {
             // Find the match stage entity if present
             Optional<IpscMatchStage> optionalIpscMatchStageEntity = Optional.empty();
-            if (matchDto.getId() != null) {
-                optionalIpscMatchStageEntity = ipscMatchStageRepository.findById(matchDto.getId());
+            if (matchStageDto.getId() != null) {
+                optionalIpscMatchStageEntity = ipscMatchStageRepository.findById(matchStageDto.getId());
             }
 
             // Initialise the match stage entity from DTO or create a new entity
-            IpscMatchStage matchStageEntity = optionalIpscMatchStageEntity.orElse(null);
-            MatchStageDto matchStageDto = null;
-            if (matchStageEntity != null) {
-                matchStageDto = new MatchStageDto(matchStageEntity);
-            }
+            optionalIpscMatchStageEntity.ifPresent(ipscMatchStage ->
+                    matchStageDto.setId(ipscMatchStage.getId())
+            );
 
             // Update the map of match stages
-            matchStageMap.put(matchDto.getUuid(), matchStageDto);
+            matchStageMap.put(matchStageDto.getUuid(), matchStageDto);
         });
 
         return matchStageMap;
@@ -281,6 +280,7 @@ public class DomainServiceImpl implements DomainService {
      * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities.
      * If a required competitor or match competitor cannot be found, an empty map is returned
      */
+    // TODO: add tests
     protected Map<UUID, MatchCompetitorDto> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitorDtoList,
                                                                         MatchDto matchDto,
                                                                         Map<UUID, CompetitorDto> competitorMap) {
