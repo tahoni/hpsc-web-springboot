@@ -22,6 +22,6 @@ public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetit
         if ((matchStageId == null) || (competitorId == null)) {
             return Optional.empty();
         }
-        return matchStageCompetitorRepository.findByMatchStageIdAndCompetitorId(matchStageId, competitorId);
+        return matchStageCompetitorRepository.findByMatchStageIdAndCompetitorIdWithMatchStageAndCompetitor(matchStageId, competitorId);
     }
 }

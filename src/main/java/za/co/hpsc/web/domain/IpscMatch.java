@@ -44,7 +44,7 @@ public class IpscMatch {
     private Club club;
 
     @NotNull
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
     @NotNull
     @Column(nullable = false)

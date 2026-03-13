@@ -168,7 +168,7 @@ public class DomainServiceImpl implements DomainService {
         // Find the match entity if present
         Optional<IpscMatch> optionalIpscMatchEntity = Optional.empty();
         if ((matchDto != null) && (matchDto.getId() != null)) {
-            optionalIpscMatchEntity = ipscMatchRepository.findByIdWithClubStages(matchDto.getId());
+            optionalIpscMatchEntity = ipscMatchRepository.findByIdWithClubAndStages(matchDto.getId());
         }
 
         // Initialise the match entity from DTO or create a new entity

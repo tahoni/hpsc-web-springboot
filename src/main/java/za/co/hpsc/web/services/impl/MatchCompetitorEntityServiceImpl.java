@@ -22,6 +22,6 @@ public class MatchCompetitorEntityServiceImpl implements MatchCompetitorEntitySe
         if ((competitorId == null) || (matchId == null)) {
             return Optional.empty();
         }
-        return matchCompetitorRepository.findByCompetitorIdAndMatchId(competitorId, matchId);
+        return matchCompetitorRepository.findByCompetitorIdAndMatchIdWithCompetitorAndMatch(competitorId, matchId);
     }
 }

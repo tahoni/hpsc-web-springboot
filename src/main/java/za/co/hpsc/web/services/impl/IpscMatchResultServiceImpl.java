@@ -274,7 +274,7 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
                 .filter(scoreResponse -> scoreResponse.getMatchId()
                         .equals(matchResultsDto.getMatch().getIndex()))
                 .toList();
-//        List<MemberResponse> memberResponses = ipscResponse.getMembers();
+        List<MemberResponse> memberResponses = ipscResponse.getMembers();
         List<EnrolledResponse> enrolledResponses =
                 ((ipscResponse.getEnrolledMembers() != null) ? ipscResponse.getEnrolledMembers() : new ArrayList<>());
 
@@ -293,37 +293,55 @@ public class IpscMatchResultServiceImpl implements IpscMatchResultService {
 
         // Maps score responses to corresponding member responses,
         // excluding members who didn't participate
-/*
-        List<Integer> memberIdsWithScores = matchResultsDto.getCompetitors().stream()
+        List<Integer> memberIndexesWithScores = matchResultsDto.getCompetitors().stream()
                 .filter(Objects::nonNull)
                 .map(CompetitorDto::getIndex)
                 .filter(Objects::nonNull)
                 .toList();
-        List<MemberResponse> scoreMembers = memberResponses.stream()
+        List<MemberResponse> scoreMembers = memberIndexesWithScores.stream()
                 .filter(Objects::nonNull)
-                .filter(memberResponse -> memberIdsWithScores
-                        .contains(memberResponse.getMemberId()))
+                .map(index -> memberResponses.stream()
+                        .filter(Objects::nonNull)
+                        .filter(memberResponse -> memberResponse.getMemberId() != null)
+                        .filter(memberResponse -> memberResponse.getMemberId().equals(index))
+                        .findFirst()
+                        .orElse(null))
+                .filter(Objects::nonNull)
                 .toList();
-*/
 
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
         Map<Integer, EnrolledResponse> enrolledResponseMap = new HashMap<>();
-        matchResultsDto.getCompetitors().stream().filter(Objects::nonNull)
-                .forEach(competitorDto -> {
+        scoreMembers.stream().filter(Objects::nonNull)
+                .forEach(memberResponse -> {
                     // Initialises the enrolled response to use to initialise the scores for each
                     // competitor per match and stage
-                    Optional<EnrolledResponse> enrolledResponse = enrolledResponses.stream()
+                    List<EnrolledResponse> enrolledResponseList = enrolledResponses.stream()
                             .filter(Objects::nonNull)
                             .filter(er -> er.getMemberId() != null)
                             .filter(er -> er.getMemberId()
-                                    .equals(competitorDto.getIndex()))
+                                    .equals(memberResponse.getMemberId()))
+                            .toList();
+
+                    // Get the member response from the map
+                    Optional<MemberResponse> optionalMemberResponse = memberResponses.stream()
+                            .filter(Objects::nonNull)
+                            .filter(mr -> mr.getMemberId() != null)
+                            .filter(mr -> mr.getMemberId()
+                                    .equals(memberResponse.getMemberId()))
+                            .findFirst();
+                    // Get the competitor from the map
+                    Optional<CompetitorDto> optionalCompetitorDto = matchResultsDto.getCompetitors().stream()
+                            .filter(Objects::nonNull)
+                            .filter(cd -> cd.getIndex() != null)
+                            .filter(cd -> cd.getIndex()
+                                    .equals(memberResponse.getMemberId()))
                             .findFirst();
 
                     // Caches the competitor and enrolled response for later use
-                    enrolledResponse.ifPresent(er -> {
-                        competitorDtoMap.put(competitorDto.getIndex(), competitorDto);
-                        enrolledResponseMap.put(competitorDto.getIndex(), er);
-                    });
+                    if (optionalCompetitorDto.isPresent() && optionalMemberResponse.isPresent()) {
+                        competitorDtoMap.put(optionalMemberResponse.get().getMemberId(), optionalCompetitorDto.get());
+                        enrolledResponseMap.put(optionalMemberResponse.get().getMemberId(), enrolledResponseList.getFirst());
+                    }
                 });
 
         // Iterates through each competitor
