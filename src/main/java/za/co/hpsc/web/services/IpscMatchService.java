@@ -2,12 +2,14 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service interface for processing IPSC matches, stages, members, scores, tags, and clubs into
@@ -43,4 +45,14 @@ public interface IpscMatchService {
      */
     IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList);
 
+    /*
+     * Initialises and returns the match results data transfer object (DTO) based on the
+     * provided IPSC response.
+     *
+     * @param ipscResponse the {@link IpscResponse} object containing data related to the match,
+     *                     such as club information, match details, stages, scores, and participants.
+     * @return an {@link Optional} containing the initialised {@link MatchResultsDto} if successful,
+     * or an empty {@link Optional} if the initialisation cannot be performed.
+     */
+    Optional<MatchResultsDto> initMatchResults(IpscResponse ipscResponse);
 }

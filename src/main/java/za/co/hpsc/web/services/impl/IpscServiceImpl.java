@@ -20,7 +20,10 @@ import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
-import za.co.hpsc.web.services.*;
+import za.co.hpsc.web.services.DomainService;
+import za.co.hpsc.web.services.IpscMatchService;
+import za.co.hpsc.web.services.IpscService;
+import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,17 +36,15 @@ import java.util.Optional;
 public class IpscServiceImpl implements IpscService {
 
     protected final IpscMatchService ipscMatchService;
-    protected final IpscMatchResultService ipscMatchResultService;
     protected final DomainService domainService;
     protected final TransactionService transactionService;
 
     @Value("${hpsc.web.app.club.filter.abbreviation:'HPSC'}")
     protected String filterClubIdentifier;
 
-    public IpscServiceImpl(IpscMatchService ipscMatchService, IpscMatchResultService ipscMatchResultService,
+    public IpscServiceImpl(IpscMatchService ipscMatchService,
                            DomainService domainService, TransactionService transactionService) {
         this.ipscMatchService = ipscMatchService;
-        this.ipscMatchResultService = ipscMatchResultService;
         this.domainService = domainService;
         this.transactionService = transactionService;
     }
@@ -124,7 +125,7 @@ public class IpscServiceImpl implements IpscService {
         // Iterates responses and accumulates DTOs
         for (IpscResponse ipscResponse : ipscResponseHolder.getIpscList()) {
             Optional<MatchResultsDto> optionalMatchResults =
-                    ipscMatchResultService.initMatchResults(ipscResponse);
+                    ipscMatchService.initMatchResults(ipscResponse);
             optionalMatchResults.ifPresent(matchResultsList::add);
         }
 

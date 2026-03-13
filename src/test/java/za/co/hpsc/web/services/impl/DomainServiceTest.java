@@ -9,6 +9,7 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
+import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
@@ -681,6 +682,337 @@ public class DomainServiceTest {
 
         assertTrue(result.isPresent());
         assertTrue(result.get().getMatchCompetitorMap().isEmpty());
+    }
+
+    // =====================================================================
+    // Tests for initMatchEntities - matchStageCompetitorMap integration
+    // =====================================================================
+
+    @Test
+    public void initMatchEntities_whenNullMatchStageCompetitorList_thenMatchStageCompetitorMapIsEmpty() {
+        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        matchResults.setMatchStageCompetitors(null);
+
+        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
+
+        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getMatchStageCompetitorMap().isEmpty());
+    }
+
+    @Test
+    public void initMatchEntities_whenEmptyMatchStageCompetitorList_thenMatchStageCompetitorMapIsEmpty() {
+        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        matchResults.setMatchStageCompetitors(Collections.emptyList());
+
+        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
+
+        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getMatchStageCompetitorMap().isEmpty());
+    }
+
+    // =====================================================================
+    // Tests for initMatchStageCompetitorEntities (direct protected method)
+    // =====================================================================
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenNullList_thenReturnsEmptyMap() {
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+
+        var result = domainService.initMatchStageCompetitorEntities(null, matchStageMap, competitorMap, null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenMatchStageCompetitorHasNullMatchStage_thenFiltersOut() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(UUID.randomUUID());
+        mscDto.setMatchStage(null);           // null matchStage — must be filtered
+        mscDto.setCompetitor(competitorDto);
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, competitorMap, null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenMatchStageUuidNotInMap_thenExcludesFromResult() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageInMap = new MatchStageDto();
+        stageInMap.setUuid(stageUuid);
+
+        // competitor DTO whose matchStage points to a DIFFERENT UUID
+        MatchStageDto differentStage = new MatchStageDto();
+        differentStage.setUuid(UUID.randomUUID());
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(UUID.randomUUID());
+        mscDto.setMatchStage(differentStage);
+        mscDto.setCompetitor(competitorDto);
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageInMap);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, competitorMap, null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenCompetitorNotInCompetitorMap_thenReturnsEmptyMap() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        // Competitor whose UUID is NOT in the competitorMap
+        CompetitorDto unknownCompetitor = new CompetitorDto();
+        unknownCompetitor.setUuid(UUID.randomUUID());
+
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(UUID.randomUUID());
+        mscDto.setMatchStage(stageDto);
+        mscDto.setCompetitor(unknownCompetitor);
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> emptyCompetitorMap = new HashMap<>(); // unknown competitor not in map
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, emptyCompetitorMap, null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenEntityNotFoundInRepository_thenSkipsEntry() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(UUID.randomUUID());
+        mscDto.setId(999L);
+        mscDto.setMatchStage(stageDto);
+        mscDto.setCompetitor(competitorDto);
+
+        when(matchStageCompetitorRepository.findById(999L)).thenReturn(Optional.empty());
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, competitorMap, null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());      // entry was skipped via continue
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenEntityFoundAndNoClubFilter_thenIncludesEntry() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+
+        UUID mscUuid = UUID.randomUUID();
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(mscUuid);
+        mscDto.setId(500L);
+        mscDto.setMatchStage(stageDto);
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setClub(ClubIdentifier.SOSC);
+
+        when(matchStageCompetitorRepository.findById(500L)).thenReturn(Optional.of(new MatchStageCompetitor()));
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, competitorMap, null);  // null = no club filter
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(mscUuid));
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenEntityFoundAndClubFilterMatches_thenIncludesEntry() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+
+        UUID mscUuid = UUID.randomUUID();
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(mscUuid);
+        mscDto.setId(501L);
+        mscDto.setMatchStage(stageDto);
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setClub(ClubIdentifier.HPSC);      // matches filter
+
+        when(matchStageCompetitorRepository.findById(501L)).thenReturn(Optional.of(new MatchStageCompetitor()));
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, competitorMap, ClubIdentifier.HPSC);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(mscUuid));
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenEntityFoundAndClubFilterDoesNotMatch_thenExcludesEntry() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(UUID.randomUUID());
+        mscDto.setId(502L);
+        mscDto.setMatchStage(stageDto);
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setClub(ClubIdentifier.SOSC);      // does NOT match HPSC filter
+
+        when(matchStageCompetitorRepository.findById(502L)).thenReturn(Optional.of(new MatchStageCompetitor()));
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, competitorMap, ClubIdentifier.HPSC);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenMultipleEntries_onlyMatchingClubIncluded() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        CompetitorDto comp1 = new CompetitorDto();
+        comp1.setUuid(UUID.randomUUID());
+        CompetitorDto comp2 = new CompetitorDto();
+        comp2.setUuid(UUID.randomUUID());
+
+        UUID mscUuid1 = UUID.randomUUID();
+        MatchStageCompetitorDto mscIncluded = new MatchStageCompetitorDto();
+        mscIncluded.setUuid(mscUuid1);
+        mscIncluded.setId(600L);
+        mscIncluded.setMatchStage(stageDto);
+        mscIncluded.setCompetitor(comp1);
+        mscIncluded.setClub(ClubIdentifier.HPSC);
+
+        UUID mscUuid2 = UUID.randomUUID();
+        MatchStageCompetitorDto mscExcluded = new MatchStageCompetitorDto();
+        mscExcluded.setUuid(mscUuid2);
+        mscExcluded.setId(601L);
+        mscExcluded.setMatchStage(stageDto);
+        mscExcluded.setCompetitor(comp2);
+        mscExcluded.setClub(ClubIdentifier.SOSC);     // filtered out
+
+        when(matchStageCompetitorRepository.findById(600L)).thenReturn(Optional.of(new MatchStageCompetitor()));
+        when(matchStageCompetitorRepository.findById(601L)).thenReturn(Optional.of(new MatchStageCompetitor()));
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(comp1.getUuid(), comp1);
+        competitorMap.put(comp2.getUuid(), comp2);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscIncluded, mscExcluded), matchStageMap, competitorMap, ClubIdentifier.HPSC);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(mscUuid1));
+        assertFalse(result.containsKey(mscUuid2));
+    }
+
+    @Test
+    public void initMatchStageCompetitorEntities_whenNullIdOnDto_thenEntityLookupSkippedAndEntryOmitted() {
+        UUID stageUuid = UUID.randomUUID();
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setUuid(stageUuid);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setUuid(UUID.randomUUID());
+        mscDto.setId(null);                 // null id → repository not called → entity null → continue
+        mscDto.setMatchStage(stageDto);
+        mscDto.setCompetitor(competitorDto);
+
+        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
+        matchStageMap.put(stageUuid, stageDto);
+
+        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
+        competitorMap.put(competitorDto.getUuid(), competitorDto);
+
+        var result = domainService.initMatchStageCompetitorEntities(
+                List.of(mscDto), matchStageMap, competitorMap, null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     // Helper Methods

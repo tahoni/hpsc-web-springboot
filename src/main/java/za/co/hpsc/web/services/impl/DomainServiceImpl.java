@@ -44,7 +44,6 @@ public class DomainServiceImpl implements DomainService {
         return initMatchEntities(matchResults, null, filterClubAbbreviation);
     }
 
-    // TODO: modify existing tests and add new ones
     @Override
     public Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String matchClubAbbreviation,
                                                   String filterClubAbbreviation) {
