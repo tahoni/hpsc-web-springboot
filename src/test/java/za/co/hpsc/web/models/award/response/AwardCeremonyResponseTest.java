@@ -219,26 +219,6 @@ class AwardCeremonyResponseTest {
         assertEquals(3, secondAward.getThirdPlace().getPlace());
     }
 
-    private static @NonNull AwardRequest getAwardRequest() {
-        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony 2024",
-                "Winner A", "Winner B", "Winner C");
-        request1.setCeremonyDescription("Annual Awards");
-        request1.setCeremonySummary("Summary 2024");
-        request1.setCeremonyCategory("General");
-        request1.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request1.setDate(LocalDate.of(2024, 1, 1));
-        request1.setImageFilePath("/path/to/img");
-
-        request1.setDescription("Ceremony 2024 Award 1");
-        request1.setSummary("Summary 2024 Award 1");
-        request1.setCategory("Category 1");
-        request1.setTags(List.of("Tag3", "Tag4"));
-        request1.setFirstPlaceImageFileName("imga.png");
-        request1.setSecondPlaceImageFileName("imgb.png");
-        request1.setThirdPlaceImageFileName("imgc.png");
-        return request1;
-    }
-
     @Test
     void testConstructor_withValidAwardRequestListPrecedence_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
@@ -294,38 +274,6 @@ class AwardCeremonyResponseTest {
         assertEquals(3, secondAward.getThirdPlace().getPlace());
     }
 
-    private static @NonNull AwardRequest getRequest2() {
-        AwardRequest request2 = new AwardRequest("Award 2 Title", "Ceremony 2025",
-                "Winner X", "Winner Y", "Winner Z");
-        request2.setCeremonyDescription("Annual Awards");
-        request2.setCeremonySummary("Summary 2025");
-        request2.setCeremonyCategory("General");
-        request2.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request2.setDate(LocalDate.of(2025, 1, 1));
-        request2.setImageFilePath("/path/to/img2");
-
-        request2.setFirstPlaceImageFileName("imgx.png");
-        request2.setSecondPlaceImageFileName("imgy.png");
-        request2.setThirdPlaceImageFileName("imgz.png");
-        return request2;
-    }
-
-    private static @NonNull AwardRequest getRequest() {
-        AwardRequest request1 = new AwardRequest("Award 1 Title", "Ceremony 2024",
-                "Winner A", "Winner B", "Winner C");
-        request1.setCeremonyDescription("Annual Awards");
-        request1.setCeremonySummary("Summary 2024");
-        request1.setCeremonyCategory("General");
-        request1.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request1.setDate(LocalDate.of(2024, 1, 1));
-        request1.setImageFilePath("/path/to/img1");
-
-        request1.setFirstPlaceImageFileName("imga.png");
-        request1.setSecondPlaceImageFileName("imgb.png");
-        request1.setThirdPlaceImageFileName("imgc.png");
-        return request1;
-    }
-
     @Test
     void testConstructor_withEmptyAwardRequestList_thenInitialisesEmptyFields() {
         // Act
@@ -354,5 +302,69 @@ class AwardCeremonyResponseTest {
         assertNull(response.getTitle());
         // Assert awards
         assertTrue(response.getAwards().isEmpty());
+    }
+
+    private static @NonNull AwardRequest getAwardRequest() {
+        return buildAwardRequest(
+                "Award 1", "Ceremony 2024", "Winner A", "Winner B", "Winner C",
+                "Annual Awards", "Summary 2024", "General", List.of("Tag1", "Tag2"), LocalDate.of(2024, 1, 1),
+                "/path/to/img", "Ceremony 2024 Award 1", "Summary 2024 Award 1", "Category 1", List.of("Tag3", "Tag4"),
+                "imga.png", "imgb.png", "imgc.png"
+        );
+    }
+
+    private static @NonNull AwardRequest getRequest() {
+        return buildAwardRequest(
+                "Award 1 Title", "Ceremony 2024", "Winner A", "Winner B", "Winner C",
+                "Annual Awards", "Summary 2024", "General", List.of("Tag1", "Tag2"), LocalDate.of(2024, 1, 1),
+                "/path/to/img1", null, null, null, null,
+                "imga.png", "imgb.png", "imgc.png"
+        );
+    }
+
+    private static @NonNull AwardRequest getRequest2() {
+        return buildAwardRequest(
+                "Award 2 Title", "Ceremony 2025", "Winner X", "Winner Y", "Winner Z",
+                "Annual Awards", "Summary 2025", "General", List.of("Tag1", "Tag2"), LocalDate.of(2025, 1, 1),
+                "/path/to/img2", null, null, null, null,
+                "imgx.png", "imgy.png", "imgz.png"
+        );
+    }
+
+    private static @NonNull AwardRequest buildAwardRequest(
+            String title,
+            String ceremonyTitle,
+            String firstPlace,
+            String secondPlace,
+            String thirdPlace,
+            String ceremonyDescription,
+            String ceremonySummary,
+            String ceremonyCategory,
+            List<String> ceremonyTags,
+            LocalDate date,
+            String imageFilePath,
+            String description,
+            String summary,
+            String category,
+            List<String> tags,
+            String firstPlaceImageFileName,
+            String secondPlaceImageFileName,
+            String thirdPlaceImageFileName
+    ) {
+        AwardRequest request = new AwardRequest(title, ceremonyTitle, firstPlace, secondPlace, thirdPlace);
+        request.setCeremonyDescription(ceremonyDescription);
+        request.setCeremonySummary(ceremonySummary);
+        request.setCeremonyCategory(ceremonyCategory);
+        request.setCeremonyTags(ceremonyTags);
+        request.setDate(date);
+        request.setImageFilePath(imageFilePath);
+        request.setDescription(description);
+        request.setSummary(summary);
+        request.setCategory(category);
+        request.setTags(tags);
+        request.setFirstPlaceImageFileName(firstPlaceImageFileName);
+        request.setSecondPlaceImageFileName(secondPlaceImageFileName);
+        request.setThirdPlaceImageFileName(thirdPlaceImageFileName);
+        return request;
     }
 }
