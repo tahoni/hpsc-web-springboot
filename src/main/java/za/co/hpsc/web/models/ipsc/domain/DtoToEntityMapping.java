@@ -25,7 +25,6 @@ public record DtoToEntityMapping(
         return Optional.ofNullable(dtoMapping.getMatch());
     }
 
-    // TODO: add unit tests
     public Optional<ClubDto> getClubDto() {
         return Optional.ofNullable(dtoMapping.getClub());
     }

@@ -12,7 +12,6 @@ import za.co.hpsc.web.services.DomainService;
 
 import java.util.*;
 
-// TODO: add comments
 @Slf4j
 @Service
 public class DomainServiceImpl implements DomainService {

@@ -17,6 +17,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -559,6 +561,119 @@ public class DomainServiceTest {
         matchCompetitor.setClub(ClubIdentifier.HPSC);
 
         matchResults.setMatchCompetitors(List.of(matchCompetitor));
+
+        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
+
+        var result = domainService.initMatchEntities(matchResults, null, null);
+
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getMatchCompetitorMap().isEmpty());
+    }
+
+    @Test
+    public void initMatchEntities_whenClubDtoExists_thenPrefersClubDtoOverMatchClubAbbreviation() {
+        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(101L);
+        clubDto.setAbbreviation("DTO");
+        clubDto.setName("DTO Club");
+        matchResults.setClub(clubDto);
+
+        Club persistedClub = new Club();
+        persistedClub.setId(101L);
+        when(clubRepository.findById(101L)).thenReturn(Optional.of(persistedClub));
+        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
+
+        var result = domainService.initMatchEntities(matchResults, "HPSC", null);
+
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getClub());
+        assertEquals(101L, result.get().getClub().getId());
+        assertEquals("DTO", result.get().getClub().getAbbreviation());
+        verify(clubRepository, never()).findByAbbreviation("HPSC");
+    }
+
+    @Test
+    public void initMatchEntities_whenNullCompetitorInList_thenSkipsNullAndKeepsValidCompetitors() {
+        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+
+        CompetitorDto competitor1 = new CompetitorDto();
+        competitor1.setId(200L);
+        competitor1.setUuid(UUID.randomUUID());
+        competitor1.setFirstName("Alice");
+
+        List<CompetitorDto> competitorList = new ArrayList<>();
+        competitorList.add(competitor1);
+        competitorList.add(null);
+        matchResults.setCompetitors(competitorList);
+
+        when(competitorRepository.findById(200L)).thenReturn(Optional.of(new Competitor()));
+        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
+
+        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+
+        assertTrue(result.isPresent());
+        assertEquals(1, result.get().getCompetitorMap().size());
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
+    }
+
+    @Test
+    public void initMatchEntities_whenStageBelongsToDifferentMatch_thenExcludesStageFromStageMap() {
+        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchDto currentMatch = matchResults.getMatch();
+        currentMatch.setUuid(UUID.randomUUID());
+
+        MatchStageDto stageInMatch = new MatchStageDto();
+        stageInMatch.setId(300L);
+        stageInMatch.setUuid(UUID.randomUUID());
+        stageInMatch.setStageName("Included Stage");
+        stageInMatch.setMatch(currentMatch);
+
+        MatchDto otherMatch = new MatchDto();
+        otherMatch.setUuid(UUID.randomUUID());
+
+        MatchStageDto stageInOtherMatch = new MatchStageDto();
+        stageInOtherMatch.setId(301L);
+        stageInOtherMatch.setUuid(UUID.randomUUID());
+        stageInOtherMatch.setStageName("Excluded Stage");
+        stageInOtherMatch.setMatch(otherMatch);
+
+        matchResults.setStages(List.of(stageInMatch, stageInOtherMatch));
+
+        IpscMatch stageMatchEntity = new IpscMatch();
+        IpscMatchStage stageEntity = new IpscMatchStage();
+        stageEntity.setId(300L);
+        stageEntity.setMatch(stageMatchEntity);
+        stageEntity.setStageNumber(1);
+
+        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
+        when(ipscMatchStageRepository.findById(300L)).thenReturn(Optional.of(stageEntity));
+
+        var result = domainService.initMatchEntities(matchResults, null, null);
+
+        assertTrue(result.isPresent());
+        assertEquals(1, result.get().getMatchStageMap().size());
+        assertTrue(result.get().getMatchStageMap().containsKey(stageInMatch.getUuid()));
+        assertFalse(result.get().getMatchStageMap().containsKey(stageInOtherMatch.getUuid()));
+    }
+
+    @Test
+    public void initMatchEntities_whenMatchCompetitorHasNullMatch_thenExcludesFromMatchCompetitorMap() {
+        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        matchResults.getMatch().setUuid(UUID.randomUUID());
+
+        CompetitorDto competitor = new CompetitorDto();
+        competitor.setUuid(UUID.randomUUID());
+        competitor.setFirstName("Known");
+        matchResults.setCompetitors(List.of(competitor));
+
+        MatchCompetitorDto nullMatchCompetitor = new MatchCompetitorDto();
+        nullMatchCompetitor.setUuid(UUID.randomUUID());
+        nullMatchCompetitor.setCompetitor(competitor);
+        nullMatchCompetitor.setMatch(null);
+
+        matchResults.setMatchCompetitors(List.of(nullMatchCompetitor));
 
         when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
 
