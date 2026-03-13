@@ -117,6 +117,29 @@ public class DtoToEntityMappingTest {
     // =====================================================================
 
     @Test
+    public void getClubDto_whenClubIsNull_thenReturnsEmptyOptional() {
+        dtoMapping.setClub(null);
+
+        Optional<ClubDto> result = dtoToEntityMapping.getClubDto();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void getClubDto_whenClubExists_thenReturnsClubDto() {
+        ClubDto clubDto = new ClubDto();
+        clubDto.setName("Hillcrest");
+        clubDto.setAbbreviation("HPSC");
+        dtoMapping.setClub(clubDto);
+
+        Optional<ClubDto> result = dtoToEntityMapping.getClubDto();
+
+        assertTrue(result.isPresent());
+        assertEquals("Hillcrest", result.get().getName());
+        assertEquals("HPSC", result.get().getAbbreviation());
+    }
+
+    @Test
     public void testGetMatchEntity_whenMatchEntityIsNull_thenReturnsEmpty() {
         // Arrange & Act
         Optional<IpscMatch> result = dtoToEntityMapping.getMatchEntity();
@@ -440,6 +463,24 @@ public class DtoToEntityMappingTest {
     // =====================================================================
 
     @Test
+    public void setClub_whenClubIsNull_thenThrowsValidationException() {
+        assertThrows(ValidationException.class, () -> dtoToEntityMapping.setClub(null));
+    }
+
+    @Test
+    public void setMatch_whenClubWasSet_thenLinksMatchToClub() {
+        Club clubEntity = new Club();
+        clubEntity.setId(10L);
+        dtoToEntityMapping.setClub(clubEntity);
+
+        IpscMatch matchEntity = new IpscMatch();
+        dtoToEntityMapping.setMatch(matchEntity);
+
+        assertTrue(dtoToEntityMapping.getMatchEntity().isPresent());
+        assertSame(clubEntity, dtoToEntityMapping.getMatchEntity().get().getClub());
+    }
+
+    @Test
     public void testSetMatch_withValidMatch_thenSetsMatchEntity() {
         // Arrange
         IpscMatch matchEntity = new IpscMatch();
@@ -619,6 +660,27 @@ public class DtoToEntityMappingTest {
         );
     }
 
+    @Test
+    public void setMatchCompetitor_whenCompetitorIsNotMapped_thenStoresDtoAndLeavesEntityCompetitorNull() {
+        IpscMatch matchEntity = new IpscMatch();
+        dtoToEntityMapping.setMatch(matchEntity);
+
+        CompetitorDto missingCompetitor = new CompetitorDto();
+        missingCompetitor.setUuid(UUID.randomUUID());
+
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setUuid(UUID.randomUUID());
+        matchCompetitorDto.setCompetitor(missingCompetitor);
+
+        MatchCompetitor matchCompetitorEntity = new MatchCompetitor();
+
+        dtoToEntityMapping.setMatchCompetitor(matchCompetitorDto, matchCompetitorEntity);
+
+        assertEquals(1, dtoToEntityMapping.getMatchCompetitorDtoList().size());
+        assertSame(matchEntity, matchCompetitorEntity.getMatch());
+        assertNull(matchCompetitorEntity.getCompetitor());
+    }
+
     // =====================================================================
     // Tests for setMatchStageCompetitor()
     // =====================================================================
@@ -676,6 +738,28 @@ public class DtoToEntityMappingTest {
         assertThrows(ValidationException.class, () ->
                 dtoToEntityMapping.setMatchStageCompetitor(stageCompetitorDto, null)
         );
+    }
+
+    @Test
+    public void setMatchStageCompetitor_whenStageAndCompetitorAreNotMapped_thenStoresDtoAndKeepsEntityLinksNull() {
+        MatchStageCompetitorDto stageCompetitorDto = new MatchStageCompetitorDto();
+        stageCompetitorDto.setUuid(UUID.randomUUID());
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+        stageCompetitorDto.setCompetitor(competitorDto);
+
+        MatchStageDto matchStageDto = new MatchStageDto();
+        matchStageDto.setUuid(UUID.randomUUID());
+        stageCompetitorDto.setMatchStage(matchStageDto);
+
+        MatchStageCompetitor stageCompetitorEntity = new MatchStageCompetitor();
+
+        dtoToEntityMapping.setMatchStageCompetitor(stageCompetitorDto, stageCompetitorEntity);
+
+        assertEquals(1, dtoToEntityMapping.getMatchStageCompetitorDtoList().size());
+        assertNull(stageCompetitorEntity.getCompetitor());
+        assertNull(stageCompetitorEntity.getMatchStage());
     }
 
     // =====================================================================

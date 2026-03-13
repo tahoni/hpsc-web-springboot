@@ -9,7 +9,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-// TODO: add comments
+/**
+ * A record that acts as a mapping utility between DTO (Data Transfer Object) and Entity representations.
+ * This class helps manage and convert data between client-facing DTOs and internal Entity objects used for persistence.
+ */
 public record DtoToEntityMapping(
         DtoMapping dtoMapping,
         EntityMapping entityMapping
