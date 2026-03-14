@@ -588,7 +588,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Attempts to find the match by name in the database
         Optional<IpscMatch> optionalMatch =
-                matchEntityService.findMatchByName(ipscResponse.getMatch().getMatchName());
+                matchEntityService.findMatchByNameAndScheduledDate(ipscResponse.getMatch().getMatchName(),
+                        ipscResponse.getMatch().getMatchDate());
         boolean ipscMatchExists = optionalMatch.isPresent();
 
         // Determines the last updated date of the match\

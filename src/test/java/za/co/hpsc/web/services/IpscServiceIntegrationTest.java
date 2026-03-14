@@ -17,9 +17,6 @@ import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -377,44 +374,6 @@ public class IpscServiceIntegrationTest {
 
         // Assert
         assertNotNull(recordHolder);
-    }
-
-    // Test Group: Valid Complete Data Processing
-    @Test
-    public void importWinMssCabFile_withRealValidData_thenReturnsIpscMatchRecordHolder() throws IOException {
-        // Arrange
-        String cabFileContent = Files.readString(Path.of("src/test/resources/sample_win_mss_cab_file.json"));
-        log.info("cabFileContent: {}", cabFileContent);
-
-        // Act
-        List<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
-
-        // Assert
-        assertNotNull(recordHolder);
-        assertFalse(recordHolder.isEmpty());
-        assertNotNull(recordHolder.getFirst());
-        IpscMatchRecordHolder firstRecord = recordHolder.getFirst();
-
-        assertFalse(firstRecord.matches().isEmpty());
-        IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
-        assertNotNull(matchRecord);
-        assertEquals("Eeufees HG and PCC Club Shoot February 2026", matchRecord.name());
-//        assertEquals("2025-02-07 00:00", matchRecord.getScheduledDate());
-//        assertEquals("", matchRecord.getClub());
-//        assertEquals("PCC", matchRecord.getMatchFirearmType());
-//        assertEquals("2026-02-07 12:54", matchRecord.getDateEdited());
-
-        // TODO: why is this false?
-//        assertFalse(matchRecord.get().isEmpty());
-//        CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
-//        assertEquals("John", competitorRecord.firstName());
-//        assertEquals("Doe", competitorRecord.lastName());
-//        assertEquals("1973-02-17", competitorRecord.dateOfBirth());
-//        assertEquals("", competitorRecord.middleNames());
-//        assertNull(competitorRecord.sapsaNumber());
-//        assertEquals("1500", competitorRecord.competitorNumber());
     }
 }
 

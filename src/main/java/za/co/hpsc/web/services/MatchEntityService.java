@@ -2,6 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.IpscMatch;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -14,14 +15,14 @@ public interface MatchEntityService {
     /**
      * Searches for an {@link IpscMatch} entity by its name.
      *
-     * @param name the name of the match to search for.
+     * @param name              the name of the match to search for.
+     * @param scheduledDateTime
      * @return an {@code Optional} containing the {@link IpscMatch} if a match is found,
      * or an empty {@code Optional} if no matching match is found.
      */
-    Optional<IpscMatch> findMatchByName(String name);
+    // TODO: Javadoc
+    Optional<IpscMatch> findMatchByNameAndScheduledDate(String name, LocalDateTime scheduledDateTime);
 
     // TODO: Javadoc
     Optional<IpscMatch> findMatchWithCompetitors(Long id);
-
-    Optional<IpscMatch> findMatchWithStages(Long id);
 }

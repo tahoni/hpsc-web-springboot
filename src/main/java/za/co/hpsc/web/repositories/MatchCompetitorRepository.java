@@ -7,12 +7,12 @@ import za.co.hpsc.web.domain.MatchCompetitor;
 import java.util.Optional;
 
 public interface MatchCompetitorRepository extends JpaRepository<MatchCompetitor, Long> {
-    @Query("SELECT mc FROM MatchCompetitor mc " +
+    @Query("SELECT DISTINCT mc FROM MatchCompetitor mc " +
             "JOIN FETCH mc.competitor cc JOIN FETCH mc.match m " +
             "WHERE mc.id = :id")
     Optional<MatchCompetitor> findByIdWithCompetitorAndMatch(Long id);
 
-    @Query("SELECT mc FROM MatchCompetitor mc " +
+    @Query("SELECT DISTINCT mc FROM MatchCompetitor mc " +
             "JOIN FETCH mc.competitor cc JOIN FETCH mc.match m " +
             "WHERE mc.competitor.id = :competitorId AND mc.match.id = :matchId")
     Optional<MatchCompetitor> findByCompetitorIdAndMatchIdWithCompetitorAndMatch(Long competitorId, Long matchId);

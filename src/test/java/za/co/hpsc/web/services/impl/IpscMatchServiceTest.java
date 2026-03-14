@@ -8353,7 +8353,7 @@ public class IpscMatchServiceTest {
         ipscResponse.setClub(null);
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName("Complex Match")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Complex Match"), any(LocalDateTime.class))).thenReturn(Optional.empty());
         when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
 
         // Act
@@ -8377,7 +8377,8 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.of(existingClub));
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"),
+                any(LocalDateTime.class)))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -8406,7 +8407,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(existingMatch));
 
         // Act
@@ -8436,7 +8437,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(existingMatch));
 
         // Act
@@ -8465,7 +8466,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.of(existingClub));
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(existingMatch));
 
         // Act
@@ -8518,7 +8519,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.of(existingClub));
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(existingMatch));
 
         // Act
@@ -8568,7 +8569,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.of(existingClub));
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(existingMatch));
 
         // Act
@@ -8616,7 +8617,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.of(existingClub));
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(existingMatch));
 
         // Act
@@ -8666,7 +8667,7 @@ public class IpscMatchServiceTest {
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 15, 0));
         when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
                 .thenReturn(Optional.of(existingClub));
-        when(matchEntityService.findMatchByName("Match with Existing Club"))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(existingMatch));
 
         // Act
@@ -8705,7 +8706,7 @@ public class IpscMatchServiceTest {
         ipscResponse.setStages(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName("Match with Null Scores")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Null Scores"), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -8739,7 +8740,8 @@ public class IpscMatchServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName("Match with Null Stages")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Null Stages"),
+                any(LocalDateTime.class))).thenReturn(Optional.empty());
         when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
 
         // Act
@@ -8766,7 +8768,7 @@ public class IpscMatchServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName("Match & Co. (2025) - v2.0")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match & Co. (2025) - v2.0"), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -8801,7 +8803,7 @@ public class IpscMatchServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName("Match with Many Stages")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Many Stages"), any(LocalDateTime.class))).thenReturn(Optional.empty());
         when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
 
         // Act
@@ -8838,7 +8840,7 @@ public class IpscMatchServiceTest {
         existingMatch.setName("Existing Match");
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 0, 0)); // More recent
 
-        when(matchEntityService.findMatchByName("Existing Match")).thenReturn(Optional.of(existingMatch));
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Existing Match"), any(LocalDateTime.class))).thenReturn(Optional.of(existingMatch));
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -8873,7 +8875,7 @@ public class IpscMatchServiceTest {
         existingMatch.setName("Match with Newer Scores");
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 0, 0)); // Earlier
 
-        when(matchEntityService.findMatchByName("Match with Newer Scores")).thenReturn(Optional.of(existingMatch));
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Newer Scores"), any(LocalDateTime.class))).thenReturn(Optional.of(existingMatch));
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -9323,7 +9325,7 @@ public class IpscMatchServiceTest {
 
     @Test
     public void initMatchResults_whenScoresMembersAndEnrollmentProvided_thenBuildsCompetitorAndScoreCollections() {
-        when(matchEntityService.findMatchByName("Match 100")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match 100"), any(LocalDateTime.class))).thenReturn(Optional.empty());
         when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
 
         ScoreResponse scoreResponse = new ScoreResponse();
@@ -9398,7 +9400,7 @@ public class IpscMatchServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName(anyString())).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(anyString(), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -9416,7 +9418,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(anyString()))
+        when(matchEntityService.findMatchByNameAndScheduledDate(anyString(), any(LocalDateTime.class)))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -9435,7 +9437,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(anyString())).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(anyString(), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -9452,7 +9454,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(anyString()))
+        when(matchEntityService.findMatchByNameAndScheduledDate(anyString(), any(LocalDateTime.class)))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -9474,7 +9476,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(null))
+        when(matchEntityService.findMatchByNameAndScheduledDate(isNull(), any(LocalDateTime.class)))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -9493,7 +9495,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName(""))
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq(""), any(LocalDateTime.class)))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -9512,7 +9514,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation(isNull(), anyString()))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("   ")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("   "), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -9534,7 +9536,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation(null, "ABC"))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("Test Match")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Test Match"), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -9551,7 +9553,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Test Club", null))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("Test Match")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Test Match"), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -9580,7 +9582,7 @@ public class IpscMatchServiceTest {
         ipscResponse.setScores(new ArrayList<>());
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName("Simple Match")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Simple Match"), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
@@ -9599,7 +9601,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Test Club", "ABC"))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("Partial Match")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Partial Match"), any(LocalDateTime.class))).thenReturn(Optional.empty());
         when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
 
         // Act
@@ -9642,7 +9644,7 @@ public class IpscMatchServiceTest {
         ipscResponse.setClub(null);
         ipscResponse.setMembers(new ArrayList<>());
 
-        when(matchEntityService.findMatchByName("Match with Data")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Data"), any(LocalDateTime.class))).thenReturn(Optional.empty());
         when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
 
         // Act
@@ -9690,7 +9692,7 @@ public class IpscMatchServiceTest {
 
         when(clubEntityService.findClubByNameOrAbbreviation("Complete Club", "ABC"))
                 .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByName("Complete Match")).thenReturn(Optional.empty());
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Complete Match"), any(LocalDateTime.class))).thenReturn(Optional.empty());
         when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
 
         // Act
