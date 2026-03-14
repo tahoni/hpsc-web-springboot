@@ -356,13 +356,13 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(1, 1L);
         DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
         stubTransactionStart();
-        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.of(existingMatch));
+        when(ipscMatchRepository.findByIdWithStages(1L)).thenReturn(Optional.of(existingMatch));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionService.saveMatchResults(dtoMapping));
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithClubAndStages(1L);
+        verify(ipscMatchRepository).findByIdWithStages(1L);
     }
 
     @Test
@@ -370,13 +370,13 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(1, 1L);
         DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
         stubTransactionStart();
-        when(ipscMatchRepository.findByIdWithClubAndStages(1L)).thenReturn(Optional.empty());
+        when(ipscMatchRepository.findByIdWithStages(1L)).thenReturn(Optional.empty());
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionService.saveMatchResults(dtoMapping));
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithClubAndStages(1L);
+        verify(ipscMatchRepository).findByIdWithStages(1L);
         verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
     }
 
@@ -469,7 +469,7 @@ public class TransactionServiceTest {
 
         assertTrue(result.isPresent());
         assertEquals("Match 1", result.get().getName());
-        verify(ipscMatchRepository, never()).findByIdWithClubAndStages(any());
+        verify(ipscMatchRepository, never()).findByIdWithStages(any());
     }
 
     @Test
@@ -478,12 +478,12 @@ public class TransactionServiceTest {
         existingMatch.setId(10L);
         MatchDto matchDto = buildMatchDto(1, 10L);
         DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(matchDto));
-        when(ipscMatchRepository.findByIdWithClubAndStages(10L)).thenReturn(Optional.of(existingMatch));
+        when(ipscMatchRepository.findByIdWithStages(10L)).thenReturn(Optional.of(existingMatch));
 
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithClubAndStages(10L);
+        verify(ipscMatchRepository).findByIdWithStages(10L);
         assertEquals(10L, result.get().getId());
     }
 
@@ -491,12 +491,12 @@ public class TransactionServiceTest {
     public void getIpscMatch_whenMatchDtoIdNotFound_thenCreatesNewMatchEntity() {
         MatchDto matchDto = buildMatchDto(1, 10L);
         DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(matchDto));
-        when(ipscMatchRepository.findByIdWithClubAndStages(10L)).thenReturn(Optional.empty());
+        when(ipscMatchRepository.findByIdWithStages(10L)).thenReturn(Optional.empty());
 
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithClubAndStages(10L);
+        verify(ipscMatchRepository).findByIdWithStages(10L);
         assertEquals("Match 1", result.get().getName());
     }
 

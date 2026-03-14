@@ -166,7 +166,7 @@ public class DomainServiceImpl implements DomainService {
         // Find the match entity if present
         Optional<IpscMatch> optionalIpscMatchEntity = Optional.empty();
         if ((matchDto != null) && (matchDto.getId() != null)) {
-            optionalIpscMatchEntity = ipscMatchRepository.findByIdWithClubAndStages(matchDto.getId());
+            optionalIpscMatchEntity = ipscMatchRepository.findByIdWithStages(matchDto.getId());
         }
 
         // Initialise the match entity from DTO or create a new entity
@@ -385,7 +385,7 @@ public class DomainServiceImpl implements DomainService {
                     return new HashMap<>();
                 }
 
-                // Find the match stage competitor entity if present
+                // Find the match competitor entity if present
                 Optional<MatchStageCompetitor> optionalMatchStageEntity = Optional.empty();
                 if (matchStageCompetitorDto.getId() != null) {
                     optionalMatchStageEntity =
@@ -393,10 +393,7 @@ public class DomainServiceImpl implements DomainService {
                 }
 
                 // Initialises the match stage competitor entity from DTO or create a new entity
-                MatchStageCompetitor matchStageCompetitorEntity = optionalMatchStageEntity.orElse(null);
-                if (matchStageCompetitorEntity == null) {
-                    continue;
-                }
+                optionalMatchStageEntity.ifPresent(matchStageCompetitor -> matchStageCompetitorDto.setId(matchStageCompetitor.getId()));
 
                 // Filter by club reference if specified
                 if ((clubIdentifier != null) && (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {

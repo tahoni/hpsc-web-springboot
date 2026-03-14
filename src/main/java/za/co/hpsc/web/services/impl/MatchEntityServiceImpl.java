@@ -27,10 +27,18 @@ public class MatchEntityServiceImpl implements MatchEntityService {
     }
 
     @Override
-    public Optional<IpscMatch> findMatch(Long id) {
+    public Optional<IpscMatch> findMatchWithCompetitors(Long id) {
         if (id == null) {
             return Optional.empty();
         }
-        return matchRepository.findByIdWithClubAndCompetitors(id);
+        return matchRepository.findByIdWithCompetitors(id);
+    }
+
+    @Override
+    public Optional<IpscMatch> findMatchWithStages(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return matchRepository.findByIdWithStages(id);
     }
 }

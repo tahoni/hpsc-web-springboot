@@ -8,17 +8,17 @@ import java.util.Optional;
 
 public interface IpscMatchRepository extends JpaRepository<IpscMatch, Long> {
     @Query("SELECT m FROM IpscMatch m " +
-            "JOIN FETCH m.club c JOIN FETCH m.matchStages ms " +
+            "JOIN FETCH m.matchStages ms " +
             "WHERE m.id = :id")
-    Optional<IpscMatch> findByIdWithClubAndStages(Long id);
+    Optional<IpscMatch> findByIdWithStages(Long id);
 
     @Query("SELECT m FROM IpscMatch m " +
-            "JOIN FETCH m.club c JOIN FETCH m.matchCompetitors mcc " +
+            "JOIN FETCH m.matchCompetitors mcc " +
             "WHERE m.id = :id")
-    Optional<IpscMatch> findByIdWithClubAndCompetitors(Long id);
+    Optional<IpscMatch> findByIdWithCompetitors(Long id);
 
     @Query("SELECT m FROM IpscMatch m " +
-            "JOIN FETCH m.club c JOIN FETCH m.matchStages " +
+            "LEFT JOIN FETCH m.club c JOIN FETCH m.matchStages " +
             "WHERE m.name = :name")
     Optional<IpscMatch> findByNameWithClubAndStages(String name);
 

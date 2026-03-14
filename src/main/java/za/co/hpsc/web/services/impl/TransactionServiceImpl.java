@@ -128,7 +128,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         IpscMatch matchEntity = new IpscMatch();
         if (matchDto.getId() != null) {
-            matchEntity = ipscMatchRepository.findByIdWithClubAndStages(matchDto.getId()).orElseGet(IpscMatch::new);
+            matchEntity = ipscMatchRepository.findByIdWithStages(matchDto.getId()).orElseGet(IpscMatch::new);
         }
         matchEntity.init(matchDto);
 

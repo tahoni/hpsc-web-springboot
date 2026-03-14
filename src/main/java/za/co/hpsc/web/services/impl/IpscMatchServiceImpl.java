@@ -105,7 +105,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     optionalIpscMatchStage.ifPresent(matchStageListWithCompetitors::add);
                 }
             });
-            IpscMatch matchWithCompetitors = matchEntityService.findMatch(match.getId()).orElse(null);
+            IpscMatch matchWithCompetitors = matchEntityService.findMatchWithCompetitors(match.getId()).orElse(null);
 
             // Get the match stage competitors
             Set<MatchStageCompetitor> matchStageCompetitorSet =

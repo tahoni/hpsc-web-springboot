@@ -21,5 +21,7 @@ public interface MatchEntityService {
     Optional<IpscMatch> findMatchByName(String name);
 
     // TODO: Javadoc
-    Optional<IpscMatch> findMatch(Long id);
+    Optional<IpscMatch> findMatchWithCompetitors(Long id);
+
+    Optional<IpscMatch> findMatchWithStages(Long id);
 }
