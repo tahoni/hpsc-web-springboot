@@ -18,6 +18,7 @@ import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -79,7 +80,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return new IpscResponseHolder(ipscResponses);
     }
 
-    // TODO: comment
     @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList) {
         if (ipscMatchEntityList == null) {
@@ -93,12 +93,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             match.setClub(match.getClub());
 
             // Get the match stages
-            List<IpscMatchStage> matchStageList =
-                    ((match.getMatchStages() != null) ? match.getMatchStages() : new ArrayList<>());
+            Set<IpscMatchStage> matchStageSet =
+                    ((match.getMatchStages() != null) ? new HashSet<>(match.getMatchStages()) : new HashSet<>());
 
             // Get the competitors
             List<IpscMatchStage> matchStageListWithCompetitors = new ArrayList<>();
-            matchStageList.stream().filter(Objects::nonNull).forEach(ipscMatchStage -> {
+            matchStageSet.stream().filter(Objects::nonNull).forEach(ipscMatchStage -> {
                 if (ipscMatchStage.getId() != null) {
                     Optional<IpscMatchStage> optionalIpscMatchStage =
                             matchStageEntityService.findMatchStage(ipscMatchStage.getId());
@@ -108,27 +108,27 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             IpscMatch matchWithCompetitors = matchEntityService.findMatch(match.getId()).orElse(null);
 
             // Get the match stage competitors
-            List<MatchStageCompetitor> matchStageCompetitorList =
-                    getMatchStageCompetitorList(matchStageListWithCompetitors);
-            List<MatchCompetitor> matchCompetitorList =
-                    getMatchCompetitorList(matchWithCompetitors);
+            Set<MatchStageCompetitor> matchStageCompetitorSet =
+                    getMatchStageCompetitorSet(matchStageListWithCompetitors);
+            Set<MatchCompetitor> matchCompetitorSet =
+                    getMatchCompetitorSet(matchWithCompetitors);
 
             // Get the match competitors
-            List<Competitor> competitorList = getCompetitorList(matchCompetitorList);
+            Set<Competitor> competitorSet = new HashSet<>(getCompetitorSet(matchCompetitorSet));
 
             // Initialise the competitor list
-            List<CompetitorMatchRecord> competitors = new ArrayList<>();
-            competitorList.stream().filter(Objects::nonNull)
-                    .forEach(c -> initMatchCompetitor(c, matchCompetitorList)
+            Set<CompetitorMatchRecord> competitors = new HashSet<>();
+            competitorSet.stream().filter(Objects::nonNull)
+                    .forEach(c -> initMatchCompetitor(c, new ArrayList<>(matchCompetitorSet))
                             .ifPresent((mcr) -> {
                                 List<MatchStageCompetitorRecord> thisCompetitorStages =
-                                        initMatchStageCompetitor(c, matchStageCompetitorList);
+                                        initMatchStageCompetitor(c, new ArrayList<>(matchStageCompetitorSet));
 
                                 // Creates competitor response from competitor details
                                 initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
                             }));
 
-            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, competitors);
+            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, new ArrayList<>(competitors));
             ipscResponse.ifPresent(ipscMatchRecordList::add);
         }
 
@@ -478,28 +478,29 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     /**
      * Retrieves a list of competitors from the provided match competitor list.
      *
-     * @param matchCompetitorList the list of MatchCompetitor objects to the process.
-     *                            If null, an empty list will be returned.
-     * @return a list of Competitor objects extracted from the match competitor list.
+     * @param matchCompetitorSet the list of MatchCompetitor objects to the process.
+     *                           If null, an empty list will be returned.
+     * @return a set of Competitor objects extracted from the match competitor list.
      * If the input list is null or contains null elements, these are handled appropriately.
      */
-    protected List<Competitor> getCompetitorList(List<MatchCompetitor> matchCompetitorList) {
-        if (matchCompetitorList == null) {
-            return new ArrayList<>();
+    protected Set<Competitor> getCompetitorSet(Set<MatchCompetitor> matchCompetitorSet) {
+        if (matchCompetitorSet == null) {
+            return new HashSet<>();
         }
 
         // Gets competitors from the match competitor list
-        return matchCompetitorList.stream()
+        return matchCompetitorSet.stream()
                 .filter(Objects::nonNull)
                 .map(MatchCompetitor::getCompetitor)
-//                .map(competitor -> competitorEntityService.findCompetitor(competitor.getId()).orElse(null))
                 .filter(Objects::nonNull)
-                .toList();
+                .map(competitor -> competitorEntityService.findCompetitor(competitor.getId()).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
-    protected List<MatchCompetitor> getMatchCompetitorList(IpscMatch match) {
+    protected Set<MatchCompetitor> getMatchCompetitorSet(IpscMatch match) {
         if (match == null) {
-            return new ArrayList<>();
+            return new HashSet<>();
         }
 
         // Gets competitors from the match
@@ -507,7 +508,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .filter(Objects::nonNull)
                 .map(matchCompetitor -> matchCompetitorEntityService.findMatchCompetitor(matchCompetitor.getId()).orElse(null))
                 .filter(Objects::nonNull)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -515,13 +516,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *
      * @param matchStageList the list of {@link IpscMatchStage} objects.
      *                       If null, an empty list is returned.
-     * @return a list of {@link MatchStageCompetitor} objects aggregated from all non-null stages
+     * @return a set of {@link MatchStageCompetitor} objects aggregated from all non-null stages
      * in the input list.
      * If the input list is null or contains no valid stages, the returned list will be empty.
      */
-    protected List<MatchStageCompetitor> getMatchStageCompetitorList(List<IpscMatchStage> matchStageList) {
+    protected Set<MatchStageCompetitor> getMatchStageCompetitorSet(List<IpscMatchStage> matchStageList) {
         if (matchStageList == null) {
-            return new ArrayList<>();
+            return new HashSet<>();
         }
 
         // Gets competitors from the match stage list
@@ -530,7 +531,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .map(IpscMatchStage::getMatchStageCompetitors)
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     /**

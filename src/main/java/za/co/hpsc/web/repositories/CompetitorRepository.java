@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
     @Query("SELECT cc FROM Competitor cc " +
-            "JOIN FETCH cc.competitorMatches cm JOIN FETCH cm.match m  " +
+            "JOIN FETCH cc.competitorMatches cm " +
             "WHERE cc.id = :id")
     Optional<Competitor> findByIdWithMatchCompetitors(Long id);
 

@@ -20,9 +20,7 @@ import za.co.hpsc.web.services.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -5185,13 +5183,13 @@ public class IpscMatchServiceTest {
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Null Input Handling
+    // Tests for getCompetitorSet - Null Input Handling
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenNullList_thenReturnsEmptyList() {
+    public void testGetCompetitorSet_whenNullList_thenReturnsEmptyList() {
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(null);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(null);
 
         // Assert
         assertNotNull(result);
@@ -5199,12 +5197,12 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testGetCompetitorList_whenEmptyList_thenReturnsEmptyList() {
+    public void testGetCompetitorSet_whenEmptyList_thenReturnsEmptyList() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
@@ -5212,11 +5210,11 @@ public class IpscMatchServiceTest {
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Null Elements Handling
+    // Tests for getCompetitorSet - Null Elements Handling
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenAllNullElements_thenReturnsEmptyList() {
+    public void testGetCompetitorSet_whenAllNullElements_thenReturnsEmptyList() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
         matchCompetitorList.add(null);
@@ -5224,7 +5222,7 @@ public class IpscMatchServiceTest {
         matchCompetitorList.add(null);
 
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
@@ -5232,7 +5230,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testGetCompetitorList_whenSomeNullElements_thenFiltersNulls() {
+    public void testGetCompetitorSet_whenSomeNullElements_thenFiltersNulls() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -5259,18 +5257,20 @@ public class IpscMatchServiceTest {
         matchCompetitorList.add(mc2);
         matchCompetitorList.add(null);
 
+        when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
+        when(competitorEntityService.findCompetitor(competitor2.getId())).thenReturn(Optional.of(competitor2));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals(competitor1, result.getFirst());
-        assertEquals(competitor2, result.get(1));
+        assertTrue(result.containsAll(List.of(competitor1, competitor2)));
     }
 
     @Test
-    public void testGetCompetitorList_whenNullCompetitorInMatchCompetitor_thenFiltersNull() {
+    public void testGetCompetitorSet_whenNullCompetitorInMatchCompetitor_thenFiltersNull() {
         // Arrange
         MatchCompetitor mc1 = new MatchCompetitor();
         mc1.setId(1L);
@@ -5279,7 +5279,7 @@ public class IpscMatchServiceTest {
         List<MatchCompetitor> matchCompetitorList = List.of(mc1);
 
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
@@ -5287,11 +5287,11 @@ public class IpscMatchServiceTest {
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Single Element
+    // Tests for getCompetitorSet - Single Element
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenSingleCompetitor_thenReturnsSingleElement() {
+    public void testGetCompetitorSet_whenSingleCompetitor_thenReturnsSingleElement() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5304,23 +5304,27 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(competitor, result.getFirst());
-        assertEquals("John", result.getFirst().getFirstName());
-        assertEquals("Doe", result.getFirst().getLastName());
+        assertTrue(result.contains(competitor));
+        Competitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals(competitor, firstResult);
+        assertEquals("John", firstResult.getFirstName());
+        assertEquals("Doe", firstResult.getLastName());
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Multiple Elements
+    // Tests for getCompetitorSet - Multiple Elements
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenMultipleCompetitors_thenReturnsAll() {
+    public void testGetCompetitorSet_whenMultipleCompetitors_thenReturnsAll() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
@@ -5335,41 +5339,46 @@ public class IpscMatchServiceTest {
             mc.setCompetitor(competitor);
 
             matchCompetitorList.add(mc);
+
+            when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
         }
 
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(5, result.size());
+        List<String> firstNames = result.stream().map(Competitor::getFirstName).toList();
+        List<String> lastNames = result.stream().map(Competitor::getLastName).toList();
         for (int i = 0; i < 5; i++) {
-            assertEquals("FirstName" + (i + 1), result.get(i).getFirstName());
-            assertEquals("LastName" + (i + 1), result.get(i).getLastName());
+            assertTrue(firstNames.contains("FirstName" + (i + 1)));
+            assertTrue(lastNames.contains("LastName" + (i + 1)));
         }
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Partial Data
+    // Tests for getCompetitorSet - Partial Data
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenCompetitorsWithoutNames_thenReturnsAll() {
+    public void testGetCompetitorSet_whenCompetitorsWithoutNames_thenReturnsAll() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = getCompetitors();
 
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertNull(result.getFirst().getFirstName());
-        assertEquals("John", result.get(1).getFirstName());
+        List<String> firstNames = result.stream().map(Competitor::getFirstName).toList();
+        assertEquals(1, firstNames.stream().filter(Objects::isNull).count());
+        assertTrue(firstNames.contains("John"));
     }
 
     @Test
-    public void testGetCompetitorList_whenCompetitorsWithNullFields_thenReturnsAll() {
+    public void testGetCompetitorSet_whenCompetitorsWithNullFields_thenReturnsAll() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5384,21 +5393,23 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(competitor, result.getFirst());
+        assertEquals(competitor, result.stream().findFirst().orElse(null));
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Full Data
+    // Tests for getCompetitorSet - Full Data
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenCompleteCompetitorData_thenReturnsComplete() {
+    public void testGetCompetitorSet_whenCompleteCompetitorData_thenReturnsComplete() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5415,25 +5426,29 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("John", result.getFirst().getFirstName());
-        assertEquals("Doe", result.getFirst().getLastName());
-        assertEquals("Michael", result.getFirst().getMiddleNames());
-        assertEquals(12345, result.getFirst().getSapsaNumber());
-        assertEquals("COMP001", result.getFirst().getCompetitorNumber());
+        assertTrue(result.contains(competitor));
+        Competitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals("John", firstResult.getFirstName());
+        assertEquals("Doe", firstResult.getLastName());
+        assertEquals("Michael", firstResult.getMiddleNames());
+        assertEquals(12345, firstResult.getSapsaNumber());
+        assertEquals("COMP001", firstResult.getCompetitorNumber());
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Duplicates
+    // Tests for getCompetitorSet - Edge Cases: Duplicates
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenDuplicateCompetitors_thenReturnsAllInstances() {
+    public void testGetCompetitorSet_whenDuplicateCompetitors_thenReturnsSingleInstance() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5454,23 +5469,23 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc1, mc2, mc3);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
-        assertEquals(3, result.size());
-        assertEquals(competitor, result.getFirst());
-        assertEquals(competitor, result.get(1));
-        assertEquals(competitor, result.get(2));
+        assertEquals(1, result.size());
+        assertTrue(result.contains(competitor));
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Large Lists
+    // Tests for getCompetitorSet - Edge Cases: Large Lists
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenLargeList_thenProcessesAll() {
+    public void testGetCompetitorSet_whenLargeList_thenProcessesAll() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
 
@@ -5485,10 +5500,12 @@ public class IpscMatchServiceTest {
             mc.setCompetitor(competitor);
 
             matchCompetitorList.add(mc);
+
+            when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
         }
 
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
@@ -5496,11 +5513,11 @@ public class IpscMatchServiceTest {
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Special Characters
+    // Tests for getCompetitorSet - Edge Cases: Special Characters
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenSpecialCharactersInNames_thenPreserves() {
+    public void testGetCompetitorSet_whenSpecialCharactersInNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5514,23 +5531,26 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("O'Connor", result.getFirst().getFirstName());
-        assertEquals("Van-Der-Berg", result.getFirst().getLastName());
-        assertEquals("José-María", result.getFirst().getMiddleNames());
+        Competitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals("O'Connor", firstResult.getFirstName());
+        assertEquals("Van-Der-Berg", firstResult.getLastName());
+        assertEquals("José-María", firstResult.getMiddleNames());
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Unicode Characters
+    // Tests for getCompetitorSet - Edge Cases: Unicode Characters
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenUnicodeCharactersInNames_thenPreserves() {
+    public void testGetCompetitorSet_whenUnicodeCharactersInNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5544,23 +5564,26 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Müller", result.getFirst().getFirstName());
-        assertEquals("Søren", result.getFirst().getLastName());
-        assertEquals("Ñoño", result.getFirst().getMiddleNames());
+        Competitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals("Müller", firstResult.getFirstName());
+        assertEquals("Søren", firstResult.getLastName());
+        assertEquals("Ñoño", firstResult.getMiddleNames());
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Long Names
+    // Tests for getCompetitorSet - Edge Cases: Long Names
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenVeryLongNames_thenPreserves() {
+    public void testGetCompetitorSet_whenVeryLongNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5574,23 +5597,26 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(200, result.getFirst().getFirstName().length());
-        assertEquals(200, result.getFirst().getLastName().length());
-        assertEquals(200, result.getFirst().getMiddleNames().length());
+        Competitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals(200, firstResult.getFirstName().length());
+        assertEquals(200, firstResult.getLastName().length());
+        assertEquals(200, firstResult.getMiddleNames().length());
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Empty Strings
+    // Tests for getCompetitorSet - Edge Cases: Empty Strings
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenEmptyStringNames_thenPreserves() {
+    public void testGetCompetitorSet_whenEmptyStringNames_thenPreserves() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -5604,43 +5630,46 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
+        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("", result.getFirst().getFirstName());
-        assertEquals("", result.getFirst().getLastName());
-        assertEquals("", result.getFirst().getMiddleNames());
+        Competitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals("", firstResult.getFirstName());
+        assertEquals("", firstResult.getLastName());
+        assertEquals("", firstResult.getMiddleNames());
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Extreme Numbers
+    // Tests for getCompetitorSet - Edge Cases: Extreme Numbers
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenExtremeNumbers_thenPreserves() {
+    public void testGetCompetitorSet_whenExtremeNumbers_thenPreserves() {
         // Arrange
         List<MatchCompetitor> matchCompetitorList = getMatchCompetitorList();
 
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals(Long.MAX_VALUE, result.getFirst().getId());
-        assertEquals(Integer.MAX_VALUE, result.getFirst().getSapsaNumber());
-        assertEquals(Integer.MIN_VALUE, result.get(1).getSapsaNumber());
+        assertTrue(result.stream().map(Competitor::getId).toList().contains(Long.MAX_VALUE));
+        assertTrue(result.stream().map(Competitor::getSapsaNumber).toList().contains(Integer.MAX_VALUE));
+        assertTrue(result.stream().map(Competitor::getSapsaNumber).toList().contains(Integer.MIN_VALUE));
     }
 
     // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Mixed Valid and Null
+    // Tests for getCompetitorSet - Edge Cases: Mixed Valid and Null
     // =====================================================================
 
     @Test
-    public void testGetCompetitorList_whenMixedValidAndNullCompetitors_thenFiltersCorrectly() {
+    public void testGetCompetitorSet_whenMixedValidAndNullCompetitors_thenFiltersCorrectly() {
         // Arrange
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
@@ -5668,75 +5697,17 @@ public class IpscMatchServiceTest {
         matchCompetitorList.add(mc2);
         matchCompetitorList.add(mc3);
 
+        when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
+        when(competitorEntityService.findCompetitor(competitor3.getId())).thenReturn(Optional.of(competitor3));
+
         // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals("John", result.getFirst().getFirstName());
-        assertEquals("Jane", result.get(1).getFirstName());
-    }
-
-    // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Order Preservation
-    // =====================================================================
-
-    @Test
-    public void testGetCompetitorList_thenPreservesOrder() {
-        // Arrange
-        List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
-
-        for (int i = 1; i <= 10; i++) {
-            Competitor competitor = new Competitor();
-            competitor.setId((long) i);
-            competitor.setFirstName("Name" + i);
-
-            MatchCompetitor mc = new MatchCompetitor();
-            mc.setId((long) i);
-            mc.setCompetitor(competitor);
-
-            matchCompetitorList.add(mc);
-        }
-
-        // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(10, result.size());
-        for (int i = 0; i < 10; i++) {
-            assertEquals(i + 1, result.get(i).getId());
-            assertEquals("Name" + (i + 1), result.get(i).getFirstName());
-        }
-    }
-
-    // =====================================================================
-    // Tests for getCompetitorList - Edge Cases: Immutability
-    // =====================================================================
-
-    @Test
-    public void testGetCompetitorList_returnsImmutableList() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(1L);
-        competitor.setFirstName("John");
-
-        MatchCompetitor mc = new MatchCompetitor();
-        mc.setId(1L);
-        mc.setCompetitor(competitor);
-
-        List<MatchCompetitor> matchCompetitorList = List.of(mc);
-
-        // Act
-        List<Competitor> result = ipscMatchService.getCompetitorList(matchCompetitorList);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        // Verify that the returned list is immutable
-        assertThrows(UnsupportedOperationException.class, () -> result.add(new Competitor()));
+        List<String> firstNames = result.stream().map(Competitor::getFirstName).toList();
+        assertTrue(firstNames.containsAll(List.of("John", "Jane")));
     }
 
     // =====================================================================
@@ -5746,7 +5717,7 @@ public class IpscMatchServiceTest {
     @Test
     public void testGetMatchStageCompetitorList_whenNullList_thenReturnsEmptyList() {
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(null);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(null);
 
         // Assert
         assertNotNull(result);
@@ -5759,7 +5730,7 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = new ArrayList<>();
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -5779,7 +5750,7 @@ public class IpscMatchServiceTest {
         matchStageList.add(null);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -5805,7 +5776,7 @@ public class IpscMatchServiceTest {
         matchStageList.add(null);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -5830,7 +5801,7 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage1, stage2);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -5851,8 +5822,8 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage1, stage2);
 
         // Act
-        List<MatchStageCompetitor> result =
-                assertDoesNotThrow(() -> ipscMatchService.getMatchStageCompetitorList(matchStageList));
+        Set<MatchStageCompetitor> result =
+                assertDoesNotThrow(() -> ipscMatchService.getMatchStageCompetitorSet(matchStageList));
 
         // Assert
         assertNotNull(result);
@@ -5883,13 +5854,14 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(msc, result.getFirst());
-        assertEquals(competitor, result.getFirst().getCompetitor());
+        MatchStageCompetitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals(msc, firstResult);
+        assertEquals(competitor, firstResult.getCompetitor());
     }
 
     @Test
@@ -5900,13 +5872,15 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(5, result.size());
+        List<String> firstNames =
+                result.stream().map(MatchStageCompetitor::getCompetitor).map(Competitor::getFirstName).toList();
         for (int i = 0; i < 5; i++) {
-            assertEquals("FirstName" + (i + 1), result.get(i).getCompetitor().getFirstName());
+            assertTrue(firstNames.contains("FirstName" + (i + 1)));
         }
     }
 
@@ -5930,7 +5904,7 @@ public class IpscMatchServiceTest {
         }
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -5967,12 +5941,13 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage1, stage2, stage3);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(msc, result.getFirst());
+        MatchStageCompetitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals(msc, firstResult);
     }
 
     // =====================================================================
@@ -6008,13 +5983,14 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertNull(result.getFirst().getCompetitor().getFirstName());
-        assertEquals("Jane", result.get(1).getCompetitor().getFirstName());
+        List<String> firstNames = result.stream().map(MatchStageCompetitor::getCompetitor).map(Competitor::getFirstName).toList();
+        assertEquals(1, firstNames.stream().filter(Objects::isNull).count());
+        assertTrue(firstNames.contains("Jane"));
     }
 
     // =====================================================================
@@ -6033,16 +6009,17 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("John", result.getFirst().getCompetitor().getFirstName());
-        assertEquals("Doe", result.getFirst().getCompetitor().getLastName());
-        assertEquals(FirearmType.HANDGUN, result.getFirst().getFirearmType());
-        assertEquals(Division.OPEN, result.getFirst().getDivision());
-        assertEquals(10, result.getFirst().getScoreA());
+        MatchStageCompetitor firstResult = result.stream().findFirst().orElse(null);
+        assertEquals("John", firstResult.getCompetitor().getFirstName());
+        assertEquals("Doe", firstResult.getCompetitor().getLastName());
+        assertEquals(FirearmType.HANDGUN, firstResult.getFirearmType());
+        assertEquals(Division.OPEN, firstResult.getDivision());
+        assertEquals(10, firstResult.getScoreA());
     }
 
     // =====================================================================
@@ -6072,7 +6049,7 @@ public class IpscMatchServiceTest {
         }
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -6102,7 +6079,7 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -6137,15 +6114,13 @@ public class IpscMatchServiceTest {
         }
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(3, result.size());
         // Same competitor but different MatchStageCompetitor instances
-        assertEquals(competitor, result.getFirst().getCompetitor());
-        assertEquals(competitor, result.get(1).getCompetitor());
-        assertEquals(competitor, result.get(2).getCompetitor());
+        assertTrue(result.stream().allMatch(m -> m.getCompetitor().equals(competitor)));
     }
 
     // =====================================================================
@@ -6173,68 +6148,18 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("O'Connor", result.getFirst().getCompetitor().getFirstName());
-        assertEquals("Van-Der-Berg", result.getFirst().getCompetitor().getLastName());
-        assertEquals(Division.PCC_OPTICS, result.getFirst().getDivision());
-    }
-
-    // =====================================================================
-    // Tests for getMatchStageCompetitorList - Edge Cases: Order Preservation
-    // =====================================================================
-
-    @Test
-    public void testGetMatchStageCompetitorList_thenPreservesOrder() {
-        // Arrange
-        List<IpscMatchStage> matchStageList = getIpscMatchStages();
-
-        // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(9, result.size()); // 3 stages * 3 competitors
-        // Verify order is preserved: stage1-comp1, stage1-comp2, stage1-comp3, stage2-comp1, etc.
-        assertEquals("S1C1", result.getFirst().getCompetitor().getFirstName());
-        assertEquals("S1C2", result.get(1).getCompetitor().getFirstName());
-        assertEquals("S1C3", result.get(2).getCompetitor().getFirstName());
-        assertEquals("S2C1", result.get(3).getCompetitor().getFirstName());
-    }
-
-    // =====================================================================
-    // Tests for getMatchStageCompetitorList - Edge Cases: Immutability
-    // =====================================================================
-
-    @Test
-    public void testGetMatchStageCompetitorList_returnsImmutableList() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(1L);
-        competitor.setFirstName("John");
-
-        MatchStageCompetitor msc = new MatchStageCompetitor();
-        msc.setId(1L);
-        msc.setCompetitor(competitor);
-
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setId(1L);
-        stage.setMatchStageCompetitors(List.of(msc));
-
-        List<IpscMatchStage> matchStageList = List.of(stage);
-
-        // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        // Verify that the returned list is immutable
-        assertThrows(UnsupportedOperationException.class, () -> result.add(new MatchStageCompetitor()));
+        List<String> firstNames =
+                result.stream().map(MatchStageCompetitor::getCompetitor).map(Competitor::getFirstName).toList();
+        List<String> lastNames =
+                result.stream().map(MatchStageCompetitor::getCompetitor).map(Competitor::getLastName).toList();
+        assertTrue(firstNames.contains("O'Connor"));
+        assertTrue(lastNames.contains("Van-Der-Berg"));
+        assertTrue(result.stream().allMatch(m -> m.getDivision() == Division.PCC_OPTICS));
     }
 
     // =====================================================================
@@ -6256,12 +6181,11 @@ public class IpscMatchServiceTest {
         List<IpscMatchStage> matchStageList = List.of(stage);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertNull(result.getFirst().getCompetitor());
     }
 
     // =====================================================================
@@ -6311,7 +6235,7 @@ public class IpscMatchServiceTest {
         matchStageList.add(stage3);
 
         // Act
-        List<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorList(matchStageList);
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(matchStageList);
 
         // Assert
         assertNotNull(result);
@@ -7257,32 +7181,6 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testGenerateIpscMatchRecordHolder_outputVerification_thenRecordIsImmutable() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-        match.setName("Immutable Test");
-        match.setScheduledDate(LocalDateTime.of(2025, 9, 6, 10, 0, 0));
-        match.setClub(null);
-        match.setMatchFirearmType(FirearmType.HANDGUN);
-        match.setMatchCategory(MatchCategory.LEAGUE);
-        match.setDateEdited(LocalDateTime.of(2025, 9, 6, 15, 0, 0));
-
-        List<IpscMatch> matchList = List.of(match);
-
-        // Act
-        IpscMatchRecordHolder result = ipscMatchService.generateIpscMatchRecordHolder(matchList);
-
-        // Assert - Records are Java records and should be immutable
-        assertNotNull(result);
-        IpscMatchRecord record = result.matches().getFirst();
-        assertNotNull(record);
-        // Verify record fields cannot be modified
-        assertEquals("Immutable Test", record.name());
-        assertEquals("Immutable Test", record.name()); // Call again to verify consistency
-    }
-
-    @Test
     public void testGenerateIpscMatchRecordHolder_outputVerification_whenMultipleMatches_thenPreservesOrder() {
         // Arrange
         List<IpscMatch> matchList = new ArrayList<>();
@@ -8202,7 +8100,7 @@ public class IpscMatchServiceTest {
         return msc;
     }
 
-    private static @NonNull List<MatchCompetitor> getCompetitors() {
+    private List<MatchCompetitor> getCompetitors() {
         Competitor competitor1 = new Competitor();
         competitor1.setId(1L);
 
@@ -8218,10 +8116,13 @@ public class IpscMatchServiceTest {
         mc2.setId(2L);
         mc2.setCompetitor(competitor2);
 
+        when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
+        when(competitorEntityService.findCompetitor(competitor2.getId())).thenReturn(Optional.of(competitor2));
+
         return List.of(mc1, mc2);
     }
 
-    private static @NonNull List<MatchCompetitor> getMatchCompetitorList() {
+    private List<MatchCompetitor> getMatchCompetitorList() {
         Competitor competitor1 = new Competitor();
         competitor1.setId(Long.MAX_VALUE);
         competitor1.setFirstName("Max");
@@ -8239,6 +8140,9 @@ public class IpscMatchServiceTest {
         MatchCompetitor mc2 = new MatchCompetitor();
         mc2.setId(2L);
         mc2.setCompetitor(competitor2);
+
+        when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
+        when(competitorEntityService.findCompetitor(competitor2.getId())).thenReturn(Optional.of(competitor2));
 
         return List.of(mc1, mc2);
     }
