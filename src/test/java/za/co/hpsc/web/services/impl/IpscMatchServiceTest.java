@@ -4009,6 +4009,8 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(matchCompetitor);
 
+        when(clubEntityService.findClubById(match.getClub().getId())).thenReturn(Optional.of(club));
+
         // Act
         Optional<MatchCompetitorRecord> result = ipscMatchService.initMatchCompetitor(competitor, matchCompetitorList);
 
@@ -5268,7 +5270,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testGetCompetitorList_whenNullCompetitorInMatchCompetitor_thenIncludesNull() {
+    public void testGetCompetitorList_whenNullCompetitorInMatchCompetitor_thenFiltersNull() {
         // Arrange
         MatchCompetitor mc1 = new MatchCompetitor();
         mc1.setId(1L);
@@ -5281,8 +5283,7 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertNull(result.getFirst());
+        assertTrue(result.isEmpty());
     }
 
     // =====================================================================
@@ -5672,10 +5673,9 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(3, result.size());
+        assertEquals(2, result.size());
         assertEquals("John", result.getFirst().getFirstName());
-        assertNull(result.get(1));
-        assertEquals("Jane", result.get(2).getFirstName());
+        assertEquals("Jane", result.get(1).getFirstName());
     }
 
     // =====================================================================

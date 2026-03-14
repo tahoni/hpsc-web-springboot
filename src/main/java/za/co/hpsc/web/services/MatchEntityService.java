@@ -19,4 +19,7 @@ public interface MatchEntityService {
      * or an empty {@code Optional} if no matching match is found.
      */
     Optional<IpscMatch> findMatchByName(String name);
+
+    // TODO: Javadoc
+    Optional<IpscMatch> findMatch(Long id);
 }

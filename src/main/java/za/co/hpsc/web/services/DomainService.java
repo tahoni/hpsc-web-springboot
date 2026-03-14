@@ -5,6 +5,8 @@ import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 
 import java.util.Optional;
 
+// TODO: rename methods to distinguish between initialising match entities and mapping match results to entities, or combine the two operations into a single method that both initialises and maps the entities based on the provided match results data.
+
 /**
  * Provides methods for initialising and managing domain entities related to a match.
  *

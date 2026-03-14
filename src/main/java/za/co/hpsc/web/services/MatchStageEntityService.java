@@ -21,4 +21,7 @@ public interface MatchStageEntityService {
      * or an empty {@code Optional} if no matching stage is found.
      */
     Optional<IpscMatchStage> findMatchStage(Long matchId, Integer stageNumber);
+
+    // TODO: Javadoc
+    Optional<IpscMatchStage> findMatchStage(Long id);
 }

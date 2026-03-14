@@ -13,9 +13,9 @@ public interface IpscMatchRepository extends JpaRepository<IpscMatch, Long> {
     Optional<IpscMatch> findByIdWithClubAndStages(Long id);
 
     @Query("SELECT m FROM IpscMatch m " +
-            "JOIN FETCH m.matchCompetitors mcc " +
+            "JOIN FETCH m.club c JOIN FETCH m.matchCompetitors mcc " +
             "WHERE m.id = :id")
-    Optional<IpscMatch> findByIdWithCompetitors(Long id);
+    Optional<IpscMatch> findByIdWithClubAndCompetitors(Long id);
 
     @Query("SELECT m FROM IpscMatch m " +
             "JOIN FETCH m.club c JOIN FETCH m.matchStages " +

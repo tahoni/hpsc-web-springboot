@@ -20,4 +20,7 @@ public interface MatchCompetitorEntityService {
      * or an empty {@code Optional} if no matching record exists.
      */
     Optional<MatchCompetitor> findMatchCompetitor(Long matchId, Long competitorId);
+
+    // TODO: Javadoc
+    Optional<MatchCompetitor> findMatchCompetitor(Long id);
 }

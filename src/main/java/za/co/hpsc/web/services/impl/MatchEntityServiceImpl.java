@@ -25,4 +25,12 @@ public class MatchEntityServiceImpl implements MatchEntityService {
         }
         return matchRepository.findByNameWithClubAndStages(name);
     }
+
+    @Override
+    public Optional<IpscMatch> findMatch(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return matchRepository.findByIdWithClubAndCompetitors(id);
+    }
 }

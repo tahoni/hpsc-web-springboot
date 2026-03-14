@@ -82,4 +82,13 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
 
         return finalCompetitorList.stream().filter(Objects::nonNull).findFirst();
     }
+
+    @Override
+    public Optional<Competitor> findCompetitor(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
+        return competitorRepository.findByIdWithMatchCompetitors(id);
+    }
 }

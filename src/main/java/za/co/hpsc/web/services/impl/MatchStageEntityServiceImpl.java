@@ -22,6 +22,14 @@ public class MatchStageEntityServiceImpl implements MatchStageEntityService {
         if ((matchId == null) || (stageNumber == null)) {
             return Optional.empty();
         }
-        return matchStageRepository.findByMatchIdAndStageNumberWithMatch(matchId, stageNumber);
+        return matchStageRepository.findByMatchIdAndStageNumber(matchId, stageNumber);
+    }
+
+    @Override
+    public Optional<IpscMatchStage> findMatchStage(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return matchStageRepository.findByIdWithCompetitors(id);
     }
 }

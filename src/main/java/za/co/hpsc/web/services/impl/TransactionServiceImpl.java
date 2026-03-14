@@ -150,7 +150,7 @@ public class TransactionServiceImpl implements TransactionService {
         filteredMatchStageDtoList.forEach(matchStageDto -> {
             IpscMatchStage matchStageEntity = new IpscMatchStage();
             if (matchStageDto.getId() != null) {
-                matchStageEntity = ipscMatchStageRepository.findByIdWithCompetitorAndMatch(matchStageDto.getId())
+                matchStageEntity = ipscMatchStageRepository.findByIdWithCompetitors(matchStageDto.getId())
                         .orElseGet(IpscMatchStage::new);
             }
             matchStageEntity.init(matchStageDto);
@@ -172,7 +172,7 @@ public class TransactionServiceImpl implements TransactionService {
             Competitor competitorEntity = new Competitor();
             if (competitorDto.getId() != null) {
                 competitorEntity =
-                        competitorRepository.findByIdWithMatchAndMatchStageCompetitors(competitorDto.getId())
+                        competitorRepository.findByIdWithMatchCompetitors(competitorDto.getId())
                                 .orElseGet(Competitor::new);
             }
             competitorEntity.init(competitorDto);

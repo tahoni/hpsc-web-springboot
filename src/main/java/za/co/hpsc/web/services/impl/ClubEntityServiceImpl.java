@@ -19,7 +19,7 @@ public class ClubEntityServiceImpl implements ClubEntityService {
 
     @Override
     public Optional<Club> findClubById(Long id) {
-        if ((id == null) || (id == 0L)) {
+        if (id == null) {
             return Optional.empty();
         }
         return clubRepository.findById(id);

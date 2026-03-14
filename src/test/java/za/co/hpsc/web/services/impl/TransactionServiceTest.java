@@ -549,12 +549,12 @@ public class TransactionServiceTest {
         IpscMatchStage existingStage = new IpscMatchStage();
         existingStage.setId(200L);
         existingStage.setStageNumber(1);
-        when(ipscMatchStageRepository.findByIdWithCompetitorAndMatch(200L)).thenReturn(Optional.of(existingStage));
+        when(ipscMatchStageRepository.findByIdWithCompetitors(200L)).thenReturn(Optional.of(existingStage));
 
         var result = transactionService.getIpscMatchStages(mapping);
 
         assertEquals(1, result.size());
-        verify(ipscMatchStageRepository).findByIdWithCompetitorAndMatch(200L);
+        verify(ipscMatchStageRepository).findByIdWithCompetitors(200L);
         assertEquals(200L, result.get(0).getId());
     }
 
@@ -613,12 +613,12 @@ public class TransactionServiceTest {
 
         Competitor existingCompetitor = new Competitor();
         existingCompetitor.setId(400L);
-        when(competitorRepository.findByIdWithMatchAndMatchStageCompetitors(400L)).thenReturn(Optional.of(existingCompetitor));
+        when(competitorRepository.findByIdWithMatchCompetitors(400L)).thenReturn(Optional.of(existingCompetitor));
 
         var result = transactionService.getCompetitors(mapping);
 
         assertEquals(1, result.size());
-        verify(competitorRepository).findByIdWithMatchAndMatchStageCompetitors(400L);
+        verify(competitorRepository).findByIdWithMatchCompetitors(400L);
         assertEquals(400L, result.get(0).getId());
     }
 
@@ -628,12 +628,12 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
-        when(competitorRepository.findByIdWithMatchAndMatchStageCompetitors(401L)).thenReturn(Optional.empty());
+        when(competitorRepository.findByIdWithMatchCompetitors(401L)).thenReturn(Optional.empty());
 
         var result = transactionService.getCompetitors(mapping);
 
         assertEquals(1, result.size());
-        verify(competitorRepository).findByIdWithMatchAndMatchStageCompetitors(401L);
+        verify(competitorRepository).findByIdWithMatchCompetitors(401L);
     }
 
     // =====================================================================
