@@ -135,7 +135,9 @@ public class MatchStageCompetitor {
 
     @Override
     public String toString() {
-        return this.matchStage.toString() + ": " + this.competitor.toString();
+        String stage = (this.matchStage != null) ? this.matchStage.toString() : "Unknown";
+        String competitor = (this.competitor != null) ? this.competitor.toString() : "Unknown";
+        return stage + ": " + competitor;
     }
 
     @PrePersist

@@ -155,7 +155,6 @@ public class IpscServiceIntegrationTest {
         assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
         assertEquals("Test Club (ABC)", matchRecord.clubName());
 
-        // TODO: why is this false?
         assertFalse(matchRecord.competitors().isEmpty());
         CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
         assertEquals("John", competitorRecord.firstName());
@@ -164,6 +163,9 @@ public class IpscServiceIntegrationTest {
         assertEquals("", competitorRecord.middleNames());
         assertNull(competitorRecord.sapsaNumber());
         assertEquals("1500", competitorRecord.competitorNumber());
+
+        assertEquals("101.0000", competitorRecord.overall().matchPoints());
+        assertFalse(competitorRecord.stages().isEmpty());
     }
 
     // Test Group: Valid Complete Data Processing
@@ -202,7 +204,6 @@ public class IpscServiceIntegrationTest {
         assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
         assertEquals("Test Club (ABC)", matchRecord.clubName());
 
-        // TODO: why is this false?
         assertFalse(matchRecord.competitors().isEmpty());
         CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
         assertEquals("John", competitorRecord.firstName());
@@ -211,6 +212,9 @@ public class IpscServiceIntegrationTest {
         assertEquals("", competitorRecord.middleNames());
         assertNull(competitorRecord.sapsaNumber());
         assertEquals("1500", competitorRecord.competitorNumber());
+
+        assertEquals("101.0000", competitorRecord.overall().matchPoints());
+        assertFalse(competitorRecord.stages().isEmpty());
     }
 
     // Test Group: Partial Data Processing

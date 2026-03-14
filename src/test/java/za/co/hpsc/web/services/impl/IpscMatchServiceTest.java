@@ -4479,6 +4479,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4503,6 +4506,9 @@ public class IpscMatchServiceTest {
         msc.setScoreA(10);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -4529,6 +4535,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4553,6 +4562,9 @@ public class IpscMatchServiceTest {
         msc.setScoreA(10);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -4580,6 +4592,9 @@ public class IpscMatchServiceTest {
         msc.setScoreD(null);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -4610,6 +4625,9 @@ public class IpscMatchServiceTest {
         msc.setProcedurals(null);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -4642,6 +4660,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4669,6 +4690,9 @@ public class IpscMatchServiceTest {
         msc.setDateEdited(null);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -4701,6 +4725,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4730,6 +4757,9 @@ public class IpscMatchServiceTest {
         msc.setProcedurals(0);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -4780,6 +4810,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4818,6 +4851,9 @@ public class IpscMatchServiceTest {
             msc.setScoreC(8 - i);
             msc.setScoreD(7 - i);
             matchStageCompetitorList.add(msc);
+            when(matchStageCompetitorEntityService.findMatchStageCompetitor((long) i))
+                    .thenReturn(Optional.of(msc));
+
         }
 
         // Act
@@ -4856,6 +4892,9 @@ public class IpscMatchServiceTest {
             msc.setCompetitor(competitor);
             msc.setFirearmType(type);
 
+            when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                    .thenReturn(Optional.of(msc));
+
             List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
             List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4892,6 +4931,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4920,6 +4962,9 @@ public class IpscMatchServiceTest {
         msc.setPoints(500);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -4950,6 +4995,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -4978,6 +5026,9 @@ public class IpscMatchServiceTest {
         msc.setStageRanking(java.math.BigDecimal.valueOf(100.00));
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -5008,6 +5059,9 @@ public class IpscMatchServiceTest {
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
 
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
+
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
 
@@ -5031,6 +5085,9 @@ public class IpscMatchServiceTest {
         msc.setDateEdited(LocalDateTime.of(2099, 12, 31, 23, 59, 59));
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -5062,6 +5119,9 @@ public class IpscMatchServiceTest {
         matchStageCompetitorList.add(null);
         matchStageCompetitorList.add(msc);
         matchStageCompetitorList.add(null);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);
@@ -5101,6 +5161,13 @@ public class IpscMatchServiceTest {
         msc3.setScoreA(9);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc1, msc2, msc3);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc1));
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(2L))
+                .thenReturn(Optional.of(msc2));
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(3L))
+                .thenReturn(Optional.of(msc3));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor1, matchStageCompetitorList);
@@ -5144,6 +5211,9 @@ public class IpscMatchServiceTest {
             msc.setCompetitor(targetCompetitor);
             msc.setScoreA(50 + i);
             matchStageCompetitorList.add(msc);
+
+            when(matchStageCompetitorEntityService.findMatchStageCompetitor((long) i))
+                    .thenReturn(Optional.of(msc));
         }
 
         // Act
@@ -5169,6 +5239,9 @@ public class IpscMatchServiceTest {
         MatchStageCompetitor msc = getMatchStageCompetitor(competitor);
 
         List<MatchStageCompetitor> matchStageCompetitorList = List.of(msc);
+
+        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L))
+                .thenReturn(Optional.of(msc));
 
         // Act
         List<MatchStageCompetitorRecord> result = ipscMatchService.initMatchStageCompetitor(competitor, matchStageCompetitorList);

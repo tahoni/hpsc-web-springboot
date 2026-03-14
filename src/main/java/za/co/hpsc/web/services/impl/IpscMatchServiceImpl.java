@@ -437,7 +437,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<MatchStageCompetitorRecord> thisCompetitorStages = new ArrayList<>();
         // Filters and maps stage data to response objects
-        matchStageCompetitorList.stream()
+        List<MatchStageCompetitor> matchStageCompetitorWithCompetitorList = matchStageCompetitorList.stream()
+                .filter(Objects::nonNull)
+                .map(matchStageCompetitor -> matchStageCompetitorEntityService.findMatchStageCompetitor(matchStageCompetitor.getId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+        matchStageCompetitorWithCompetitorList.stream()
                 .filter(Objects::nonNull)
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {

@@ -21,4 +21,7 @@ public interface MatchStageCompetitorEntityService {
      * is found, or an empty {@code Optional} if no match is found.
      */
     Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchStageId, Long competitorId);
+
+    // TODO: Javadoc
+    Optional<MatchStageCompetitor> findMatchStageCompetitor(Long id);
 }
