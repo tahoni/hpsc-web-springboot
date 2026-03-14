@@ -118,15 +118,14 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
             // Initialise the competitor list
             Set<CompetitorMatchRecord> competitors = new HashSet<>();
-            competitorSet.stream().filter(Objects::nonNull)
-                    .forEach(c -> initMatchCompetitor(c, new ArrayList<>(matchCompetitorSet))
-                            .ifPresent((mcr) -> {
-                                List<MatchStageCompetitorRecord> thisCompetitorStages =
-                                        initMatchStageCompetitor(c, new ArrayList<>(matchStageCompetitorSet));
-
-                                // Creates competitor response from competitor details
-                                initCompetitor(c, mcr, thisCompetitorStages).ifPresent(competitors::add);
-                            }));
+            for (Competitor competitor : competitorSet.stream().filter(Objects::nonNull).toList()) {
+                MatchCompetitorRecord thisCompetitorOverall = initMatchCompetitor(competitor, new ArrayList<>(matchCompetitorSet)).orElse(null);
+                if (thisCompetitorOverall != null) {
+                    List<MatchStageCompetitorRecord> thisCompetitorStages =
+                            initMatchStageCompetitor(competitor, new ArrayList<>(matchStageCompetitorSet));
+                    initCompetitor(competitor, thisCompetitorOverall, thisCompetitorStages).ifPresent(competitors::add);
+                }
+            }
 
             Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, new ArrayList<>(competitors));
             ipscResponse.ifPresent(ipscMatchRecordList::add);
@@ -330,6 +329,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
+
         // Creates competitor response from competitor details
         String dateOfBirth = DateUtil.formatDate(competitor.getDateOfBirth(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
@@ -492,8 +492,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return matchCompetitorSet.stream()
                 .filter(Objects::nonNull)
                 .map(MatchCompetitor::getCompetitor)
-                .filter(Objects::nonNull)
-                .map(competitor -> competitorEntityService.findCompetitor(competitor.getId()).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }

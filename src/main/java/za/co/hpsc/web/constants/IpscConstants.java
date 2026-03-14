@@ -22,7 +22,7 @@ public final class IpscConstants {
             SystemConstants.ISO_DATE_TIME_FORMAT;
 
     public static final List<String> EXCLUDE_ICS_ALIAS =
-            List.of("15000", "16000");
+            List.of("1500", "1600");
     public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS =
             List.of(ClubIdentifier.UNKNOWN);
 

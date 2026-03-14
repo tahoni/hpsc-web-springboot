@@ -5257,8 +5257,10 @@ public class IpscMatchServiceTest {
         matchCompetitorList.add(mc2);
         matchCompetitorList.add(null);
 
+/*
         when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
         when(competitorEntityService.findCompetitor(competitor2.getId())).thenReturn(Optional.of(competitor2));
+*/
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5304,7 +5306,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5340,7 +5342,7 @@ public class IpscMatchServiceTest {
 
             matchCompetitorList.add(mc);
 
-            when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//            when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
         }
 
         // Act
@@ -5393,7 +5395,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5426,7 +5428,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5469,7 +5471,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc1, mc2, mc3);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5501,7 +5503,7 @@ public class IpscMatchServiceTest {
 
             matchCompetitorList.add(mc);
 
-            when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//            when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
         }
 
         // Act
@@ -5531,7 +5533,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5564,7 +5566,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5597,7 +5599,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5630,7 +5632,7 @@ public class IpscMatchServiceTest {
 
         List<MatchCompetitor> matchCompetitorList = List.of(mc);
 
-        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
+//        when(competitorEntityService.findCompetitor(competitor.getId())).thenReturn(Optional.of(competitor));
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -5697,8 +5699,10 @@ public class IpscMatchServiceTest {
         matchCompetitorList.add(mc2);
         matchCompetitorList.add(mc3);
 
+/*
         when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
         when(competitorEntityService.findCompetitor(competitor3.getId())).thenReturn(Optional.of(competitor3));
+*/
 
         // Act
         Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(matchCompetitorList));
@@ -8116,8 +8120,10 @@ public class IpscMatchServiceTest {
         mc2.setId(2L);
         mc2.setCompetitor(competitor2);
 
+/*
         when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
         when(competitorEntityService.findCompetitor(competitor2.getId())).thenReturn(Optional.of(competitor2));
+*/
 
         return List.of(mc1, mc2);
     }
@@ -8141,8 +8147,10 @@ public class IpscMatchServiceTest {
         mc2.setId(2L);
         mc2.setCompetitor(competitor2);
 
+/*
         when(competitorEntityService.findCompetitor(competitor1.getId())).thenReturn(Optional.of(competitor1));
         when(competitorEntityService.findCompetitor(competitor2.getId())).thenReturn(Optional.of(competitor2));
+*/
 
         return List.of(mc1, mc2);
     }
@@ -9153,7 +9161,7 @@ public class IpscMatchServiceTest {
         memberResponse.setFirstName("Alice");
         memberResponse.setLastName("Jones");
         memberResponse.setDateOfBirth(LocalDateTime.of(1990, 1, 15, 0, 0));
-        memberResponse.setIcsAlias("1500");
+        memberResponse.setIcsAlias("15000");
         memberResponse.setIsRegisteredForMatch(true);
 
         EnrolledResponse enrolledResponse = buildEnrolledResponse(9, 100);
@@ -9176,8 +9184,8 @@ public class IpscMatchServiceTest {
         assertEquals("Alice", matchResults.getCompetitors().getFirst().getFirstName());
         assertEquals("Jones", matchResults.getCompetitors().getFirst().getLastName());
         assertEquals("1990-01-15", matchResults.getCompetitors().getFirst().getDateOfBirth().toString());
-        assertEquals("1500", matchResults.getCompetitors().getFirst().getCompetitorNumber());
-        assertEquals(1500, matchResults.getCompetitors().getFirst().getSapsaNumber());
+        assertEquals("15000", matchResults.getCompetitors().getFirst().getCompetitorNumber());
+        assertEquals(15000, matchResults.getCompetitors().getFirst().getSapsaNumber());
         assertEquals(1, matchResults.getMatchCompetitors().size());
         assertEquals(95, matchResults.getMatchCompetitors().getFirst().getMatchPoints().intValue());
         assertEquals(lastModified, matchResults.getMatchCompetitors().getFirst().getDateEdited());
