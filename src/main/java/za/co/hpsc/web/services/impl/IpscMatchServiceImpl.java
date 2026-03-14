@@ -93,25 +93,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             match.setClub(match.getClub());
 
             // Get the match stages
-            Set<IpscMatchStage> matchStageSet =
-                    ((match.getMatchStages() != null) ? new HashSet<>(match.getMatchStages()) : new HashSet<>());
-
-            // Get the competitors
-            List<IpscMatchStage> matchStageListWithCompetitors = new ArrayList<>();
-            matchStageSet.stream().filter(Objects::nonNull).forEach(ipscMatchStage -> {
-                if (ipscMatchStage.getId() != null) {
-                    Optional<IpscMatchStage> optionalIpscMatchStage =
-                            matchStageEntityService.findMatchStage(ipscMatchStage.getId());
-                    optionalIpscMatchStage.ifPresent(matchStageListWithCompetitors::add);
-                }
-            });
-            IpscMatch matchWithCompetitors = matchEntityService.findMatchWithCompetitors(match.getId()).orElse(null);
+            Set<IpscMatchStage> matchStageSet = new HashSet<>(match.getMatchStages());
 
             // Get the match stage competitors
             Set<MatchStageCompetitor> matchStageCompetitorSet =
-                    getMatchStageCompetitorSet(matchStageListWithCompetitors);
+                    getMatchStageCompetitorSet(new ArrayList<>(matchStageSet));
             Set<MatchCompetitor> matchCompetitorSet =
-                    getMatchCompetitorSet(matchWithCompetitors);
+                    getMatchCompetitorSet(match);
 
             // Get the match competitors
             Set<Competitor> competitorSet = new HashSet<>(getCompetitorSet(matchCompetitorSet));
@@ -437,13 +425,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<MatchStageCompetitorRecord> thisCompetitorStages = new ArrayList<>();
         // Filters and maps stage data to response objects
-        List<MatchStageCompetitor> matchStageCompetitorWithCompetitorList = matchStageCompetitorList.stream()
-                .filter(Objects::nonNull)
-                .map(matchStageCompetitor -> matchStageCompetitorEntityService.findMatchStageCompetitor(matchStageCompetitor.getId()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-        matchStageCompetitorWithCompetitorList.stream()
+        matchStageCompetitorList.stream()
                 .filter(Objects::nonNull)
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {
@@ -509,8 +491,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Gets competitors from the match
         return match.getMatchCompetitors().stream()
-                .filter(Objects::nonNull)
-                .map(matchCompetitor -> matchCompetitorEntityService.findMatchCompetitor(matchCompetitor.getId()).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
@@ -750,19 +730,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Maps score responses to corresponding member responses,
         // excluding members who didn't participate
-        List<Integer> memberIndexesWithScores = matchResultsDto.getCompetitors().stream()
-                .filter(Objects::nonNull)
-                .map(CompetitorDto::getIndex)
-                .filter(Objects::nonNull)
-                .toList();
-        List<MemberResponse> scoreMembers = memberIndexesWithScores.stream()
-                .filter(Objects::nonNull)
-                .map(index -> memberResponses.stream()
-                        .filter(Objects::nonNull)
-                        .filter(memberResponse -> memberResponse.getMemberId() != null)
-                        .filter(memberResponse -> memberResponse.getMemberId().equals(index))
-                        .findFirst()
-                        .orElse(null))
+        List<MemberResponse> scoreMembers = memberResponses.stream()
                 .filter(Objects::nonNull)
                 .toList();
 

@@ -30,6 +30,6 @@ public class MatchStageEntityServiceImpl implements MatchStageEntityService {
         if (id == null) {
             return Optional.empty();
         }
-        return matchStageRepository.findByIdWithCompetitors(id);
+        return matchStageRepository.findById(id);
     }
 }

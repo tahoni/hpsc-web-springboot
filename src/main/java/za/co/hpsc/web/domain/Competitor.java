@@ -54,9 +54,9 @@ public class Competitor {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "competitor")
+    @OneToMany(mappedBy = "competitor", fetch = FetchType.EAGER)
     private List<MatchCompetitor> competitorMatches = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "competitor")
+    @OneToMany(mappedBy = "competitor", fetch = FetchType.EAGER)
     private List<MatchStageCompetitor> competitorStageMatches = new ArrayList<>();
 
     /**

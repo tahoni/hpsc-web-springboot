@@ -22,7 +22,4 @@ public interface MatchEntityService {
      */
     // TODO: Javadoc
     Optional<IpscMatch> findMatchByNameAndScheduledDate(String name, LocalDateTime scheduledDateTime);
-
-    // TODO: Javadoc
-    Optional<IpscMatch> findMatchWithCompetitors(Long id);
 }

@@ -25,7 +25,7 @@ public class MatchEntityServiceImpl implements MatchEntityService {
         if (name == null) {
             return Optional.empty();
         }
-        List<IpscMatch> matchList = matchRepository.findAllByNameWithClubAndStages(name);
+        List<IpscMatch> matchList = matchRepository.findAllByName(name);
 
         // No match found
         if (matchList.isEmpty()) {
@@ -42,13 +42,5 @@ public class MatchEntityServiceImpl implements MatchEntityService {
             return matchList.stream().findFirst();
         }
         return matchList.stream().filter(m -> m.getScheduledDate().equals(scheduledDateTime)).findFirst();
-    }
-
-    @Override
-    public Optional<IpscMatch> findMatchWithCompetitors(Long id) {
-        if (id == null) {
-            return Optional.empty();
-        }
-        return matchRepository.findByIdWithCompetitors(id);
     }
 }

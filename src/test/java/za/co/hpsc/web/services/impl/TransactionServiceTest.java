@@ -356,13 +356,13 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(1, 1L);
         DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
         stubTransactionStart();
-        when(ipscMatchRepository.findByIdWithStages(1L)).thenReturn(Optional.of(existingMatch));
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existingMatch));
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionService.saveMatchResults(dtoMapping));
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithStages(1L);
+        verify(ipscMatchRepository).findById(1L);
     }
 
     @Test
@@ -370,13 +370,13 @@ public class TransactionServiceTest {
         MatchDto matchDto = buildMatchDto(1, 1L);
         DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
         stubTransactionStart();
-        when(ipscMatchRepository.findByIdWithStages(1L)).thenReturn(Optional.empty());
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.empty());
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
                 transactionService.saveMatchResults(dtoMapping));
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithStages(1L);
+        verify(ipscMatchRepository).findById(1L);
         verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
     }
 
@@ -469,7 +469,7 @@ public class TransactionServiceTest {
 
         assertTrue(result.isPresent());
         assertEquals("Match 1", result.get().getName());
-        verify(ipscMatchRepository, never()).findByIdWithStages(any());
+        verify(ipscMatchRepository, never()).findById(any());
     }
 
     @Test
@@ -478,12 +478,12 @@ public class TransactionServiceTest {
         existingMatch.setId(10L);
         MatchDto matchDto = buildMatchDto(1, 10L);
         DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(matchDto));
-        when(ipscMatchRepository.findByIdWithStages(10L)).thenReturn(Optional.of(existingMatch));
+        when(ipscMatchRepository.findById(10L)).thenReturn(Optional.of(existingMatch));
 
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithStages(10L);
+        verify(ipscMatchRepository).findById(10L);
         assertEquals(10L, result.get().getId());
     }
 
@@ -491,12 +491,12 @@ public class TransactionServiceTest {
     public void getIpscMatch_whenMatchDtoIdNotFound_thenCreatesNewMatchEntity() {
         MatchDto matchDto = buildMatchDto(1, 10L);
         DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(matchDto));
-        when(ipscMatchRepository.findByIdWithStages(10L)).thenReturn(Optional.empty());
+        when(ipscMatchRepository.findById(10L)).thenReturn(Optional.empty());
 
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
         assertTrue(result.isPresent());
-        verify(ipscMatchRepository).findByIdWithStages(10L);
+        verify(ipscMatchRepository).findById(10L);
         assertEquals("Match 1", result.get().getName());
     }
 
@@ -549,12 +549,12 @@ public class TransactionServiceTest {
         IpscMatchStage existingStage = new IpscMatchStage();
         existingStage.setId(200L);
         existingStage.setStageNumber(1);
-        when(ipscMatchStageRepository.findByIdWithCompetitors(200L)).thenReturn(Optional.of(existingStage));
+        when(ipscMatchStageRepository.findById(200L)).thenReturn(Optional.of(existingStage));
 
         var result = transactionService.getIpscMatchStages(mapping);
 
         assertEquals(1, result.size());
-        verify(ipscMatchStageRepository).findByIdWithCompetitors(200L);
+        verify(ipscMatchStageRepository).findById(200L);
         assertEquals(200L, result.get(0).getId());
     }
 
@@ -613,12 +613,12 @@ public class TransactionServiceTest {
 
         Competitor existingCompetitor = new Competitor();
         existingCompetitor.setId(400L);
-        when(competitorRepository.findByIdWithMatchCompetitors(400L)).thenReturn(Optional.of(existingCompetitor));
+        when(competitorRepository.findById(400L)).thenReturn(Optional.of(existingCompetitor));
 
         var result = transactionService.getCompetitors(mapping);
 
         assertEquals(1, result.size());
-        verify(competitorRepository).findByIdWithMatchCompetitors(400L);
+        verify(competitorRepository).findById(400L);
         assertEquals(400L, result.get(0).getId());
     }
 
@@ -628,12 +628,12 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
-        when(competitorRepository.findByIdWithMatchCompetitors(401L)).thenReturn(Optional.empty());
+        when(competitorRepository.findById(401L)).thenReturn(Optional.empty());
 
         var result = transactionService.getCompetitors(mapping);
 
         assertEquals(1, result.size());
-        verify(competitorRepository).findByIdWithMatchCompetitors(401L);
+        verify(competitorRepository).findById(401L);
     }
 
     // =====================================================================

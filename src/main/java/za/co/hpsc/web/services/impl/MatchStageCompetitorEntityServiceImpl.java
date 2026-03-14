@@ -22,7 +22,7 @@ public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetit
         if ((matchStageId == null) || (competitorId == null)) {
             return Optional.empty();
         }
-        return matchStageCompetitorRepository.findByMatchStageIdAndCompetitorIdWithMatchStageAndCompetitor(matchStageId, competitorId);
+        return matchStageCompetitorRepository.findByMatchStageIdAndCompetitorId(matchStageId, competitorId);
     }
 
     @Override
@@ -30,6 +30,6 @@ public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetit
         if (id == null) {
             return Optional.empty();
         }
-        return matchStageCompetitorRepository.findByIdWithCompetitors(id);
+        return matchStageCompetitorRepository.findById(id);
     }
 }

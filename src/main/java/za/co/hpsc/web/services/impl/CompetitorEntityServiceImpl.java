@@ -89,6 +89,6 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
             return Optional.empty();
         }
 
-        return competitorRepository.findByIdWithMatchCompetitors(id);
+        return competitorRepository.findById(id);
     }
 }

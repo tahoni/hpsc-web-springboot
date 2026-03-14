@@ -22,7 +22,7 @@ public class MatchCompetitorEntityServiceImpl implements MatchCompetitorEntitySe
         if ((competitorId == null) || (matchId == null)) {
             return Optional.empty();
         }
-        return matchCompetitorRepository.findByCompetitorIdAndMatchIdWithCompetitorAndMatch(competitorId, matchId);
+        return matchCompetitorRepository.findByCompetitorIdAndMatchId(competitorId, matchId);
     }
 
     @Override
@@ -30,6 +30,6 @@ public class MatchCompetitorEntityServiceImpl implements MatchCompetitorEntitySe
         if (id == null) {
             return Optional.empty();
         }
-        return matchCompetitorRepository.findByIdWithCompetitorAndMatch(id);
+        return matchCompetitorRepository.findById(id);
     }
 }
