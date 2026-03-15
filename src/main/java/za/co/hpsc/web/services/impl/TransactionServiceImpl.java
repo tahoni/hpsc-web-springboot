@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-// TODO: add unit tests
+// TODO: add Javadoc comments
+// TODO: add tests
 @Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {

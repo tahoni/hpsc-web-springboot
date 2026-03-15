@@ -282,7 +282,7 @@ public class DomainServiceImpl implements DomainService {
      * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities.
      * If a required competitor or match competitor cannot be found, an empty map is returned
      */
-    // TODO: add tests
+    // TODO: add/modify tests
     protected Map<UUID, MatchCompetitorDto> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitorDtoList,
                                                                         MatchDto matchDto,
                                                                         Map<UUID, CompetitorDto> competitorMap, ClubIdentifier clubIdentifier) {
