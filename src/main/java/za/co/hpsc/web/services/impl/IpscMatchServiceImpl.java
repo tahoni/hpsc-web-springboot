@@ -576,9 +576,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                             .map(ScoreResponse::getLastModified)
                             .filter(Objects::nonNull)
                             .max(LocalDateTime::compareTo);
+/*
             if ((scoreLastUpdated.isPresent()) && (!scoreLastUpdated.get().isAfter(matchLastUpdated))) {
                 return Optional.empty();
             }
+*/
         }
 
         // Creates a new match DTO, from either the found entity or the match response
