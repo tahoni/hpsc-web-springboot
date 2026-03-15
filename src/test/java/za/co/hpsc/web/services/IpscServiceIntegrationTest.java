@@ -36,14 +36,13 @@ public class IpscServiceIntegrationTest {
     private IpscService ipscService;
 
     @Bean
-    public IpscMatchService ipscMatchService(ClubEntityService clubEntityService, MatchEntityService matchEntityService,
-                                             CompetitorEntityService competitorEntityService, MatchStageEntityService matchStageEntityService,
+    public IpscMatchService ipscMatchService(ClubEntityService clubEntityService,
+                                             MatchEntityService matchEntityService,
+                                             MatchStageEntityService matchStageEntityService,
                                              MatchCompetitorEntityService matchCompetitorEntityService,
-                                             MatchStageCompetitorEntityService matchStageCompetitorEntityService,
-                                             TransactionService transactionService) {
-        return new IpscMatchServiceImpl(clubEntityService, matchEntityService, competitorEntityService,
-                matchStageEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService,
-                transactionService);
+                                             MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
+        return new IpscMatchServiceImpl(clubEntityService, matchEntityService,
+                matchStageEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
 
     @Bean
@@ -58,9 +57,9 @@ public class IpscServiceIntegrationTest {
     }
 
     @Bean
-    public IpscService winMssService(IpscMatchService ipscMatchService,
-                                     DomainService domainService,
-                                     TransactionService transactionService) {
+    public IpscService ipscService(IpscMatchService ipscMatchService,
+                                   DomainService domainService,
+                                   TransactionService transactionService) {
         return new IpscServiceImpl(ipscMatchService, domainService,
                 transactionService);
     }
