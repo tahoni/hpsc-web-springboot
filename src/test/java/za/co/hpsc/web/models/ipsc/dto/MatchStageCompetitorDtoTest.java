@@ -1,6 +1,5 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.*;
@@ -117,7 +116,54 @@ public class MatchStageCompetitorDtoTest {
     @Test
     void testConstructor_whenMatchStageCompetitorEntityHasNullFields_thenMapsNulls() {
         // Arrange
-        MatchStageCompetitor entity = getMatchStageCompetitor();
+        Club club = new Club();
+        club.setId(1L);
+        club.setName("Test Club");
+
+        IpscMatch match = new IpscMatch();
+        match.setId(10L);
+        match.setName("Test Match");
+        match.setClub(club);
+
+        IpscMatchStage matchStage1 = new IpscMatchStage();
+        matchStage1.setId(1L);
+        matchStage1.setMatch(match);
+        matchStage1.setStageNumber(1);
+        IpscMatchStage matchStage = matchStage1;
+        Competitor competitor1 = new Competitor();
+        competitor1.setId(20L);
+        competitor1.setFirstName("John");
+        competitor1.setLastName("Doe");
+        Competitor competitor = competitor1;
+        MatchStageCompetitor entity2 = new MatchStageCompetitor();
+        entity2.setId(100L);
+        entity2.setMatchStage(matchStage);
+        entity2.setCompetitor(competitor);
+        MatchStageCompetitor entity1 = entity2;
+
+        // Keep all optional fields explicitly null for this null-field mapping scenario.
+        entity1.setCompetitorCategory(null);
+        entity1.setFirearmType(null);
+        entity1.setDivision(null);
+        entity1.setPowerFactor(null);
+        entity1.setScoreA(null);
+        entity1.setScoreB(null);
+        entity1.setScoreC(null);
+        entity1.setScoreD(null);
+        entity1.setPoints(null);
+        entity1.setMisses(null);
+        entity1.setPenalties(null);
+        entity1.setProcedurals(null);
+        entity1.setHasDeduction(null);
+        entity1.setDeductionPercentage(null);
+        entity1.setTime(null);
+        entity1.setHitFactor(null);
+        entity1.setStagePoints(null);
+        entity1.setStagePercentage(null);
+        entity1.setStageRanking(null);
+        entity1.setIsDisqualified(null);
+        entity1.setDateEdited(null);
+        MatchStageCompetitor entity = entity1;
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(entity);
@@ -342,7 +388,46 @@ public class MatchStageCompetitorDtoTest {
     @Test
     void testConstructor_whenMatchStageCompetitorEntityHasZeroScores_thenMapsZeros() {
         // Arrange
-        MatchStageCompetitor entity = getStageCompetitor();
+        Club club = new Club();
+        club.setId(1L);
+        club.setName("Test Club");
+
+        IpscMatch match = new IpscMatch();
+        match.setId(10L);
+        match.setName("Test Match");
+        match.setClub(club);
+
+        IpscMatchStage matchStage1 = new IpscMatchStage();
+        matchStage1.setId(1L);
+        matchStage1.setMatch(match);
+        matchStage1.setStageNumber(1);
+        IpscMatchStage matchStage = matchStage1;
+        Competitor competitor1 = new Competitor();
+        competitor1.setId(20L);
+        competitor1.setFirstName("Zero");
+        competitor1.setLastName("Scores");
+        Competitor competitor = competitor1;
+
+        MatchStageCompetitor entity2 = new MatchStageCompetitor();
+        entity2.setId(104L);
+        entity2.setMatchStage(matchStage);
+        entity2.setCompetitor(competitor);
+        MatchStageCompetitor entity1 = entity2;
+        entity1.setScoreA(0);
+        entity1.setScoreB(0);
+        entity1.setScoreC(0);
+        entity1.setScoreD(0);
+        entity1.setPoints(0);
+        entity1.setMisses(0);
+        entity1.setPenalties(0);
+        entity1.setProcedurals(0);
+        entity1.setTime(BigDecimal.ZERO);
+        entity1.setHitFactor(BigDecimal.ZERO);
+        entity1.setStagePoints(BigDecimal.ZERO);
+        entity1.setStagePercentage(BigDecimal.ZERO);
+        entity1.setStageRanking(BigDecimal.ZERO);
+        entity1.setDeductionPercentage(BigDecimal.ZERO);
+        MatchStageCompetitor entity = entity1;
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(entity);
@@ -422,7 +507,23 @@ public class MatchStageCompetitorDtoTest {
         matchStage.setMatch(match);
         matchStage.setStageNumber(1);
 
-        MatchStageCompetitor entity = getMatchStageCompetitor(matchStage);
+        Competitor competitor1 = new Competitor();
+        competitor1.setId(20L);
+        competitor1.setFirstName("Max");
+        competitor1.setLastName("Values");
+        Competitor competitor = competitor1;
+        MatchStageCompetitor entity2 = new MatchStageCompetitor();
+        entity2.setId(106L);
+        entity2.setMatchStage(matchStage);
+        entity2.setCompetitor(competitor);
+        MatchStageCompetitor entity1 = entity2;
+        entity1.setScoreA(Integer.MAX_VALUE);
+        entity1.setScoreB(Integer.MAX_VALUE);
+        entity1.setPoints(Integer.MAX_VALUE);
+        entity1.setMisses(Integer.MAX_VALUE);
+        entity1.setTime(new BigDecimal("999999.99"));
+        entity1.setHitFactor(new BigDecimal("999.99"));
+        MatchStageCompetitor entity = entity1;
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(entity);
@@ -844,7 +945,22 @@ public class MatchStageCompetitorDtoTest {
         // Arrange
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
 
-        ScoreResponse scoreResponse = getScoreResponse();
+        ScoreResponse scoreResponse1 = new ScoreResponse();
+        scoreResponse1.setScoreA(20);
+        scoreResponse1.setScoreB(15);
+        scoreResponse1.setScoreC(10);
+        scoreResponse1.setScoreD(5);
+        scoreResponse1.setFinalScore(175);
+        scoreResponse1.setMisses(2);
+        scoreResponse1.setPenalties(1);
+        scoreResponse1.setProcedurals(0);
+        scoreResponse1.setDeduction(false);
+        scoreResponse1.setDeductionPercentage("0.00");
+        scoreResponse1.setIsDisqualified(false);
+        scoreResponse1.setTime("38.25");
+        scoreResponse1.setHitFactor("4.58");
+        scoreResponse1.setLastModified(LocalDateTime.of(2026, 2, 20, 10, 30));
+        ScoreResponse scoreResponse = scoreResponse1;
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setIndex(1);
@@ -878,7 +994,22 @@ public class MatchStageCompetitorDtoTest {
         // Arrange
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
 
-        ScoreResponse scoreResponse = getNullScoreResponse();
+        ScoreResponse scoreResponse1 = new ScoreResponse();
+        scoreResponse1.setScoreA(null);
+        scoreResponse1.setScoreB(null);
+        scoreResponse1.setScoreC(null);
+        scoreResponse1.setScoreD(null);
+        scoreResponse1.setFinalScore(null);
+        scoreResponse1.setMisses(null);
+        scoreResponse1.setPenalties(null);
+        scoreResponse1.setProcedurals(null);
+        scoreResponse1.setDeduction(null);
+        scoreResponse1.setDeductionPercentage(null);
+        scoreResponse1.setIsDisqualified(null);
+        scoreResponse1.setTime(null);
+        scoreResponse1.setHitFactor(null);
+        scoreResponse1.setLastModified(null);
+        ScoreResponse scoreResponse = scoreResponse1;
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setIndex(2);
@@ -993,7 +1124,39 @@ public class MatchStageCompetitorDtoTest {
     @Test
     void testInit_whenAllParametersFullyPopulated_thenMapsAllFields() {
         // Arrange
-        MatchStageCompetitorDto dto = getMatchStageCompetitorDto();
+        MatchStageCompetitorDto dto1 = new MatchStageCompetitorDto();
+
+        ScoreResponse scoreResponse1 = new ScoreResponse();
+        scoreResponse1.setScoreA(20);
+        scoreResponse1.setScoreB(15);
+        scoreResponse1.setScoreC(10);
+        scoreResponse1.setScoreD(5);
+        scoreResponse1.setFinalScore(180);
+        scoreResponse1.setMisses(1);
+        scoreResponse1.setPenalties(0);
+        scoreResponse1.setProcedurals(0);
+        scoreResponse1.setDeduction(false);
+        scoreResponse1.setDeductionPercentage("0.00");
+        scoreResponse1.setIsDisqualified(false);
+        scoreResponse1.setTime("40.00");
+        scoreResponse1.setHitFactor("4.50");
+        scoreResponse1.setLastModified(LocalDateTime.of(2026, 2, 18, 14, 45));
+        ScoreResponse scoreResponse = scoreResponse1;
+        EnrolledResponse enrolledResponse1 = new EnrolledResponse();
+        enrolledResponse1.setCompetitorId(25);
+        enrolledResponse1.setDivisionId(1);
+        enrolledResponse1.setCompetitorCategoryId(2);
+        enrolledResponse1.setMajorPowerFactor(true);
+        EnrolledResponse enrolledResponse = enrolledResponse1;
+        MatchStageDto matchStageDto1 = new MatchStageDto();
+        matchStageDto1.setIndex(8);
+        matchStageDto1.setStageNumber(8);
+        matchStageDto1.setMaxPoints(200);
+        MatchStageDto matchStageDto = matchStageDto1;
+
+        // Act
+        dto1.init(scoreResponse, enrolledResponse, matchStageDto);
+        MatchStageCompetitorDto dto = dto1;
 
         // Assert
         // Score fields
@@ -2019,199 +2182,4 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("17"));
         assertTrue(result.contains("Category"));
     }
-
-    // =====================================================================
-    // Helper Methods
-    // =====================================================================
-
-    private static @NonNull MatchStageCompetitor getMatchStageCompetitor() {
-        IpscMatchStage matchStage = buildMatchStage(1L, "Test Club", "Test Match", 1);
-        Competitor competitor = buildCompetitor(20L, "John", "Doe");
-        MatchStageCompetitor entity = buildMatchStageCompetitorEntity(100L, matchStage, competitor);
-
-        // Keep all optional fields explicitly null for this null-field mapping scenario.
-        entity.setCompetitorCategory(null);
-        entity.setFirearmType(null);
-        entity.setDivision(null);
-        entity.setPowerFactor(null);
-        entity.setScoreA(null);
-        entity.setScoreB(null);
-        entity.setScoreC(null);
-        entity.setScoreD(null);
-        entity.setPoints(null);
-        entity.setMisses(null);
-        entity.setPenalties(null);
-        entity.setProcedurals(null);
-        entity.setHasDeduction(null);
-        entity.setDeductionPercentage(null);
-        entity.setTime(null);
-        entity.setHitFactor(null);
-        entity.setStagePoints(null);
-        entity.setStagePercentage(null);
-        entity.setStageRanking(null);
-        entity.setIsDisqualified(null);
-        entity.setDateEdited(null);
-        return entity;
-    }
-
-    private static @NonNull MatchStageCompetitor getStageCompetitor() {
-        IpscMatchStage matchStage = buildMatchStage(1L, "Test Club", "Test Match", 1);
-        Competitor competitor = buildCompetitor(20L, "Zero", "Scores");
-
-        return getMatchStageCompetitor(matchStage, competitor);
-    }
-
-    private static @NonNull MatchStageCompetitor getMatchStageCompetitor(IpscMatchStage matchStage, Competitor competitor) {
-        MatchStageCompetitor entity = buildMatchStageCompetitorEntity(104L, matchStage, competitor);
-        entity.setScoreA(0);
-        entity.setScoreB(0);
-        entity.setScoreC(0);
-        entity.setScoreD(0);
-        entity.setPoints(0);
-        entity.setMisses(0);
-        entity.setPenalties(0);
-        entity.setProcedurals(0);
-        entity.setTime(BigDecimal.ZERO);
-        entity.setHitFactor(BigDecimal.ZERO);
-        entity.setStagePoints(BigDecimal.ZERO);
-        entity.setStagePercentage(BigDecimal.ZERO);
-        entity.setStageRanking(BigDecimal.ZERO);
-        entity.setDeductionPercentage(BigDecimal.ZERO);
-        return entity;
-    }
-
-    private static @NonNull MatchStageCompetitor getMatchStageCompetitor(IpscMatchStage matchStage) {
-        Competitor competitor = buildCompetitor(20L, "Max", "Values");
-        MatchStageCompetitor entity = buildMatchStageCompetitorEntity(106L, matchStage, competitor);
-        entity.setScoreA(Integer.MAX_VALUE);
-        entity.setScoreB(Integer.MAX_VALUE);
-        entity.setPoints(Integer.MAX_VALUE);
-        entity.setMisses(Integer.MAX_VALUE);
-        entity.setTime(new BigDecimal("999999.99"));
-        entity.setHitFactor(new BigDecimal("999.99"));
-        return entity;
-    }
-
-    private static @NonNull ScoreResponse getScoreResponse() {
-        return buildScoreResponse(175, 2, 1, 0, "0.00", "38.25", "4.58", LocalDateTime.of(2026, 2, 20, 10, 30));
-    }
-
-    private static @NonNull ScoreResponse getNullScoreResponse() {
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setScoreA(null);
-        scoreResponse.setScoreB(null);
-        scoreResponse.setScoreC(null);
-        scoreResponse.setScoreD(null);
-        scoreResponse.setFinalScore(null);
-        scoreResponse.setMisses(null);
-        scoreResponse.setPenalties(null);
-        scoreResponse.setProcedurals(null);
-        scoreResponse.setDeduction(null);
-        scoreResponse.setDeductionPercentage(null);
-        scoreResponse.setIsDisqualified(null);
-        scoreResponse.setTime(null);
-        scoreResponse.setHitFactor(null);
-        scoreResponse.setLastModified(null);
-        return scoreResponse;
-    }
-
-    private static @NonNull MatchStageCompetitorDto getMatchStageCompetitorDto() {
-        MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
-
-        ScoreResponse scoreResponse = getScoreResponseForFullInit();
-        EnrolledResponse enrolledResponse = buildEnrolledResponse(25, 1, 2, true);
-        MatchStageDto matchStageDto = buildMatchStageDto(8, 8, 200);
-
-        // Act
-        dto.init(scoreResponse, enrolledResponse, matchStageDto);
-        return dto;
-    }
-
-    private static @NonNull ScoreResponse getScoreResponseForFullInit() {
-        return buildScoreResponse(180, 1, 0, 0, "0.00", "40.00", "4.50", LocalDateTime.of(2026, 2, 18, 14, 45));
-    }
-
-    private static @NonNull ScoreResponse buildScoreResponse(
-            int finalScore,
-            int misses,
-            int penalties,
-            int procedurals,
-            String deductionPercentage,
-            String time,
-            String hitFactor,
-            LocalDateTime lastModified
-    ) {
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setScoreA(20);
-        scoreResponse.setScoreB(15);
-        scoreResponse.setScoreC(10);
-        scoreResponse.setScoreD(5);
-        scoreResponse.setFinalScore(finalScore);
-        scoreResponse.setMisses(misses);
-        scoreResponse.setPenalties(penalties);
-        scoreResponse.setProcedurals(procedurals);
-        scoreResponse.setDeduction(false);
-        scoreResponse.setDeductionPercentage(deductionPercentage);
-        scoreResponse.setIsDisqualified(false);
-        scoreResponse.setTime(time);
-        scoreResponse.setHitFactor(hitFactor);
-        scoreResponse.setLastModified(lastModified);
-        return scoreResponse;
-    }
-
-    private static @NonNull IpscMatchStage buildMatchStage(Long stageId, String clubName, String matchName, Integer stageNumber) {
-        Club club = new Club();
-        club.setId(1L);
-        club.setName(clubName);
-
-        IpscMatch match = new IpscMatch();
-        match.setId(10L);
-        match.setName(matchName);
-        match.setClub(club);
-
-        IpscMatchStage matchStage = new IpscMatchStage();
-        matchStage.setId(stageId);
-        matchStage.setMatch(match);
-        matchStage.setStageNumber(stageNumber);
-        return matchStage;
-    }
-
-    private static @NonNull Competitor buildCompetitor(Long competitorId, String firstName, String lastName) {
-        Competitor competitor = new Competitor();
-        competitor.setId(competitorId);
-        competitor.setFirstName(firstName);
-        competitor.setLastName(lastName);
-        return competitor;
-    }
-
-    private static @NonNull MatchStageCompetitor buildMatchStageCompetitorEntity(Long id, IpscMatchStage matchStage, Competitor competitor) {
-        MatchStageCompetitor entity = new MatchStageCompetitor();
-        entity.setId(id);
-        entity.setMatchStage(matchStage);
-        entity.setCompetitor(competitor);
-        return entity;
-    }
-
-    private static @NonNull EnrolledResponse buildEnrolledResponse(
-            Integer competitorId,
-            Integer divisionId,
-            Integer competitorCategoryId,
-            Boolean majorPowerFactor
-    ) {
-        EnrolledResponse enrolledResponse = new EnrolledResponse();
-        enrolledResponse.setCompetitorId(competitorId);
-        enrolledResponse.setDivisionId(divisionId);
-        enrolledResponse.setCompetitorCategoryId(competitorCategoryId);
-        enrolledResponse.setMajorPowerFactor(majorPowerFactor);
-        return enrolledResponse;
-    }
-
-    private static @NonNull MatchStageDto buildMatchStageDto(Integer index, Integer stageNumber, Integer maxPoints) {
-        MatchStageDto matchStageDto = new MatchStageDto();
-        matchStageDto.setIndex(index);
-        matchStageDto.setStageNumber(stageNumber);
-        matchStageDto.setMaxPoints(maxPoints);
-        return matchStageDto;
-    }
-
 }

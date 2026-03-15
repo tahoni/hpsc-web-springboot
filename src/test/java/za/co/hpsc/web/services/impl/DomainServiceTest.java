@@ -13,7 +13,6 @@ import za.co.hpsc.web.repositories.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,9 +28,6 @@ public class DomainServiceTest {
 
     @Mock
     private IpscMatchStageRepository ipscMatchStageRepository;
-
-    @Mock
-    private MatchCompetitorRepository matchCompetitorRepository;
 
     @Mock
     private MatchStageCompetitorRepository matchStageCompetitorRepository;
@@ -98,7 +94,16 @@ public class DomainServiceTest {
 
         Long matchId = 1L;
         Long clubId = 100L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         ClubDto clubDto = new ClubDto();
         clubDto.setId(clubId);
@@ -121,7 +126,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenClubDtoIsAbsent_thenDontSetClub() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setClub(null);
 
         // Act
@@ -136,7 +150,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenClubDtoHasNullId_thenDontSetClub() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         // Act
         var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
@@ -154,7 +177,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenExistingMatch_thenLoadsFromRepository() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(matchId);
@@ -172,7 +204,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenNewMatch_thenCreatesNewEntity() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         // Act
         var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
@@ -190,7 +231,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenEmptyCompetitorList_thenReturnsEmptyCompetitorList() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setCompetitors(Collections.emptyList());
 
         // Act
@@ -209,7 +259,16 @@ public class DomainServiceTest {
         Long competitor1Id = 100L;
         Long competitor2Id = 101L;
 
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         CompetitorDto competitor1 = new CompetitorDto();
         competitor1.setId(competitor1Id);
@@ -242,7 +301,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenNullCompetitorList_thenReturnsEmptyCompetitorList() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setCompetitors(null);
 
         // Act
@@ -262,7 +330,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenEmptyStageList_thenReturnsEmptyStageList() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setStages(Collections.emptyList());
 
         // Act
@@ -281,7 +358,16 @@ public class DomainServiceTest {
         Long stage1Id = 200L;
         Long stage2Id = 201L;
 
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         MatchStageDto stage1 = new MatchStageDto();
         stage1.setId(stage1Id);
@@ -320,7 +406,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenNullStageList_thenReturnsEmptyStageList() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setStages(null);
 
         // Act
@@ -405,7 +500,16 @@ public class DomainServiceTest {
         // Arrange
 
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         CompetitorDto competitor1 = new CompetitorDto();
         competitor1.setId(200L);
@@ -430,7 +534,16 @@ public class DomainServiceTest {
     public void testInitMatchEntities_whenNullStageInList_thenFiltersOutNull() {
         // Arrange
         Long matchId = 1L;
-        MatchResultsDto matchResults = createMinimalMatchResults(matchId);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(matchId);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         MatchStageDto stage1 = new MatchStageDto();
         stage1.setId(300L);
@@ -439,8 +552,6 @@ public class DomainServiceTest {
         List<MatchStageDto> stageList = new ArrayList<>();
         stageList.add(stage1);
         matchResults.setStages(stageList);
-
-        IpscMatch match = new IpscMatch();
 
         // Act
         var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
@@ -452,7 +563,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenMatchClubAbbreviationResolvesClub_thenSetsClubInMapping() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setClub(null);
 
         Club club = new Club();
@@ -472,7 +592,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenMatchCompetitorsBelongToDifferentMatches_thenKeepsOnlyCurrentMatchCompetitors() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.getMatch().setUuid(UUID.randomUUID());
 
         CompetitorDto competitor1 = new CompetitorDto();
@@ -507,14 +636,23 @@ public class DomainServiceTest {
         assertEquals(2, result.get().getCompetitorMap().size());
         assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
         assertTrue(result.get().getCompetitorMap().containsKey(competitor2.getUuid()));
-//        assertEquals(1, result.get().getMatchCompetitorMap().size());
-//        assertTrue(result.get().getMatchCompetitorMap().containsKey(included.getUuid()));
-//        assertFalse(result.get().getMatchCompetitorMap().containsKey(excluded.getUuid()));
+        assertEquals(1, result.get().getMatchCompetitorMap().size());
+        assertTrue(result.get().getMatchCompetitorMap().containsKey(included.getUuid()));
+        assertFalse(result.get().getMatchCompetitorMap().containsKey(excluded.getUuid()));
     }
 
     @Test
     public void initMatchEntities_whenMatchCompetitorReferencesUnknownCompetitor_thenReturnsEmptyMatchCompetitorMap() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.getMatch().setUuid(UUID.randomUUID());
 
         CompetitorDto existingCompetitor = new CompetitorDto();
@@ -542,7 +680,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenClubDtoExists_thenPrefersClubDtoOverMatchClubAbbreviation() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         ClubDto clubDto = new ClubDto();
         clubDto.setId(101L);
@@ -565,7 +712,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenNullCompetitorInList_thenSkipsNullAndKeepsValidCompetitors() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
 
         CompetitorDto competitor1 = new CompetitorDto();
         competitor1.setId(200L);
@@ -588,7 +744,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenStageBelongsToDifferentMatch_thenExcludesStageFromStageMap() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         MatchDto currentMatch = matchResults.getMatch();
         currentMatch.setUuid(UUID.randomUUID());
 
@@ -627,7 +792,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenMatchCompetitorHasNullMatch_thenExcludesFromMatchCompetitorMap() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.getMatch().setUuid(UUID.randomUUID());
 
         CompetitorDto competitor = new CompetitorDto();
@@ -654,7 +828,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenNullMatchStageCompetitorList_thenMatchStageCompetitorMapIsEmpty() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setMatchStageCompetitors(null);
 
         var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
@@ -665,7 +848,16 @@ public class DomainServiceTest {
 
     @Test
     public void initMatchEntities_whenEmptyMatchStageCompetitorList_thenMatchStageCompetitorMapIsEmpty() {
-        MatchResultsDto matchResults = createMinimalMatchResults(1L);
+        MatchResultsDto matchResults1 = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.setId(1L);
+        matchDto.setName("Test Match");
+        matchResults1.setMatch(matchDto);
+        matchResults1.setCompetitors(new ArrayList<>());
+        matchResults1.setStages(new ArrayList<>());
+        matchResults1.setMatchCompetitors(new ArrayList<>());
+        matchResults1.setMatchStageCompetitors(new ArrayList<>());
+        MatchResultsDto matchResults = matchResults1;
         matchResults.setMatchStageCompetitors(Collections.emptyList());
 
         var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
@@ -722,7 +914,7 @@ public class DomainServiceTest {
         MatchStageDto stageInMap = new MatchStageDto();
         stageInMap.setUuid(stageUuid);
 
-        // competitor DTO whose matchStage points to a DIFFERENT UUID
+        // competitor DTO object whose matchStage points to a DIFFERENT UUID
         MatchStageDto differentStage = new MatchStageDto();
         differentStage.setUuid(UUID.randomUUID());
 
@@ -765,7 +957,7 @@ public class DomainServiceTest {
         Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
         matchStageMap.put(stageUuid, stageDto);
 
-        Map<UUID, CompetitorDto> emptyCompetitorMap = new HashMap<>(); // unknown competitor not in map
+        Map<UUID, CompetitorDto> emptyCompetitorMap = new HashMap<>();
 
         var result = domainService.initMatchStageCompetitorEntities(
                 List.of(mscDto), matchStageMap, emptyCompetitorMap, null);
@@ -915,20 +1107,6 @@ public class DomainServiceTest {
         assertEquals(1, result.size());
         assertTrue(result.containsKey(mscUuid1));
         assertFalse(result.containsKey(mscUuid2));
-    }
-
-    // Helper Methods
-    private MatchResultsDto createMinimalMatchResults(Long matchId) {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        return matchResults;
     }
 }
 

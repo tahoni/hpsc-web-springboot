@@ -1,6 +1,5 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
@@ -31,7 +30,24 @@ public class MatchStageDtoTest {
     @Test
     void testConstructor_whenIpscMatchStageHasNullFields_thenMapsNulls() {
         // Arrange
-        IpscMatchStage stage = getIpscMatchStage();
+        IpscMatch match = new IpscMatch();
+        match.setId(10L);
+        match.setName("Test Match");
+
+        IpscMatchStage stage1 = new IpscMatchStage();
+        stage1.setId(42L);
+        stage1.setMatch(match);
+        stage1.setStageNumber(null);
+        stage1.setStageName(null);
+        stage1.setRangeNumber(null);
+        stage1.setTargetPaper(null);
+        stage1.setTargetPopper(null);
+        stage1.setTargetPlates(null);
+        stage1.setTargetDisappear(null);
+        stage1.setTargetPenalty(null);
+        stage1.setMinRounds(null);
+        stage1.setMaxPoints(null);
+        IpscMatchStage stage = stage1;
 
         // Act
         MatchStageDto dto = new MatchStageDto(stage);
@@ -121,7 +137,25 @@ public class MatchStageDtoTest {
     @Test
     void testConstructor_whenIpscMatchStageFullyPopulated_thenMapsAllFields() {
         // Arrange
-        MatchStageDto dto = getMatchStageDto();
+        IpscMatch match = new IpscMatch();
+        match.setId(10L);
+        match.setName("Championship Match");
+
+        IpscMatchStage stage1 = new IpscMatchStage();
+        stage1.setId(99L);
+        stage1.setMatch(match);
+        stage1.setStageNumber(5);
+        stage1.setStageName("Stage 5 - Speed Shooting");
+        stage1.setRangeNumber(2);
+        stage1.setTargetPaper(8);
+        stage1.setTargetPopper(4);
+        stage1.setTargetPlates(6);
+        stage1.setTargetDisappear(2);
+        stage1.setTargetPenalty(0);
+        stage1.setMinRounds(20);
+        stage1.setMaxPoints(100);
+        IpscMatchStage stage = stage1;
+        MatchStageDto dto = new MatchStageDto(stage);
 
         // Assert
         assertEquals(99L, dto.getId());
@@ -239,7 +273,27 @@ public class MatchStageDtoTest {
     @Test
     void testConstructor_whenIpscMatchStageAndMatchDtoFullyPopulated_thenMapsAllFields() {
         // Arrange
-        MatchStageDto dto = getStageDto();
+        IpscMatch match = new IpscMatch();
+        match.setId(10L);
+        match.setName(null);
+
+        IpscMatchStage stage1 = new IpscMatchStage();
+        stage1.setId(30L);
+        stage1.setMatch(match);
+        stage1.setStageNumber(7);
+        stage1.setStageName("Precision Stage");
+        stage1.setRangeNumber(3);
+        stage1.setTargetPaper(10);
+        stage1.setTargetPopper(5);
+        stage1.setTargetPlates(8);
+        stage1.setTargetDisappear(3);
+        stage1.setTargetPenalty(1);
+        stage1.setMinRounds(25);
+        stage1.setMaxPoints(150);
+        IpscMatchStage stage = stage1;
+        MatchDto matchDto = new MatchDto();
+        matchDto.setName("Full Match");
+        MatchStageDto dto = new MatchStageDto(stage, matchDto);
 
         // Assert
         assertEquals(30L, dto.getId());
@@ -317,7 +371,26 @@ public class MatchStageDtoTest {
     @Test
     void testInit_whenMatchDtoAndStageResponseProvided_thenMapsAllFields() {
         // Arrange
-        MatchStageDto dto = getDto();
+        MatchStageDto dto1 = new MatchStageDto();
+        dto1.setIndex(null);
+        dto1.setStageNumber(null);
+
+        MatchDto matchDto = new MatchDto();
+        matchDto.setName("Spring Championship");
+
+        StageResponse stageResponse = new StageResponse();
+        stageResponse.setStageId(12);
+        stageResponse.setStageName("Stage 12 - Accuracy");
+        stageResponse.setTargetPaper(6);
+        stageResponse.setTargetPopper(3);
+        stageResponse.setTargetPlates(4);
+        stageResponse.setTargetDisappear(1);
+        stageResponse.setTargetPenalty(0);
+        stageResponse.setMinRounds(15);
+        stageResponse.setMaxPoints(75);
+
+        dto1.init(matchDto, stageResponse);
+        MatchStageDto dto = dto1;
 
         // Assert
         assertEquals(12, dto.getIndex());
@@ -458,7 +531,26 @@ public class MatchStageDtoTest {
     @Test
     void testInit_whenStageResponseFullyPopulated_thenMapsAllFields() {
         // Arrange
-        MatchStageDto dto = getMatchStageDto1();
+        MatchStageDto dto1 = new MatchStageDto();
+        dto1.setIndex(null);
+        dto1.setStageNumber(null);
+
+        MatchDto matchDto = new MatchDto();
+        matchDto.setName("Complete Match");
+
+        StageResponse stageResponse = new StageResponse();
+        stageResponse.setStageId(60);
+        stageResponse.setStageName("Stage 60 - Complete");
+        stageResponse.setTargetPaper(12);
+        stageResponse.setTargetPopper(8);
+        stageResponse.setTargetPlates(10);
+        stageResponse.setTargetDisappear(4);
+        stageResponse.setTargetPenalty(2);
+        stageResponse.setMinRounds(30);
+        stageResponse.setMaxPoints(200);
+
+        dto1.init(matchDto, stageResponse);
+        MatchStageDto dto = dto1;
 
         // Assert
         assertEquals(60, dto.getIndex());
@@ -479,7 +571,26 @@ public class MatchStageDtoTest {
     @Test
     void testInit_whenStageResponseHasAllZeroTargets_thenMapsZeros() {
         // Arrange
-        MatchStageDto dto = getMatchStageDto2();
+        MatchStageDto dto1 = new MatchStageDto();
+        dto1.setIndex(null);
+        dto1.setStageNumber(null);
+
+        MatchDto matchDto = new MatchDto();
+        matchDto.setName("Zero Target Match");
+
+        StageResponse stageResponse = new StageResponse();
+        stageResponse.setStageId(70);
+        stageResponse.setStageName("No Targets");
+        stageResponse.setTargetPaper(0);
+        stageResponse.setTargetPopper(0);
+        stageResponse.setTargetPlates(0);
+        stageResponse.setTargetDisappear(0);
+        stageResponse.setTargetPenalty(0);
+        stageResponse.setMinRounds(0);
+        stageResponse.setMaxPoints(0);
+
+        dto1.init(matchDto, stageResponse);
+        MatchStageDto dto = dto1;
 
         // Assert
         assertEquals(70, dto.getIndex());
@@ -495,7 +606,26 @@ public class MatchStageDtoTest {
     @Test
     void testInit_whenStageResponseHasMaxValues_thenMapsCorrectly() {
         // Arrange
-        MatchStageDto dto = getMatchStageDto3();
+        MatchStageDto dto1 = new MatchStageDto();
+        dto1.setIndex(999);
+        dto1.setStageNumber(99);
+
+        MatchDto matchDto = new MatchDto();
+        matchDto.setName("Max Values Match");
+
+        StageResponse stageResponse = new StageResponse();
+        stageResponse.setStageId(100);
+        stageResponse.setStageName("Maximum Values");
+        stageResponse.setTargetPaper(999);
+        stageResponse.setTargetPopper(999);
+        stageResponse.setTargetPlates(999);
+        stageResponse.setTargetDisappear(999);
+        stageResponse.setTargetPenalty(999);
+        stageResponse.setMinRounds(999);
+        stageResponse.setMaxPoints(99999);
+
+        dto1.init(matchDto, stageResponse);
+        MatchStageDto dto = dto1;
 
         // Assert
         assertEquals(100, dto.getIndex());
@@ -1090,143 +1220,6 @@ public class MatchStageDtoTest {
         // Assert
         assertEquals("13 for Target Match", result);
         assertFalse(result.contains("99"));
-    }
-
-    private static @NonNull IpscMatchStage getIpscMatchStage() {
-        IpscMatch match = new IpscMatch();
-        match.setId(10L);
-        match.setName("Test Match");
-
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setId(42L);
-        stage.setMatch(match);
-        stage.setStageNumber(null);
-        stage.setStageName(null);
-        stage.setRangeNumber(null);
-        stage.setTargetPaper(null);
-        stage.setTargetPopper(null);
-        stage.setTargetPlates(null);
-        stage.setTargetDisappear(null);
-        stage.setTargetPenalty(null);
-        stage.setMinRounds(null);
-        stage.setMaxPoints(null);
-        return stage;
-    }
-
-    private static @NonNull MatchStageDto getMatchStageDto() {
-        IpscMatchStage stage = buildIpscMatchStage(
-                99L, "Championship Match", 5, "Stage 5 - Speed Shooting", 2,
-                8, 4, 6, 2, 0, 20, 100
-        );
-        return new MatchStageDto(stage);
-    }
-
-    private static @NonNull MatchStageDto getStageDto() {
-        IpscMatchStage stage = buildIpscMatchStage(
-                30L, null, 7, "Precision Stage", 3,
-                10, 5, 8, 3, 1, 25, 150
-        );
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Full Match");
-        return new MatchStageDto(stage, matchDto);
-    }
-
-    private static @NonNull MatchStageDto getDto() {
-        return buildInitDto(
-                "Spring Championship", 12, "Stage 12 - Accuracy",
-                6, 3, 4, 1, 0, 15, 75, null, null
-        );
-    }
-
-    private static @NonNull MatchStageDto getMatchStageDto1() {
-        return buildInitDto(
-                "Complete Match", 60, "Stage 60 - Complete",
-                12, 8, 10, 4, 2, 30, 200, null, null
-        );
-    }
-
-    private static @NonNull MatchStageDto getMatchStageDto2() {
-        return buildInitDto(
-                "Zero Target Match", 70, "No Targets",
-                0, 0, 0, 0, 0, 0, 0, null, null
-        );
-    }
-
-    private static @NonNull MatchStageDto getMatchStageDto3() {
-        return buildInitDto(
-                "Max Values Match", 100, "Maximum Values",
-                999, 999, 999, 999, 999, 999, 99999, 999, 99
-        );
-    }
-
-    private static @NonNull MatchStageDto buildInitDto(
-            String matchName,
-            int stageId,
-            String stageName,
-            Integer targetPaper,
-            Integer targetPopper,
-            Integer targetPlates,
-            Integer targetDisappear,
-            Integer targetPenalty,
-            Integer minRounds,
-            Integer maxPoints,
-            Integer initialIndex,
-            Integer initialStageNumber
-    ) {
-        MatchStageDto dto = new MatchStageDto();
-        dto.setIndex(initialIndex);
-        dto.setStageNumber(initialStageNumber);
-
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName(matchName);
-
-        StageResponse stageResponse = new StageResponse();
-        stageResponse.setStageId(stageId);
-        stageResponse.setStageName(stageName);
-        stageResponse.setTargetPaper(targetPaper);
-        stageResponse.setTargetPopper(targetPopper);
-        stageResponse.setTargetPlates(targetPlates);
-        stageResponse.setTargetDisappear(targetDisappear);
-        stageResponse.setTargetPenalty(targetPenalty);
-        stageResponse.setMinRounds(minRounds);
-        stageResponse.setMaxPoints(maxPoints);
-
-        dto.init(matchDto, stageResponse);
-        return dto;
-    }
-
-    private static @NonNull IpscMatchStage buildIpscMatchStage(
-            Long stageId,
-            String matchName,
-            Integer stageNumber,
-            String stageName,
-            Integer rangeNumber,
-            Integer targetPaper,
-            Integer targetPopper,
-            Integer targetPlates,
-            Integer targetDisappear,
-            Integer targetPenalty,
-            Integer minRounds,
-            Integer maxPoints
-    ) {
-        IpscMatch match = new IpscMatch();
-        match.setId(10L);
-        match.setName(matchName);
-
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setId(stageId);
-        stage.setMatch(match);
-        stage.setStageNumber(stageNumber);
-        stage.setStageName(stageName);
-        stage.setRangeNumber(rangeNumber);
-        stage.setTargetPaper(targetPaper);
-        stage.setTargetPopper(targetPopper);
-        stage.setTargetPlates(targetPlates);
-        stage.setTargetDisappear(targetDisappear);
-        stage.setTargetPenalty(targetPenalty);
-        stage.setMinRounds(minRounds);
-        stage.setMaxPoints(maxPoints);
-        return stage;
     }
 }
 

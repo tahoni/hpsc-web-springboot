@@ -2186,5 +2186,3 @@ public class IpscServiceTest {
         assertNull(enrolled.getCompetitorCategoryId());
     }
 }
-
-

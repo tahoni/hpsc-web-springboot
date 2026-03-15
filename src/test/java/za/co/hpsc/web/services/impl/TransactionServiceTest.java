@@ -89,8 +89,13 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenMatchProvided_thenSavesMatchAndCommits() {
         // Arrange
-        MatchDto matchDto = buildMatchDto(100, null);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(100);
+        matchDto.setId(null);
+        matchDto.setName("Match 100");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         stubTransactionStart();
 
         // Act
@@ -113,12 +118,20 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenClubProvided_thenSavesClubAndMatch() {
         // Arrange
-        MatchDto matchDto = buildMatchDto(100, null);
-        ClubDto clubDto = buildClubDto(100L, "Test Club");
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(100);
+        matchDto.setId(null);
+        matchDto.setName("Match 100");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(100L);
+        clubDto.setName("Test Club");
+        clubDto.setAbbreviation("TC");
         Club club = new Club();
         club.setId(clubDto.getId());
         club.setName(clubDto.getName());
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setClub(clubDto);
 
         stubTransactionStart();
@@ -139,16 +152,48 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenFullMappingProvided_thenSavesAllEntities() {
         // Arrange
-        MatchDto matchDto = buildMatchDto(101, 1L);
-        ClubDto clubDto = buildClubDto(200L, "Full Club");
-        CompetitorDto competitorDto = buildCompetitorDto(300L, 1);
-        MatchStageDto matchStageDto = buildMatchStageDto(matchDto, 1);
-        MatchCompetitorDto matchCompetitorDto = buildMatchCompetitorDto(competitorDto, matchDto);
-        MatchStageCompetitorDto matchStageCompetitorDto =
-                buildMatchStageCompetitorDto(competitorDto, matchStageDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(101);
+        matchDto.setId(1L);
+        matchDto.setName("Match 101");
+        matchDto.setScheduledDate(LocalDateTime.now());
 
-        DtoMapping dtoMapping = buildFullMapping(matchDto, clubDto, competitorDto,
-                matchStageDto, matchCompetitorDto, matchStageCompetitorDto);
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(200L);
+        clubDto.setName("Full Club");
+        clubDto.setAbbreviation("TC");
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(300L);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+
+        MatchStageDto matchStageDto = new MatchStageDto();
+        matchStageDto.setMatch(matchDto);
+        matchStageDto.setStageNumber(1);
+        matchStageDto.setStageName("Stage 1");
+
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setCompetitor(competitorDto);
+        matchCompetitorDto.setMatch(matchDto);
+        matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+        matchCompetitorDto.setMatchIndex(matchDto.getIndex());
+
+        MatchStageCompetitorDto matchStageCompetitorDto = new MatchStageCompetitorDto();
+        matchStageCompetitorDto.setCompetitor(competitorDto);
+        matchStageCompetitorDto.setMatchStage(matchStageDto);
+        matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+        matchStageCompetitorDto.setMatchStageIndex(matchStageDto.getIndex());
+
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        dtoMapping.setClub(clubDto);
+        dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
+        dtoMapping.setMatchStageMap(singleEntryMap(matchStageDto.getUuid(), matchStageDto));
+        dtoMapping.setMatchCompetitorMap(singleEntryMap(matchCompetitorDto.getUuid(), matchCompetitorDto));
+        dtoMapping.setMatchStageCompetitorMap(singleEntryMap(matchStageCompetitorDto.getUuid(), matchStageCompetitorDto));
 
         stubTransactionStart();
         when(clubRepository.findById(clubDto.getId())).thenReturn(Optional.of(new Club()));
@@ -171,9 +216,14 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenMatchNameIsBlank_thenStillCommits() {
         // Arrange
-        MatchDto matchDto = buildMatchDto(100, null);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(100);
+        matchDto.setId(null);
+        matchDto.setName("Match 100");
+        matchDto.setScheduledDate(LocalDateTime.now());
         matchDto.setName("   ");
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         stubTransactionStart();
 
         // Act
@@ -190,8 +240,13 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenEmptyCollections_thenSkipsSaveAll() {
         // Arrange
-        MatchDto matchDto = buildMatchDto(100, null);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(100);
+        matchDto.setId(null);
+        matchDto.setName("Match 100");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageMap(new HashMap<>());
         dtoMapping.setCompetitorMap(new HashMap<>());
         dtoMapping.setMatchCompetitorMap(new HashMap<>());
@@ -216,8 +271,13 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenNullMaps_thenRollsBackAndThrowsFatalException() {
         // Arrange
-        MatchDto matchDto = buildMatchDto(100, null);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(100);
+        matchDto.setId(null);
+        matchDto.setName("Match 100");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(null);
         stubTransactionStart();
 
@@ -235,8 +295,13 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenIpscMatchSaveThrows_thenRollsBackAndThrowsFatalException() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         stubTransactionStart();
         doThrow(new RuntimeException("DB error")).when(ipscMatchRepository).save(any());
 
@@ -247,9 +312,19 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenCompetitorSaveAllThrows_thenRollsBackAndThrowsFatalException() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         stubTransactionStart();
         doThrow(new RuntimeException("DB error")).when(competitorRepository).saveAll(anyList());
@@ -261,9 +336,17 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenMatchStageSaveAllThrows_thenRollsBackAndThrowsFatalException() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(1);
+        stageDto.setStageName("Stage 1");
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageMap(singleEntryMap(stageDto.getUuid(), stageDto));
         stubTransactionStart();
         doThrow(new RuntimeException("DB error")).when(ipscMatchStageRepository).saveAll(anyList());
@@ -275,10 +358,24 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenMatchCompetitorSaveAllThrows_thenRollsBackAndThrowsFatalException() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
-        MatchCompetitorDto matchCompetitorDto = buildMatchCompetitorDto(competitorDto, matchDto);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setCompetitor(competitorDto);
+        matchCompetitorDto.setMatch(matchDto);
+        matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+        matchCompetitorDto.setMatchIndex(matchDto.getIndex());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         dtoMapping.setMatchCompetitorMap(singleEntryMap(matchCompetitorDto.getUuid(), matchCompetitorDto));
         stubTransactionStart();
@@ -291,11 +388,28 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenMatchStageCompetitorSaveAllThrows_thenRollsBackAndThrowsFatalException() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
-        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
-        MatchStageCompetitorDto mscDto = buildMatchStageCompetitorDto(competitorDto, stageDto);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(1);
+        stageDto.setStageName("Stage 1");
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setMatchStage(stageDto);
+        mscDto.setCompetitorIndex(competitorDto.getIndex());
+        mscDto.setMatchStageIndex(stageDto.getIndex());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         dtoMapping.setMatchStageMap(singleEntryMap(stageDto.getUuid(), stageDto));
         dtoMapping.setMatchStageCompetitorMap(singleEntryMap(mscDto.getUuid(), mscDto));
@@ -317,7 +431,13 @@ public class TransactionServiceTest {
         clubDto.setId(null);
         clubDto.setName("New Club");
         clubDto.setAbbreviation("NC");
-        DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setClub(clubDto);
         stubTransactionStart();
 
@@ -331,8 +451,17 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenClubIdNotFoundInRepository_thenCreatesNewClub() {
-        ClubDto clubDto = buildClubDto(999L, "Missing Club");
-        DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(999L);
+        clubDto.setName("Missing Club");
+        clubDto.setAbbreviation("TC");
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setClub(clubDto);
         stubTransactionStart();
         when(clubRepository.findById(999L)).thenReturn(Optional.empty());
@@ -353,8 +482,13 @@ public class TransactionServiceTest {
     public void saveMatchResults_whenMatchHasExistingId_thenLoadsMatchFromRepository() {
         IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(1L);
-        MatchDto matchDto = buildMatchDto(1, 1L);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(1L);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         stubTransactionStart();
         when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existingMatch));
 
@@ -367,8 +501,13 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenMatchIdNotFoundInRepository_thenCreatesNewMatch() {
-        MatchDto matchDto = buildMatchDto(1, 1L);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(1L);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         stubTransactionStart();
         when(ipscMatchRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -386,9 +525,14 @@ public class TransactionServiceTest {
 
     @Test
     public void saveMatchResults_whenSuccessful_thenReturnsMatchEntityWithCorrectName() {
-        MatchDto matchDto = buildMatchDto(42, null);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(42);
+        matchDto.setId(null);
+        matchDto.setName("Match 42");
+        matchDto.setScheduledDate(LocalDateTime.now());
         matchDto.setName("Championship Match");
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         stubTransactionStart();
 
         Optional<IpscMatch> result = assertDoesNotThrow(() ->
@@ -404,7 +548,14 @@ public class TransactionServiceTest {
 
     @Test
     public void getClub_whenNullClubDto_thenReturnsEmpty() {
-        DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(buildMatchDto(1, null)));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
         Optional<Club> result = transactionService.getClub(null, mapping);
 
@@ -417,7 +568,14 @@ public class TransactionServiceTest {
         ClubDto clubDto = new ClubDto();
         clubDto.setId(null);
         clubDto.setName("Fresh Club");
-        DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(buildMatchDto(1, null)));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
         Optional<Club> result = transactionService.getClub(clubDto, mapping);
 
@@ -431,8 +589,18 @@ public class TransactionServiceTest {
         Club repositoryClub = new Club();
         repositoryClub.setId(5L);
         repositoryClub.setName("Old Name");
-        ClubDto clubDto = buildClubDto(5L, "New Name");
-        DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(buildMatchDto(1, null)));
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(5L);
+        clubDto.setName("New Name");
+        clubDto.setAbbreviation("TC");
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         when(clubRepository.findById(5L)).thenReturn(Optional.of(repositoryClub));
 
         Optional<Club> result = transactionService.getClub(clubDto, mapping);
@@ -445,8 +613,18 @@ public class TransactionServiceTest {
 
     @Test
     public void getClub_whenClubDtoIdNotFound_thenCreatesNewClub() {
-        ClubDto clubDto = buildClubDto(77L, "Missing Club");
-        DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(buildMatchDto(1, null)));
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(77L);
+        clubDto.setName("Missing Club");
+        clubDto.setAbbreviation("TC");
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         when(clubRepository.findById(77L)).thenReturn(Optional.empty());
 
         Optional<Club> result = transactionService.getClub(clubDto, mapping);
@@ -462,8 +640,14 @@ public class TransactionServiceTest {
 
     @Test
     public void getIpscMatch_whenMatchDtoHasNullId_thenCreatesNewMatchEntity() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(matchDto));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
@@ -476,8 +660,14 @@ public class TransactionServiceTest {
     public void getIpscMatch_whenMatchDtoIdFound_thenLoadsFromRepository() {
         IpscMatch existingMatch = new IpscMatch();
         existingMatch.setId(10L);
-        MatchDto matchDto = buildMatchDto(1, 10L);
-        DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(matchDto));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(10L);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         when(ipscMatchRepository.findById(10L)).thenReturn(Optional.of(existingMatch));
 
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
@@ -489,8 +679,14 @@ public class TransactionServiceTest {
 
     @Test
     public void getIpscMatch_whenMatchDtoIdNotFound_thenCreatesNewMatchEntity() {
-        MatchDto matchDto = buildMatchDto(1, 10L);
-        DtoToEntityMapping mapping = new DtoToEntityMapping(buildMappingWithMatch(matchDto));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(10L);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         when(ipscMatchRepository.findById(10L)).thenReturn(Optional.empty());
 
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
@@ -506,9 +702,17 @@ public class TransactionServiceTest {
 
     @Test
     public void getIpscMatchStages_whenMatchEntityIsNull_thenReturnsEmptyList() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(1);
+        stageDto.setStageName("Stage 1");
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageMap(singleEntryMap(stageDto.getUuid(), stageDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping); // match entity is NOT set
 
@@ -521,10 +725,18 @@ public class TransactionServiceTest {
 
     @Test
     public void getIpscMatchStages_whenStageHasNullId_thenCreatesNewStageEntity() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto stageDto = buildMatchStageDto(matchDto, 2);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(2);
+        stageDto.setStageName("Stage 2");
         stageDto.setId(null);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageMap(singleEntryMap(stageDto.getUuid(), stageDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         transactionService.getIpscMatch(mapping); // sets match entity
@@ -538,10 +750,18 @@ public class TransactionServiceTest {
 
     @Test
     public void getIpscMatchStages_whenStageIdFound_thenLoadsFromRepository() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(1);
+        stageDto.setStageName("Stage 1");
         stageDto.setId(200L);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageMap(singleEntryMap(stageDto.getUuid(), stageDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         transactionService.getIpscMatch(mapping); // sets match entity
@@ -560,10 +780,18 @@ public class TransactionServiceTest {
 
     @Test
     public void getIpscMatchStages_whenStageIdNotFound_thenCreatesNewStageEntity() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto stageDto = buildMatchStageDto(matchDto, 3);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(3);
+        stageDto.setStageName("Stage 3");
         stageDto.setId(300L);
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageMap(singleEntryMap(stageDto.getUuid(), stageDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         transactionService.getIpscMatch(mapping); // sets match entity
@@ -580,7 +808,13 @@ public class TransactionServiceTest {
 
     @Test
     public void getCompetitors_whenEmptyList_thenReturnsEmptyList() {
-        DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(new HashMap<>());
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -593,8 +827,19 @@ public class TransactionServiceTest {
 
     @Test
     public void getCompetitors_whenCompetitorHasNullId_thenCreatesNewCompetitorEntity() {
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
-        DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -606,8 +851,19 @@ public class TransactionServiceTest {
 
     @Test
     public void getCompetitors_whenCompetitorIdFound_thenLoadsFromRepository() {
-        CompetitorDto competitorDto = buildCompetitorDto(400L, 1);
-        DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(400L);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -624,8 +880,19 @@ public class TransactionServiceTest {
 
     @Test
     public void getCompetitors_whenCompetitorIdNotFound_thenCreatesNewCompetitorEntity() {
-        CompetitorDto competitorDto = buildCompetitorDto(401L, 1);
-        DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(401L);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         when(competitorRepository.findById(401L)).thenReturn(Optional.empty());
@@ -642,7 +909,13 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchCompetitors_whenEmptyList_thenReturnsEmptyList() {
-        DtoMapping dtoMapping = buildMappingWithMatch(buildMatchDto(1, null));
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchCompetitorMap(new HashMap<>());
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -654,12 +927,26 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchCompetitors_whenMatchCompetitorHasExistingId_thenSetsIdOnEntity() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
-        MatchCompetitorDto matchCompetitorDto = buildMatchCompetitorDto(competitorDto, matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setCompetitor(competitorDto);
+        matchCompetitorDto.setMatch(matchDto);
+        matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+        matchCompetitorDto.setMatchIndex(matchDto.getIndex());
         matchCompetitorDto.setId(777L);
 
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         dtoMapping.setMatchCompetitorMap(singleEntryMap(matchCompetitorDto.getUuid(), matchCompetitorDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
@@ -672,12 +959,26 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchCompetitors_whenMatchCompetitorHasNullId_thenEntityHasNullId() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
-        MatchCompetitorDto matchCompetitorDto = buildMatchCompetitorDto(competitorDto, matchDto);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setCompetitor(competitorDto);
+        matchCompetitorDto.setMatch(matchDto);
+        matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+        matchCompetitorDto.setMatchIndex(matchDto.getIndex());
         // id remains null (default)
 
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
         dtoMapping.setMatchCompetitorMap(singleEntryMap(matchCompetitorDto.getUuid(), matchCompetitorDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
@@ -694,14 +995,31 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchStageCompetitors_whenNullMatchStageOnDto_thenFiltersOut() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto targetStage = buildMatchStageDto(matchDto, 1);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto targetStage = new MatchStageDto();
+        targetStage.setMatch(matchDto);
+        targetStage.setStageNumber(1);
+        targetStage.setStageName("Stage 1");
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
 
-        MatchStageCompetitorDto mscDto = buildMatchStageCompetitorDto(competitorDto, targetStage);
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setMatchStage(targetStage);
+        mscDto.setCompetitorIndex(competitorDto.getIndex());
+        mscDto.setMatchStageIndex(targetStage.getIndex());
         mscDto.setMatchStage(null);   // null matchStage → must be filtered
 
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageCompetitorMap(singleEntryMap(mscDto.getUuid(), mscDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -713,14 +1031,34 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchStageCompetitors_whenDifferentStageUuid_thenFiltersOut() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto targetStage = buildMatchStageDto(matchDto, 1);
-        MatchStageDto differentStage = buildMatchStageDto(matchDto, 2); // different UUID
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto targetStage = new MatchStageDto();
+        targetStage.setMatch(matchDto);
+        targetStage.setStageNumber(1);
+        targetStage.setStageName("Stage 1");
+        MatchStageDto differentStage = new MatchStageDto();
+        differentStage.setMatch(matchDto);
+        differentStage.setStageNumber(2);
+        differentStage.setStageName("Stage 2"); // different UUID
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
 
-        MatchStageCompetitorDto mscDto = buildMatchStageCompetitorDto(competitorDto, differentStage);
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setMatchStage(differentStage);
+        mscDto.setCompetitorIndex(competitorDto.getIndex());
+        mscDto.setMatchStageIndex(differentStage.getIndex());
 
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageCompetitorMap(singleEntryMap(mscDto.getUuid(), mscDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -732,13 +1070,30 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchStageCompetitors_whenMatchingStageUuid_thenIncludesCompetitorInResult() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto targetStage = buildMatchStageDto(matchDto, 1);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto targetStage = new MatchStageDto();
+        targetStage.setMatch(matchDto);
+        targetStage.setStageNumber(1);
+        targetStage.setStageName("Stage 1");
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
 
-        MatchStageCompetitorDto mscDto = buildMatchStageCompetitorDto(competitorDto, targetStage);
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setMatchStage(targetStage);
+        mscDto.setCompetitorIndex(competitorDto.getIndex());
+        mscDto.setMatchStageIndex(targetStage.getIndex());
 
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageCompetitorMap(singleEntryMap(mscDto.getUuid(), mscDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -750,14 +1105,31 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchStageCompetitors_whenMatchStageCompetitorHasExistingId_thenSetsIdOnEntity() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto targetStage = buildMatchStageDto(matchDto, 1);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto targetStage = new MatchStageDto();
+        targetStage.setMatch(matchDto);
+        targetStage.setStageNumber(1);
+        targetStage.setStageName("Stage 1");
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
 
-        MatchStageCompetitorDto mscDto = buildMatchStageCompetitorDto(competitorDto, targetStage);
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setMatchStage(targetStage);
+        mscDto.setCompetitorIndex(competitorDto.getIndex());
+        mscDto.setMatchStageIndex(targetStage.getIndex());
         mscDto.setId(888L);
 
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageCompetitorMap(singleEntryMap(mscDto.getUuid(), mscDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -769,14 +1141,31 @@ public class TransactionServiceTest {
 
     @Test
     public void getMatchStageCompetitors_whenMatchStageCompetitorHasNullId_thenEntityHasNullId() {
-        MatchDto matchDto = buildMatchDto(1, null);
-        MatchStageDto targetStage = buildMatchStageDto(matchDto, 1);
-        CompetitorDto competitorDto = buildCompetitorDto(null, 1);
+        MatchDto matchDto = new MatchDto();
+        matchDto.setIndex(1);
+        matchDto.setId(null);
+        matchDto.setName("Match 1");
+        matchDto.setScheduledDate(LocalDateTime.now());
+        MatchStageDto targetStage = new MatchStageDto();
+        targetStage.setMatch(matchDto);
+        targetStage.setStageNumber(1);
+        targetStage.setStageName("Stage 1");
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setId(null);
+        competitorDto.setIndex(1);
+        competitorDto.setFirstName("Test");
+        competitorDto.setLastName("Competitor");
+        competitorDto.setCompetitorNumber("C1");
 
-        MatchStageCompetitorDto mscDto = buildMatchStageCompetitorDto(competitorDto, targetStage);
+        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
+        mscDto.setCompetitor(competitorDto);
+        mscDto.setMatchStage(targetStage);
+        mscDto.setCompetitorIndex(competitorDto.getIndex());
+        mscDto.setMatchStageIndex(targetStage.getIndex());
         // id is null by default
 
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
+        DtoMapping dtoMapping = new DtoMapping();
+        dtoMapping.setMatch(matchDto);
         dtoMapping.setMatchStageCompetitorMap(singleEntryMap(mscDto.getUuid(), mscDto));
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
@@ -790,84 +1179,8 @@ public class TransactionServiceTest {
     // Helper Methods
     // =====================================================================
 
-    private static ClubDto buildClubDto(Long clubId, String name) {
-        ClubDto clubDto = new ClubDto();
-        clubDto.setId(clubId);
-        clubDto.setName(name);
-        clubDto.setAbbreviation("TC");
-        return clubDto;
-    }
-
-    private static MatchDto buildMatchDto(int matchIndex, Long matchId) {
-        MatchDto matchDto = new MatchDto();
-        matchDto.setIndex(matchIndex);
-        matchDto.setId(matchId);
-        matchDto.setName("Match " + matchIndex);
-        matchDto.setScheduledDate(LocalDateTime.now());
-        return matchDto;
-    }
-
-    private static CompetitorDto buildCompetitorDto(Long competitorId, int competitorIndex) {
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setId(competitorId);
-        competitorDto.setIndex(competitorIndex);
-        competitorDto.setFirstName("Test");
-        competitorDto.setLastName("Competitor");
-        competitorDto.setCompetitorNumber("C" + competitorIndex);
-        return competitorDto;
-    }
-
-    private static MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageNumber) {
-        MatchStageDto matchStageDto = new MatchStageDto();
-        matchStageDto.setMatch(matchDto);
-        matchStageDto.setStageNumber(stageNumber);
-        matchStageDto.setStageName("Stage " + stageNumber);
-        return matchStageDto;
-    }
-
-    private static MatchCompetitorDto buildMatchCompetitorDto(CompetitorDto competitorDto, MatchDto matchDto) {
-        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
-        matchCompetitorDto.setCompetitor(competitorDto);
-        matchCompetitorDto.setMatch(matchDto);
-        matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
-        matchCompetitorDto.setMatchIndex(matchDto.getIndex());
-        return matchCompetitorDto;
-    }
-
-    private static MatchStageCompetitorDto buildMatchStageCompetitorDto(CompetitorDto competitorDto,
-                                                                        MatchStageDto matchStageDto) {
-        MatchStageCompetitorDto matchStageCompetitorDto = new MatchStageCompetitorDto();
-        matchStageCompetitorDto.setCompetitor(competitorDto);
-        matchStageCompetitorDto.setMatchStage(matchStageDto);
-        matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
-        matchStageCompetitorDto.setMatchStageIndex(matchStageDto.getIndex());
-        return matchStageCompetitorDto;
-    }
-
-    private static DtoMapping buildFullMapping(MatchDto matchDto,
-                                               ClubDto clubDto,
-                                               CompetitorDto competitorDto,
-                                               MatchStageDto matchStageDto,
-                                               MatchCompetitorDto matchCompetitorDto,
-                                               MatchStageCompetitorDto matchStageCompetitorDto) {
-        DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
-        dtoMapping.setClub(clubDto);
-
-        dtoMapping.setCompetitorMap(singleEntryMap(competitorDto.getUuid(), competitorDto));
-        dtoMapping.setMatchStageMap(singleEntryMap(matchStageDto.getUuid(), matchStageDto));
-        dtoMapping.setMatchCompetitorMap(singleEntryMap(matchCompetitorDto.getUuid(), matchCompetitorDto));
-        dtoMapping.setMatchStageCompetitorMap(singleEntryMap(matchStageCompetitorDto.getUuid(), matchStageCompetitorDto));
-        return dtoMapping;
-    }
-
     private void stubTransactionStart() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
-    }
-
-    private static DtoMapping buildMappingWithMatch(MatchDto matchDto) {
-        DtoMapping dtoMapping = new DtoMapping();
-        dtoMapping.setMatch(matchDto);
-        return dtoMapping;
     }
 
     private static <K, V> HashMap<K, V> singleEntryMap(K key, V value) {
@@ -875,5 +1188,4 @@ public class TransactionServiceTest {
         map.put(key, value);
         return map;
     }
-
 }
