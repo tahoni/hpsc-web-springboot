@@ -372,11 +372,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Initialises match competitor details
         String clubName = "";
         if ((matchCompetitor.getMatch() != null) && (matchCompetitor.getMatch().getClub() != null)) {
-            Optional<Club> optionalClub =
-                    clubEntityService.findClubById(matchCompetitor.getMatch().getClub().getId());
-            if (optionalClub.isPresent()) {
-                clubName = ValueUtil.nullAsEmptyString(optionalClub.get().getName());
-            }
+            clubName = ValueUtil.nullAsEmptyString(matchCompetitor.getMatch().getClub().getName());
         }
 
         String firearmType = ValueUtil.nullAsEmptyString(matchCompetitor.getFirearmType());
@@ -872,9 +868,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             LocalDateTime dateCreated = optionalMatch.get().getDateCreated();
             LocalDateTime matchLastEdited = optionalMatch.get().getDateEdited();
 
-            matchLastUpdated = ((dateUpdated != null) ? dateUpdated : dateCreated);
+            matchLastUpdated = ((matchLastEdited != null) ? matchLastEdited : dateUpdated);
+            matchLastUpdated = ((matchLastUpdated != null) ? matchLastUpdated : dateCreated);
             matchLastUpdated = ((matchLastUpdated != null) ? matchLastUpdated : LocalDateTime.MIN);
-            matchLastUpdated = ((matchLastEdited != null) ? matchLastEdited : matchLastUpdated);
         }
         return matchLastUpdated;
     }

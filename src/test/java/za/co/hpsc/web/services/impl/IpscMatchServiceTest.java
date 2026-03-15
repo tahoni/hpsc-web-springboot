@@ -23,6 +23,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class IpscMatchServiceTest {
@@ -4010,8 +4013,6 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        // TODO: fix this
-/*
         assertEquals("Alpha Club", result.get().clubName());
         assertNotNull(result.get().firearmType());
         assertEquals("Open Division", result.get().division());
@@ -4020,7 +4021,6 @@ public class IpscMatchServiceTest {
         assertNotNull(result.get().matchPoints());
         assertNotNull(result.get().matchRanking());
         assertNotNull(result.get().dateEdited());
-*/
     }
 
     @Test
@@ -8497,13 +8497,17 @@ public class IpscMatchServiceTest {
         existingMatch.setName("Match with Existing Club");
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 0, 0));
 
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.of(existingClub));
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), isNull()))
+                .thenReturn(Optional.of(existingMatch));
+
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
 
         // Assert
         assertNotNull(result);
-        // TODO: fix this
-//        assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -8587,13 +8591,17 @@ public class IpscMatchServiceTest {
         existingMatch.setName("Match with Existing Club");
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 15, 0));
 
+        when(clubEntityService.findClubByNameOrAbbreviation("Existing Club", "ABC"))
+                .thenReturn(Optional.of(existingClub));
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Match with Existing Club"), isNull()))
+                .thenReturn(Optional.of(existingMatch));
+
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
 
         // Assert
         assertNotNull(result);
-        // TODO: fix this
-//        assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 
     // =====================================================================
@@ -8747,13 +8755,15 @@ public class IpscMatchServiceTest {
         existingMatch.setName("Existing Match");
         existingMatch.setDateUpdated(LocalDateTime.of(2025, 2, 25, 10, 0, 0)); // More recent
 
+        when(matchEntityService.findMatchByNameAndScheduledDate(eq("Existing Match"), isNull()))
+                .thenReturn(Optional.of(existingMatch));
+
         // Act
         var result = ipscMatchService.initMatchResults(ipscResponse);
 
         // Assert
         assertNotNull(result);
-        // TODO: fix this
-//        assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 
     @Test

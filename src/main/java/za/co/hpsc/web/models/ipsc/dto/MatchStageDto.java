@@ -103,10 +103,14 @@ public class MatchStageDto {
      *                      such as stage number, targets, and possible points.
      */
     public void init(MatchDto matchDto, StageResponse stageResponse) {
-        if ((matchDto != null) && (stageResponse != null)) {
+        if (matchDto != null) {
+            // Initialises the stage details
+            this.match = matchDto;
+        }
+
+        if (stageResponse != null) {
             // Initialises the stage details
             this.index = stageResponse.getStageId();
-            this.match = matchDto;
             this.matchIndex = stageResponse.getMatchId();
 
             // Initialises the stage attributes

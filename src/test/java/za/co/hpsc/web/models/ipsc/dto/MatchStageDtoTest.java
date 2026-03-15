@@ -292,12 +292,12 @@ public class MatchStageDtoTest {
         dto.init(null, stageResponse);
 
         // Assert
-        assertEquals(2, dto.getStageNumber());
-        assertNull(dto.getIndex());
+        assertEquals(10, dto.getStageNumber());
+        assertEquals(10, dto.getIndex());
     }
 
     @Test
-    void testInit_whenStageResponseNullAndMatchDtoProvided_thenKeepsExistingValues() {
+    void testInit_whenStageResponseNullAndMatchDtoProvided_thenUpdatesValues() {
         // Arrange
         MatchStageDto dto = new MatchStageDto();
         dto.setStageNumber(4);
@@ -310,7 +310,7 @@ public class MatchStageDtoTest {
 
         // Assert
         assertEquals(4, dto.getStageNumber());
-        assertNull(dto.getMatch());
+        assertEquals("Test Match", dto.getMatch().getName());
     }
 
     // Basic Field Mapping
