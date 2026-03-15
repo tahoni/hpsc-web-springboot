@@ -24,12 +24,4 @@ public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetit
         }
         return matchStageCompetitorRepository.findByMatchStageIdAndCompetitorId(matchStageId, competitorId);
     }
-
-    @Override
-    public Optional<MatchStageCompetitor> findMatchStageCompetitor(Long id) {
-        if (id == null) {
-            return Optional.empty();
-        }
-        return matchStageCompetitorRepository.findById(id);
-    }
 }

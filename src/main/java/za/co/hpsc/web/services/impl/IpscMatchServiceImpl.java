@@ -25,25 +25,20 @@ import java.util.stream.Collectors;
 public class IpscMatchServiceImpl implements IpscMatchService {
     protected final ClubEntityService clubEntityService;
     protected final MatchEntityService matchEntityService;
-    protected final CompetitorEntityService competitorEntityService;
     protected final MatchStageEntityService matchStageEntityService;
     protected final MatchCompetitorEntityService matchCompetitorEntityService;
     protected final MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
-    protected final TransactionService transactionService;
-
-    public IpscMatchServiceImpl(ClubEntityService clubEntityService, MatchEntityService matchEntityService,
-                                CompetitorEntityService competitorEntityService, MatchStageEntityService matchStageEntityService,
+    public IpscMatchServiceImpl(ClubEntityService clubEntityService,
+                                MatchEntityService matchEntityService,
+                                MatchStageEntityService matchStageEntityService,
                                 MatchCompetitorEntityService matchCompetitorEntityService,
-                                MatchStageCompetitorEntityService matchStageCompetitorEntityService,
-                                TransactionService transactionService) {
+                                MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
         this.clubEntityService = clubEntityService;
         this.matchEntityService = matchEntityService;
-        this.competitorEntityService = competitorEntityService;
         this.matchStageEntityService = matchStageEntityService;
         this.matchCompetitorEntityService = matchCompetitorEntityService;
         this.matchStageCompetitorEntityService = matchStageCompetitorEntityService;
-        this.transactionService = transactionService;
     }
 
     @Override
@@ -330,27 +325,21 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Initialises a {@link MatchCompetitorRecord} object for the specified competitor based on the
-     * provided list of {@link MatchCompetitor} objects.
-     *
+     * Initialises the match competitor details for a given competitor from a list of match competitors.
      * <p>
-     * The method finds the relevant {@link MatchCompetitor} for the given competitor,
-     * extracts the necessary details, formats them, and creates a {@link MatchCompetitorRecord}.
-     * If the input {@code competitor} is null, the list {@code matchCompetitorList} is null,
-     * or no matching competitor is found in the list, the method returns an empty {@code Optional}.
-     * </p>
+     * This method filters the provided list of match competitors to find a matching competitor,
+     * extracts relevant details, and formats these details into a MatchCompetitorRecord object.
+     * If the competitor or the list is null, or no matching competitor is found, an empty Optional
+     * is returned.
      *
-     * @param competitor          the {@link Competitor} object for which a match competitor record
-     *                            needs to be initialised.
-     *                            If it is null, the method will return {@code Optional.empty()}.
-     * @param matchCompetitorList the list of {@link MatchCompetitor} objects from which the
-     *                            relevant match competitor will be identified.
-     *                            If it is null, the method will return {@code Optional.empty()}.
-     * @return an {@code Optional} containing the initialized {@link MatchCompetitorRecord}
-     * if successful, or an empty {@code Optional} if the input is invalid or
-     * no matching competitor is found.
+     * @param competitor          the competitor for whom the match competitor details are to be initialised.
+     *                            Can be null.
+     * @param matchCompetitorList the list of match competitors to search through. Can be null
+     *                            or contain null elements.
+     * @return an Optional containing a MatchCompetitorRecord populated with the initialised details
+     * of the given competitor, or an empty Optional if the competitor or list is null,
+     * or if no match is found.
      */
-    // TODO: add Javadoc
     protected Optional<MatchCompetitorRecord> initMatchCompetitor(Competitor competitor,
                                                                   List<MatchCompetitor> matchCompetitorList) {
 

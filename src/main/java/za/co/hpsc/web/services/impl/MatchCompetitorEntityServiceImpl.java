@@ -24,12 +24,4 @@ public class MatchCompetitorEntityServiceImpl implements MatchCompetitorEntitySe
         }
         return matchCompetitorRepository.findByCompetitorIdAndMatchId(competitorId, matchId);
     }
-
-    @Override
-    public Optional<MatchCompetitor> findMatchCompetitor(Long id) {
-        if (id == null) {
-            return Optional.empty();
-        }
-        return matchCompetitorRepository.findById(id);
-    }
 }

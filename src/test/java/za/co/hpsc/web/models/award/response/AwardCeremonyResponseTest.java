@@ -146,21 +146,20 @@ class AwardCeremonyResponseTest {
     @Test
     void testConstructor_withValidAwardRequestList_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
-        AwardRequest request = new AwardRequest("Award 1", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
-        request.setCeremonyDescription("Annual Awards");
-        request.setCeremonySummary("Summary 2024");
-        request.setCeremonyCategory("General");
-        request.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request.setDate(LocalDate.of(2024, 1, 1));
-        request.setImageFilePath("/path/to/img");
-        request.setDescription("Ceremony 2024 Award 1");
-        request.setSummary("Summary 2024 Award 1");
-        request.setCategory("Category 1");
-        request.setTags(List.of("Tag3", "Tag4"));
-        request.setFirstPlaceImageFileName("imga.png");
-        request.setSecondPlaceImageFileName("imgb.png");
-        request.setThirdPlaceImageFileName("imgc.png");
-        AwardRequest request1 = request;
+        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
+        request1.setCeremonyDescription("Annual Awards");
+        request1.setCeremonySummary("Summary 2024");
+        request1.setCeremonyCategory("General");
+        request1.setCeremonyTags(List.of("Tag1", "Tag2"));
+        request1.setDate(LocalDate.of(2024, 1, 1));
+        request1.setImageFilePath("/path/to/img");
+        request1.setDescription("Ceremony 2024 Award 1");
+        request1.setSummary("Summary 2024 Award 1");
+        request1.setCategory("Category 1");
+        request1.setTags(List.of("Tag3", "Tag4"));
+        request1.setFirstPlaceImageFileName("imga.png");
+        request1.setSecondPlaceImageFileName("imgb.png");
+        request1.setThirdPlaceImageFileName("imgc.png");
 
         // Arrange second award request
         AwardRequest request2 = new AwardRequest("Award 2", "Ceremony 2025",
@@ -235,38 +234,36 @@ class AwardCeremonyResponseTest {
     @Test
     void testConstructor_withValidAwardRequestListPrecedence_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
-        AwardRequest request3 = new AwardRequest("Award 1 Title", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
-        request3.setCeremonyDescription("Annual Awards");
-        request3.setCeremonySummary("Summary 2024");
-        request3.setCeremonyCategory("General");
-        request3.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request3.setDate(LocalDate.of(2024, 1, 1));
-        request3.setImageFilePath("/path/to/img1");
-        request3.setDescription(null);
-        request3.setSummary(null);
-        request3.setCategory(null);
-        request3.setTags(null);
-        request3.setFirstPlaceImageFileName("imga.png");
-        request3.setSecondPlaceImageFileName("imgb.png");
-        request3.setThirdPlaceImageFileName("imgc.png");
-        AwardRequest request1 = request3;
+        AwardRequest request1 = new AwardRequest("Award 1 Title", "Ceremony 2024", "Winner A", "Winner B", "Winner C");
+        request1.setCeremonyDescription("Annual Awards");
+        request1.setCeremonySummary("Summary 2024");
+        request1.setCeremonyCategory("General");
+        request1.setCeremonyTags(List.of("Tag1", "Tag2"));
+        request1.setDate(LocalDate.of(2024, 1, 1));
+        request1.setImageFilePath("/path/to/img1");
+        request1.setDescription(null);
+        request1.setSummary(null);
+        request1.setCategory(null);
+        request1.setTags(null);
+        request1.setFirstPlaceImageFileName("imga.png");
+        request1.setSecondPlaceImageFileName("imgb.png");
+        request1.setThirdPlaceImageFileName("imgc.png");
 
         // Arrange second award request
-        AwardRequest request = new AwardRequest("Award 2 Title", "Ceremony 2025", "Winner X", "Winner Y", "Winner Z");
-        request.setCeremonyDescription("Annual Awards");
-        request.setCeremonySummary("Summary 2025");
-        request.setCeremonyCategory("General");
-        request.setCeremonyTags(List.of("Tag1", "Tag2"));
-        request.setDate(LocalDate.of(2025, 1, 1));
-        request.setImageFilePath("/path/to/img2");
-        request.setDescription(null);
-        request.setSummary(null);
-        request.setCategory(null);
-        request.setTags(null);
-        request.setFirstPlaceImageFileName("imgx.png");
-        request.setSecondPlaceImageFileName("imgy.png");
-        request.setThirdPlaceImageFileName("imgz.png");
-        AwardRequest request2 = request;
+        AwardRequest request2 = new AwardRequest("Award 2 Title", "Ceremony 2025", "Winner X", "Winner Y", "Winner Z");
+        request2.setCeremonyDescription("Annual Awards");
+        request2.setCeremonySummary("Summary 2025");
+        request2.setCeremonyCategory("General");
+        request2.setCeremonyTags(List.of("Tag1", "Tag2"));
+        request2.setDate(LocalDate.of(2025, 1, 1));
+        request2.setImageFilePath("/path/to/img2");
+        request2.setDescription(null);
+        request2.setSummary(null);
+        request2.setCategory(null);
+        request2.setTags(null);
+        request2.setFirstPlaceImageFileName("imgx.png");
+        request2.setSecondPlaceImageFileName("imgy.png");
+        request2.setThirdPlaceImageFileName("imgz.png");
 
         // Arrange all requests in a list
         List<AwardRequest> requestList = List.of(request1, request2);

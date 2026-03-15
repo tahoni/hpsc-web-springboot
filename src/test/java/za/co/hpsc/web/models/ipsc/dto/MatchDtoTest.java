@@ -65,15 +65,14 @@ public class MatchDtoTest {
         club.setName("Test Club");
         club.setAbbreviation("TC");
 
-        IpscMatch match1 = new IpscMatch();
-        match1.setId(99L);
-        match1.setName("Championship Match");
-        match1.setScheduledDate(LocalDateTime.of(2026, 6, 15, 9, 0));
-        match1.setMatchFirearmType(FirearmType.HANDGUN);
-        match1.setMatchCategory(MatchCategory.LEAGUE);
-        match1.setClub(club);
-        match1.setDateEdited(LocalDateTime.of(2026, 6, 10, 14, 30));
-        IpscMatch match = match1;
+        IpscMatch match = new IpscMatch();
+        match.setId(99L);
+        match.setName("Championship Match");
+        match.setScheduledDate(LocalDateTime.of(2026, 6, 15, 9, 0));
+        match.setMatchFirearmType(FirearmType.HANDGUN);
+        match.setMatchCategory(MatchCategory.LEAGUE);
+        match.setClub(club);
+        match.setDateEdited(LocalDateTime.of(2026, 6, 10, 14, 30));
 
         // Act
         MatchDto dto = new MatchDto(match);

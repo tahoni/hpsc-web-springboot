@@ -24,7 +24,4 @@ public interface CompetitorEntityService {
      */
     Optional<Competitor> findCompetitor(String icsAlias, String firstName, String lastName,
                                         LocalDateTime dateTimeOfBirth);
-
-    // TODO: Javadoc
-    Optional<Competitor> findCompetitor(Long id);
 }

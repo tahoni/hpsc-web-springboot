@@ -18,14 +18,6 @@ public class ClubEntityServiceImpl implements ClubEntityService {
     }
 
     @Override
-    public Optional<Club> findClubById(Long id) {
-        if (id == null) {
-            return Optional.empty();
-        }
-        return clubRepository.findById(id);
-    }
-
-    @Override
     public Optional<Club> findClubByNameOrAbbreviation(String name, String abbreviation) {
         if (((name == null) || (name.isBlank())) && ((abbreviation == null) || (abbreviation.isBlank()))) {
             return Optional.empty();
@@ -48,21 +40,5 @@ public class ClubEntityServiceImpl implements ClubEntityService {
         });
 
         return Optional.ofNullable(club);
-    }
-
-    @Override
-    public Optional<Club> findClubByName(String name) {
-        if ((name == null) || (name.isBlank())) {
-            return Optional.empty();
-        }
-        return clubRepository.findByName(name);
-    }
-
-    @Override
-    public Optional<Club> findClubByAbbreviation(String abbreviation) {
-        if ((abbreviation == null) || (abbreviation.isBlank())) {
-            return Optional.empty();
-        }
-        return clubRepository.findByAbbreviation(abbreviation);
     }
 }
