@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.converters.ClubIdentifierConverter;
+import za.co.hpsc.web.converters.DivisionConverter;
+import za.co.hpsc.web.converters.FirearmTypeConverter;
+import za.co.hpsc.web.converters.PowerFactorConverter;
 import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
@@ -44,13 +48,13 @@ public class MatchStageCompetitor {
     @JoinColumn(name = "match_stage_id")
     private IpscMatchStage matchStage;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ClubIdentifierConverter.class)
     private ClubIdentifier matchClub;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = FirearmTypeConverter.class)
     private FirearmType firearmType;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = DivisionConverter.class)
     private Division division;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = PowerFactorConverter.class)
     private PowerFactor powerFactor;
 
     @Column(name = "score_a")

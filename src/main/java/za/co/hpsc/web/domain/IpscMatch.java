@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.converters.FirearmTypeConverter;
+import za.co.hpsc.web.converters.MatchCategoryConverter;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
@@ -50,9 +52,9 @@ public class IpscMatch {
     @Column(nullable = false)
     private LocalDateTime scheduledDate;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = FirearmTypeConverter.class)
     private FirearmType matchFirearmType;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = MatchCategoryConverter.class)
     private MatchCategory matchCategory;
 
     @OneToMany(mappedBy = "match", fetch = FetchType.EAGER)
