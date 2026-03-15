@@ -312,7 +312,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
-
         // Creates competitor response from competitor details
         String dateOfBirth = DateUtil.formatDate(competitor.getDateOfBirth(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
