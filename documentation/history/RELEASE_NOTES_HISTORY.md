@@ -215,7 +215,7 @@ full backward compatibility with the IPSC domain refactoring from version 4.0.0.
   generation
 - **Stage Entity Initialisation:** `initMatchStageEntities()` with comprehensive stage data mapping
 - **Competitor Association:** `initMatchCompetitorEntities()` and related methods for the
-  establishmenmt of complex relationships
+  establishment of complex relationships
 
 #### 📊 Advanced IPSC Match Record Generation
 
