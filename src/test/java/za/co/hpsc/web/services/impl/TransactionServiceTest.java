@@ -510,7 +510,7 @@ public class TransactionServiceTest {
         MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
         DtoMapping dtoMapping = buildMappingWithMatch(matchDto);
         dtoMapping.setMatchStageMap(singleEntryMap(stageDto.getUuid(), stageDto));
-        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping); // match entity NOT set
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping); // match entity is NOT set
 
         var result = transactionService.getIpscMatchStages(mapping);
 
@@ -533,7 +533,7 @@ public class TransactionServiceTest {
 
         assertEquals(1, result.size());
         verify(ipscMatchStageRepository, never()).findById(any());
-        assertEquals("Stage 2", result.get(0).getStageName());
+        assertEquals("Stage 2", result.getFirst().getStageName());
     }
 
     @Test
@@ -555,7 +555,7 @@ public class TransactionServiceTest {
 
         assertEquals(1, result.size());
         verify(ipscMatchStageRepository).findById(200L);
-        assertEquals(200L, result.get(0).getId());
+        assertEquals(200L, result.getFirst().getId());
     }
 
     @Test
@@ -571,7 +571,7 @@ public class TransactionServiceTest {
         var result = transactionService.getIpscMatchStages(mapping);
 
         assertEquals(1, result.size());
-        assertEquals("Stage 3", result.get(0).getStageName());
+        assertEquals("Stage 3", result.getFirst().getStageName());
     }
 
     // =====================================================================
@@ -619,7 +619,7 @@ public class TransactionServiceTest {
 
         assertEquals(1, result.size());
         verify(competitorRepository).findById(400L);
-        assertEquals(400L, result.get(0).getId());
+        assertEquals(400L, result.getFirst().getId());
     }
 
     @Test
@@ -667,7 +667,7 @@ public class TransactionServiceTest {
         var result = transactionService.getMatchCompetitors(mapping);
 
         assertEquals(1, result.size());
-        assertEquals(777L, result.get(0).getId());
+        assertEquals(777L, result.getFirst().getId());
     }
 
     @Test
@@ -685,7 +685,7 @@ public class TransactionServiceTest {
         var result = transactionService.getMatchCompetitors(mapping);
 
         assertEquals(1, result.size());
-        assertNull(result.get(0).getId());
+        assertNull(result.getFirst().getId());
     }
 
     // =====================================================================
@@ -764,7 +764,7 @@ public class TransactionServiceTest {
         var result = transactionService.getMatchStageCompetitors(targetStage, mapping);
 
         assertEquals(1, result.size());
-        assertEquals(888L, result.get(0).getId());
+        assertEquals(888L, result.getFirst().getId());
     }
 
     @Test
@@ -783,7 +783,7 @@ public class TransactionServiceTest {
         var result = transactionService.getMatchStageCompetitors(targetStage, mapping);
 
         assertEquals(1, result.size());
-        assertNull(result.get(0).getId());
+        assertNull(result.getFirst().getId());
     }
 
     // =====================================================================
