@@ -1,14 +1,15 @@
 # Release Notes History
 
 A complete archive of all release notes for the HPSC Website Backend project from version 1.0.0 through
-version 5.2.0, documenting the evolution of features, improvements, and changes across the entire project
+version 5.3.0, documenting the evolution of features, improvements, and changes across the entire project
 lifecycle.
 
 ---
 
 ## 📑 Table of Contents
 
-- [🧾 Version 5.2.0](#-version-520---february-27-2026) ← Current Release
+- [🧾 Version 5.3.0](#-version-530---march-15-2026) ← Current Release
+- [🧾 Version 5.2.0](#-version-520---february-27-2026)
 - [🧾 Version 5.1.0](#-version-510---february-25-2026)
 - [🧾 Version 5.0.0](#-version-500---february-24-2026)
 - [🧾 Version 4.1.0](#-version-410---february-13-2026)
@@ -21,6 +22,69 @@ lifecycle.
 - [🧾 Version 1.1.1](#-version-111---january-16-2026)
 - [🧾 Version 1.1.0](#-version-110---january-14-2026)
 - [🧾 Version 1.0.0](#-version-100---january-4-2026)
+
+---
+
+## 🧾 Version 5.3.0 - March 15, 2026
+
+**Theme:** Service Consolidation, Custom JPA Converters & Repository Optimisation
+
+### 📖 Overview
+
+Version 5.3.0 delivers a focused set of architectural improvements centred on service consolidation,
+type-safe JPA attribute converters, and repository query optimisation. This release removes the
+`IpscMatchResultService` and `ScoreDto` classes by consolidating their responsibilities into the
+`DomainService` and `IpscMatchService` layers; introduces six new JPA attribute converters to replace
+`@Enumerated(EnumType.STRING)` across all match-related entities; and delivers significant repository
+query enhancements for improved data fetching. The changes also transition `DtoMapping` from a class to
+a Java record construct, improving immutability and clarity throughout the mapping layer, while maintaining
+full backward compatibility.
+
+### ⭐ Key Highlights
+
+#### 🔌 Custom JPA Attribute Converters
+
+- **Six new type-safe converters:** `ClubIdentifierConverter`, `CompetitorCategoryConverter`,
+  `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`
+- **Replace `@Enumerated(EnumType.STRING)`:** Explicit, testable conversion logic per enum type
+- **No data migration required:** Database column values remain the same (string representations)
+
+#### 🏗️ Service Consolidation
+
+- **`IpscMatchResultService` removed:** Interface and implementation (379 lines) fully removed
+- **`ScoreDto` removed:** 50 lines removed; score data handled via `ScoreResponse` directly
+- **`ClubEntityService` simplified:** Reduced to single `findClubByNameOrAbbreviation` method
+- **Functionality consolidated:** Match result logic moved to `DomainService` and `IpscMatchService`
+
+#### 📦 DtoMapping as Java Record
+
+- **Converted from class to record:** Immutable record construct with compact constructor
+- **Improved test setup:** Streamlined transaction stubbing and simplified initialisation
+
+#### 🗄️ JPA Entity & Repository Improvements
+
+- **`mappedBy` added:** All bidirectional `@OneToMany` relationships now include `mappedBy`
+- **Cascade types fixed:** Correct entity lifecycle management configurations
+- **Repository queries optimised:** Scheduled date in match queries; `Set` for competitor deduplication;
+  unnecessary fetch joins removed
+
+#### 🧪 Comprehensive Test Updates
+
+- **DomainServiceTest:** 787 lines added – comprehensive coverage
+- **IpscMatchServiceTest:** 3,156 lines changed – major consolidation
+- **TransactionServiceTest:** 1,031 lines changed – enabled tests, `getFirst()` assertions
+- **IpscServiceIntegrationTest:** 113 lines changed – integration tests added
+- **Removed:** `IpscMatchResultServiceTest` (1,802 lines), `ScoreDtoTest` (643 lines)
+
+### 📊 Statistics
+
+- **~45 commits**, **59 files changed**
+- **+5,686 insertions**, **-4,613 deletions**
+- **Net: +1,073 lines**
+
+### 🔄 Backward Compatibility
+
+✅ **FULLY BACKWARD COMPATIBLE** – No breaking changes to public APIs, safe for direct upgrade
 
 ---
 

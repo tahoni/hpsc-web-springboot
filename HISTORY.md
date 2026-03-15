@@ -21,6 +21,25 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ## 📅 Historical Timeline
 
+### Version 5.3.0 (March 15, 2026)
+
+**Theme:** Service Consolidation, Custom JPA Converters & Repository Optimisation
+
+**Key Focus:**
+
+- Six new custom JPA attribute converters replacing `@Enumerated(EnumType.STRING)` for all enum types
+- Complete removal of `IpscMatchResultService` and `ScoreDto`; functionality consolidated into
+  `DomainService` and `IpscMatchService`
+- `DtoMapping` transitioned from class to Java record construct for immutability
+- Added `mappedBy` to all bidirectional `@OneToMany` entity relationships; fixed cascade types
+- Repository query optimisation: scheduled date in match queries, `Set` for competitor deduplication,
+  removed unnecessary fetch joins
+- Major test updates: DomainServiceTest (+787 lines), IpscMatchServiceTest (3,156 lines changed),
+  TransactionServiceTest (1,031 lines changed), IpscMatchResultServiceTest removed (1,802 lines),
+  ScoreDtoTest removed (643 lines)
+- Spring Boot upgraded from 4.0.3 to 4.1.0-SNAPSHOT
+- Statistics: ~45 commits, 59 files changed, +5,686 insertions, -4,613 deletions
+
 ### Version 5.2.0 (February 27, 2026)
 
 **Theme:** Match Results Processing Enhancement & Architecture Refactoring
@@ -772,6 +791,95 @@ test coverage.
 
 ---
 
+### 🔌 Phase 11: Service Consolidation & Type Safety (v5.3.0)
+
+**Duration:** March 15, 2026
+
+Focused consolidation of services, introduction of custom JPA converters, and repository query optimisation.
+
+**Key Accomplishments:**
+
+**Custom JPA Attribute Converters**
+
+- Six new `AttributeConverter` implementations replacing `@Enumerated(EnumType.STRING)`:
+    - `ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`
+    - `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`
+- Explicit, testable conversion logic per enum type
+- No data migration required; column values unchanged
+
+**Service Consolidation**
+
+- **`IpscMatchResultService` removed:** Interface and `IpscMatchResultServiceImpl` (379 lines) fully deleted
+    - Match result initialisation consolidated into `DomainService`
+    - Score and competitor processing moved to `IpscMatchService`
+- **`ScoreDto` removed:** 50 lines; score data handled directly via `ScoreResponse`
+- **`ClubEntityService` simplified:** Reduced to single `findClubByNameOrAbbreviation` method
+
+**DtoMapping as Java Record**
+
+- Transitioned `DtoMapping` from mutable class to immutable Java record
+- Compact record constructor simplifying initialisation
+- Streamlined test setup with cleaner transaction stubbing
+
+**JPA Entity Relationship Corrections**
+
+- Added `mappedBy` to all bidirectional `@OneToMany` relationships across entity hierarchy:
+    - `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`
+- Fixed cascade type configurations for correct entity lifecycle management
+- Added detailed Javadoc for `IpscMatchStage.init()` method
+
+**Repository Query Optimisation**
+
+- Added scheduled date to match retrieval for uniqueness constraints
+- Optimised competitor retrieval using `Set` for deduplication and performance
+- Removed unnecessary fetch joins across repository methods
+- Improved null handling in match stage competitor retrieval
+
+**Service Layer Refinement**
+
+- **DomainServiceImpl:** 270 lines changed – enhanced `initMatchEntities` with Javadoc; improved
+  null handling
+- **IpscMatchServiceImpl:** 546 lines changed – consolidated match results processing; removed
+  commented-out code
+- **TransactionServiceImpl:** 22 lines changed – improved null handling and list initialisation
+
+**Test Suite Overhaul**
+
+- **DomainServiceTest:** 787 lines added – comprehensive `initMatchEntities` coverage
+- **IpscMatchServiceTest:** 3,156 lines changed – comprehensive consolidation with helper methods
+- **TransactionServiceTest:** 1,031 lines changed – `getFirst()` assertions; enabled disabled tests
+- **IpscServiceIntegrationTest:** 113 lines changed – integration tests for `importWinMssCabFile`
+- **Removed:** `IpscMatchResultServiceTest` (1,802 lines), `ScoreDtoTest` (643 lines)
+
+**Spring Boot Upgrade**
+
+- Updated from Spring Boot 4.0.3 to 4.1.0-SNAPSHOT
+- Added Spring Snapshots repository configuration
+
+**Statistics**
+
+- ~45 commits
+- 59 files changed
+- +5,686 insertions
+- -4,613 deletions
+- Net: +1,073 lines
+
+**Architecture Highlights:**
+
+- Custom JPA converters for type-safe enum persistence
+- Consolidated service boundaries
+- Immutable DtoMapping record
+- Correct bidirectional JPA relationships
+
+**Technical Focus:**
+
+- Service consolidation and simplification
+- Type-safe JPA attribute conversion
+- Repository query accuracy and performance
+- Test suite refinement
+
+---
+
 ## 🎯 Major Milestones
 
 ### 🏁 Milestone 1: Project Foundation (v1.0.0)
@@ -885,6 +993,19 @@ clarity.
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null
 safety, and comprehensive test coverage across all services and utilities.
+
+---
+
+### 🔌 Milestone 11: Service Consolidation & Type Safety (v5.3.0)
+
+- ✅ Six custom JPA attribute converters for type-safe enum persistence
+- ✅ IpscMatchResultService and ScoreDto removed; functionality consolidated
+- ✅ DtoMapping converted to Java record for immutability
+- ✅ All bidirectional @OneToMany relationships corrected with mappedBy
+- ✅ Repository queries optimised with Set deduplication and scheduled date constraints
+
+**Achievement:** Focused service consolidation and type-safety improvements simplifying the service
+architecture, correcting JPA entity relationships, and improving repository query accuracy.
 
 ---
 
@@ -1041,7 +1162,40 @@ Entity Layer
 
 ---
 
-## ✨ Feature Timeline
+### v5.3.0: Consolidated Service Architecture
+
+```
+       IpscController
+            ↓
+  ┌─────────┼─────────┐
+  ↓         ↓         ↓
+Service   Domain    IPSC
+Layer     Service   Match
+  ↓       (init)    Service
+  ↓         ↓    (processing)
+  ↓    DtoToEntity   ↓
+  ↓     Mapping      ↓
+  ↓    (record)      ↓
+  ↓         ↓        ↓
+Repository Layer
+  ↓  (Set-based, scheduled date)
+Entity Layer
+  ↓
+AttributeConverters
+(ClubIdentifier, CompetitorCategory,
+ Division, FirearmType,
+ MatchCategory, PowerFactor)
+```
+
+**Characteristics:**
+
+- Consolidated service boundaries (IpscMatchResultService removed)
+- Custom JPA AttributeConverters for type-safe enum persistence
+- DtoMapping as immutable Java record
+- Correct bidirectional `@OneToMany` relationships with `mappedBy`
+- Optimised repository queries
+
+---
 
 ### 📊 Data Processing Features
 
@@ -1052,6 +1206,7 @@ Entity Layer
 - **v4.0.0:** Enhanced entity mapping, validation layers
 - **v5.0.0:** Entity initialisation framework, record generation
 - **v5.2.0:** Three-tier mapping architecture, enhanced match entity handling
+- **v5.3.0:** Custom JPA converters; optimised repository queries; `Set`-based competitor deduplication
 
 ### 🏛️ Domain Management Features
 
@@ -1062,6 +1217,8 @@ Entity Layer
 - **v4.0.0:** IpscMatch, IpscMatchStage entities
 - **v5.0.0:** Advanced initialisation patterns
 - **v5.2.0:** DtoMapping, EntityMapping, DtoToEntityMapping, MatchEntityService
+- **v5.3.0:** Custom AttributeConverters for all enums; DtoMapping as Java record; corrected
+  `@OneToMany` mappedBy declarations; ClubEntityService simplified
 
 ### 🌐 API Capabilities
 
@@ -1073,6 +1230,7 @@ Entity Layer
 - **v4.1.0:** Complete CRUD endpoints
 - **v5.0.0:** Mature API with record generation
 - **v5.2.0:** Enhanced null safety with Optional return types
+- **v5.3.0:** Consolidated service API; IpscMatchResultService removed from internal contract
 
 ### 🧪 Testing Coverage
 
@@ -1104,6 +1262,13 @@ Entity Layer
     - WinMSS Integration Tests: Comprehensive importWinMssCabFile validation and processing scenarios
     - FirearmTypeToDivisionsTest: Enhanced with comprehensive cases and improved naming
     - Test documentation improvements across all test classes
+- **v5.3.0:** Service consolidation test overhaul
+    - DomainServiceTest: 787 lines added – comprehensive `initMatchEntities` coverage
+    - IpscMatchServiceTest: 3,156 lines changed – comprehensive consolidation with helper methods
+    - TransactionServiceTest: 1,031 lines changed – enabled tests, `getFirst()` assertions
+    - IpscServiceIntegrationTest: 113 lines changed – `importWinMssCabFile` integration tests
+    - Removed IpscMatchResultServiceTest (1,802 lines) – service deleted
+    - Removed ScoreDtoTest (643 lines) – class deleted
 
 ### 📚 Documentation Quality
 
@@ -1113,6 +1278,8 @@ Entity Layer
 - **v3.0.0:** Enhanced Javadoc across codebase
 - **v5.0.0:** RELEASE_NOTES, CHANGELOG, HISTORY
 - **v5.2.0:** Comprehensive release documentation with breaking changes analysis
+- **v5.3.0:** v5.3.0 release notes, changelog entry, history update; Javadoc for
+  `IpscMatchStage.init()` and `findMatchByNameAndScheduledDate`
 
 ---
 
@@ -1166,6 +1333,17 @@ Entity Layer
 - Test suite enhancement and refactoring
 - Improved code maintainability
 - Long-term maintainability
+
+### 🔌 Consolidation Phase (v5.3.0)
+
+**Focus:** Service Consolidation, Type Safety & Repository Efficiency
+
+- Removal of unnecessary service abstractions (`IpscMatchResultService`)
+- Custom JPA converters for explicit, type-safe enum persistence
+- Immutable DtoMapping record for cleaner data flow
+- Correct JPA bidirectional relationship declarations
+- Repository query optimisation for performance and accuracy
+- Continued test suite refinement and integration test expansion
 
 ---
 
@@ -1224,14 +1402,35 @@ Entity Layer
     - Major service refactoring: 61 files, +13,567 insertions, -5,898 deletions
     - New comprehensive tests: DtoToEntityMappingTest (716 lines), TransactionServiceTest (2,000+ lines)
     - All tests consistently follow the AAA pattern with standardised naming
+9. **Service Consolidation & Type Safety (v5.3.0):** Focused consolidation and infrastructure improvements
+    - Six custom JPA AttributeConverters replacing `@Enumerated(EnumType.STRING)` for type-safe persistence
+    - `IpscMatchResultService` and `ScoreDto` fully removed; functionality consolidated into `DomainService`
+      and `IpscMatchService`
+    - `DtoMapping` transitioned to Java record for immutability and clarity
+    - All bidirectional `@OneToMany` relationships corrected with `mappedBy` declarations
+    - Repository queries optimised: `Set` deduplication, scheduled date constraints, fetch join removal
+    - Test suite overhaul: DomainServiceTest (+787 lines), IpscMatchServiceTest (3,156 lines changed)
+    - Statistics: ~45 commits, 59 files changed, +5,686 insertions, -4,613 deletions
 
 ---
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v5.2.0, the following areas are identified for future enhancement:
+Based on the evolution to v5.3.0, the following areas are identified for future enhancement:
 
-### ✅ Recently Completed (v5.2.0)
+### ✅ Recently Completed (v5.3.0)
+
+- ✅ Six custom JPA attribute converters (ClubIdentifier, CompetitorCategory, Division, FirearmType,
+  MatchCategory, PowerFactor)
+- ✅ IpscMatchResultService and ScoreDto removed; match result processing consolidated
+- ✅ DtoMapping converted to Java record for immutability
+- ✅ All @OneToMany relationships corrected with mappedBy declarations
+- ✅ Repository query optimisation (Set deduplication, scheduled date, fetch join removal)
+- ✅ DomainServiceTest comprehensive coverage (+787 lines)
+- ✅ IpscServiceIntegrationTest integration tests for importWinMssCabFile
+- ✅ Spring Boot upgraded to 4.1.0-SNAPSHOT
+
+### ✅ Previously Completed (v5.2.0 and earlier)
 
 - ✅ Three-tier mapping architecture (DtoMapping, EntityMapping, DtoToEntityMapping)
 - ✅ Enhanced match entity handling with MatchEntityService
@@ -1244,9 +1443,6 @@ Based on the evolution to v5.2.0, the following areas are identified for future 
 - ✅ All utility tests consolidated (DateUtil, NumberUtil, StringUtil, ValueUtil)
 - ✅ Test suite reorganisation and consolidation (from v5.1.0)
 - ✅ Elimination of duplicate test cases (from v5.1.0)
-- ✅ Enhanced test readability with section-based grouping (from v5.1.0)
-- ✅ Consistent test naming across large test suites (from v5.1.0)
-- ✅ Improved test maintainability through better organisation (from v5.1.0)
 
 ### 🔄 Short-term (Minor Releases)
 
@@ -1255,7 +1451,7 @@ Based on the evolution to v5.2.0, the following areas are identified for future 
 - Enhanced diagnostic logging
 - Additional integration test scenarios
 
-### 📦 Medium-term (v5.3+)
+### 📦 Medium-term (v5.4+)
 
 - Additional IPSC data format support
 - Bulk match processing capabilities
@@ -1280,31 +1476,50 @@ platform for managing practical shooting competition data. This evolution demons
 - **Continuous Improvement:** Regular releases addressing quality, features, and standards
 - **Domain Alignment:** Progressive refinement toward IPSC compliance and specialisation
 - **Architectural Excellence:** Evolution from monolithic to modular, testable architecture with three-tier
-  mapping
+  mapping and consolidated service boundaries
 - **Standards Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
 - **Code Maintainability:** Systematic refinement of test organisation, consolidation, and architectural
-  separation (v5.1.0, v5.2.0)
-- **Null Safety:** Enhanced robustness through array initialisation and Optional patterns (v5.2.0)
+  separation (v5.1.0, v5.2.0, v5.3.0)
+- **Type Safety:** Custom JPA converters ensuring explicit, testable enum persistence (v5.3.0)
+- **Service Simplicity:** Removal of unnecessary abstractions for cleaner, more cohesive architecture
+  (v5.3.0)
 
-The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, and the major
-architectural refactoring in v5.2.0 mark significant maturation points where the project demonstrates stable,
-predictable releases with clear separation of concerns. These releases serve as a solid foundation for the
-shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
+The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major
+architectural refactoring in v5.2.0, and the service consolidation with custom converters in v5.3.0 mark
+significant maturation points where the project demonstrates stable, predictable releases with clear
+separation of concerns. These releases serve as a solid foundation for the shooting club's digital
+operations, with a clear commitment to long-term maintainability and quality.
 
-Version 5.2.0 represents a significant architectural milestone with the introduction of a three-tier mapping
-system, dedicated entity services, and comprehensive test coverage that ensures robust behaviour across all
-scenarios.
+Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity
+relationships, optimised repositories, and a consolidated service architecture that reduces complexity
+without sacrificing capability.
 
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** February 27, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.2.0 (February 27, 2026)  
+**Last Updated:** March 15, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.3.0 (March 15, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for
 detailed technical information
 
-**Recent Updates (v5.2.0):**
+**Recent Updates (v5.3.0):**
+
+- Six custom JPA attribute converters replacing `@Enumerated(EnumType.STRING)` across all enum-mapped fields
+- Complete removal of `IpscMatchResultService` (interface + implementation, 379 lines) and `ScoreDto`
+  (50 lines)
+- `DtoMapping` converted from class to Java record for immutability
+- Added `mappedBy` to all bidirectional `@OneToMany` entity relationships; cascade types fixed
+- Repository queries optimised: scheduled date in match queries; `Set` deduplication for competitors;
+  unnecessary fetch joins removed
+- `ClubEntityService` simplified: removed `findClubById`, `findClubByName`, `findClubByAbbreviation`
+- Test suite overhaul: DomainServiceTest (+787 lines), IpscMatchServiceTest (3,156 lines changed),
+  TransactionServiceTest (1,031 lines changed), IpscServiceIntegrationTest (113 lines changed)
+- Removed IpscMatchResultServiceTest (1,802 lines) and ScoreDtoTest (643 lines)
+- Spring Boot upgraded from 4.0.3 to 4.1.0-SNAPSHOT
+- Statistics: ~45 commits, 59 files changed, +5,686 insertions, -4,613 deletions
+
+**Previous Update (v5.2.0):**
 
 - Three-tier mapping architecture (DtoMapping, EntityMapping, DtoToEntityMapping)
 - Enhanced match entity handling with a dedicated MatchEntityService
@@ -1327,13 +1542,4 @@ detailed technical information
   Fields Handling, Partial/Complete Data Scenarios, Edge Cases
 - All tests follow consistent `testMethod_whenCondition_thenExpectedBehavior` naming pattern
 - 100% test pass rate maintained (23 passing, 1 skipped as expected)
-
-**Previous Updates:**
-
-- Test enhancements and refactoring (IpscMatchServiceTest rename, enhanced coverage)
-- Comprehensive null handling improvements in IpscMatchResultServiceImpl
-- Integration tests for WinMSS CAB file import
-- FirearmTypeToDivisions test improvements
-- Test documentation clarity enhancements
-- Javadoc standardisation across DTOs and models (removed redundant comments, improved consistency)
 

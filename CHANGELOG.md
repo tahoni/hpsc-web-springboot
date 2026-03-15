@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## 📑 Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
+- [🧾 Version 5.3.0](#-530---2026-03-15)
 - [🧾 Version 5.2.0](#-520---2026-02-27)
 - [🧾 Version 5.1.0](#-510---2026-02-25)
 - [🧾 Version 5.0.0](#-500---2026-02-24)
@@ -46,7 +47,167 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ---
 
-## 🧾 [5.2.0] - 2026-02-27
+## 🧾 [5.3.0] - 2026-03-15
+
+### ➕ Added
+
+#### 🔌 Custom JPA Attribute Converters
+
+- **ClubIdentifierConverter:** Type-safe `AttributeConverter` for `ClubIdentifier` enum persistence
+- **CompetitorCategoryConverter:** Type-safe `AttributeConverter` for `CompetitorCategory` enum persistence
+- **DivisionConverter:** Type-safe `AttributeConverter` for `Division` enum persistence
+- **FirearmTypeConverter:** Type-safe `AttributeConverter` for `FirearmType` enum persistence
+- **MatchCategoryConverter:** Type-safe `AttributeConverter` for `MatchCategory` enum persistence
+- **PowerFactorConverter:** Type-safe `AttributeConverter` for `PowerFactor` enum persistence
+- All converters replace `@Enumerated(EnumType.STRING)` with explicit, testable conversion logic
+
+#### 🔧 Service Enhancements
+
+- **DomainService interface:** Enhanced with match result initialisation methods
+- **IpscMatchService interface:** Extended with consolidated match processing capabilities
+
+#### 🧪 Test Coverage
+
+- **DomainServiceTest:** 787 lines added – comprehensive `initMatchEntities` test cases with
+  Javadoc documentation
+- **IpscServiceIntegrationTest:** Comprehensive integration tests for `importWinMssCabFile`
+  including validation and processing scenarios
+
+### 🔄 Changed
+
+#### 🏗️ Core Services (Major Refactoring)
+
+- **DomainServiceImpl:** 270 lines changed
+    - Enhanced `initMatchEntities` method with detailed Javadoc
+    - Improved null handling throughout match entity processing
+    - Streamlined match result handling with better flow control
+    - Removed unused properties and cleaned up service implementation
+- **IpscMatchServiceImpl:** 546 lines changed
+    - Consolidated match results processing with improved logic
+    - Removed commented-out code for cleaner implementation
+    - Enhanced integration with updated DomainService
+- **TransactionServiceImpl:** 22 lines changed
+    - Enhanced null handling in transaction processing
+    - Improved list initialisation for match operations
+- **IpscServiceImpl:** 11 lines changed – minor updates
+- **MatchEntityServiceImpl:** 24 lines changed – streamlined implementation
+- **ClubEntityServiceImpl:** 24 lines changed – simplified to single method
+- **ClubEntityService:** 27 lines changed – removed unused methods
+
+#### 📦 Domain Mapping
+
+- **DtoMapping:** Converted from class to Java record construct
+    - Simplified initialisation with compact record constructor
+    - Improved immutability and clarity of DTO mapping state
+    - Streamlined transaction stubbing in tests
+- **DtoToEntityMapping:** 79 lines changed – enhanced with additional test cases and documentation
+
+#### 🗄️ Entity Models
+
+- **IpscMatch:** 14 lines changed – `mappedBy` added to `@OneToMany` annotations; cascade type updates
+- **IpscMatchStage:** 26 lines changed – `mappedBy` added; Javadoc for `init()` added; entity mapping
+  improvements
+- **MatchCompetitor:** 20 lines changed – improved bidirectional `@OneToMany` relationship with `mappedBy`
+- **MatchStageCompetitor:** 24 lines changed – enhanced mapping with proper ownership side declaration
+- **Competitor:** 11 lines changed – minor relationship updates
+- **Club:** 2 lines changed – minor updates
+
+#### 📦 DTOs
+
+- **MatchStageDto:** 95 lines changed – enhanced target/scoring handling
+- **MatchStageCompetitorDto:** 82 lines changed – improved initialisation
+- **MatchCompetitorDto:** 62 lines changed – streamlined constructor and init logic
+- **CompetitorDto:** 27 lines changed – optimised initialisation
+- **MatchDto:** 10 lines changed – minor updates
+- **ClubDto:** 6 lines changed – minor updates
+- **MatchResultsDto:** 1 line changed – minor cleanup
+
+#### 🗂️ Repository Layer
+
+- **IpscMatchRepository:** 10 lines changed – added scheduled date to queries for uniqueness constraints
+- Competitor retrieval methods updated to use `Set` for deduplication and performance
+- Match stage competitor retrieval enhanced with improved null handling
+- Removed unnecessary fetch joins across repository methods
+
+#### 🧪 Test Suites (Comprehensive Updates)
+
+- **IpscMatchServiceTest:** 3,156 lines changed – comprehensive consolidation including disabled tests,
+  helper method extraction, streamlined parameter handling and object creation
+- **TransactionServiceTest:** 1,031 lines changed – updated `getFirst()` assertions, enabled previously
+  disabled tests, streamlined transaction stubbing
+- **IpscServiceIntegrationTest:** 113 lines changed – integration tests added, previously disabled tests
+  enabled, bean definitions cleaned up
+- **DtoToEntityMappingTest:** 171 lines changed – additional test cases and documentation
+- **MatchStageCompetitorDtoTest:** 243 lines changed – updated for DTO changes
+- **MatchStageDtoTest:** 50 lines changed – updated assertions
+- **CompetitorDtoTest:** 73 lines changed – updated for DTO refactoring
+- **AwardCeremonyResponseTest:** 20 lines changed – minor updates
+- **StringUtilTest:** 71 lines changed – updated utility tests
+- **ValueUtilTest:** 2 lines changed – minor updates
+- **MatchDtoTest:** 6 lines changed – minor updates
+
+#### 🏗️ Build & Configuration
+
+- **pom.xml:** Updated Spring Boot from 4.0.3 to 4.1.0-SNAPSHOT; added Spring Snapshots repository
+- **application-dev.properties:** 13 lines changed – datasource and logging configuration updates
+- **application-test.properties:** 6 lines changed – updated test datasource configuration
+- **application.properties:** 1 line removed – minor cleanup
+- **logback-spring.xml:** 2 lines changed – logging improvements
+- **IpscConstants:** Updated competitor number and ICS alias constant values
+
+### 🐛 Fixed
+
+#### 🗄️ Entity Relationships
+
+- **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships
+  across `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, and `MatchStageCompetitor`
+- **Cascade types:** Fixed cascade type configurations for correct entity lifecycle management
+- **Null handling:** Improved null handling in entity relationship resolution across match stage
+  competitor retrieval
+
+#### 🔍 Repository Queries
+
+- **Fetch joins:** Removed unnecessary fetch joins reducing query complexity and improving performance
+- **Match retrieval:** Fixed to properly include scheduled date constraint for uniqueness
+- **Club and competitor lookup:** Improved accuracy of lookup methods
+
+#### 🧹 Code Quality
+
+- **Test assertions:** Fixed to use `getFirst()` instead of index-based access for improved clarity
+- **Test duplication:** Removed duplicate code patterns in test setups
+- **Typo:** Corrected typo in `RELEASE_NOTES_HISTORY.md` competitor association section
+
+### ⚠️ Deprecated
+
+None.
+
+### 🗑️ Removed
+
+#### 🏗️ Services & Classes
+
+- **`IpscMatchResultService` interface:** Fully removed (31 lines); functionality consolidated into
+  `DomainService` and `IpscMatchService`
+- **`IpscMatchResultServiceImpl` class:** Fully removed (379 lines); match result processing
+  consolidated into `DomainService`
+- **`ScoreDto` class:** Fully removed (50 lines); score data now handled via `ScoreResponse` directly
+
+#### 🔧 Entity Service Methods
+
+- **`ClubEntityService.findClubById()`:** Removed unused method
+- **`ClubEntityService.findClubByName()`:** Removed unused method
+- **`ClubEntityService.findClubByAbbreviation()`:** Removed unused method
+- Various unused helper methods removed from entity service implementations
+
+#### 🧪 Test Classes
+
+- **`IpscMatchResultServiceTest`:** 1,802 lines removed – service deleted, tests no longer required
+- **`ScoreDtoTest`:** 643 lines removed – `ScoreDto` deleted, tests no longer required
+
+### 🔐 Security
+
+No security-related changes in this release.
+
+---
 
 ### ➕ Added
 
