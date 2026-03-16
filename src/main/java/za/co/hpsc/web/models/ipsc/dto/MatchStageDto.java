@@ -32,6 +32,7 @@ public class MatchStageDto {
 
     @NotNull
     private MatchDto match;
+    private Integer matchIndex;
 
     @NotNull
     private Integer stageNumber = 0;
@@ -67,16 +68,7 @@ public class MatchStageDto {
         this.stageNumber = matchStageEntity.getStageNumber();
         this.rangeNumber = matchStageEntity.getRangeNumber();
 
-        // Initialises the target details
-        this.targetPaper = matchStageEntity.getTargetPaper();
-        this.targetPopper = matchStageEntity.getTargetPopper();
-        this.targetPlates = matchStageEntity.getTargetPlates();
-        this.targetDisappear = matchStageEntity.getTargetDisappear();
-        this.targetPenalty = matchStageEntity.getTargetPenalty();
-
-        // Initialises the max rounds and max points details
-        this.minRounds = matchStageEntity.getMinRounds();
-        this.maxPoints = matchStageEntity.getMaxPoints();
+        setTargetsAndScoringFromEntity(matchStageEntity);
     }
 
     /**
@@ -98,16 +90,7 @@ public class MatchStageDto {
             this.stageName = matchStageEntity.getStageName();
             this.rangeNumber = matchStageEntity.getRangeNumber();
 
-            // Initialises the target details
-            this.targetPaper = matchStageEntity.getTargetPaper();
-            this.targetPopper = matchStageEntity.getTargetPopper();
-            this.targetPlates = matchStageEntity.getTargetPlates();
-            this.targetDisappear = matchStageEntity.getTargetDisappear();
-            this.targetPenalty = matchStageEntity.getTargetPenalty();
-
-            // Initialises the max rounds and max points details
-            this.minRounds = matchStageEntity.getMinRounds();
-            this.maxPoints = matchStageEntity.getMaxPoints();
+            setTargetsAndScoringFromEntity(matchStageEntity);
         }
     }
 
@@ -120,27 +103,77 @@ public class MatchStageDto {
      *                      such as stage number, targets, and possible points.
      */
     public void init(MatchDto matchDto, StageResponse stageResponse) {
-        if ((matchDto != null) && (stageResponse != null)) {
+        if (matchDto != null) {
+            // Initialises the stage details
+            this.match = matchDto;
+        }
+
+        if (stageResponse != null) {
             // Initialises the stage details
             this.index = stageResponse.getStageId();
-            this.match = matchDto;
+            this.matchIndex = stageResponse.getMatchId();
 
             // Initialises the stage attributes
             this.stageNumber = stageResponse.getStageId();
             this.stageName = stageResponse.getStageName();
             this.rangeNumber = 0;
 
-            // Initialises the target details
-            this.targetPaper = stageResponse.getTargetPaper();
-            this.targetPopper = stageResponse.getTargetPopper();
-            this.targetPlates = stageResponse.getTargetPlates();
-            this.targetDisappear = stageResponse.getTargetDisappear();
-            this.targetPenalty = stageResponse.getTargetPenalty();
-
-            // Initialises the possible points details
-            this.minRounds = stageResponse.getMinRounds();
-            this.maxPoints = stageResponse.getMaxPoints();
+            setTargetsAndScoringFromResponse(stageResponse);
         }
+    }
+
+    private void setTargetsAndScoring(Integer targetPaper,
+                                      Integer targetPopper,
+                                      Integer targetPlates,
+                                      Integer targetDisappear,
+                                      Integer targetPenalty,
+                                      Integer minRounds,
+                                      Integer maxPoints) {
+        this.targetPaper = targetPaper;
+        this.targetPopper = targetPopper;
+        this.targetPlates = targetPlates;
+        this.targetDisappear = targetDisappear;
+        this.targetPenalty = targetPenalty;
+        this.minRounds = minRounds;
+        this.maxPoints = maxPoints;
+    }
+
+    private void setTargetsAndScoringFromEntity(IpscMatchStage stage) {
+        setTargetsAndScoring(
+                stage.getTargetPaper(),
+                stage.getTargetPopper(),
+                stage.getTargetPlates(),
+                stage.getTargetDisappear(),
+                stage.getTargetPenalty(),
+                stage.getMinRounds(),
+                stage.getMaxPoints()
+        );
+    }
+
+    private void setTargetsAndScoringFromResponse(StageResponse stageResponse) {
+        setTargetsAndScoring(
+                stageResponse.getTargetPaper(),
+                stageResponse.getTargetPopper(),
+                stageResponse.getTargetPlates(),
+                stageResponse.getTargetDisappear(),
+                stageResponse.getTargetPenalty(),
+                stageResponse.getMinRounds(),
+                stageResponse.getMaxPoints()
+        );
+    }
+
+    public void copyTargetsAndScoringTo(IpscMatchStage stageEntity) {
+        if (stageEntity == null) {
+            return;
+        }
+
+        stageEntity.setTargetPaper(this.targetPaper);
+        stageEntity.setTargetPopper(this.targetPopper);
+        stageEntity.setTargetPlates(this.targetPlates);
+        stageEntity.setTargetDisappear(this.targetDisappear);
+        stageEntity.setTargetPenalty(this.targetPenalty);
+        stageEntity.setMinRounds(this.minRounds);
+        stageEntity.setMaxPoints(this.maxPoints);
     }
 
     /**

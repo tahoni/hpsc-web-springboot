@@ -6,6 +6,8 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.services.MatchEntityService;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 // TOOD: add tests
@@ -19,10 +21,26 @@ public class MatchEntityServiceImpl implements MatchEntityService {
     }
 
     @Override
-    public Optional<IpscMatch> findMatchByName(String name) {
-        if ((name == null) || (name.isBlank())) {
+    public Optional<IpscMatch> findMatchByNameAndScheduledDate(String name, LocalDateTime scheduledDateTime) {
+        if (name == null) {
             return Optional.empty();
         }
-        return matchRepository.findByNameWithClub(name);
+        List<IpscMatch> matchList = matchRepository.findAllByName(name);
+
+        // No match found
+        if (matchList.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Exactly one match found
+        if (matchList.size() == 1) {
+            return matchList.stream().findFirst();
+        }
+
+        // More than one match found, filter by scheduled date
+        if (scheduledDateTime == null) {
+            return matchList.stream().findFirst();
+        }
+        return matchList.stream().filter(m -> m.getScheduledDate().equals(scheduledDateTime)).findFirst();
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -19,9 +18,6 @@ class HpscWebApplicationTests {
 
     @MockitoBean
     private TestEntityManager testEntityManager;
-    @MockitoBean
-    private PlatformTransactionManager transactionManager;
-
     @MockitoBean
     private TransactionService transactionService;
 

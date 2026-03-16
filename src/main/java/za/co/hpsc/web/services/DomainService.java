@@ -27,4 +27,19 @@ public interface DomainService {
      * entities such as the match, club, stages, and competitors.
      */
     Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation);
+
+    /**
+     * Initialises and maps entities related to a match based on the provided match results,
+     * match club abbreviation, and a filter club abbreviation.
+     *
+     * @param matchResults           an instance of {@code MatchResultsDto} containing detailed information
+     *                               about the match, club, competitors, stages, and related entities.
+     * @param matchClubAbbreviation  the abbreviation of the club associated with the match being processed.
+     * @param filterClubAbbreviation the abbreviation of the club used to filter matches or related entities.
+     * @return an {@link Optional} containing a {@link DtoMapping} object that includes the initialised entities,
+     * such as match, club, competitors, and stages, or an empty {@link Optional} if no mapping could be
+     * generated based on the provided input.
+     */
+    Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String matchClubAbbreviation,
+                                           String filterClubAbbreviation);
 }

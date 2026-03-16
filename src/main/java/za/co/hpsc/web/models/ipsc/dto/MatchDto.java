@@ -40,8 +40,6 @@ public class MatchDto {
     private ClubDto club;
     private Integer clubIndex;
 
-    private List<ScoreDto> scores;
-
     @NotNull
     private String name = "";
     @NotNull
@@ -162,13 +160,13 @@ public class MatchDto {
 
             // Sets the date edited to the latest score update timestamp
             if (scoreResponses != null) {
-                this.scores = scoreResponses.stream()
+                List<ScoreResponse> filteredScores = scoreResponses.stream()
                         .filter(Objects::nonNull)
                         .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), this.index))
-                        .map(ScoreDto::new)
                         .toList();
-                this.dateEdited = this.scores.stream()
-                        .map(ScoreDto::getLastModified)
+                this.dateEdited = filteredScores.stream()
+                        .map(ScoreResponse::getLastModified)
+                        .filter(Objects::nonNull)
                         .max(LocalDateTime::compareTo)
                         .orElse(LocalDateTime.now());
             } else {

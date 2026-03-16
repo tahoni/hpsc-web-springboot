@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.MatchRequest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -28,7 +27,7 @@ public class MatchResponse {
     private Integer matchId;
     private String matchName;
     @NotNull
-    private LocalDateTime matchDate = LocalDate.now().atStartOfDay();
+    private LocalDateTime matchDate;
     private Integer clubId;
 
     private Integer squadCount;

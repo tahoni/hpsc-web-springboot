@@ -17,9 +17,12 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenValidTemplateAndParameters_thenReplacesPlaceholders() {
         // Arrange
         String template = "Hello, ${name}! Welcome to ${place}.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", "Alice");
-        parameters.put("place", "Wonderland");
+        String[] entries = new String[]{"name", "Alice", "place", "Wonderland"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -32,8 +35,12 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenDuplicatePlaceholders_thenReplacesAllOccurrences() {
         // Arrange
         String template = "Hello, ${name}! ${name}, you are amazing!";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", "Alice");
+        String[] entries = new String[]{"name", "Alice"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -46,9 +53,12 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenAdjacentPlaceholders_thenReplacesCorrectly() {
         // Arrange
         String template = "Welcome, ${firstName}${lastName}!";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("firstName", "John");
-        parameters.put("lastName", "Doe");
+        String[] entries = new String[]{"firstName", "John", "lastName", "Doe"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -61,8 +71,12 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenMissingKeysInParameters_thenLeavesPlaceholdersUnchanged() {
         // Arrange
         String template = "Hello, ${name}! Welcome to ${place}.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", "Alice");
+        String[] entries = new String[]{"name", "Alice"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -75,8 +89,12 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenNonExistentPlaceholder_thenLeavesItUnchanged() {
         // Arrange
         String template = "Hello, ${missingKey}.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        String[] entries = new String[]{"key", "value"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -89,8 +107,12 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenNonPlaceholderTextOnly_thenReturnsTemplate() {
         // Arrange
         String template = "Simple text without placeholders.";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        String[] entries = new String[]{"key", "value"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -107,8 +129,12 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenEmptyTemplate_thenReturnsEmptyString() {
         // Arrange
         String template = "";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        String[] entries = new String[]{"key", "value"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -149,8 +175,12 @@ public class StringUtilTest {
     @Test
     void testFormatStringWithNamedParameters_whenNullTemplate_thenThrowsNullPointerException() {
         // Arrange
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("key", "value");
+        String[] entries = new String[]{"key", "value"};
+        Map<String, String> map = new HashMap<>();
+        for (int index = 0; index + 1 < entries.length; index += 2) {
+            map.put(entries[index], entries[index + 1]);
+        }
+        Map<String, String> parameters = map;
 
         // Act & Assert
         assertThrows(NullPointerException.class, () ->
@@ -196,11 +226,8 @@ public class StringUtilTest {
 
     @Test
     void testToString_whenNullObject_thenReturnsNull() {
-        // Arrange
-        Object obj = null;
-
         // Act
-        String result = StringUtil.toString(obj);
+        String result = StringUtil.toString(null);
 
         // Assert
         assertNull(result);

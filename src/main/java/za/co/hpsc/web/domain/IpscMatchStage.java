@@ -17,7 +17,7 @@ import java.util.List;
  * stage number, range number, and the competitors within the stage.
  *
  * <p>
- * The {@code MatchStage} class is an entity in the persistence layer, used to store and
+ * The {@code IpscMatchStage} class is an entity in the persistence layer, used to store and
  * retrieve information regarding individual stages of a match. Each stage is uniquely
  * identified and linked to a specific match.
  * It provides constructors for creating instances with specific details or using default values.
@@ -36,7 +36,7 @@ public class IpscMatchStage {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "match_id")
     private IpscMatch match;
 
@@ -58,26 +58,24 @@ public class IpscMatchStage {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "matchStage", fetch = FetchType.EAGER)
     private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
 
-    // TODOL Javadoc
+    /**
+     * Initialises the current stage with details provided by the given MatchStageDto object.
+     * The method sets the stage number, stage name, and range number and copies the targets
+     * and scoring information from the provided DTO to the current stage.
+     *
+     * @param stage the {@code MatchStageDto} object containing the stage attributes and
+     *              target/scoring details to be copied to the current stage
+     */
     public void init(MatchStageDto stage) {
         // Initialises the stage attributes
         this.stageNumber = stage.getStageNumber();
         this.stageName = stage.getStageName();
         this.rangeNumber = stage.getRangeNumber();
 
-        // Initialises the target details
-        this.targetPaper = stage.getTargetPaper();
-        this.targetPopper = stage.getTargetPopper();
-        this.targetPlates = stage.getTargetPlates();
-        this.targetDisappear = stage.getTargetDisappear();
-        this.targetPenalty = stage.getTargetPenalty();
-
-        // Initialises the possible points details
-        this.minRounds = stage.getMinRounds();
-        this.maxPoints = stage.getMaxPoints();
+        stage.copyTargetsAndScoringTo(this);
     }
 
     @Override

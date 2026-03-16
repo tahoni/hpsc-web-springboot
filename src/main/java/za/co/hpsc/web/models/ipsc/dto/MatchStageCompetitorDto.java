@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
@@ -49,7 +46,7 @@ public class MatchStageCompetitorDto {
     private MatchStageDto matchStage;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
-    private ClubDto club;
+    private ClubIdentifier club;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
@@ -94,7 +91,7 @@ public class MatchStageCompetitorDto {
             this.matchStage = new MatchStageDto(matchStageCompetitorEntity.getMatchStage());
 
             // Initialises the club details
-            this.club = new ClubDto(matchStageCompetitorEntity.getMatchStage().getMatch().getClub());
+            this.club = matchStageCompetitorEntity.getMatchClub();
 
             // Initialises the competitor and stage attributes
             this.competitorCategory = matchStageCompetitorEntity.getCompetitorCategory();
@@ -148,9 +145,6 @@ public class MatchStageCompetitorDto {
             // Initialises the competitor and stage details
             this.competitor = competitorDto;
             this.matchStage = matchStageDto;
-
-            // Initialises the competitor and stage attributes
-            this.competitorCategory = competitorDto.getDefaultCompetitorCategory();
         }
     }
 
@@ -167,6 +161,7 @@ public class MatchStageCompetitorDto {
     public void init(ScoreResponse scoreResponse, EnrolledResponse enrolledResponse,
                      MatchStageDto matchStageDto) {
 
+        // Initialises the score details
         if (scoreResponse != null) {
             // Initialises the detailed breakdown of the score
             this.scoreA = scoreResponse.getScoreA();
@@ -191,41 +186,52 @@ public class MatchStageCompetitorDto {
             this.time = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getTime());
             this.hitFactor = ValueUtil.nullAsZeroBigDecimal(scoreResponse.getHitFactor());
 
-            // Calculates the stage points and percentage based on the final score
+            // Calculates the stage points based on the final score
             this.stagePoints = BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()));
-            if ((matchStageDto != null) && (matchStageDto.getMaxPoints() != null)) {
-                this.stagePercentage = NumberUtil.calculatePercentage(this.stagePoints,
-                        BigDecimal.valueOf(matchStageDto.getMaxPoints()));
-            }
 
             // Sets the date edited to the latest score update timestamp
             this.dateEdited = scoreResponse.getLastModified();
+        }
 
-            // Initialises competitor attributes
-            this.competitorCategory = CompetitorCategory.NONE;
-            if (enrolledResponse != null) {
-                // Initialise the competitor and match details
-                this.competitorIndex = enrolledResponse.getCompetitorId();
-                this.matchStageIndex = ((matchStageDto != null) ? matchStageDto.getIndex() : null);
-                // TOOD: get DTOs
-                this.matchStage = matchStageDto;
+        if (matchStageDto != null) {
+            // Initialises the match competitor details
+            this.matchStageIndex = matchStageDto.getIndex();
 
-                // Determines the power factor based on the major power factor flag
-                this.powerFactor =
-                        (((enrolledResponse.getMajorPowerFactor() != null) && (enrolledResponse.getMajorPowerFactor())) ?
-                                PowerFactor.MAJOR : PowerFactor.MINOR);
-                this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
-                // Determines the discipline based on the division ID
-                this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
-                // Determines the firearm type from the discipline
-                this.firearmType =
-                        FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division)
-                                .orElse(null);
-                // Determines the competitor category based on the competitor category ID
-                this.competitorCategory =
-                        CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
-                                .orElse(CompetitorCategory.NONE);
+            // Calculates the stage percentage based on the final score
+            if (matchStageDto.getMaxPoints() != null) {
+                this.stagePercentage = NumberUtil.calculatePercentage(this.stagePoints,
+                        BigDecimal.valueOf(matchStageDto.getMaxPoints()));
             }
+        }
+
+        // Initialises competitor attributes
+        this.competitorCategory = CompetitorCategory.NONE;
+        if (enrolledResponse != null) {
+            // Initialises the match competitor details
+            this.competitorIndex = enrolledResponse.getCompetitorId();
+
+            // Initialise the competitor and match details
+            this.matchStageIndex = ((matchStageDto != null) ? matchStageDto.getIndex() : null);
+            this.matchStage = matchStageDto;
+
+            // Initialises the club details
+            this.club = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
+
+            // Determines the power factor based on the major power factor flag
+            this.powerFactor =
+                    (((enrolledResponse.getMajorPowerFactor() != null) && (enrolledResponse.getMajorPowerFactor())) ?
+                            PowerFactor.MAJOR : PowerFactor.MINOR);
+            this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the discipline based on the division ID
+            this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the firearm type from the discipline
+            this.firearmType =
+                    FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division)
+                            .orElse(null);
+            // Determines the competitor category based on the competitor category ID
+            this.competitorCategory =
+                    CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                            .orElse(CompetitorCategory.NONE);
         }
     }
 

@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.converters.FirearmTypeConverter;
+import za.co.hpsc.web.converters.MatchCategoryConverter;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
@@ -39,25 +41,25 @@ public class IpscMatch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "club_id")
     private Club club;
 
     @NotNull
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
     @NotNull
     @Column(nullable = false)
     private LocalDateTime scheduledDate;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = FirearmTypeConverter.class)
     private FirearmType matchFirearmType;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = MatchCategoryConverter.class)
     private MatchCategory matchCategory;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "match", fetch = FetchType.EAGER)
     private List<IpscMatchStage> matchStages = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "match", fetch = FetchType.EAGER)
     private List<MatchCompetitor> matchCompetitors = new ArrayList<>();
 
     private LocalDateTime dateCreated;

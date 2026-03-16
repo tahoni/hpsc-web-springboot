@@ -357,8 +357,6 @@ public class MatchDtoTest {
         // Assert
         assertEquals(30, dto.getIndex());
         assertEquals(LocalDateTime.of(2026, 10, 7, 15, 30), dto.getDateEdited());
-        assertNotNull(dto.getScores());
-        assertEquals(3, dto.getScores().size());
     }
 
     @Test
@@ -414,8 +412,6 @@ public class MatchDtoTest {
 
         // Assert
         assertEquals(50, dto.getIndex());
-        assertNotNull(dto.getScores());
-        assertEquals(2, dto.getScores().size());
         assertEquals(LocalDateTime.of(2026, 8, 21, 16, 0), dto.getDateEdited());
     }
 
@@ -524,8 +520,6 @@ public class MatchDtoTest {
 
         // Assert
         assertEquals(90, dto.getIndex());
-        assertNotNull(dto.getScores());
-        assertEquals(1, dto.getScores().size());
     }
 
 

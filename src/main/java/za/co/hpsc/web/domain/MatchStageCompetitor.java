@@ -6,10 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.converters.ClubIdentifierConverter;
+import za.co.hpsc.web.converters.DivisionConverter;
+import za.co.hpsc.web.converters.FirearmTypeConverter;
+import za.co.hpsc.web.converters.PowerFactorConverter;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
@@ -39,16 +40,21 @@ public class MatchStageCompetitor {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "competitor_id")
     private Competitor competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "match_stage_id")
     private IpscMatchStage matchStage;
 
+    @Convert(converter = ClubIdentifierConverter.class)
+    private ClubIdentifier matchClub;
+    @Convert(converter = FirearmTypeConverter.class)
     private FirearmType firearmType;
+    @Convert(converter = DivisionConverter.class)
     private Division division;
+    @Convert(converter = PowerFactorConverter.class)
     private PowerFactor powerFactor;
 
     @Column(name = "score_a")
@@ -93,7 +99,7 @@ public class MatchStageCompetitor {
      * and rankings, based on the data from the provided DTO object.
      *
      * @param matchStageCompetitorDto the data transfer object containing the
-     *                                values to initialize the fields of this object
+     *                                values to initialise the fields of this object
      */
     public void init(MatchStageCompetitorDto matchStageCompetitorDto) {
         // Initialises the match stage and competitor attributes
@@ -133,7 +139,9 @@ public class MatchStageCompetitor {
 
     @Override
     public String toString() {
-        return this.matchStage.toString() + ": " + this.competitor.toString();
+        String stage = (this.matchStage != null) ? this.matchStage.toString() : "Unknown";
+        String competitor = (this.competitor != null) ? this.competitor.toString() : "Unknown";
+        return stage + ": " + competitor;
     }
 
     @PrePersist

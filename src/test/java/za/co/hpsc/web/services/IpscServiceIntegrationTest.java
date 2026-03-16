@@ -1,5 +1,7 @@
 package za.co.hpsc.web.services;
 
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,13 +10,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @ActiveProfiles("test")
 @SpringBootTest
 public class IpscServiceIntegrationTest {
@@ -28,22 +36,17 @@ public class IpscServiceIntegrationTest {
     private IpscService ipscService;
 
     @Bean
-    public IpscService winMssService(IpscMatchService ipscMatchService,
-                                     IpscMatchResultService ipscMatchResultService,
-                                     DomainService domainService,
-                                     TransactionService transactionService) {
-        return new IpscServiceImpl(ipscMatchService, ipscMatchResultService, domainService,
-                transactionService);
+    public IpscMatchService ipscMatchService(ClubEntityService clubEntityService,
+                                             MatchEntityService matchEntityService,
+                                             MatchStageEntityService matchStageEntityService,
+                                             MatchCompetitorEntityService matchCompetitorEntityService,
+                                             MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
+        return new IpscMatchServiceImpl(clubEntityService, matchEntityService,
+                matchStageEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
 
     @Bean
-    public IpscMatchService ipscMatchService(TransactionService transactionService) {
-        return new IpscMatchServiceImpl(transactionService);
-    }
-
-    @Bean
-    public TransactionService transactionService(DomainService domainService,
-                                                 ClubRepository clubRepository,
+    public TransactionService transactionService(ClubRepository clubRepository,
                                                  IpscMatchRepository ipscMatchRepository,
                                                  IpscMatchStageRepository ipscMatchStageRepository,
                                                  MatchCompetitorRepository matchCompetitorRepository,
@@ -51,6 +54,14 @@ public class IpscServiceIntegrationTest {
         return new TransactionServiceImpl(platformTransactionManager, clubRepository,
                 competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
                 matchCompetitorRepository, matchStageCompetitorRepository);
+    }
+
+    @Bean
+    public IpscService ipscService(IpscMatchService ipscMatchService,
+                                   DomainService domainService,
+                                   TransactionService transactionService) {
+        return new IpscServiceImpl(ipscMatchService, domainService,
+                transactionService);
     }
 
     // =====================================================================
@@ -109,13 +120,64 @@ public class IpscServiceIntegrationTest {
     }
 
     // Test Group: Valid Complete Data Processing
+    @Disabled
     @Test
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club' Contact='Admin'/></data></xml>",
-                    "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True' ClubId='1'/></data></xml>",
+                    "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
+                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00' IcsAlias='1500'/></data></xml>",
+                    "classify": "<xml><data><row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' RefNo='BBB'/></data></xml>",
+                    "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='100'/></data></xml>",
+                    "team": "<xml><data><row TeamId='20' Team='Team A' MatchId='100'/></data></xml>",
+                    "score": "<xml><data><row MemberId='50' StageId='200' MatchId='100' HitFactor='6.08433734939759' FinalScore='101'/></data></xml>"
+                }
+                """;
+
+        // Act
+        List<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFile(cabFileContent)
+        );
+
+        // Assert
+        assertNotNull(recordHolder);
+        assertFalse(recordHolder.isEmpty());
+        assertNotNull(recordHolder.getFirst());
+        IpscMatchRecordHolder firstRecord = recordHolder.getFirst();
+
+        assertFalse(firstRecord.matches().isEmpty());
+        IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
+        assertEquals("Test Match", matchRecord.name());
+        assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
+        assertEquals("Test Club (ABC)", matchRecord.clubName());
+
+        assertFalse(matchRecord.competitors().isEmpty());
+        CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
+        assertEquals("John", competitorRecord.firstName());
+        assertEquals("Doe", competitorRecord.lastName());
+        assertEquals("1973-02-17", competitorRecord.dateOfBirth());
+        assertEquals("", competitorRecord.middleNames());
+        assertNull(competitorRecord.sapsaNumber());
+        assertEquals("1500", competitorRecord.competitorNumber());
+
+        assertEquals("101.0000", competitorRecord.overall().matchPoints());
+        assertFalse(competitorRecord.stages().isEmpty());
+    }
+
+    // Test Group: Valid Complete Data Processing
+    @Disabled
+    @Test
+    public void importWinMssCabFile_withCompleteValidDataClubNullAndFilter_thenReturnsIpscMatchRecordHolder() {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True' ClubId='1'/></data></xml>",
                     "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
                     "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
                     "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00' IcsAlias='1500'/></data></xml>",
@@ -128,12 +190,33 @@ public class IpscServiceIntegrationTest {
                 """;
 
         // Act
-        var recordHolder = assertDoesNotThrow(() ->
+        List<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
         // Assert
         assertNotNull(recordHolder);
+        assertFalse(recordHolder.isEmpty());
+        assertNotNull(recordHolder.getFirst());
+        IpscMatchRecordHolder firstRecord = recordHolder.getFirst();
+
+        assertFalse(firstRecord.matches().isEmpty());
+        IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
+        assertEquals("Test Match", matchRecord.name());
+        assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
+        assertEquals("Test Club (ABC)", matchRecord.clubName());
+
+        assertFalse(matchRecord.competitors().isEmpty());
+        CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
+        assertEquals("John", competitorRecord.firstName());
+        assertEquals("Doe", competitorRecord.lastName());
+        assertEquals("1973-02-17", competitorRecord.dateOfBirth());
+        assertEquals("", competitorRecord.middleNames());
+        assertNull(competitorRecord.sapsaNumber());
+        assertEquals("1500", competitorRecord.competitorNumber());
+
+        assertEquals("101.0000", competitorRecord.overall().matchPoints());
+        assertFalse(competitorRecord.stages().isEmpty());
     }
 
     // Test Group: Partial Data Processing

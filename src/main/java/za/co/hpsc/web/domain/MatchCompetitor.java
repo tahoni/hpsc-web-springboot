@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.converters.*;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
@@ -39,25 +37,27 @@ public class MatchCompetitor {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "competitor_id")
     private Competitor competitor;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "match_id")
     private IpscMatch match;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ClubIdentifierConverter.class)
+    private ClubIdentifier matchClub;
+    @Convert(converter = FirearmTypeConverter.class)
     private FirearmType firearmType;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = DivisionConverter.class)
     private Division division;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = PowerFactorConverter.class)
     private PowerFactor powerFactor;
 
     private BigDecimal matchPoints;
     private BigDecimal matchRanking;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = CompetitorCategoryConverter.class)
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
     private LocalDateTime dateCreated;

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+// TODO: add Javadoc comments
+// TODO: add tests
 @Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -64,12 +66,14 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
 
-            getClub(dtoMapping.getClub()).ifPresent(clubRepository::save);
-            getIpscMatch(dtoToEntityMapping).ifPresent(ipscMatchRepository::save);
+            getClub(dtoMapping.getClub(), dtoToEntityMapping).ifPresent(clubRepository::save);
 
-            if (dtoMapping.getMatch() == null) {
-                return Optional.empty();
+            Optional<IpscMatch> optionalIpscMatch = getIpscMatch(dtoToEntityMapping);
+            if (optionalIpscMatch.isEmpty()) {
+                throw new FatalException("Unable to save the match: Match is null");
             }
+            IpscMatch ipscMatch = optionalIpscMatch.get();
+            ipscMatchRepository.save(ipscMatch);
 
             List<Competitor> competitorList = getCompetitors(dtoToEntityMapping);
             if (!competitorList.isEmpty()) {
@@ -91,6 +95,7 @@ public class TransactionServiceImpl implements TransactionService {
                 matchStageCompetitorRepository.saveAll(matchStageCompetitorList);
             }
 
+            ipscMatchRepository.save(ipscMatch);
             transactionManager.commit(transaction);
             return dtoToEntityMapping.getMatchEntity();
 
@@ -101,7 +106,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    protected Optional<Club> getClub(ClubDto clubDto) {
+    protected Optional<Club> getClub(ClubDto clubDto, @NotNull DtoToEntityMapping dtoToEntityMapping) {
         if (clubDto == null) {
             return Optional.empty();
         }
@@ -111,6 +116,8 @@ public class TransactionServiceImpl implements TransactionService {
             clubEntity = clubRepository.findById(clubDto.getId()).orElseGet(Club::new);
         }
         clubEntity.init(clubDto);
+        dtoToEntityMapping.setClub(clubEntity);
+
         return Optional.of(clubEntity);
     }
 
@@ -165,8 +172,9 @@ public class TransactionServiceImpl implements TransactionService {
         competitorDtoList.forEach(competitorDto -> {
             Competitor competitorEntity = new Competitor();
             if (competitorDto.getId() != null) {
-                competitorEntity = competitorRepository.findById(competitorDto.getId())
-                        .orElseGet(Competitor::new);
+                competitorEntity =
+                        competitorRepository.findById(competitorDto.getId())
+                                .orElseGet(Competitor::new);
             }
             competitorEntity.init(competitorDto);
 

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.divisions.FirearmTypeToDivisions;
@@ -47,6 +46,7 @@ public class MatchCompetitorDto {
     private MatchDto match;
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
+    private ClubIdentifier club;
     private FirearmType firearmType;
     private Division division;
     private PowerFactor powerFactor;
@@ -70,6 +70,9 @@ public class MatchCompetitorDto {
             this.id = matchCompetitorEntity.getId();
             this.competitor = new CompetitorDto(matchCompetitorEntity.getCompetitor());
             this.match = new MatchDto(matchCompetitorEntity.getMatch());
+
+            // Initialises the club details
+            this.club = matchCompetitorEntity.getMatchClub();
 
             // Initialises the competitor attributes
             this.competitorCategory = matchCompetitorEntity.getCompetitorCategory();
@@ -112,6 +115,10 @@ public class MatchCompetitorDto {
      */
     public void init(List<ScoreResponse> scoreResponses, EnrolledResponse enrolledResponse) {
         if (scoreResponses != null) {
+            // Initialises the match competitor details
+            this.matchIndex = enrolledResponse.getMatchId();
+            this.competitorIndex = enrolledResponse.getCompetitorId();
+
             // Initializes aggregate score from multiple score responses
             this.matchPoints = BigDecimal.ZERO;
             scoreResponses.forEach(scoreResponse -> matchPoints =
@@ -125,35 +132,30 @@ public class MatchCompetitorDto {
                     .max(LocalDateTime::compareTo)
                     .orElse(LocalDateTime.now());
 
-            // Initialises the competitor
-            this.competitorCategory = CompetitorCategory.NONE;
-            if (enrolledResponse != null) {
-                // Initialise the competitor and match details
-                this.competitorIndex = enrolledResponse.getCompetitorId();
-                this.matchIndex = enrolledResponse.getMatchId();
+        }
 
-                // Initialises the club details
-                if (this.match != null) {
-                    ClubIdentifier clubIdentifier =
-                            ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
-                    if (!IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier)) {
-                        this.match.setClub(new ClubDto(clubIdentifier));
-                    }
-                }
+        // Initialises the competitor
+        this.competitorCategory = CompetitorCategory.NONE;
+        if (enrolledResponse != null) {
+            // Initialise the competitor and match details
+            this.competitorIndex = enrolledResponse.getCompetitorId();
+            this.matchIndex = enrolledResponse.getMatchId();
 
-                // Determines the power factor based on the major power factor flag
-                this.powerFactor = ((enrolledResponse.getMajorPowerFactor() != null) &&
-                        (enrolledResponse.getMajorPowerFactor()) ? PowerFactor.MAJOR : PowerFactor.MINOR);
-                // Determines the discipline based on the division ID
-                this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
-                // Determines the firearm type from the discipline
-                this.firearmType = FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division)
-                        .orElse(null);
-                // Determines the competitor category based on the competitor category ID
-                this.competitorCategory =
-                        CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
-                                .orElse(CompetitorCategory.NONE);
-            }
+            // Initialises the club details
+            this.club = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
+
+            // Determines the power factor based on the major power factor flag
+            this.powerFactor = ((enrolledResponse.getMajorPowerFactor() != null) &&
+                    (enrolledResponse.getMajorPowerFactor()) ? PowerFactor.MAJOR : PowerFactor.MINOR);
+            // Determines the discipline based on the division ID
+            this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
+            // Determines the firearm type from the discipline
+            this.firearmType = FirearmTypeToDivisions.getFirearmTypeFromDivision(this.division)
+                    .orElse(null);
+            // Determines the competitor category based on the competitor category ID
+            this.competitorCategory =
+                    CompetitorCategory.getByCode(enrolledResponse.getCompetitorCategoryId())
+                            .orElse(CompetitorCategory.NONE);
         }
     }
 

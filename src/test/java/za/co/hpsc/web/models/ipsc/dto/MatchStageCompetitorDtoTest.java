@@ -2,10 +2,7 @@ package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
 
@@ -129,10 +126,9 @@ public class MatchStageCompetitorDtoTest {
         match.setClub(club);
 
         IpscMatchStage matchStage = new IpscMatchStage();
-        matchStage.setId(5L);
+        matchStage.setId(1L);
         matchStage.setMatch(match);
         matchStage.setStageNumber(1);
-
         Competitor competitor = new Competitor();
         competitor.setId(20L);
         competitor.setFirstName("John");
@@ -142,6 +138,7 @@ public class MatchStageCompetitorDtoTest {
         entity.setId(100L);
         entity.setMatchStage(matchStage);
         entity.setCompetitor(competitor);
+        // Keep all optional fields explicitly null for this null-field mapping scenario.
         entity.setCompetitorCategory(null);
         entity.setFirearmType(null);
         entity.setDivision(null);
@@ -171,7 +168,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(100L, dto.getId());
         assertNotNull(dto.getCompetitor());
         assertNotNull(dto.getMatchStage());
-        assertNotNull(dto.getClub());
+        assertNull(dto.getClub());
         assertNull(dto.getCompetitorCategory());
         assertNull(dto.getFirearmType());
         assertNull(dto.getDivision());
@@ -243,7 +240,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(101L, dto.getId());
         assertNotNull(dto.getCompetitor());
         assertNotNull(dto.getMatchStage());
-        assertNotNull(dto.getClub());
+        assertNull(dto.getClub());
         assertEquals(CompetitorCategory.SENIOR, dto.getCompetitorCategory());
         assertEquals(FirearmType.HANDGUN, dto.getFirearmType());
         assertEquals(Division.PRODUCTION, dto.getDivision());
@@ -325,8 +322,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals("Champion", dto.getCompetitor().getLastName());
         assertNotNull(dto.getMatchStage());
         assertEquals(3, dto.getMatchStage().getStageNumber());
-        assertNotNull(dto.getClub());
-        assertEquals("Championship Club", dto.getClub().getName());
+        assertNull(dto.getClub());
         assertEquals(CompetitorCategory.JUNIOR, dto.getCompetitorCategory());
         assertEquals(FirearmType.HANDGUN, dto.getFirearmType());
         assertEquals(Division.OPEN, dto.getDivision());
@@ -397,34 +393,37 @@ public class MatchStageCompetitorDtoTest {
         match.setName("Test Match");
         match.setClub(club);
 
-        IpscMatchStage matchStage = new IpscMatchStage();
-        matchStage.setId(5L);
-        matchStage.setMatch(match);
-        matchStage.setStageNumber(1);
+        IpscMatchStage matchStage1 = new IpscMatchStage();
+        matchStage1.setId(1L);
+        matchStage1.setMatch(match);
+        matchStage1.setStageNumber(1);
+        IpscMatchStage matchStage = matchStage1;
+        Competitor competitor1 = new Competitor();
+        competitor1.setId(20L);
+        competitor1.setFirstName("Zero");
+        competitor1.setLastName("Scores");
+        Competitor competitor = competitor1;
 
-        Competitor competitor = new Competitor();
-        competitor.setId(20L);
-        competitor.setFirstName("Zero");
-        competitor.setLastName("Scores");
-
-        MatchStageCompetitor entity = new MatchStageCompetitor();
-        entity.setId(104L);
-        entity.setMatchStage(matchStage);
-        entity.setCompetitor(competitor);
-        entity.setScoreA(0);
-        entity.setScoreB(0);
-        entity.setScoreC(0);
-        entity.setScoreD(0);
-        entity.setPoints(0);
-        entity.setMisses(0);
-        entity.setPenalties(0);
-        entity.setProcedurals(0);
-        entity.setTime(BigDecimal.ZERO);
-        entity.setHitFactor(BigDecimal.ZERO);
-        entity.setStagePoints(BigDecimal.ZERO);
-        entity.setStagePercentage(BigDecimal.ZERO);
-        entity.setStageRanking(BigDecimal.ZERO);
-        entity.setDeductionPercentage(BigDecimal.ZERO);
+        MatchStageCompetitor entity2 = new MatchStageCompetitor();
+        entity2.setId(104L);
+        entity2.setMatchStage(matchStage);
+        entity2.setCompetitor(competitor);
+        MatchStageCompetitor entity1 = entity2;
+        entity1.setScoreA(0);
+        entity1.setScoreB(0);
+        entity1.setScoreC(0);
+        entity1.setScoreD(0);
+        entity1.setPoints(0);
+        entity1.setMisses(0);
+        entity1.setPenalties(0);
+        entity1.setProcedurals(0);
+        entity1.setTime(BigDecimal.ZERO);
+        entity1.setHitFactor(BigDecimal.ZERO);
+        entity1.setStagePoints(BigDecimal.ZERO);
+        entity1.setStagePercentage(BigDecimal.ZERO);
+        entity1.setStageRanking(BigDecimal.ZERO);
+        entity1.setDeductionPercentage(BigDecimal.ZERO);
+        MatchStageCompetitor entity = entity1;
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(entity);
@@ -504,21 +503,23 @@ public class MatchStageCompetitorDtoTest {
         matchStage.setMatch(match);
         matchStage.setStageNumber(1);
 
-        Competitor competitor = new Competitor();
-        competitor.setId(20L);
-        competitor.setFirstName("Max");
-        competitor.setLastName("Values");
-
-        MatchStageCompetitor entity = new MatchStageCompetitor();
-        entity.setId(106L);
-        entity.setMatchStage(matchStage);
-        entity.setCompetitor(competitor);
-        entity.setScoreA(Integer.MAX_VALUE);
-        entity.setScoreB(Integer.MAX_VALUE);
-        entity.setPoints(Integer.MAX_VALUE);
-        entity.setMisses(Integer.MAX_VALUE);
-        entity.setTime(new BigDecimal("999999.99"));
-        entity.setHitFactor(new BigDecimal("999.99"));
+        Competitor competitor1 = new Competitor();
+        competitor1.setId(20L);
+        competitor1.setFirstName("Max");
+        competitor1.setLastName("Values");
+        Competitor competitor = competitor1;
+        MatchStageCompetitor entity2 = new MatchStageCompetitor();
+        entity2.setId(106L);
+        entity2.setMatchStage(matchStage);
+        entity2.setCompetitor(competitor);
+        MatchStageCompetitor entity1 = entity2;
+        entity1.setScoreA(Integer.MAX_VALUE);
+        entity1.setScoreB(Integer.MAX_VALUE);
+        entity1.setPoints(Integer.MAX_VALUE);
+        entity1.setMisses(Integer.MAX_VALUE);
+        entity1.setTime(new BigDecimal("999999.99"));
+        entity1.setHitFactor(new BigDecimal("999.99"));
+        MatchStageCompetitor entity = entity1;
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(entity);
@@ -571,7 +572,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("John");
         competitorDto.setLastName("Doe");
-        competitorDto.setDefaultCompetitorCategory(CompetitorCategory.SENIOR);
 
         // Act
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(competitorDto, null);
@@ -582,7 +582,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals("John", dto.getCompetitor().getFirstName());
         assertEquals("Doe", dto.getCompetitor().getLastName());
         assertNull(dto.getMatchStage());
-        assertEquals(CompetitorCategory.SENIOR, dto.getCompetitorCategory());
+        assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
     // Both Parameters Provided
@@ -592,7 +592,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("Jane");
         competitorDto.setLastName("Smith");
-        competitorDto.setDefaultCompetitorCategory(CompetitorCategory.GRAND_SENIOR);
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setStageNumber(3);
@@ -609,7 +608,6 @@ public class MatchStageCompetitorDtoTest {
         assertNotNull(dto.getMatchStage());
         assertEquals(3, dto.getMatchStage().getStageNumber());
         assertEquals("Speed Stage", dto.getMatchStage().getStageName());
-        assertEquals(CompetitorCategory.GRAND_SENIOR, dto.getCompetitorCategory());
     }
 
     // CompetitorDto with Null Default Category
@@ -619,7 +617,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("Test");
         competitorDto.setLastName("User");
-        competitorDto.setDefaultCompetitorCategory(null);
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setStageNumber(1);
@@ -628,7 +625,7 @@ public class MatchStageCompetitorDtoTest {
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto(competitorDto, matchStageDto);
 
         // Assert
-        assertNull(dto.getCompetitorCategory());
+        assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
     // CompetitorDto with NONE Category
@@ -638,7 +635,6 @@ public class MatchStageCompetitorDtoTest {
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setFirstName("New");
         competitorDto.setLastName("Shooter");
-        competitorDto.setDefaultCompetitorCategory(CompetitorCategory.NONE);
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setStageNumber(1);
@@ -677,7 +673,7 @@ public class MatchStageCompetitorDtoTest {
                 competitorDto,
                 matchStageDto,
                 CompetitorCategory.SUPER_SENIOR,
-                clubDto,
+                ClubIdentifier.HPSC,
                 FirearmType.HANDGUN,
                 Division.STANDARD,
                 PowerFactor.MAJOR,
@@ -710,8 +706,7 @@ public class MatchStageCompetitorDtoTest {
         assertNotNull(dto.getMatchStage());
         assertEquals(5, dto.getMatchStage().getStageNumber());
         assertEquals(CompetitorCategory.SUPER_SENIOR, dto.getCompetitorCategory());
-        assertNotNull(dto.getClub());
-        assertEquals("All Args Club", dto.getClub().getName());
+        assertEquals(ClubIdentifier.HPSC, dto.getClub());
         assertEquals(FirearmType.HANDGUN, dto.getFirearmType());
         assertEquals(Division.STANDARD, dto.getDivision());
         assertEquals(PowerFactor.MAJOR, dto.getPowerFactor());
@@ -911,7 +906,7 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(125, dto.getPoints());
         assertEquals("42.50", dto.getTime().toString());
         assertNull(dto.getCompetitorIndex());
-        assertNull(dto.getMatchStageIndex());
+        assertEquals(3, dto.getMatchStageIndex());
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
@@ -946,21 +941,22 @@ public class MatchStageCompetitorDtoTest {
         // Arrange
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
 
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setScoreA(20);
-        scoreResponse.setScoreB(15);
-        scoreResponse.setScoreC(10);
-        scoreResponse.setScoreD(5);
-        scoreResponse.setFinalScore(175);
-        scoreResponse.setMisses(2);
-        scoreResponse.setPenalties(1);
-        scoreResponse.setProcedurals(0);
-        scoreResponse.setDeduction(false);
-        scoreResponse.setDeductionPercentage("0.00");
-        scoreResponse.setIsDisqualified(false);
-        scoreResponse.setTime("38.25");
-        scoreResponse.setHitFactor("4.58");
-        scoreResponse.setLastModified(LocalDateTime.of(2026, 2, 20, 10, 30));
+        ScoreResponse scoreResponse1 = new ScoreResponse();
+        scoreResponse1.setScoreA(20);
+        scoreResponse1.setScoreB(15);
+        scoreResponse1.setScoreC(10);
+        scoreResponse1.setScoreD(5);
+        scoreResponse1.setFinalScore(175);
+        scoreResponse1.setMisses(2);
+        scoreResponse1.setPenalties(1);
+        scoreResponse1.setProcedurals(0);
+        scoreResponse1.setDeduction(false);
+        scoreResponse1.setDeductionPercentage("0.00");
+        scoreResponse1.setIsDisqualified(false);
+        scoreResponse1.setTime("38.25");
+        scoreResponse1.setHitFactor("4.58");
+        scoreResponse1.setLastModified(LocalDateTime.of(2026, 2, 20, 10, 30));
+        ScoreResponse scoreResponse = scoreResponse1;
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setIndex(1);
@@ -994,21 +990,22 @@ public class MatchStageCompetitorDtoTest {
         // Arrange
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
 
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setScoreA(null);
-        scoreResponse.setScoreB(null);
-        scoreResponse.setScoreC(null);
-        scoreResponse.setScoreD(null);
-        scoreResponse.setFinalScore(null);
-        scoreResponse.setMisses(null);
-        scoreResponse.setPenalties(null);
-        scoreResponse.setProcedurals(null);
-        scoreResponse.setDeduction(null);
-        scoreResponse.setDeductionPercentage(null);
-        scoreResponse.setIsDisqualified(null);
-        scoreResponse.setTime(null);
-        scoreResponse.setHitFactor(null);
-        scoreResponse.setLastModified(null);
+        ScoreResponse scoreResponse1 = new ScoreResponse();
+        scoreResponse1.setScoreA(null);
+        scoreResponse1.setScoreB(null);
+        scoreResponse1.setScoreC(null);
+        scoreResponse1.setScoreD(null);
+        scoreResponse1.setFinalScore(null);
+        scoreResponse1.setMisses(null);
+        scoreResponse1.setPenalties(null);
+        scoreResponse1.setProcedurals(null);
+        scoreResponse1.setDeduction(null);
+        scoreResponse1.setDeductionPercentage(null);
+        scoreResponse1.setIsDisqualified(null);
+        scoreResponse1.setTime(null);
+        scoreResponse1.setHitFactor(null);
+        scoreResponse1.setLastModified(null);
+        ScoreResponse scoreResponse = scoreResponse1;
 
         MatchStageDto matchStageDto = new MatchStageDto();
         matchStageDto.setIndex(2);
@@ -1123,37 +1120,39 @@ public class MatchStageCompetitorDtoTest {
     @Test
     void testInit_whenAllParametersFullyPopulated_thenMapsAllFields() {
         // Arrange
-        MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
+        MatchStageCompetitorDto dto1 = new MatchStageCompetitorDto();
 
-        ScoreResponse scoreResponse = new ScoreResponse();
-        scoreResponse.setScoreA(20);
-        scoreResponse.setScoreB(15);
-        scoreResponse.setScoreC(10);
-        scoreResponse.setScoreD(5);
-        scoreResponse.setFinalScore(180);
-        scoreResponse.setMisses(1);
-        scoreResponse.setPenalties(0);
-        scoreResponse.setProcedurals(0);
-        scoreResponse.setDeduction(false);
-        scoreResponse.setDeductionPercentage("0.00");
-        scoreResponse.setIsDisqualified(false);
-        scoreResponse.setTime("40.00");
-        scoreResponse.setHitFactor("4.50");
-        scoreResponse.setLastModified(LocalDateTime.of(2026, 2, 18, 14, 45));
-
-        EnrolledResponse enrolledResponse = new EnrolledResponse();
-        enrolledResponse.setCompetitorId(25);
-        enrolledResponse.setDivisionId(1);
-        enrolledResponse.setCompetitorCategoryId(2);
-        enrolledResponse.setMajorPowerFactor(true);
-
-        MatchStageDto matchStageDto = new MatchStageDto();
-        matchStageDto.setIndex(8);
-        matchStageDto.setStageNumber(8);
-        matchStageDto.setMaxPoints(200);
+        ScoreResponse scoreResponse1 = new ScoreResponse();
+        scoreResponse1.setScoreA(20);
+        scoreResponse1.setScoreB(15);
+        scoreResponse1.setScoreC(10);
+        scoreResponse1.setScoreD(5);
+        scoreResponse1.setFinalScore(180);
+        scoreResponse1.setMisses(1);
+        scoreResponse1.setPenalties(0);
+        scoreResponse1.setProcedurals(0);
+        scoreResponse1.setDeduction(false);
+        scoreResponse1.setDeductionPercentage("0.00");
+        scoreResponse1.setIsDisqualified(false);
+        scoreResponse1.setTime("40.00");
+        scoreResponse1.setHitFactor("4.50");
+        scoreResponse1.setLastModified(LocalDateTime.of(2026, 2, 18, 14, 45));
+        ScoreResponse scoreResponse = scoreResponse1;
+        EnrolledResponse enrolledResponse1 = new EnrolledResponse();
+        enrolledResponse1.setCompetitorId(25);
+        enrolledResponse1.setDivisionId(1);
+        enrolledResponse1.setCompetitorCategoryId(2);
+        enrolledResponse1.setMajorPowerFactor(true);
+        EnrolledResponse enrolledResponse = enrolledResponse1;
+        MatchStageDto matchStageDto1 = new MatchStageDto();
+        matchStageDto1.setIndex(8);
+        matchStageDto1.setStageNumber(8);
+        matchStageDto1.setMaxPoints(200);
+        MatchStageDto matchStageDto = matchStageDto1;
 
         // Act
-        dto.init(scoreResponse, enrolledResponse, matchStageDto);
+        dto1.init(scoreResponse, enrolledResponse, matchStageDto);
+        MatchStageCompetitorDto dto = dto1;
 
         // Assert
         // Score fields
