@@ -10,10 +10,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
+import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
@@ -65,7 +65,7 @@ public class IpscServiceImpl implements IpscService {
                 .filter(Objects::nonNull)
                 .toList();
 
-        List<IpscMatch> ipscMatchList = new ArrayList<>();
+        List<MatchHolder> matchHolderList = new ArrayList<>();
         // Iterates the DTOs, maps them to entities, and persists the results
         for (MatchResultsDto matchResultsDto : ipscResultsList) {
             // Maps the DTO to an entity
@@ -74,12 +74,13 @@ public class IpscServiceImpl implements IpscService {
             if (optionalDtoToEntityMapping.isPresent()) {
                 // Persists the entity
                 DtoMapping dtoMapping = optionalDtoToEntityMapping.get();
-                transactionService.saveMatchResults(dtoMapping).ifPresent(ipscMatchList::add);
+                Optional<MatchHolder> matchHolder = transactionService.saveMatchResults(dtoMapping);
+                matchHolder.ifPresent(matchHolderList::add);
             }
 
             // Generates a match record holder for the current match and adds it to the list
             IpscMatchRecordHolder ipscMatchRecordHolder =
-                    ipscMatchService.generateIpscMatchRecordHolder(ipscMatchList);
+                    ipscMatchService.generateIpscMatchRecordHolder(matchHolderList);
             ipscMatchRecordHolders.add(ipscMatchRecordHolder);
         }
 

@@ -13,6 +13,7 @@ import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
 import za.co.hpsc.web.models.ipsc.records.MatchCompetitorRecord;
 import za.co.hpsc.web.models.ipsc.records.MatchStageCompetitorRecord;
 import za.co.hpsc.web.models.ipsc.request.*;
@@ -217,7 +218,9 @@ public class IpscMatchServiceTest {
         match.setMatchCompetitors(List.of(matchCompetitor));
         match.setMatchStages(List.of(stage));
 
-        var result = ipscMatchService.generateIpscMatchRecordHolder(List.of(match));
+        var result = ipscMatchService.generateIpscMatchRecordHolder(List.of(
+                new za.co.hpsc.web.models.ipsc.domain.MatchHolder(match, club,
+                        List.of(stage), List.of(competitor), List.of(matchCompetitor), List.of(stageCompetitor))));
 
         assertEquals(1, result.matches().size());
         assertEquals("Main Match", result.matches().getFirst().name());
@@ -363,8 +366,8 @@ public class IpscMatchServiceTest {
 
     @Test
     public void testInitIpscMatchResponse_whenNullInputs_thenEmpty() {
-        assertTrue(ipscMatchService.initIpscMatchResponse(null, new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initIpscMatchResponse(new IpscMatch(), null).isEmpty());
+        assertTrue(ipscMatchService.initIpscMatchResponse(null, new Club(), new ArrayList<>()).isEmpty());
+        assertTrue(ipscMatchService.initIpscMatchResponse(new IpscMatch(), new Club(), null).isEmpty());
     }
 
     @Test
@@ -373,12 +376,13 @@ public class IpscMatchServiceTest {
         club.setName("Holster Club");
         IpscMatch match = new IpscMatch();
         match.setName("Main Match");
-        match.setClub(club);
         match.setScheduledDate(LocalDateTime.of(2026, 3, 31, 10, 0));
 
-        Optional<?> result = ipscMatchService.initIpscMatchResponse(match, new ArrayList<>());
+        Optional<IpscMatchRecord> result = ipscMatchService.initIpscMatchResponse(match, club, new ArrayList<>());
 
         assertTrue(result.isPresent());
+        assertEquals("Main Match", result.get().name());
+        assertEquals(club.toString(), result.get().clubName());
     }
 
     @Test
@@ -509,14 +513,12 @@ public class IpscMatchServiceTest {
 
     @Test
     public void testGetMatchCompetitorSet_whenValid_thenFiltersNulls() {
-        IpscMatch match = new IpscMatch();
         MatchCompetitor mc = new MatchCompetitor();
         List<MatchCompetitor> input = new ArrayList<>();
         input.add(mc);
         input.add(null);
-        match.setMatchCompetitors(input);
 
-        Set<MatchCompetitor> result = ipscMatchService.getMatchCompetitorSet(match);
+        Set<MatchCompetitor> result = ipscMatchService.getMatchCompetitorSet(input);
 
         assertEquals(1, result.size());
     }

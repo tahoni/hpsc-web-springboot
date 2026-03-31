@@ -11,6 +11,7 @@ import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
 import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.TransactionService;
@@ -50,7 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<IpscMatch> saveMatchResults(DtoMapping dtoMapping)
+    public Optional<MatchHolder> saveMatchResults(DtoMapping dtoMapping)
             throws FatalException {
 
         if ((dtoMapping == null) || (dtoMapping.getMatch() == null)) {
@@ -61,10 +62,16 @@ public class TransactionServiceImpl implements TransactionService {
                 new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
 
         // Executes transactional match result persistence; rolls back on failure
+        MatchHolder matchHolder = new MatchHolder();
         try {
             DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
 
-            getClub(dtoMapping.getClub(), dtoToEntityMapping).ifPresent(clubRepository::save);
+            Optional<Club> optionalClub = getClub(dtoMapping.getClub(), dtoToEntityMapping);
+            if (optionalClub.isPresent()) {
+                Club club = optionalClub.get();
+                clubRepository.save(club);
+                matchHolder.setClub(club);
+            }
 
             Optional<IpscMatch> optionalIpscMatch = getIpscMatch(dtoToEntityMapping);
             if (optionalIpscMatch.isEmpty()) {
@@ -72,30 +79,35 @@ public class TransactionServiceImpl implements TransactionService {
             }
             IpscMatch ipscMatch = optionalIpscMatch.get();
             ipscMatchRepository.save(ipscMatch);
+            matchHolder.setMatch(ipscMatch);
 
             List<Competitor> competitorList = getCompetitors(dtoToEntityMapping);
             if (!competitorList.isEmpty()) {
                 competitorRepository.saveAll(competitorList);
+                matchHolder.setCompetitors(competitorList);
             }
 
             List<IpscMatchStage> ipscMatchStageList = getIpscMatchStages(dtoToEntityMapping);
             if (!ipscMatchStageList.isEmpty()) {
                 ipscMatchStageRepository.saveAll(ipscMatchStageList);
+                matchHolder.setMatchStages(ipscMatchStageList);
             }
 
             List<MatchCompetitor> matchCompetitorList = getMatchCompetitors(dtoToEntityMapping);
             if (!matchCompetitorList.isEmpty()) {
                 matchCompetitorRepository.saveAll(matchCompetitorList);
+                matchHolder.setMatchCompetitors(matchCompetitorList);
             }
 
             List<MatchStageCompetitor> matchStageCompetitorList = getAllMatchStageCompetitors(dtoToEntityMapping);
             if (!matchStageCompetitorList.isEmpty()) {
                 matchStageCompetitorRepository.saveAll(matchStageCompetitorList);
+                matchHolder.setMatchStageCompetitors(matchStageCompetitorList);
             }
 
             ipscMatchRepository.save(ipscMatch);
             transactionManager.commit(transaction);
-            return Optional.of(ipscMatch);
+            return Optional.of(matchHolder);
 
         } catch (Exception e) {
             transactionManager.rollback(transaction);
@@ -108,7 +120,7 @@ public class TransactionServiceImpl implements TransactionService {
      * Retrieves a club entity based on the provided club DTO and maps it using the given DTO to entity mapping.
      * If the club DTO is null, an empty {@code Optional} is returned.
      *
-     * @param clubDto            the data transfer object containing club information, can be null
+     * @param clubDto            the data transfer object containing club information can be null
      * @param dtoToEntityMapping a mapping utility responsible for mapping the data from the DTO to the entity
      * @return an {@code Optional} containing the club entity, or an empty {@code Optional} if the club DTO is null
      */
@@ -131,11 +143,11 @@ public class TransactionServiceImpl implements TransactionService {
      * Retrieves an optional IpscMatch entity based on the provided DtoToEntityMapping.
      * If the mapping contains a valid MatchDto with an ID, the corresponding
      * IpscMatch entity is fetched from the repository. If no entity is found, a new one
-     * is created. The entity is then initialized with the data from the MatchDto.
+     * is created. The entity is then initialised with the data from the MatchDto.
      * The updated entity is set back into the DtoToEntityMapping.
      *
      * @param dtoToEntityMapping a mapping object containing the MatchDto used to retrieve
-     *                           or initialize the IpscMatch entity
+     *                           or initialise the IpscMatch entity
      * @return an Optional containing the initialized IpscMatch entity if the MatchDto is
      * present in the mapping, otherwise an empty Optional
      */
@@ -197,7 +209,7 @@ public class TransactionServiceImpl implements TransactionService {
      *
      * @param dtoToEntityMapping an object containing the mapping between DTOs and entities,
      *                           including a list of Competitor DTOs.
-     * @return a list of Competitor entities, initialized and mapped from the provided DTOs.
+     * @return a list of Competitor entities, initialised and mapped from the provided DTOs.
      */
     protected List<Competitor> getCompetitors(@NotNull DtoToEntityMapping dtoToEntityMapping) {
 
@@ -222,7 +234,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     /**
      * Converts a list of MatchCompetitorDto objects from the given DtoToEntityMapping instance
-     * into a list of MatchCompetitor entities, initializing and mapping each entity accordingly.
+     * into a list of MatchCompetitor entities, initialising and mapping each entity accordingly.
      *
      * @param dtoToEntityMapping Object containing the mapping details and the list of
      *                           MatchCompetitorDto objects to be converted.

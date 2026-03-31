@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.records.*;
 import za.co.hpsc.web.models.ipsc.request.*;
@@ -79,25 +80,24 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList) {
-        if (ipscMatchEntityList == null) {
+    public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<MatchHolder> ipscMatchHolderList) {
+        if (ipscMatchHolderList == null) {
             return new IpscMatchRecordHolder(new ArrayList<>());
         }
 
         List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
-        for (IpscMatch match : ipscMatchEntityList.stream().filter(Objects::nonNull).toList()) {
-            // Get the match
-            match.setName(ValueUtil.nullAsEmptyString(match.getName()));
-            match.setClub(match.getClub());
+        for (MatchHolder matchHolder : ipscMatchHolderList.stream().filter(Objects::nonNull).toList()) {
+            // Get the match name
+            matchHolder.getMatch().setName(ValueUtil.nullAsEmptyString(matchHolder.getMatch().getName()));
 
             // Get the match stages
-            Set<IpscMatchStage> matchStageSet = new HashSet<>(match.getMatchStages());
+            Set<IpscMatchStage> matchStageSet = new HashSet<>(matchHolder.getMatchStages());
 
             // Get the match stage competitors
             Set<MatchStageCompetitor> matchStageCompetitorSet =
                     getMatchStageCompetitorSet(new ArrayList<>(matchStageSet));
             Set<MatchCompetitor> matchCompetitorSet =
-                    getMatchCompetitorSet(match);
+                    getMatchCompetitorSet(matchHolder.getMatchCompetitors());
 
             // Get the match competitors
             Set<Competitor> competitorSet = new HashSet<>(getCompetitorSet(matchCompetitorSet));
@@ -113,7 +113,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 }
             }
 
-            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(match, new ArrayList<>(competitors));
+            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(matchHolder.getMatch(),
+                    matchHolder.getClub(), new ArrayList<>(competitors));
             ipscResponse.ifPresent(ipscMatchRecordList::add);
         }
 
@@ -270,19 +271,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *
      * @param match       The IPSC match object containing match details.
      *                    If null, an empty Optional is returned.
+     * @param club        The club object associated with the match.
      * @param competitors A list of competitor match records associated with the match.
      *                    If null, an empty Optional is returned.
      * @return An Optional containing the initialized {@link IpscMatchRecord} if both inputs
      * are non-null, otherwise an empty Optional.
      */
-    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match,
+    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, Club club,
                                                               List<CompetitorMatchRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
 
         // Initialises match details
-        String clubName = ((match.getClub() != null) ? match.getClub().toString() : "");
+        String clubName = ((club != null) ? club.toString() : "");
 
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
@@ -471,13 +473,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .collect(Collectors.toSet());
     }
 
-    protected Set<MatchCompetitor> getMatchCompetitorSet(IpscMatch match) {
-        if (match == null) {
+    /**
+     * Retrieves a set of unique, non-null MatchCompetitor objects from the input list.
+     *
+     * @param matchCompetitors the list of MatchCompetitor objects, which may include null values
+     * @return a Set containing unique, non-null MatchCompetitor objects;
+     * if the input list is null, an empty Set is returned
+     */
+    protected Set<MatchCompetitor> getMatchCompetitorSet(List<MatchCompetitor> matchCompetitors) {
+        if (matchCompetitors == null) {
             return new HashSet<>();
         }
 
         // Gets competitors from the match
-        return match.getMatchCompetitors().stream()
+        return matchCompetitors.stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }

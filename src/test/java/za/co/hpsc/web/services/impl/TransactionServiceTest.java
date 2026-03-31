@@ -11,6 +11,7 @@ import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
 import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.repositories.*;
 
@@ -96,7 +97,7 @@ public class TransactionServiceTest {
 
     @Test
     public void testSaveMatchResults_whenDtoMappingIsNull_thenReturnsEmptyOptional() {
-        Optional<IpscMatch> result = assertDoesNotThrow(
+        Optional<MatchHolder> result = assertDoesNotThrow(
                 () -> transactionService.saveMatchResults(null));
 
         assertNotNull(result);
@@ -109,7 +110,7 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(null);
 
-        Optional<IpscMatch> result = assertDoesNotThrow(
+        Optional<MatchHolder> result = assertDoesNotThrow(
                 () -> transactionService.saveMatchResults(dtoMapping));
 
         assertNotNull(result);
@@ -125,10 +126,11 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         stubTransactionStart();
 
-        Optional<IpscMatch> result = transactionService.saveMatchResults(dtoMapping);
+        Optional<MatchHolder> result = transactionService.saveMatchResults(dtoMapping);
 
         assertTrue(result.isPresent());
-        assertEquals("Test Match", result.get().getName());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Test Match", result.get().getMatch().getName());
         verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
         verify(transactionManager).commit(transactionStatus);
         verify(transactionManager, never()).rollback(any());
@@ -164,10 +166,11 @@ public class TransactionServiceTest {
         when(ipscMatchRepository.findById(10L)).thenReturn(Optional.of(existingMatch));
         stubTransactionStart();
 
-        Optional<IpscMatch> result = transactionService.saveMatchResults(dtoMapping);
+        Optional<MatchHolder> result = transactionService.saveMatchResults(dtoMapping);
 
         assertTrue(result.isPresent());
-        assertEquals("Test Match", result.get().getName());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Test Match", result.get().getMatch().getName());
         verify(ipscMatchRepository).findById(10L);
     }
 

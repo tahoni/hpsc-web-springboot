@@ -1,7 +1,7 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
 import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
@@ -38,12 +38,12 @@ public interface IpscMatchService {
      * This method processes the input list and structures the data into a record holder
      * for convenient access and manipulation.
      *
-     * @param ipscMatchEntityList a list of {@code IpscMatch} entities representing the matches
+     * @param ipscMatchHolderList a list of {@code MatchHolder} objcets representing the matches
      *                            to be included in the generated {@code IpscMatchRecordHolder}.
      * @return an {@code IpscMatchRecordHolder} containing a list of structured match records
      * generated from the provided {@code IpscMatch} entities.
      */
-    IpscMatchRecordHolder generateIpscMatchRecordHolder(List<IpscMatch> ipscMatchEntityList);
+    IpscMatchRecordHolder generateIpscMatchRecordHolder(List<MatchHolder> ipscMatchHolderList);
 
     /*
      * Initialises and returns the match results data transfer object (DTO) based on the
