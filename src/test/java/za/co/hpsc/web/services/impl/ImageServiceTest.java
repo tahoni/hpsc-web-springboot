@@ -19,20 +19,16 @@ class ImageServiceTest {
     @InjectMocks
     private ImageServiceImpl imageService;
 
-    // =====================================================================
-    // Tests for processCsv - Valid Data Processing
-    // =====================================================================
+    // Test Group: processCsv - Valid Data Processing
 
     @Test
     public void testProcessCsv_whenValidCsvData_thenReturnsImageResponseHolder() {
-        // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
                 Image 1,Summary 1,Description 1,Category 1,Tag1|Tag2,/path/to/image1,image1.png
                 Image 2,Summary 2,Description 2,Category 2,Tag3,/path/to/image2,image2.png
                 """;
 
-        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.processCsv(csvData));
 
@@ -66,18 +62,14 @@ class ImageServiceTest {
         // Arrange - CSV with only header, no data rows
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
-        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.processCsv(emptyCsvData));
 
-        // Assert
         List<ImageResponse> responses = responseHolder.getImages();
         assertTrue(responses.isEmpty());
     }
 
-    // =====================================================================
-    // Tests for processCsv - Input Validation and Error Handling
-    // =====================================================================
+    // Test Group: processCsv - Input Validation and Error Handling
 
     @Test
     public void testProcessCsv_whenInvalidCsvData_thenThrowsValidationException() {
@@ -87,14 +79,12 @@ class ImageServiceTest {
                 Summary 1
                 """;
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.processCsv(invalidCsvData));
     }
 
     @Test
     public void testProcessCsv_whenNullCsvData_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.processCsv(null));
     }
@@ -104,24 +94,19 @@ class ImageServiceTest {
         // Arrange - Invalid CSV format
         String csvData = "Invalid CSV Format";
 
-        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.processCsv(csvData));
     }
 
-    // =====================================================================
-    // Tests for readImages - Valid Data Processing
-    // =====================================================================
+    // Test Group: readImages - Valid Data Processing
 
     @Test
     public void testReadImages_whenValidCsv_thenReturnsImageRequestList() {
-        // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
                 Image 1,Summary 1,Description 1,Category 1,Tag1|Tag2,/path/to/image1,image1.png
                 Image 2,Summary 2,Description 2,Category 2,Tag3|Tag4,/path/to/image2,image2.png
                 """;
 
-        // Act
         List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
                 imageService.readImages(csvData));
 
@@ -163,7 +148,6 @@ class ImageServiceTest {
                 Summary 2,Image 2,Description 2,Category 2,Tag3|Tag4,/path/to/image2,image2.png
                 """;
 
-        // Act
         List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
                 imageService.readImages(csvData));
 
@@ -207,7 +191,6 @@ class ImageServiceTest {
             largeCsv.append(",path/to/image").append(i).append(",image").append(i).append(".png\n");
         }
 
-        // Act
         List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
                 imageService.readImages(largeCsv.toString()));
 
@@ -237,18 +220,14 @@ class ImageServiceTest {
         // Arrange - CSV with only header, no data rows
         String emptyCsvData = "title,summary,description,category,tags,filePath,fileName\n";
 
-        // Act
         List<ImageRequest> imageRequests = assertDoesNotThrow(() ->
                 imageService.readImages(emptyCsvData));
 
-        // Assert
         assertNotNull(imageRequests);
         assertTrue(imageRequests.isEmpty());
     }
 
-    // =====================================================================
-    // Tests for readImages - Input Validation and Error Handling
-    // =====================================================================
+    // Test Group: readImages - Input Validation and Error Handling
 
     @Test
     public void testReadImages_whenMissingCsvColumns_thenThrowsValidationException() {
@@ -259,7 +238,6 @@ class ImageServiceTest {
                 Image 2,/path/to/image2,image2.png
                 """;
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(csvData));
     }
@@ -272,7 +250,6 @@ class ImageServiceTest {
                 Invalid Row Without Correct Columns
                 """;
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(invalidCsvData));
     }
@@ -285,7 +262,6 @@ class ImageServiceTest {
                 value1,value2
                 """;
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(invalidCsvStructure));
     }
@@ -297,46 +273,38 @@ class ImageServiceTest {
                 Invalid CSV With One Column and no Header
                 """;
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(invalidCsv));
     }
 
     @Test
     public void testReadImages_whenBlankCsv_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages("    "));
     }
 
     @Test
     public void testReadImages_whenEmptyStringCsv_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(""));
     }
 
     @Test
     public void testReadImages_whenNullCsv_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(null));
     }
 
-    // =====================================================================
-    // Tests for mapImages - Valid Data Processing
-    // =====================================================================
+    // Test Group: mapImages - Valid Data Processing
 
     @Test
     public void testMapImages_whenValidImageRequestList_thenReturnsImageResponseList() {
-        // Arrange
         ImageRequest request1 = new ImageRequest("Image 1", "Summary 1", "Description 1",
                 "Category 1", List.of("Tag1", "Tag2"), "/path/to/image1", "image1.png");
         ImageRequest request2 = new ImageRequest("Image 2", "Summary 2", "Description 2",
                 "Category 2", List.of("Tag3", "Tag4"), "/path/to/image2", "image2.png");
         List<ImageRequest> imageRequestList = List.of(request1, request2);
 
-        // Act
         List<ImageResponse> imageResponseList =
                 imageService.mapImages(imageRequestList);
 
@@ -363,26 +331,20 @@ class ImageServiceTest {
         assertTrue(secondTags.containsAll(List.of("Tag4", "Tag3")));
     }
 
-    // =====================================================================
-    // Tests for mapImages - Input Validation and Error Handling
-    // =====================================================================
+    // Test Group: mapImages - Input Validation and Error Handling
 
     @Test
     public void testMapImages_whenEmptyImageRequestList_thenReturnsEmptyList() {
-        // Act
         List<ImageResponse> imageResponseList =
                 imageService.mapImages(List.of());
 
-        // Assert
         assertNotNull(imageResponseList);
         assertTrue(imageResponseList.isEmpty());
     }
 
     @Test
     public void testMapImages_whenNullImageRequestList_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.mapImages(null));
     }
 }
-

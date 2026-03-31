@@ -37,14 +37,10 @@ public class IpscServiceTest {
     @InjectMocks
     private IpscServiceImpl ipscService;
 
-    // =====================================================================
-    // Tests for importWinMssCabFile - Public wrapper method tests
-    // =====================================================================
-
+    // Test Group: importWinMssCabFile - Public wrapper method tests
     // Test Group: Null/Empty/Blank Input Handling
     @Test
     public void testImportWinMssCabFile_whenCabFileIsNull_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(null)
         );
@@ -59,7 +55,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFile_whenCabFileIsEmpty_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("")
         );
@@ -74,7 +69,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFile_whenCabFileIsBlank_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("   \t\n  ")
         );
@@ -90,10 +84,8 @@ public class IpscServiceTest {
     // Test Group: Invalid JSON Format Handling
     @Test
     public void testImportWinMssCabFile_whenJsonIsInvalid_thenThrowsFatalException() {
-        // Arrange
         String invalidJson = "This is not valid JSON at all";
 
-        // Act & Assert
         assertThrows(FatalException.class, () ->
                 ipscService.importWinMssCabFile(invalidJson)
         );
@@ -108,13 +100,11 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFile_whenJsonHasMissingBraces_thenThrowsFatalException() {
-        // Arrange
         String malformedJson = """
                 {
                     "club": "<xml><data><row ClubId='1'/></data></xml>"
                 """;
 
-        // Act & Assert
         assertThrows(FatalException.class, () ->
                 ipscService.importWinMssCabFile(malformedJson)
         );
@@ -125,7 +115,6 @@ public class IpscServiceTest {
     // Test Group: Valid Complete Data Processing
     @Test
     public void testImportWinMssCabFile_whenCompleteValidData_thenReturnsIpscMatchRecordHolder() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club' Contact='Admin'/></data></xml>",
@@ -148,12 +137,10 @@ public class IpscServiceTest {
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
-        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertNotNull(recordHolder);
         assertDoesNotThrow(() -> {
             verify(ipscMatchService, times(1)).mapMatchResults(any());
@@ -188,12 +175,10 @@ public class IpscServiceTest {
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
-        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertNotNull(recordHolder);
         verify(ipscMatchService, times(1)).mapMatchResults(any());
     }
@@ -201,7 +186,6 @@ public class IpscServiceTest {
     // Test Group: Empty XML Sections Handling
     @Test
     public void testImportWinMssCabFile_whenEmptyXmlSections_thenProcessesWithEmptyData() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -225,12 +209,10 @@ public class IpscServiceTest {
         when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
                 .thenReturn(Optional.empty());
 
-        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertNotNull(recordHolders);
         assertTrue(recordHolders.isEmpty());
         assertDoesNotThrow(() -> {
@@ -243,7 +225,6 @@ public class IpscServiceTest {
     // Test Group: Multiple Records Processing
     @Test
     public void testImportWinMssCabFile_whenMultipleMatches_thenProcessesAllMatches() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Club A'/></data></xml>",
@@ -270,12 +251,10 @@ public class IpscServiceTest {
         when(ipscMatchService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
         when(ipscMatchService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
 
-        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertNotNull(recordHolder);
         assertDoesNotThrow(() -> {
             verify(ipscMatchService, times(1)).mapMatchResults(any());
@@ -287,7 +266,6 @@ public class IpscServiceTest {
     // Test Group: Error Handling During Processing
     @Test
     public void testImportWinMssCabFile_whenMapMatchResultsReturnsNull_thenThrowsValidationException() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1'/></data></xml>",
@@ -305,7 +283,6 @@ public class IpscServiceTest {
 
         when(ipscMatchService.mapMatchResults(any())).thenReturn(null);
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
@@ -317,7 +294,6 @@ public class IpscServiceTest {
     // Test Group: Mixed Match Results (Some Present, Some Empty)
     @Test
     public void testImportWinMssCabFile_whenMixedMatchResults_thenProcessesPresentResultsOnly() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC'/></data></xml>",
@@ -344,12 +320,10 @@ public class IpscServiceTest {
         when(ipscMatchService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
         when(ipscMatchService.initMatchResults(ipscResponse2)).thenReturn(Optional.empty());
 
-        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertNotNull(recordHolder);
         assertDoesNotThrow(() -> {
             verify(ipscMatchService, times(2)).initMatchResults(any(IpscResponse.class));
@@ -361,7 +335,6 @@ public class IpscServiceTest {
     // Test Group: Empty Strings vs Null Values in XML
     @Test
     public void testImportWinMssCabFile_whenEmptyStringXmlFields_thenProcessesSuccessfully() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='' Club=''/></data></xml>",
@@ -384,12 +357,10 @@ public class IpscServiceTest {
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
-        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertNotNull(recordHolder);
         verify(ipscMatchService, times(1)).mapMatchResults(any());
     }
@@ -397,7 +368,6 @@ public class IpscServiceTest {
     // Test Group: Special Characters and Unicode Handling
     @Test
     public void testImportWinMssCabFile_whenSpecialCharactersInData_thenProcessesSuccessfully() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club &amp; Co.'/></data></xml>",
@@ -420,24 +390,18 @@ public class IpscServiceTest {
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
-        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertNotNull(recordHolder);
         verify(ipscMatchService, times(1)).mapMatchResults(any());
     }
 
-    // =====================================================================
-    // Tests for importWinMssCabFileContent - valid/invalid file processing
-    // =====================================================================
-
+    // Test Group: importWinMssCabFileContent - valid/invalid file processing
     // Test Group: Null/Empty/Blank Input Validation
     @Test
     public void testImportWinMssCabFileContent_whenValidCabFile_thenReturnsMatches() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
@@ -461,11 +425,9 @@ public class IpscServiceTest {
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
-        // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFileContent(cabFileContent));
 
-        // Assert
         assertNotNull(response);
         assertEquals(1, response.getMatches().size());
         assertEquals(matchResultsDto, response.getMatches().getFirst());
@@ -477,12 +439,10 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenNullCabFileContent_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(null)
         );
 
-        // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(ipscMatchService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
@@ -490,12 +450,10 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenEmptyCabFileContent_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("")
         );
 
-        // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(ipscMatchService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
@@ -503,7 +461,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenBlankCabFileContent_thenThrowsValidationException() {
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("   ")
         );
@@ -515,7 +472,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenNullResponseHolder_thenThrowsValidationException() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
@@ -531,12 +487,10 @@ public class IpscServiceTest {
 
         when(ipscMatchService.mapMatchResults(any())).thenReturn(null);
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
-        // Assert
         assertDoesNotThrow(() -> {
             verify(ipscMatchService, times(1)).mapMatchResults(any());
             verify(ipscMatchService, never()).initMatchResults(any());
@@ -546,7 +500,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenMultipleMatches_thenProcessesAllMatches() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
@@ -571,11 +524,9 @@ public class IpscServiceTest {
         when(ipscMatchService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
         when(ipscMatchService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
 
-        // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFileContent(cabFileContent));
 
-        // Assert
         assertNotNull(response);
         assertEquals(2, response.getMatches().size());
         assertTrue(response.getMatches().contains(matchResults1));
@@ -587,7 +538,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenEmptyMatchResults_thenSkipsSaving() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
@@ -607,11 +557,9 @@ public class IpscServiceTest {
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
 
-        // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFileContent(cabFileContent));
 
-        // Assert
         assertNotNull(response);
         assertTrue(response.getMatches().isEmpty());
 
@@ -622,15 +570,12 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenInvalidJson_thenThrowsFatalException() {
-        // Arrange
         String invalidCabFileContent = "This is not valid JSON content";
 
-        // Act & Assert
         assertThrows(FatalException.class, () ->
                 ipscService.importWinMssCabFile(invalidCabFileContent)
         );
 
-        // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(ipscMatchService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
@@ -638,7 +583,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenInvalidXml_thenThrowsValidationException() {
-        // Arrange
         String invalidCabFileContent = """
                 {
                     "club": "This is not valid XML content",
@@ -652,12 +596,10 @@ public class IpscServiceTest {
                 }
                 """;
 
-        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(invalidCabFileContent)
         );
 
-        // Assert
         verify(ipscMatchService, never()).mapMatchResults(any());
         verify(ipscMatchService, never()).initMatchResults(any());
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any()));
@@ -665,7 +607,6 @@ public class IpscServiceTest {
 
     @Test
     public void testImportWinMssCabFileContent_whenCabFile_thenReturnsMatch() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
@@ -689,11 +630,9 @@ public class IpscServiceTest {
         when(ipscMatchService.mapMatchResults(any())).thenReturn(ipscResponseHolder);
         when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
-        // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFileContent(cabFileContent));
 
-        // Assert
         assertNotNull(response);
         assertEquals(1, response.getMatches().size());
         assertEquals(matchResultsDto, response.getMatches().getFirst());
@@ -703,13 +642,9 @@ public class IpscServiceTest {
 //        assertDoesNotThrow(() -> verify(transactionService, times(1)).saveMatchResults(any(DtoToEntityMapping.class)));
     }
 
-    // =====================================================================
-    // Tests for readIpscRequests - IPSC request parsing with XML
-    // =====================================================================
-
+    // Test Group: readIpscRequests - IPSC request parsing with XML
     @Test
     public void testReadIpscRequests_whenValidJson_thenReturnsIpscRequestHolder() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club'/></data></xml>",
@@ -725,10 +660,8 @@ public class IpscServiceTest {
                 }
                 """;
 
-        // Act
         var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.getClubs().size());
         assertEquals("ABC", result.getClubs().getFirst().getClubCode());
@@ -799,7 +732,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadIpscRequests_whenEmptyXmlSectionData_thenReturnsEmptyLists() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -813,10 +745,8 @@ public class IpscServiceTest {
                 }
                 """;
 
-        // Act
         var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.getClubs().isEmpty());
         assertTrue(result.getMatches().isEmpty());
@@ -831,7 +761,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadIpscRequests_whenEmptyAndNotEmptyXml_thenReturnsIpscRequestHolder() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -845,10 +774,8 @@ public class IpscServiceTest {
                 }
                 """;
 
-        // Act
         var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
 
-        // Assert
         assertNotNull(result);
         assertEquals(0, result.getClubs().size());
         assertEquals(1, result.getMatches().size());
@@ -885,7 +812,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadIpscRequests_whenMissingXml_thenReturnsIpscRequestHolder() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -899,10 +825,8 @@ public class IpscServiceTest {
                 }
                 """;
 
-        // Act
         var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
 
-        // Assert
         assertNotNull(result);
         assertEquals(0, result.getClubs().size());
         assertEquals(1, result.getMatches().size());
@@ -919,7 +843,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadIpscRequests_whenEmptyXmlSections_thenReturnsEmptyLists() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": "",
@@ -935,10 +858,8 @@ public class IpscServiceTest {
                 }
                 """;
 
-        // Act
         var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.getClubs().isEmpty());
         assertTrue(result.getMatches().isEmpty());
@@ -954,7 +875,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadIpscRequests_whenNullXmlSections_thenReturnsEmptyLists() {
-        // Arrange
         String cabFileContent = """
                 {
                     "club": null,
@@ -970,10 +890,8 @@ public class IpscServiceTest {
                 }
                 """;
 
-        // Act
         var result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.getClubs().isEmpty());
         assertTrue(result.getMatches().isEmpty());
@@ -989,24 +907,17 @@ public class IpscServiceTest {
 
     @Test
     public void testReadIpscRequests_whenInvalidJson_thenThrowsException() {
-        // Arrange
         String cabFileContent = "Invalid JSON Content";
 
-        // Act & Assert
         assertThrows(FatalException.class, () ->
                 ipscService.readIpscRequests(cabFileContent)
         );
     }
 
-    // =====================================================================
-    // Tests for readRequests - Generic XML to request object parsing
-    // =====================================================================
-
-    // --- Existing readRequests tests (original) ---
-
+    // Test Group: readRequests - Generic XML to request object parsing
+    // Test Group: Existing readRequests tests (original)
     @Test
     public void testReadRequests_whenValidXml_thenReturnsRequests() {
-        // Arrange
         String xmlData = """
                     <xml>
                         <data>
@@ -1024,11 +935,9 @@ public class IpscServiceTest {
                     </xml>
                 """;
 
-        // Act
         List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
-        // Assert
         assertNotNull(clubs);
         assertEquals(2, clubs.size());
 
@@ -1059,7 +968,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenValidNamespaceClubXml_thenReturnsClubRequest() {
-        // Arrange
         String xmlData = """
                     <xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
                       xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
@@ -1080,11 +988,9 @@ public class IpscServiceTest {
                     </xml>
                 """;
 
-        // Act
         List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
-        // Assert
         assertNotNull(clubs);
         assertEquals(2, clubs.size());
 
@@ -1115,49 +1021,40 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenEmptyXmlData_thenReturnsEmptyList() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data/>
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
-        // Assert
         assertNotNull(clubs);
         assertEquals(0, clubs.size());
     }
 
     @Test
     public void testReadRequests_whenInvalidXml_thenThrowsException() {
-        // Arrange
         String xmlData = "Invalid XML Content";
 
-        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
     }
 
     @Test
     public void testReadRequests_whenEmptyXml_thenReturnsEmptyList() {
-        // Arrange
         String xmlData = "";
 
-        // Act
         List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
-        // Assert
         assertNotNull(clubs);
         assertEquals(0, clubs.size());
     }
 
     @Test
     public void testReadRequests_whenPartialData_thenReturnsRequestsWithPartialData() {
-        // Arrange
         String xmlData = """
                     <xml>
                         <data>
@@ -1167,11 +1064,9 @@ public class IpscServiceTest {
                     </xml>
                 """;
 
-        // Act
         List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
-        // Assert
         assertNotNull(clubs);
         assertEquals(2, clubs.size());
 
@@ -1214,7 +1109,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenMixedDataCompleteness_thenProcessesAllRowsCorrectly() {
-        // Arrange
         String xmlData = """
                     <xml>
                         <data>
@@ -1225,11 +1119,9 @@ public class IpscServiceTest {
                     </xml>
                 """;
 
-        // Act
         List<ClubRequest> clubs = assertDoesNotThrow(() -> ipscService.readRequests(xmlData,
                 ClubRequest.class));
 
-        // Assert
         assertNotNull(clubs);
         assertEquals(3, clubs.size());
 
@@ -1257,7 +1149,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenXmlHasNumericAttributes_thenParsesCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1267,10 +1158,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -1287,7 +1176,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenXmlHasBooleanAttributes_thenParsesBooleanCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1297,10 +1185,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -1315,7 +1201,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenXmlHasDateTimeAttributes_thenParsesDateTimeCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1325,10 +1210,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -1341,7 +1224,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenNumericAttributes_thenParsesCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1351,10 +1233,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -1371,7 +1251,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenBooleanAttributes_thenParsesBooleanCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1381,10 +1260,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -1399,7 +1276,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenDateTimeAttributes_thenParsesDateTimeCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1409,10 +1285,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -1425,7 +1299,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenCompleteScoreFields_thenReturnsAllFieldsPopulated() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1434,10 +1307,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ScoreRequest> result = ipscService.readRequests(xmlData, ScoreRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -1457,33 +1328,26 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenXmlHasEmptyDataElement_thenReturnsEmptyList() {
-        // Arrange
         String xmlData = "<xml><data></data></xml>";
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testReadRequests_whenXmlHasNullDataElement_thenReturnsEmptyList() {
-        // Arrange
         String xmlData = "<xml><data/></xml>";
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testReadRequests_whenXmlHasPartialClubFields_thenReturnsRequestsWithPartialData() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1494,10 +1358,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(3, result.size());
 
@@ -1520,7 +1382,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenXmlHasMultipleRowsWithVariedFieldPopulation_thenProcessesAllRows() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1531,10 +1392,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(3, result.size());
 
@@ -1564,7 +1423,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenOnlyRequiredMemberId_thenReturnsRequest() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1573,10 +1431,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MemberRequest> result = ipscService.readRequests(xmlData, MemberRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -1588,7 +1444,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenCompleteMatchFields_thenReturnsAllFieldsPopulated() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1597,10 +1452,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -1617,7 +1470,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenPartialMatchFields_thenReturnsOnlyPopulatedFields() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1626,10 +1478,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -1642,7 +1492,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenCompleteStageFields_thenReturnsAllFieldsPopulated() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1651,10 +1500,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<StageRequest> result = ipscService.readRequests(xmlData, StageRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -1671,7 +1518,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenCompleteEnrolledFields_thenReturnsAllFieldsPopulated() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1680,10 +1526,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<EnrolledRequest> result = ipscService.readRequests(xmlData, EnrolledRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -1699,7 +1543,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenXmlHasMultipleClubsWithVariedFieldCompleteness_thenProcessesAllClubs() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1711,10 +1554,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(4, result.size());
 
@@ -1745,7 +1586,6 @@ public class IpscServiceTest {
 
     @Test
     public void testReadRequests_whenXmlHasEmptyStringAttributes_thenProcessesWithEmptyValues() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1754,10 +1594,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -1767,45 +1605,36 @@ public class IpscServiceTest {
         assertEquals("Alpha Club", club.getClubName());
     }
 
-    // --- New comprehensive readRequests tests: Edge cases, null/empty/blank, partial/full fields ---
-
+    // Test Group: New comprehensive readRequests tests: Edge cases, null/empty/blank, partial/full fields
     // Test Group: Null/Empty/Blank Input Handling
     @Test
     public void readRequests_whenXmlIsNull_thenReturnsEmptyList() {
-        // Act
         List<ClubRequest> result = ipscService.readRequests(null, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void readRequests_whenXmlIsEmpty_thenReturnsEmptyList() {
-        // Act
         List<ClubRequest> result = ipscService.readRequests("", ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void readRequests_whenXmlIsBlank_thenReturnsEmptyList() {
-        // Act
         List<ClubRequest> result = ipscService.readRequests("   ", ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void readRequests_whenXmlHasBlankWithTabsAndNewlines_thenReturnsEmptyList() {
-        // Act
         List<ClubRequest> result = ipscService.readRequests("\t\t\n   ", ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -1813,26 +1642,20 @@ public class IpscServiceTest {
     // Test Group: XML Structure Edge Cases
     @Test
     public void readRequests_whenXmlHasEmptyDataElement_thenReturnsEmptyList() {
-        // Arrange
         String xmlData = "<xml><data></data></xml>";
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void readRequests_whenXmlHasSelfClosingDataElement_thenReturnsEmptyList() {
-        // Arrange
         String xmlData = "<xml><data/></xml>";
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -1840,7 +1663,6 @@ public class IpscServiceTest {
     // Test Group: Partial and Full Field Coverage
     @Test
     public void readRequests_whenRowHasEmptyStringAttributes_thenProcessesWithEmptyValues() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1849,10 +1671,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         ClubRequest club = result.getFirst();
@@ -1863,7 +1683,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenRowHasPartialFields_thenReturnsRequestWithOnlyPopulatedFields() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1872,10 +1691,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         ClubRequest club = result.getFirst();
@@ -1887,7 +1704,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenRowHasAllFields_thenReturnsRequestWithAllFields() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1897,10 +1713,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         ClubRequest club = result.getFirst();
@@ -1915,7 +1729,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenMultipleRowsWithVariedFieldPopulation_thenProcessesAllRows() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1926,10 +1739,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(3, result.size());
 
@@ -1948,7 +1759,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenRowHasMissingOptionalFields_thenReturnsWithNullValues() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1957,10 +1767,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ClubRequest> result = ipscService.readRequests(xmlData, ClubRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         ClubRequest club = result.getFirst();
@@ -1974,7 +1782,6 @@ public class IpscServiceTest {
     // Test Group: Data Type Handling (Numeric, Boolean, DateTime)
     @Test
     public void readRequests_whenNumericFields_thenParsesCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -1984,10 +1791,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(100, result.getFirst().getMatchId());
@@ -2001,7 +1806,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenBooleanFields_thenParsesBooleanCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -2011,10 +1815,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertTrue(result.getFirst().getChrono());
@@ -2023,7 +1825,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenDateTimeFields_thenParsesDateTimeCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -2033,10 +1834,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(LocalDateTime.of(2025, 9, 6, 10, 30, 0), result.getFirst().getMatchDate());
@@ -2045,7 +1844,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenCompleteMatchRecord_thenMapsAllFieldsCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -2055,10 +1853,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<MatchRequest> result = ipscService.readRequests(xmlData, MatchRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         MatchRequest match = result.getFirst();
@@ -2074,7 +1870,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenCompleteScoreRecord_thenMapsAllScoreFieldsCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -2084,10 +1879,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ScoreRequest> result = ipscService.readRequests(xmlData, ScoreRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         ScoreRequest score = result.getFirst();
@@ -2106,7 +1899,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenPartialScoreRecord_thenMapsOnlyPopulatedScoreFields() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -2115,10 +1907,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<ScoreRequest> result = ipscService.readRequests(xmlData, ScoreRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         ScoreRequest score = result.getFirst();
@@ -2132,7 +1922,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenCompleteEnrolledRecord_thenMapsAllEnrolledFieldsCorrectly() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -2142,10 +1931,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<EnrolledRequest> result = ipscService.readRequests(xmlData, EnrolledRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         EnrolledRequest enrolled = result.getFirst();
@@ -2162,7 +1949,6 @@ public class IpscServiceTest {
 
     @Test
     public void readRequests_whenPartialEnrolledRecord_thenMapsOnlyPopulatedEnrolledFields() {
-        // Arrange
         String xmlData = """
                 <xml>
                     <data>
@@ -2171,10 +1957,8 @@ public class IpscServiceTest {
                 </xml>
                 """;
 
-        // Act
         List<EnrolledRequest> result = ipscService.readRequests(xmlData, EnrolledRequest.class);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         EnrolledRequest enrolled = result.getFirst();

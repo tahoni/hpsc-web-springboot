@@ -109,10 +109,7 @@ public class DomainServiceTest {
         return dto;
     }
 
-    // =====================================================================
-    // initMatchEntities(...) public methods
-    // =====================================================================
-
+    // Test Group: initMatchEntities(...) public methods
     @Test
     public void testInitMatchEntitiesOverload_whenMatchResultsNull_thenEmpty() {
         Optional<DtoMapping> result = domainService.initMatchEntities(null, "HPSC");
@@ -248,10 +245,7 @@ public class DomainServiceTest {
         assertTrue(result.get().getMatchStageCompetitorMap().isEmpty());
     }
 
-    // =====================================================================
-    // initClubEntity(ClubDto)
-    // =====================================================================
-
+    // Test Group: initClubEntity(ClubDto)
     @Test
     public void testInitClubEntityFromDto_whenNull_thenEmpty() {
         Optional<ClubDto> result = domainService.initClubEntity((ClubDto) null);
@@ -301,10 +295,7 @@ public class DomainServiceTest {
         verify(clubRepository).findById(99L);
     }
 
-    // =====================================================================
-    // initClubEntity(ClubIdentifier)
-    // =====================================================================
-
+    // Test Group: initClubEntity(ClubIdentifier)
     @Test
     public void testInitClubEntityFromIdentifier_whenNull_thenEmpty() {
         Optional<ClubDto> result = domainService.initClubEntity((ClubIdentifier) null);
@@ -344,10 +335,7 @@ public class DomainServiceTest {
         assertTrue(result.isEmpty());
     }
 
-    // =====================================================================
-    // initMatchEntity
-    // =====================================================================
-
+    // Test Group: initMatchEntity
     @Test
     public void testInitMatchEntity_whenNull_thenEmpty() {
         Optional<MatchDto> result = domainService.initMatchEntity(null);
@@ -395,10 +383,7 @@ public class DomainServiceTest {
         assertEquals(55L, result.get().getId());
     }
 
-    // =====================================================================
-    // initCompetitorEntities
-    // =====================================================================
-
+    // Test Group: initCompetitorEntities
     @Test
     public void testInitCompetitorEntities_whenNullList_thenEmptyMap() {
         Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(null);
@@ -446,10 +431,7 @@ public class DomainServiceTest {
         assertTrue(result.containsKey(competitorDto.getUuid()));
     }
 
-    // =====================================================================
-    // initMatchStageEntities
-    // =====================================================================
-
+    // Test Group: initMatchStageEntities
     @Test
     public void testInitMatchStageEntities_whenNullList_thenEmptyMap() {
         MatchDto matchDto = buildMatchDto();
@@ -510,10 +492,7 @@ public class DomainServiceTest {
         assertTrue(result.containsKey(stageDto.getUuid()));
     }
 
-    // =====================================================================
-    // initMatchCompetitorEntities
-    // =====================================================================
-
+    // Test Group: initMatchCompetitorEntities
     @Test
     public void testInitMatchCompetitorEntities_whenNullList_thenEmptyMap() {
         Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
@@ -624,10 +603,7 @@ public class DomainServiceTest {
         assertTrue(result.isEmpty());
     }
 
-    // =====================================================================
-    // initMatchStageCompetitorEntities
-    // =====================================================================
-
+    // Test Group: initMatchStageCompetitorEntities
     @Test
     public void testInitMatchStageCompetitorEntities_whenNullList_thenEmptyMap() {
         MatchDto matchDto = buildMatchDto();

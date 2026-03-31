@@ -45,9 +45,7 @@ public class TransactionServiceTest {
     @InjectMocks
     private TransactionServiceImpl transactionService;
 
-    // =====================================================================
     // Helper methods
-    // =====================================================================
 
     private MatchDto buildMatchDto() {
         MatchDto matchDto = new MatchDto();
@@ -94,17 +92,13 @@ public class TransactionServiceTest {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
     }
 
-    // =====================================================================
-    // Tests for saveMatchResults – Input Validation
-    // =====================================================================
+    // Test Group: saveMatchResults – Input Validation
 
     @Test
     public void testSaveMatchResults_whenDtoMappingIsNull_thenReturnsEmptyOptional() {
-        // Act
         Optional<IpscMatch> result = assertDoesNotThrow(
                 () -> transactionService.saveMatchResults(null));
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(transactionManager);
@@ -112,35 +106,27 @@ public class TransactionServiceTest {
 
     @Test
     public void testSaveMatchResults_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(null);
 
-        // Act
         Optional<IpscMatch> result = assertDoesNotThrow(
                 () -> transactionService.saveMatchResults(dtoMapping));
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(transactionManager);
     }
 
-    // =====================================================================
-    // Tests for saveMatchResults – Happy Path
-    // =====================================================================
+    // Test Group: saveMatchResults – Happy Path
 
     @Test
     public void testSaveMatchResults_whenValidDtoMappingWithNoClubOrCollections_thenSavesMatchAndCommits()
             throws FatalException {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         stubTransactionStart();
 
-        // Act
         Optional<IpscMatch> result = transactionService.saveMatchResults(dtoMapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("Test Match", result.get().getName());
         verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
@@ -155,24 +141,20 @@ public class TransactionServiceTest {
 
     @Test
     public void testSaveMatchResults_whenClubDtoProvided_thenSavesClub() throws FatalException {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         ClubDto clubDto = new ClubDto();
         clubDto.setName("Test Club");
         dtoMapping.setClub(clubDto);
         stubTransactionStart();
 
-        // Act
         transactionService.saveMatchResults(dtoMapping);
 
-        // Assert
         verify(clubRepository).save(any(Club.class));
     }
 
     @Test
     public void testSaveMatchResults_whenExistingMatchIdProvided_thenFetchesMatchFromRepository()
             throws FatalException {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         dtoMapping.getMatch().setId(10L);
         IpscMatch existingMatch = new IpscMatch();
@@ -182,10 +164,8 @@ public class TransactionServiceTest {
         when(ipscMatchRepository.findById(10L)).thenReturn(Optional.of(existingMatch));
         stubTransactionStart();
 
-        // Act
         Optional<IpscMatch> result = transactionService.saveMatchResults(dtoMapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("Test Match", result.get().getName());
         verify(ipscMatchRepository).findById(10L);
@@ -194,39 +174,32 @@ public class TransactionServiceTest {
     @Test
     public void testSaveMatchResults_whenCompetitorsProvided_thenSavesAllCompetitors()
             throws FatalException {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
         stubTransactionStart();
 
-        // Act
         transactionService.saveMatchResults(dtoMapping);
 
-        // Assert
         verify(competitorRepository).saveAll(anyList());
     }
 
     @Test
     public void testSaveMatchResults_whenMatchStagesProvided_thenSavesAllMatchStages()
             throws FatalException {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         MatchStageDto matchStageDto = buildMatchStageDto();
         dtoMapping.getMatchStageMap().put(matchStageDto.getUuid(), matchStageDto);
         stubTransactionStart();
 
-        // Act
         transactionService.saveMatchResults(dtoMapping);
 
-        // Assert
         verify(ipscMatchStageRepository).saveAll(anyList());
     }
 
     @Test
     public void testSaveMatchResults_whenMatchCompetitorsProvided_thenSavesAllMatchCompetitors()
             throws FatalException {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -237,17 +210,14 @@ public class TransactionServiceTest {
         dtoMapping.getMatchCompetitorMap().put(matchCompetitorDto.getUuid(), matchCompetitorDto);
         stubTransactionStart();
 
-        // Act
         transactionService.saveMatchResults(dtoMapping);
 
-        // Assert
         verify(matchCompetitorRepository).saveAll(anyList());
     }
 
     @Test
     public void testSaveMatchResults_whenMatchStageCompetitorsProvided_thenSavesAllMatchStageCompetitors()
             throws FatalException {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -261,25 +231,19 @@ public class TransactionServiceTest {
         dtoMapping.getMatchStageCompetitorMap().put(msc.getUuid(), msc);
         stubTransactionStart();
 
-        // Act
         transactionService.saveMatchResults(dtoMapping);
 
-        // Assert
         verify(matchStageCompetitorRepository).saveAll(anyList());
     }
 
-    // =====================================================================
-    // Tests for saveMatchResults – Error / Rollback Handling
-    // =====================================================================
+    // Test Group: saveMatchResults – Error / Rollback Handling
 
     @Test
     public void testSaveMatchResults_whenRepositoryThrowsException_thenRollsBackTransaction() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         stubTransactionStart();
         when(ipscMatchRepository.save(any())).thenThrow(new RuntimeException("DB error"));
 
-        // Act & Assert
         assertThrows(FatalException.class,
                 () -> transactionService.saveMatchResults(dtoMapping));
         verify(transactionManager).rollback(transactionStatus);
@@ -288,33 +252,25 @@ public class TransactionServiceTest {
 
     @Test
     public void testSaveMatchResults_whenRepositoryThrowsException_thenThrowsFatalExceptionWithMessage() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         stubTransactionStart();
         when(ipscMatchRepository.save(any())).thenThrow(new RuntimeException("DB error"));
 
-        // Act
         FatalException ex = assertThrows(FatalException.class,
                 () -> transactionService.saveMatchResults(dtoMapping));
 
-        // Assert
         assertNotNull(ex.getMessage());
         assertTrue(ex.getMessage().startsWith("Unable to save the match:"));
     }
 
-    // =====================================================================
-    // Tests for getClub
-    // =====================================================================
+    // Test Group: getClub
 
     @Test
     public void testGetClub_whenClubDtoIsNull_thenReturnsEmptyOptional() {
-        // Arrange
         DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
 
-        // Act
         Optional<Club> result = transactionService.getClub(null, mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(clubRepository);
@@ -322,17 +278,14 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetClub_whenClubDtoHasNullId_thenCreatesNewClubWithoutRepositoryCall() {
-        // Arrange
         DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
         ClubDto clubDto = new ClubDto();
         clubDto.setId(null);
         clubDto.setName("New Club");
         clubDto.setAbbreviation("NC");
 
-        // Act
         Optional<Club> result = transactionService.getClub(clubDto, mapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("New Club", result.get().getName());
         assertEquals("NC", result.get().getAbbreviation());
@@ -341,7 +294,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetClub_whenClubDtoHasIdAndClubExistsInRepository_thenReturnsFetchedAndUpdatedClub() {
-        // Arrange
         DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
         ClubDto clubDto = new ClubDto();
         clubDto.setId(1L);
@@ -353,10 +305,8 @@ public class TransactionServiceTest {
         existingClub.setName("Old Club");
         when(clubRepository.findById(1L)).thenReturn(Optional.of(existingClub));
 
-        // Act
         Optional<Club> result = transactionService.getClub(clubDto, mapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("Updated Club", result.get().getName());
         assertEquals("UC", result.get().getAbbreviation());
@@ -365,17 +315,14 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetClub_whenClubDtoHasIdButClubNotInRepository_thenCreatesNewClub() {
-        // Arrange
         DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
         ClubDto clubDto = new ClubDto();
         clubDto.setId(99L);
         clubDto.setName("New Club");
         when(clubRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act
         Optional<Club> result = transactionService.getClub(clubDto, mapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("New Club", result.get().getName());
         verify(clubRepository).findById(99L);
@@ -390,31 +337,25 @@ public class TransactionServiceTest {
         clubDto.setName("HPSC");
         clubDto.setAbbreviation("HPSC");
 
-        // Act
         transactionService.getClub(clubDto, mapping);
 
         // Verify by calling getIpscMatch which propagates the club onto the match entity
         Optional<IpscMatch> matchResult = transactionService.getIpscMatch(mapping);
 
-        // Assert
         assertTrue(matchResult.isPresent());
         assertNotNull(matchResult.get().getClub());
         assertEquals("HPSC", matchResult.get().getClub().getName());
     }
 
-    // =====================================================================
-    // Tests for getIpscMatch
-    // =====================================================================
+    // Test Group: getIpscMatch
 
     @Test
     public void testGetIpscMatch_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
         // Arrange – DtoMapping with no match set
         DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
 
-        // Act
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(ipscMatchRepository);
@@ -422,17 +363,14 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetIpscMatch_whenMatchDtoHasNullId_thenCreatesNewMatchWithoutRepositoryCall() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         MatchDto matchDto = buildMatchDto();
         matchDto.setId(null);
         dtoMapping.setMatch(matchDto);
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("Test Match", result.get().getName());
         verifyNoInteractions(ipscMatchRepository);
@@ -440,7 +378,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetIpscMatch_whenMatchDtoHasIdAndMatchExistsInRepository_thenReturnsFetchedAndUpdatedMatch() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         MatchDto matchDto = buildMatchDto();
         matchDto.setId(5L);
@@ -453,10 +390,8 @@ public class TransactionServiceTest {
         existingMatch.setScheduledDate(LocalDateTime.now());
         when(ipscMatchRepository.findById(5L)).thenReturn(Optional.of(existingMatch));
 
-        // Act
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("Test Match", result.get().getName());
         verify(ipscMatchRepository).findById(5L);
@@ -464,7 +399,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetIpscMatch_whenMatchDtoHasIdButMatchNotInRepository_thenCreatesNewMatch() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         MatchDto matchDto = buildMatchDto();
         matchDto.setId(99L);
@@ -472,10 +406,8 @@ public class TransactionServiceTest {
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         when(ipscMatchRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act
         Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("Test Match", result.get().getName());
         verify(ipscMatchRepository).findById(99L);
@@ -483,21 +415,16 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetIpscMatch_whenCalled_thenSetsMatchEntityInMapping() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(buildMatchDto());
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         transactionService.getIpscMatch(mapping);
 
-        // Assert
         assertTrue(mapping.getMatchEntity().isPresent());
     }
 
-    // =====================================================================
-    // Tests for getIpscMatchStages
-    // =====================================================================
+    // Test Group: getIpscMatchStages
 
     @Test
     public void testGetIpscMatchStages_whenMatchEntityIsAbsent_thenReturnsEmptyList() {
@@ -505,10 +432,8 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         List<IpscMatchStage> result = transactionService.getIpscMatchStages(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(ipscMatchStageRepository);
@@ -519,10 +444,8 @@ public class TransactionServiceTest {
         // Arrange – match entity present but no stages in the map
         DtoToEntityMapping mapping = buildMappingWithMatchEntity();
 
-        // Act
         List<IpscMatchStage> result = transactionService.getIpscMatchStages(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(ipscMatchStageRepository);
@@ -530,7 +453,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetIpscMatchStages_whenMatchStageDtoHasNullId_thenCreatesNewStageWithoutRepositoryCall() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         MatchStageDto matchStageDto = buildMatchStageDto();
         matchStageDto.setId(null);
@@ -541,10 +463,8 @@ public class TransactionServiceTest {
         matchEntity.setScheduledDate(LocalDateTime.now());
         mapping.setMatch(matchEntity);
 
-        // Act
         List<IpscMatchStage> result = transactionService.getIpscMatchStages(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
         assertEquals(1, result.get(0).getStageNumber());
@@ -554,7 +474,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetIpscMatchStages_whenMatchStageDtoHasIdAndStageExistsInRepository_thenReturnsFetchedStage() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         MatchStageDto matchStageDto = buildMatchStageDto();
         matchStageDto.setId(7L);
@@ -570,10 +489,8 @@ public class TransactionServiceTest {
         existingStage.setStageNumber(99); // will be overwritten by init()
         when(ipscMatchStageRepository.findById(7L)).thenReturn(Optional.of(existingStage));
 
-        // Act
         List<IpscMatchStage> result = transactionService.getIpscMatchStages(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.get(0).getStageNumber()); // updated from DTO
         verify(ipscMatchStageRepository).findById(7L);
@@ -581,7 +498,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetIpscMatchStages_whenMatchStageDtoHasIdButStageNotInRepository_thenCreatesNewStage() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         MatchStageDto matchStageDto = buildMatchStageDto();
         matchStageDto.setId(99L);
@@ -593,17 +509,14 @@ public class TransactionServiceTest {
         mapping.setMatch(matchEntity);
         when(ipscMatchStageRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act
         List<IpscMatchStage> result = transactionService.getIpscMatchStages(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.get(0).getStageNumber());
     }
 
     @Test
     public void testGetIpscMatchStages_whenMultipleStageDtos_thenReturnsAllStages() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         MatchStageDto stage1 = buildMatchStageDto();
         stage1.setStageNumber(1);
@@ -617,10 +530,8 @@ public class TransactionServiceTest {
         matchEntity.setScheduledDate(LocalDateTime.now());
         mapping.setMatch(matchEntity);
 
-        // Act
         List<IpscMatchStage> result = transactionService.getIpscMatchStages(mapping);
 
-        // Assert
         assertEquals(2, result.size());
     }
 
@@ -635,17 +546,13 @@ public class TransactionServiceTest {
         matchEntity.setScheduledDate(LocalDateTime.now());
         mapping.setMatch(matchEntity);
 
-        // Act
         List<IpscMatchStage> result = transactionService.getIpscMatchStages(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
-    // =====================================================================
-    // Tests for getCompetitors
-    // =====================================================================
+    // Test Group: getCompetitors
 
     @Test
     public void testGetCompetitors_whenCompetitorDtoListIsEmpty_thenReturnsEmptyList() {
@@ -653,10 +560,8 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = new DtoMapping();
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         List<Competitor> result = transactionService.getCompetitors(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(competitorRepository);
@@ -664,17 +569,14 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetCompetitors_whenCompetitorDtoHasNullId_thenCreatesNewCompetitorWithoutRepositoryCall() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         competitorDto.setId(null);
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         List<Competitor> result = transactionService.getCompetitors(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
         assertEquals("John", result.get(0).getFirstName());
@@ -684,7 +586,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetCompetitors_whenCompetitorDtoHasIdAndCompetitorExistsInRepository_thenReturnsFetchedAndUpdatedCompetitor() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         competitorDto.setId(3L);
@@ -697,10 +598,8 @@ public class TransactionServiceTest {
         existingCompetitor.setLastName("Smith");
         when(competitorRepository.findById(3L)).thenReturn(Optional.of(existingCompetitor));
 
-        // Act
         List<Competitor> result = transactionService.getCompetitors(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals("John", result.get(0).getFirstName()); // updated from DTO
         verify(competitorRepository).findById(3L);
@@ -708,7 +607,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetCompetitors_whenCompetitorDtoHasIdButCompetitorNotInRepository_thenCreatesNewCompetitor() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         competitorDto.setId(99L);
@@ -716,10 +614,8 @@ public class TransactionServiceTest {
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         when(competitorRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act
         List<Competitor> result = transactionService.getCompetitors(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals("John", result.get(0).getFirstName());
         verify(competitorRepository).findById(99L);
@@ -727,7 +623,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetCompetitors_whenMultipleCompetitorDtos_thenReturnsAllCompetitors() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         CompetitorDto c1 = buildCompetitorDto();
         c1.setFirstName("Alice");
@@ -737,22 +632,18 @@ public class TransactionServiceTest {
         dtoMapping.getCompetitorMap().put(c2.getUuid(), c2);
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         List<Competitor> result = transactionService.getCompetitors(mapping);
 
-        // Assert
         assertEquals(2, result.size());
     }
 
     @Test
     public void testGetCompetitors_whenCalled_thenSetsCompetitorEntitiesInMapping() {
-        // Arrange
         DtoMapping dtoMapping = new DtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         List<Competitor> competitors = transactionService.getCompetitors(mapping);
 
         // Assert – verify the competitor was registered in the entity mapping by checking
@@ -761,26 +652,21 @@ public class TransactionServiceTest {
         assertEquals("John", competitors.get(0).getFirstName());
     }
 
-    // =====================================================================
-    // Tests for getMatchCompetitors
-    // =====================================================================
+    // Test Group: getMatchCompetitors
 
     @Test
     public void testGetMatchCompetitors_whenMatchCompetitorListIsEmpty_thenReturnsEmptyList() {
         // Arrange – matchCompetitorMap is empty by default
         DtoToEntityMapping mapping = buildMappingWithMatchEntity();
 
-        // Act
         List<MatchCompetitor> result = transactionService.getMatchCompetitors(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetMatchCompetitors_whenMatchCompetitorDtoHasNullId_thenCreatesEntityWithNullId() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -798,10 +684,8 @@ public class TransactionServiceTest {
         mapping.setMatch(matchEntity);
         mapping.setCompetitor(competitorDto, new Competitor());
 
-        // Act
         List<MatchCompetitor> result = transactionService.getMatchCompetitors(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
         assertNull(result.get(0).getId());
@@ -809,7 +693,6 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetMatchCompetitors_whenMatchCompetitorDtoHasId_thenSetsIdOnEntity() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -827,17 +710,14 @@ public class TransactionServiceTest {
         mapping.setMatch(matchEntity);
         mapping.setCompetitor(competitorDto, new Competitor());
 
-        // Act
         List<MatchCompetitor> result = transactionService.getMatchCompetitors(mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(42L, result.get(0).getId());
     }
 
     @Test
     public void testGetMatchCompetitors_whenMultipleMatchCompetitorDtos_thenReturnsAll() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto c1 = buildCompetitorDto();
         c1.setFirstName("Alice");
@@ -863,16 +743,12 @@ public class TransactionServiceTest {
         mapping.setCompetitor(c1, new Competitor());
         mapping.setCompetitor(c2, new Competitor());
 
-        // Act
         List<MatchCompetitor> result = transactionService.getMatchCompetitors(mapping);
 
-        // Assert
         assertEquals(2, result.size());
     }
 
-    // =====================================================================
-    // Tests for getAllMatchStageCompetitors
-    // =====================================================================
+    // Test Group: getAllMatchStageCompetitors
 
     @Test
     public void testGetAllMatchStageCompetitors_whenMatchStageDtoListIsEmpty_thenReturnsEmptyList() {
@@ -880,10 +756,8 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = new DtoMapping();
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
 
-        // Act
         List<MatchStageCompetitor> result = transactionService.getAllMatchStageCompetitors(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -904,17 +778,14 @@ public class TransactionServiceTest {
         stageEntity.setStageNumber(1);
         mapping.setMatchStage(stage1, stageEntity);
 
-        // Act
         List<MatchStageCompetitor> result = transactionService.getAllMatchStageCompetitors(mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetAllMatchStageCompetitors_whenMultipleStagesEachWithOneCompetitor_thenAccumulatesAll() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -949,16 +820,12 @@ public class TransactionServiceTest {
         mapping.setMatchStage(stage1, stageEntity1);
         mapping.setMatchStage(stage2, stageEntity2);
 
-        // Act
         List<MatchStageCompetitor> result = transactionService.getAllMatchStageCompetitors(mapping);
 
-        // Assert
         assertEquals(2, result.size());
     }
 
-    // =====================================================================
-    // Tests for getMatchStageCompetitors
-    // =====================================================================
+    // Test Group: getMatchStageCompetitors
 
     @Test
     public void testGetMatchStageCompetitors_whenMatchStageCompetitorListIsEmpty_thenReturnsEmptyList() {
@@ -967,17 +834,14 @@ public class TransactionServiceTest {
         DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
         MatchStageDto matchStageDto = buildMatchStageDto();
 
-        // Act
         List<MatchStageCompetitor> result = transactionService.getMatchStageCompetitors(matchStageDto, mapping);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetMatchStageCompetitors_whenCompetitorMatchesStageUuid_thenReturnsIt() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -1000,17 +864,14 @@ public class TransactionServiceTest {
         stageEntity.setStageNumber(1);
         mapping.setMatchStage(matchStageDto, stageEntity);
 
-        // Act
         List<MatchStageCompetitor> result =
                 transactionService.getMatchStageCompetitors(matchStageDto, mapping);
 
-        // Assert
         assertEquals(1, result.size());
     }
 
     @Test
     public void testGetMatchStageCompetitors_whenCompetitorDoesNotMatchStageUuid_thenExcludesIt() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -1035,17 +896,14 @@ public class TransactionServiceTest {
         stageEntity.setStageNumber(1);
         mapping.setMatchStage(targetStage, stageEntity);
 
-        // Act
         List<MatchStageCompetitor> result =
                 transactionService.getMatchStageCompetitors(targetStage, mapping);
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetMatchStageCompetitors_whenCompetitorHasNullMatchStage_thenExcludesIt() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -1064,17 +922,14 @@ public class TransactionServiceTest {
         matchEntity.setScheduledDate(LocalDateTime.now());
         mapping.setMatch(matchEntity);
 
-        // Act
         List<MatchStageCompetitor> result =
                 transactionService.getMatchStageCompetitors(targetStage, mapping);
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetMatchStageCompetitors_whenCompetitorDtoHasId_thenSetsIdOnEntity() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -1098,18 +953,15 @@ public class TransactionServiceTest {
         stageEntity.setStageNumber(1);
         mapping.setMatchStage(matchStageDto, stageEntity);
 
-        // Act
         List<MatchStageCompetitor> result =
                 transactionService.getMatchStageCompetitors(matchStageDto, mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(77L, result.get(0).getId());
     }
 
     @Test
     public void testGetMatchStageCompetitors_whenCompetitorDtoHasNullId_thenCreatesEntityWithNullId() {
-        // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
         dtoMapping.getCompetitorMap().put(competitorDto.getUuid(), competitorDto);
@@ -1133,11 +985,9 @@ public class TransactionServiceTest {
         stageEntity.setStageNumber(1);
         mapping.setMatchStage(matchStageDto, stageEntity);
 
-        // Act
         List<MatchStageCompetitor> result =
                 transactionService.getMatchStageCompetitors(matchStageDto, mapping);
 
-        // Assert
         assertFalse(result.isEmpty());
         assertNull(result.get(0).getId());
     }
