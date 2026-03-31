@@ -209,6 +209,8 @@ No security-related changes in this release.
 
 ---
 
+## 🧾 [5.2.0] - 2026-02-27
+
 ### ➕ Added
 
 #### 🏗️ Architecture & Domain Model

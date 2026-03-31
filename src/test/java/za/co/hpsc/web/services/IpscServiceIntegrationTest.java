@@ -39,10 +39,12 @@ public class IpscServiceIntegrationTest {
     public IpscMatchService ipscMatchService(ClubEntityService clubEntityService,
                                              MatchEntityService matchEntityService,
                                              MatchStageEntityService matchStageEntityService,
+                                             CompetitorEntityService competitorEntityService,
                                              MatchCompetitorEntityService matchCompetitorEntityService,
                                              MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
         return new IpscMatchServiceImpl(clubEntityService, matchEntityService,
-                matchStageEntityService, matchCompetitorEntityService, matchStageCompetitorEntityService);
+                matchStageEntityService, competitorEntityService,
+                matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
 
     @Bean

@@ -57,6 +57,7 @@ public class IpscMatchServiceTest {
                 clubEntityService,
                 matchEntityService,
                 matchStageEntityService,
+                competitorEntityService,
                 matchCompetitorEntityService,
                 matchStageCompetitorEntityService
         );

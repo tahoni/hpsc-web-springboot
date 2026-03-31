@@ -1197,6 +1197,8 @@ AttributeConverters
 
 ---
 
+## ✨ Feature Timeline
+
 ### 📊 Data Processing Features
 
 - **v1.0.0:** Image CSV processing, MIME type inference

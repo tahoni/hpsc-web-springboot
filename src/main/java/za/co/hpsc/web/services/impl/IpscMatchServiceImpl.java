@@ -26,17 +26,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected final ClubEntityService clubEntityService;
     protected final MatchEntityService matchEntityService;
     protected final MatchStageEntityService matchStageEntityService;
+    protected final CompetitorEntityService competitorEntityService;
     protected final MatchCompetitorEntityService matchCompetitorEntityService;
     protected final MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
     public IpscMatchServiceImpl(ClubEntityService clubEntityService,
                                 MatchEntityService matchEntityService,
                                 MatchStageEntityService matchStageEntityService,
+                                CompetitorEntityService competitorEntityService,
                                 MatchCompetitorEntityService matchCompetitorEntityService,
                                 MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
         this.clubEntityService = clubEntityService;
         this.matchEntityService = matchEntityService;
         this.matchStageEntityService = matchStageEntityService;
+        this.competitorEntityService = competitorEntityService;
         this.matchCompetitorEntityService = matchCompetitorEntityService;
         this.matchStageCompetitorEntityService = matchStageCompetitorEntityService;
     }
@@ -253,7 +256,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if ((ipscResponse.getMatch() != null) && (ipscResponse.getMatch().getClubId() != null) &&
                 (ipscRequestHolder.getClubs() != null)) {
             Integer clubId = ipscResponse.getMatch().getClubId();
-            // Finds club matching ID or provides default
+            // Finds the club matching ID or provides default
             ClubRequest club = ipscRequestHolder.getClubs().stream()
                     .filter(Objects::nonNull)
                     .filter(clubRequest -> clubId.equals(clubRequest.getClubId()))
@@ -576,11 +579,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                             .map(ScoreResponse::getLastModified)
                             .filter(Objects::nonNull)
                             .max(LocalDateTime::compareTo);
-/*
             if ((scoreLastUpdated.isPresent()) && (!scoreLastUpdated.get().isAfter(matchLastUpdated))) {
                 return Optional.empty();
             }
-*/
         }
 
         // Creates a new match DTO, from either the found entity or the match response
@@ -653,8 +654,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .toList();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
 
-        // Maps score responses to corresponding member responses,
-        // excluding members who didn't participate
+        // Maps score responses to corresponding competitor responses,
+        // excluding competitors who didn't participate
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
         scoreResponses.forEach(scoreResponse -> {
             if ((scoreResponse.getFinalScore() != null) && (scoreResponse.getFinalScore() != 0)) {
@@ -664,7 +665,18 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                         .filter(memberResponse -> memberResponse.getMemberId().equals(scoreResponse.getMemberId()))
                         .findFirst();
                 optionalMemberResponse.ifPresent(memberResponse -> {
-                    CompetitorDto competitorDto = new CompetitorDto();
+                    // Attempts to find the competitor by its ICS alias or first name and last name
+                    Optional<Competitor> optionalCompetitor = competitorEntityService.findCompetitor(
+                            memberResponse.getIcsAlias(),
+                            memberResponse.getFirstName(),
+                            memberResponse.getLastName(),
+                            memberResponse.getDateOfBirth());
+                    // Creates a new competitor DTO, from either the found entity or the competitor response
+                    CompetitorDto competitorDto = optionalCompetitor
+                            .map(CompetitorDto::new)
+                            .orElseGet(CompetitorDto::new);
+
+                    // Initialises competitor attributes
                     competitorDto.init(memberResponse);
                     competitorDtoMap.put(memberResponse.getMemberId(), competitorDto);
                 });
