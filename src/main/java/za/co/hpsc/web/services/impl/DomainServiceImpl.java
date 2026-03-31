@@ -228,7 +228,6 @@ public class DomainServiceImpl implements DomainService {
      * @return a map where the keys are the UUIDs from the MatchStageDto objects and the values
      * are the initialised or updated IpscMatchStage entities.
      */
-    // TODO: add/modify tests
     protected Map<UUID, MatchStageDto> initMatchStageEntities(List<MatchStageDto> matchStageDtoList,
                                                               MatchDto matchEntity) {
         if (matchStageDtoList == null) {
@@ -282,7 +281,6 @@ public class DomainServiceImpl implements DomainService {
      * @return a map of match competitor UUIDs to their corresponding MatchCompetitor entities.
      * If a required competitor or match competitor cannot be found, an empty map is returned
      */
-    // TODO: add/modify tests
     protected Map<UUID, MatchCompetitorDto> initMatchCompetitorEntities(List<MatchCompetitorDto> matchCompetitorDtoList,
                                                                         MatchDto matchDto,
                                                                         Map<UUID, CompetitorDto> competitorMap, ClubIdentifier clubIdentifier) {
