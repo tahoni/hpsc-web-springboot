@@ -112,7 +112,6 @@ public class IpscServiceIntegrationTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    @Disabled
     @Test
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         String cabFileContent = """

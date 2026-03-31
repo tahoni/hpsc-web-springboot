@@ -90,30 +90,29 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             // Get the match name
             matchHolder.getMatch().setName(ValueUtil.nullAsEmptyString(matchHolder.getMatch().getName()));
 
-            // Get the match stages
-            Set<IpscMatchStage> matchStageSet = new HashSet<>(matchHolder.getMatchStages());
-
-            // Get the match stage competitors
+            // Get the match and match stage competitors
             Set<MatchStageCompetitor> matchStageCompetitorSet =
-                    getMatchStageCompetitorSet(new ArrayList<>(matchStageSet));
+                    getMatchStageCompetitorSet(matchHolder.getMatchStageCompetitors());
             Set<MatchCompetitor> matchCompetitorSet =
                     getMatchCompetitorSet(matchHolder.getMatchCompetitors());
 
-            // Get the match competitors
-            Set<Competitor> competitorSet = new HashSet<>(getCompetitorSet(matchCompetitorSet));
+            // Get the competitors
+            Set<Competitor> competitorSet = new HashSet<>(getCompetitorSet(matchHolder.getCompetitors()));
 
             // Initialise the competitor list
             Set<CompetitorMatchRecord> competitors = new HashSet<>();
             for (Competitor competitor : competitorSet.stream().filter(Objects::nonNull).toList()) {
-                MatchCompetitorRecord thisCompetitorOverall = initMatchCompetitor(competitor, new ArrayList<>(matchCompetitorSet)).orElse(null);
+                MatchCompetitorRecord thisCompetitorOverall = initMatchCompetitor(competitor,
+                        new ArrayList<>(matchCompetitorSet)).orElse(null);
                 if (thisCompetitorOverall != null) {
                     List<MatchStageCompetitorRecord> thisCompetitorStages =
                             initMatchStageCompetitor(competitor, new ArrayList<>(matchStageCompetitorSet));
-                    initCompetitor(competitor, thisCompetitorOverall, thisCompetitorStages).ifPresent(competitors::add);
+                    initCompetitorMatchRecord(competitor, thisCompetitorOverall, thisCompetitorStages)
+                            .ifPresent(competitors::add);
                 }
             }
 
-            Optional<IpscMatchRecord> ipscResponse = initIpscMatchResponse(matchHolder.getMatch(),
+            Optional<IpscMatchRecord> ipscResponse = initIpscMatchRecord(matchHolder.getMatch(),
                     matchHolder.getClub(), new ArrayList<>(competitors));
             ipscResponse.ifPresent(ipscMatchRecordList::add);
         }
@@ -277,8 +276,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @return An Optional containing the initialized {@link IpscMatchRecord} if both inputs
      * are non-null, otherwise an empty Optional.
      */
-    protected Optional<IpscMatchRecord> initIpscMatchResponse(IpscMatch match, Club club,
-                                                              List<CompetitorMatchRecord> competitors) {
+    protected Optional<IpscMatchRecord> initIpscMatchRecord(IpscMatch match, Club club,
+                                                            List<CompetitorMatchRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
@@ -310,9 +309,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @return an Optional containing the initialized {@link CompetitorMatchRecord} if all inputs are
      * non-null; otherwise an empty Optional.
      */
-    protected Optional<CompetitorMatchRecord> initCompetitor(Competitor competitor,
-                                                             MatchCompetitorRecord thisCompetitorOverall,
-                                                             List<MatchStageCompetitorRecord> thisCompetitorStages) {
+    protected Optional<CompetitorMatchRecord> initCompetitorMatchRecord(Competitor competitor,
+                                                                        MatchCompetitorRecord thisCompetitorOverall,
+                                                                        List<MatchStageCompetitorRecord> thisCompetitorStages) {
         if ((competitor == null) || (thisCompetitorOverall == null) || (thisCompetitorStages == null)) {
             return Optional.empty();
         }
@@ -453,22 +452,21 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Retrieves a list of competitors from the provided match competitor list.
+     * Retrieves a set of unique competitors from the provided list of competitors.
+     * If the input list is null, an empty set is returned.
      *
-     * @param matchCompetitorSet the list of MatchCompetitor objects to the process.
-     *                           If null, an empty list will be returned.
-     * @return a set of Competitor objects extracted from the match competitor list.
-     * If the input list is null or contains null elements, these are handled appropriately.
+     * @param competitorList the list of competitors from which to extract a unique set,
+     *                       may contain null values
+     * @return a set of unique, non-null competitors derived from the input list;
+     * returns an empty set if the input list is null
      */
-    protected Set<Competitor> getCompetitorSet(Set<MatchCompetitor> matchCompetitorSet) {
-        if (matchCompetitorSet == null) {
+    protected Set<Competitor> getCompetitorSet(List<Competitor> competitorList) {
+        if (competitorList == null) {
             return new HashSet<>();
         }
 
         // Gets competitors from the match competitor list
-        return matchCompetitorSet.stream()
-                .filter(Objects::nonNull)
-                .map(MatchCompetitor::getCompetitor)
+        return competitorList.stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
@@ -492,25 +490,21 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Retrieves a list of competitors from the provided match stage list.
+     * Retrieves a set of unique {@code MatchStageCompetitor} objects from the provided list.
      *
-     * @param matchStageList the list of {@link IpscMatchStage} objects.
-     *                       If null, an empty list is returned.
-     * @return a set of {@link MatchStageCompetitor} objects aggregated from all non-null stages
-     * in the input list.
-     * If the input list is null or contains no valid stages, the returned list will be empty.
+     * @param matchStageCompetitors the list of {@code MatchStageCompetitor} objects to be processed;
+     *                              may be {@code null}.
+     * @return a {@code Set} containing unique {@code MatchStageCompetitor} objects from the input list.
+     * If the input list is {@code null}, returns an empty {@code Set}.
      */
-    protected Set<MatchStageCompetitor> getMatchStageCompetitorSet(List<IpscMatchStage> matchStageList) {
-        if (matchStageList == null) {
+    protected Set<MatchStageCompetitor> getMatchStageCompetitorSet(List<MatchStageCompetitor> matchStageCompetitors) {
+        if (matchStageCompetitors == null) {
             return new HashSet<>();
         }
 
         // Gets competitors from the match stage list
-        return matchStageList.stream()
+        return matchStageCompetitors.stream()
                 .filter(Objects::nonNull)
-                .map(IpscMatchStage::getMatchStageCompetitors)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
                 .collect(Collectors.toSet());
     }
 

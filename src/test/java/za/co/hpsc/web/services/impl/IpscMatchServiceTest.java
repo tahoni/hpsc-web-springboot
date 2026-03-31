@@ -366,8 +366,8 @@ public class IpscMatchServiceTest {
 
     @Test
     public void testInitIpscMatchResponse_whenNullInputs_thenEmpty() {
-        assertTrue(ipscMatchService.initIpscMatchResponse(null, new Club(), new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initIpscMatchResponse(new IpscMatch(), new Club(), null).isEmpty());
+        assertTrue(ipscMatchService.initIpscMatchRecord(null, new Club(), new ArrayList<>()).isEmpty());
+        assertTrue(ipscMatchService.initIpscMatchRecord(new IpscMatch(), new Club(), null).isEmpty());
     }
 
     @Test
@@ -378,7 +378,7 @@ public class IpscMatchServiceTest {
         match.setName("Main Match");
         match.setScheduledDate(LocalDateTime.of(2026, 3, 31, 10, 0));
 
-        Optional<IpscMatchRecord> result = ipscMatchService.initIpscMatchResponse(match, club, new ArrayList<>());
+        Optional<IpscMatchRecord> result = ipscMatchService.initIpscMatchRecord(match, club, new ArrayList<>());
 
         assertTrue(result.isPresent());
         assertEquals("Main Match", result.get().name());
@@ -390,9 +390,9 @@ public class IpscMatchServiceTest {
         MatchCompetitorRecord overall = new MatchCompetitorRecord("", "", "", "", "", "", "", "");
         List<MatchStageCompetitorRecord> stages = new ArrayList<>();
 
-        assertTrue(ipscMatchService.initCompetitor(null, overall, stages).isEmpty());
-        assertTrue(ipscMatchService.initCompetitor(new Competitor(), null, stages).isEmpty());
-        assertTrue(ipscMatchService.initCompetitor(new Competitor(), overall, null).isEmpty());
+        assertTrue(ipscMatchService.initCompetitorMatchRecord(null, overall, stages).isEmpty());
+        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), null, stages).isEmpty());
+        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), overall, null).isEmpty());
     }
 
     @Test
@@ -404,7 +404,7 @@ public class IpscMatchServiceTest {
 
         MatchCompetitorRecord overall = new MatchCompetitorRecord("", "", "", "", "", "", "", "");
         Optional<CompetitorMatchRecord> result =
-                ipscMatchService.initCompetitor(competitor, overall, new ArrayList<>());
+                ipscMatchService.initCompetitorMatchRecord(competitor, overall, new ArrayList<>());
 
         assertTrue(result.isPresent());
         assertEquals("Jane", result.get().firstName());
@@ -492,18 +492,14 @@ public class IpscMatchServiceTest {
     @Test
     public void testGetCompetitorSet_whenValid_thenUniqueCompetitorsOnly() {
         Competitor competitor = new Competitor();
-        MatchCompetitor mc1 = new MatchCompetitor();
-        mc1.setCompetitor(competitor);
-        MatchCompetitor mc2 = new MatchCompetitor();
-        mc2.setCompetitor(competitor);
-
-        List<MatchCompetitor> input = new ArrayList<>();
-        input.add(mc1);
-        input.add(mc2);
+        List<Competitor> input = new ArrayList<>();
+        input.add(competitor);
+        input.add(competitor);
         input.add(null);
-        Set<Competitor> result = ipscMatchService.getCompetitorSet(new HashSet<>(input));
+        Set<Competitor> result = ipscMatchService.getCompetitorSet(input);
 
         assertEquals(1, result.size());
+        assertFalse(result.contains(null));
     }
 
     @Test
@@ -529,17 +525,17 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testGetMatchStageCompetitorSet_whenValid_thenFlattensStages() {
+    public void testGetMatchStageCompetitorSet_whenValid_thenFiltersNullsAndReturnsUniqueSet() {
         MatchStageCompetitor c1 = new MatchStageCompetitor();
-        MatchStageCompetitor c2 = new MatchStageCompetitor();
-        IpscMatchStage s1 = new IpscMatchStage();
-        s1.setMatchStageCompetitors(List.of(c1));
-        IpscMatchStage s2 = new IpscMatchStage();
-        s2.setMatchStageCompetitors(List.of(c2));
+        List<MatchStageCompetitor> input = new ArrayList<>();
+        input.add(c1);
+        input.add(c1);
+        input.add(null);
 
-        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(List.of(s1, s2));
+        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(input);
 
-        assertEquals(2, result.size());
+        assertEquals(1, result.size());
+        assertFalse(result.contains(null));
     }
 
     @Test
