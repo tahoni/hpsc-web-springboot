@@ -71,6 +71,8 @@ public class CompetitorDto {
         this.competitorNumber = competitorEntity.getCompetitorNumber();
     }
 
+    // TODO: add test fro max sapsa number and excluded ics alias
+
     /**
      * Initialises the current {@code CompetitorDto} instance with data from the provided
      * {@link MemberResponse} object.
@@ -97,7 +99,10 @@ public class CompetitorDto {
             this.competitorNumber = memberResponse.getIcsAlias();
             if ((NumberUtils.isCreatable(memberResponse.getIcsAlias())) &&
                     (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(memberResponse.getIcsAlias()))) {
-                this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+                int sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+                if (sapsaNumber <= IpscConstants.MAX_SAPSA_NUMBER) {
+                    this.sapsaNumber = sapsaNumber;
+                }
             } else {
                 this.sapsaNumber = null;
             }

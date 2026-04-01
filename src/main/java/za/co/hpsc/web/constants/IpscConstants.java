@@ -22,9 +22,10 @@ public final class IpscConstants {
             SystemConstants.ISO_DATE_TIME_FORMAT;
 
     public static final List<String> EXCLUDE_ICS_ALIAS =
-            List.of("1500", "1600");
+            List.of("15000", "16000");
     public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS =
             List.of(ClubIdentifier.UNKNOWN);
+    public static final Integer MAX_SAPSA_NUMBER = 99_999;
 
     public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|RO)$";
 

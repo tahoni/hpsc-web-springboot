@@ -119,7 +119,7 @@ public class IpscServiceIntegrationTest {
                     "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True' ClubId='1'/></data></xml>",
                     "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
                     "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
-                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00' IcsAlias='1500'/></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1973-02-17T00:00:00' IcsAlias='15000'/></data></xml>",
                     "classify": "<xml><data><row MemberId='50' DivisionId='1' IntlId='5000' NatlId='500'/></data></xml>",
                     "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' RefNo='BBB'/></data></xml>",
                     "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='100'/></data></xml>",
@@ -150,7 +150,7 @@ public class IpscServiceIntegrationTest {
         assertEquals("1973-02-17", competitorRecord.dateOfBirth());
         assertEquals("", competitorRecord.middleNames());
         assertNull(competitorRecord.sapsaNumber());
-        assertEquals("1500", competitorRecord.competitorNumber());
+        assertEquals("15000", competitorRecord.competitorNumber());
 
         assertEquals("101.0000", competitorRecord.overall().matchPoints());
         assertFalse(competitorRecord.stages().isEmpty());

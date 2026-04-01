@@ -26,12 +26,14 @@ public class AwardServiceTest {
 
     @Test
     public void testProcessCsv_whenValidCsvData_thenReturnsAwardCeremonyResponseHolder() {
+        // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Award 1,Summary 1,Description 1,Category 1,tag1|tag2,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png
                 Award 2,Summary 2,Description 2,Category 2,tag3|tag4,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,Mary Jane,Tom Brown,Karen White,wX.png,wY.png,wZ.png
                 """;
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.processCsv(csvData));
 
         // Assert - Verify holder structure
@@ -87,28 +89,34 @@ public class AwardServiceTest {
 
     @Test
     public void testProcessCsv_whenInvalidCsvData_thenThrowsValidationException() {
+        // Arrange
         String csvData = """
                 ceremonyTitle,imageFilePath,title,firstPlace,secondPlace,thirdPlace
                 Ceremony 1,path/to/image1.png
                 """;
 
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
     @Test
     public void testProcessCsv_whenEmptyCsvData_thenThrowsValidationException() {
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(""));
     }
 
     @Test
     public void testProcessCsv_whenNullCsvData_thenThrowsValidationException() {
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(null));
     }
 
     @Test
     public void testProcessCsv_whenInvalidCsvFormat_thenThrowsValidationException() {
+        // Arrange
         String csvData = "Invalid CSV Format";
 
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
@@ -116,12 +124,14 @@ public class AwardServiceTest {
 
     @Test
     public void testReadAwards_whenValidCsv_thenReturnsAwardRequestList() {
+        // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Award 1,Summary 1,Description 1,Category 1,tag1|tag2,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png
                 Award 2,Summary 2,Description 2,Category 2,tag3|tag4,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,Mary Jane,Tom Brown,Karen White,wX.png,wY.png,wZ.png
                 """;
 
+        // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
                 awardService.readAwards(csvData));
 
@@ -182,13 +192,14 @@ public class AwardServiceTest {
 
     @Test
     public void testReadAwards_whenValidCsvWithRearrangedColumns_thenReturnsAwardRequestList() {
-        // Arrange - CSV with columns in different order
+        // Arrange
         String csvData = """
                 title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Award 1,Description 1,Summary 1,Category 1,tag1|tag2,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png
                 Award 2,Description 2,Summary 2,Category 2,tag3|tag4,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,Mary Jane,Tom Brown,Karen White,wX.png,wY.png,wZ.png
                 """;
 
+        // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
                 awardService.readAwards(csvData));
 
@@ -232,7 +243,7 @@ public class AwardServiceTest {
 
     @Test
     public void testReadAwards_whenLargeCsv_thenReturnsAwardRequestList() {
-        // Arrange - Create large CSV with 1000 rows
+        // Arrange
         StringBuilder largeCsv = new StringBuilder("title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n");
 
         for (int i = 0; i < 1000; i++) {
@@ -247,6 +258,7 @@ public class AwardServiceTest {
                     .append(",imgC").append(i).append(".png\n");
         }
 
+        // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
                 awardService.readAwards(largeCsv.toString()));
 
@@ -288,76 +300,85 @@ public class AwardServiceTest {
 
     @Test
     public void testReadAwards_whenEmptyCsvData_thenReturnsEmptyList() {
-        // Arrange - CSV with only header, no data rows
+        // Arrange
         String emptyCsvData = "title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n";
 
+        // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
                 awardService.readAwards(emptyCsvData));
 
+        // Assert
         assertNotNull(awardRequests);
         assertTrue(awardRequests.isEmpty());
     }
 
     @Test
     public void testReadAwards_whenMissingCsvColumns_thenThrowsValidationException() {
-        // Arrange - CSV with missing required columns
+        // Arrange
         String csvData = """
                 title,summary,imageFilePath,ceremonyTitle,ceremonySummary
                 Award 1,Summary 1,/path/to,Ceremony 1,Ceremony Summary 1
                 Award 2,Summary 2,/path/to,Ceremony 1,Ceremony Summary 1
                 """;
 
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(csvData));
     }
 
     @Test
     public void testReadAwards_whenInvalidCsvData_thenThrowsValidationException() {
-        // Arrange - CSV row with incorrect number of columns
+        // Arrange
         String invalidCsvData = """
                 title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Invalid Row Without Correct Columns
                 """;
 
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(invalidCsvData));
     }
 
     @Test
     public void testReadAwards_whenInvalidCsvStructure_thenThrowsValidationException() {
-        // Arrange - CSV with invalid headers
+        // Arrange
         String invalidCsvStructure = """
                 Invalid_Header1,Invalid_Header2,Invalid_Header3
                 value1,value2
                 """;
 
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(invalidCsvStructure));
     }
 
     @Test
     public void testReadAwards_whenInvalidCsvFormat_thenThrowsValidationException() {
-        // Arrange - Single column with no proper header
+        // Arrange
         String invalidCsv = """
                 Invalid CSV With One Column and no Header
                 """;
 
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(invalidCsv));
     }
 
     @Test
     public void testReadAwards_whenBlankCsv_thenThrowsValidationException() {
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.readAwards("  "));
     }
 
     @Test
     public void testReadAwards_whenEmptyStringCsv_thenThrowsValidationException() {
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.readAwards(""));
     }
 
     @Test
     public void testReadAwards_whenNullCsv_thenThrowsValidationException() {
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.readAwards(null));
     }
 
@@ -365,6 +386,7 @@ public class AwardServiceTest {
 
     @Test
     public void testMapAwards_whenValidAwardRequests_thenReturnsAwardCeremonyResponseList() {
+        // Arrange
         AwardRequest request1 = new AwardRequest("Award 1", "Ceremony A", "Alice", "Bob", "Charlie");
         request1.setImageFilePath("/path/to/images1");
 
@@ -376,6 +398,7 @@ public class AwardServiceTest {
 
         List<AwardRequest> awardRequests = List.of(request1, request2, request3);
 
+        // Act
         List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
 
         // Assert - Verify ceremony count
@@ -418,15 +441,19 @@ public class AwardServiceTest {
 
     @Test
     public void testMapAwards_whenEmptyAwardRequestList_thenReturnsEmptyList() {
+        // Arrange
         List<AwardRequest> awardRequests = new ArrayList<>();
 
+        // Act
         List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
 
+        // Assert
         assertTrue(responses.isEmpty());
     }
 
     @Test
     public void testMapAwards_whenNullAwardRequestList_thenThrowsValidationException() {
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
     }
 }

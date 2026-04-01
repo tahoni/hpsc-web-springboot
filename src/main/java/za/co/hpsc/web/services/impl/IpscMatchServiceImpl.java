@@ -2,7 +2,6 @@ package za.co.hpsc.web.services.impl;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
@@ -17,7 +16,6 @@ import za.co.hpsc.web.utils.DateUtil;
 import za.co.hpsc.web.utils.NumberUtil;
 import za.co.hpsc.web.utils.ValueUtil;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -455,7 +453,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * Retrieves a set of unique competitors from the provided list of competitors.
      * If the input list is null, an empty set is returned.
      *
-     * @param competitorList the list of competitors from which to extract a unique set,
+     * @param competitorList the list of competitors from which to extract a unique set;
      *                       may contain null values
      * @return a set of unique, non-null competitors derived from the input list;
      * returns an empty set if the input list is null
@@ -545,11 +543,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * Initialises a {@link MatchDto} object based on the provided IPSC response data
      * and club information.
      *
-     * <p>The method checks if the match exists in the database, determines whether the response
-     * contains newer scores, and skips updates if applicable. If the match is valid,
-     * it creates or updates the match DTO and initialises its attributes.
-     * </p>
-     *
      * @param ipscResponse The response object containing match details and scores from
      *                     the IPSC system.
      * @param clubDto      The club data transfer object containing information about the club
@@ -566,26 +559,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         Optional<IpscMatch> optionalMatch =
                 matchEntityService.findMatchByNameAndScheduledDate(ipscResponse.getMatch().getMatchName(),
                         ipscResponse.getMatch().getMatchDate());
-        boolean ipscMatchExists = optionalMatch.isPresent();
-
-        // Determines the last updated date of the match\
-        LocalDateTime matchLastUpdated = getMatchLastUpdated(optionalMatch);
-
-        // Skips update if there are no newer scores in the IPSC response
-        if ((ipscMatchExists) && (ipscResponse.getScores() != null)) {
-            Integer matchIndex = ipscResponse.getMatch().getMatchId();
-            Optional<LocalDateTime> scoreLastUpdated =
-                    ipscResponse.getScores().stream()
-                            .filter(Objects::nonNull)
-                            .filter(scoreResponse -> scoreResponse.getMatchId() != null)
-                            .filter(scoreResponse -> Objects.equals(scoreResponse.getMatchId(), matchIndex))
-                            .map(ScoreResponse::getLastModified)
-                            .filter(Objects::nonNull)
-                            .max(LocalDateTime::compareTo);
-            if ((scoreLastUpdated.isPresent()) && (!scoreLastUpdated.get().isAfter(matchLastUpdated))) {
-                return Optional.empty();
-            }
-        }
 
         // Creates a new match DTO, from either the found entity or the match response
         MatchDto matchDto = optionalMatch.map(MatchDto::new).orElseGet(MatchDto::new);
@@ -864,19 +837,5 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         matchResultsDto.setMatchCompetitors(matchCompetitorDtoList);
         // Collects all stage competitors in the match results DTO
         matchResultsDto.setMatchStageCompetitors(matchStageCompetitorDtoList);
-    }
-
-    private static @NonNull LocalDateTime getMatchLastUpdated(Optional<IpscMatch> optionalMatch) {
-        LocalDateTime matchLastUpdated = LocalDateTime.MIN;
-        if (optionalMatch.isPresent()) {
-            LocalDateTime dateUpdated = optionalMatch.get().getDateUpdated();
-            LocalDateTime dateCreated = optionalMatch.get().getDateCreated();
-            LocalDateTime matchLastEdited = optionalMatch.get().getDateEdited();
-
-            matchLastUpdated = ((matchLastEdited != null) ? matchLastEdited : dateUpdated);
-            matchLastUpdated = ((matchLastUpdated != null) ? matchLastUpdated : dateCreated);
-            matchLastUpdated = ((matchLastUpdated != null) ? matchLastUpdated : LocalDateTime.MIN);
-        }
-        return matchLastUpdated;
     }
 }

@@ -298,13 +298,13 @@ class CompetitorDtoTest {
         memberResponse.setMemberId(22);
         memberResponse.setFirstName("Sam");
         memberResponse.setLastName("Jones");
-        memberResponse.setIcsAlias("1500");
+        memberResponse.setIcsAlias("15000");
 
         // Act
         dto.init(memberResponse);
 
         // Assert
-        assertEquals("1500", dto.getCompetitorNumber());
+        assertEquals("15000", dto.getCompetitorNumber());
         assertNull(dto.getSapsaNumber());
     }
 
