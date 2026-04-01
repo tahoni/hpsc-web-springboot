@@ -1,6 +1,7 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
@@ -306,6 +307,62 @@ class CompetitorDtoTest {
         // Assert
         assertEquals("15000", dto.getCompetitorNumber());
         assertNull(dto.getSapsaNumber());
+    }
+
+    @Test
+    void testInit_whenIcsAliasEqualsMaxSapsaNumber_thenSetsSapsaNumber() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(24);
+        memberResponse.setFirstName("Max");
+        memberResponse.setLastName("Boundary");
+        memberResponse.setIcsAlias(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER));
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER), dto.getCompetitorNumber());
+        assertEquals(IpscConstants.MAX_SAPSA_NUMBER, dto.getSapsaNumber());
+    }
+
+    @Test
+    void testInit_whenIcsAliasAboveMaxSapsaNumber_thenLeavesSapsaNumberNull() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(25);
+        memberResponse.setFirstName("Over");
+        memberResponse.setLastName("Boundary");
+        memberResponse.setIcsAlias(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1));
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1), dto.getCompetitorNumber());
+        assertNull(dto.getSapsaNumber());
+    }
+
+    @Test
+    void testInit_whenExistingSapsaNumberSetAndIcsAliasAboveMax_thenPreservesExistingSapsaNumber() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        dto.setSapsaNumber(43210);
+
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(26);
+        memberResponse.setFirstName("Existing");
+        memberResponse.setLastName("Sapsa");
+        memberResponse.setIcsAlias(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1));
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1), dto.getCompetitorNumber());
+        assertEquals(43210, dto.getSapsaNumber());
     }
 
 
@@ -818,5 +875,3 @@ class CompetitorDtoTest {
         assertEquals("", result);
     }
 }
-
-
