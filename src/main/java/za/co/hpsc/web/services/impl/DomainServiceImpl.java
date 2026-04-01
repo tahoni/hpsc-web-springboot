@@ -144,7 +144,7 @@ public class DomainServiceImpl implements DomainService {
 
         // Find the club entity if present
         ClubDto clubDto = null;
-        Optional<Club> optionalClub = clubRepository.findByAbbreviation(clubIdentifier.getName());
+        Optional<Club> optionalClub = clubRepository.findByAbbreviation(clubIdentifier.getAbbreviation());
         if (optionalClub.isPresent()) {
             clubDto = new ClubDto(optionalClub.get());
         }
