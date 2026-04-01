@@ -53,11 +53,11 @@ public class DomainServiceImpl implements DomainService {
         }
 
         // Find the club to filter the results by from the provided filter abbreviation if specified
-        ClubIdentifier filterClubIdentifier = ClubIdentifier.getByName(filterClubAbbreviation)
+        ClubIdentifier filterClubIdentifier = ClubIdentifier.getByAbbreviation(filterClubAbbreviation)
                 .orElse(null);
 
         // Find the club entity from the match results or the provided match club abbreviation
-        ClubIdentifier matchClubIdentifier = ClubIdentifier.getByName(matchClubAbbreviation)
+        ClubIdentifier matchClubIdentifier = ClubIdentifier.getByAbbreviation(matchClubAbbreviation)
                 .orElse(null);
         ClubDto matchClub = matchResults.getClub();
         Optional<ClubDto> optionalClubDto = Optional.empty();

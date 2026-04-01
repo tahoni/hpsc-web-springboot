@@ -7,22 +7,25 @@ import java.util.Optional;
 
 @Getter
 public enum ClubIdentifier {
-    SOSC("SOSC", "AAA"),
-    HPSC("HPSC", "BBB"),
-    PMPSC("PMPSC", "CCC"),
-    VISITOR("Visitor", "UUU"),
+    SOSC("Safari Outdoor Shooting Club", "SOSC", "AAA"),
+    HPSC("Hartbeespoortdam Practical Shooting Club", "HPSC", "BBB"),
+    PMPSC("Pretoria Military Practical Shooting Club", "PMPSC", "CCC"),
+    VISITOR("Visitor", "V", "UUU"),
     UNKNOWN;
 
     private final String name;
+    private final String abbreviation;
     private final String code;
 
     ClubIdentifier() {
         this.name = "";
+        this.abbreviation = "";
         this.code = "";
     }
 
-    ClubIdentifier(String name, String code) {
+    ClubIdentifier(String name, String abbreviation, String code) {
         this.name = name;
+        this.abbreviation = abbreviation;
         this.code = code;
     }
 
@@ -46,6 +49,29 @@ public enum ClubIdentifier {
 
         return Arrays.stream(ClubIdentifier.values())
                 .filter(clubReference -> clubReference.name.equalsIgnoreCase(name))
+                .findFirst();
+    }
+
+    /**
+     * Retrieves an optional {@code ClubReference} instance based on the provided abbreviation.
+     *
+     * <p>
+     * The method performs a case-insensitive match to find a club reference with the given abbreviation.
+     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
+     * </p>
+     *
+     * @param abbreviation the abbreviation of the club reference to search for.
+     *                     Can be null or blank.
+     * @return an {@code Optional} containing the matching {@code ClubReference} if found,
+     * or empty otherwise.
+     */
+    public static Optional<ClubIdentifier> getByAbbreviation(String abbreviation) {
+        if ((abbreviation == null) || (abbreviation.isBlank())) {
+            return Optional.empty();
+        }
+
+        return Arrays.stream(ClubIdentifier.values())
+                .filter(clubReference -> clubReference.abbreviation.equalsIgnoreCase(abbreviation))
                 .findFirst();
     }
 
