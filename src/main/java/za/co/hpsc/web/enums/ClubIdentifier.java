@@ -101,6 +101,6 @@ public enum ClubIdentifier {
 
     @Override
     public String toString() {
-        return this.name;
+        return this.name + " (" + this.abbreviation + ")";
     }
 }

@@ -140,7 +140,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenMatchResultsHasNoClub_usesMatchClubAbbreviationLookup() {
+    public void initMatchEntitiesUsesIdentifierNameLookupWhenMatchClubMissing() {
         MatchResultsDto matchResultsDto = new MatchResultsDto();
         matchResultsDto.setMatch(buildMatchDto());
         matchResultsDto.setClub(null);
@@ -149,14 +149,14 @@ public class DomainServiceTest {
         clubEntity.setId(11L);
         clubEntity.setName("Holster Club");
         clubEntity.setAbbreviation("HPSC");
-        when(clubRepository.findByAbbreviation("HPSC")).thenReturn(Optional.of(clubEntity));
+        when(clubRepository.findByAbbreviation(ClubIdentifier.HPSC.getName())).thenReturn(Optional.of(clubEntity));
 
         Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         assertTrue(result.isPresent());
         assertNotNull(result.get().getClub());
         assertEquals(11L, result.get().getClub().getId());
-        verify(clubRepository).findByAbbreviation("HPSC");
+        verify(clubRepository).findByAbbreviation(ClubIdentifier.HPSC.getName());
     }
 
     @Test
@@ -311,13 +311,13 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitClubEntityFromIdentifier_whenFoundByAbbreviation_thenReturnsClubDto() {
+    public void initClubEntityReturnsClubDtoWhenIdentifierNameIsFound() {
         Club clubEntity = new Club();
         clubEntity.setId(101L);
         clubEntity.setName("Holster Club");
         clubEntity.setAbbreviation("HPSC");
 
-        when(clubRepository.findByAbbreviation("HPSC")).thenReturn(Optional.of(clubEntity));
+        when(clubRepository.findByAbbreviation(ClubIdentifier.HPSC.getName())).thenReturn(Optional.of(clubEntity));
 
         Optional<ClubDto> result = domainService.initClubEntity(ClubIdentifier.HPSC);
 
@@ -327,8 +327,8 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitClubEntityFromIdentifier_whenNotFound_thenEmpty() {
-        when(clubRepository.findByAbbreviation("SOSC")).thenReturn(Optional.empty());
+    public void initClubEntityReturnsEmptyWhenIdentifierNameIsNotFound() {
+        when(clubRepository.findByAbbreviation(ClubIdentifier.SOSC.getName())).thenReturn(Optional.empty());
 
         Optional<ClubDto> result = domainService.initClubEntity(ClubIdentifier.SOSC);
 

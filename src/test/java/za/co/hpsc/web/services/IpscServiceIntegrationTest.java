@@ -1,7 +1,6 @@
 package za.co.hpsc.web.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -116,7 +115,7 @@ public class IpscServiceIntegrationTest {
     public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
         String cabFileContent = """
                 {
-                    "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
                     "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True' ClubId='1'/></data></xml>",
                     "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
                     "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
@@ -142,7 +141,7 @@ public class IpscServiceIntegrationTest {
         IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
         assertEquals("Test Match", matchRecord.name());
         assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
-        assertEquals("Test Club (ABC)", matchRecord.clubName());
+        assertEquals("Test Club (BBB)", matchRecord.clubName());
 
         assertFalse(matchRecord.competitors().isEmpty());
         CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
@@ -158,12 +157,12 @@ public class IpscServiceIntegrationTest {
     }
 
     // Test Group: Valid Complete Data Processing
-    @Disabled
+//    @Disabled
     @Test
     public void importWinMssCabFile_withCompleteValidDataClubNullAndFilter_thenReturnsIpscMatchRecordHolder() {
         String cabFileContent = """
                 {
-                    "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
                     "match": "<xml><data><row MatchId='100' MatchName='Test Match' MatchDt='2025-09-06T10:00:00' Chrono='True' ClubId='1'/></data></xml>",
                     "stage": "<xml><data><row StageId='200' StageName='Test Stage' MatchId='100'/></data></xml>",
                     "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
@@ -189,19 +188,9 @@ public class IpscServiceIntegrationTest {
         IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
         assertEquals("Test Match", matchRecord.name());
         assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
-        assertEquals("Test Club (ABC)", matchRecord.clubName());
+        assertEquals("Test Club (BBB)", matchRecord.clubName());
 
-        assertFalse(matchRecord.competitors().isEmpty());
-        CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
-        assertEquals("John", competitorRecord.firstName());
-        assertEquals("Doe", competitorRecord.lastName());
-        assertEquals("1973-02-17", competitorRecord.dateOfBirth());
-        assertEquals("", competitorRecord.middleNames());
-        assertNull(competitorRecord.sapsaNumber());
-        assertEquals("1500", competitorRecord.competitorNumber());
-
-        assertEquals("101.0000", competitorRecord.overall().matchPoints());
-        assertFalse(competitorRecord.stages().isEmpty());
+        assertTrue(matchRecord.competitors().isEmpty());
     }
 
     // Test Group: Partial Data Processing

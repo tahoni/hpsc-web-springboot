@@ -8,9 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ClubIdentifierTest {
     @Test
-    void testGetByName_withExactName_thenReturnsCorrectDiscipline() {
-        // Arrange & Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("HPSC");
+    void getByAbbreviationReturnsMatchingClubForExactAbbreviation() {
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("HPSC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -18,12 +17,11 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectClubReference() {
-        // Arrange
+    void getByAbbreviationReturnsMatchingClubForCaseInsensitiveInput() {
         String searchName = "sosc";
 
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName(searchName);
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -31,37 +29,37 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByName_withNulInput_thenReturnsEmptyOptional() {
+    void getByAbbreviationReturnsEmptyOptionalForNullInput() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName(null);
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(null);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
+    void getByAbbreviationReturnsEmptyOptionalForBlankInput() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName(" ");
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(" ");
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withNoMatch_thenReturnsEmptyOptional() {
+    void getByAbbreviationReturnsEmptyOptionalWhenNoClubMatches() {
         // Arrange
         String searchName = "Nonexistent Club";
 
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName(searchName);
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByCode_withMatch_thenReturnsCorrectClubReference() {
+    void getByCodeReturnsMatchingClubForKnownCode() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("CCC");
 
@@ -71,7 +69,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
+    void getByCodeReturnsEmptyOptionalForNullInput() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode(null);
 
@@ -80,7 +78,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_withBlankInput_thenReturnsEmptyOptional() {
+    void getByCodeReturnsEmptyOptionalForBlankInput() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("   ");
 
@@ -89,11 +87,27 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_withNoMatch_returnsEmptyOptional() {
+    void getByCodeReturnsEmptyOptionalWhenNoClubMatches() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ZZZ");
 
         // Assert
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getByNameReturnsMatchingClubForExactClubName() {
+        Optional<ClubIdentifier> result = ClubIdentifier.getByName("Hartbeespoortdam Practical Shooting Club");
+
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.HPSC, result.get());
+    }
+
+    @Test
+    void getByNameReturnsMatchingClubForCaseInsensitiveName() {
+        Optional<ClubIdentifier> result = ClubIdentifier.getByName("safari outdoor shooting club");
+
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.SOSC, result.get());
     }
 }
