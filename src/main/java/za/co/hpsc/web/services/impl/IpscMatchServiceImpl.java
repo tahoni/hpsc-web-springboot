@@ -630,6 +630,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .toList();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
 
+        // TODO: really filter competitors by score
         // Maps score responses to corresponding competitor responses,
         // excluding competitors who didn't participate
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();

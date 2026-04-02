@@ -71,8 +71,6 @@ public class CompetitorDto {
         this.competitorNumber = competitorEntity.getCompetitorNumber();
     }
 
-    // TODO: add test fro max sapsa number and excluded ics alias
-
     /**
      * Initialises the current {@code CompetitorDto} instance with data from the provided
      * {@link MemberResponse} object.

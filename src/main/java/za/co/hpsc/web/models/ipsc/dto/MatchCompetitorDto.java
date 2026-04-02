@@ -145,8 +145,8 @@ public class MatchCompetitorDto {
             this.club = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
 
             // Determines the power factor based on the major power factor flag
-            this.powerFactor = ((enrolledResponse.getMajorPowerFactor() != null) &&
-                    (enrolledResponse.getMajorPowerFactor()) ? PowerFactor.MAJOR : PowerFactor.MINOR);
+            this.powerFactor = (((enrolledResponse.getMajorPowerFactor() != null) &&
+                    (enrolledResponse.getMajorPowerFactor())) ? PowerFactor.MAJOR : PowerFactor.MINOR);
             // Determines the discipline based on the division ID
             this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
             // Determines the firearm type from the discipline
