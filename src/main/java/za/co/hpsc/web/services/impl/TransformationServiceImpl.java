@@ -637,7 +637,6 @@ public class TransformationServiceImpl implements TransformationService {
                 .toList();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
 
-        // TODO: really filter competitors by score
         // Maps score responses to corresponding competitor responses,
         // excluding competitors who didn't participate
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
@@ -667,7 +666,10 @@ public class TransformationServiceImpl implements TransformationService {
             }
         });
 
-        return competitorDtoMap.values().stream().filter(Objects::nonNull).toList();
+        // Filter out duplicates based on sapsaNumber and id
+        Map<Integer, CompetitorDto> filteredCompetitorDtoMap = deDuplicateCompetitorDtoList(competitorDtoMap);
+
+        return filteredCompetitorDtoMap.values().stream().filter(Objects::nonNull).toList();
     }
 
     /**
@@ -681,14 +683,16 @@ public class TransformationServiceImpl implements TransformationService {
      *                        May include enrolled members and finalised scores.
      */
     protected void initScores(@NotNull MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
+        // Checks for null or missing data in the IPSC response
         if ((ipscResponse == null) || (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
+            return;
+        }
+        // Checks for null match results DTO
+        if (matchResultsDto.getMatch() == null) {
             return;
         }
 
         // Filters score responses to those relevant to the current match
-        if (matchResultsDto.getMatch() == null) {
-            return;
-        }
         List<ScoreResponse> scoreResponses = ipscResponse.getScores().stream()
                 .filter(Objects::nonNull)
                 .filter(scoreResponse -> scoreResponse.getMatchId() != null)
@@ -769,11 +773,10 @@ public class TransformationServiceImpl implements TransformationService {
 
                     // Creates a new match competitor DTO, from either the found entity or the
                     // competitor DTO
-                    // TODO: get real competitor index
                     MatchCompetitorDto matchCompetitorDto = optionalMatchCompetitor
                             .map(MatchCompetitorDto::new)
-                            .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch(), -1));
-//                    matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                            .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch(), memberIndex));
+                    matchCompetitorDto.setCompetitorIndex(memberIndex);
                     matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
 
                     // Filters scores by member ID
@@ -849,5 +852,75 @@ public class TransformationServiceImpl implements TransformationService {
         matchResultsDto.setMatchCompetitors(matchCompetitorDtoList);
         // Collects all stage competitors in the match results DTO
         matchResultsDto.setMatchStageCompetitors(matchStageCompetitorDtoList);
+    }
+
+    protected Map<Integer, CompetitorDto> deDuplicateCompetitorDtoList(Map<Integer, CompetitorDto> competitorDtoMap) {
+        if (competitorDtoMap == null) {
+            return null;
+        }
+
+        // Prepare sets to track seen SAPSA numbers and IDs
+        Set<Integer> seenSapsaNumbers = new HashSet<>();
+        Set<Long> seenIds = new HashSet<>();
+
+        // Prepare maps to hold the original and filtered competitor DTOs
+        Map<Integer, CompetitorDto> unfilteredCompetitorMap = competitorDtoMap;
+        Map<Integer, CompetitorDto> filteredCompetitorDtoMap = new LinkedHashMap<>();
+
+        // Filter out duplicates based on the member's SAPSA number, if available
+        Map<Integer, CompetitorDto> intermediateFilteredCompetitorDtoMap = filteredCompetitorDtoMap;
+        unfilteredCompetitorMap.forEach((key, competitorDto) -> {
+            boolean isDuplicate = false;
+
+            if (competitorDto.getSapsaNumber() != null) {
+                if (seenSapsaNumbers.contains(competitorDto.getSapsaNumber())) {
+                    isDuplicate = true;
+                } else {
+                    seenSapsaNumbers.add(competitorDto.getSapsaNumber());
+                }
+            }
+
+            if (!isDuplicate) {
+                intermediateFilteredCompetitorDtoMap.put(key, competitorDto);
+            } else {
+                Optional<CompetitorDto> duplicateCompetitorDto = competitorDtoMap.values().stream()
+                        .filter(Objects::nonNull)
+                        .filter(cd -> cd.getSapsaNumber() != null)
+                        .filter(cd -> cd.getSapsaNumber().equals(competitorDto.getSapsaNumber()))
+                        .findFirst();
+                duplicateCompetitorDto.ifPresent(originalCompetitorDto -> originalCompetitorDto.getIndexes().addAll(competitorDto.getIndexes()));
+            }
+        });
+
+        // Prepare maps to hold the original and filtered competitor DTOs
+        unfilteredCompetitorMap = filteredCompetitorDtoMap;
+        filteredCompetitorDtoMap = new LinkedHashMap<>();
+
+        // Filter out duplicates based on the competitor's ID, if available
+        Map<Integer, CompetitorDto> finalFilteredCompetitorDtoMap = filteredCompetitorDtoMap;
+        unfilteredCompetitorMap.forEach((key, competitorDto) -> {
+            boolean isDuplicate = false;
+
+            if (competitorDto.getId() != null) {
+                if (seenIds.contains(competitorDto.getId())) {
+                    isDuplicate = true;
+                } else {
+                    seenIds.add(competitorDto.getId());
+                }
+            }
+
+            if (!isDuplicate) {
+                finalFilteredCompetitorDtoMap.put(key, competitorDto);
+            } else {
+                Optional<CompetitorDto> duplicateCompetitorDto = competitorDtoMap.values().stream()
+                        .filter(Objects::nonNull)
+                        .filter(cd -> cd.getId() != null)
+                        .filter(cd -> cd.getId().equals(competitorDto.getId()))
+                        .findFirst();
+                duplicateCompetitorDto.ifPresent(originalCompetitorDto -> originalCompetitorDto.getIndexes().addAll(competitorDto.getIndexes()));
+            }
+        });
+
+        return finalFilteredCompetitorDtoMap;
     }
 }
