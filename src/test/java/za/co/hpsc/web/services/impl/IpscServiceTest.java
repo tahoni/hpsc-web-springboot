@@ -45,8 +45,7 @@ public class IpscServiceTest {
     public void testImportWinMssCabFile_whenCabFileIsNull_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(null)
-        );
+                ipscService.importWinMssCabFile(null));
 
         // Assert - Verify no downstream calls were made
         assertDoesNotThrow(() -> {
@@ -60,8 +59,7 @@ public class IpscServiceTest {
     public void testImportWinMssCabFile_whenCabFileIsEmpty_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile("")
-        );
+                ipscService.importWinMssCabFile(""));
 
         // Assert - Verify no downstream calls were made
         assertDoesNotThrow(() -> {
@@ -75,8 +73,7 @@ public class IpscServiceTest {
     public void testImportWinMssCabFile_whenCabFileIsBlank_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile("   \t\n  ")
-        );
+                ipscService.importWinMssCabFile("   \t\n  "));
 
         // Assert - Verify no downstream calls were made
         assertDoesNotThrow(() -> {
@@ -94,8 +91,7 @@ public class IpscServiceTest {
 
         // Act / Assert
         assertThrows(FatalException.class, () ->
-                ipscService.importWinMssCabFile(invalidJson)
-        );
+                ipscService.importWinMssCabFile(invalidJson));
 
         // Assert - Verify no downstream calls were made beyond JSON parsing
         assertDoesNotThrow(() -> {
@@ -115,12 +111,13 @@ public class IpscServiceTest {
 
         // Act / Assert
         assertThrows(FatalException.class, () ->
-                ipscService.importWinMssCabFile(malformedJson)
-        );
+                ipscService.importWinMssCabFile(malformedJson));
 
         // Assert
-        verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any(DtoMapping.class)));
+        verify(ipscMatchService, never())
+                .mapMatchResults(any(IpscRequestHolder.class));
+        assertDoesNotThrow(() -> verify(transactionService, never())
+                .saveMatchResults(any(DtoMapping.class)));
     }
 
     // Test Group: Valid Complete Data Processing
@@ -154,9 +151,7 @@ public class IpscServiceTest {
                 .thenReturn(Optional.of(new DtoMapping()));
 
         // Act
-        var recordHolder = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+        var recordHolder = assertDoesNotThrow(() -> ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(recordHolder);
@@ -199,14 +194,16 @@ public class IpscServiceTest {
 
         // Act
         var recordHolder = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(recordHolder);
-        verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, times(1)).initMatchResults(ipscResponse);
-        assertDoesNotThrow(() -> verify(transactionService, times(1)).saveMatchResults(any(DtoMapping.class)));
+        verify(ipscMatchService, times(1))
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(ipscMatchService, times(1))
+                .initMatchResults(ipscResponse);
+        assertDoesNotThrow(() -> verify(transactionService, times(1))
+                .saveMatchResults(any(DtoMapping.class)));
     }
 
     // Test Group: Empty XML Sections Handling
@@ -238,15 +235,16 @@ public class IpscServiceTest {
 
         // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(recordHolders);
         assertTrue(recordHolders.isEmpty());
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, times(1)).initMatchResults(ipscResponse);
-            verify(transactionService, never()).saveMatchResults(any(DtoMapping.class));
+            verify(ipscMatchService, times(1))
+                    .initMatchResults(ipscResponse);
+            verify(transactionService, never())
+                    .saveMatchResults(any(DtoMapping.class));
         });
     }
 
@@ -276,20 +274,24 @@ public class IpscServiceTest {
         MatchResultsDto matchResults1 = new MatchResultsDto();
         MatchResultsDto matchResults2 = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
-        when(ipscMatchService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+                .thenReturn(ipscResponseHolder);
+        when(ipscMatchService.initMatchResults(ipscResponse1))
+                .thenReturn(Optional.of(matchResults1));
+        when(ipscMatchService.initMatchResults(ipscResponse2))
+                .thenReturn(Optional.of(matchResults2));
 
         // Act
         var recordHolder = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(recordHolder);
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, times(2)).initMatchResults(any(IpscResponse.class));
+            verify(ipscMatchService, times(1))
+                    .mapMatchResults(any(IpscRequestHolder.class));
+            verify(ipscMatchService, times(2))
+                    .initMatchResults(any(IpscResponse.class));
         });
     }
 
@@ -312,16 +314,18 @@ public class IpscServiceTest {
                 }
                 """;
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(null);
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+                .thenReturn(null);
 
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
-        verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+        verify(ipscMatchService, times(1))
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(ipscMatchService, never())
+                .initMatchResults(any(IpscResponse.class));
     }
 
     // Test Group: Mixed Match Results (Some Present, Some Empty)
@@ -348,14 +352,16 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse1, ipscResponse2));
         MatchResultsDto matchResults1 = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
-        when(ipscMatchService.initMatchResults(ipscResponse2)).thenReturn(Optional.empty());
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+                .thenReturn(ipscResponseHolder);
+        when(ipscMatchService.initMatchResults(ipscResponse1))
+                .thenReturn(Optional.of(matchResults1));
+        when(ipscMatchService.initMatchResults(ipscResponse2))
+                .thenReturn(Optional.empty());
 
         // Act
         var recordHolder = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(recordHolder);
@@ -386,13 +392,14 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+                .thenReturn(ipscResponseHolder);
+        when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
+                .thenReturn(Optional.of(matchResultsDto));
 
         // Act
         var recordHolder = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(recordHolder);
@@ -423,17 +430,19 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+                .thenReturn(ipscResponseHolder);
+        when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
+                .thenReturn(Optional.of(matchResultsDto));
 
         // Act
         var recordHolder = assertDoesNotThrow(() ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertNotNull(recordHolder);
-        verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
+        verify(ipscMatchService, times(1))
+                .mapMatchResults(any(IpscRequestHolder.class));
     }
 
     // Test Group: importWinMssCabFileContent - valid/invalid file processing
@@ -461,8 +470,10 @@ public class IpscServiceTest {
 
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
+        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+                .thenReturn(ipscResponseHolder);
+        when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
+                .thenReturn(Optional.of(matchResultsDto));
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
@@ -473,47 +484,55 @@ public class IpscServiceTest {
         assertEquals(1, response.getMatches().size());
         assertEquals(matchResultsDto, response.getMatches().getFirst());
 
-        verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, times(1)).initMatchResults(ipscResponse);
+        verify(ipscMatchService, times(1))
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(ipscMatchService, times(1))
+                .initMatchResults(ipscResponse);
     }
 
     @Test
     public void testImportWinMssCabFileContent_whenNullCabFileContent_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(null)
-        );
+                ipscService.importWinMssCabFile(null));
 
         // Assert
-        verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
-        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any(DtoMapping.class)));
+        verify(ipscMatchService, never())
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(ipscMatchService, never())
+                .initMatchResults(any(IpscResponse.class));
+        assertDoesNotThrow(() -> verify(transactionService, never())
+                .saveMatchResults(any(DtoMapping.class)));
     }
 
     @Test
     public void testImportWinMssCabFileContent_whenEmptyCabFileContent_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile("")
-        );
+                ipscService.importWinMssCabFile(""));
 
         // Assert
-        verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
-        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any(DtoMapping.class)));
+        verify(ipscMatchService, never())
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(ipscMatchService, never())
+                .initMatchResults(any(IpscResponse.class));
+        assertDoesNotThrow(() -> verify(transactionService, never())
+                .saveMatchResults(any(DtoMapping.class)));
     }
 
     @Test
     public void testImportWinMssCabFileContent_whenBlankCabFileContent_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile("   ")
-        );
+                ipscService.importWinMssCabFile("   "));
 
         // Assert
-        verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
-        assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any(DtoMapping.class)));
+        verify(ipscMatchService, never())
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(ipscMatchService, never())
+                .initMatchResults(any(IpscResponse.class));
+        assertDoesNotThrow(() -> verify(transactionService, never())
+                .saveMatchResults(any(DtoMapping.class)));
     }
 
     @Test
@@ -536,8 +555,7 @@ public class IpscServiceTest {
 
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(cabFileContent)
-        );
+                ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
         assertDoesNotThrow(() -> {
@@ -632,8 +650,7 @@ public class IpscServiceTest {
 
         // Act / Assert
         assertThrows(FatalException.class, () ->
-                ipscService.importWinMssCabFile(invalidCabFileContent)
-        );
+                ipscService.importWinMssCabFile(invalidCabFileContent));
 
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
@@ -659,8 +676,7 @@ public class IpscServiceTest {
 
         // Act / Assert
         assertThrows(ValidationException.class, () ->
-                ipscService.importWinMssCabFile(invalidCabFileContent)
-        );
+                ipscService.importWinMssCabFile(invalidCabFileContent));
 
         // Assert
         verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
@@ -996,8 +1012,7 @@ public class IpscServiceTest {
 
         // Act / Assert
         assertThrows(FatalException.class, () ->
-                ipscService.readIpscRequests(cabFileContent)
-        );
+                ipscService.readIpscRequests(cabFileContent));
     }
 
     // Test Group: readRequests - Generic XML to request object parsing
