@@ -134,7 +134,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testMapMatchResults_whenMatchesNull_thenReturnsEmptyHolder() throws ValidationException {
+    public void testMapMatchResults_whenMatchesNull_thenReturnsEmptyHolder() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setMatches(null);
@@ -149,7 +149,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    public void testMapMatchResults_whenValidInput_thenMapsMatchMembersAndClub() throws ValidationException {
+    public void testMapMatchResults_whenValidInput_thenMapsMatchMembersAndClub() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setMatches(List.of(matchRequest(1)));

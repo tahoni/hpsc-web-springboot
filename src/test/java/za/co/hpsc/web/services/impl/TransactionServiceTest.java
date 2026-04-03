@@ -126,14 +126,14 @@ public class TransactionServiceTest {
     // Test Group: saveMatchResults – Happy Path
 
     @Test
-    public void testSaveMatchResults_whenValidDtoMappingWithNoClubOrCollections_thenSavesMatchAndCommits()
-            throws FatalException {
+    public void testSaveMatchResults_whenValidDtoMappingWithNoClubOrCollections_thenSavesMatchAndCommits() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         stubTransactionStart();
 
         // Act
-        Optional<MatchHolder> result = transactionService.saveMatchResults(dtoMapping);
+        Optional<MatchHolder> result = assertDoesNotThrow(() ->
+                transactionService.saveMatchResults(dtoMapping));
 
         // Assert
         assertTrue(result.isPresent());
@@ -150,7 +150,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void testSaveMatchResults_whenClubDtoProvided_thenSavesClub() throws FatalException {
+    public void testSaveMatchResults_whenClubDtoProvided_thenSavesClub() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         ClubDto clubDto = new ClubDto();
@@ -159,15 +159,14 @@ public class TransactionServiceTest {
         stubTransactionStart();
 
         // Act
-        transactionService.saveMatchResults(dtoMapping);
+        assertDoesNotThrow(() -> transactionService.saveMatchResults(dtoMapping));
 
         // Assert
         verify(clubRepository).save(any(Club.class));
     }
 
     @Test
-    public void testSaveMatchResults_whenExistingMatchIdProvided_thenFetchesMatchFromRepository()
-            throws FatalException {
+    public void testSaveMatchResults_whenExistingMatchIdProvided_thenFetchesMatchFromRepository() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         dtoMapping.getMatch().setId(10L);
@@ -179,7 +178,8 @@ public class TransactionServiceTest {
         stubTransactionStart();
 
         // Act
-        Optional<MatchHolder> result = transactionService.saveMatchResults(dtoMapping);
+        Optional<MatchHolder> result = assertDoesNotThrow(() ->
+                transactionService.saveMatchResults(dtoMapping));
 
         // Assert
         assertTrue(result.isPresent());
@@ -189,8 +189,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void testSaveMatchResults_whenCompetitorsProvided_thenSavesAllCompetitors()
-            throws FatalException {
+    public void testSaveMatchResults_whenCompetitorsProvided_thenSavesAllCompetitors() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
@@ -198,15 +197,14 @@ public class TransactionServiceTest {
         stubTransactionStart();
 
         // Act
-        transactionService.saveMatchResults(dtoMapping);
+        assertDoesNotThrow(() -> transactionService.saveMatchResults(dtoMapping));
 
         // Assert
         verify(competitorRepository).saveAll(anyList());
     }
 
     @Test
-    public void testSaveMatchResults_whenMatchStagesProvided_thenSavesAllMatchStages()
-            throws FatalException {
+    public void testSaveMatchResults_whenMatchStagesProvided_thenSavesAllMatchStages() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         MatchStageDto matchStageDto = buildMatchStageDto();
@@ -214,15 +212,14 @@ public class TransactionServiceTest {
         stubTransactionStart();
 
         // Act
-        transactionService.saveMatchResults(dtoMapping);
+        assertDoesNotThrow(() -> transactionService.saveMatchResults(dtoMapping));
 
         // Assert
         verify(ipscMatchStageRepository).saveAll(anyList());
     }
 
     @Test
-    public void testSaveMatchResults_whenMatchCompetitorsProvided_thenSavesAllMatchCompetitors()
-            throws FatalException {
+    public void testSaveMatchResults_whenMatchCompetitorsProvided_thenSavesAllMatchCompetitors() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
@@ -235,15 +232,14 @@ public class TransactionServiceTest {
         stubTransactionStart();
 
         // Act
-        transactionService.saveMatchResults(dtoMapping);
+        assertDoesNotThrow(() -> transactionService.saveMatchResults(dtoMapping));
 
         // Assert
         verify(matchCompetitorRepository).saveAll(anyList());
     }
 
     @Test
-    public void testSaveMatchResults_whenMatchStageCompetitorsProvided_thenSavesAllMatchStageCompetitors()
-            throws FatalException {
+    public void testSaveMatchResults_whenMatchStageCompetitorsProvided_thenSavesAllMatchStageCompetitors() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
         CompetitorDto competitorDto = buildCompetitorDto();
@@ -259,7 +255,7 @@ public class TransactionServiceTest {
         stubTransactionStart();
 
         // Act
-        transactionService.saveMatchResults(dtoMapping);
+        assertDoesNotThrow(() -> transactionService.saveMatchResults(dtoMapping));
 
         // Assert
         verify(matchStageCompetitorRepository).saveAll(anyList());

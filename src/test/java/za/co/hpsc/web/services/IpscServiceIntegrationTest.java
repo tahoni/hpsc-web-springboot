@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: add tests for enum value reads and writes
 @Slf4j
 @ActiveProfiles("test")
 @SpringBootTest
