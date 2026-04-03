@@ -33,7 +33,6 @@ import java.util.UUID;
 public class CompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
-    // TODO: test multiple indexes
     private transient List<Integer> indexes = new ArrayList<>();
 
     @NotNull

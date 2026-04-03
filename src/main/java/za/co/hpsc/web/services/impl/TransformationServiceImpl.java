@@ -809,12 +809,11 @@ public class TransformationServiceImpl implements TransformationService {
                                                             competitorDto.getId());
                                     // Creates a new match stage competitor DTO, from either
                                     // the found entity or the competitor DTO
-                                    // TODO: get real competitor index
                                     MatchStageCompetitorDto matchStageCompetitorDto =
                                             optionalMatchStageCompetitor
                                                     .map(MatchStageCompetitorDto::new)
                                                     .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
-//                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                                    matchStageCompetitorDto.setCompetitorIndex(stageScoreResponse.getMemberId());
                                     matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                                     // Initialises the match stage attributes
@@ -831,12 +830,11 @@ public class TransformationServiceImpl implements TransformationService {
                                                             competitorDto.getId());
                                     // Creates a new match stage competitor DTO, from either
                                     // the found entity or the competitor DTO
-                                    // TODO: get real competitor index
                                     MatchStageCompetitorDto matchStageCompetitorDto =
                                             optionalMatchStageCompetitor
                                                     .map(MatchStageCompetitorDto::new)
                                                     .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
-//                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                                    matchStageCompetitorDto.setCompetitorIndex(optionalStageScoreResponse.get().getMemberId());
                                     matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                                     // Initialises the match stage attributes

@@ -252,6 +252,50 @@ class CompetitorDtoTest {
         assertEquals(12345, dto.getSapsaNumber());
     }
 
+    @Test
+    void testInit_whenSingleMemberResponse_thenAddsOneIndex() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(101);
+        memberResponse.setFirstName("John");
+        memberResponse.setLastName("Doe");
+        memberResponse.setIcsAlias("1001");
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(1, dto.getIndexes().size());
+        assertEquals(101, dto.getIndexes().getFirst());
+    }
+
+    @Test
+    void testInit_whenCalledWithMultipleMemberResponses_thenAppendsIndexesInOrder() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse firstMemberResponse = new MemberResponse();
+        firstMemberResponse.setMemberId(201);
+        firstMemberResponse.setFirstName("Jane");
+        firstMemberResponse.setLastName("Smith");
+        firstMemberResponse.setIcsAlias("2001");
+
+        MemberResponse secondMemberResponse = new MemberResponse();
+        secondMemberResponse.setMemberId(202);
+        secondMemberResponse.setFirstName("Alex");
+        secondMemberResponse.setLastName("Stone");
+        secondMemberResponse.setIcsAlias("2002");
+
+        // Act
+        dto.init(firstMemberResponse);
+        dto.init(secondMemberResponse);
+
+        // Assert
+        assertEquals(2, dto.getIndexes().size());
+        assertEquals(201, dto.getIndexes().get(0));
+        assertEquals(202, dto.getIndexes().get(1));
+    }
+
     // Category Mapping
     @Test
     void testInit_whenEnrolledResponseHasCategoryCode_thenMapsCategory() {
