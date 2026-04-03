@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.math.NumberUtils;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
+import za.co.hpsc.web.utils.IpscUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class CompetitorDto {
     private String firstName = "";
     @NotNull
     private String lastName = "";
-    private String middleNames = "";
+    private String middleNames;
     private LocalDate dateOfBirth;
 
     private Integer sapsaNumber;
@@ -75,6 +75,35 @@ public class CompetitorDto {
     }
 
     /**
+     * Constructs a new {@code CompetitorDto} instance using the provided
+     * {@link MemberResponse} objecty.
+     *
+     * @param memberResponse the {@link MemberResponse} object containing competitor-related
+     *                       information, such as the competitor's first name, last name,
+     *                       date of birth, and SAPSA number.
+     */
+    // TODO: add tests for this constructor
+    public CompetitorDto(MemberResponse memberResponse) {
+        if (memberResponse != null) {
+            // Initialises competitor details
+            this.indexes = List.of(memberResponse.getMemberId());
+
+            // Initialises competitor attributes
+            this.firstName = memberResponse.getFirstName().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX,
+                    "").trim();
+            this.lastName = memberResponse.getLastName().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX,
+                    "").trim();
+            if (memberResponse.getDateOfBirth() != null) {
+                this.dateOfBirth = memberResponse.getDateOfBirth().toLocalDate();
+            }
+
+            // Initialises competitor number and SAPSA number based on the member's ICS alias
+            this.competitorNumber = memberResponse.getIcsAlias();
+            this.sapsaNumber = IpscUtil.getValidSapsaNumber(memberResponse.getIcsAlias());
+        }
+    }
+
+    /**
      * Initialises the current {@code CompetitorDto} instance with data from the provided
      * {@link MemberResponse} object.
      *
@@ -98,15 +127,8 @@ public class CompetitorDto {
 
             // Initialises competitor number and SAPSA number based on the member's ICS alias
             this.competitorNumber = memberResponse.getIcsAlias();
-            if ((NumberUtils.isCreatable(memberResponse.getIcsAlias())) &&
-                    (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(memberResponse.getIcsAlias()))) {
-                int sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
-                if (sapsaNumber <= IpscConstants.MAX_SAPSA_NUMBER) {
-                    this.sapsaNumber = sapsaNumber;
-                }
-            } else {
-                this.sapsaNumber = null;
-            }
+            Integer sapsaNumber = IpscUtil.getValidSapsaNumber(memberResponse.getIcsAlias());
+            this.sapsaNumber = ((sapsaNumber != null) ? sapsaNumber : this.sapsaNumber);
         }
     }
 
