@@ -52,7 +52,7 @@ public class ScoreResponse {
 
     private Boolean isDisqualified;
 
-    private LocalDateTime lastModified;
+    private LocalDateTime lastModified = LocalDateTime.now();
 
     /**
      * Constructs a new {@code ScoreResponse} object by initialising its fields using the values

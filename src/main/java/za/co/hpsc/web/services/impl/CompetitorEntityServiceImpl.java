@@ -1,11 +1,12 @@
 package za.co.hpsc.web.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.services.CompetitorEntityService;
-import za.co.hpsc.web.utils.IpscUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,10 +30,12 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
         List<Competitor> competitorList = new ArrayList<>();
 
         // Attempts competitor lookup by SAPSA number or alias
-        Integer sapsaNumber = IpscUtil.getValidSapsaNumber(icsAlias);
-        boolean hasIpscAlias = sapsaNumber != null;
-        if (hasIpscAlias) {
-            competitorList = competitorRepository.findAllBySapsaNumber(sapsaNumber);
+        boolean hasIpscAlias = false;
+        if ((icsAlias != null) && (!icsAlias.isBlank()) && (NumberUtils.isCreatable((icsAlias)))) {
+            Integer sapsaNumber = Integer.parseInt(icsAlias);
+            if (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(icsAlias)) {
+                competitorList = competitorRepository.findAllBySapsaNumber(sapsaNumber);
+            }
         }
 
         // If the competitor was not found
@@ -42,6 +45,8 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
             if (competitorList.isEmpty()) {
                 return Optional.empty();
             }
+        } else {
+            hasIpscAlias = true;
         }
 
         // Filters list by date of birth if present

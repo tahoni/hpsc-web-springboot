@@ -19,7 +19,7 @@ class CompetitorDtoTest {
     @Test
     void testConstructor_whenCompetitorNull_thenKeepsDefaults() {
         // Arrange
-        CompetitorDto dto = new CompetitorDto((Competitor) null);
+        CompetitorDto dto = new CompetitorDto(null);
 
         // Act
         String firstName = dto.getFirstName();
@@ -30,7 +30,7 @@ class CompetitorDtoTest {
         assertTrue(dto.getIndexes().isEmpty());
         assertEquals("", firstName);
         assertEquals("", dto.getLastName());
-        assertNull(dto.getMiddleNames());
+        assertEquals("", dto.getMiddleNames());
         assertNull(dto.getDateOfBirth());
         assertNull(dto.getSapsaNumber());
         assertNull(dto.getCompetitorNumber());

@@ -6,7 +6,7 @@ import za.co.hpsc.web.domain.Competitor;
 import java.util.List;
 
 public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
-    List<Competitor> findAllBySapsaNumber(Integer sapsaNumber);
+    List<Competitor> findAllBySapsaNumber(Integer icsAlias);
 
     List<Competitor> findAllByFirstNameAndLastName(String firstName, String lastName);
 }
