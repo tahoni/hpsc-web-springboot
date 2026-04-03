@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.domain;
+package za.co.hpsc.web.models.ipsc.data;
 
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;

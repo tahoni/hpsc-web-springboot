@@ -52,7 +52,7 @@ public class AwardController {
      * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
-    @PostMapping(value = "/processCsv", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Process award CSV", description = "Convert CSV data about awards to JSON.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully converted the CSV data to JSON.",

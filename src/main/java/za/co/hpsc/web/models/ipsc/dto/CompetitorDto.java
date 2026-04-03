@@ -11,6 +11,8 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -31,7 +33,8 @@ import java.util.UUID;
 public class CompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
-    private Integer index;
+    // TODO: test multiple indexes
+    private transient List<Integer> indexes = new ArrayList<>();
 
     @NotNull
     private String firstName = "";
@@ -82,7 +85,7 @@ public class CompetitorDto {
     public void init(MemberResponse memberResponse) {
         if (memberResponse != null) {
             // Initialises competitor details
-            this.index = memberResponse.getMemberId();
+            this.indexes.add(memberResponse.getMemberId());
 
             // Initialises competitor attributes
             this.firstName = memberResponse.getFirstName().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX,

@@ -35,7 +35,7 @@ import java.util.UUID;
 public class MatchDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
-    private Integer index;
+    private transient Integer index;
 
     private ClubDto club;
     private Integer clubIndex;

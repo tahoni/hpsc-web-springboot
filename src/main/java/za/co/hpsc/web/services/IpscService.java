@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
 
 import java.util.List;
 

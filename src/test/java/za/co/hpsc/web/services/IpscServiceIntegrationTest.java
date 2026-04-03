@@ -9,13 +9,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
+import za.co.hpsc.web.services.impl.TransformationServiceImpl;
 
 import java.util.List;
 
@@ -36,13 +36,13 @@ public class IpscServiceIntegrationTest {
     private IpscService ipscService;
 
     @Bean
-    public IpscMatchService ipscMatchService(ClubEntityService clubEntityService,
-                                             MatchEntityService matchEntityService,
-                                             MatchStageEntityService matchStageEntityService,
-                                             CompetitorEntityService competitorEntityService,
-                                             MatchCompetitorEntityService matchCompetitorEntityService,
-                                             MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
-        return new IpscMatchServiceImpl(clubEntityService, matchEntityService,
+    public TransformationService ipscMatchService(ClubEntityService clubEntityService,
+                                                  MatchEntityService matchEntityService,
+                                                  MatchStageEntityService matchStageEntityService,
+                                                  CompetitorEntityService competitorEntityService,
+                                                  MatchCompetitorEntityService matchCompetitorEntityService,
+                                                  MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
+        return new TransformationServiceImpl(clubEntityService, matchEntityService,
                 matchStageEntityService, competitorEntityService,
                 matchCompetitorEntityService, matchStageCompetitorEntityService);
     }
@@ -59,10 +59,10 @@ public class IpscServiceIntegrationTest {
     }
 
     @Bean
-    public IpscService ipscService(IpscMatchService ipscMatchService,
+    public IpscService ipscService(TransformationService transformationService,
                                    DomainService domainService,
                                    TransactionService transactionService) {
-        return new IpscServiceImpl(ipscMatchService, domainService,
+        return new IpscServiceImpl(transformationService, domainService,
                 transactionService);
     }
 

@@ -28,7 +28,7 @@ import java.util.UUID;
 public class MatchStageDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
-    private Integer index;
+    private transient Integer index;
 
     @NotNull
     private MatchDto match;

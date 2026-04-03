@@ -1,7 +1,7 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 
 import java.util.Optional;
 
@@ -17,29 +17,20 @@ import java.util.Optional;
  */
 public interface DomainService {
     /**
-     * Initialises and maps entities related to a match based on the provided match results data.
-     *
-     * @param matchResults           an instance of {@code MatchResultsDto} containing detailed information
-     *                               about a match, including the match itself, club, competitors, stages,
-     *                               and related entities.
-     * @param filterClubAbbreviation the abbreviation of the club to filter matches by.
-     * @return a {@link DtoMapping} that contains the initialised match
-     * entities such as the match, club, stages, and competitors.
-     */
-    Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation);
-
-    /**
      * Initialises and maps entities related to a match based on the provided match results,
      * match club abbreviation, and a filter club abbreviation.
      *
-     * @param matchResults           an instance of {@code MatchResultsDto} containing detailed information
-     *                               about the match, club, competitors, stages, and related entities.
-     * @param matchClubAbbreviation  the abbreviation of the club associated with the match being processed.
-     * @param filterClubAbbreviation the abbreviation of the club used to filter matches or related entities.
-     * @return an {@link Optional} containing a {@link DtoMapping} object that includes the initialised entities,
-     * such as match, club, competitors, and stages, or an empty {@link Optional} if no mapping could be
-     * generated based on the provided input.
+     * @param matchResults           an instance of {@code MatchResultsDto} containing detailed
+     *                               information about the match, club, competitors, stages,
+     *                               and related entities.
+     * @param filterClubAbbreviation the abbreviation of the club used to filter matches or
+     *                               related entities.
+     * @param matchClubAbbreviation  the abbreviation of the club associated with the match being
+     *                               processed, optional.
+     * @return an {@link Optional} containing a {@link DtoMapping} object that includes
+     * the initialised entities, such as match, club, competitors, and stages, or an
+     * empty {@link Optional} if no mapping could be generated based on the provided input.
      */
-    Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String matchClubAbbreviation,
-                                           String filterClubAbbreviation);
+    Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults,
+                                           String filterClubAbbreviation, String matchClubAbbreviation);
 }

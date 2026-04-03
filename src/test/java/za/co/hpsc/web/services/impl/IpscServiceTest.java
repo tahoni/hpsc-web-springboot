@@ -7,16 +7,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDtoHolder;
+import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.DomainService;
-import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
+import za.co.hpsc.web.services.TransformationService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +34,7 @@ public class IpscServiceTest {
     private TransactionService transactionService;
 
     @Mock
-    private IpscMatchService ipscMatchService;
+    private TransformationService transformationService;
     @Mock
     private DomainService domainService;
     @InjectMocks
@@ -49,8 +50,8 @@ public class IpscServiceTest {
 
         // Assert - Verify no downstream calls were made
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+            verify(transformationService, never()).mapMatchResults(any(IpscRequestHolder.class));
+            verify(transformationService, never()).initMatchResults(any(IpscResponse.class));
             verify(transactionService, never()).saveMatchResults(any(DtoMapping.class));
         });
     }
@@ -63,8 +64,8 @@ public class IpscServiceTest {
 
         // Assert - Verify no downstream calls were made
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+            verify(transformationService, never()).mapMatchResults(any(IpscRequestHolder.class));
+            verify(transformationService, never()).initMatchResults(any(IpscResponse.class));
             verify(transactionService, never()).saveMatchResults(any(DtoMapping.class));
         });
     }
@@ -77,8 +78,8 @@ public class IpscServiceTest {
 
         // Assert - Verify no downstream calls were made
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+            verify(transformationService, never()).mapMatchResults(any(IpscRequestHolder.class));
+            verify(transformationService, never()).initMatchResults(any(IpscResponse.class));
             verify(transactionService, never()).saveMatchResults(any(DtoMapping.class));
         });
     }
@@ -95,8 +96,8 @@ public class IpscServiceTest {
 
         // Assert - Verify no downstream calls were made beyond JSON parsing
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+            verify(transformationService, never()).mapMatchResults(any(IpscRequestHolder.class));
+            verify(transformationService, never()).initMatchResults(any(IpscResponse.class));
             verify(transactionService, never()).saveMatchResults(any(DtoMapping.class));
         });
     }
@@ -114,7 +115,7 @@ public class IpscServiceTest {
                 ipscService.importWinMssCabFile(malformedJson));
 
         // Assert
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .mapMatchResults(any(IpscRequestHolder.class));
         assertDoesNotThrow(() -> verify(transactionService, never())
                 .saveMatchResults(any(DtoMapping.class)));
@@ -143,11 +144,11 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(ipscResponse))
+        when(transformationService.initMatchResults(ipscResponse))
                 .thenReturn(Optional.of(matchResultsDto));
-        when(domainService.initMatchEntities(matchResultsDto, null))
+        when(domainService.initMatchEntities(matchResultsDto, null, null))
                 .thenReturn(Optional.of(new DtoMapping()));
 
         // Act
@@ -156,8 +157,8 @@ public class IpscServiceTest {
         // Assert
         assertNotNull(recordHolder);
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, times(1)).initMatchResults(ipscResponse);
+            verify(transformationService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
+            verify(transformationService, times(1)).initMatchResults(ipscResponse);
             verify(transactionService, times(1)).saveMatchResults(any(DtoMapping.class));
         });
     }
@@ -185,11 +186,11 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(ipscResponse))
+        when(transformationService.initMatchResults(ipscResponse))
                 .thenReturn(Optional.of(matchResultsDto));
-        when(domainService.initMatchEntities(matchResultsDto, null))
+        when(domainService.initMatchEntities(matchResultsDto, null, null))
                 .thenReturn(Optional.of(new DtoMapping()));
 
         // Act
@@ -198,9 +199,9 @@ public class IpscServiceTest {
 
         // Assert
         assertNotNull(recordHolder);
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .initMatchResults(ipscResponse);
         assertDoesNotThrow(() -> verify(transactionService, times(1))
                 .saveMatchResults(any(DtoMapping.class)));
@@ -228,9 +229,9 @@ public class IpscServiceTest {
         IpscResponse ipscResponse = new IpscResponse();
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
+        when(transformationService.initMatchResults(any(IpscResponse.class)))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -241,7 +242,7 @@ public class IpscServiceTest {
         assertNotNull(recordHolders);
         assertTrue(recordHolders.isEmpty());
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, times(1))
+            verify(transformationService, times(1))
                     .initMatchResults(ipscResponse);
             verify(transactionService, never())
                     .saveMatchResults(any(DtoMapping.class));
@@ -274,11 +275,11 @@ public class IpscServiceTest {
         MatchResultsDto matchResults1 = new MatchResultsDto();
         MatchResultsDto matchResults2 = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(ipscResponse1))
+        when(transformationService.initMatchResults(ipscResponse1))
                 .thenReturn(Optional.of(matchResults1));
-        when(ipscMatchService.initMatchResults(ipscResponse2))
+        when(transformationService.initMatchResults(ipscResponse2))
                 .thenReturn(Optional.of(matchResults2));
 
         // Act
@@ -288,9 +289,9 @@ public class IpscServiceTest {
         // Assert
         assertNotNull(recordHolder);
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, times(1))
+            verify(transformationService, times(1))
                     .mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, times(2))
+            verify(transformationService, times(2))
                     .initMatchResults(any(IpscResponse.class));
         });
     }
@@ -314,7 +315,7 @@ public class IpscServiceTest {
                 }
                 """;
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(null);
 
         // Act / Assert
@@ -322,9 +323,9 @@ public class IpscServiceTest {
                 ipscService.importWinMssCabFile(cabFileContent));
 
         // Assert
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .initMatchResults(any(IpscResponse.class));
     }
 
@@ -352,11 +353,11 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse1, ipscResponse2));
         MatchResultsDto matchResults1 = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(ipscResponse1))
+        when(transformationService.initMatchResults(ipscResponse1))
                 .thenReturn(Optional.of(matchResults1));
-        when(ipscMatchService.initMatchResults(ipscResponse2))
+        when(transformationService.initMatchResults(ipscResponse2))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -365,7 +366,7 @@ public class IpscServiceTest {
 
         // Assert
         assertNotNull(recordHolder);
-        assertDoesNotThrow(() -> verify(ipscMatchService, times(2))
+        assertDoesNotThrow(() -> verify(transformationService, times(2))
                 .initMatchResults(any(IpscResponse.class)));
     }
 
@@ -392,9 +393,9 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
+        when(transformationService.initMatchResults(any(IpscResponse.class)))
                 .thenReturn(Optional.of(matchResultsDto));
 
         // Act
@@ -403,7 +404,7 @@ public class IpscServiceTest {
 
         // Assert
         assertNotNull(recordHolder);
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .mapMatchResults(any(IpscRequestHolder.class));
     }
 
@@ -430,9 +431,9 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
+        when(transformationService.initMatchResults(any(IpscResponse.class)))
                 .thenReturn(Optional.of(matchResultsDto));
 
         // Act
@@ -441,7 +442,7 @@ public class IpscServiceTest {
 
         // Assert
         assertNotNull(recordHolder);
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .mapMatchResults(any(IpscRequestHolder.class));
     }
 
@@ -470,9 +471,9 @@ public class IpscServiceTest {
 
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class)))
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
                 .thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class)))
+        when(transformationService.initMatchResults(any(IpscResponse.class)))
                 .thenReturn(Optional.of(matchResultsDto));
 
         // Act
@@ -484,9 +485,9 @@ public class IpscServiceTest {
         assertEquals(1, response.getMatches().size());
         assertEquals(matchResultsDto, response.getMatches().getFirst());
 
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .initMatchResults(ipscResponse);
     }
 
@@ -497,9 +498,9 @@ public class IpscServiceTest {
                 ipscService.importWinMssCabFile(null));
 
         // Assert
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .initMatchResults(any(IpscResponse.class));
         assertDoesNotThrow(() -> verify(transactionService, never())
                 .saveMatchResults(any(DtoMapping.class)));
@@ -512,9 +513,9 @@ public class IpscServiceTest {
                 ipscService.importWinMssCabFile(""));
 
         // Assert
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .initMatchResults(any(IpscResponse.class));
         assertDoesNotThrow(() -> verify(transactionService, never())
                 .saveMatchResults(any(DtoMapping.class)));
@@ -527,9 +528,9 @@ public class IpscServiceTest {
                 ipscService.importWinMssCabFile("   "));
 
         // Assert
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never())
+        verify(transformationService, never())
                 .initMatchResults(any(IpscResponse.class));
         assertDoesNotThrow(() -> verify(transactionService, never())
                 .saveMatchResults(any(DtoMapping.class)));
@@ -551,7 +552,7 @@ public class IpscServiceTest {
                 }
                 """;
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(null);
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(null);
 
         // Act / Assert
         assertThrows(ValidationException.class, () ->
@@ -559,8 +560,8 @@ public class IpscServiceTest {
 
         // Assert
         assertDoesNotThrow(() -> {
-            verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
-            verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+            verify(transformationService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
+            verify(transformationService, never()).initMatchResults(any(IpscResponse.class));
             verify(transactionService, never()).saveMatchResults(any(DtoMapping.class));
         });
     }
@@ -588,9 +589,9 @@ public class IpscServiceTest {
         MatchResultsDto matchResults1 = new MatchResultsDto();
         MatchResultsDto matchResults2 = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
-        when(ipscMatchService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
+        when(transformationService.initMatchResults(ipscResponse1)).thenReturn(Optional.of(matchResults1));
+        when(transformationService.initMatchResults(ipscResponse2)).thenReturn(Optional.of(matchResults2));
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
@@ -602,9 +603,9 @@ public class IpscServiceTest {
         assertTrue(response.getMatches().contains(matchResults1));
         assertTrue(response.getMatches().contains(matchResults2));
 
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, times(2))
+        verify(transformationService, times(2))
                 .initMatchResults(any(IpscResponse.class));
     }
 
@@ -627,8 +628,8 @@ public class IpscServiceTest {
         IpscResponse ipscResponse = new IpscResponse();
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
+        when(transformationService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.empty());
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
@@ -638,8 +639,8 @@ public class IpscServiceTest {
         assertNotNull(response);
         assertTrue(response.getMatches().isEmpty());
 
-        verify(ipscMatchService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, times(1)).initMatchResults(ipscResponse);
+        verify(transformationService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
+        verify(transformationService, times(1)).initMatchResults(ipscResponse);
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any(DtoMapping.class)));
     }
 
@@ -653,8 +654,8 @@ public class IpscServiceTest {
                 ipscService.importWinMssCabFile(invalidCabFileContent));
 
         // Assert
-        verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+        verify(transformationService, never()).mapMatchResults(any(IpscRequestHolder.class));
+        verify(transformationService, never()).initMatchResults(any(IpscResponse.class));
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any(DtoMapping.class)));
     }
 
@@ -679,8 +680,8 @@ public class IpscServiceTest {
                 ipscService.importWinMssCabFile(invalidCabFileContent));
 
         // Assert
-        verify(ipscMatchService, never()).mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, never()).initMatchResults(any(IpscResponse.class));
+        verify(transformationService, never()).mapMatchResults(any(IpscRequestHolder.class));
+        verify(transformationService, never()).initMatchResults(any(IpscResponse.class));
         assertDoesNotThrow(() -> verify(transactionService, never()).saveMatchResults(any(DtoMapping.class)));
     }
 
@@ -706,8 +707,8 @@ public class IpscServiceTest {
         IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
         MatchResultsDto matchResultsDto = new MatchResultsDto();
 
-        when(ipscMatchService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
-        when(ipscMatchService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class))).thenReturn(ipscResponseHolder);
+        when(transformationService.initMatchResults(any(IpscResponse.class))).thenReturn(Optional.of(matchResultsDto));
 
         // Act
         MatchResultsDtoHolder response = assertDoesNotThrow(() ->
@@ -718,9 +719,9 @@ public class IpscServiceTest {
         assertEquals(1, response.getMatches().size());
         assertEquals(matchResultsDto, response.getMatches().getFirst());
 
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .mapMatchResults(any(IpscRequestHolder.class));
-        verify(ipscMatchService, times(1))
+        verify(transformationService, times(1))
                 .initMatchResults(ipscResponse);
     }
 

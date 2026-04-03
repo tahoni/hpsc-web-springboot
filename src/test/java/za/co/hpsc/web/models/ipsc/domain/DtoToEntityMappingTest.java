@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.data.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.data.EntityMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
 
 import java.util.HashMap;

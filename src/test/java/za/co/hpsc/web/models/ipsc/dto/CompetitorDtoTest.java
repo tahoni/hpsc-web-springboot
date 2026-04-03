@@ -27,7 +27,7 @@ class CompetitorDtoTest {
         // Assert
         assertNotNull(dto.getUuid());
         assertNull(dto.getId());
-        assertNull(dto.getIndex());
+        assertTrue(dto.getIndexes().isEmpty());
         assertEquals("", firstName);
         assertEquals("", dto.getLastName());
         assertEquals("", dto.getMiddleNames());
@@ -189,7 +189,7 @@ class CompetitorDtoTest {
     void testInit_whenMemberResponseNull_thenKeepsExistingValues() {
         // Arrange
         CompetitorDto dto = new CompetitorDto();
-        dto.setIndex(5);
+        dto.getIndexes().add(5);
         dto.setFirstName("Existing");
         dto.setLastName("Member");
         dto.setMiddleNames("X");
@@ -201,7 +201,7 @@ class CompetitorDtoTest {
         dto.init(null);
 
         // Assert
-        assertEquals(5, dto.getIndex());
+        assertEquals(5, dto.getIndexes().getFirst());
         assertEquals("Existing", dto.getFirstName());
         assertEquals("Member", dto.getLastName());
         assertEquals("X", dto.getMiddleNames());
@@ -244,7 +244,7 @@ class CompetitorDtoTest {
         dto.init(memberResponse);
 
         // Assert
-        assertEquals(12, dto.getIndex());
+        assertEquals(12, dto.getIndexes().getFirst());
         assertEquals("Jane", dto.getFirstName());
         assertEquals("Doe", dto.getLastName());
         assertEquals(LocalDate.of(1995, 3, 10), dto.getDateOfBirth());
@@ -269,7 +269,7 @@ class CompetitorDtoTest {
         dto.init(memberResponse);
 
         // Assert
-        assertEquals(20, dto.getIndex());
+        assertEquals(20, dto.getIndexes().getFirst());
     }
 
     // ICS Alias and SAPSA Number Handling
@@ -763,7 +763,7 @@ class CompetitorDtoTest {
         // Arrange
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setId(999L);
-        competitorDto.setIndex(888);
+        competitorDto.getIndexes().add(888);
         competitorDto.setFirstName("Robert");
         competitorDto.setLastName("Brown");
 

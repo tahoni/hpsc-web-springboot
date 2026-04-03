@@ -11,7 +11,14 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.dto.*;
+import za.co.hpsc.web.models.ipsc.dto.ClubDto;
+import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
 import za.co.hpsc.web.models.ipsc.records.MatchCompetitorRecord;
@@ -32,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IpscMatchServiceTest {
+public class TransformationServiceTest {
 
     @Mock
     private ClubEntityService clubEntityService;
@@ -48,7 +55,7 @@ public class IpscMatchServiceTest {
     private MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
     @InjectMocks
-    private IpscMatchServiceImpl ipscMatchService;
+    private TransformationServiceImpl ipscMatchService;
 
     private MatchRequest matchRequest(int matchId) {
         MatchRequest request = new MatchRequest();
@@ -233,7 +240,7 @@ public class IpscMatchServiceTest {
 
         // Act
         var result = ipscMatchService.generateIpscMatchRecordHolder(List.of(
-                new za.co.hpsc.web.models.ipsc.domain.MatchHolder(match, club,
+                new MatchHolder(match, club,
                         List.of(stage), List.of(competitor), List.of(matchCompetitor), List.of(stageCompetitor))));
 
         // Assert
@@ -765,7 +772,7 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals(10, result.getFirst().getIndex());
+        assertEquals(10, result.getFirst().getIndexes().getFirst());
     }
 
     @Test
@@ -800,7 +807,7 @@ public class IpscMatchServiceTest {
 
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setId(1L);
-        competitorDto.setIndex(9);
+        competitorDto.getIndexes().add(9);
         competitorDto.setFirstName("John");
         competitorDto.setLastName("Doe");
         competitorDto.setCompetitorNumber("C-1");

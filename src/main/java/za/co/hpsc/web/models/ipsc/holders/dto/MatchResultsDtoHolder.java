@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.dto;
+package za.co.hpsc.web.models.ipsc.holders.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

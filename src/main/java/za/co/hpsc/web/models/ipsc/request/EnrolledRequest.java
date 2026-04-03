@@ -64,14 +64,14 @@ public class EnrolledRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "MajorPF", required = true)
+    @JsonProperty(value = "MajorPF", defaultValue = "false")
     private Boolean majorPowerFactor;
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "Classified", required = true)
+    @JsonProperty(value = "Classified", defaultValue = "false")
     private Boolean scoreClassificationId;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "IsDisq", required = true)
+    @JsonProperty(value = "IsDisq", defaultValue = "false")
     private Boolean isDisqualified;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DisqRuleId")

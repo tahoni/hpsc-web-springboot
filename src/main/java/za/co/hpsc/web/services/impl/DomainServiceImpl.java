@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.DomainService;
 
@@ -38,15 +39,7 @@ public class DomainServiceImpl implements DomainService {
     }
 
     @Override
-    public Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults,
-                                                  String filterClubAbbreviation) {
-
-        return initMatchEntities(matchResults, null, filterClubAbbreviation);
-    }
-
-    @Override
-    public Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String matchClubAbbreviation,
-                                                  String filterClubAbbreviation) {
+    public Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults, String filterClubAbbreviation, String matchClubAbbreviation) {
 
         if ((matchResults == null) || (matchResults.getMatch() == null)) {
             return Optional.empty();

@@ -1,9 +1,10 @@
-package za.co.hpsc.web.models.ipsc.response;
+package za.co.hpsc.web.models.ipsc.holders.response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 
 import java.util.ArrayList;
 import java.util.List;

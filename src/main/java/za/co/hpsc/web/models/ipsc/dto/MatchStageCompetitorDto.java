@@ -37,8 +37,8 @@ public class MatchStageCompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
 
-    private Integer competitorIndex;
-    private Integer matchStageIndex;
+    private transient Integer competitorIndex;
+    private transient Integer matchStageIndex;
 
     @NotNull
     private CompetitorDto competitor;

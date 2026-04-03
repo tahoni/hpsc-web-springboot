@@ -28,7 +28,8 @@ import java.util.UUID;
 public class ClubDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
-    private Integer index;
+    private transient Integer index;
+
     private Long matchId;
 
     @NotNull

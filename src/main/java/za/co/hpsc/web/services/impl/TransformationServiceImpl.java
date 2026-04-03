@@ -6,9 +6,16 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
 import za.co.hpsc.web.models.ipsc.dto.*;
-import za.co.hpsc.web.models.ipsc.records.*;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
+import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.MatchCompetitorRecord;
+import za.co.hpsc.web.models.ipsc.records.MatchStageCompetitorRecord;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -21,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class IpscMatchServiceImpl implements IpscMatchService {
+public class TransformationServiceImpl implements TransformationService {
     protected final ClubEntityService clubEntityService;
     protected final MatchEntityService matchEntityService;
     protected final MatchStageEntityService matchStageEntityService;
@@ -29,12 +36,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected final MatchCompetitorEntityService matchCompetitorEntityService;
     protected final MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
-    public IpscMatchServiceImpl(ClubEntityService clubEntityService,
-                                MatchEntityService matchEntityService,
-                                MatchStageEntityService matchStageEntityService,
-                                CompetitorEntityService competitorEntityService,
-                                MatchCompetitorEntityService matchCompetitorEntityService,
-                                MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
+    public TransformationServiceImpl(ClubEntityService clubEntityService,
+                                     MatchEntityService matchEntityService,
+                                     MatchStageEntityService matchStageEntityService,
+                                     CompetitorEntityService competitorEntityService,
+                                     MatchCompetitorEntityService matchCompetitorEntityService,
+                                     MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
         this.clubEntityService = clubEntityService;
         this.matchEntityService = matchEntityService;
         this.matchStageEntityService = matchStageEntityService;
@@ -732,9 +739,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     // Get the competitor from the map
                     Optional<CompetitorDto> optionalCompetitorDto = matchResultsDto.getCompetitors().stream()
                             .filter(Objects::nonNull)
-                            .filter(cd -> cd.getIndex() != null)
-                            .filter(cd -> cd.getIndex()
-                                    .equals(memberResponse.getMemberId()))
+                            .filter(cd -> cd.getIndexes() != null)
+                            .filter(cd -> !cd.getIndexes().isEmpty())
+                            .filter(cd -> cd.getIndexes()
+                                    .contains(memberResponse.getMemberId()))
                             .findFirst();
 
                     // Caches the competitor and enrolled response for later use
@@ -761,10 +769,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
                     // Creates a new match competitor DTO, from either the found entity or the
                     // competitor DTO
+                    // TODO: get real competitor index
                     MatchCompetitorDto matchCompetitorDto = optionalMatchCompetitor
                             .map(MatchCompetitorDto::new)
-                            .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch()));
-                    matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+                            .orElse(new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch(), -1));
+//                    matchCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
                     matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
 
                     // Filters scores by member ID
@@ -797,11 +806,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                                                             competitorDto.getId());
                                     // Creates a new match stage competitor DTO, from either
                                     // the found entity or the competitor DTO
+                                    // TODO: get real competitor index
                                     MatchStageCompetitorDto matchStageCompetitorDto =
                                             optionalMatchStageCompetitor
                                                     .map(MatchStageCompetitorDto::new)
                                                     .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
-                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+//                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
                                     matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                                     // Initialises the match stage attributes
@@ -818,11 +828,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                                                             competitorDto.getId());
                                     // Creates a new match stage competitor DTO, from either
                                     // the found entity or the competitor DTO
+                                    // TODO: get real competitor index
                                     MatchStageCompetitorDto matchStageCompetitorDto =
                                             optionalMatchStageCompetitor
                                                     .map(MatchStageCompetitorDto::new)
                                                     .orElse(new MatchStageCompetitorDto(competitorDto, stageDto));
-                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
+//                                    matchStageCompetitorDto.setCompetitorIndex(competitorDto.getIndex());
                                     matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
 
                                     // Initialises the match stage attributes

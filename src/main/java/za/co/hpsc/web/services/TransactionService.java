@@ -1,8 +1,8 @@
 package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
-import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 
 import java.util.Optional;
 

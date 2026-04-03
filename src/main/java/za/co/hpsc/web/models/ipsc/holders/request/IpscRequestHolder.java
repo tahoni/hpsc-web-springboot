@@ -1,9 +1,10 @@
-package za.co.hpsc.web.models.ipsc.request;
+package za.co.hpsc.web.models.ipsc.holders.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.request.*;
 
 import java.util.ArrayList;
 import java.util.List;

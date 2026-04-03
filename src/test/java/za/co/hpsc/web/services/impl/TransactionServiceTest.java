@@ -9,10 +9,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
-import za.co.hpsc.web.models.ipsc.domain.DtoToEntityMapping;
-import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.data.DtoToEntityMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.repositories.*;
 
 import java.time.LocalDateTime;

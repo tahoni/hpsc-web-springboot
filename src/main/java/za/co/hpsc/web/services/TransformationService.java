@@ -1,23 +1,26 @@
 package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.domain.MatchHolder;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
-import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Service interface for processing IPSC matches, stages, members, scores, tags, and clubs into
- * structured response objects and record holders. It provides methods to map the input data
- * into domain-specific responses and generate match records for further utilisation in the
- * application.
+ * Interface representing the transformation service for processing and mapping IPSC
+ * (International Practical Shooting Confederation) related data.
+ *
+ * <p>
+ * It provides methods for converting raw data into structured response objects and
+ * initializing variousIPSC-related records and DTOs for further usage.
+ * </p>
  */
-public interface IpscMatchService {
+public interface TransformationService {
     /**
      * Maps IPSC requests to a list of IPSC responses. This method processes the matches, stages,
      * enrolled members, scores, tags, and clubs from the given {@link IpscRequestHolder}, groups

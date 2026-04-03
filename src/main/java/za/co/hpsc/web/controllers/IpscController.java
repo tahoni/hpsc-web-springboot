@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
-import za.co.hpsc.web.models.ipsc.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.services.IpscService;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class IpscController {
      *                       Must not be null or empty.
      * @return a {@link ControllerResponse} object if the processing is successful.
      */
-    @PostMapping(value = "/importWinMssCabData", consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/match", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully imported the WinMSS.cab file data.",

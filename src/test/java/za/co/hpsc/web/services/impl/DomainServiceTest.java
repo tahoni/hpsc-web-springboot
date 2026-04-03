@@ -7,8 +7,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.repositories.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+// TODO: fix naming convention
 @ExtendWith(MockitoExtension.class)
 public class DomainServiceTest {
 
@@ -90,36 +92,36 @@ public class DomainServiceTest {
 
     // Test Group: initMatchEntities(...) public methods
     @Test
-    public void testInitMatchEntitiesOverload_whenMatchResultsNull_thenEmpty() {
+    public void testInitMatchEntities_whenMatchResultsNull_thenEmptyFromMatchResults() {
         // Act
-        Optional<DtoMapping> result = domainService.initMatchEntities(null, "HPSC");
+        Optional<DtoMapping> result = domainService.initMatchEntities(null, "HPSC", null);
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testInitMatchEntitiesOverload_whenMatchNull_thenEmpty() {
+    public void testInitMatchEntities_whenMatchNull_thenEmptyFromMatchResults() {
         // Arrange
         MatchResultsDto matchResultsDto = new MatchResultsDto();
         matchResultsDto.setMatch(null);
 
         // Act
-        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC");
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testInitMatchEntitiesOverload_whenValidMinimalInput_thenReturnsMapping() {
+    public void testInitMatchEntities_whenValidMinimalInput_thenReturnsMapping() {
         // Arrange
         MatchResultsDto matchResultsDto = new MatchResultsDto();
         MatchDto matchDto = buildMatchDto();
         matchResultsDto.setMatch(matchDto);
 
         // Act
-        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC");
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
         assertTrue(result.isPresent());
@@ -127,7 +129,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void initMatchEntitiesUsesIdentifierNameLookupWhenMatchClubMissing() {
+    public void initMatchEntitiesUsesIdentifierNameLookupWhenMatchClubMissingFromMatchResults() {
         // Arrange
         MatchResultsDto matchResultsDto = new MatchResultsDto();
         matchResultsDto.setMatch(buildMatchDto());
@@ -140,7 +142,7 @@ public class DomainServiceTest {
         when(clubRepository.findByAbbreviation(ClubIdentifier.HPSC.getAbbreviation())).thenReturn(Optional.of(clubEntity));
 
         // Act
-        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, "HPSC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -150,7 +152,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_filtersMatchCompetitors() {
+    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_filtersMatchCompetitorsFromMatchResults() {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         CompetitorDto competitorDto = buildCompetitorDto("John", "Doe");
@@ -167,7 +169,7 @@ public class DomainServiceTest {
         matchResultsDto.setMatchCompetitors(List.of(included, excluded));
 
         // Act
-        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, "HPSC");
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
         assertTrue(result.isPresent());
@@ -176,7 +178,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_filtersMatchStageCompetitors() {
+    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_filtersMatchStageCompetitorsFromMatchResults() {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         CompetitorDto competitorDto = buildCompetitorDto("Jane", "Doe");
@@ -195,7 +197,7 @@ public class DomainServiceTest {
         matchResultsDto.setMatchStageCompetitors(List.of(included, excluded));
 
         // Act
-        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, "HPSC");
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
         assertTrue(result.isPresent());
@@ -204,7 +206,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForMatchCompetitor_returnsEmptyMapForMatchCompetitors() {
+    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForMatchCompetitor_returnsEmptyMapForMatchCompetitorsFromMatchResults() {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         CompetitorDto competitorNotInList = buildCompetitorDto("Ghost", "Rider");
