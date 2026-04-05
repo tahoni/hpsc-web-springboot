@@ -10,7 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
-import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.CompetitorRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
@@ -145,7 +145,7 @@ public class IpscServiceIntegrationTest {
         assertEquals("Test Club (BBB)", matchRecord.clubName());
 
         assertFalse(matchRecord.competitors().isEmpty());
-        CompetitorMatchRecord competitorRecord = matchRecord.competitors().getFirst();
+        CompetitorRecord competitorRecord = matchRecord.competitors().getFirst();
         assertEquals("John", competitorRecord.firstName());
         assertEquals("Doe", competitorRecord.lastName());
         assertEquals("1973-02-17", competitorRecord.dateOfBirth());

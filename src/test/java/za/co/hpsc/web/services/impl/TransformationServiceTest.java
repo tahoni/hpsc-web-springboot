@@ -19,10 +19,10 @@ import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.CompetitorRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchCompetitorRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchStageCompetitorRecord;
+import za.co.hpsc.web.models.ipsc.records.MatchCompetitorOverallResultsRecord;
+import za.co.hpsc.web.models.ipsc.records.MatchCompetitorStageResultRecord;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -443,13 +443,13 @@ public class TransformationServiceTest {
     @Test
     public void testInitCompetitor_whenAnyNull_thenEmpty() {
         // Arrange
-        MatchCompetitorRecord overall = new MatchCompetitorRecord("", "", "", "", "", "", "", "");
-        List<MatchStageCompetitorRecord> stages = new ArrayList<>();
+        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("", "", "", "", "", "", "", "");
+        List<MatchCompetitorStageResultRecord> stages = new ArrayList<>();
 
         // Act / Assert
-        assertTrue(ipscMatchService.initCompetitorMatchRecord(null, overall, stages).isEmpty());
-        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), null, stages).isEmpty());
-        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), overall, null).isEmpty());
+        assertTrue(ipscMatchService.initCompetitorMatchRecord(null, overall).isEmpty());
+        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), null).isEmpty());
+        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), overall).isEmpty());
     }
 
     @Test
@@ -460,11 +460,11 @@ public class TransformationServiceTest {
         competitor.setLastName("Doe");
         competitor.setDateOfBirth(LocalDate.of(1991, 2, 2));
 
-        MatchCompetitorRecord overall = new MatchCompetitorRecord("", "", "", "", "", "", "", "");
+        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("", "", "", "", "", "", "", "");
 
         // Act
-        Optional<CompetitorMatchRecord> result =
-                ipscMatchService.initCompetitorMatchRecord(competitor, overall, new ArrayList<>());
+        Optional<CompetitorRecord> result =
+                ipscMatchService.initCompetitorMatchRecord(competitor, overall);
 
         // Assert
         assertTrue(result.isPresent());
@@ -474,8 +474,8 @@ public class TransformationServiceTest {
     @Test
     public void testInitMatchCompetitor_whenNullInputs_thenEmpty() {
         // Act / Assert
-        assertTrue(ipscMatchService.initMatchCompetitor(null, new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initMatchCompetitor(new Competitor(), null).isEmpty());
+        assertTrue(ipscMatchService.initMatchCompetitorOverallResult(null, new ArrayList<>()).isEmpty());
+        assertTrue(ipscMatchService.initMatchCompetitorOverallResult(new Competitor(), null).isEmpty());
     }
 
     @Test
@@ -487,8 +487,8 @@ public class TransformationServiceTest {
         matchCompetitor.setCompetitor(other);
 
         // Act
-        Optional<MatchCompetitorRecord> result =
-                ipscMatchService.initMatchCompetitor(target, List.of(matchCompetitor));
+        Optional<MatchCompetitorOverallResultsRecord> result =
+                ipscMatchService.initMatchCompetitorOverallResult(target, List.of(matchCompetitor));
 
         // Assert
         assertTrue(result.isEmpty());
@@ -514,8 +514,8 @@ public class TransformationServiceTest {
         matchCompetitor.setMatchRanking(BigDecimal.ONE);
 
         // Act
-        Optional<MatchCompetitorRecord> result =
-                ipscMatchService.initMatchCompetitor(target, List.of(matchCompetitor));
+        Optional<MatchCompetitorOverallResultsRecord> result =
+                ipscMatchService.initMatchCompetitorOverallResult(target, List.of(matchCompetitor));
 
         // Assert
         assertTrue(result.isPresent());
@@ -525,8 +525,8 @@ public class TransformationServiceTest {
     @Test
     public void testInitMatchStageCompetitor_whenNullInputs_thenEmptyList() {
         // Act / Assert
-        assertTrue(ipscMatchService.initMatchStageCompetitor(null, new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initMatchStageCompetitor(new Competitor(), null).isEmpty());
+        assertTrue(ipscMatchService.initMatchCompetitorStageResults(null, new ArrayList<>()).isEmpty());
+        assertTrue(ipscMatchService.initMatchCompetitorStageResults(new Competitor(), null).isEmpty());
     }
 
     @Test
@@ -549,8 +549,8 @@ public class TransformationServiceTest {
         exclude.setCompetitor(other);
 
         // Act
-        List<MatchStageCompetitorRecord> result =
-                ipscMatchService.initMatchStageCompetitor(target, List.of(include, exclude));
+        List<MatchCompetitorStageResultRecord> result =
+                ipscMatchService.initMatchCompetitorStageResults(target, List.of(include, exclude));
 
         // Assert
         assertEquals(1, result.size());

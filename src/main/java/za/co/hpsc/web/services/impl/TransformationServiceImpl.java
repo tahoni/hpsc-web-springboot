@@ -12,10 +12,7 @@ import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.records.CompetitorMatchRecord;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchCompetitorRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchStageCompetitorRecord;
+import za.co.hpsc.web.models.ipsc.records.*;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -105,14 +102,17 @@ public class TransformationServiceImpl implements TransformationService {
             Set<Competitor> competitorSet = new HashSet<>(getCompetitorSet(matchHolder.getCompetitors()));
 
             // Initialise the competitor list
-            Set<CompetitorMatchRecord> competitors = new HashSet<>();
+            Set<CompetitorRecord> competitors = new HashSet<>();
             for (Competitor competitor : competitorSet.stream().filter(Objects::nonNull).toList()) {
-                MatchCompetitorRecord thisCompetitorOverall = initMatchCompetitor(competitor,
-                        new ArrayList<>(matchCompetitorSet)).orElse(null);
+                MatchCompetitorOverallResultsRecord thisCompetitorOverall =
+                        initMatchCompetitorOverallResult(competitor, new ArrayList<>(matchCompetitorSet))
+                                .orElse(null);
+                List<MatchCompetitorStageResultRecord> thisCompetitorStages =
+                        initMatchCompetitorStageResults(competitor, new ArrayList<>(matchStageCompetitorSet));
                 if (thisCompetitorOverall != null) {
-                    List<MatchStageCompetitorRecord> thisCompetitorStages =
-                            initMatchStageCompetitor(competitor, new ArrayList<>(matchStageCompetitorSet));
-                    initCompetitorMatchRecord(competitor, thisCompetitorOverall, thisCompetitorStages)
+                    CompetitorResultRecord thisCompetitorResult =
+                            initCompetitorResult(competitor, thisCompetitorOverall, thisCompetitorStages);
+                    initCompetitorMatchRecord(competitor, thisCompetitorResult)
                             .ifPresent(competitors::add);
                 }
             }
@@ -282,7 +282,7 @@ public class TransformationServiceImpl implements TransformationService {
      * are non-null, otherwise an empty Optional.
      */
     protected Optional<IpscMatchRecord> initIpscMatchRecord(IpscMatch match, Club club,
-                                                            List<CompetitorMatchRecord> competitors) {
+                                                            List<CompetitorRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
@@ -306,56 +306,49 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a {@link CompetitorMatchRecord} based on the given Competitor and match records.
+     * Initialises a {@link CompetitorRecord} for a given competitor and their corresponding result details.
      *
-     * @param competitor            the Competitor object containing personal and identification details.
-     * @param thisCompetitorOverall the overall match record of the competitor.
-     * @param thisCompetitorStages  a list of stage-wise match records of the competitor.
-     * @return an Optional containing the initialized {@link CompetitorMatchRecord} if all inputs are
-     * non-null; otherwise an empty Optional.
+     * @param competitor            The {@link Competitor} object containing details of the competitor.
+     *                              Must not be {@code null}.
+     * @param thisCompetitorResults The {@link CompetitorResultRecord} object containing result details
+     *                              for the competitor. Must not be {@code null}.
+     * @return An {@link Optional} containing the initialized {@link CompetitorRecord} if both input parameters
+     * are not {@code null}. Returns an empty {@link Optional} if either parameter is {@code null}.
      */
-    protected Optional<CompetitorMatchRecord> initCompetitorMatchRecord(Competitor competitor,
-                                                                        MatchCompetitorRecord thisCompetitorOverall,
-                                                                        List<MatchStageCompetitorRecord> thisCompetitorStages) {
-        if ((competitor == null) || (thisCompetitorOverall == null) || (thisCompetitorStages == null)) {
+    protected Optional<CompetitorRecord> initCompetitorMatchRecord(Competitor competitor,
+                                                                   CompetitorResultRecord thisCompetitorResults) {
+        if ((competitor == null) || (thisCompetitorResults == null)) {
             return Optional.empty();
         }
 
-        // Creates competitor response from competitor details
+        // Get the date of birth for the competitor
         String dateOfBirth = DateUtil.formatDate(competitor.getDateOfBirth(),
                 IpscConstants.IPSC_OUTPUT_DATE_FORMAT);
 
-        CompetitorMatchRecord competitorRecord = new CompetitorMatchRecord(competitor.getFirstName(),
+        // Creates competitor response from competitor details
+        CompetitorRecord competitorRecord = new CompetitorRecord(competitor.getFirstName(),
                 competitor.getLastName(), competitor.getMiddleNames(), dateOfBirth,
                 competitor.getSapsaNumber(), competitor.getCompetitorNumber(),
-                thisCompetitorOverall, thisCompetitorStages);
+                thisCompetitorResults);
         return Optional.of(competitorRecord);
     }
 
     /**
-     * Initialises the match competitor details for a given competitor from a list of match competitors.
-     * <p>
-     * This method filters the provided list of match competitors to find a matching competitor,
-     * extracts relevant details, and formats these details into a MatchCompetitorRecord object.
-     * If the competitor or the list is null, or no matching competitor is found, an empty Optional
-     * is returned.
+     * Initialises the overall result of a given competitor based on the provided list of match competitors.
      *
-     * @param competitor          the competitor for whom the match competitor details are to be initialised.
-     *                            Can be null.
-     * @param matchCompetitorList the list of match competitors to search through. Can be null
-     *                            or contain null elements.
-     * @return an Optional containing a MatchCompetitorRecord populated with the initialised details
-     * of the given competitor, or an empty Optional if the competitor or list is null,
-     * or if no match is found.
+     * @param competitor          the competitor whose overall match result is to be initialised, must not be null.
+     * @param matchCompetitorList the list of match competitors from which the overall result is determined; must not be null.
+     * @return an {@code Optional} containing the initialized {@code MatchCompetitorOverallResultsRecord} if the competitor is found in the list; otherwise,
+     * {@code Optional.empty()}.
      */
-    protected Optional<MatchCompetitorRecord> initMatchCompetitor(Competitor competitor,
-                                                                  List<MatchCompetitor> matchCompetitorList) {
+    protected Optional<MatchCompetitorOverallResultsRecord> initMatchCompetitorOverallResult(
+            Competitor competitor, List<MatchCompetitor> matchCompetitorList) {
 
         if ((competitor == null) || (matchCompetitorList == null)) {
             return Optional.empty();
         }
 
-        MatchCompetitorRecord thisCompetitorOverall = null;
+        MatchCompetitorOverallResultsRecord thisCompetitorOverall = null;
         // Filters and maps overall data to the response object
         MatchCompetitor matchCompetitor = matchCompetitorList.stream()
                 .filter(Objects::nonNull)
@@ -366,17 +359,7 @@ public class TransformationServiceImpl implements TransformationService {
             return Optional.empty();
         }
 
-        // Initialises match competitor details
-        String clubName = "";
-        if ((matchCompetitor.getMatch() != null) && (matchCompetitor.getMatch().getClub() != null)) {
-            clubName = ValueUtil.nullAsEmptyString(matchCompetitor.getMatch().getClub().getName());
-        }
-
-        String firearmType = ValueUtil.nullAsEmptyString(matchCompetitor.getFirearmType());
-        String division = ValueUtil.nullAsEmptyString(matchCompetitor.getDivision());
-        String powerFactor = ValueUtil.nullAsEmptyString(matchCompetitor.getPowerFactor());
-        String competitorCategory = ValueUtil.nullAsEmptyString(matchCompetitor.getCompetitorCategory());
-
+        // Initialises the overall result of the competitor in this division
         String matchPoints = NumberUtil.formatBigDecimal(matchCompetitor.getMatchPoints(),
                 IpscConstants.MATCH_POINTS_SCALE);
         String matchRanking = NumberUtil.formatBigDecimal(matchCompetitor.getMatchRanking(),
@@ -386,49 +369,70 @@ public class TransformationServiceImpl implements TransformationService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Formats competitor details for match competitor response
-        thisCompetitorOverall = new MatchCompetitorRecord(clubName, firearmType, division,
-                powerFactor, competitorCategory, matchPoints, matchRanking, dateEdited);
+        thisCompetitorOverall = new MatchCompetitorOverallResultsRecord(matchPoints, matchRanking, dateEdited);
         return Optional.of(thisCompetitorOverall);
     }
 
     /**
-     * Initialises and retrieves a list of {@link MatchStageCompetitorRecord} for the given competitor,
-     * based on the provided list of {@link MatchStageCompetitor}.
+     * Initialises a competitor's result record based on their details, overall match performance,
+     * and stage results.
      *
-     * <p>
-     * The method filters the match stage competitor list to include only entities matching the provided
-     * competitor, processes the data, and maps it to a structured response format.
-     * </p>
-     *
-     * @param competitor               The {@link Competitor} object for which the match stage
-     *                                 competitor records are to be initialised.
-     *                                 If null, an empty list is returned.
-     * @param matchStageCompetitorList A list of {@link MatchStageCompetitor} objects representing
-     *                                 stage details. If null, an empty list is returned.
-     * @return A list of {@link MatchStageCompetitorRecord} objects containing the initialised
-     * details for the specified competitor. If no match stage competitors belong to the
-     * provided competitor or if any input is null, an empty list is returned.
+     * @param competitor                   The competitor whose result record is to be initialised. Must not be null.
+     * @param matchCompetitorOverallResult The overall result record of the competitor in the match. Must not be null.
+     * @param matchCompetitorStageResults  A list of stage result records for the competitor within the match. Must not be null.
+     * @return An {@code Optional} containing the initialized {@code CompetitorResultRecord} if input parameters are valid.
+     * Returns an empty {@code Optional} if any parameter is null.
      */
-    protected List<MatchStageCompetitorRecord> initMatchStageCompetitor(Competitor competitor,
-                                                                        List<MatchStageCompetitor> matchStageCompetitorList) {
+    protected Optional<CompetitorResultRecord> initCompetitorResult(
+            Competitor competitor, MatchCompetitorOverallResultsRecord matchCompetitorOverallResult,
+            List<MatchCompetitorStageResultRecord> matchCompetitorStageResults) {
+        if ((competitor == null) || (matchCompetitorOverallResult == null) ||
+                (matchCompetitorStageResults == null)) {
+            return Optional.empty();
+        }
+
+        // Initialises match competitor details
+        String clubName = "";
+        if ((competitor.getMatch() != null) && (competitor.getMatch().getClub() != null)) {
+            clubName = ValueUtil.nullAsEmptyString(competitor.getMatch().getClub().getName());
+        }
+
+        String firearmType = ValueUtil.nullAsEmptyString(competitor.getFirearmType());
+        String division = ValueUtil.nullAsEmptyString(competitor.getDivision());
+        String powerFactor = ValueUtil.nullAsEmptyString(competitor.getPowerFactor());
+        String competitorCategory = ValueUtil.nullAsEmptyString(competitor.getCompetitorCategory());
+
+        return new CompetitorResultRecord(clubName, firearmType, division, powerFactor, competitorCategory,
+                matchCompetitorOverallResult, matchCompetitorStageResults);
+    }
+
+    /**
+     * Initialises and returns a list of match competitor stage results for a given competitor
+     * based on the provided match stage competitor data.
+     *
+     * @param competitor               The competitor whose stage results are to be initialised.
+     *                                 If null, an empty list is returned.
+     * @param matchStageCompetitorList A list of {@link MatchStageCompetitor} objects containing
+     *                                 data for the match stages. If null, an empty list is returned.
+     * @return A list of {@link MatchCompetitorStageResultRecord} objects representing the
+     * stage results for the specified competitor. Returns an empty list if the input
+     * parameters are null or if no matching stage data is found.
+     */
+    protected List<MatchCompetitorStageResultRecord> initMatchCompetitorStageResults(
+            Competitor competitor, List<MatchStageCompetitor> matchStageCompetitorList) {
 
         if ((competitor == null) || (matchStageCompetitorList == null)) {
             return new ArrayList<>();
         }
 
-        List<MatchStageCompetitorRecord> thisCompetitorStages = new ArrayList<>();
+        List<MatchCompetitorStageResultRecord> thisCompetitorStages = new ArrayList<>();
         // Filters and maps stage data to response objects
         matchStageCompetitorList.stream()
                 .filter(Objects::nonNull)
                 .filter(msc -> competitor.equals(msc.getCompetitor()))
                 .forEach(msc -> {
 
-                    // Initialises match stage competitor details
-                    String firearmType = ValueUtil.nullAsEmptyString(msc.getFirearmType());
-                    String division = ValueUtil.nullAsEmptyString(msc.getDivision());
-                    String powerFactor = ValueUtil.nullAsEmptyString(msc.getPowerFactor());
-                    String competitorCategory = ValueUtil.nullAsEmptyString(msc.getCompetitorCategory());
-
+                    // Initialises match stage competitor results
                     String time = NumberUtil.formatBigDecimal(msc.getTime(),
                             IpscConstants.TIME_SCALE);
                     String hitFactor = NumberUtil.formatBigDecimal(msc.getHitFactor(),
@@ -445,8 +449,7 @@ public class TransformationServiceImpl implements TransformationService {
                             IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
                     // Formats competitor details for match stage competitor response
-                    MatchStageCompetitorRecord thisCompetitorStage = new MatchStageCompetitorRecord(
-                            firearmType, division, powerFactor, competitorCategory,
+                    MatchCompetitorStageResultRecord thisCompetitorStage = new MatchCompetitorStageResultRecord(
                             msc.getScoreA(), msc.getScoreB(), msc.getScoreC(), msc.getScoreD(),
                             msc.getPoints(), msc.getMisses(), msc.getPenalties(), msc.getProcedurals(),
                             time, hitFactor, stagePoints, stagePercentage, stageRanking,

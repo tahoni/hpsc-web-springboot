@@ -26,7 +26,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-// TODO: add tests for enum value reads (and writes?)
 @ExtendWith(MockitoExtension.class)
 public class IpscServiceTest {
 

@@ -18,7 +18,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-// TODO: fix naming convention
 @ExtendWith(MockitoExtension.class)
 public class DomainServiceTest {
 
@@ -129,7 +128,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void initMatchEntitiesUsesIdentifierNameLookupWhenMatchClubMissingFromMatchResults() {
+    public void testInitMatchEntities_whenMatchClubMissingFromMatchResultsAndIdentifierNameProvided_thenUsesIdentifierNameLookup() {
         // Arrange
         MatchResultsDto matchResultsDto = new MatchResultsDto();
         matchResultsDto.setMatch(buildMatchDto());
@@ -152,7 +151,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_filtersMatchCompetitorsFromMatchResults() {
+    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_thenFiltersMatchCompetitorsFromMatchResults() {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         CompetitorDto competitorDto = buildCompetitorDto("John", "Doe");
@@ -178,7 +177,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_filtersMatchStageCompetitorsFromMatchResults() {
+    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_thenFiltersMatchStageCompetitorsFromMatchResults() {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         CompetitorDto competitorDto = buildCompetitorDto("Jane", "Doe");
@@ -206,7 +205,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForMatchCompetitor_returnsEmptyMapForMatchCompetitorsFromMatchResults() {
+    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForMatchCompetitor_thenReturnsEmptyMapForMatchCompetitorsFromMatchResults() {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         CompetitorDto competitorNotInList = buildCompetitorDto("Ghost", "Rider");
@@ -227,7 +226,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForStageCompetitor_returnsEmptyMapForStageCompetitors() {
+    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForStageCompetitor_thenReturnsEmptyMapForStageCompetitors() {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
@@ -330,7 +329,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void initClubEntityReturnsClubDtoWhenIdentifierNameIsFound() {
+    public void testInitClubEntityFromIdentifier_whenIdentifierNameIsFound_thenReturnsClubDto() {
         // Arrange
         Club clubEntity = new Club();
         clubEntity.setId(101L);
@@ -349,7 +348,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void initClubEntityReturnsEmptyWhenIdentifierNameIsNotFound() {
+    public void testInitClubEntityFromIdentifier_whenIdentifierNameIsNotFound_thenReturnsEmpty() {
         // Arrange
         when(clubRepository.findByAbbreviation(ClubIdentifier.SOSC.getAbbreviation())).thenReturn(Optional.empty());
 
