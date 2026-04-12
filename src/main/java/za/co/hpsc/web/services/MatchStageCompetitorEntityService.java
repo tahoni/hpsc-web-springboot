@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.MatchStageCompetitor;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * The {@code MatchStageCompetitorEntityService} interface defines the contract for operations
@@ -11,14 +11,6 @@ import java.util.Optional;
  * based on specific criteria.
  */
 public interface MatchStageCompetitorEntityService {
-    /**
-     * Searches for a {@link MatchStageCompetitor} entity by its match stage ID
-     * and competitor ID.
-     *
-     * @param matchStageId the unique identifier of the match stage
-     * @param competitorId the unique identifier of the competitor.
-     * @return an {@code Optional} containing the {@link MatchStageCompetitor} if a matching entity
-     * is found, or an empty {@code Optional} if no match is found.
-     */
-    Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchStageId, Long competitorId);
+    // TODO: Javadoc
+    List<MatchStageCompetitor> findMatchStageCompetitors(Long matchStageId, Long competitorId);
 }

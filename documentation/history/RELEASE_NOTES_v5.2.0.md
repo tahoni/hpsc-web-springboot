@@ -1,4 +1,4 @@
-# Release Notes - Version 5.2.0
+# Release Notes – Version 5.2.0
 
 **Release Date:** February 27, 2026  
 **Status:** ✨ Stable

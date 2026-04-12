@@ -6,7 +6,8 @@ import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.services.MatchCompetitorEntityService;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -18,10 +19,10 @@ public class MatchCompetitorEntityServiceImpl implements MatchCompetitorEntitySe
     }
 
     @Override
-    public Optional<MatchCompetitor> findMatchCompetitor(Long matchId, Long competitorId) {
+    public List<MatchCompetitor> findMatchCompetitors(Long matchId, Long competitorId) {
         if ((competitorId == null) || (matchId == null)) {
-            return Optional.empty();
+            return new ArrayList<>();
         }
-        return matchCompetitorRepository.findByCompetitorIdAndMatchId(competitorId, matchId);
+        return matchCompetitorRepository.findAllByCompetitorIdAndMatchId(competitorId, matchId);
     }
 }

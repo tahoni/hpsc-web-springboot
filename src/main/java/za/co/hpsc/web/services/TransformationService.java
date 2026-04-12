@@ -41,7 +41,7 @@ public interface TransformationService {
      * This method processes the input list and structures the data into a record holder
      * for convenient access and manipulation.
      *
-     * @param ipscMatchHolderList a list of {@code MatchHolder} objcets representing the matches
+     * @param ipscMatchHolderList a list of {@code MatchHolder} objects representing the matches
      *                            to be included in the generated {@code IpscMatchRecordHolder}.
      * @return an {@code IpscMatchRecordHolder} containing a list of structured match records
      * generated from the provided {@code IpscMatch} entities.

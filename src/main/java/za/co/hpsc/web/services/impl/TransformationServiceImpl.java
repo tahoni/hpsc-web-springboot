@@ -677,16 +677,8 @@ public class TransformationServiceImpl implements TransformationService {
         return filteredCompetitorDtoMap.values().stream().filter(Objects::nonNull).toList();
     }
 
-    /**
-     * Initialises the scores and competitors for a match based on the provided match results
-     * and IPSC response data.
-     *
-     * @param matchResultsDto The data transfer object containing information about the current
-     *                        match, including scores, competitors, and stages, to be updated.
-     * @param ipscResponse    The response containing the scores, members, and other related data
-     *                        fetched from the IPSC system.
-     *                        May include enrolled members and finalised scores.
-     */
+    // TODO: Javadoc
+    // TODO: tests
     protected void initScores(@NotNull MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
         // Checks for null or missing data in the IPSC response
         if ((ipscResponse == null) || (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
@@ -714,7 +706,7 @@ public class TransformationServiceImpl implements TransformationService {
         List<MatchStageCompetitorDto> matchStageCompetitorDtoList = ((matchResultsDto.getMatchStageCompetitors() != null) ?
                 new ArrayList<>(matchResultsDto.getMatchStageCompetitors()) : new ArrayList<>());
 
-        // initScores can be called directly; seed competitors when not already initialised.
+        // Seed competitors when not already initialised
         if ((matchResultsDto.getCompetitors() == null) || (matchResultsDto.getCompetitors().isEmpty())) {
             matchResultsDto.setCompetitors(initCompetitors(matchResultsDto, ipscResponse));
         }
@@ -846,7 +838,6 @@ public class TransformationServiceImpl implements TransformationService {
                                     matchStageCompetitorDto.init(optionalStageScoreResponse.get(),
                                             enrolledResponseMap.get(memberIndex), stageDto);
                                     matchStageCompetitorDtoList.add(matchStageCompetitorDto);
-
                                 }
                             });
                 });
@@ -857,6 +848,8 @@ public class TransformationServiceImpl implements TransformationService {
         matchResultsDto.setMatchStageCompetitors(matchStageCompetitorDtoList);
     }
 
+    // TODO: Javadoc
+    // TODO: tests
     protected Map<Integer, CompetitorDto> deDuplicateCompetitorDtoList(Map<Integer, CompetitorDto> competitorDtoMap) {
         if (competitorDtoMap == null) {
             return null;
@@ -866,7 +859,7 @@ public class TransformationServiceImpl implements TransformationService {
         Set<Integer> seenSapsaNumbers = new HashSet<>();
         Set<Long> seenIds = new HashSet<>();
 
-        // Prepare maps to hold the original and filtered competitor DTOs
+        // Sets maps to hold the original and filtered competitor DTOs
         Map<Integer, CompetitorDto> unfilteredCompetitorMap = competitorDtoMap;
         Map<Integer, CompetitorDto> filteredCompetitorDtoMap = new LinkedHashMap<>();
 
@@ -883,6 +876,7 @@ public class TransformationServiceImpl implements TransformationService {
                 }
             }
 
+            // Is this SAPSA number duplicated?
             if (!isDuplicate) {
                 intermediateFilteredCompetitorDtoMap.put(key, competitorDto);
             } else {
@@ -891,11 +885,12 @@ public class TransformationServiceImpl implements TransformationService {
                         .filter(cd -> cd.getSapsaNumber() != null)
                         .filter(cd -> cd.getSapsaNumber().equals(competitorDto.getSapsaNumber()))
                         .findFirst();
-                duplicateCompetitorDto.ifPresent(originalCompetitorDto -> originalCompetitorDto.getIndexes().addAll(competitorDto.getIndexes()));
+                duplicateCompetitorDto.ifPresent(originalCompetitorDto ->
+                        originalCompetitorDto.getIndexes().addAll(competitorDto.getIndexes()));
             }
         });
 
-        // Prepare maps to hold the original and filtered competitor DTOs
+        // Resets maps to hold the original and filtered competitor DTOs
         unfilteredCompetitorMap = filteredCompetitorDtoMap;
         filteredCompetitorDtoMap = new LinkedHashMap<>();
 
@@ -912,6 +907,7 @@ public class TransformationServiceImpl implements TransformationService {
                 }
             }
 
+            // Is this ID duplicated?
             if (!isDuplicate) {
                 finalFilteredCompetitorDtoMap.put(key, competitorDto);
             } else {
@@ -920,7 +916,8 @@ public class TransformationServiceImpl implements TransformationService {
                         .filter(cd -> cd.getId() != null)
                         .filter(cd -> cd.getId().equals(competitorDto.getId()))
                         .findFirst();
-                duplicateCompetitorDto.ifPresent(originalCompetitorDto -> originalCompetitorDto.getIndexes().addAll(competitorDto.getIndexes()));
+                duplicateCompetitorDto.ifPresent(originalCompetitorDto ->
+                        originalCompetitorDto.getIndexes().addAll(competitorDto.getIndexes()));
             }
         });
 
