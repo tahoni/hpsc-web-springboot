@@ -12,6 +12,8 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.records.CompetitorRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.MatchCompetitorOverallResultsRecord;
+import za.co.hpsc.web.models.ipsc.records.MatchCompetitorStageResultRecord;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
@@ -21,6 +23,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: add all fields
 // TODO: add tests for enum value reads and writes
 @Slf4j
 @ActiveProfiles("test")
@@ -125,7 +128,7 @@ public class IpscServiceIntegrationTest {
                     "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' RefNo='BBB'/></data></xml>",
                     "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='100'/></data></xml>",
                     "team": "<xml><data><row TeamId='20' Team='Team A' MatchId='100'/></data></xml>",
-                    "score": "<xml><data><row MemberId='50' StageId='200' MatchId='100' HitFactor='6.08433734939759' FinalScore='101'/></data></xml>"
+                    "score": "<xml><data><row MemberId='50' StageId='200' MatchId='100' HitFactor='6.08433734939759' ShootTime='0.87' FinalScore='101'/></data></xml>"
                 }
                 """;
 
@@ -153,12 +156,19 @@ public class IpscServiceIntegrationTest {
         assertNull(competitorRecord.sapsaNumber());
         assertEquals("15000", competitorRecord.competitorNumber());
 
-        assertEquals("101.0000", competitorRecord.overall().matchPoints());
-        assertFalse(competitorRecord.stages().isEmpty());
+        // TODO: re-enable when results are properly mapped and returned in the record
+        MatchCompetitorOverallResultsRecord overallResultRecord = competitorRecord.results().overall();
+        assertEquals("101.0000", overallResultRecord.matchPoints());
+
+        assertFalse(competitorRecord.results().stages().isEmpty());
+        MatchCompetitorStageResultRecord firstStageResultRecord = competitorRecord.results().stages().getFirst();
+        assertEquals("Test Stage", firstStageResultRecord.stageName());
+        assertEquals("0.87", firstStageResultRecord.time());
+        assertEquals("6.0843", firstStageResultRecord.hitFactor());
+        assertEquals("101.0000", firstStageResultRecord.stagePoints());
     }
 
     // Test Group: Valid Complete Data Processing
-//    @Disabled
     @Test
     public void importWinMssCabFile_withCompleteValidDataClubNullAndFilter_thenReturnsIpscMatchRecordHolder() {
         String cabFileContent = """

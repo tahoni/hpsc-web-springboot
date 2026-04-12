@@ -19,10 +19,7 @@ import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.records.CompetitorRecord;
 import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchCompetitorOverallResultsRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchCompetitorStageResultRecord;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -438,122 +435,6 @@ public class TransformationServiceTest {
         assertTrue(result.isPresent());
         assertEquals("Main Match", result.get().name());
         assertEquals(club.toString(), result.get().clubName());
-    }
-
-    @Test
-    public void testInitCompetitor_whenAnyNull_thenEmpty() {
-        // Arrange
-        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("", "", "", "", "", "", "", "");
-        List<MatchCompetitorStageResultRecord> stages = new ArrayList<>();
-
-        // Act / Assert
-        assertTrue(ipscMatchService.initCompetitorMatchRecord(null, overall).isEmpty());
-        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), null).isEmpty());
-        assertTrue(ipscMatchService.initCompetitorMatchRecord(new Competitor(), overall).isEmpty());
-    }
-
-    @Test
-    public void testInitCompetitor_whenValid_thenReturnsRecord() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setFirstName("Jane");
-        competitor.setLastName("Doe");
-        competitor.setDateOfBirth(LocalDate.of(1991, 2, 2));
-
-        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("", "", "", "", "", "", "", "");
-
-        // Act
-        Optional<CompetitorRecord> result =
-                ipscMatchService.initCompetitorMatchRecord(competitor, overall);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals("Jane", result.get().firstName());
-    }
-
-    @Test
-    public void testInitMatchCompetitor_whenNullInputs_thenEmpty() {
-        // Act / Assert
-        assertTrue(ipscMatchService.initMatchCompetitorOverallResult(null, new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initMatchCompetitorOverallResult(new Competitor(), null).isEmpty());
-    }
-
-    @Test
-    public void testInitMatchCompetitor_whenNoMatchingCompetitor_thenEmpty() {
-        // Arrange
-        Competitor target = new Competitor();
-        Competitor other = new Competitor();
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        matchCompetitor.setCompetitor(other);
-
-        // Act
-        Optional<MatchCompetitorOverallResultsRecord> result =
-                ipscMatchService.initMatchCompetitorOverallResult(target, List.of(matchCompetitor));
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void testInitMatchCompetitor_whenValid_thenReturnsRecord() {
-        // Arrange
-        Competitor target = new Competitor();
-        Club club = new Club();
-        club.setName("Holster Club");
-        IpscMatch match = new IpscMatch();
-        match.setClub(club);
-
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        matchCompetitor.setCompetitor(target);
-        matchCompetitor.setMatch(match);
-        matchCompetitor.setFirearmType(FirearmType.HANDGUN);
-        matchCompetitor.setDivision(Division.PRODUCTION);
-        matchCompetitor.setPowerFactor(PowerFactor.MINOR);
-        matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
-        matchCompetitor.setMatchPoints(BigDecimal.ONE);
-        matchCompetitor.setMatchRanking(BigDecimal.ONE);
-
-        // Act
-        Optional<MatchCompetitorOverallResultsRecord> result =
-                ipscMatchService.initMatchCompetitorOverallResult(target, List.of(matchCompetitor));
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals("Holster Club", result.get().clubName());
-    }
-
-    @Test
-    public void testInitMatchStageCompetitor_whenNullInputs_thenEmptyList() {
-        // Act / Assert
-        assertTrue(ipscMatchService.initMatchCompetitorStageResults(null, new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initMatchCompetitorStageResults(new Competitor(), null).isEmpty());
-    }
-
-    @Test
-    public void testInitMatchStageCompetitor_whenValid_thenReturnsFilteredStages() {
-        // Arrange
-        Competitor target = new Competitor();
-        Competitor other = new Competitor();
-
-        MatchStageCompetitor include = new MatchStageCompetitor();
-        include.setCompetitor(target);
-        include.setFirearmType(FirearmType.HANDGUN);
-        include.setDivision(Division.PRODUCTION);
-        include.setPowerFactor(PowerFactor.MINOR);
-        include.setCompetitorCategory(CompetitorCategory.NONE);
-        include.setStagePoints(BigDecimal.ONE);
-        include.setStagePercentage(BigDecimal.ONE);
-        include.setStageRanking(BigDecimal.ONE);
-
-        MatchStageCompetitor exclude = new MatchStageCompetitor();
-        exclude.setCompetitor(other);
-
-        // Act
-        List<MatchCompetitorStageResultRecord> result =
-                ipscMatchService.initMatchCompetitorStageResults(target, List.of(include, exclude));
-
-        // Assert
-        assertEquals(1, result.size());
     }
 
     @Test

@@ -1,11 +1,7 @@
 package za.co.hpsc.web.models.ipsc.records;
 
-public record MatchStageCompetitorRecord(
-        String firearmType,
-        String division,
-        String powerFactor,
-
-        String competitorCategory,
+public record MatchCompetitorStageResultRecord(
+        String stageName,
 
         Integer scoreA,
         Integer scoreB,

@@ -1,8 +1,6 @@
 package za.co.hpsc.web.models.ipsc.records;
 
-import java.util.List;
-
-public record CompetitorMatchRecord(
+public record CompetitorRecord(
         String firstName,
         String lastName,
         String middleNames,
@@ -11,7 +9,9 @@ public record CompetitorMatchRecord(
         Integer sapsaNumber,
         String competitorNumber,
 
-        MatchCompetitorRecord overall,
-        List<MatchStageCompetitorRecord> stages
+        String clubName,
+        String competitorCategory,
+
+        CompetitorResultRecord results
 ) {
 }
