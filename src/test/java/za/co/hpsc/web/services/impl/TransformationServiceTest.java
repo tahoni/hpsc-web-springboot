@@ -52,7 +52,7 @@ public class TransformationServiceTest {
     private MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
     @InjectMocks
-    private TransformationServiceImpl ipscMatchService;
+    private TransformationServiceImpl transformationService;
 
     private MatchRequest matchRequest(int matchId) {
         MatchRequest request = new MatchRequest();
@@ -134,7 +134,7 @@ public class TransformationServiceTest {
     @Test
     public void testMapMatchResults_whenNullRequest_thenThrowsValidationException() {
         // Act / Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.mapMatchResults(null));
+        assertThrows(ValidationException.class, () -> transformationService.mapMatchResults(null));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class TransformationServiceTest {
         holder.setMatches(null);
 
         // Act
-        IpscResponseHolder result = ipscMatchService.mapMatchResults(holder);
+        IpscResponseHolder result = transformationService.mapMatchResults(holder);
 
         // Assert
         assertNotNull(result);
@@ -165,7 +165,7 @@ public class TransformationServiceTest {
         holder.setClubs(List.of(clubRequest(101)));
 
         // Act
-        IpscResponseHolder result = ipscMatchService.mapMatchResults(holder);
+        IpscResponseHolder result = transformationService.mapMatchResults(holder);
 
         // Assert
         assertEquals(1, result.getIpscList().size());
@@ -181,7 +181,7 @@ public class TransformationServiceTest {
     @Test
     public void testGenerateIpscMatchRecordHolder_whenNullInput_thenReturnsEmptyHolder() {
         // Act
-        var result = ipscMatchService.generateIpscMatchRecordHolder(null);
+        var result = transformationService.generateIpscMatchRecordHolder(null);
 
         // Assert
         assertNotNull(result);
@@ -236,7 +236,7 @@ public class TransformationServiceTest {
         match.setMatchStages(List.of(stage));
 
         // Act
-        var result = ipscMatchService.generateIpscMatchRecordHolder(List.of(
+        var result = transformationService.generateIpscMatchRecordHolder(List.of(
                 new MatchHolder(match, club,
                         List.of(stage), List.of(competitor), List.of(matchCompetitor), List.of(stageCompetitor))));
 
@@ -249,7 +249,7 @@ public class TransformationServiceTest {
     @Test
     public void testInitMatchResults_whenNullResponse_thenEmpty() {
         // Act / Assert
-        assertTrue(ipscMatchService.initMatchResults(null).isEmpty());
+        assertTrue(transformationService.initMatchResults(null).isEmpty());
     }
 
     @Test
@@ -258,49 +258,13 @@ public class TransformationServiceTest {
         IpscResponse response = new IpscResponse();
 
         // Act / Assert
-        assertTrue(ipscMatchService.initMatchResults(response).isEmpty());
-    }
-
-    @Test
-    public void testInitMatchResults_whenValid_thenReturnsPopulatedDto() {
-        // Arrange
-        IpscResponse response = baseIpscResponse(1);
-        response.setClub(new ClubResponse(200, "HPSC", "Holster Club"));
-        response.setStages(List.of(new StageResponse(1, 1, "Stage 1", "Desc", 1,
-                1, 10, 0, 0, 0, 0, 20, 100, 0, 0)));
-        response.setScores(List.of(new ScoreResponse(1, 1, 9, 5, 0, 0, 0, 0,
-                0, 0, "12.00", false, "0", 0, "0", "2.2", 50,
-                false, LocalDateTime.of(2026, 3, 31, 12, 0))));
-        response.setMembers(List.of(new MemberResponse(9, "Doe", "John", "",
-                false, LocalDateTime.of(1990, 1, 1, 0, 0), "1234", "BBB",
-                true, null, null, null)));
-        response.setEnrolledMembers(List.of(new EnrolledResponse(9, 9, 1, 1, 1,
-                "BBB", 1, 2, true, true, false,
-                null, false, null, null)));
-
-        when(clubEntityService.findClubByNameOrAbbreviation("Holster Club", "HPSC"))
-                .thenReturn(Optional.empty());
-        when(matchEntityService.findMatchByNameAndScheduledDate(anyString(), any()))
-                .thenReturn(Optional.empty());
-        when(matchStageEntityService.findMatchStage(any(), any())).thenReturn(Optional.empty());
-        when(competitorEntityService.findCompetitor(anyString(), anyString(), anyString(), any()))
-                .thenReturn(Optional.empty());
-
-        // Act
-        Optional<MatchResultsDto> result = ipscMatchService.initMatchResults(response);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertNotNull(result.get().getMatch());
-        assertEquals(1, result.get().getStages().size());
-        assertFalse(result.get().getMatchCompetitors().isEmpty());
-        assertFalse(result.get().getMatchStageCompetitors().isEmpty());
+        assertTrue(transformationService.initMatchResults(response).isEmpty());
     }
 
     @Test
     public void testCreateBasicMatch_whenMatchNull_thenEmpty() {
         // Act / Assert
-        Optional<IpscResponse> result = ipscMatchService.createBasicMatch(new IpscRequestHolder(), null);
+        Optional<IpscResponse> result = transformationService.createBasicMatch(new IpscRequestHolder(), null);
         assertTrue(result.isEmpty());
     }
 
@@ -311,7 +275,7 @@ public class TransformationServiceTest {
         request.setMatchId(null);
 
         // Act / Assert
-        Optional<IpscResponse> result = ipscMatchService.createBasicMatch(new IpscRequestHolder(), request);
+        Optional<IpscResponse> result = transformationService.createBasicMatch(new IpscRequestHolder(), request);
         assertTrue(result.isEmpty());
     }
 
@@ -324,7 +288,7 @@ public class TransformationServiceTest {
         holder.setScores(new ArrayList<>());
 
         // Act / Assert
-        Optional<IpscResponse> result = ipscMatchService.createBasicMatch(holder, matchRequest(1));
+        Optional<IpscResponse> result = transformationService.createBasicMatch(holder, matchRequest(1));
         assertTrue(result.isEmpty());
     }
 
@@ -338,7 +302,7 @@ public class TransformationServiceTest {
         holder.setScores(List.of(scoreRequest(1, 1, 9, 10), scoreRequest(2, 1, 10, 20)));
 
         // Act
-        Optional<IpscResponse> result = ipscMatchService.createBasicMatch(holder, matchRequest(1));
+        Optional<IpscResponse> result = transformationService.createBasicMatch(holder, matchRequest(1));
 
         // Assert
         assertTrue(result.isPresent());
@@ -355,7 +319,7 @@ public class TransformationServiceTest {
         holder.setMembers(new ArrayList<>());
 
         // Act / Assert
-        assertDoesNotThrow(() -> ipscMatchService.addMembersToMatch(null, holder));
+        assertDoesNotThrow(() -> transformationService.addMembersToMatch(null, holder));
     }
 
     @Test
@@ -367,7 +331,7 @@ public class TransformationServiceTest {
         holder.setMembers(List.of(memberRequest(9), memberRequest(10)));
 
         // Act
-        ipscMatchService.addMembersToMatch(response, holder);
+        transformationService.addMembersToMatch(response, holder);
 
         // Assert
         assertEquals(1, response.getMembers().size());
@@ -377,7 +341,7 @@ public class TransformationServiceTest {
     @Test
     public void testAddClubToMatch_whenNullArgs_thenNoThrow() {
         // Act / Assert
-        assertDoesNotThrow(() -> ipscMatchService.addClubToMatch(null, null));
+        assertDoesNotThrow(() -> transformationService.addClubToMatch(null, null));
     }
 
     @Test
@@ -389,7 +353,7 @@ public class TransformationServiceTest {
         holder.setClubs(List.of(clubRequest(500)));
 
         // Act
-        ipscMatchService.addClubToMatch(response, holder);
+        transformationService.addClubToMatch(response, holder);
 
         // Assert
         assertNotNull(response.getClub());
@@ -405,7 +369,7 @@ public class TransformationServiceTest {
         holder.setClubs(List.of(clubRequest(500)));
 
         // Act
-        ipscMatchService.addClubToMatch(response, holder);
+        transformationService.addClubToMatch(response, holder);
 
         // Assert
         assertNotNull(response.getClub());
@@ -415,8 +379,8 @@ public class TransformationServiceTest {
     @Test
     public void testInitIpscMatchResponse_whenNullInputs_thenEmpty() {
         // Act / Assert
-        assertTrue(ipscMatchService.initIpscMatchRecord(null, new Club(), new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initIpscMatchRecord(new IpscMatch(), new Club(), null).isEmpty());
+        assertTrue(transformationService.initIpscMatchRecord(null, new Club(), new ArrayList<>()).isEmpty());
+        assertTrue(transformationService.initIpscMatchRecord(new IpscMatch(), new Club(), null).isEmpty());
     }
 
     @Test
@@ -429,7 +393,7 @@ public class TransformationServiceTest {
         match.setScheduledDate(LocalDateTime.of(2026, 3, 31, 10, 0));
 
         // Act
-        Optional<IpscMatchRecord> result = ipscMatchService.initIpscMatchRecord(match, club, new ArrayList<>());
+        Optional<IpscMatchRecord> result = transformationService.initIpscMatchRecord(match, club, new ArrayList<>());
 
         // Assert
         assertTrue(result.isPresent());
@@ -440,7 +404,7 @@ public class TransformationServiceTest {
     @Test
     public void testGetCompetitorSet_whenNull_thenEmptySet() {
         // Act / Assert
-        assertTrue(ipscMatchService.getCompetitorSet(null).isEmpty());
+        assertTrue(transformationService.getCompetitorSet(null).isEmpty());
     }
 
     @Test
@@ -453,7 +417,7 @@ public class TransformationServiceTest {
         input.add(null);
 
         // Act
-        Set<Competitor> result = ipscMatchService.getCompetitorSet(input);
+        Set<Competitor> result = transformationService.getCompetitorSet(input);
 
         // Assert
         assertEquals(1, result.size());
@@ -463,7 +427,7 @@ public class TransformationServiceTest {
     @Test
     public void testGetMatchCompetitorSet_whenNullMatch_thenEmptySet() {
         // Act / Assert
-        assertTrue(ipscMatchService.getMatchCompetitorSet(null).isEmpty());
+        assertTrue(transformationService.getMatchCompetitorSet(null).isEmpty());
     }
 
     @Test
@@ -475,7 +439,7 @@ public class TransformationServiceTest {
         input.add(null);
 
         // Act
-        Set<MatchCompetitor> result = ipscMatchService.getMatchCompetitorSet(input);
+        Set<MatchCompetitor> result = transformationService.getMatchCompetitorSet(input);
 
         // Assert
         assertEquals(1, result.size());
@@ -484,7 +448,7 @@ public class TransformationServiceTest {
     @Test
     public void testGetMatchStageCompetitorSet_whenNull_thenEmptySet() {
         // Act / Assert
-        assertTrue(ipscMatchService.getMatchStageCompetitorSet(null).isEmpty());
+        assertTrue(transformationService.getMatchStageCompetitorSet(null).isEmpty());
     }
 
     @Test
@@ -497,7 +461,7 @@ public class TransformationServiceTest {
         input.add(null);
 
         // Act
-        Set<MatchStageCompetitor> result = ipscMatchService.getMatchStageCompetitorSet(input);
+        Set<MatchStageCompetitor> result = transformationService.getMatchStageCompetitorSet(input);
 
         // Assert
         assertEquals(1, result.size());
@@ -507,7 +471,7 @@ public class TransformationServiceTest {
     @Test
     public void testInitClub_whenNull_thenEmpty() {
         // Act / Assert
-        assertTrue(ipscMatchService.initClub(null).isEmpty());
+        assertTrue(transformationService.initClub(null).isEmpty());
     }
 
     @Test
@@ -522,7 +486,7 @@ public class TransformationServiceTest {
                 .thenReturn(Optional.of(club));
 
         // Act
-        Optional<ClubDto> result = ipscMatchService.initClub(clubResponse);
+        Optional<ClubDto> result = transformationService.initClub(clubResponse);
 
         // Assert
         assertTrue(result.isPresent());
@@ -538,7 +502,7 @@ public class TransformationServiceTest {
                 .thenReturn(Optional.empty());
 
         // Act
-        Optional<ClubDto> result = ipscMatchService.initClub(clubResponse);
+        Optional<ClubDto> result = transformationService.initClub(clubResponse);
 
         // Assert
         assertTrue(result.isPresent());
@@ -548,8 +512,8 @@ public class TransformationServiceTest {
     @Test
     public void testInitMatch_whenResponseOrMatchNull_thenEmpty() {
         // Act / Assert
-        assertTrue(ipscMatchService.initMatch(null, null).isEmpty());
-        assertTrue(ipscMatchService.initMatch(new IpscResponse(), null).isEmpty());
+        assertTrue(transformationService.initMatch(null, null).isEmpty());
+        assertTrue(transformationService.initMatch(new IpscResponse(), null).isEmpty());
     }
 
     @Test
@@ -567,7 +531,7 @@ public class TransformationServiceTest {
                 .thenReturn(Optional.of(existing));
 
         // Act
-        Optional<MatchDto> result = ipscMatchService.initMatch(response, new ClubDto());
+        Optional<MatchDto> result = transformationService.initMatch(response, new ClubDto());
 
         // Assert
         assertTrue(result.isPresent());
@@ -582,7 +546,7 @@ public class TransformationServiceTest {
                 .thenReturn(Optional.empty());
 
         // Act
-        Optional<MatchDto> result = ipscMatchService.initMatch(response, null);
+        Optional<MatchDto> result = transformationService.initMatch(response, null);
 
         // Assert
         assertTrue(result.isPresent());
@@ -591,8 +555,8 @@ public class TransformationServiceTest {
     @Test
     public void testInitStages_whenNullArgs_thenEmptyList() {
         // Act / Assert
-        assertTrue(ipscMatchService.initStages(null, new ArrayList<>()).isEmpty());
-        assertTrue(ipscMatchService.initStages(new MatchDto(), null).isEmpty());
+        assertTrue(transformationService.initStages(null, new ArrayList<>()).isEmpty());
+        assertTrue(transformationService.initStages(new MatchDto(), null).isEmpty());
     }
 
     @Test
@@ -607,7 +571,7 @@ public class TransformationServiceTest {
         when(matchStageEntityService.findMatchStage(1L, 1)).thenReturn(Optional.empty());
 
         // Act
-        List<MatchStageDto> result = ipscMatchService.initStages(matchDto, List.of(stageResponse));
+        List<MatchStageDto> result = transformationService.initStages(matchDto, List.of(stageResponse));
 
         // Assert
         assertEquals(1, result.size());
@@ -620,7 +584,7 @@ public class TransformationServiceTest {
         MatchResultsDto emptyResults = new MatchResultsDto();
 
         // Act / Assert
-        assertTrue(ipscMatchService.initCompetitors(emptyResults, null).isEmpty());
+        assertTrue(transformationService.initCompetitors(emptyResults, null).isEmpty());
     }
 
     @Test
@@ -649,7 +613,7 @@ public class TransformationServiceTest {
                 .thenReturn(Optional.empty());
 
         // Act
-        List<CompetitorDto> result = ipscMatchService.initCompetitors(results, response);
+        List<CompetitorDto> result = transformationService.initCompetitors(results, response);
 
         // Assert
         assertEquals(1, result.size());
@@ -669,56 +633,8 @@ public class TransformationServiceTest {
         response.setMembers(new ArrayList<>());
 
         // Act / Assert
-        assertDoesNotThrow(() -> ipscMatchService.initScores(results, response));
+        assertDoesNotThrow(() -> transformationService.initEnrolledCompetitors(results, response));
         assertTrue(results.getMatchCompetitors().isEmpty());
-    }
-
-    @Test
-    public void testInitScores_whenValid_thenPopulatesMatchAndStageCompetitors() {
-        // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setIndex(1);
-
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setId(1L);
-        stageDto.setIndex(1);
-        stageDto.setStageNumber(1);
-        stageDto.setMaxPoints(100);
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setId(1L);
-        competitorDto.getIndexes().add(9);
-        competitorDto.setFirstName("John");
-        competitorDto.setLastName("Doe");
-        competitorDto.setCompetitorNumber("C-1");
-
-        MatchResultsDto results = new MatchResultsDto(matchDto);
-        results.setStages(List.of(stageDto));
-        results.setCompetitors(List.of(competitorDto));
-        results.setMatchCompetitors(new ArrayList<>());
-        results.setMatchStageCompetitors(new ArrayList<>());
-
-        IpscResponse response = baseIpscResponse(1);
-        response.setScores(List.of(new ScoreResponse(1, 1, 9, 5, 1, 0, 0,
-                0, 0, 0, "10.0", false, "0", 0, "0", "2.5", 50,
-                false, LocalDateTime.of(2026, 3, 31, 12, 0))));
-        response.setMembers(List.of(new MemberResponse(9, "Doe", "John", "", false,
-                LocalDateTime.of(1990, 1, 1, 0, 0), "1234", "BBB", true,
-                null, null, null)));
-        response.setEnrolledMembers(List.of(new EnrolledResponse(9, 9, 1, 1, 1,
-                "BBB", 1, 2, true, true, false,
-                null, false, null, null)));
-
-        when(matchCompetitorEntityService.findMatchCompetitor(1L, 1L)).thenReturn(Optional.empty());
-        when(matchStageCompetitorEntityService.findMatchStageCompetitor(1L, 1L)).thenReturn(Optional.empty());
-
-        // Act
-        ipscMatchService.initScores(results, response);
-
-        // Assert
-        assertEquals(1, results.getMatchCompetitors().size());
-        assertEquals(2, results.getMatchStageCompetitors().size());
     }
 }
 

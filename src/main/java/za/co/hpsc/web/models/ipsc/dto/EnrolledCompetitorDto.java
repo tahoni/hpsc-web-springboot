@@ -27,9 +27,9 @@ public class EnrolledCompetitorDto {
     @NotNull
     private CompetitorDto competitor;
     @NotNull
-    private List<MatchCompetitorDto> matches = new ArrayList<>();
+    private List<MatchCompetitorDto> competitorMatches = new ArrayList<>();
     @NotNull
-    private List<MatchStageCompetitorDto> matchStages = new ArrayList<>();
+    private List<MatchStageCompetitorDto> competitorMatchStages = new ArrayList<>();
     private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
 
     private ClubIdentifier club;
@@ -66,6 +66,22 @@ public class EnrolledCompetitorDto {
             this.firearmType = matchStageCompetitorEntity.getFirearmType();
             this.division = matchStageCompetitorEntity.getDivision();
             this.powerFactor = matchStageCompetitorEntity.getPowerFactor();
+        }
+    }
+
+    public EnrolledCompetitorDto(MatchCompetitorDto matchCompetitorDto) {
+        if (matchCompetitorDto != null) {
+            // Initialises the match competitor details
+            this.competitor = matchCompetitorDto.getCompetitor();
+
+            // Initialises the club details
+            this.club = matchCompetitorDto.getClub();
+
+            // Initialises the competitor attributes
+            this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
+            this.firearmType = matchCompetitorDto.getFirearmType();
+            this.division = matchCompetitorDto.getDivision();
+            this.powerFactor = matchCompetitorDto.getPowerFactor();
         }
     }
 }
