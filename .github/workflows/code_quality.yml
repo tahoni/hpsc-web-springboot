@@ -5,6 +5,7 @@ on:
   push:
     branches: # Specify your branches here
       - main # The 'main' branch
+      - develop # The 'develop' branch
       - 'releases/*' # The release branches
 
 jobs:
@@ -19,10 +20,18 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
           fetch-depth: 0  # a full history is required for pull request analysis
+
+      - name: 'Run Tests with Coverage'
+        run: |
+          mvn verify -Pcoverage
+
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
+          args: >-
+            --coverage-dir,${{ github.workspace }}/coverage,
+            --property,idea.license.audit.enabled=true
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
