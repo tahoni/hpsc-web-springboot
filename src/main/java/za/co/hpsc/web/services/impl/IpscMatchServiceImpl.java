@@ -346,7 +346,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
-        MatchCompetitorRecord thisCompetitorOverall = null;
+        MatchCompetitorRecord thisCompetitorOverall;
         // Filters and maps overall data to the response object
         MatchCompetitor matchCompetitor = matchCompetitorList.stream()
                 .filter(Objects::nonNull)

@@ -28,14 +28,14 @@ public class AwardRequest extends Request {
     private String imageFilePath;
 
     @NotNull
-    private String ceremonyTitle = "";
+    private String ceremonyTitle;
     private String ceremonySummary;
     private String ceremonyDescription;
     private String ceremonyCategory;
     private List<String> ceremonyTags = new ArrayList<>();
 
     @NotNull
-    private String firstPlaceName = "";
+    private String firstPlaceName;
     private String secondPlaceName;
     private String thirdPlaceName;
 

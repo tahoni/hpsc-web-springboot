@@ -122,7 +122,7 @@ public class CompetitorDto {
         String lastNameString = ((this.lastName != null) ? this.lastName.trim() : "");
         String middleNamesString = ((this.middleNames != null) ? this.middleNames.trim() : "");
 
-        String result = "";
+        String result;
         if (!middleNamesString.isBlank()) {
             result = firstNameString + " " + middleNamesString + " " + lastNameString;
         } else {

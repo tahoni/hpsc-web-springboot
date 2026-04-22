@@ -71,7 +71,7 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
                     .toList();
         }
 
-        List<Competitor> finalCompetitorList = new ArrayList<>();
+        List<Competitor> finalCompetitorList;
         if (!filteredListWithSapsaNumber.isEmpty()) {
             finalCompetitorList = filteredListWithSapsaNumber;
         } else if (!filteredListWithoutSapsaNumber.isEmpty()) {
