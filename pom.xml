@@ -166,6 +166,7 @@
                     <excludes>
                         <exclude>**/*$HibernateProxy.class</exclude>
                         <exclude>**/*$HibernateInstantiator.class</exclude>
+                        <exclude>**/*$HibernateGenerated*</exclude>
                         <exclude>**/javassist/*</exclude>
                         <exclude>javax/lang/model/*</exclude>
                         <exclude>java/sql/*</exclude>
