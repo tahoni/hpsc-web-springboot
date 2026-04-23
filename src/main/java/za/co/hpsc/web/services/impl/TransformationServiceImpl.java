@@ -387,9 +387,9 @@ public class TransformationServiceImpl implements TransformationService {
             return Optional.empty();
         }
 
-        MatchCompetitorRecord thisCompetitorOverall;
-        // Filters and maps overall data to the response object
-        MatchCompetitor matchCompetitor = matchCompetitorList.stream()
+
+        // Filters and maps match data for the competitor in this division
+        Optional<MatchCompetitor> optionalMatchCompetitor = matchCompetitorList.stream()
                 .filter(Objects::nonNull)
                 .filter(mc -> competitor.equals(mc.getCompetitor()))
                 .findFirst();
