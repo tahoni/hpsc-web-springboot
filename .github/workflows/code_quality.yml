@@ -5,6 +5,7 @@ on:
   push:
     branches: # Specify your branches here
       - main # The 'main' branch
+      - develop # The 'develop' branch
       - 'releases/*' # The release branches
 
 jobs:
@@ -14,15 +15,37 @@ jobs:
       contents: write
       pull-requests: write
       checks: write
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
-          fetch-depth: 0  # a full history is required for pull request analysis
+          ref: ${{ github.event.pull_request.head.sha }}  # check out actual PR commit, not merge commit
+          fetch-depth: 0  # full history required for PR analysis
+
+      # ── Code Coverage: build & test first so coverage reports exist ──────────
+      - name: Set up JDK 25
+        uses: actions/setup-java@v3
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and generate coverage report
+        run: mvn --batch-mode verify -Pcoverage
+        # The 'coverage' profile (defined in pom.xml) runs JaCoCo and writes
+        # target/site/jacoco/jacoco.xml — the path Qodana reads by default.
+
+      # ── Qodana Scan (code quality + coverage upload + license audit) ─────────
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
+          # Point Qodana at the JaCoCo XML report produced above
+          coverage-reports: target/site/jacoco/jacoco.xml
+          # Enable the licence-audit inspections bundled in Qodana
+          args: >-
+            --property=idea.suppress.tasks.path=false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'

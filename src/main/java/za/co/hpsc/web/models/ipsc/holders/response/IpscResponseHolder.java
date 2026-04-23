@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,5 +22,5 @@ import java.util.List;
 @AllArgsConstructor
 public class IpscResponseHolder {
     @NotNull
-    List<IpscResponse> ipscList = new ArrayList<>();
+    List<IpscResponse> ipscList;
 }
