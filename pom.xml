@@ -37,7 +37,7 @@
         <maven.compiler.target>25</maven.compiler.target>
         <spring-framework.version>7.0.7</spring-framework.version>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
-        <jacoco.version>0.8.11</jacoco.version>
+        <jacoco.version>0.8.14</jacoco.version>
         <jackson-bom.version>3.1.1</jackson-bom.version>
         <commons.lang3.version>3.19.0</commons.lang3.version>
     </properties>
