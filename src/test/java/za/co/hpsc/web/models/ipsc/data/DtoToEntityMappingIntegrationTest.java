@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.data;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
@@ -15,6 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DtoToEntityMappingIntegrationTest {
     private DtoMapping dtoMapping;
     private DtoToEntityMapping dtoToEntityMapping;
+
+    @BeforeEach
+    public void setUp() {
+        dtoMapping = new DtoMapping();
+        dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
+    }
 
     @Test
     public void testCompleteFlow_withAllMappings_thenAllDataStored() {
