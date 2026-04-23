@@ -33,7 +33,11 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring-framework.version>7.0.7</spring-framework.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <spring-framework.version>7.0.8</spring-framework.version>
+        <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
+        <jacoco.version>0.8.11</jacoco.version>
         <tomcat.version>11.0.21</tomcat.version>
         <jackson-bom.version>3.1.1</jackson-bom.version>
         <commons.lang3.version>3.19.0</commons.lang3.version>
@@ -157,44 +161,107 @@
                     </excludes>
                 </configuration>
             </plugin>
-
+            <!-- JaCoCo: instruments tests and produces the XML coverage report -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*$HibernateProxy.class</exclude>
-                        <exclude>**/*$HibernateInstantiator.class</exclude>
-                        <exclude>**/*$HibernateGenerated*</exclude>
-                        <exclude>**/javassist/*</exclude>
-                        <exclude>javax/lang/model/*</exclude>
-                        <exclude>java/sql/*</exclude>
-                    </excludes>
-                </configuration>
+                <version>${jacoco.version}</version>
                 <executions>
+                    <!-- Attach the JaCoCo agent before tests run -->
                     <execution>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- Generate XML report after tests complete -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
+                            <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
             <plugin>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                <version>1.5</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.4.0</version>
                 <executions>
                     <execution>
-                        <phase>integration-test</phase>
+                        <id>aggregate-add-third-party</id>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>aggregate-add-third-party</goal>
                         </goals>
+                        <configuration>
+                            <!-- File Qodana reads for licence information -->
+                            <outputDirectory>${project.build.directory}/qodana</outputDirectory>
+                            <thirdPartyFilename>dependencies-licenses.txt</thirdPartyFilename>
+                            <!-- Fail the build if a dependency has no recognised licence -->
+                            <failOnMissing>true</failOnMissing>
+                            <!-- List licences you explicitly allow in your project -->
+                            <includedLicenses>
+                                <includedLicense>Apache License, Version 2.0</includedLicense>
+                                <includedLicense>MIT License</includedLicense>
+                                <includedLicense>BSD 2-Clause License</includedLicense>
+                                <includedLicense>BSD 3-Clause License</includedLicense>
+                                <includedLicense>Eclipse Public License 1.0</includedLicense>
+                                <includedLicense>Eclipse Public License 2.0</includedLicense>
+                            </includedLicenses>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <formats>
+                                        <format>XML</format>
+                                        <format>HTML</format>
+                                    </formats>
+                                    <outputDirectory>
+                                        ${project.build.directory}/site/jacoco
+                                    </outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
