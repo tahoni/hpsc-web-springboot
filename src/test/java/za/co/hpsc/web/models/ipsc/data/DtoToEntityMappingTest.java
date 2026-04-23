@@ -1,12 +1,9 @@
-package za.co.hpsc.web.models.ipsc.domain;
+package za.co.hpsc.web.models.ipsc.data;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.data.DtoToEntityMapping;
-import za.co.hpsc.web.models.ipsc.data.EntityMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
 
 import java.util.HashMap;
@@ -765,54 +762,145 @@ public class DtoToEntityMappingTest {
         assertNull(stageCompetitorEntity.getMatchStage());
     }
 
-    // =====================================================================
-    // Integration Tests - Multiple Operations
-    // =====================================================================
+    @Test
+    public void setClub_withValidClub_thenClubIsStoredInEntityMapping() {
+        Club clubEntity = new Club();
+        clubEntity.setId(42L);
+
+        dtoToEntityMapping.setClub(clubEntity);
+
+        assertSame(clubEntity, dtoToEntityMapping.entityMapping().getClub());
+    }
 
     @Test
-    public void testCompleteFlow_withAllMappings_thenAllDataStored() {
-        // Arrange
+    public void setMatchStage_whenMatchWasSet_thenLinksStageEntityToMatch() {
         IpscMatch matchEntity = new IpscMatch();
-        matchEntity.setName("Complete Test Match");
         dtoToEntityMapping.setMatch(matchEntity);
 
-        HashMap<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        CompetitorDto competitorDto = new CompetitorDto();
-        UUID competitorUuid = UUID.randomUUID();
-        competitorDto.setUuid(competitorUuid);
-        competitorMap.put(competitorUuid, competitorDto);
-        dtoMapping.setCompetitorMap(competitorMap);
+        MatchStageDto matchStageDto = new MatchStageDto();
+        matchStageDto.setUuid(UUID.randomUUID());
+        IpscMatchStage matchStageEntity = new IpscMatchStage();
 
-        HashMap<UUID, MatchStageDto> stageMap = new HashMap<>();
+        dtoToEntityMapping.setMatchStage(matchStageDto, matchStageEntity);
+
+        assertSame(matchEntity, matchStageEntity.getMatch());
+    }
+
+    @Test
+    public void setMatchStage_withValidData_thenStageAppearsInStageDtoList() {
         MatchStageDto matchStageDto = new MatchStageDto();
         UUID stageUuid = UUID.randomUUID();
         matchStageDto.setUuid(stageUuid);
-        stageMap.put(stageUuid, matchStageDto);
-        dtoMapping.setMatchStageMap(stageMap);
+        matchStageDto.setStageName("Stage A");
+        IpscMatchStage matchStageEntity = new IpscMatchStage();
 
-        // Act & Assert
-        assertTrue(dtoToEntityMapping.getMatchEntity().isPresent());
-        assertEquals(1, dtoToEntityMapping.getCompetitorDtoList().size());
-        assertEquals(1, dtoToEntityMapping.getMatchStageDtoList().size());
+        dtoToEntityMapping.setMatchStage(matchStageDto, matchStageEntity);
+
+        List<MatchStageDto> stages = dtoToEntityMapping.getMatchStageDtoList();
+        assertEquals(1, stages.size());
+        assertEquals("Stage A", stages.getFirst().getStageName());
     }
 
     @Test
-    public void testMultipleCompetitors_withPartialData_thenStoresAll() {
-        // Arrange
-        HashMap<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        for (int i = 1; i <= 5; i++) {
-            CompetitorDto competitorDto = new CompetitorDto();
-            competitorDto.setUuid(UUID.randomUUID());
-            competitorDto.setFirstName("Competitor" + i);
-            competitorMap.put(competitorDto.getUuid(), competitorDto);
+    public void setMatchCompetitor_withValidData_thenEntityIsLinkedToMatchAndCompetitor() {
+        IpscMatch matchEntity = new IpscMatch();
+        dtoToEntityMapping.setMatch(matchEntity);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        UUID competitorUuid = UUID.randomUUID();
+        competitorDto.setUuid(competitorUuid);
+        Competitor competitorEntity = new Competitor();
+        dtoToEntityMapping.setCompetitor(competitorDto, competitorEntity);
+
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setUuid(UUID.randomUUID());
+        matchCompetitorDto.setCompetitor(competitorDto);
+        MatchCompetitor matchCompetitorEntity = new MatchCompetitor();
+
+        dtoToEntityMapping.setMatchCompetitor(matchCompetitorDto, matchCompetitorEntity);
+
+        assertSame(matchEntity, matchCompetitorEntity.getMatch());
+        assertSame(competitorEntity, matchCompetitorEntity.getCompetitor());
+    }
+
+    @Test
+    public void setMatchCompetitor_withValidData_thenDtoAppearsInMatchCompetitorDtoList() {
+        IpscMatch matchEntity = new IpscMatch();
+        dtoToEntityMapping.setMatch(matchEntity);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+        dtoToEntityMapping.setCompetitor(competitorDto, new Competitor());
+
+        MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto();
+        matchCompetitorDto.setUuid(UUID.randomUUID());
+        matchCompetitorDto.setCompetitor(competitorDto);
+
+        dtoToEntityMapping.setMatchCompetitor(matchCompetitorDto, new MatchCompetitor());
+
+        assertEquals(1, dtoToEntityMapping.getMatchCompetitorDtoList().size());
+    }
+
+    @Test
+    public void setMatchStageCompetitor_withValidData_thenEntityIsLinkedToStageAndCompetitor() {
+        MatchStageDto matchStageDto = new MatchStageDto();
+        matchStageDto.setUuid(UUID.randomUUID());
+        IpscMatchStage matchStageEntity = new IpscMatchStage();
+        dtoToEntityMapping.setMatchStage(matchStageDto, matchStageEntity);
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+        Competitor competitorEntity = new Competitor();
+        dtoToEntityMapping.setCompetitor(competitorDto, competitorEntity);
+
+        MatchStageCompetitorDto stageCompetitorDto = new MatchStageCompetitorDto();
+        stageCompetitorDto.setUuid(UUID.randomUUID());
+        stageCompetitorDto.setCompetitor(competitorDto);
+        stageCompetitorDto.setMatchStage(matchStageDto);
+        MatchStageCompetitor stageCompetitorEntity = new MatchStageCompetitor();
+
+        dtoToEntityMapping.setMatchStageCompetitor(stageCompetitorDto, stageCompetitorEntity);
+
+        assertSame(competitorEntity, stageCompetitorEntity.getCompetitor());
+        assertSame(matchStageEntity, stageCompetitorEntity.getMatchStage());
+    }
+
+    @Test
+    public void setMatchStageCompetitor_withValidData_thenDtoAppearsInStageCompetitorDtoList() {
+        MatchStageDto matchStageDto = new MatchStageDto();
+        matchStageDto.setUuid(UUID.randomUUID());
+        dtoToEntityMapping.setMatchStage(matchStageDto, new IpscMatchStage());
+
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setUuid(UUID.randomUUID());
+        dtoToEntityMapping.setCompetitor(competitorDto, new Competitor());
+
+        MatchStageCompetitorDto stageCompetitorDto = new MatchStageCompetitorDto();
+        stageCompetitorDto.setUuid(UUID.randomUUID());
+        stageCompetitorDto.setCompetitor(competitorDto);
+        stageCompetitorDto.setMatchStage(matchStageDto);
+
+        dtoToEntityMapping.setMatchStageCompetitor(stageCompetitorDto, new MatchStageCompetitor());
+
+        assertEquals(1, dtoToEntityMapping.getMatchStageCompetitorDtoList().size());
+    }
+
+    @Test
+    public void setCompetitor_calledMultipleTimes_thenAllCompetitorsAccumulateInDtoList() {
+        for (int i = 0; i < 3; i++) {
+            CompetitorDto dto = new CompetitorDto();
+            dto.setUuid(UUID.randomUUID());
+            dtoToEntityMapping.setCompetitor(dto, new Competitor());
         }
-        dtoMapping.setCompetitorMap(competitorMap);
 
-        // Act
-        List<CompetitorDto> result = dtoToEntityMapping.getCompetitorDtoList();
+        assertEquals(3, dtoToEntityMapping.getCompetitorDtoList().size());
+    }
 
-        // Assert
-        assertEquals(5, result.size());
+    @Test
+    public void constructorWithNullDtoMapping_thenDtoMappingIsInitializedWithDefaults() {
+        DtoToEntityMapping mapping = new DtoToEntityMapping((DtoMapping) null);
+
+        assertNotNull(mapping.dtoMapping());
+        assertNotNull(mapping.entityMapping());
     }
 }
-
