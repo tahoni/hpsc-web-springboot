@@ -2,12 +2,14 @@ package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
@@ -491,6 +493,95 @@ public class IpscServiceTest {
     }
 
     @Test
+    public void testImportWinMssCabFileContent_whenMultipleClubsProvided_thenPassesParsedClubsToTransformationService() {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Harties Club'/><row ClubId='2' ClubCode='AAA' Club='Safari Club'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Club Parsing Match'/></data></xml>",
+                    "stage": "<xml><data></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data></data></xml>"
+                }
+                """;
+
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of());
+        ArgumentCaptor<IpscRequestHolder> requestHolderCaptor = ArgumentCaptor.forClass(IpscRequestHolder.class);
+
+        when(transformationService.mapMatchResults(requestHolderCaptor.capture()))
+                .thenReturn(ipscResponseHolder);
+
+        // Act
+        MatchResultsDtoHolder response = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFileContent(cabFileContent));
+
+        // Assert
+        assertNotNull(response);
+        assertNotNull(requestHolderCaptor.getValue());
+        assertEquals(2, requestHolderCaptor.getValue().getClubs().size());
+
+        ClubRequest firstClub = requestHolderCaptor.getValue().getClubs().getFirst();
+        assertEquals(1, firstClub.getClubId());
+        assertEquals("BBB", firstClub.getClubCode());
+        assertEquals("Harties Club", firstClub.getClubName());
+
+        ClubRequest secondClub = requestHolderCaptor.getValue().getClubs().get(1);
+        assertEquals(2, secondClub.getClubId());
+        assertEquals("AAA", secondClub.getClubCode());
+        assertEquals("Safari Club", secondClub.getClubName());
+
+        verify(transformationService, times(1))
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(transformationService, never())
+                .initMatchResults(any(IpscResponse.class));
+    }
+
+    @Test
+    public void testImportWinMssCabFileContent_whenClubXmlIsEmpty_thenPassesEmptyClubListToTransformationService() {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='No Club Match'/></data></xml>",
+                    "stage": "<xml><data></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data></data></xml>"
+                }
+                """;
+
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of());
+        ArgumentCaptor<IpscRequestHolder> requestHolderCaptor = ArgumentCaptor.forClass(IpscRequestHolder.class);
+
+        when(transformationService.mapMatchResults(requestHolderCaptor.capture()))
+                .thenReturn(ipscResponseHolder);
+
+        // Act
+        MatchResultsDtoHolder response = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFileContent(cabFileContent));
+
+        // Assert
+        assertNotNull(response);
+        assertNotNull(requestHolderCaptor.getValue());
+        assertNotNull(requestHolderCaptor.getValue().getClubs());
+        assertTrue(requestHolderCaptor.getValue().getClubs().isEmpty());
+
+        verify(transformationService, times(1))
+                .mapMatchResults(any(IpscRequestHolder.class));
+        verify(transformationService, never())
+                .initMatchResults(any(IpscResponse.class));
+    }
+
+    @Test
     public void testImportWinMssCabFileContent_whenNullCabFileContent_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
@@ -813,6 +904,92 @@ public class IpscServiceTest {
         assertEquals(50, scoreRequest.getMemberId());
         assertEquals(101, scoreRequest.getFinalScore());
         assertEquals("6.08433734939759", scoreRequest.getHitFactor());
+    }
+
+    @Test
+    public void testReadIpscRequests_whenMultipleClubRows_thenReturnsAllClubEntries() {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Harties Club' Contact='Admin One'/><row ClubId='2' ClubCode='AAA' Club='Safari Club' Contact='Admin Two'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Club Parsing Match'/></data></xml>",
+                    "stage": "<xml><data></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data></data></xml>"
+                }
+                """;
+
+        // Act
+        IpscRequestHolder result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.getClubs().size());
+
+        ClubRequest firstClub = result.getClubs().getFirst();
+        assertEquals(1, firstClub.getClubId());
+        assertEquals("BBB", firstClub.getClubCode());
+        assertEquals("Harties Club", firstClub.getClubName());
+        assertEquals("Admin One", firstClub.getContact());
+
+        ClubRequest secondClub = result.getClubs().get(1);
+        assertEquals(2, secondClub.getClubId());
+        assertEquals("AAA", secondClub.getClubCode());
+        assertEquals("Safari Club", secondClub.getClubName());
+        assertEquals("Admin Two", secondClub.getContact());
+    }
+
+    @Test
+    public void testImportWinMssCabFile_whenClubFilterConfigured_thenForwardsFilterToDomainService() throws FatalException {
+        // Arrange
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Filtered Match'/></data></xml>",
+                    "stage": "<xml><data></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data></data></xml>"
+                }
+                """;
+
+        ipscService.filterClubIdentifier = "HPSC";
+
+        IpscResponse ipscResponse = new IpscResponse();
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of(ipscResponse));
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        MatchHolder matchHolder = new MatchHolder();
+
+        when(transformationService.mapMatchResults(any(IpscRequestHolder.class)))
+                .thenReturn(ipscResponseHolder);
+        when(transformationService.initMatchResults(ipscResponse))
+                .thenReturn(Optional.of(matchResultsDto));
+        when(domainService.initMatchEntities(matchResultsDto, "HPSC", null))
+                .thenReturn(Optional.of(new DtoMapping()));
+        when(transactionService.saveMatchResults(any(DtoMapping.class)))
+                .thenReturn(Optional.of(matchHolder));
+        when(transformationService.generateIpscMatchRecordHolder(anyList()))
+                .thenReturn(new IpscMatchRecordHolder(List.of()));
+
+        // Act
+        List<IpscMatchRecordHolder> response = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFile(cabFileContent));
+
+        // Assert
+        assertNotNull(response);
+        verify(domainService, times(1))
+                .initMatchEntities(matchResultsDto, "HPSC", null);
+        verify(transactionService, times(1))
+                .saveMatchResults(any(DtoMapping.class));
     }
 
     @Test
