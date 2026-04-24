@@ -103,6 +103,7 @@ public class MatchStageCompetitor {
      */
     public void init(MatchStageCompetitorDto matchStageCompetitorDto) {
         // Initialises the match stage and competitor attributes
+        this.matchClub = matchStageCompetitorDto.getClub();
         this.competitorCategory = matchStageCompetitorDto.getCompetitorCategory();
         this.firearmType = matchStageCompetitorDto.getFirearmType();
         this.division = matchStageCompetitorDto.getDivision();
