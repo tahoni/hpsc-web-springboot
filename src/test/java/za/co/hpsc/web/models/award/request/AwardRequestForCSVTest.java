@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: standard naming
 public class AwardRequestForCSVTest {
     @NoArgsConstructor
     private static class TestAwardRequestForCSV extends AwardRequestForCSV {
@@ -22,7 +21,7 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void constructor_whenRequiredFieldsProvided_thenMapsCoreFieldsAndInitializesTagLists() {
+    void testConstructor_whenRequiredFieldsProvided_thenMapsCoreFieldsAndInitializesTagLists() {
         // Arrange & Act
         TestAwardRequestForCSV request =
                 new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", "John Roe", "Sam Poe");
@@ -40,7 +39,7 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void constructor_whenOptionalPlaceNamesAreNull_thenKeepsOptionalNamesNull() {
+    void testConstructor_whenOptionalPlaceNamesAreNull_thenKeepsOptionalNamesNull() {
         // Arrange & Act
         TestAwardRequestForCSV request =
                 new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
@@ -54,7 +53,7 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void tags_whenMutated_thenPersistsAddedValues() {
+    void testTags_whenMutated_thenPersistsAddedValues() {
         // Arrange
         TestAwardRequestForCSV request =
                 new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", "John Roe", "Sam Poe");
@@ -71,7 +70,7 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void setters_whenMetadataProvided_thenUpdatesAllOptionalFields() {
+    void testSetters_whenMetadataProvided_thenUpdatesAllOptionalFields() {
         // Arrange
         TestAwardRequestForCSV request =
                 new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", "John Roe", "Sam Poe");
@@ -105,7 +104,7 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void jsonDeserialization_whenUnknownProperty_thenThrowsMismatchedInputException() {
+    void testJsonDeserialization_whenUnknownProperty_thenThrowsMismatchedInputException() {
         // Arrange
         ObjectMapper objectMapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
@@ -122,7 +121,7 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void jsonDeserialization_whenValidPayloadProvided_thenCreatesInstanceUsingJsonCreatorAndParsesDate() throws Exception {
+    void testJsonDeserialization_whenValidPayloadProvided_thenCreatesInstanceUsingJsonCreatorAndParsesDate() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());

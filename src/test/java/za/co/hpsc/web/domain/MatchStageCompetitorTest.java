@@ -359,7 +359,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void testInit_withAllCompetitorCategories_thenEachCategoryIsSetCorrectly() {
+    void testInit_whenAllCompetitorCategoriesAreProvided_thenEachCategoryIsSetCorrectly() {
         // Arrange & Act & Assert
         for (CompetitorCategory category : CompetitorCategory.values()) {
             MatchStageCompetitor entity = new MatchStageCompetitor();
@@ -373,7 +373,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void testInit_doesNotAffectCompetitorOrMatchStage() {
+    void testInit_whenDtoIsApplied_thenDoesNotAffectCompetitorOrMatchStage() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
         Competitor competitor = new Competitor();
@@ -527,7 +527,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void testToString_afterInit_thenMatchStageAndCompetitorAreUnaffected() {
+    void testToString_whenCalledAfterInit_thenMatchStageAndCompetitorAreUnaffected() {
         // Arrange
         IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setStageName("Speed Stage");
@@ -559,7 +559,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void testToString_containsStageInfoAndCompetitorName() {
+    void testToString_whenCalled_thenContainsStageInfoAndCompetitorName() {
         // Arrange
         IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setStageName("HPSC Stage 3");
@@ -584,7 +584,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
 
@@ -593,7 +593,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void init_whenCompetitorCategoryIsNull_thenCompetitorCategoryIsSetToNull() {
+    void testInit_whenCompetitorCategoryIsNull_thenCompetitorCategoryIsSetToNull() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
         MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
@@ -613,7 +613,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void onInsert_whenInvoked_thenInitializesDateCreatedAndDateUpdatedWithSameValue() {
+    void testOnInsert_whenInvoked_thenInitializesDateCreatedAndDateUpdatedWithSameValue() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
         LocalDateTime before = LocalDateTime.now();
@@ -631,7 +631,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void onUpdate_whenInvoked_thenUpdatesDateUpdatedWithoutChangingDateCreated() {
+    void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedWithoutChangingDateCreated() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
         entity.onInsert();

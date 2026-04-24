@@ -285,7 +285,7 @@ public class IpscMatchTest {
     }
 
     @Test
-    void init_whenDtoNameIsNull_thenNameBecomesNull() {
+    void testInit_whenDtoNameIsNull_thenNameBecomesNull() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setName("Existing Name");
@@ -303,7 +303,7 @@ public class IpscMatchTest {
 
     // TODO:fix message
     @Test
-    void toString_whenNameIsNull_thenIncludesNullLiteralForName() {
+    void testToString_whenNameIsNull_thenIncludesNullLiteralForName() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setName(null);
@@ -317,7 +317,7 @@ public class IpscMatchTest {
     }
 
     @Test
-    void toString_whenScheduledDateIsNull_thenScheduledDateIsCurrentValue() {
+    void testToString_whenScheduledDateIsNull_thenScheduledDateIsCurrentValue() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setName("Null Date Match");
@@ -329,7 +329,7 @@ public class IpscMatchTest {
     }
 
     @Test
-    void onInsert_whenInvoked_thenInitializesCreatedAndUpdatedDatesToSameCurrentValue() {
+    void testOnInsert_whenInvoked_thenInitializesCreatedAndUpdatedDatesToSameCurrentValue() {
         // Arrange
         IpscMatch match = new IpscMatch();
         LocalDateTime before = LocalDateTime.now();
@@ -347,7 +347,7 @@ public class IpscMatchTest {
     }
 
     @Test
-    void onUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
+    void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
         // Arrange
         IpscMatch match = new IpscMatch();
         LocalDateTime created = LocalDateTime.of(2026, 1, 1, 8, 0);

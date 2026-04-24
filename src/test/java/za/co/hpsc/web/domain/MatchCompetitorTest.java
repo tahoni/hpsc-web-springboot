@@ -228,7 +228,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void testToString_containsMatchNameInOutput() {
+    void testToString_whenCalled_thenContainsMatchNameInOutput() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setMatch(buildMatch("HPSC League Round 1", LocalDateTime.of(2026, 5, 15, 8, 0)));
@@ -242,7 +242,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void testToString_containsCompetitorNameInOutput() {
+    void testToString_whenCalled_thenContainsCompetitorNameInOutput() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setMatch(buildMatch("Club Shoot", LocalDateTime.of(2026, 5, 15, 8, 0)));
@@ -256,7 +256,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void testToString_afterInit_thenMatchAndCompetitorAreUnaffected() {
+    void testToString_whenCalledAfterInit_thenMatchAndCompetitorAreUnaffected() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setMatch(buildMatch("Winter Shoot", LocalDateTime.of(2026, 7, 10, 9, 0)));
@@ -278,7 +278,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
@@ -287,7 +287,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void toString_whenMatchIsNull_thenThrowsNullPointerException() {
+    void testToString_whenMatchIsNull_thenThrowsNullPointerException() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setMatch(null);
@@ -298,7 +298,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void toString_whenCompetitorIsNull_thenThrowsNullPointerException() {
+    void testToString_whenCompetitorIsNull_thenThrowsNullPointerException() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setMatch(buildMatch("Spring Classic", LocalDateTime.of(2026, 4, 24, 10, 30)));
@@ -309,7 +309,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void onInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
+    void testOnInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
@@ -323,7 +323,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void onUpdate_whenInvoked_thenRefreshesDateUpdatedAndPreservesDateCreated() {
+    void testOnUpdate_whenInvoked_thenRefreshesDateUpdatedAndPreservesDateCreated() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.onInsert();

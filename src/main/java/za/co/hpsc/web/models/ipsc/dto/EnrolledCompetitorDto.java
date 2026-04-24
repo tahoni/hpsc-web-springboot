@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 // TODO: Javadoc
-// TODO: tests
 @Getter
 @Setter
 @NoArgsConstructor

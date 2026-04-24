@@ -23,9 +23,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: add all fields
-// TODO: add tests for enum value reads and writes
-// TODO: standard naming
 @Slf4j
 @ActiveProfiles("test")
 @SpringBootTest
@@ -73,21 +70,21 @@ public class IpscServiceIntegrationTest {
     // Test Group: importWinMssCabFile - Integration tests
     // Test Group: Null/Empty/Blank Input Handling
     @Test
-    public void importWinMssCabFile_whenCabFileIsNull_thenThrowsValidationException() {
+    public void testImportWinMssCabFile_whenCabFileIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(null)
         );
     }
 
     @Test
-    public void importWinMssCabFile_whenCabFileIsEmpty_thenThrowsValidationException() {
+    public void testImportWinMssCabFile_whenCabFileIsEmpty_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("")
         );
     }
 
     @Test
-    public void importWinMssCabFile_whenCabFileIsBlank_thenThrowsValidationException() {
+    public void testImportWinMssCabFile_whenCabFileIsBlank_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("   \t\n  ")
         );
@@ -95,7 +92,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Invalid JSON Format Handling
     @Test
-    public void importWinMssCabFile_whenJsonIsInvalid_thenThrowsFatalException() {
+    public void testImportWinMssCabFile_whenJsonIsInvalid_thenThrowsFatalException() {
         String invalidJson = "This is not valid JSON at all";
 
         assertThrows(FatalException.class, () ->
@@ -104,7 +101,7 @@ public class IpscServiceIntegrationTest {
     }
 
     @Test
-    public void importWinMssCabFile_whenJsonHasMissingBraces_thenThrowsFatalException() {
+    public void testImportWinMssCabFile_whenJsonHasMissingBraces_thenThrowsFatalException() {
         String malformedJson = """
                 {
                     "club": "<xml><data><row ClubId='1'/></data></xml>"
@@ -117,7 +114,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Valid Complete Data Processing
     @Test
-    public void importWinMssCabFile_withCompleteValidData_thenReturnsIpscMatchRecordHolder() {
+    public void testImportWinMssCabFile_whenDataIsCompleteAndValid_thenReturnsIpscMatchRecordHolder() {
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
@@ -171,7 +168,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Valid Complete Data Processing
     @Test
-    public void importWinMssCabFile_withCompleteValidDataClubNullAndFilter_thenReturnsIpscMatchRecordHolder() {
+    public void testImportWinMssCabFile_whenDataIsCompleteAndValidWithClubNullAndFilter_thenReturnsIpscMatchRecordHolder() {
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
@@ -207,7 +204,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Partial Data Processing
     @Test
-    public void importWinMssCabFile_withPartialMatchData_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_whenMatchDataIsPartial_thenProcessesSuccessfully() {
         // Arrange - Only match required fields, other sections mostly empty
         String cabFileContent = """
                 {
@@ -233,7 +230,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Empty XML Sections Handling
     @Test
-    public void importWinMssCabFile_withEmptyXmlSections_thenProcessesWithEmptyData() {
+    public void testImportWinMssCabFile_whenXmlSectionsAreEmpty_thenProcessesWithEmptyData() {
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -258,7 +255,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Multiple Records Processing
     @Test
-    public void importWinMssCabFile_withMultipleMatches_thenProcessesAllMatches() {
+    public void testImportWinMssCabFile_whenMultipleMatchesAreProvided_thenProcessesAllMatches() {
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Club A'/></data></xml>",
@@ -283,7 +280,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Error Handling During Processing
     @Test
-    public void importWinMssCabFile_whenJsonIsInvalidStructure_thenDoesNotThrowValidationException() {
+    public void testImportWinMssCabFile_whenJsonStructureIsInvalid_thenDoesNotThrowValidationException() {
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -304,7 +301,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Empty Strings vs Null Values in XML
     @Test
-    public void importWinMssCabFile_withEmptyStringXmlFields_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_whenXmlFieldsAreEmptyStrings_thenProcessesSuccessfully() {
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='' Club=''/></data></xml>",
@@ -329,7 +326,7 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Special Characters and Unicode Handling
     @Test
-    public void importWinMssCabFile_withSpecialCharactersInData_thenProcessesSuccessfully() {
+    public void testImportWinMssCabFile_whenDataContainsSpecialCharacters_thenProcessesSuccessfully() {
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club &amp; Co.'/></data></xml>",

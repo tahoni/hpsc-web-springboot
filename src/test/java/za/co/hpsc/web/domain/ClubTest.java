@@ -14,7 +14,7 @@ public class ClubTest {
     // =====================================================================
 
     @Test
-    void testConstructor_withNameAndAbbreviation_thenSetsFields() {
+    void testConstructor_whenNameAndAbbreviationAreProvided_thenSetsFields() {
         // Arrange & Act
         Club club = new Club("Hillcrest Practical Shooting Club", "HPSC");
 
@@ -25,7 +25,7 @@ public class ClubTest {
     }
 
     @Test
-    void testConstructor_withNullName_thenNameIsNull() {
+    void testConstructor_whenNameIsNull_thenNameIsNull() {
         // Arrange & Act
         Club club = new Club(null, "HPSC");
 
@@ -35,7 +35,7 @@ public class ClubTest {
     }
 
     @Test
-    void testConstructor_withNullAbbreviation_thenAbbreviationIsNull() {
+    void testConstructor_whenAbbreviationIsNull_thenAbbreviationIsNull() {
         // Arrange & Act
         Club club = new Club("Hillcrest Practical Shooting Club", null);
 
@@ -49,7 +49,7 @@ public class ClubTest {
     // =====================================================================
 
     @Test
-    void testConstructor_withClubDto_thenMapsAllFields() {
+    void testConstructor_whenClubDtoIsProvided_thenMapsAllFields() {
         // Arrange
         ClubDto dto = new ClubDto();
         dto.setId(5L);
@@ -66,7 +66,7 @@ public class ClubTest {
     }
 
     @Test
-    void testConstructor_withClubDtoHavingNullId_thenIdIsNull() {
+    void testConstructor_whenClubDtoHasNullId_thenIdIsNull() {
         // Arrange
         ClubDto dto = new ClubDto();
         dto.setName("Beta Club");
@@ -82,7 +82,7 @@ public class ClubTest {
     }
 
     @Test
-    void testConstructor_withClubDtoHavingNullFields_thenFieldsAreNull() {
+    void testConstructor_whenClubDtoHasNullFields_thenFieldsAreNull() {
         // Arrange
         ClubDto dto = new ClubDto();
         dto.setId(null);
@@ -103,7 +103,7 @@ public class ClubTest {
     // =====================================================================
 
     @Test
-    void testInit_withValidNameAndAbbreviation_thenUpdatesFields() {
+    void testInit_whenNameAndAbbreviationAreValid_thenUpdatesFields() {
         // Arrange
         Club club = new Club("Old Name", "ON");
         ClubDto dto = new ClubDto();
@@ -241,7 +241,7 @@ public class ClubTest {
     }
 
     @Test
-    void testInit_calledMultipleTimes_thenLastNonBlankValueWins() {
+    void testInit_whenCalledMultipleTimes_thenLastNonBlankValueWins() {
         // Arrange
         Club club = new Club("Original", "OR");
 
@@ -377,7 +377,7 @@ public class ClubTest {
     }
 
     @Test
-    void testToString_afterNameChangedViaInit_thenReflectsUpdatedName() {
+    void testToString_whenNameIsChangedViaInit_thenReflectsUpdatedName() {
         // Arrange
         Club club = new Club("Original Name", "ON");
         ClubDto dto = new ClubDto();
@@ -393,13 +393,13 @@ public class ClubTest {
     }
 
     @Test
-    void constructorWithClubDto_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testConstructor_whenClubDtoIsNull_thenThrowsNullPointerException() {
         // Arrange, Act & Assert
         assertThrows(NullPointerException.class, () -> new Club(null));
     }
 
     @Test
-    void init_whenDtoValuesContainWhitespace_thenAppliesValuesWithoutTrimming() {
+    void testInit_whenDtoValuesContainWhitespace_thenAppliesValuesWithoutTrimming() {
         // Arrange
         Club club = new Club("Original Name", "ON");
         ClubDto dto = new ClubDto();
@@ -416,7 +416,7 @@ public class ClubTest {
 
     // TODO: fix method
     @Test
-    void toString_whenNameIsNullAndAbbreviationPresent_thenReturnsNullLiteralWithAbbreviation() {
+    void testToString_whenNameIsNullAndAbbreviationIsPresent_thenReturnsNullLiteralWithAbbreviation() {
         // Arrange
         Club club = new Club(null, "AB");
 
@@ -428,7 +428,7 @@ public class ClubTest {
     }
 
     @Test
-    void onInsert_whenInvoked_thenInitializesCreatedAndUpdatedDatesToSameCurrentValue() {
+    void testOnInsert_whenInvoked_thenInitializesCreatedAndUpdatedDatesToSameCurrentValue() {
         // Arrange
         Club club = new Club("Timing Club", "TC");
         LocalDateTime before = LocalDateTime.now();
@@ -446,7 +446,7 @@ public class ClubTest {
     }
 
     @Test
-    void onUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
+    void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
         // Arrange
         Club club = new Club("Update Club", "UC");
         LocalDateTime fixedCreated = LocalDateTime.of(2026, 4, 20, 9, 0);

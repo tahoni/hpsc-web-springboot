@@ -232,7 +232,7 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void testToString_containsStageNumberInOutput() {
+    void testToString_whenCalled_thenContainsStageNumberInOutput() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
         stage.setStageName("Speed Stage");
@@ -246,7 +246,7 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void testToString_containsStageNameInOutput() {
+    void testToString_whenCalled_thenContainsStageNameInOutput() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
         stage.setStageName("Speed Stage");
@@ -260,7 +260,7 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
 
@@ -269,7 +269,7 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void init_whenDtoHasNullStageNumber_thenStageNumberBecomesNull() {
+    void testInit_whenDtoHasNullStageNumber_thenStageNumberBecomesNull() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
         MatchStageDto dto = new MatchStageDto();
@@ -288,7 +288,7 @@ public class IpscMatchStageTest {
 
     // TODO: fix method
     @Test
-    void toString_whenStageNumberIsNull_thenIncludesNullLiteral() {
+    void testToString_whenStageNumberIsNull_thenIncludesNullLiteral() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
         stage.setStageName("No Number");
@@ -302,7 +302,7 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void onInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
+    void testOnInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
 
@@ -316,7 +316,7 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void onUpdate_whenInvoked_thenUpdatesDateUpdatedOnly() {
+    void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedOnly() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
         stage.onInsert();

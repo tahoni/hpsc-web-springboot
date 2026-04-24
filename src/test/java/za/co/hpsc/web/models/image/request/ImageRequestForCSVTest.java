@@ -10,7 +10,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: standard naming
 public class ImageRequestForCSVTest {
     @NoArgsConstructor
     private static class TestImageRequestForCsv extends ImageRequestForCsv {
@@ -20,7 +19,7 @@ public class ImageRequestForCSVTest {
     }
 
     @Test
-    void constructor_whenRequiredFieldsProvided_thenMapsRequiredFieldsAndLeavesOptionalFieldsUnset() {
+    void testConstructor_whenRequiredFieldsProvided_thenMapsRequiredFieldsAndLeavesOptionalFieldsUnset() {
         // Arrange & Act
         TestImageRequestForCsv request = new TestImageRequestForCsv(
                 "Range Photo",
@@ -39,7 +38,7 @@ public class ImageRequestForCSVTest {
     }
 
     @Test
-    void constructor_whenRequiredFieldsAreNull_thenStoresNullValues() {
+    void testConstructor_whenRequiredFieldsAreNull_thenStoresNullValues() {
         // Arrange & Act
         TestImageRequestForCsv request = new TestImageRequestForCsv(null, null, null);
 
@@ -50,7 +49,7 @@ public class ImageRequestForCSVTest {
     }
 
     @Test
-    void setters_whenOptionalFieldsProvided_thenUpdatesMetadataAndTags() {
+    void testSetters_whenOptionalFieldsProvided_thenUpdatesMetadataAndTags() {
         // Arrange
         TestImageRequestForCsv request = new TestImageRequestForCsv("Title", "/path", "file.png");
         List<String> tags = List.of("club", "finals");
@@ -68,9 +67,8 @@ public class ImageRequestForCSVTest {
         assertEquals(tags, request.getTags());
     }
 
-    // TODO: check exception thrown
     @Test
-    void jsonDeserialization_whenUnknownProperty_thenThrowsMismatchedInputException() {
+    void testJsonDeserialization_whenUnknownProperty_thenThrowsMismatchedInputException() {
         // Arrange
         ObjectMapper objectMapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);

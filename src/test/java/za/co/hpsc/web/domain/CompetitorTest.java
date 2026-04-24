@@ -15,7 +15,7 @@ public class CompetitorTest {
     // =====================================================================
 
     @Test
-    void testInit_withFullyPopulatedDto_thenMapsAllFields() {
+    void testInit_whenDtoIsFullyPopulated_thenMapsAllFields() {
         // Arrange
         Competitor competitor = new Competitor();
         CompetitorDto dto = new CompetitorDto();
@@ -39,7 +39,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testInit_withNullMiddleNames_thenMiddleNamesIsNull() {
+    void testInit_whenMiddleNamesAreNull_thenMiddleNamesAreNull() {
         // Arrange
         Competitor competitor = new Competitor();
         CompetitorDto dto = new CompetitorDto();
@@ -58,7 +58,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testInit_withNullSapsaNumber_thenSapsaNumberIsNull() {
+    void testInit_whenSapsaNumberIsNull_thenSapsaNumberIsNull() {
         // Arrange
         Competitor competitor = new Competitor();
         CompetitorDto dto = new CompetitorDto();
@@ -75,7 +75,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testInit_withNullDateOfBirth_thenDateOfBirthIsNull() {
+    void testInit_whenDateOfBirthIsNull_thenDateOfBirthIsNull() {
         // Arrange
         Competitor competitor = new Competitor();
         CompetitorDto dto = new CompetitorDto();
@@ -92,7 +92,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testInit_calledTwice_thenLastDtoValueOverwrites() {
+    void testInit_whenCalledTwice_thenLastDtoValueOverwrites() {
         // Arrange
         Competitor competitor = new Competitor();
 
@@ -120,7 +120,7 @@ public class CompetitorTest {
     // =====================================================================
 
     @Test
-    void testToString_withFirstAndLastNameOnly_thenReturnsFirstSpaceLast() {
+    void testToString_whenOnlyFirstAndLastNameAreSet_thenReturnsFirstSpaceLast() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("John");
@@ -134,7 +134,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_withMiddleName_thenReturnsFirstMiddleLast() {
+    void testToString_whenMiddleNameIsSet_thenReturnsFirstMiddleLast() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("John");
@@ -149,7 +149,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_withNullMiddleName_thenOmitsMiddleName() {
+    void testToString_whenMiddleNameIsNull_thenOmitsMiddleName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
@@ -164,7 +164,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_withBlankMiddleName_thenOmitsMiddleName() {
+    void testToString_whenMiddleNameIsBlank_thenOmitsMiddleName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
@@ -179,7 +179,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_withEmptyMiddleName_thenOmitsMiddleName() {
+    void testToString_whenMiddleNameIsEmpty_thenOmitsMiddleName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
@@ -194,7 +194,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_withMultipleMiddleNames_thenIncludesAllMiddleNames() {
+    void testToString_whenMultipleMiddleNamesAreSet_thenIncludesAllMiddleNames() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("Mary");
@@ -209,7 +209,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_withMiddleNameContainingOnlyTab_thenOmitsMiddleName() {
+    void testToString_whenMiddleNameContainsOnlyTab_thenOmitsMiddleName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("Tom");
@@ -224,7 +224,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_afterInitWithMiddleName_thenReturnsFullName() {
+    void testToString_whenInitialisedWithMiddleName_thenReturnsFullName() {
         // Arrange
         Competitor competitor = new Competitor();
         CompetitorDto dto = new CompetitorDto();
@@ -242,7 +242,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_afterInitWithoutMiddleName_thenReturnsFirstAndLastOnly() {
+    void testToString_whenInitialisedWithoutMiddleName_thenReturnsFirstAndLastOnly() {
         // Arrange
         Competitor competitor = new Competitor();
         CompetitorDto dto = new CompetitorDto();
@@ -260,7 +260,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_calledMultipleTimes_thenReturnsConsistentResult() {
+    void testToString_whenCalledMultipleTimes_thenReturnsConsistentResult() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("Consistent");
@@ -275,7 +275,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
         // Arrange
         Competitor competitor = new Competitor();
 
@@ -285,7 +285,7 @@ public class CompetitorTest {
 
     // TODO: fix method
     @Test
-    void toString_whenFirstNameIsNullAndLastNamePresent_thenIncludesNullLiteralForFirstName() {
+    void testToString_whenFirstNameIsNullAndLastNameIsPresent_thenIncludesNullLiteralForFirstName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName(null);
@@ -301,7 +301,7 @@ public class CompetitorTest {
 
     // TODO: fix method
     @Test
-    void toString_whenLastNameIsNullAndMiddleNamePresent_thenIncludesNullLiteralForLastName() {
+    void testToString_whenLastNameIsNullAndMiddleNameIsPresent_thenIncludesNullLiteralForLastName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("John");
@@ -316,7 +316,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void onInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameCurrentValue() {
+    void testOnInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameCurrentValue() {
         // Arrange
         Competitor competitor = new Competitor();
         LocalDateTime before = LocalDateTime.now();
@@ -334,7 +334,7 @@ public class CompetitorTest {
     }
 
     @Test
-    void onUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
+    void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
         // Arrange
         Competitor competitor = new Competitor();
         LocalDateTime created = LocalDateTime.of(2026, 1, 1, 9, 0);

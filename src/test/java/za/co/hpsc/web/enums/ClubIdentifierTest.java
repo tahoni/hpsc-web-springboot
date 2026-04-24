@@ -6,10 +6,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: standard naming
 public class ClubIdentifierTest {
     @Test
-    void getByAbbreviationReturnsMatchingClubForExactAbbreviation() {
+    void testGetByAbbreviation_whenAbbreviationIsExact_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("HPSC");
 
@@ -19,7 +18,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByAbbreviationReturnsMatchingClubForCaseInsensitiveInput() {
+    void testGetByAbbreviation_whenInputIsCaseInsensitive_thenReturnsMatchingClub() {
         // Arrange
         String searchName = "sosc";
 
@@ -32,7 +31,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByAbbreviationReturnsEmptyOptionalForNullInput() {
+    void testGetByAbbreviation_whenInputIsNull_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(null);
 
@@ -41,7 +40,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByAbbreviationReturnsEmptyOptionalForBlankInput() {
+    void testGetByAbbreviation_whenInputIsBlank_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(" ");
 
@@ -50,7 +49,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByAbbreviationReturnsEmptyOptionalWhenNoClubMatches() {
+    void testGetByAbbreviation_whenNoClubMatches_thenReturnsEmptyOptional() {
         // Arrange
         String searchName = "Nonexistent Club";
 
@@ -62,7 +61,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsMatchingClubForKnownCode() {
+    void testGetByCode_whenCodeIsKnown_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("CCC");
 
@@ -72,7 +71,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsEmptyOptionalForNullInput() {
+    void testGetByCode_whenInputIsNull_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode(null);
 
@@ -81,7 +80,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsEmptyOptionalForBlankInput() {
+    void testGetByCode_whenInputIsBlank_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("   ");
 
@@ -90,7 +89,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsEmptyOptionalWhenNoClubMatches() {
+    void testGetByCode_whenNoClubMatches_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ZZZ");
 
@@ -99,7 +98,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsMatchingClubForExactClubName() {
+    void testGetByName_whenClubNameIsExact_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("Hartbeespoortdam Practical Shooting Club");
 
@@ -109,7 +108,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsMatchingClubForCaseInsensitiveName() {
+    void testGetByName_whenNameIsCaseInsensitive_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("safari outdoor shooting club");
 
@@ -119,7 +118,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsEmptyOptionalForNullInput() {
+    void testGetByName_whenInputIsNull_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName(null);
 
@@ -128,7 +127,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsEmptyOptionalForBlankInput() {
+    void testGetByName_whenInputIsBlank_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("   ");
 
@@ -137,7 +136,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsEmptyOptionalForEmptyInput() {
+    void testGetByName_whenInputIsEmpty_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("");
 
@@ -146,7 +145,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsEmptyOptionalWhenNoClubMatches() {
+    void testGetByName_whenNoClubMatches_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("Nonexistent Club");
 
@@ -155,7 +154,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsMatchingClubForPmpsc() {
+    void testGetByName_whenNameIsPmpsc_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("Pretoria Military Practical Shooting Club");
 
@@ -165,7 +164,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsMatchingClubForVisitor() {
+    void testGetByName_whenNameIsVisitor_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("Visitor");
 
@@ -175,7 +174,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByNameReturnsEmptyOptionalForUnknown() {
+    void testGetByName_whenNameIsUnknown_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByName("UNKNOWN");
 
@@ -184,7 +183,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByAbbreviationReturnsEmptyOptionalForEmptyInput() {
+    void testGetByAbbreviation_whenInputIsEmpty_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("");
 
@@ -193,7 +192,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByAbbreviationReturnsMatchingClubForPmpsc() {
+    void testGetByAbbreviation_whenAbbreviationIsPmpsc_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("PMPSC");
 
@@ -203,7 +202,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByAbbreviationReturnsMatchingClubForVisitor() {
+    void testGetByAbbreviation_whenAbbreviationIsVisitor_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("V");
 
@@ -213,7 +212,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsMatchingClubForSosc() {
+    void testGetByCode_whenCodeIsSosc_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("AAA");
 
@@ -223,7 +222,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsMatchingClubForHpsc() {
+    void testGetByCode_whenCodeIsHpsc_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("BBB");
 
@@ -233,7 +232,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsMatchingClubForVisitor() {
+    void testGetByCode_whenCodeIsVisitor_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("UUU");
 
@@ -243,7 +242,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeIsCaseInsensitive() {
+    void testGetByCode_whenCodeIsCaseInsensitive_thenReturnsMatchingClub() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ccc");
 
@@ -253,7 +252,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void getByCodeReturnsEmptyOptionalForEmptyInput() {
+    void testGetByCode_whenInputIsEmpty_thenReturnsEmptyOptional() {
         // Act
         Optional<ClubIdentifier> result = ClubIdentifier.getByCode("");
 
@@ -262,7 +261,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void toStringReturnsNameAndAbbreviationForHpsc() {
+    void testToString_whenIdentifierIsHpsc_thenReturnsNameAndAbbreviation() {
         // Act
         String result = ClubIdentifier.HPSC.toString();
 
@@ -271,7 +270,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void toStringReturnsNameAndAbbreviationForSosc() {
+    void testToString_whenIdentifierIsSosc_thenReturnsNameAndAbbreviation() {
         // Act
         String result = ClubIdentifier.SOSC.toString();
 
@@ -280,7 +279,7 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void toStringReturnsEmptyParenthesesForUnknown() {
+    void testToString_whenIdentifierIsUnknown_thenReturnsEmptyParentheses() {
         // Act
         String result = ClubIdentifier.UNKNOWN.toString();
 
