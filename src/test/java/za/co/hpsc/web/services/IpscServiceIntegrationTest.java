@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // TODO: add all fields
 // TODO: add tests for enum value reads and writes
+// TODO: standard naming
 @Slf4j
 @ActiveProfiles("test")
 @SpringBootTest

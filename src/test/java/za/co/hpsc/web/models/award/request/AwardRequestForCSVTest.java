@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: standard naming
 public class AwardRequestForCSVTest {
     @NoArgsConstructor
     private static class TestAwardRequestForCSV extends AwardRequestForCSV {

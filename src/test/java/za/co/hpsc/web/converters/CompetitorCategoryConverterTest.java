@@ -6,6 +6,7 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+// TODO: standard naming
 class CompetitorCategoryConverterTest {
 
     private final CompetitorCategoryConverter converter = new CompetitorCategoryConverter();

@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: standard naming
 public class ImageRequestForCSVTest {
     @NoArgsConstructor
     private static class TestImageRequestForCsv extends ImageRequestForCsv {

@@ -54,83 +54,6 @@ public class TransformationServiceTest {
     @InjectMocks
     private TransformationServiceImpl transformationService;
 
-    private MatchRequest matchRequest(int matchId) {
-        MatchRequest request = new MatchRequest();
-        request.setMatchId(matchId);
-        request.setMatchName("Match " + matchId);
-        request.setClubId(100 + matchId);
-        request.setMatchDate(LocalDateTime.of(2026, 3, 31, 10, 0));
-        request.setFirearmId(1);
-        return request;
-    }
-
-    private StageRequest stageRequest(int matchId, int stageId) {
-        StageRequest request = new StageRequest();
-        request.setMatchId(matchId);
-        request.setStageId(stageId);
-        request.setStageName("Stage " + stageId);
-        request.setTargetPaper(10);
-        request.setMaxPoints(100);
-        request.setMinRounds(20);
-        return request;
-    }
-
-    private ScoreRequest scoreRequest(int matchId, int stageId, int memberId, int finalScore) {
-        ScoreRequest request = new ScoreRequest();
-        request.setMatchId(matchId);
-        request.setStageId(stageId);
-        request.setMemberId(memberId);
-        request.setFinalScore(finalScore);
-        request.setScoreA(5);
-        request.setHitFactor("2.25");
-        request.setTime("12.11");
-        request.setDeduction(false);
-        request.setLastModified(LocalDateTime.of(2026, 3, 31, 11, 0));
-        return request;
-    }
-
-    private MemberRequest memberRequest(int memberId) {
-        MemberRequest request = new MemberRequest();
-        request.setMemberId(memberId);
-        request.setFirstName("John");
-        request.setLastName("Doe");
-        request.setDateOfBirth(LocalDateTime.of(1990, 1, 1, 0, 0));
-        request.setFemale(false);
-        request.setIcsAlias("1234");
-        request.setRefNo("BBB");
-        request.setIsRegisteredForMatch(true);
-        return request;
-    }
-
-    private EnrolledRequest enrolledRequest(int memberId, int matchId) {
-        EnrolledRequest request = new EnrolledRequest();
-        request.setMemberId(memberId);
-        request.setCompetitorId(memberId);
-        request.setMatchId(matchId);
-        request.setDivisionId(1);
-        request.setRefNo("BBB");
-        request.setCompetitorCategoryId(2);
-        request.setMajorPowerFactor(true);
-        request.setScoreClassificationId(true);
-        request.setIsDisqualified(false);
-        return request;
-    }
-
-    private ClubRequest clubRequest(int clubId) {
-        ClubRequest request = new ClubRequest();
-        request.setClubId(clubId);
-        request.setClubCode("HPSC");
-        request.setClubName("Holster Club");
-        return request;
-    }
-
-    private IpscResponse baseIpscResponse(int matchId) {
-        IpscResponse response = new IpscResponse();
-        response.setMatch(new MatchResponse(matchId, "Match " + matchId,
-                LocalDateTime.of(2026, 3, 31, 10, 0), 200, 3, 1));
-        return response;
-    }
-
     @Test
     public void testMapMatchResults_whenNullRequest_thenThrowsValidationException() {
         // Act / Assert
@@ -156,13 +79,13 @@ public class TransformationServiceTest {
     public void testMapMatchResults_whenValidInput_thenMapsMatchMembersAndClub() {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
-        holder.setMatches(List.of(matchRequest(1)));
-        holder.setStages(List.of(stageRequest(1, 1), stageRequest(2, 1)));
-        holder.setScores(List.of(scoreRequest(1, 1, 9, 50), scoreRequest(2, 1, 10, 60)));
-        holder.setMembers(List.of(memberRequest(9), memberRequest(10)));
-        holder.setEnrolledMembers(List.of(enrolledRequest(9, 1)));
+        holder.setMatches(List.of(buildMatchRequest(1)));
+        holder.setStages(List.of(buildStageRequest(1, 1), buildStageRequest(2, 1)));
+        holder.setScores(List.of(buildScoreRequest(1, 1, 9, 50), buildScoreRequest(2, 1, 10, 60)));
+        holder.setMembers(List.of(buildMemberRequest(9), buildMemberRequest(10)));
+        holder.setEnrolledMembers(List.of(buildEnrolledRequest(9, 1)));
         holder.setTags(List.of(new TagRequest(null, 1, "Tag")));
-        holder.setClubs(List.of(clubRequest(101)));
+        holder.setClubs(List.of(buildClubRequest(101)));
 
         // Act
         IpscResponseHolder result = transformationService.mapMatchResults(holder);
@@ -271,7 +194,7 @@ public class TransformationServiceTest {
     @Test
     public void testCreateBasicMatch_whenMatchIdNull_thenEmpty() {
         // Arrange
-        MatchRequest request = matchRequest(1);
+        MatchRequest request = buildMatchRequest(1);
         request.setMatchId(null);
 
         // Act / Assert
@@ -288,7 +211,7 @@ public class TransformationServiceTest {
         holder.setScores(new ArrayList<>());
 
         // Act / Assert
-        Optional<IpscResponse> result = transformationService.createBasicMatch(holder, matchRequest(1));
+        Optional<IpscResponse> result = transformationService.createBasicMatch(holder, buildMatchRequest(1));
         assertTrue(result.isEmpty());
     }
 
@@ -297,12 +220,12 @@ public class TransformationServiceTest {
         // Arrange
         IpscRequestHolder holder = new IpscRequestHolder();
         holder.setTags(List.of(new TagRequest(null, 1, "Tag")));
-        holder.setStages(List.of(stageRequest(1, 1), stageRequest(2, 1)));
-        holder.setEnrolledMembers(List.of(enrolledRequest(9, 1), enrolledRequest(10, 2)));
-        holder.setScores(List.of(scoreRequest(1, 1, 9, 10), scoreRequest(2, 1, 10, 20)));
+        holder.setStages(List.of(buildStageRequest(1, 1), buildStageRequest(2, 1)));
+        holder.setEnrolledMembers(List.of(buildEnrolledRequest(9, 1), buildEnrolledRequest(10, 2)));
+        holder.setScores(List.of(buildScoreRequest(1, 1, 9, 10), buildScoreRequest(2, 1, 10, 20)));
 
         // Act
-        Optional<IpscResponse> result = transformationService.createBasicMatch(holder, matchRequest(1));
+        Optional<IpscResponse> result = transformationService.createBasicMatch(holder, buildMatchRequest(1));
 
         // Assert
         assertTrue(result.isPresent());
@@ -327,8 +250,8 @@ public class TransformationServiceTest {
         // Arrange
         IpscResponse response = new IpscResponse();
         IpscRequestHolder holder = new IpscRequestHolder();
-        holder.setScores(List.of(scoreRequest(1, 1, 9, 20)));
-        holder.setMembers(List.of(memberRequest(9), memberRequest(10)));
+        holder.setScores(List.of(buildScoreRequest(1, 1, 9, 20)));
+        holder.setMembers(List.of(buildMemberRequest(9), buildMemberRequest(10)));
 
         // Act
         transformationService.addMembersToMatch(response, holder);
@@ -350,7 +273,7 @@ public class TransformationServiceTest {
         IpscResponse response = new IpscResponse();
         response.setMatch(new MatchResponse(1, "M1", LocalDateTime.now(), 500, 1, 1));
         IpscRequestHolder holder = new IpscRequestHolder();
-        holder.setClubs(List.of(clubRequest(500)));
+        holder.setClubs(List.of(buildClubRequest(500)));
 
         // Act
         transformationService.addClubToMatch(response, holder);
@@ -366,7 +289,7 @@ public class TransformationServiceTest {
         IpscResponse response = new IpscResponse();
         response.setMatch(new MatchResponse(1, "M1", LocalDateTime.now(), 501, 1, 1));
         IpscRequestHolder holder = new IpscRequestHolder();
-        holder.setClubs(List.of(clubRequest(500)));
+        holder.setClubs(List.of(buildClubRequest(500)));
 
         // Act
         transformationService.addClubToMatch(response, holder);
@@ -519,7 +442,7 @@ public class TransformationServiceTest {
     @Test
     public void testInitMatch_whenExistingMatchAndNewerScores_thenPresent() {
         // Arrange
-        IpscResponse response = baseIpscResponse(1);
+        IpscResponse response = buildBaseIpscResponse(1);
         response.setScores(List.of(new ScoreResponse(1, 1, 9, 0, 0, 0, 0,
                 0, 0, 0, "", false, "", 0, "", "", 0,
                 false, LocalDateTime.of(2026, 3, 31, 12, 0))));
@@ -541,7 +464,7 @@ public class TransformationServiceTest {
     @Test
     public void testInitMatch_whenNoExistingMatch_thenPresent() {
         // Arrange
-        IpscResponse response = baseIpscResponse(1);
+        IpscResponse response = buildBaseIpscResponse(1);
         when(matchEntityService.findMatchByNameAndScheduledDate(anyString(), any()))
                 .thenReturn(Optional.empty());
 
@@ -595,7 +518,7 @@ public class TransformationServiceTest {
         match.setIndex(1);
         results.setMatch(match);
 
-        IpscResponse response = baseIpscResponse(1);
+        IpscResponse response = buildBaseIpscResponse(1);
         response.setScores(List.of(
                 new ScoreResponse(1, 1, 9, 0, 0, 0, 0, 0,
                         0, 0, "", false, "", 0, "", "", 0, false, LocalDateTime.now()),
@@ -635,6 +558,85 @@ public class TransformationServiceTest {
         // Act / Assert
         assertDoesNotThrow(() -> transformationService.initEnrolledCompetitors(results, response));
         assertTrue(results.getMatchCompetitors().isEmpty());
+    }
+
+    // Helper methods
+
+    private MatchRequest buildMatchRequest(int matchId) {
+        MatchRequest request = new MatchRequest();
+        request.setMatchId(matchId);
+        request.setMatchName("Match " + matchId);
+        request.setClubId(100 + matchId);
+        request.setMatchDate(LocalDateTime.of(2026, 3, 31, 10, 0));
+        request.setFirearmId(1);
+        return request;
+    }
+
+    private StageRequest buildStageRequest(int matchId, int stageId) {
+        StageRequest request = new StageRequest();
+        request.setMatchId(matchId);
+        request.setStageId(stageId);
+        request.setStageName("Stage " + stageId);
+        request.setTargetPaper(10);
+        request.setMaxPoints(100);
+        request.setMinRounds(20);
+        return request;
+    }
+
+    private ScoreRequest buildScoreRequest(int matchId, int stageId, int memberId, int finalScore) {
+        ScoreRequest request = new ScoreRequest();
+        request.setMatchId(matchId);
+        request.setStageId(stageId);
+        request.setMemberId(memberId);
+        request.setFinalScore(finalScore);
+        request.setScoreA(5);
+        request.setHitFactor("2.25");
+        request.setTime("12.11");
+        request.setDeduction(false);
+        request.setLastModified(LocalDateTime.of(2026, 3, 31, 11, 0));
+        return request;
+    }
+
+    private MemberRequest buildMemberRequest(int memberId) {
+        MemberRequest request = new MemberRequest();
+        request.setMemberId(memberId);
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setDateOfBirth(LocalDateTime.of(1990, 1, 1, 0, 0));
+        request.setFemale(false);
+        request.setIcsAlias("1234");
+        request.setRefNo("BBB");
+        request.setIsRegisteredForMatch(true);
+        return request;
+    }
+
+    private EnrolledRequest buildEnrolledRequest(int memberId, int matchId) {
+        EnrolledRequest request = new EnrolledRequest();
+        request.setMemberId(memberId);
+        request.setCompetitorId(memberId);
+        request.setMatchId(matchId);
+        request.setDivisionId(1);
+        request.setRefNo("BBB");
+        request.setCompetitorCategoryId(2);
+        request.setMajorPowerFactor(true);
+        request.setScoreClassificationId(true);
+        request.setIsDisqualified(false);
+        return request;
+    }
+
+    private ClubRequest buildClubRequest(int clubId) {
+        ClubRequest request = new ClubRequest();
+        request.setClubId(clubId);
+        request.setClubCode("HPSC");
+        request.setClubName("Holster Club");
+        return request;
+    }
+
+    private IpscResponse buildBaseIpscResponse(int matchId) {
+        IpscResponse response = new IpscResponse();
+        response.setMatch(new MatchResponse(matchId, "Match " + matchId,
+                LocalDateTime.of(2026, 3, 31, 10, 0), 200, 3, 1));
+        return response;
     }
 }
 

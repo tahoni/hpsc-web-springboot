@@ -14,20 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchCompetitorTest {
 
-    private IpscMatch buildMatch(String name, LocalDateTime scheduledDate) {
-        IpscMatch match = new IpscMatch();
-        match.setName(name);
-        match.setScheduledDate(scheduledDate);
-        return match;
-    }
-
-    private Competitor buildCompetitor(String firstName, String lastName) {
-        Competitor competitor = new Competitor();
-        competitor.setFirstName(firstName);
-        competitor.setLastName(lastName);
-        return competitor;
-    }
-
     // =====================================================================
     // init(MatchCompetitorDto)
     // =====================================================================
@@ -351,6 +337,22 @@ public class MatchCompetitorTest {
         assertEquals(createdBeforeUpdate, matchCompetitor.getDateCreated());
         assertNotNull(matchCompetitor.getDateUpdated());
         assertFalse(matchCompetitor.getDateUpdated().isBefore(updatedBeforeUpdate));
+    }
+
+    // Helper methods
+
+    private IpscMatch buildMatch(String name, LocalDateTime scheduledDate) {
+        IpscMatch match = new IpscMatch();
+        match.setName(name);
+        match.setScheduledDate(scheduledDate);
+        return match;
+    }
+
+    private Competitor buildCompetitor(String firstName, String lastName) {
+        Competitor competitor = new Competitor();
+        competitor.setFirstName(firstName);
+        competitor.setLastName(lastName);
+        return competitor;
     }
 }
 

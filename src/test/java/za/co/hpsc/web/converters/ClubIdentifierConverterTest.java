@@ -6,6 +6,7 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+// TODO: standard naming
 class ClubIdentifierConverterTest {
 
     private final ClubIdentifierConverter converter = new ClubIdentifierConverter();

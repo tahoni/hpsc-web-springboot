@@ -6,6 +6,7 @@ import za.co.hpsc.web.enums.PowerFactor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+// TODO: standard naming
 class PowerFactorConverterTest {
 
     private final PowerFactorConverter converter = new PowerFactorConverter();

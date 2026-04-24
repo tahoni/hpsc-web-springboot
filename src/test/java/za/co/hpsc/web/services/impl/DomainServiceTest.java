@@ -42,53 +42,6 @@ public class DomainServiceTest {
     @InjectMocks
     private DomainServiceImpl domainService;
 
-    private MatchDto buildMatchDto() {
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("League Match");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 3, 31, 8, 0));
-        return matchDto;
-    }
-
-    private ClubDto buildClubDto(String name, String abbreviation) {
-        ClubDto clubDto = new ClubDto();
-        clubDto.setName(name);
-        clubDto.setAbbreviation(abbreviation);
-        return clubDto;
-    }
-
-    private CompetitorDto buildCompetitorDto(String firstName, String lastName) {
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setFirstName(firstName);
-        competitorDto.setLastName(lastName);
-        competitorDto.setCompetitorNumber(firstName + "-001");
-        return competitorDto;
-    }
-
-    private MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageNumber) {
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setMatch(matchDto);
-        stageDto.setStageNumber(stageNumber);
-        stageDto.setStageName("Stage " + stageNumber);
-        return stageDto;
-    }
-
-    private MatchCompetitorDto buildMatchCompetitorDto(MatchDto matchDto, CompetitorDto competitorDto) {
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setMatch(matchDto);
-        dto.setCompetitor(competitorDto);
-        dto.setClub(ClubIdentifier.HPSC);
-        return dto;
-    }
-
-    private MatchStageCompetitorDto buildMatchStageCompetitorDto(MatchStageDto stageDto,
-                                                                 CompetitorDto competitorDto) {
-        MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
-        dto.setMatchStage(stageDto);
-        dto.setCompetitor(competitorDto);
-        dto.setClub(ClubIdentifier.HPSC);
-        return dto;
-    }
-
     // Test Group: initMatchEntities(...) public methods
     @Test
     public void testInitMatchEntities_whenMatchResultsNull_thenEmptyFromMatchResults() {
@@ -850,6 +803,55 @@ public class DomainServiceTest {
 
         // Assert
         assertTrue(result.isEmpty());
+    }
+
+    // Helper methods
+
+    private MatchDto buildMatchDto() {
+        MatchDto matchDto = new MatchDto();
+        matchDto.setName("League Match");
+        matchDto.setScheduledDate(LocalDateTime.of(2026, 3, 31, 8, 0));
+        return matchDto;
+    }
+
+    private ClubDto buildClubDto(String name, String abbreviation) {
+        ClubDto clubDto = new ClubDto();
+        clubDto.setName(name);
+        clubDto.setAbbreviation(abbreviation);
+        return clubDto;
+    }
+
+    private CompetitorDto buildCompetitorDto(String firstName, String lastName) {
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setFirstName(firstName);
+        competitorDto.setLastName(lastName);
+        competitorDto.setCompetitorNumber(firstName + "-001");
+        return competitorDto;
+    }
+
+    private MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageNumber) {
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(stageNumber);
+        stageDto.setStageName("Stage " + stageNumber);
+        return stageDto;
+    }
+
+    private MatchCompetitorDto buildMatchCompetitorDto(MatchDto matchDto, CompetitorDto competitorDto) {
+        MatchCompetitorDto dto = new MatchCompetitorDto();
+        dto.setMatch(matchDto);
+        dto.setCompetitor(competitorDto);
+        dto.setClub(ClubIdentifier.HPSC);
+        return dto;
+    }
+
+    private MatchStageCompetitorDto buildMatchStageCompetitorDto(MatchStageDto stageDto,
+                                                                 CompetitorDto competitorDto) {
+        MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
+        dto.setMatchStage(stageDto);
+        dto.setCompetitor(competitorDto);
+        dto.setClub(ClubIdentifier.HPSC);
+        return dto;
     }
 }
 

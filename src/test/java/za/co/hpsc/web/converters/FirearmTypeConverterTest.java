@@ -6,6 +6,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+// TODO: standard naming
 class FirearmTypeConverterTest {
 
     private final FirearmTypeConverter converter = new FirearmTypeConverter();
