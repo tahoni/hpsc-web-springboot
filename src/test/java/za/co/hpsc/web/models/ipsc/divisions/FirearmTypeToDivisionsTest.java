@@ -3,10 +3,13 @@ package za.co.hpsc.web.models.ipsc.divisions;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.exceptions.ValidationException;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class FirearmTypeToDivisionsTest {
@@ -128,6 +131,7 @@ class FirearmTypeToDivisionsTest {
     void testGetFirearmTypeFromDivision_whenDivisionIsProductionOptics_thenReturnsHandgun() {
         // Act
         FirearmType result = FirearmTypeToDivisions.getFirearmTypeFromDivision(Division.PRODUCTION_OPTICS).orElse(null);
+        // Assert
         assertEquals(FirearmType.HANDGUN, result);
     }
 
@@ -291,5 +295,41 @@ class FirearmTypeToDivisionsTest {
         Optional<FirearmType> firearmTypeOptional = FirearmTypeToDivisions.getFirearmTypeFromDivision(null);
         // Assert
         assertEquals(Optional.empty(), firearmTypeOptional);
+    }
+
+    @Test
+    void getDivisionsForFirearmType_whenFirearmTypeIsNull_thenThrowsValidationException() {
+        // Assert
+        assertThrows(
+                ValidationException.class,
+                () -> FirearmTypeToDivisions.getDivisionsForFirearmType(null)
+        );
+    }
+
+    @Test
+    void getAll_whenCalled_thenReturnsAllMappedFirearmTypes() {
+        // Act
+        Map<FirearmType, DivisionsForFirearmType> result = FirearmTypeToDivisions.getAll();
+
+        // Assert
+        assertEquals(6, result.size());
+        assertEquals(DivisionsHandgun.getInstance(), result.get(FirearmType.HANDGUN));
+        assertEquals(DivisionsPcc.getInstance(), result.get(FirearmType.PCC));
+        assertEquals(DivisionsShotgun.getInstance(), result.get(FirearmType.SHOTGUN));
+        assertEquals(DivisionsRifle.getInstance(), result.get(FirearmType.RIFLE));
+        assertEquals(Divisions22Handgun.getInstance(), result.get(FirearmType.HANDGUN_22));
+        assertEquals(DivisionsMiniRifle.getInstance(), result.get(FirearmType.MINI_RIFLE));
+    }
+
+    @Test
+    void getAll_whenReturnedMapIsModified_thenThrowsUnsupportedOperationException() {
+        // Arrange
+        Map<FirearmType, DivisionsForFirearmType> result = FirearmTypeToDivisions.getAll();
+
+        // Assert
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> result.put(FirearmType.HANDGUN, DivisionsPcc.getInstance())
+        );
     }
 }
