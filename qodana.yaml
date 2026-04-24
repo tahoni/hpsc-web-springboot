@@ -4,7 +4,9 @@
 version: "1.0"
 profile:
   name: qodana.recommended
-
 include:
-  - name: CheckDependencyLicenses   # enables Qodana licence-audit inspections
-
+  - name: CheckDependencyLicenses # enables Qodana licence-audit inspections
+exclude:
+  - name: All
+    paths:
+      - src/main/java/za/co/hpsc/web/HpscWebApplication.java

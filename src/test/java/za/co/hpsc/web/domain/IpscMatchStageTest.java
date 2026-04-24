@@ -3,6 +3,8 @@ package za.co.hpsc.web.domain;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IpscMatchStageTest {
@@ -254,6 +256,78 @@ public class IpscMatchStageTest {
 
         // Assert
         assertTrue(result.contains("Speed Stage"));
+    }
+
+    @Test
+    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+        // Arrange
+        IpscMatchStage stage = new IpscMatchStage();
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> stage.init(null));
+    }
+
+    @Test
+    void init_whenDtoHasNullStageNumber_thenStageNumberBecomesNull() {
+        // Arrange
+        IpscMatchStage stage = new IpscMatchStage();
+        MatchStageDto dto = new MatchStageDto();
+        dto.setStageNumber(null);
+        dto.setStageName("Null Number Stage");
+        dto.setRangeNumber(5);
+
+        // Act
+        stage.init(dto);
+
+        // Assert
+        assertNull(stage.getStageNumber());
+        assertEquals("Null Number Stage", stage.getStageName());
+        assertEquals(5, stage.getRangeNumber());
+    }
+
+    @Test
+    void toString_whenStageNumberIsNull_thenIncludesNullLiteral() {
+        // Arrange
+        IpscMatchStage stage = new IpscMatchStage();
+        stage.setStageName("No Number");
+        stage.setStageNumber(null);
+
+        // Act
+        String result = stage.toString();
+
+        // Assert
+        assertEquals("No Number (null)", result);
+    }
+
+    @Test
+    void onInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
+        // Arrange
+        IpscMatchStage stage = new IpscMatchStage();
+
+        // Act
+        stage.onInsert();
+
+        // Assert
+        assertNotNull(stage.getDateCreated());
+        assertNotNull(stage.getDateUpdated());
+        assertEquals(stage.getDateCreated(), stage.getDateUpdated());
+    }
+
+    @Test
+    void onUpdate_whenInvoked_thenUpdatesDateUpdatedOnly() {
+        // Arrange
+        IpscMatchStage stage = new IpscMatchStage();
+        stage.onInsert();
+        LocalDateTime createdBeforeUpdate = stage.getDateCreated();
+        LocalDateTime updatedBeforeUpdate = stage.getDateUpdated();
+
+        // Act
+        stage.onUpdate();
+
+        // Assert
+        assertEquals(createdBeforeUpdate, stage.getDateCreated());
+        assertNotNull(stage.getDateUpdated());
+        assertFalse(stage.getDateUpdated().isBefore(updatedBeforeUpdate));
     }
 }
 

@@ -1,7 +1,10 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.enums.*;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
@@ -286,6 +289,68 @@ public class MatchCompetitorTest {
         // Assert
         assertTrue(result.contains("Winter Shoot"));
         assertTrue(result.contains("Tom Hardy"));
+    }
+
+    @Test
+    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> matchCompetitor.init(null));
+    }
+
+    @Test
+    void toString_whenMatchIsNull_thenThrowsNullPointerException() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setMatch(null);
+        matchCompetitor.setCompetitor(buildCompetitor("John", "Doe"));
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, matchCompetitor::toString);
+    }
+
+    @Test
+    void toString_whenCompetitorIsNull_thenThrowsNullPointerException() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setMatch(buildMatch("Spring Classic", LocalDateTime.of(2026, 4, 24, 10, 30)));
+        matchCompetitor.setCompetitor(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, matchCompetitor::toString);
+    }
+
+    @Test
+    void onInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitor.onInsert();
+
+        // Assert
+        assertNotNull(matchCompetitor.getDateCreated());
+        assertNotNull(matchCompetitor.getDateUpdated());
+        assertEquals(matchCompetitor.getDateCreated(), matchCompetitor.getDateUpdated());
+    }
+
+    @Test
+    void onUpdate_whenInvoked_thenRefreshesDateUpdatedAndPreservesDateCreated() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.onInsert();
+        LocalDateTime createdBeforeUpdate = matchCompetitor.getDateCreated();
+        LocalDateTime updatedBeforeUpdate = matchCompetitor.getDateUpdated();
+
+        // Act
+        matchCompetitor.onUpdate();
+
+        // Assert
+        assertEquals(createdBeforeUpdate, matchCompetitor.getDateCreated());
+        assertNotNull(matchCompetitor.getDateUpdated());
+        assertFalse(matchCompetitor.getDateUpdated().isBefore(updatedBeforeUpdate));
     }
 }
 

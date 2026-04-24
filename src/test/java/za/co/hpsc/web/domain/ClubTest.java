@@ -3,6 +3,8 @@ package za.co.hpsc.web.domain;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClubTest {
@@ -388,6 +390,78 @@ public class ClubTest {
 
         // Assert
         assertEquals("Updated Name (UN)", result);
+    }
+
+    @Test
+    void constructorWithClubDto_whenDtoIsNull_thenThrowsNullPointerException() {
+        // Arrange, Act & Assert
+        assertThrows(NullPointerException.class, () -> new Club(null));
+    }
+
+    @Test
+    void init_whenDtoValuesContainWhitespace_thenAppliesValuesWithoutTrimming() {
+        // Arrange
+        Club club = new Club("Original Name", "ON");
+        ClubDto dto = new ClubDto();
+        dto.setName("  Updated Name  ");
+        dto.setAbbreviation("  UN  ");
+
+        // Act
+        club.init(dto);
+
+        // Assert
+        assertEquals("  Updated Name  ", club.getName());
+        assertEquals("  UN  ", club.getAbbreviation());
+    }
+
+    @Test
+    void toString_whenNameIsNullAndAbbreviationPresent_thenReturnsNullLiteralWithAbbreviation() {
+        // Arrange
+        Club club = new Club(null, "AB");
+
+        // Act
+        String result = club.toString();
+
+        // Assert
+        assertEquals("null (AB)", result);
+    }
+
+    @Test
+    void onInsert_whenInvoked_thenInitializesCreatedAndUpdatedDatesToSameCurrentValue() {
+        // Arrange
+        Club club = new Club("Timing Club", "TC");
+        LocalDateTime before = LocalDateTime.now();
+
+        // Act
+        club.onInsert();
+        LocalDateTime after = LocalDateTime.now();
+
+        // Assert
+        assertNotNull(club.getDateCreated());
+        assertNotNull(club.getDateUpdated());
+        assertEquals(club.getDateCreated(), club.getDateUpdated());
+        assertFalse(club.getDateCreated().isBefore(before));
+        assertFalse(club.getDateCreated().isAfter(after));
+    }
+
+    @Test
+    void onUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
+        // Arrange
+        Club club = new Club("Update Club", "UC");
+        LocalDateTime fixedCreated = LocalDateTime.of(2026, 4, 20, 9, 0);
+        club.setDateCreated(fixedCreated);
+        club.setDateUpdated(LocalDateTime.of(2026, 4, 20, 9, 0));
+        LocalDateTime before = LocalDateTime.now();
+
+        // Act
+        club.onUpdate();
+        LocalDateTime after = LocalDateTime.now();
+
+        // Assert
+        assertEquals(fixedCreated, club.getDateCreated());
+        assertNotNull(club.getDateUpdated());
+        assertFalse(club.getDateUpdated().isBefore(before));
+        assertFalse(club.getDateUpdated().isAfter(after));
     }
 }
 

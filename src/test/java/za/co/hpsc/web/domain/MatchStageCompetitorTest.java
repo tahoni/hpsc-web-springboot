@@ -1,7 +1,10 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.enums.*;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
@@ -578,6 +581,70 @@ public class MatchStageCompetitorTest {
         assertTrue(result.contains("3"));
         assertTrue(result.contains("Sarah Connor"));
         assertTrue(result.contains(":"));
+    }
+
+    @Test
+    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+        // Arrange
+        MatchStageCompetitor entity = new MatchStageCompetitor();
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> entity.init(null));
+    }
+
+    @Test
+    void init_whenCompetitorCategoryIsNull_thenCompetitorCategoryIsSetToNull() {
+        // Arrange
+        MatchStageCompetitor entity = new MatchStageCompetitor();
+        MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
+        dto.setCompetitorCategory(null);
+        dto.setFirearmType(FirearmType.HANDGUN);
+        dto.setDivision(Division.OPEN);
+        dto.setPowerFactor(PowerFactor.MAJOR);
+
+        // Act
+        entity.init(dto);
+
+        // Assert
+        assertNull(entity.getCompetitorCategory());
+        assertEquals(FirearmType.HANDGUN, entity.getFirearmType());
+        assertEquals(Division.OPEN, entity.getDivision());
+        assertEquals(PowerFactor.MAJOR, entity.getPowerFactor());
+    }
+
+    @Test
+    void onInsert_whenInvoked_thenInitializesDateCreatedAndDateUpdatedWithSameValue() {
+        // Arrange
+        MatchStageCompetitor entity = new MatchStageCompetitor();
+        LocalDateTime before = LocalDateTime.now();
+
+        // Act
+        entity.onInsert();
+        LocalDateTime after = LocalDateTime.now();
+
+        // Assert
+        assertNotNull(entity.getDateCreated());
+        assertNotNull(entity.getDateUpdated());
+        assertEquals(entity.getDateCreated(), entity.getDateUpdated());
+        assertFalse(entity.getDateCreated().isBefore(before));
+        assertFalse(entity.getDateCreated().isAfter(after));
+    }
+
+    @Test
+    void onUpdate_whenInvoked_thenUpdatesDateUpdatedWithoutChangingDateCreated() {
+        // Arrange
+        MatchStageCompetitor entity = new MatchStageCompetitor();
+        entity.onInsert();
+        LocalDateTime created = entity.getDateCreated();
+        LocalDateTime updatedBefore = entity.getDateUpdated();
+
+        // Act
+        entity.onUpdate();
+
+        // Assert
+        assertEquals(created, entity.getDateCreated());
+        assertNotNull(entity.getDateUpdated());
+        assertFalse(entity.getDateUpdated().isBefore(updatedBefore));
     }
 }
 

@@ -283,4 +283,84 @@ public class IpscMatchTest {
         // Assert
         assertTrue(result.contains("2026-12-31 23:59"));
     }
+
+    @Test
+    void init_whenDtoNameIsNull_thenNameBecomesNull() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setName("Existing Name");
+        MatchDto dto = new MatchDto();
+        dto.setName(null);
+        dto.setScheduledDate(LocalDateTime.of(2026, 5, 1, 9, 0));
+
+        // Act
+        match.init(dto);
+
+        // Assert
+        assertNull(match.getName());
+        assertEquals(LocalDateTime.of(2026, 5, 1, 9, 0), match.getScheduledDate());
+    }
+
+    @Test
+    void toString_whenNameIsNull_thenIncludesNullLiteralForName() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setName(null);
+        match.setScheduledDate(LocalDateTime.of(2026, 4, 24, 10, 30));
+
+        // Act
+        String result = match.toString();
+
+        // Assert
+        assertEquals("null (2026-04-24 10:30)", result);
+    }
+
+    @Test
+    void toString_whenScheduledDateIsNull_thenThrowsNullPointerException() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setName("Null Date Match");
+        match.setScheduledDate(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, match::toString);
+    }
+
+    @Test
+    void onInsert_whenInvoked_thenInitializesCreatedAndUpdatedDatesToSameCurrentValue() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        LocalDateTime before = LocalDateTime.now();
+
+        // Act
+        match.onInsert();
+        LocalDateTime after = LocalDateTime.now();
+
+        // Assert
+        assertNotNull(match.getDateCreated());
+        assertNotNull(match.getDateUpdated());
+        assertEquals(match.getDateCreated(), match.getDateUpdated());
+        assertFalse(match.getDateCreated().isBefore(before));
+        assertFalse(match.getDateCreated().isAfter(after));
+    }
+
+    @Test
+    void onUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        LocalDateTime created = LocalDateTime.of(2026, 1, 1, 8, 0);
+        match.setDateCreated(created);
+        match.setDateUpdated(LocalDateTime.of(2026, 1, 1, 8, 0));
+        LocalDateTime before = LocalDateTime.now();
+
+        // Act
+        match.onUpdate();
+        LocalDateTime after = LocalDateTime.now();
+
+        // Assert
+        assertEquals(created, match.getDateCreated());
+        assertNotNull(match.getDateUpdated());
+        assertFalse(match.getDateUpdated().isBefore(before));
+        assertFalse(match.getDateUpdated().isAfter(after));
+    }
 }

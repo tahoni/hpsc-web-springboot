@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CompetitorTest {
 
@@ -272,5 +272,83 @@ public class CompetitorTest {
 
         // Assert
         assertEquals(result1, result2);
+    }
+
+    @Test
+    void init_whenDtoIsNull_thenThrowsNullPointerException() {
+        // Arrange
+        Competitor competitor = new Competitor();
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> competitor.init(null));
+    }
+
+    @Test
+    void toString_whenFirstNameIsNullAndLastNamePresent_thenIncludesNullLiteralForFirstName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setFirstName(null);
+        competitor.setMiddleNames(null);
+        competitor.setLastName("Doe");
+
+        // Act
+        String result = competitor.toString();
+
+        // Assert
+        assertEquals("null Doe", result);
+    }
+
+    @Test
+    void toString_whenLastNameIsNullAndMiddleNamePresent_thenIncludesNullLiteralForLastName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setFirstName("John");
+        competitor.setMiddleNames("William");
+        competitor.setLastName(null);
+
+        // Act
+        String result = competitor.toString();
+
+        // Assert
+        assertEquals("John William null", result);
+    }
+
+    @Test
+    void onInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameCurrentValue() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        LocalDateTime before = LocalDateTime.now();
+
+        // Act
+        competitor.onInsert();
+        LocalDateTime after = LocalDateTime.now();
+
+        // Assert
+        assertNotNull(competitor.getDateCreated());
+        assertNotNull(competitor.getDateUpdated());
+        assertEquals(competitor.getDateCreated(), competitor.getDateUpdated());
+        assertFalse(competitor.getDateCreated().isBefore(before));
+        assertFalse(competitor.getDateCreated().isAfter(after));
+    }
+
+    @Test
+    void onUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        LocalDateTime created = LocalDateTime.of(2026, 1, 1, 9, 0);
+        LocalDateTime oldUpdated = LocalDateTime.of(2026, 1, 2, 9, 0);
+        competitor.setDateCreated(created);
+        competitor.setDateUpdated(oldUpdated);
+        LocalDateTime before = LocalDateTime.now();
+
+        // Act
+        competitor.onUpdate();
+        LocalDateTime after = LocalDateTime.now();
+
+        // Assert
+        assertEquals(created, competitor.getDateCreated());
+        assertNotNull(competitor.getDateUpdated());
+        assertFalse(competitor.getDateUpdated().isBefore(before));
+        assertFalse(competitor.getDateUpdated().isAfter(after));
     }
 }
