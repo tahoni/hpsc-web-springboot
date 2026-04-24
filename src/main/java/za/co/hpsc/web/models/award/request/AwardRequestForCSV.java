@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.HpscConstants;
 
@@ -30,8 +31,10 @@ import java.util.List;
  * specifically focusing on the required fields for minimal valid initialisation.
  * </p>
  */
+// TODO: fix mandatory fields and test
 @Getter
 @Setter
+@NoArgsConstructor
 public abstract class AwardRequestForCSV {
     @JsonProperty(required = true)
     private String ceremonyTitle;
