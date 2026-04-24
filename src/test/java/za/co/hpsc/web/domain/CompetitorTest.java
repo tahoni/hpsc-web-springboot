@@ -283,9 +283,8 @@ public class CompetitorTest {
         assertThrows(NullPointerException.class, () -> competitor.init(null));
     }
 
-    // TODO: fix method
     @Test
-    void testToString_whenFirstNameIsNullAndLastNameIsPresent_thenIncludesNullLiteralForFirstName() {
+    void testToString_whenFirstNameIsNullAndLastNameIsPresent_thenReturnsFirstNameOnly() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName(null);
@@ -296,12 +295,11 @@ public class CompetitorTest {
         String result = competitor.toString();
 
         // Assert
-        assertEquals("null Doe", result);
+        assertEquals("Doe", result);
     }
 
-    // TODO: fix method
     @Test
-    void testToString_whenLastNameIsNullAndMiddleNameIsPresent_thenIncludesNullLiteralForLastName() {
+    void testToString_whenLastNameIsNullAndMiddleNameIsPresent_thenReturnsLastNameOnly() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("John");
@@ -312,7 +310,7 @@ public class CompetitorTest {
         String result = competitor.toString();
 
         // Assert
-        assertEquals("John William null", result);
+        assertEquals("John William", result);
     }
 
     @Test

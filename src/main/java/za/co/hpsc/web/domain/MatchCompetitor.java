@@ -86,7 +86,20 @@ public class MatchCompetitor {
     }
 
     public String toString() {
-        return this.match.toString() + ": " + this.competitor.toString();
+        StringBuilder sb = new StringBuilder();
+
+        String match = ((this.match != null) ? this.match.toString().trim() : "");
+        sb.append(match);
+
+        String competitor = ((this.competitor != null) ? this.competitor.toString().trim() : "");
+        if (!competitor.isEmpty()) {
+            if (!match.isEmpty()) {
+                sb.append(": ");
+            }
+            sb.append(competitor);
+        }
+
+        return sb.toString().trim();
     }
 
     @PrePersist

@@ -278,7 +278,7 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenDoesNotThrowsNullPointerException() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
@@ -287,25 +287,31 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void testToString_whenMatchIsNull_thenThrowsNullPointerException() {
+    void testToString_whenMatchIsNull_thenReturnsCompetitorNameOnly() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setMatch(null);
         matchCompetitor.setCompetitor(buildCompetitor("John", "Doe"));
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, matchCompetitor::toString);
+        // Act
+        String result = matchCompetitor.toString();
+
+        // Assert
+        assertEquals("John Doe", result);
     }
 
     @Test
-    void testToString_whenCompetitorIsNull_thenThrowsNullPointerException() {
+    void testToString_whenCompetitorIsNull_thenReturnsMatchNameOnly() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setMatch(buildMatch("Spring Classic", LocalDateTime.of(2026, 4, 24, 10, 30)));
         matchCompetitor.setCompetitor(null);
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, matchCompetitor::toString);
+        // Act
+        String result = matchCompetitor.toString();
+
+        // Assert
+        assertEquals("Spring Classic (2026-04-24 10:30)", result);
     }
 
     @Test

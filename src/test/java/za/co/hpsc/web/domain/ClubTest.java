@@ -414,9 +414,8 @@ public class ClubTest {
         assertEquals("  UN  ", club.getAbbreviation());
     }
 
-    // TODO: fix method
     @Test
-    void testToString_whenNameIsNullAndAbbreviationIsPresent_thenReturnsNullLiteralWithAbbreviation() {
+    void testToString_whenNameIsNullAndAbbreviationIsPresent_thenReturnsAbbreviationOnly() {
         // Arrange
         Club club = new Club(null, "AB");
 
@@ -424,7 +423,7 @@ public class ClubTest {
         String result = club.toString();
 
         // Assert
-        assertEquals("null (AB)", result);
+        assertEquals("(AB)", result);
     }
 
     @Test

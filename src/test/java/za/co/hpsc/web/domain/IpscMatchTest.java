@@ -301,9 +301,8 @@ public class IpscMatchTest {
         assertEquals(LocalDateTime.of(2026, 5, 1, 9, 0), match.getScheduledDate());
     }
 
-    // TODO:fix message
     @Test
-    void testToString_whenNameIsNull_thenIncludesNullLiteralForName() {
+    void testToString_whenNameIsNull_thenReturnsScheduledDateOnly() {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setName(null);
@@ -313,7 +312,7 @@ public class IpscMatchTest {
         String result = match.toString();
 
         // Assert
-        assertEquals("null (2026-04-24 10:30)", result);
+        assertEquals("(2026-04-24 10:30)", result);
     }
 
     @Test

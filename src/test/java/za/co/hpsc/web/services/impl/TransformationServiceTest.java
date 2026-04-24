@@ -720,7 +720,7 @@ public class TransformationServiceTest {
     }
 
     @Test
-    public void testInitMatchCompetitorOverallResult_whenNullPointsAndRanking_thenReturnsEmptyFormattedValues() {
+    public void testInitMatchCompetitorOverallResult_whenNullPointsAndRanking_thenReturnsFormattedZeroValues() {
         // Arrange
         Competitor competitor = buildCompetitor("Alice", "Brown");
         MatchCompetitor mc = buildMatchCompetitor(competitor);
@@ -733,8 +733,8 @@ public class TransformationServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals("", result.get().matchPoints());
-        assertEquals("", result.get().matchRanking());
+        assertEquals("0.0000", result.get().matchPoints());
+        assertEquals("0.00", result.get().matchRanking());
     }
 
     // ─── initMatchCompetitorStageResults ────────────────────────────────────────

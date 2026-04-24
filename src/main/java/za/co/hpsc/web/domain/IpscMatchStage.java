@@ -80,7 +80,17 @@ public class IpscMatchStage {
 
     @Override
     public String toString() {
-        return this.stageName + " (" + this.stageNumber + ")";
+        StringBuilder sb = new StringBuilder();
+
+        String stageName = ((this.stageName != null) ? this.stageName.trim() : "");
+        sb.append(stageName).append(" ");
+
+        Integer stageNumber = (this.stageNumber != null) ? this.stageNumber : null;
+        if (stageNumber != null) {
+            sb.append("(").append(stageNumber).append(")");
+        }
+
+        return sb.toString().trim();
     }
 
     @PrePersist

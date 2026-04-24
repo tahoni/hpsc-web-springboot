@@ -429,7 +429,7 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void testToString_whenMatchStageIsNull_thenUsesUnknownForStage() {
+    void testToString_whenMatchStageIsNull_thenReturnsCompetitorOnly() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
@@ -443,11 +443,11 @@ public class MatchStageCompetitorTest {
         String result = entity.toString();
 
         // Assert
-        assertEquals("Unknown: Jane Smith", result);
+        assertEquals("Jane Smith", result);
     }
 
     @Test
-    void testToString_whenCompetitorIsNull_thenUsesUnknownForCompetitor() {
+    void testToString_whenCompetitorIsNull_thenStageOnly() {
         // Arrange
         IpscMatchStage matchStage = new IpscMatchStage();
         matchStage.setStageName("Stage One");
@@ -461,11 +461,11 @@ public class MatchStageCompetitorTest {
         String result = entity.toString();
 
         // Assert
-        assertEquals("Stage One (1): Unknown", result);
+        assertEquals("Stage One (1)", result);
     }
 
     @Test
-    void testToString_whenBothMatchStageAndCompetitorAreNull_thenReturnsUnknownForBoth() {
+    void testToString_whenBothMatchStageAndCompetitorAreNull_thenReturnsEmptyString() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
         entity.setMatchStage(null);
@@ -475,7 +475,7 @@ public class MatchStageCompetitorTest {
         String result = entity.toString();
 
         // Assert
-        assertEquals("Unknown: Unknown", result);
+        assertEquals("", result);
     }
 
     @Test
@@ -498,7 +498,7 @@ public class MatchStageCompetitorTest {
         String result = entity.toString();
 
         // Assert
-        assertTrue(result.contains("Alice Grace Cooper"));
+        assertEquals("Finals (5): Alice Grace Cooper", result);
     }
 
     @Test
@@ -553,9 +553,7 @@ public class MatchStageCompetitorTest {
         String result = entity.toString();
 
         // Assert
-        assertTrue(result.contains("Speed Stage"));
-        assertTrue(result.contains("4"));
-        assertTrue(result.contains("Tom Hardy"));
+        assertEquals("Speed Stage (4): Tom Hardy", result);
     }
 
     @Test
@@ -577,10 +575,7 @@ public class MatchStageCompetitorTest {
         String result = entity.toString();
 
         // Assert
-        assertTrue(result.contains("HPSC Stage 3"));
-        assertTrue(result.contains("3"));
-        assertTrue(result.contains("Sarah Connor"));
-        assertTrue(result.contains(":"));
+        assertEquals("HPSC Stage 3 (3): Sarah Connor", result);
     }
 
     @Test

@@ -171,9 +171,8 @@ public class IpscMatchStageTest {
         assertEquals("El Presidente (3)", result);
     }
 
-    // TODO: fix method
     @Test
-    void testToString_whenStageNameIsNull_thenIncludesNullLiteralAndNumber() {
+    void testToString_whenStageNameIsNull_thenIncludesOnlyNumber() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
         stage.setStageName(null);
@@ -183,7 +182,7 @@ public class IpscMatchStageTest {
         String result = stage.toString();
 
         // Assert
-        assertEquals("null (2)", result);
+        assertEquals("(2)", result);
     }
 
     @Test
@@ -286,9 +285,8 @@ public class IpscMatchStageTest {
         assertEquals(5, stage.getRangeNumber());
     }
 
-    // TODO: fix method
     @Test
-    void testToString_whenStageNumberIsNull_thenIncludesNullLiteral() {
+    void testToString_whenStageNumberIsNull_thenDontIncludesNullLiteral() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
         stage.setStageName("No Number");
@@ -298,7 +296,7 @@ public class IpscMatchStageTest {
         String result = stage.toString();
 
         // Assert
-        assertEquals("No Number (null)", result);
+        assertEquals("No Number", result);
     }
 
     @Test
