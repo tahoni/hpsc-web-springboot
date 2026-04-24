@@ -171,6 +171,7 @@ public class IpscMatchStageTest {
         assertEquals("El Presidente (3)", result);
     }
 
+    // TODO: fix method
     @Test
     void testToString_whenStageNameIsNull_thenIncludesNullLiteralAndNumber() {
         // Arrange
@@ -285,6 +286,7 @@ public class IpscMatchStageTest {
         assertEquals(5, stage.getRangeNumber());
     }
 
+    // TODO: fix method
     @Test
     void toString_whenStageNumberIsNull_thenIncludesNullLiteral() {
         // Arrange

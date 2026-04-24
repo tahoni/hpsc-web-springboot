@@ -283,6 +283,7 @@ public class CompetitorTest {
         assertThrows(NullPointerException.class, () -> competitor.init(null));
     }
 
+    // TODO: fix method
     @Test
     void toString_whenFirstNameIsNullAndLastNamePresent_thenIncludesNullLiteralForFirstName() {
         // Arrange
@@ -298,6 +299,7 @@ public class CompetitorTest {
         assertEquals("null Doe", result);
     }
 
+    // TODO: fix method
     @Test
     void toString_whenLastNameIsNullAndMiddleNamePresent_thenIncludesNullLiteralForLastName() {
         // Arrange

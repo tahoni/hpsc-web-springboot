@@ -414,6 +414,7 @@ public class ClubTest {
         assertEquals("  UN  ", club.getAbbreviation());
     }
 
+    // TODO: fix method
     @Test
     void toString_whenNameIsNullAndAbbreviationPresent_thenReturnsNullLiteralWithAbbreviation() {
         // Arrange
