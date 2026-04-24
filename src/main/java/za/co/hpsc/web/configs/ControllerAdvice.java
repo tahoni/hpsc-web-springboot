@@ -54,26 +54,7 @@ public class ControllerAdvice {
     /**
      * Handles validation exceptions that occur during the processing of requests.
      * Constructs a response entity containing an error message, a timestamp,
-     * and additional error details to notify the client of a bad request.
-     *
-     * @param ex      the exception that was thrown.
-     * @param request the current web request context.
-     * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request).
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ControllerResponse> handleNonFatalException(ValidationException ex,
-                                                                      WebRequest request) {
-        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
-                "Bad Request");
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Handles non-fatal exceptions that occur during the processing of requests.
-     * Constructs a response entity containing an error message, a timestamp,
-     * and additional error details to notify the client of a bad request.
+     * and additional error details to provide comprehensive feedback to the client.
      *
      * @param ex      the exception that was thrown.
      * @param request the current web request context.
@@ -81,11 +62,30 @@ public class ControllerAdvice {
      * with HTTP status 422 (Unprocessable Content).
      */
     @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ControllerResponse> handleNonFatalException(ValidationException ex,
+                                                                      WebRequest request) {
+        ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
+                "Unprocessable Content");
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_CONTENT);
+    }
+
+    /**
+     * Handles non-fatal exceptions that occur during the processing of requests.
+     * Constructs a response entity containing an error message, a timestamp,
+     * and additional error details to provide comprehensive feedback to the client.
+     *
+     * @param ex      the exception that was thrown.
+     * @param request the current web request context.
+     * @return a {@link ResponseEntity} containing a structured error response
+     * with HTTP status 400 (Bad Request).
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NonFatalException.class)
     public ResponseEntity<ControllerResponse> handleValidationException(NonFatalException ex,
                                                                         WebRequest request) {
         ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
-                "Unprocessable Content");
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_CONTENT);
+                "Bad Request");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
