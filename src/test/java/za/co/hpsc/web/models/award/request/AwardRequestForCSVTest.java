@@ -1,10 +1,12 @@
 package za.co.hpsc.web.models.award.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -12,10 +14,13 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AwardRequestForCSVTest {
-    @NoArgsConstructor
     private static class TestAwardRequestForCSV extends AwardRequestForCSV {
-        TestAwardRequestForCSV(String title, String ceremonyTitle, String firstPlaceName,
-                               String secondPlaceName, String thirdPlaceName) {
+        @JsonCreator
+        TestAwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
+                               @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
+                               @JsonProperty(value = "firstPlaceName", required = true) String firstPlaceName,
+                               @JsonProperty(value = "secondPlaceName") String secondPlaceName,
+                               @JsonProperty(value = "thirdPlaceName") String thirdPlaceName) {
             super(title, ceremonyTitle, firstPlaceName, secondPlaceName, thirdPlaceName);
         }
     }
@@ -104,6 +109,158 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
+    void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        TestAwardRequestForCSV request =
+                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", "John Roe", "Sam Poe");
+        request.setSummary("Award summary");
+        request.setDescription("Award description");
+        request.setCategory("Overall");
+        request.setCeremonySummary("Ceremony summary");
+        request.setCeremonyDescription("Ceremony description");
+        request.setCeremonyCategory("Main event");
+        request.setDate(LocalDate.of(2026, 4, 24));
+        request.setImageFilePath("awards/2026/top-shooter.png");
+        request.setFirstPlaceImageFileName("first.png");
+        request.setSecondPlaceImageFileName("second.png");
+        request.setThirdPlaceImageFileName("third.png");
+        request.getTags().add("ipsc");
+        request.getCeremonyTags().add("hpsc");
+
+        // Act
+        String json = mapper.writeValueAsString(request);
+        JsonNode node = mapper.readTree(json);
+
+        // Assert
+        assertEquals("Top Shooter", node.get("title").asText());
+        assertEquals("Annual Awards", node.get("ceremonyTitle").asText());
+        assertEquals("Jane Doe", node.get("firstPlaceName").asText());
+        assertEquals("John Roe", node.get("secondPlaceName").asText());
+        assertEquals("Sam Poe", node.get("thirdPlaceName").asText());
+        assertEquals("Award summary", node.get("summary").asText());
+        assertEquals("Award description", node.get("description").asText());
+        assertEquals("Overall", node.get("category").asText());
+        assertEquals("Ceremony summary", node.get("ceremonySummary").asText());
+        assertEquals("Ceremony description", node.get("ceremonyDescription").asText());
+        assertEquals("Main event", node.get("ceremonyCategory").asText());
+        assertEquals("awards/2026/top-shooter.png", node.get("imageFilePath").asText());
+        assertEquals("first.png", node.get("firstPlaceImageFileName").asText());
+        assertEquals("second.png", node.get("secondPlaceImageFileName").asText());
+        assertEquals("third.png", node.get("thirdPlaceImageFileName").asText());
+        assertEquals("ipsc", node.get("tags").get(0).asText());
+        assertEquals("hpsc", node.get("ceremonyTags").get(0).asText());
+    }
+
+    @Test
+    void testJsonSerialization_whenOnlyRequiredFieldsSet_thenSerializesWithEmptyTagListsAndNullOptionals() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper();
+        TestAwardRequestForCSV request =
+                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
+
+        // Act
+        String json = mapper.writeValueAsString(request);
+        JsonNode node = mapper.readTree(json);
+
+        // Assert
+        assertEquals("Top Shooter", node.get("title").asText());
+        assertEquals("Annual Awards", node.get("ceremonyTitle").asText());
+        assertEquals("Jane Doe", node.get("firstPlaceName").asText());
+        assertTrue(node.get("secondPlaceName").isNull());
+        assertTrue(node.get("thirdPlaceName").isNull());
+        assertTrue(node.get("summary").isNull());
+        assertTrue(node.get("description").isNull());
+        assertTrue(node.get("date").isNull());
+        assertTrue(node.get("imageFilePath").isNull());
+        assertTrue(node.get("tags").isArray());
+        assertTrue(node.get("ceremonyTags").isArray());
+        assertEquals(0, node.get("tags").size());
+        assertEquals(0, node.get("ceremonyTags").size());
+    }
+
+    @Test
+    void testJsonDeserialization_whenTitleMissing_thenThrowsMismatchedInputException() {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        String json = """
+                {
+                  "ceremonyTitle": "Annual Awards",
+                  "firstPlaceName": "Jane Doe"
+                }
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue(json, TestAwardRequestForCSV.class));
+    }
+
+    @Test
+    void testJsonDeserialization_whenCeremonyTitleMissing_thenThrowsMismatchedInputException() {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        String json = """
+                {
+                  "title": "Top Shooter",
+                  "firstPlaceName": "Jane Doe"
+                }
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue(json, TestAwardRequestForCSV.class));
+    }
+
+    @Test
+    void testJsonDeserialization_whenFirstPlaceNameMissing_thenThrowsMismatchedInputException() {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        String json = """
+                {
+                  "title": "Top Shooter",
+                  "ceremonyTitle": "Annual Awards"
+                }
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue(json, TestAwardRequestForCSV.class));
+    }
+
+    @Test
+    void testJsonDeserialization_whenAllRequiredFieldsMissing_thenThrowsMismatchedInputException() {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        String json = """
+                {
+                  "category": "Overall",
+                  "summary": "Award summary"
+                }
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue(json, TestAwardRequestForCSV.class));
+    }
+
+    @Test
+    void testJsonDeserialization_whenEmptyObject_thenThrowsMismatchedInputException() {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        String json = "{}";
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue(json, TestAwardRequestForCSV.class));
+    }
+
+    @Test
     void testJsonDeserialization_whenUnknownProperty_thenThrowsMismatchedInputException() {
         // Arrange
         ObjectMapper objectMapper = new ObjectMapper()
@@ -111,7 +268,7 @@ public class AwardRequestForCSVTest {
         String jsonUnknownProperty = """
                 {
                   "title": "Podium Shot",
-                  "name": "Podium Shot",
+                  "name": "Podium Shot"
                 }
                 """;
 

@@ -3,7 +3,6 @@ package za.co.hpsc.web.models.image.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -28,10 +27,8 @@ import java.util.List;
  * specifically focusing on the required fields for minimal valid initialisation.
  * </p>
  */
-// TODO: fix mandatory fields and test
 @Getter
 @Setter
-@NoArgsConstructor
 public abstract class ImageRequestForCsv {
     @JsonProperty(required = true)
     private String title;
@@ -49,6 +46,7 @@ public abstract class ImageRequestForCsv {
     /**
      * Constructs a new {@code ImageRequestForCsv} instance with the specified title,
      * file path, and file name.
+     *
      * <p>
      * This constructor is annotated with {@code @JsonCreator} to enable
      * deserialization from JSON, specifically requiring the title, file path,
@@ -56,9 +54,14 @@ public abstract class ImageRequestForCsv {
      * initialise the corresponding attributes of the object.
      * </p>
      *
-     * @param title    the title of the image. This field is required.
-     * @param filePath the file path where the image is stored. This field is required.
-     * @param fileName the name of the file containing the image. This field is required.
+     * <p>
+     * Optional fields such as {@code summary}, {@code description}, {@code category},
+     * and {@code tags} remain unset and may be populated via their respective setters.
+     * </p>
+     *
+     * @param title    the title of the image. Must not be null or blank.
+     * @param filePath the file path where the image is stored. Must not be null or blank.
+     * @param fileName the name of the file containing the image. Must not be null or blank.
      */
     @JsonCreator
     public ImageRequestForCsv(@JsonProperty(value = "title", required = true) String title,

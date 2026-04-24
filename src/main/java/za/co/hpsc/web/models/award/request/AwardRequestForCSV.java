@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.HpscConstants;
 
@@ -31,10 +30,8 @@ import java.util.List;
  * specifically focusing on the required fields for minimal valid initialisation.
  * </p>
  */
-// TODO: fix mandatory fields and test
 @Getter
 @Setter
-@NoArgsConstructor
 public abstract class AwardRequestForCSV {
     @JsonProperty(required = true)
     private String ceremonyTitle;
@@ -63,7 +60,29 @@ public abstract class AwardRequestForCSV {
     private String thirdPlaceImageFileName;
 
     /**
-     * Constructs an instance of {@code AwardRequestForCSV} object with the specified title,
+     * Constructs a minimal instance of {@code AwardRequestForCSV} with the three required fields.
+     *
+     * <p>
+     * Use this constructor when only the core identifying fields are available. Optional fields
+     * such as {@code secondPlaceName}, {@code thirdPlaceName}, summary, description, and tags
+     * remain unset and may be populated via their respective setters.
+     * </p>
+     *
+     * @param title          the title of the award. Must not be null or blank.
+     * @param ceremonyTitle  the title of the award ceremony. Must not be null or blank.
+     * @param firstPlaceName the name of the first-place winner. Must not be null or blank.
+     */
+    @JsonCreator
+    public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
+                              @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
+                              @JsonProperty(value = "firstNamePlace", required = true) String firstPlaceName) {
+        this.title = title;
+        this.ceremonyTitle = ceremonyTitle;
+        this.firstPlaceName = firstPlaceName;
+    }
+
+    /**
+     * Constructs an instance of {@code AwardRequestForCSV} with the specified title,
      * ceremony title, and award details for first, second, and third places.
      *
      * <p>
@@ -72,18 +91,12 @@ public abstract class AwardRequestForCSV {
      * first place.
      * </p>
      *
-     * @param title           the title of the award.
-     *                        Must not be null or blank.
-     * @param ceremonyTitle   the title of the award ceremony.
-     *                        Must not be null or blank.
-     * @param firstPlaceName  the name of the first-place winner.
-     *                        Must not be null or blank.
-     * @param secondPlaceName the name of the second-place winner.
-     *                        Can be null.
-     * @param thirdPlaceName  the name of the third-place winner.
-     *                        Can be null.
+     * @param title           the title of the award. Must not be null or blank.
+     * @param ceremonyTitle   the title of the award ceremony. Must not be null or blank.
+     * @param firstPlaceName  the name of the first-place winner. Must not be null or blank.
+     * @param secondPlaceName the name of the second-place winner. May be null.
+     * @param thirdPlaceName  the name of the third-place winner. May be null.
      */
-    @JsonCreator
     public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
                               @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
                               @JsonProperty(value = "firstPlaceName", required = true) String firstPlaceName,
