@@ -14,6 +14,9 @@ import java.util.List;
  * </p>
  */
 public final class IpscConstants {
+    private IpscConstants() {
+    }
+
     public static final String IPSC_INPUT_DATE_TIME_FORMAT =
             SystemConstants.T_SEPARATED_DATE_TIME_FORMAT;
     public static final String IPSC_OUTPUT_DATE_FORMAT =
