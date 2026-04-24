@@ -46,7 +46,7 @@ jobs:
           pr-mode: false
           # Pass the JaCoCo XML report and enable licence-audit inspections
           args: >-
-            --coverage-path target/site/jacoco/jacoco.xml
+            --coverage-dir target/site/jacoco/jacoco.xml
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
