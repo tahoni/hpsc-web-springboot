@@ -154,7 +154,6 @@ public class IpscServiceIntegrationTest {
         assertNull(competitorRecord.sapsaNumber());
         assertEquals("15000", competitorRecord.competitorNumber());
 
-        // TODO: re-enable when results are properly mapped and returned in the record
         MatchCompetitorOverallResultsRecord overallResultRecord = competitorRecord.results().overall();
         assertEquals("101.0000", overallResultRecord.matchPoints());
 

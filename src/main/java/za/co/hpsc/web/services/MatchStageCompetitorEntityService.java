@@ -11,6 +11,23 @@ import java.util.List;
  * based on specific criteria.
  */
 public interface MatchStageCompetitorEntityService {
-    // TODO: Javadoc
+
+    /**
+     * Retrieves a list of {@link MatchStageCompetitor} entities matching the specified match
+     * stage and competitor identifiers.
+     *
+     * <p>
+     * Either or both parameters may be {@code null}. When a parameter is {@code null},
+     * it is not used as a filter criterion, and all records matching the remaining
+     * non-null parameters are returned.
+     * </p>
+     *
+     * @param matchStageId the unique identifier of the match stage to filter by, or
+     *                     {@code null} to include all match stages.
+     * @param competitorId the unique identifier of the competitor to filter by, or
+     *                     {@code null} to include all competitors.
+     * @return a {@link List} of {@link MatchStageCompetitor} entities matching the given
+     * criteria; never {@code null}, but may be empty if no matches are found.
+     */
     List<MatchStageCompetitor> findMatchStageCompetitors(Long matchStageId, Long competitorId);
 }

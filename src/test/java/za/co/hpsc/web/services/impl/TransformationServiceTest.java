@@ -6,10 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
@@ -19,7 +16,7 @@ import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
+import za.co.hpsc.web.models.ipsc.records.*;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.*;
 import za.co.hpsc.web.services.*;
@@ -27,10 +24,7 @@ import za.co.hpsc.web.services.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -560,6 +554,356 @@ public class TransformationServiceTest {
         assertTrue(results.getMatchCompetitors().isEmpty());
     }
 
+    // ─── initCompetitorRecord ───────────────────────────────────────────────────
+
+    @Test
+    public void testInitCompetitorRecord_whenAnyArgIsNull_thenEmpty() {
+        Competitor competitor = buildCompetitor("John", "Doe");
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(competitor);
+        CompetitorResultRecord result = buildCompetitorResultRecord();
+
+        assertTrue(transformationService.initCompetitorRecord(null, matchCompetitor, result).isEmpty());
+        assertTrue(transformationService.initCompetitorRecord(competitor, null, result).isEmpty());
+        assertTrue(transformationService.initCompetitorRecord(competitor, matchCompetitor, null).isEmpty());
+    }
+
+    @Test
+    public void testInitCompetitorRecord_whenValidInputsWithMatchClub_thenReturnsRecordWithClubFromMatchClub() {
+        // Arrange
+        Competitor competitor = buildCompetitor("John", "Doe");
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(competitor);
+        ClubIdentifier clubIdentifier = ClubIdentifier.HPSC;
+        matchCompetitor.setMatchClub(clubIdentifier);
+        CompetitorResultRecord resultRecord = buildCompetitorResultRecord();
+
+        // Act
+        Optional<CompetitorRecord> result =
+                transformationService.initCompetitorRecord(competitor, matchCompetitor, resultRecord);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("John", result.get().firstName());
+        assertEquals("Doe", result.get().lastName());
+        assertEquals(clubIdentifier.getName(), result.get().clubName());
+    }
+
+    @Test
+    public void testInitCompetitorRecord_whenMatchClubIsNullButMatchHasClub_thenReturnsRecordWithClubFromMatch() {
+        // Arrange
+        Competitor competitor = buildCompetitor("Jane", "Smith");
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(competitor);
+        matchCompetitor.setMatchClub(null);
+        Club club = new Club();
+        club.setName("Test Club");
+        IpscMatch match = new IpscMatch();
+        match.setClub(club);
+        match.setScheduledDate(LocalDateTime.now());
+        matchCompetitor.setMatch(match);
+        CompetitorResultRecord resultRecord = buildCompetitorResultRecord();
+
+        // Act
+        Optional<CompetitorRecord> result =
+                transformationService.initCompetitorRecord(competitor, matchCompetitor, resultRecord);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("Test Club", result.get().clubName());
+    }
+
+    @Test
+    public void testInitCompetitorRecord_whenNoClubAvailable_thenReturnsRecordWithEmptyClubName() {
+        // Arrange
+        Competitor competitor = buildCompetitor("Alice", "Brown");
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(competitor);
+        matchCompetitor.setMatchClub(null);
+        CompetitorResultRecord resultRecord = buildCompetitorResultRecord();
+
+        // Act
+        Optional<CompetitorRecord> result =
+                transformationService.initCompetitorRecord(competitor, matchCompetitor, resultRecord);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("", result.get().clubName());
+    }
+
+    // ─── initCompetitorResult ───────────────────────────────────────────────────
+
+    @Test
+    public void testInitCompetitorResult_whenCompetitorIsNull_thenEmpty() {
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(new Competitor());
+        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("100.0000", "95.00", "");
+        List<MatchCompetitorStageResultRecord> stages = List.of(buildStageResultRecord());
+
+        assertTrue(transformationService.initCompetitorResult(null, matchCompetitor, overall, stages).isEmpty());
+    }
+
+    @Test
+    public void testInitCompetitorResult_whenOverallResultIsNull_thenEmpty() {
+        Competitor competitor = buildCompetitor("John", "Doe");
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(competitor);
+        List<MatchCompetitorStageResultRecord> stages = List.of(buildStageResultRecord());
+
+        assertTrue(transformationService.initCompetitorResult(competitor, matchCompetitor, null, stages).isEmpty());
+    }
+
+    @Test
+    public void testInitCompetitorResult_whenStageResultsAreNull_thenEmpty() {
+        Competitor competitor = buildCompetitor("John", "Doe");
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(competitor);
+        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("100.0000", "95.00", "");
+
+        assertTrue(transformationService.initCompetitorResult(competitor, matchCompetitor, overall, null).isEmpty());
+    }
+
+    @Test
+    public void testInitCompetitorResult_whenValidInputs_thenReturnsRecordWithFirearmDivisionAndPowerFactor() {
+        // Arrange
+        Competitor competitor = buildCompetitor("John", "Doe");
+        MatchCompetitor matchCompetitor = buildMatchCompetitor(competitor);
+        matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitor.setDivision(Division.PRODUCTION);
+        matchCompetitor.setPowerFactor(PowerFactor.MINOR);
+        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("100.0000", "95.00", "");
+        List<MatchCompetitorStageResultRecord> stages = List.of(buildStageResultRecord());
+
+        // Act
+        Optional<CompetitorResultRecord> result =
+                transformationService.initCompetitorResult(competitor, matchCompetitor, overall, stages);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(FirearmType.HANDGUN.toString(), result.get().firearmType());
+        assertEquals(Division.PRODUCTION.toString(), result.get().division());
+        assertEquals(PowerFactor.MINOR.toString(), result.get().powerFactor());
+    }
+
+    // ─── initMatchCompetitorOverallResult ───────────────────────────────────────
+
+    @Test
+    public void testInitMatchCompetitorOverallResult_whenCompetitorIsNull_thenEmpty() {
+        assertTrue(transformationService.initMatchCompetitorOverallResult(null, new ArrayList<>()).isEmpty());
+    }
+
+    @Test
+    public void testInitMatchCompetitorOverallResult_whenMatchCompetitorListIsNull_thenEmpty() {
+        assertTrue(transformationService.initMatchCompetitorOverallResult(new Competitor(), null).isEmpty());
+    }
+
+    @Test
+    public void testInitMatchCompetitorOverallResult_whenNoMatchingCompetitorInList_thenEmpty() {
+        // Arrange
+        Competitor competitor = buildCompetitor("John", "Doe");
+        Competitor other = buildCompetitor("Jane", "Smith");
+        MatchCompetitor mc = buildMatchCompetitor(other);
+
+        // Act / Assert
+        assertTrue(transformationService.initMatchCompetitorOverallResult(competitor, List.of(mc)).isEmpty());
+    }
+
+    @Test
+    public void testInitMatchCompetitorOverallResult_whenMatchingCompetitorFound_thenReturnsFormattedPoints() {
+        // Arrange
+        Competitor competitor = buildCompetitor("John", "Doe");
+        MatchCompetitor mc = buildMatchCompetitor(competitor);
+        mc.setMatchPoints(new BigDecimal("245.6700"));
+        mc.setMatchRanking(new BigDecimal("98.25"));
+
+        // Act
+        Optional<MatchCompetitorOverallResultsRecord> result =
+                transformationService.initMatchCompetitorOverallResult(competitor, List.of(mc));
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("245.6700", result.get().matchPoints());
+        assertEquals("98.25", result.get().matchRanking());
+    }
+
+    @Test
+    public void testInitMatchCompetitorOverallResult_whenNullPointsAndRanking_thenReturnsEmptyFormattedValues() {
+        // Arrange
+        Competitor competitor = buildCompetitor("Alice", "Brown");
+        MatchCompetitor mc = buildMatchCompetitor(competitor);
+        mc.setMatchPoints(null);
+        mc.setMatchRanking(null);
+
+        // Act
+        Optional<MatchCompetitorOverallResultsRecord> result =
+                transformationService.initMatchCompetitorOverallResult(competitor, List.of(mc));
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("", result.get().matchPoints());
+        assertEquals("", result.get().matchRanking());
+    }
+
+    // ─── initMatchCompetitorStageResults ────────────────────────────────────────
+
+    @Test
+    public void testInitMatchCompetitorStageResults_whenCompetitorIsNull_thenEmptyList() {
+        assertTrue(transformationService.initMatchCompetitorStageResults(null, new ArrayList<>()).isEmpty());
+    }
+
+    @Test
+    public void testInitMatchCompetitorStageResults_whenListIsNull_thenEmptyList() {
+        assertTrue(transformationService.initMatchCompetitorStageResults(new Competitor(), null).isEmpty());
+    }
+
+    @Test
+    public void testInitMatchCompetitorStageResults_whenNoMatchingCompetitorInList_thenEmptyList() {
+        // Arrange
+        Competitor competitor = buildCompetitor("John", "Doe");
+        Competitor other = buildCompetitor("Jane", "Smith");
+        IpscMatchStage stage = buildMatchStage("Stage 1", 1);
+        MatchStageCompetitor msc = buildMatchStageCompetitor(other, stage);
+
+        // Act / Assert
+        assertTrue(transformationService.initMatchCompetitorStageResults(competitor, List.of(msc)).isEmpty());
+    }
+
+    @Test
+    public void testInitMatchCompetitorStageResults_whenValidEntry_thenReturnsMappedStageRecord() {
+        // Arrange
+        Competitor competitor = buildCompetitor("John", "Doe");
+        IpscMatchStage stage = buildMatchStage("El Presidente", 1);
+        MatchStageCompetitor msc = buildMatchStageCompetitor(competitor, stage);
+        msc.setTime(new BigDecimal("38.25"));
+        msc.setHitFactor(new BigDecimal("4.5813"));
+        msc.setStagePoints(new BigDecimal("175.0000"));
+        msc.setStagePercentage(new BigDecimal("95.50"));
+        msc.setStageRanking(BigDecimal.ONE);
+
+        // Act
+        List<MatchCompetitorStageResultRecord> results =
+                transformationService.initMatchCompetitorStageResults(competitor, List.of(msc));
+
+        // Assert
+        assertEquals(1, results.size());
+        assertEquals("El Presidente", results.getFirst().stageName());
+        assertEquals("38.25", results.getFirst().time());
+        assertEquals("4.5813", results.getFirst().hitFactor());
+        assertEquals("175.0000", results.getFirst().stagePoints());
+    }
+
+    @Test
+    public void testInitMatchCompetitorStageResults_whenMultipleStagesForCompetitor_thenReturnsAllStages() {
+        // Arrange
+        Competitor competitor = buildCompetitor("John", "Doe");
+        IpscMatchStage stage1 = buildMatchStage("Stage 1", 1);
+        IpscMatchStage stage2 = buildMatchStage("Stage 2", 2);
+        MatchStageCompetitor msc1 = buildMatchStageCompetitor(competitor, stage1);
+        MatchStageCompetitor msc2 = buildMatchStageCompetitor(competitor, stage2);
+
+        // Act
+        List<MatchCompetitorStageResultRecord> results =
+                transformationService.initMatchCompetitorStageResults(competitor, List.of(msc1, msc2));
+
+        // Assert
+        assertEquals(2, results.size());
+    }
+
+    // ─── deDuplicateCompetitorDtoList ───────────────────────────────────────────
+
+    @Test
+    public void testDeDuplicateCompetitorDtoList_whenNull_thenReturnsNull() {
+        assertNull(transformationService.deDuplicateCompetitorDtoList(null));
+    }
+
+    @Test
+    public void testDeDuplicateCompetitorDtoList_whenEmptyMap_thenReturnsEmptyMap() {
+        assertTrue(transformationService.deDuplicateCompetitorDtoList(new LinkedHashMap<>()).isEmpty());
+    }
+
+    @Test
+    public void testDeDuplicateCompetitorDtoList_whenNoDuplicates_thenReturnsAllEntries() {
+        // Arrange
+        CompetitorDto c1 = new CompetitorDto();
+        c1.setSapsaNumber(1001);
+        c1.setId(1L);
+        CompetitorDto c2 = new CompetitorDto();
+        c2.setSapsaNumber(1002);
+        c2.setId(2L);
+        Map<Integer, CompetitorDto> input = new LinkedHashMap<>();
+        input.put(1, c1);
+        input.put(2, c2);
+
+        // Act
+        Map<Integer, CompetitorDto> result = transformationService.deDuplicateCompetitorDtoList(input);
+
+        // Assert
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testDeDuplicateCompetitorDtoList_whenDuplicateSapsaNumbers_thenDeduplicatesAndMergesIndexes() {
+        // Arrange
+        CompetitorDto c1 = new CompetitorDto();
+        c1.setSapsaNumber(1001);
+        c1.getIndexes().add(9);
+
+        CompetitorDto c2 = new CompetitorDto();
+        c2.setSapsaNumber(1001);
+        c2.getIndexes().add(10);
+
+        Map<Integer, CompetitorDto> input = new LinkedHashMap<>();
+        input.put(9, c1);
+        input.put(10, c2);
+
+        // Act
+        Map<Integer, CompetitorDto> result = transformationService.deDuplicateCompetitorDtoList(input);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.get(9).getIndexes().contains(9));
+        assertTrue(result.get(9).getIndexes().contains(10));
+    }
+
+    @Test
+    public void testDeDuplicateCompetitorDtoList_whenDuplicateIds_thenDeduplicatesAndMergesIndexes() {
+        // Arrange
+        CompetitorDto c1 = new CompetitorDto();
+        c1.setId(5L);
+        c1.getIndexes().add(1);
+
+        CompetitorDto c2 = new CompetitorDto();
+        c2.setId(5L);
+        c2.getIndexes().add(2);
+
+        Map<Integer, CompetitorDto> input = new LinkedHashMap<>();
+        input.put(1, c1);
+        input.put(2, c2);
+
+        // Act
+        Map<Integer, CompetitorDto> result = transformationService.deDuplicateCompetitorDtoList(input);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.get(1).getIndexes().contains(1));
+        assertTrue(result.get(1).getIndexes().contains(2));
+    }
+
+    @Test
+    public void testDeDuplicateCompetitorDtoList_whenNullSapsaAndNullId_thenKeepsBothEntries() {
+        // Arrange
+        CompetitorDto c1 = new CompetitorDto();
+        c1.setSapsaNumber(null);
+        c1.setId(null);
+
+        CompetitorDto c2 = new CompetitorDto();
+        c2.setSapsaNumber(null);
+        c2.setId(null);
+
+        Map<Integer, CompetitorDto> input = new LinkedHashMap<>();
+        input.put(1, c1);
+        input.put(2, c2);
+
+        // Act
+        Map<Integer, CompetitorDto> result = transformationService.deDuplicateCompetitorDtoList(input);
+
+        // Assert
+        assertEquals(2, result.size());
+    }
+
     // Helper methods
 
     private MatchRequest buildMatchRequest(int matchId) {
@@ -637,6 +981,46 @@ public class TransformationServiceTest {
         response.setMatch(new MatchResponse(matchId, "Match " + matchId,
                 LocalDateTime.of(2026, 3, 31, 10, 0), 200, 3, 1));
         return response;
+    }
+
+    private Competitor buildCompetitor(String firstName, String lastName) {
+        Competitor competitor = new Competitor();
+        competitor.setFirstName(firstName);
+        competitor.setLastName(lastName);
+        competitor.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        return competitor;
+    }
+
+    private MatchCompetitor buildMatchCompetitor(Competitor competitor) {
+        MatchCompetitor mc = new MatchCompetitor();
+        mc.setCompetitor(competitor);
+        mc.setCompetitorCategory(CompetitorCategory.NONE);
+        return mc;
+    }
+
+    private IpscMatchStage buildMatchStage(String name, int number) {
+        IpscMatchStage stage = new IpscMatchStage();
+        stage.setStageName(name);
+        stage.setStageNumber(number);
+        return stage;
+    }
+
+    private MatchStageCompetitor buildMatchStageCompetitor(Competitor competitor, IpscMatchStage stage) {
+        MatchStageCompetitor msc = new MatchStageCompetitor();
+        msc.setCompetitor(competitor);
+        msc.setMatchStage(stage);
+        msc.setCompetitorCategory(CompetitorCategory.NONE);
+        return msc;
+    }
+
+    private CompetitorResultRecord buildCompetitorResultRecord() {
+        MatchCompetitorOverallResultsRecord overall = new MatchCompetitorOverallResultsRecord("100.0000", "95.00", "");
+        return new CompetitorResultRecord("Handgun", "Production", "Minor", overall, new ArrayList<>());
+    }
+
+    private MatchCompetitorStageResultRecord buildStageResultRecord() {
+        return new MatchCompetitorStageResultRecord("Stage 1", 10, 5, 2, 1, 50, 0, 0, 0,
+                "15.50", "3.22", "50.0000", "85.00", "1.00", "");
     }
 }
 

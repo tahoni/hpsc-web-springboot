@@ -13,7 +13,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-// TODO: Javadoc
+/**
+ * Data Transfer Object (DTO) representing a competitor enrolled in a match.
+ *
+ * <p>
+ * This class aggregates a competitor's identity, club affiliation, category, firearm type,
+ * division, and power factor, along with their associated match and match stage results.
+ * It can be constructed from various entity and DTO types to facilitate mapping between
+ * domain objects and the transfer layer.
+ * </p>
+ *
+ * <p>
+ * When constructed from a {@link MatchCompetitor} or {@link MatchStageCompetitor} entity,
+ * the fields are populated from the entity's data. When constructed from a
+ * {@link MatchCompetitorDto}, the fields are populated directly from the DTO.
+ * If the provided argument is {@code null}, all fields retain their default values.
+ * </p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,6 +52,18 @@ public class EnrolledCompetitorDto {
     private Division division;
     private PowerFactor powerFactor;
 
+    /**
+     * Constructs an {@code EnrolledCompetitorDto} from a {@link MatchCompetitor} entity.
+     *
+     * <p>
+     * Populates the competitor details, club affiliation, competitor category, firearm type,
+     * division, and power factor from the provided entity. If {@code matchCompetitorEntity}
+     * is {@code null}, all fields retain their default values.
+     * </p>
+     *
+     * @param matchCompetitorEntity the {@link MatchCompetitor} entity to map from, or
+     *                              {@code null} to create an instance with default values.
+     */
     public EnrolledCompetitorDto(MatchCompetitor matchCompetitorEntity) {
         if (matchCompetitorEntity != null) {
             // Initialises the match competitor details
@@ -52,6 +80,18 @@ public class EnrolledCompetitorDto {
         }
     }
 
+    /**
+     * Constructs an {@code EnrolledCompetitorDto} from a {@link MatchStageCompetitor} entity.
+     *
+     * <p>
+     * Populates the competitor details, club affiliation, competitor category, firearm type,
+     * division, and power factor from the provided entity. If {@code matchStageCompetitorEntity}
+     * is {@code null}, all fields retain their default values.
+     * </p>
+     *
+     * @param matchStageCompetitorEntity the {@link MatchStageCompetitor} entity to map from,
+     *                                   or {@code null} to create an instance with default values.
+     */
     public EnrolledCompetitorDto(MatchStageCompetitor matchStageCompetitorEntity) {
         if (matchStageCompetitorEntity != null) {
             // Initialises the match competitor details
@@ -68,6 +108,18 @@ public class EnrolledCompetitorDto {
         }
     }
 
+    /**
+     * Constructs an {@code EnrolledCompetitorDto} from a {@link MatchCompetitorDto}.
+     *
+     * <p>
+     * Populates the competitor details, club affiliation, competitor category, firearm type,
+     * division, and power factor directly from the provided DTO. If {@code matchCompetitorDto}
+     * is {@code null}, all fields retain their default values.
+     * </p>
+     *
+     * @param matchCompetitorDto the {@link MatchCompetitorDto} to map from, or {@code null}
+     *                           to create an instance with default values.
+     */
     public EnrolledCompetitorDto(MatchCompetitorDto matchCompetitorDto) {
         if (matchCompetitorDto != null) {
             // Initialises the match competitor details

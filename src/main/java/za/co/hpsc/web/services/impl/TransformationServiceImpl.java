@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.dto.*;
 import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
@@ -81,7 +82,6 @@ public class TransformationServiceImpl implements TransformationService {
         return new IpscResponseHolder(ipscResponses);
     }
 
-    // TODO: comment
     @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<MatchHolder> ipscMatchHolderList) {
         if (ipscMatchHolderList == null) {
@@ -325,7 +325,27 @@ public class TransformationServiceImpl implements TransformationService {
         return Optional.of(ipscMatchRecord);
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a {@link CompetitorRecord} from the provided competitor, match competitor,
+     * and competitor result data.
+     *
+     * <p>
+     * The club name is resolved by first checking the match competitor's associated
+     * {@link ClubIdentifier}. If that is absent or has no name, the club is resolved from
+     * the match entity itself. If neither source provides a club name, an empty string is used.
+     * </p>
+     *
+     * @param competitor             the competitor whose personal details are used to populate
+     *                               the record. If {@code null}, an empty {@code Optional} is returned.
+     * @param matchCompetitor        the match competitor entity providing club, category, and match
+     *                               association details. If {@code null}, an empty {@code Optional}
+     *                               is returned.
+     * @param competitorResultRecord the competitor's result record containing firearm type, division,
+     *                               power factor, and stage results. If {@code null}, an empty
+     *                               {@code Optional} is returned.
+     * @return an {@code Optional} containing the initialised {@link CompetitorRecord}, or
+     * {@code Optional.empty()} if any of the required arguments are {@code null}.
+     */
     protected Optional<CompetitorRecord> initCompetitorRecord(Competitor competitor,
                                                               MatchCompetitor matchCompetitor,
                                                               CompetitorResultRecord competitorResultRecord) {
@@ -359,7 +379,27 @@ public class TransformationServiceImpl implements TransformationService {
         return Optional.of(competitorRecord);
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a {@link CompetitorResultRecord} from the provided competitor, match competitor,
+     * overall results, and stage results.
+     *
+     * <p>
+     * The firearm type, division, and power factor are derived from the {@code matchCompetitor}
+     * entity. Null enum values are converted to empty strings.
+     * </p>
+     *
+     * @param competitor                   the competitor entity. If {@code null}, an empty
+     *                                     {@code Optional} is returned.
+     * @param matchCompetitor              the match competitor providing firearm type, division,
+     *                                     and power factor for the record.
+     * @param matchCompetitorOverallResult the pre-computed overall match results record for the
+     *                                     competitor. If {@code null}, an empty {@code Optional}
+     *                                     is returned.
+     * @param matchCompetitorStageResults  the list of per-stage result records for the competitor.
+     *                                     If {@code null}, an empty {@code Optional} is returned.
+     * @return an {@code Optional} containing the initialised {@link CompetitorResultRecord}, or
+     * {@code Optional.empty()} if any required argument is {@code null}.
+     */
     protected Optional<CompetitorResultRecord> initCompetitorResult(
             Competitor competitor, MatchCompetitor matchCompetitor,
             MatchCompetitorOverallResultsRecord matchCompetitorOverallResult,
@@ -379,7 +419,26 @@ public class TransformationServiceImpl implements TransformationService {
                 matchCompetitorOverallResult, matchCompetitorStageResults));
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a {@link MatchCompetitorOverallResultsRecord} for the given competitor based
+     * on their entry in the provided list of match competitors.
+     *
+     * <p>
+     * The method filters the {@code matchCompetitorList} to find the first entry whose competitor
+     * equals the provided {@code competitor}. Match points and ranking values are formatted to their
+     * respective scales as defined in {@link IpscConstants}. Null numeric values are represented
+     * as empty strings.
+     * </p>
+     *
+     * @param competitor          the competitor for whom the overall result record is initialised.
+     *                            If {@code null}, an empty {@code Optional} is returned.
+     * @param matchCompetitorList the list of match competitor entities to search. If {@code null},
+     *                            an empty {@code Optional} is returned. If no entry matches the
+     *                            competitor, an empty {@code Optional} is returned.
+     * @return an {@code Optional} containing the initialised
+     * {@link MatchCompetitorOverallResultsRecord}, or {@code Optional.empty()} if the
+     * competitor is not found or any required argument is {@code null}.
+     */
     protected Optional<MatchCompetitorOverallResultsRecord> initMatchCompetitorOverallResult(
             Competitor competitor, List<MatchCompetitor> matchCompetitorList) {
 
@@ -414,7 +473,24 @@ public class TransformationServiceImpl implements TransformationService {
                 matchPoints, matchRanking, dateEdited));
     }
 
-    // TODO: Javadoc
+    /**
+     * Initialises a list of {@link MatchCompetitorStageResultRecord} objects for the given
+     * competitor based on their entries in the provided list of match stage competitors.
+     *
+     * <p>
+     * The method filters the {@code matchStageCompetitorList} for entries belonging to the given
+     * competitor and maps each to a stage result record. Time, hit factor, stage points, percentage,
+     * and ranking are formatted to their respective scales as defined in {@link IpscConstants}.
+     * Null numeric values are represented as empty strings.
+     * </p>
+     *
+     * @param competitor               the competitor for whom stage result records are initialised.
+     *                                 If {@code null}, an empty list is returned.
+     * @param matchStageCompetitorList the list of match stage competitor entities to process.
+     *                                 If {@code null}, an empty list is returned.
+     * @return a {@link List} of {@link MatchCompetitorStageResultRecord} objects for the competitor;
+     * never {@code null}, but may be empty if no matching entries are found.
+     */
     protected List<MatchCompetitorStageResultRecord> initMatchCompetitorStageResults(
             Competitor competitor, List<MatchStageCompetitor> matchStageCompetitorList) {
 
@@ -680,8 +756,32 @@ public class TransformationServiceImpl implements TransformationService {
         return filteredCompetitorDtoMap.values().stream().filter(Objects::nonNull).toList();
     }
 
-    // TODO: Javadoc
-    // TODO: tests
+    /**
+     * Initialises enrolled competitor data for the given match results by mapping score and
+     * member responses to match competitor and match stage competitor DTOs.
+     *
+     * <p>
+     * For each member present in the IPSC response, the method finds the corresponding competitor
+     * in the match results, then delegates to {@link #initCompetitorScores} to create the
+     * relevant {@link MatchCompetitorDto} and {@link MatchStageCompetitorDto} entries. The
+     * resulting lists are set back on the provided {@code matchResultsDto}.
+     * </p>
+     *
+     * <p>
+     * If {@code ipscResponse} is {@code null}, its scores or members collections are {@code null},
+     * or the match on {@code matchResultsDto} is {@code null}, the method returns without making
+     * any changes.
+     * </p>
+     *
+     * <p>
+     * If {@code matchResultsDto} does not yet have competitors initialised, they are seeded by
+     * calling {@link #initCompetitors} before processing.
+     * </p>
+     *
+     * @param matchResultsDto the match results DTO to which the enrolled competitor data is written.
+     *                        Must not be {@code null}.
+     * @param ipscResponse    the IPSC response containing scores, members, and enrolled member data.
+     */
     protected void initEnrolledCompetitors(@NotNull MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
         // Checks for null or missing data in the IPSC response
         if ((ipscResponse == null) || (ipscResponse.getScores() == null) || (ipscResponse.getMembers() == null)) {
@@ -778,8 +878,36 @@ public class TransformationServiceImpl implements TransformationService {
         matchResultsDto.setMatchStageCompetitors(matchStageCompetitorDtoListFinal);
     }
 
-    // TODO: Javadoc
-    // TODO: tests
+    /**
+     * Initialises and returns an {@link EnrolledCompetitorDto} for the given member index by
+     * resolving match competitor and match stage competitor data from both the database and the
+     * provided score and enrolled response maps.
+     *
+     * <p>
+     * For the match competitor, the method attempts to find an existing {@link MatchCompetitor}
+     * entity by match ID and competitor ID. If none is found, a new {@link MatchCompetitorDto}
+     * is created from the competitor DTO and match details. All match competitor DTOs are
+     * initialised with their scores and enrolled response.
+     * </p>
+     *
+     * <p>
+     * For each match stage in {@code matchResultsDto}, the method filters scores by stage ID and
+     * attempts to find an existing {@link MatchStageCompetitor} entity. If none is found, a new
+     * {@link MatchStageCompetitorDto} is created. All stage competitor DTOs are initialised with
+     * the corresponding score and enrolled response.
+     * </p>
+     *
+     * @param memberIndex         the member index used to filter scores and retrieve the competitor
+     *                            DTO from {@code competitorDtoMap}.
+     * @param matchResultsDto     the match results DTO containing the match and stage details.
+     * @param competitorDtoMap    a map of member index to {@link CompetitorDto}, used to look up
+     *                            the competitor for the given member index.
+     * @param scoreResponses      the list of score responses filtered to the current match, used
+     *                            to find scores for the competitor per stage.
+     * @param enrolledResponseMap a map of member index to {@link EnrolledResponse}, used to
+     *                            initialise competitor category and classification data.
+     * @return the fully initialised {@link EnrolledCompetitorDto} for the given member index.
+     */
     protected EnrolledCompetitorDto initCompetitorScores(int memberIndex, MatchResultsDto matchResultsDto,
                                                          Map<Integer, CompetitorDto> competitorDtoMap,
                                                          List<ScoreResponse> scoreResponses,
@@ -873,8 +1001,31 @@ public class TransformationServiceImpl implements TransformationService {
         return enrolledCompetitorDto;
     }
 
-    // TODO: Javadoc
-    // TODO: tests
+    /**
+     * Removes duplicate {@link CompetitorDto} entries from the provided map, first by SAPSA number
+     * and then by competitor ID.
+     *
+     * <p>
+     * Deduplication is performed in two passes:
+     * </p>
+     * <ol>
+     *   <li><b>SAPSA number pass:</b> entries sharing a non-null SAPSA number with a previously
+     *       seen entry are removed. The indexes of the duplicate are merged into the first
+     *       occurrence's index list.</li>
+     *   <li><b>ID pass:</b> entries sharing a non-null ID with a previously seen entry are removed.
+     *       The indexes of the duplicate are merged into the first occurrence's index list.</li>
+     * </ol>
+     *
+     * <p>
+     * Entries with {@code null} SAPSA numbers or IDs are never considered duplicates and are
+     * always retained.
+     * </p>
+     *
+     * @param competitorDtoMap the map of member index to {@link CompetitorDto} to deduplicate.
+     *                         If {@code null}, {@code null} is returned.
+     * @return a new {@link Map} containing only unique {@link CompetitorDto} entries with merged
+     * indexes, preserving insertion order; or {@code null} if the input is {@code null}.
+     */
     protected Map<Integer, CompetitorDto> deDuplicateCompetitorDtoList(Map<Integer, CompetitorDto> competitorDtoMap) {
         if (competitorDtoMap == null) {
             return null;
