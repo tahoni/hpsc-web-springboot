@@ -292,7 +292,7 @@ class CompetitorDtoTest {
 
         // Assert
         assertEquals(2, dto.getIndexes().size());
-        assertEquals(201, dto.getIndexes().get(0));
+        assertEquals(201, dto.getIndexes().getFirst());
         assertEquals(202, dto.getIndexes().get(1));
     }
 

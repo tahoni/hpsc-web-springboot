@@ -569,8 +569,8 @@ public class TransactionServiceTest {
         // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getStageNumber());
-        assertEquals("Stage 1", result.get(0).getStageName());
+        assertEquals(1, result.getFirst().getStageNumber());
+        assertEquals("Stage 1", result.getFirst().getStageName());
         verifyNoInteractions(ipscMatchStageRepository);
     }
 
@@ -597,7 +597,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertEquals(1, result.get(0).getStageNumber());
+        assertEquals(1, result.getFirst().getStageNumber());
         verify(ipscMatchStageRepository).findById(7L);
     }
 
@@ -620,7 +620,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertEquals(1, result.get(0).getStageNumber());
+        assertEquals(1, result.getFirst().getStageNumber());
     }
 
     @Test
@@ -697,8 +697,8 @@ public class TransactionServiceTest {
         // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        assertEquals("John", result.get(0).getFirstName());
-        assertEquals("Doe", result.get(0).getLastName());
+        assertEquals("John", result.getFirst().getFirstName());
+        assertEquals("Doe", result.getFirst().getLastName());
         verifyNoInteractions(competitorRepository);
     }
 
@@ -722,7 +722,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertEquals("John", result.get(0).getFirstName());
+        assertEquals("John", result.getFirst().getFirstName());
         verify(competitorRepository).findById(3L);
     }
 
@@ -741,7 +741,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertEquals("John", result.get(0).getFirstName());
+        assertEquals("John", result.getFirst().getFirstName());
         verify(competitorRepository).findById(99L);
     }
 
@@ -777,7 +777,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(competitors.isEmpty());
-        assertEquals("John", competitors.get(0).getFirstName());
+        assertEquals("John", competitors.getFirst().getFirstName());
     }
 
     // Test Group: getMatchCompetitors
@@ -821,7 +821,7 @@ public class TransactionServiceTest {
         // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        assertNull(result.get(0).getId());
+        assertNull(result.getFirst().getId());
     }
 
     @Test
@@ -849,7 +849,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertEquals(42L, result.get(0).getId());
+        assertEquals(42L, result.getFirst().getId());
     }
 
     @Test
@@ -1193,7 +1193,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertEquals(77L, result.get(0).getId());
+        assertEquals(77L, result.getFirst().getId());
     }
 
     @Test
@@ -1274,7 +1274,7 @@ public class TransactionServiceTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertNull(result.get(0).getId());
+        assertNull(result.getFirst().getId());
     }
 }
 

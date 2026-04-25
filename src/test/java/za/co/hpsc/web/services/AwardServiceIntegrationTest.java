@@ -118,8 +118,8 @@ public class AwardServiceIntegrationTest {
         assertEquals("Club Gala 2026", ceremony.getTitle());
         assertEquals(3, ceremony.getAwards().size());
 
-        assertEquals("Top Shooter", ceremony.getAwards().get(0).getTitle());
-        assertEquals("Jane Doe", ceremony.getAwards().get(0).getFirstPlace().getName());
+        assertEquals("Top Shooter", ceremony.getAwards().getFirst().getTitle());
+        assertEquals("Jane Doe", ceremony.getAwards().getFirst().getFirstPlace().getName());
         assertEquals("Best Lady", ceremony.getAwards().get(1).getTitle());
         assertEquals("Alice Brown", ceremony.getAwards().get(1).getFirstPlace().getName());
         assertEquals("Junior Award", ceremony.getAwards().get(2).getTitle());
@@ -155,11 +155,11 @@ public class AwardServiceIntegrationTest {
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(2, ceremonies.size());
 
-        AwardCeremonyResponse alpha = ceremonies.get(0);
+        AwardCeremonyResponse alpha = ceremonies.getFirst();
         assertEquals("Ceremony Alpha", alpha.getTitle());
         assertEquals(2, alpha.getAwards().size());
-        assertEquals("Award A1", alpha.getAwards().get(0).getTitle());
-        assertEquals("Alice", alpha.getAwards().get(0).getFirstPlace().getName());
+        assertEquals("Award A1", alpha.getAwards().getFirst().getTitle());
+        assertEquals("Alice", alpha.getAwards().getFirst().getFirstPlace().getName());
         assertEquals("Award A2", alpha.getAwards().get(1).getTitle());
         assertEquals("Carol", alpha.getAwards().get(1).getFirstPlace().getName());
 
@@ -185,7 +185,7 @@ public class AwardServiceIntegrationTest {
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, ceremonies.size());
         assertEquals(2, ceremonies.getFirst().getAwards().size());
-        assertEquals("Award 1", ceremonies.getFirst().getAwards().get(0).getTitle());
+        assertEquals("Award 1", ceremonies.getFirst().getAwards().getFirst().getTitle());
         assertEquals("Award 2", ceremonies.getFirst().getAwards().get(1).getTitle());
     }
 
@@ -205,9 +205,9 @@ public class AwardServiceIntegrationTest {
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(3, ceremonies.size());
 
-        assertEquals("Ceremony A", ceremonies.get(0).getTitle());
-        assertEquals(1, ceremonies.get(0).getAwards().size());
-        assertEquals("Award A1", ceremonies.get(0).getAwards().getFirst().getTitle());
+        assertEquals("Ceremony A", ceremonies.getFirst().getTitle());
+        assertEquals(1, ceremonies.getFirst().getAwards().size());
+        assertEquals("Award A1", ceremonies.getFirst().getAwards().getFirst().getTitle());
 
         assertEquals("Ceremony B", ceremonies.get(1).getTitle());
         assertEquals(1, ceremonies.get(1).getAwards().size());
