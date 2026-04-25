@@ -34,10 +34,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Install dependencies
+        run: mvn install
+
       - name: Build and generate coverage report
         run: mvn --batch-mode verify -Pcoverage,license
         # The 'coverage' profile runs JaCoCo → target/site/jacoco/jacoco.xml
-        # The 'license' profile runs license-maven-plugin → target/qodana/dependencies-licenses.txt
 
       # ── Qodana Scan (code quality + coverage upload + license audit) ─────────
       - name: 'Qodana Scan'
