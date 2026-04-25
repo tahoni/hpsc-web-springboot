@@ -1,7 +1,6 @@
 package za.co.hpsc.web.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -631,7 +630,6 @@ public class IpscServiceIntegrationTest {
 
     // Test Group: Same competitor enrolled in multiple divisions or firearm types
 
-    @Disabled
     @Test
     public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoHandgunDivisions_thenPersistsTwoMatchCompetitorsWithCorrectDivisions() {
         // Arrange
@@ -663,7 +661,7 @@ public class IpscServiceIntegrationTest {
 
         IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
-        assertEquals(1, matchRecord.competitors().size());
+        assertEquals(2, matchRecord.competitors().size());
 
         List<String> resultDivisions = matchRecord.competitors().stream()
                 .map(c -> c.results().division())
@@ -698,7 +696,6 @@ public class IpscServiceIntegrationTest {
         assertTrue(stageDivisions.contains(Division.STANDARD));
     }
 
-    @Disabled
     @Test
     public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoFirearmTypes_thenPersistsTwoMatchCompetitorsWithCorrectFirearmTypes() {
         // Arrange
@@ -730,7 +727,7 @@ public class IpscServiceIntegrationTest {
 
         IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
-        assertEquals(1, matchRecord.competitors().size());
+        assertEquals(2, matchRecord.competitors().size());
 
         List<String> resultFirearmTypes = matchRecord.competitors().stream()
                 .map(c -> c.results().firearmType())
@@ -765,7 +762,6 @@ public class IpscServiceIntegrationTest {
         matchCompetitors.forEach(mc -> assertEquals(PowerFactor.MINOR, mc.getPowerFactor()));
     }
 
-    @Disabled
     @Test
     public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoDivisionsWithTwoStages_thenPersistsStageCompetitorsForEachDivisionOnEachStage() {
         // Arrange
@@ -797,13 +793,13 @@ public class IpscServiceIntegrationTest {
 
         IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
-        assertEquals(1, matchRecord.competitors().size());
+        assertEquals(2, matchRecord.competitors().size());
         matchRecord.competitors().forEach(System.out::println);
         matchRecord.competitors().forEach(c -> assertEquals(2, c.results().stages().size()));
 
         IpscMatch persistedMatch = loadSinglePersistedMatch(matchName);
         List<MatchCompetitor> matchCompetitors = persistedMatch.getMatchCompetitors();
-        assertEquals(1, matchCompetitors.size());
+        assertEquals(2, matchCompetitors.size());
 
         List<Division> persistedDivisions = matchCompetitors.stream()
                 .map(MatchCompetitor::getDivision)
@@ -818,6 +814,67 @@ public class IpscServiceIntegrationTest {
         assertTrue(persistedFirearmTypes.contains(FirearmType.PCC));
 
         assertEquals(2, persistedMatch.getMatchStages().size());
+        persistedMatch.getMatchStages().forEach(stage ->
+                assertEquals(2, stage.getMatchStageCompetitors().size())
+        );
+    }
+
+    @Test
+    public void testImportWinMssCabFile_whenTwoMembersHaveTwoStages_thenAllStagesAndCompetitorsAreStored() {
+        // Arrange
+        String matchName = "Two Members Two Stages Match";
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "match": "<xml><data><row MatchId='1105' MatchName='%s' MatchDt='2026-04-25T09:30:00' ClubId='1' Chrono='True'/></data></xml>",
+                    "stage": "<xml><data><row StageId='2205' StageName='Stage One' MatchId='1105'/><row StageId='2206' StageName='Stage Two' MatchId='1105'/></data></xml>",
+                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
+                    "member": "<xml><data><row MemberId='180' Firstname='Carlos' Lastname='Delta' Register='True' DOB='1988-03-15T00:00:00' IcsAlias='33346'/><row MemberId='181' Firstname='Diana' Lastname='Echo' Register='True' DOB='1990-07-22T00:00:00' IcsAlias='33347'/></data></xml>",
+                    "classify": "<xml><data><row MemberId='180' DivisionId='4' IntlId='5000' NatlId='500'/><row MemberId='181' DivisionId='4' IntlId='5001' NatlId='501'/></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='180' CompId='580' MatchId='1105' RefNo='BBB' DivId='4' MajorPF='True'/><row MemberId='181' CompId='581' MatchId='1105' RefNo='BBB' DivId='4' MajorPF='True'/></data></xml>",
+                    "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='1105'/></data></xml>",
+                    "team": "<xml><data><row TeamId='20' Team='Team A' MatchId='1105'/></data></xml>",
+                    "score": "<xml><data><row MemberId='180' StageId='2205' MatchId='1105' HitFactor='7.1000' ShootTime='1.20' FinalScore='105'/><row MemberId='180' StageId='2206' MatchId='1105' HitFactor='6.5000' ShootTime='1.30' FinalScore='98'/><row MemberId='181' StageId='2205' MatchId='1105' HitFactor='6.1000' ShootTime='1.40' FinalScore='95'/><row MemberId='181' StageId='2206' MatchId='1105' HitFactor='5.8000' ShootTime='1.50' FinalScore='88'/></data></xml>"
+                }
+                """.formatted(matchName);
+
+        // Act
+        List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFile(cabFileContent)
+        );
+
+        // Assert
+        assertNotNull(recordHolders);
+        assertEquals(1, recordHolders.size());
+        assertFalse(recordHolders.getFirst().matches().isEmpty());
+
+        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        assertEquals(matchName, matchRecord.name());
+        assertEquals(2, matchRecord.competitors().size());
+
+        // Each competitor should have stage results for both stages
+        matchRecord.competitors().forEach(competitor ->
+                assertEquals(2, competitor.results().stages().size())
+        );
+
+        List<String> stageNames = matchRecord.competitors().getFirst().results().stages().stream()
+                .map(MatchCompetitorStageResultRecord::stageName)
+                .toList();
+        assertTrue(stageNames.contains("Stage One"));
+        assertTrue(stageNames.contains("Stage Two"));
+
+        // Verify persistence
+        IpscMatch persistedMatch = loadSinglePersistedMatch(matchName);
+        assertEquals(2, persistedMatch.getMatchCompetitors().size());
+        assertEquals(2, persistedMatch.getMatchStages().size());
+
+        List<String> persistedStageNames = persistedMatch.getMatchStages().stream()
+                .map(IpscMatchStage::getStageName)
+                .toList();
+        assertTrue(persistedStageNames.contains("Stage One"));
+        assertTrue(persistedStageNames.contains("Stage Two"));
+
+        // Every stage must have both competitors stored
         persistedMatch.getMatchStages().forEach(stage ->
                 assertEquals(2, stage.getMatchStageCompetitors().size())
         );

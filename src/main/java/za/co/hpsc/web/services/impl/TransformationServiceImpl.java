@@ -99,23 +99,21 @@ public class TransformationServiceImpl implements TransformationService {
             Set<MatchCompetitor> matchCompetitorSet =
                     getMatchCompetitorSet(matchHolder.getMatchCompetitors());
 
-            // Get the competitors
-            Set<Competitor> competitorSet = new HashSet<>(getCompetitorSet(matchHolder.getCompetitors()));
-
-            // Initialise the competitor list
+            // Initialise one CompetitorRecord per enrollment (MatchCompetitor)
             Set<CompetitorRecord> competitorRecordSet = new HashSet<>();
-            for (Competitor competitor : competitorSet.stream().filter(Objects::nonNull).toList()) {
-                List<MatchCompetitor> matchCompetitorList = matchCompetitorSet.stream()
-                        .filter(Objects::nonNull)
-                        .filter(mc -> competitor.equals(mc.getCompetitor()))
-                        .toList();
+            for (MatchCompetitor matchCompetitor : matchCompetitorSet.stream().filter(Objects::nonNull).toList()) {
+                Competitor competitor = matchCompetitor.getCompetitor();
+                if (competitor == null) continue;
+
+                // Stage competitors for this enrollment, matched by division
                 List<MatchStageCompetitor> matchStageCompetitorList = matchStageCompetitorSet.stream()
                         .filter(Objects::nonNull)
                         .filter(msc -> competitor.equals(msc.getCompetitor()))
+                        .filter(msc -> Objects.equals(matchCompetitor.getDivision(), msc.getDivision()))
                         .toList();
 
                 MatchCompetitorOverallResultsRecord competitorOverallResult =
-                        initMatchCompetitorOverallResult(competitor, matchCompetitorList)
+                        initMatchCompetitorOverallResult(competitor, List.of(matchCompetitor))
                                 .orElse(null);
                 List<MatchCompetitorStageResultRecord> competitorStageRecordList =
                         initMatchCompetitorStageResults(competitor, matchStageCompetitorList);
@@ -124,13 +122,10 @@ public class TransformationServiceImpl implements TransformationService {
                         (!competitorStageRecordList.isEmpty())) {
 
                     Optional<CompetitorResultRecord> optionalCompetitorResult =
-                            initCompetitorResult(competitor, matchCompetitorList.getFirst(),
+                            initCompetitorResult(competitor, matchCompetitor,
                                     competitorOverallResult, competitorStageRecordList);
                     optionalCompetitorResult.flatMap(competitorResultRecord ->
-                                    initCompetitorRecord(competitor, matchCompetitorSet.stream()
-                                            .filter(Objects::nonNull)
-                                            .filter(mc -> competitor.equals(mc.getCompetitor()))
-                                            .findFirst().orElse(null), competitorResultRecord))
+                                    initCompetitorRecord(competitor, matchCompetitor, competitorResultRecord))
                             .ifPresent(competitorRecordSet::add);
                 }
             }
@@ -815,11 +810,10 @@ public class TransformationServiceImpl implements TransformationService {
                 .toList();
 
         Map<Integer, CompetitorDto> competitorDtoMap = new HashMap<>();
-        Map<Integer, EnrolledResponse> enrolledResponseMap = new HashMap<>();
+        Map<Integer, List<EnrolledResponse>> enrolledResponseMap = new HashMap<>();
         scoreMembers.stream().filter(Objects::nonNull)
                 .forEach(memberResponse -> {
-                    // Initialises the enrolled response to use to initialise the scores for each
-                    // competitor per match and stage
+                    // Collects all enrolled responses for this member (one per enrollment/division)
                     List<EnrolledResponse> enrolledResponseList = enrolledResponses.stream()
                             .filter(Objects::nonNull)
                             .filter(er -> er.getMemberId() != null)
@@ -843,12 +837,13 @@ public class TransformationServiceImpl implements TransformationService {
                                     .contains(memberResponse.getMemberId()))
                             .findFirst();
 
-                    // Caches the competitor and enrolled response for later use
-                    if (optionalCompetitorDto.isPresent() && optionalMemberResponse.isPresent()) {
+                    // Caches the competitor and all enrolled responses for later use
+                    if (optionalCompetitorDto.isPresent() && optionalMemberResponse.isPresent()
+                            && !enrolledResponseList.isEmpty()) {
                         competitorDtoMap.put(optionalMemberResponse.get().getMemberId(),
                                 optionalCompetitorDto.get());
                         enrolledResponseMap.put(optionalMemberResponse.get().getMemberId(),
-                                enrolledResponseList.getFirst());
+                                enrolledResponseList);
                     }
                 });
 
@@ -904,16 +899,18 @@ public class TransformationServiceImpl implements TransformationService {
      *                            the competitor for the given member index.
      * @param scoreResponses      the list of score responses filtered to the current match, used
      *                            to find scores for the competitor per stage.
-     * @param enrolledResponseMap a map of member index to {@link EnrolledResponse}, used to
-     *                            initialise competitor category and classification data.
+     * @param enrolledResponseMap a map of member index to all {@link EnrolledResponse} entries
+     *                            (one per enrollment/division), used to initialise competitor
+     *                            category and classification data.
      * @return the fully initialised {@link EnrolledCompetitorDto} for the given member index.
      */
     protected EnrolledCompetitorDto initCompetitorScores(int memberIndex, MatchResultsDto matchResultsDto,
                                                          Map<Integer, CompetitorDto> competitorDtoMap,
                                                          List<ScoreResponse> scoreResponses,
-                                                         Map<Integer, EnrolledResponse> enrolledResponseMap) {
-        // Gets the competitor DTO from the map
+                                                         Map<Integer, List<EnrolledResponse>> enrolledResponseMap) {
+        // Gets the competitor DTO and all enrolled responses for this member
         CompetitorDto competitorDto = competitorDtoMap.get(memberIndex);
+        List<EnrolledResponse> enrolledResponsesForMember = enrolledResponseMap.get(memberIndex);
 
         // Attempts to find the match competitor by competitor ID and match ID in the database
         List<MatchCompetitor> matchCompetitorList = new ArrayList<>();
@@ -923,11 +920,12 @@ public class TransformationServiceImpl implements TransformationService {
                             competitorDto.getId());
         }
 
-        // Creates new match competitor DTOs, from either the found entities or the competitor DTO
+        // Creates one match competitor DTO per enrollment (division/firearm type)
         List<MatchCompetitorDto> matchCompetitorDtoList = new ArrayList<>();
         if (matchCompetitorList.isEmpty()) {
-            MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto(competitorDto, matchResultsDto.getMatch(), memberIndex);
-            matchCompetitorDtoList.add(matchCompetitorDto);
+            enrolledResponsesForMember.forEach(enrolledResponse ->
+                    matchCompetitorDtoList.add(new MatchCompetitorDto(competitorDto,
+                            matchResultsDto.getMatch(), memberIndex)));
         } else {
             matchCompetitorList.forEach(matchCompetitor -> {
                 MatchCompetitorDto matchCompetitorDto = new MatchCompetitorDto(matchCompetitor);
@@ -937,7 +935,7 @@ public class TransformationServiceImpl implements TransformationService {
 
         EnrolledCompetitorDto enrolledCompetitorDto = new EnrolledCompetitorDto(matchCompetitorDtoList.getFirst());
 
-        // Filters scores by member ID
+        // Filters scores by member ID (deduplicated by stage so matchPoints is not inflated)
         List<ScoreResponse> scores = scoreResponses.stream()
                 .filter(Objects::nonNull)
                 .filter(sr -> Objects.equals(sr.getMemberId(), memberIndex))
@@ -945,13 +943,16 @@ public class TransformationServiceImpl implements TransformationService {
                         matchResultsDto.getMatch().getIndex()))
                 .toList();
 
-        // Initialises match competitor attributes and sets the match and competitor indexes for later use
-        matchCompetitorDtoList.forEach(matchCompetitorDto -> {
+        // Initialises each match competitor DTO with its corresponding enrolled response
+        for (int i = 0; i < matchCompetitorDtoList.size(); i++) {
+            MatchCompetitorDto matchCompetitorDto = matchCompetitorDtoList.get(i);
             matchCompetitorDto.setCompetitorIndex(memberIndex);
             matchCompetitorDto.setMatchIndex(matchResultsDto.getMatch().getIndex());
-            // Initialises match competitor attributes
-            matchCompetitorDto.init(scores, enrolledResponseMap.get(memberIndex));
-        });
+            EnrolledResponse enrolledResponse = (i < enrolledResponsesForMember.size())
+                    ? enrolledResponsesForMember.get(i)
+                    : enrolledResponsesForMember.getFirst();
+            matchCompetitorDto.init(scores, enrolledResponse);
+        }
         enrolledCompetitorDto.setCompetitorMatches(matchCompetitorDtoList);
 
         // Gets the match stage competitors from the match results DTO
@@ -965,36 +966,31 @@ public class TransformationServiceImpl implements TransformationService {
                             .findFirst();
 
                     optionalStageScoreResponse.ifPresent(stageScoreResponse -> {
-                        // Attempts to find the match stage competitor by competitor ID,
-                        // stage ID, and match ID
+                        // Attempts to find the match stage competitor by competitor ID and stage ID
                         List<MatchStageCompetitor> matchStageCompetitors =
                                 matchStageCompetitorEntityService.findMatchStageCompetitors(stageDto.getId(),
                                         competitorDto.getId());
 
-                        // Creates new match stage competitor DTOs, from either the found entities or the
-                        // competitor DTO
+                        // Creates one match stage competitor DTO per enrollment
                         List<MatchStageCompetitorDto> matchStageCompetitorDtoList = new ArrayList<>();
                         if (matchStageCompetitors.isEmpty()) {
-                            MatchStageCompetitorDto matchStageCompetitorDto = new MatchStageCompetitorDto(competitorDto, stageDto);
-                            matchStageCompetitorDtoList.add(matchStageCompetitorDto);
+                            enrolledResponsesForMember.forEach(enrolledResponse -> {
+                                MatchStageCompetitorDto dto = new MatchStageCompetitorDto(competitorDto, stageDto);
+                                dto.setCompetitorIndex(memberIndex);
+                                dto.setMatchStageIndex(stageDto.getIndex());
+                                dto.init(stageScoreResponse, enrolledResponse, stageDto);
+                                matchStageCompetitorDtoList.add(dto);
+                            });
                         } else {
                             matchStageCompetitors.forEach(matchStageCompetitor -> {
-                                MatchStageCompetitorDto matchStageCompetitorDto = new MatchStageCompetitorDto(matchStageCompetitor);
-                                matchStageCompetitorDtoList.add(matchStageCompetitorDto);
+                                MatchStageCompetitorDto dto = new MatchStageCompetitorDto(matchStageCompetitor);
+                                dto.setCompetitorIndex(memberIndex);
+                                dto.setMatchStageIndex(stageDto.getIndex());
+                                matchStageCompetitorDtoList.add(dto);
                             });
                         }
 
-                        // Initialises match stage competitor attributes and sets the match and competitor
-                        // indexes for later use
-                        matchStageCompetitorDtoList.forEach(matchStageCompetitorDto -> {
-                            // Sets the match stage and competitor indexes for the match stage competitor DTO
-                            matchStageCompetitorDto.setCompetitorIndex(memberIndex);
-                            matchStageCompetitorDto.setMatchStageIndex(stageDto.getIndex());
-                            // Initialises the match stage competitor attributes
-                            matchStageCompetitorDto.init(stageScoreResponse,
-                                    enrolledResponseMap.get(memberIndex), stageDto);
-                        });
-                        enrolledCompetitorDto.setCompetitorMatchStages(matchStageCompetitorDtoList);
+                        enrolledCompetitorDto.getCompetitorMatchStages().addAll(matchStageCompetitorDtoList);
                     });
                 });
 
