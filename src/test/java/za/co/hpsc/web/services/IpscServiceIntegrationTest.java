@@ -276,6 +276,50 @@ public class IpscServiceIntegrationTest {
     }
 
     @Test
+    public void testImportWinMssCabFile_whenTwoMembersHaveScoresInSameClub_thenReturnsTwoCompetitors() {
+        // Arrange
+        String matchName = "Two Competitors Match";
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "match": "<xml><data><row MatchId='1104' MatchName='%s' MatchDt='2026-04-25T09:30:00' ClubId='1' Chrono='True'/></data></xml>",
+                    "stage": "<xml><data><row StageId='2204' StageName='Two Competitors Stage' MatchId='1104'/></data></xml>",
+                    "tag": "<xml><data><row TagId='10' Tag='Test Tag'/></data></xml>",
+                    "member": "<xml><data><row MemberId='170' Firstname='Alex' Lastname='Alpha' Register='True' DOB='1991-01-10T00:00:00' IcsAlias='22346'/><row MemberId='171' Firstname='Blake' Lastname='Bravo' Register='True' DOB='1992-02-11T00:00:00' IcsAlias='22347'/></data></xml>",
+                    "classify": "<xml><data><row MemberId='170' DivisionId='4' IntlId='5000' NatlId='500'/><row MemberId='171' DivisionId='4' IntlId='5001' NatlId='501'/></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='170' CompId='570' MatchId='1104' RefNo='BBB' DivId='4' MajorPF='True'/><row MemberId='171' CompId='571' MatchId='1104' RefNo='BBB' DivId='4' MajorPF='True'/></data></xml>",
+                    "squad": "<xml><data><row SquadId='20' Squad='Squad A' MatchId='1104'/></data></xml>",
+                    "team": "<xml><data><row TeamId='20' Team='Team A' MatchId='1104'/></data></xml>",
+                    "score": "<xml><data><row MemberId='170' StageId='2204' MatchId='1104' HitFactor='7.1000' ShootTime='1.20' FinalScore='105'/><row MemberId='171' StageId='2204' MatchId='1104' HitFactor='6.1000' ShootTime='1.40' FinalScore='95'/></data></xml>"
+                }
+                """.formatted(matchName);
+
+        // Act
+        List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFile(cabFileContent)
+        );
+
+        // Assert
+        assertNotNull(recordHolders);
+        assertEquals(1, recordHolders.size());
+        assertFalse(recordHolders.getFirst().matches().isEmpty());
+
+        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        assertEquals(matchName, matchRecord.name());
+        assertEquals(2, matchRecord.competitors().size());
+
+        List<String> competitorFirstNames = matchRecord.competitors().stream()
+                .map(CompetitorRecord::firstName)
+                .toList();
+        assertTrue(competitorFirstNames.contains("Alex"));
+        assertTrue(competitorFirstNames.contains("Blake"));
+
+        IpscMatch persistedMatch = loadSinglePersistedMatch(matchName);
+        assertEquals(2, persistedMatch.getMatchCompetitors().size());
+        assertEquals(2, persistedMatch.getMatchStages().getFirst().getMatchStageCompetitors().size());
+    }
+
+    @Test
     public void testImportWinMssCabFile_whenEnumBackedFieldsAreProvided_thenPersistsAndReloadsMappedEnums() {
         // Arrange
         String matchName = "Enum Mapping Match";
