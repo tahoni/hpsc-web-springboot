@@ -430,6 +430,163 @@ public class DomainServiceTest {
         assertTrue(result.containsKey(competitorDto.getUuid()));
     }
 
+    // Test Group: initCompetitorEntities - SAPSA number deduplication
+    @Test
+    public void testInitCompetitorEntities_whenTwoCompetitorDtosWithSameSapsaNumber_thenBothAddedToMap() {
+        // Arrange
+        CompetitorDto competitor1 = buildCompetitorDto("John", "Doe");
+        competitor1.setSapsaNumber(12345);
+        competitor1.setCompetitorNumber("12345");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Jane", "Smith");
+        competitor2.setSapsaNumber(12345);
+        competitor2.setCompetitorNumber("ALIAS-001");
+
+        List<CompetitorDto> list = List.of(competitor1, competitor2);
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(list);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsKey(competitor1.getUuid()));
+        assertTrue(result.containsKey(competitor2.getUuid()));
+    }
+
+    @Test
+    public void testInitCompetitorEntities_whenTwoCompetitorDtosWithExcludedSapsaNumber15000_thenBothAddedToMap() {
+        // Arrange
+        CompetitorDto competitor1 = buildCompetitorDto("Alice", "Johnson");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("15000");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Bob", "Brown");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("15000");
+
+        List<CompetitorDto> list = List.of(competitor1, competitor2);
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(list);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsKey(competitor1.getUuid()));
+        assertTrue(result.containsKey(competitor2.getUuid()));
+        assertNull(result.get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get(competitor2.getUuid()).getSapsaNumber());
+    }
+
+    @Test
+    public void testInitCompetitorEntities_whenTwoCompetitorDtosWithExcludedSapsaNumber16000_thenBothAddedToMap() {
+        // Arrange
+        CompetitorDto competitor1 = buildCompetitorDto("Charlie", "Davis");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("16000");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Diana", "Evans");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("16000");
+
+        List<CompetitorDto> list = List.of(competitor1, competitor2);
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(list);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsKey(competitor1.getUuid()));
+        assertTrue(result.containsKey(competitor2.getUuid()));
+        assertNull(result.get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get(competitor2.getUuid()).getSapsaNumber());
+    }
+
+    // Test Group: initMatchEntities - Multiple competitors with same/excluded SAPSA numbers
+    @Test
+    public void testInitMatchEntitiesWithCompetitors_whenTwoCompetitorDtosWithSameSapsaNumber_thenBothInCompetitorMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        CompetitorDto competitor1 = buildCompetitorDto("John", "Doe");
+        competitor1.setSapsaNumber(54321);
+
+        CompetitorDto competitor2 = buildCompetitorDto("Jane", "Smith");
+        competitor2.setSapsaNumber(54321);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitor1, competitor2));
+
+        // Act
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(2, result.get().getCompetitorMap().size());
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor2.getUuid()));
+        assertEquals(54321, result.get().getCompetitorMap().get(competitor1.getUuid()).getSapsaNumber());
+        assertEquals(54321, result.get().getCompetitorMap().get(competitor2.getUuid()).getSapsaNumber());
+    }
+
+    @Test
+    public void testInitMatchEntitiesWithCompetitors_whenTwoCompetitorDtosWithExcludedSapsaNumber15000_thenBothInCompetitorMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        CompetitorDto competitor1 = buildCompetitorDto("Alice", "Johnson");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("15000");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Bob", "Wilson");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("15000");
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitor1, competitor2));
+
+        // Act
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(2, result.get().getCompetitorMap().size());
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor2.getUuid()));
+        assertNull(result.get().getCompetitorMap().get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get().getCompetitorMap().get(competitor2.getUuid()).getSapsaNumber());
+    }
+
+    @Test
+    public void testInitMatchEntitiesWithCompetitors_whenTwoCompetitorDtosWithExcludedSapsaNumber16000_thenBothInCompetitorMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        CompetitorDto competitor1 = buildCompetitorDto("Charlie", "Brown");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("16000");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Diana", "Garcia");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("16000");
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitor1, competitor2));
+
+        // Act
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(2, result.get().getCompetitorMap().size());
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor2.getUuid()));
+        assertNull(result.get().getCompetitorMap().get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get().getCompetitorMap().get(competitor2.getUuid()).getSapsaNumber());
+    }
+
     // Test Group: initMatchStageEntities
     @Test
     public void testInitMatchStageEntities_whenNullList_thenEmptyMap() {
