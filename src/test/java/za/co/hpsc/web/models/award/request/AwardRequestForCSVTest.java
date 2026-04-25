@@ -10,10 +10,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AwardRequestForCSVTest {
+    private static class MinimalAwardRequestForCSV extends AwardRequestForCSV {
+        @JsonCreator
+        MinimalAwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
+                                  @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
+                                  @JsonProperty(value = "firstNamePlace", required = true) String firstPlaceName) {
+            super(title, ceremonyTitle, firstPlaceName);
+        }
+    }
+
     private static class TestAwardRequestForCSV extends AwardRequestForCSV {
         @JsonCreator
         TestAwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
@@ -275,6 +286,80 @@ public class AwardRequestForCSVTest {
         // Act & Assert
         assertThrows(MismatchedInputException.class,
                 () -> objectMapper.readValue(jsonUnknownProperty, TestAwardRequestForCSV.class));
+    }
+
+    @Test
+    void testThreeParamConstructor_whenRequiredFieldsProvided_thenMapsFieldsAndLeavesOptionalPlaceNamesNull() {
+        // Arrange & Act
+        MinimalAwardRequestForCSV request =
+                new MinimalAwardRequestForCSV("Best Shooter", "Club Awards", "Alice Smith");
+
+        // Assert
+        assertEquals("Best Shooter", request.getTitle());
+        assertEquals("Club Awards", request.getCeremonyTitle());
+        assertEquals("Alice Smith", request.getFirstPlaceName());
+        assertNull(request.getSecondPlaceName());
+        assertNull(request.getThirdPlaceName());
+        assertNotNull(request.getTags());
+        assertNotNull(request.getCeremonyTags());
+        assertTrue(request.getTags().isEmpty());
+        assertTrue(request.getCeremonyTags().isEmpty());
+    }
+
+    @Test
+    void testJsonDeserialization_whenTagsAndCeremonyTagsInPayload_thenDeserializesTagLists() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper();
+        String json = """
+                {
+                  "title": "Top Shooter",
+                  "ceremonyTitle": "Annual Awards",
+                  "firstPlaceName": "Jane Doe",
+                  "tags": ["ipsc", "hpsc"],
+                  "ceremonyTags": ["annual", "gala"]
+                }
+                """;
+
+        // Act
+        TestAwardRequestForCSV request = mapper.readValue(json, TestAwardRequestForCSV.class);
+
+        // Assert
+        assertEquals(List.of("ipsc", "hpsc"), request.getTags());
+        assertEquals(List.of("annual", "gala"), request.getCeremonyTags());
+    }
+
+    @Test
+    void testSetters_whenTagListsReplaced_thenReflectsNewLists() {
+        // Arrange
+        TestAwardRequestForCSV request =
+                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
+        List<String> tags = new ArrayList<>(List.of("ipsc", "hpsc"));
+        List<String> ceremonyTags = new ArrayList<>(List.of("annual", "gala"));
+
+        // Act
+        request.setTags(tags);
+        request.setCeremonyTags(ceremonyTags);
+
+        // Assert
+        assertEquals(tags, request.getTags());
+        assertEquals(ceremonyTags, request.getCeremonyTags());
+    }
+
+    @Test
+    void testJsonSerialization_whenDateSet_thenSerializesInIsoDateFormat() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        TestAwardRequestForCSV request =
+                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
+        request.setDate(LocalDate.of(2026, 4, 24));
+
+        // Act
+        String json = mapper.writeValueAsString(request);
+        JsonNode node = mapper.readTree(json);
+
+        // Assert
+        assertEquals("2026-04-24", node.get("date").asText());
     }
 
     @Test
