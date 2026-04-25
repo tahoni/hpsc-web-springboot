@@ -128,10 +128,8 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
-        String csvData = CSV_HEADER;
-
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.processCsv(CSV_HEADER));
 
         assertNotNull(responseHolder);
         assertTrue(responseHolder.getAwardCeremonies().isEmpty());
