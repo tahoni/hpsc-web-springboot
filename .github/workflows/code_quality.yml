@@ -47,6 +47,7 @@ jobs:
           # Pass the JaCoCo XML report and enable licence-audit inspections
           args: >-
             --coverage-dir target/site/jacoco/jacoco.xml
+            --license-rules target/qodana/dependencies-licenses.txt
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
