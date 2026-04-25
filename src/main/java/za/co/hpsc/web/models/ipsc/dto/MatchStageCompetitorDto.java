@@ -221,7 +221,6 @@ public class MatchStageCompetitorDto {
             this.powerFactor =
                     (((enrolledResponse.getMajorPowerFactor() != null) && (enrolledResponse.getMajorPowerFactor())) ?
                             PowerFactor.MAJOR : PowerFactor.MINOR);
-            this.firearmType = FirearmType.getByCode(enrolledResponse.getDivisionId()).orElse(null);
             // Determines the discipline based on the division ID
             this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
             // Determines the firearm type from the discipline

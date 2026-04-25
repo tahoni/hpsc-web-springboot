@@ -41,7 +41,7 @@ public enum Division {
     SHOTGUN_STANDARD_MANUAL("Standard Manual Division", 12),
 
     // PCC Divisions
-    PCC_OPTICS("PCC Optic Division", "PCC", 29),
+    PCC_OPTICS("PCC Optic Division", "PCCO", 29),
     PCC_IRON("PCC Iron Division", "PCC", 31),
 
     // .22 Divisions
