@@ -35,7 +35,7 @@ jobs:
           cache: maven
 
       - name: Install dependencies
-        run: mvn install
+        run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
       - name: Build and generate coverage report
         run: mvn --batch-mode verify -Pcoverage,license
