@@ -24,10 +24,9 @@ public class ControllerResponseTest {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 15);
         String message = "Operation completed";
-        String error = null;
 
         // Act
-        ControllerResponse response = new ControllerResponse(timestamp, message, error);
+        ControllerResponse response = new ControllerResponse(timestamp, message, null);
 
         // Assert
         assertEquals(timestamp, response.getTimestamp());
@@ -42,10 +41,9 @@ public class ControllerResponseTest {
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 11, 0);
         boolean success = true;
         String message = "Saved successfully";
-        String error = null;
 
         // Act
-        ControllerResponse response = new ControllerResponse(timestamp, success, message, error);
+        ControllerResponse response = new ControllerResponse(timestamp, success, message, null);
 
         // Assert
         assertEquals(timestamp, response.getTimestamp());
@@ -75,13 +73,12 @@ public class ControllerResponseTest {
     @Test
     void testConstructorWithAllArguments_whenTimestampIsNull_thenAllowsNullTimestamp() {
         // Arrange
-        LocalDateTime timestamp = null;
         boolean success = true;
         String message = "Message";
         String error = "Error";
 
         // Act
-        ControllerResponse response = new ControllerResponse(timestamp, success, message, error);
+        ControllerResponse response = new ControllerResponse(null, success, message, error);
 
         // Assert
         assertNull(response.getTimestamp());

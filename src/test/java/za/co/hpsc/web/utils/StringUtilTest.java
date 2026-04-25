@@ -18,11 +18,10 @@ public class StringUtilTest {
         // Arrange
         String template = "Hello, ${name}! Welcome to ${place}.";
         String[] entries = new String[]{"name", "Alice", "place", "Wonderland"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -36,11 +35,10 @@ public class StringUtilTest {
         // Arrange
         String template = "Hello, ${name}! ${name}, you are amazing!";
         String[] entries = new String[]{"name", "Alice"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -54,11 +52,10 @@ public class StringUtilTest {
         // Arrange
         String template = "Welcome, ${firstName}${lastName}!";
         String[] entries = new String[]{"firstName", "John", "lastName", "Doe"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -72,11 +69,10 @@ public class StringUtilTest {
         // Arrange
         String template = "Hello, ${name}! Welcome to ${place}.";
         String[] entries = new String[]{"name", "Alice"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -90,11 +86,10 @@ public class StringUtilTest {
         // Arrange
         String template = "Hello, ${missingKey}.";
         String[] entries = new String[]{"key", "value"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -108,11 +103,10 @@ public class StringUtilTest {
         // Arrange
         String template = "Simple text without placeholders.";
         String[] entries = new String[]{"key", "value"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -130,11 +124,10 @@ public class StringUtilTest {
         // Arrange
         String template = "";
         String[] entries = new String[]{"key", "value"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act
         String result = StringUtil.formatStringWithNamedParameters(template, parameters);
@@ -176,11 +169,10 @@ public class StringUtilTest {
     void testFormatStringWithNamedParameters_whenNullTemplate_thenThrowsNullPointerException() {
         // Arrange
         String[] entries = new String[]{"key", "value"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         for (int index = 0; index + 1 < entries.length; index += 2) {
-            map.put(entries[index], entries[index + 1]);
+            parameters.put(entries[index], entries[index + 1]);
         }
-        Map<String, String> parameters = map;
 
         // Act & Assert
         assertThrows(NullPointerException.class, () ->
@@ -226,11 +218,8 @@ public class StringUtilTest {
 
     @Test
     void testToString_whenNullObject_thenReturnsNull() {
-        // Act
-        String result = StringUtil.toString(null);
-
-        // Assert
-        assertNull(result);
+        // Act & Assert
+        assertNull(StringUtil.toString(null));
     }
 }
 

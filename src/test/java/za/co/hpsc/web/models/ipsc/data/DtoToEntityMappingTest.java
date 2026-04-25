@@ -898,7 +898,7 @@ public class DtoToEntityMappingTest {
 
     @Test
     public void constructorWithNullDtoMapping_thenDtoMappingIsInitializedWithDefaults() {
-        DtoToEntityMapping mapping = new DtoToEntityMapping((DtoMapping) null);
+        DtoToEntityMapping mapping = new DtoToEntityMapping(null);
 
         assertNotNull(mapping.dtoMapping());
         assertNotNull(mapping.entityMapping());

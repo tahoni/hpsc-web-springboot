@@ -77,6 +77,7 @@ public class IpscServiceIntegrationTest {
     // Test Group: Null/Empty/Blank Input Handling
     @Test
     public void testImportWinMssCabFile_whenCabFileIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile(null)
         );
@@ -84,6 +85,7 @@ public class IpscServiceIntegrationTest {
 
     @Test
     public void testImportWinMssCabFile_whenCabFileIsEmpty_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("")
         );
@@ -91,6 +93,7 @@ public class IpscServiceIntegrationTest {
 
     @Test
     public void testImportWinMssCabFile_whenCabFileIsBlank_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 ipscService.importWinMssCabFile("   \t\n  ")
         );
@@ -99,8 +102,10 @@ public class IpscServiceIntegrationTest {
     // Test Group: Invalid JSON Format Handling
     @Test
     public void testImportWinMssCabFile_whenJsonIsInvalid_thenThrowsFatalException() {
+        // Arrange
         String invalidJson = "This is not valid JSON at all";
 
+        // Act & Assert
         assertThrows(FatalException.class, () ->
                 ipscService.importWinMssCabFile(invalidJson)
         );
@@ -108,11 +113,13 @@ public class IpscServiceIntegrationTest {
 
     @Test
     public void testImportWinMssCabFile_whenJsonHasMissingBraces_thenThrowsFatalException() {
+        // Arrange
         String malformedJson = """
                 {
                     "club": "<xml><data><row ClubId='1'/></data></xml>"
                 """;
 
+        // Act & Assert
         assertThrows(FatalException.class, () ->
                 ipscService.importWinMssCabFile(malformedJson)
         );
@@ -121,6 +128,7 @@ public class IpscServiceIntegrationTest {
     // Test Group: Valid Complete Data Processing
     @Test
     public void testImportWinMssCabFile_whenDataIsCompleteAndValid_thenReturnsIpscMatchRecordHolder() {
+        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
@@ -136,10 +144,12 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act
         List<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolder);
         assertFalse(recordHolder.isEmpty());
         assertNotNull(recordHolder.getFirst());
@@ -173,6 +183,7 @@ public class IpscServiceIntegrationTest {
 
     @Test
     public void testImportWinMssCabFile_whenClubDataIsProvided_thenPersistsMatchClubAndCompetitorClubMappings() {
+        // Arrange
         String matchName = "Club Mapping Match";
         String cabFileContent = buildCabFileContent(
                 1102,
@@ -184,10 +195,12 @@ public class IpscServiceIntegrationTest {
                 "RefNo='BBB' DivId='4' CatId='3' MajorPF='True'"
         );
 
+        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolders);
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
@@ -214,6 +227,7 @@ public class IpscServiceIntegrationTest {
 
     @Test
     public void testImportWinMssCabFile_whenCompetitorsBelongToDifferentClubs_thenDefaultClubFilterKeepsOnlyHpscCompetitors() {
+        // Arrange
         String matchName = "Club Filter Match";
         String cabFileContent = """
                 {
@@ -230,10 +244,12 @@ public class IpscServiceIntegrationTest {
                 }
                 """.formatted(matchName);
 
+        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolders);
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
@@ -261,6 +277,7 @@ public class IpscServiceIntegrationTest {
 
     @Test
     public void testImportWinMssCabFile_whenEnumBackedFieldsAreProvided_thenPersistsAndReloadsMappedEnums() {
+        // Arrange
         String matchName = "Enum Mapping Match";
         String cabFileContent = buildCabFileContent(
                 1100,
@@ -272,10 +289,12 @@ public class IpscServiceIntegrationTest {
                 "RefNo='BBB' DivId='4' CatId='3' MajorPF='True'"
         );
 
+        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolders);
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
@@ -312,6 +331,7 @@ public class IpscServiceIntegrationTest {
 
     @Test
     public void testImportWinMssCabFile_whenEnumSourceValuesAreUnknown_thenUsesExpectedDefaultsAfterReload() {
+        // Arrange
         String matchName = "Enum Defaults Match";
         String cabFileContent = buildCabFileContent(
                 1101,
@@ -323,10 +343,12 @@ public class IpscServiceIntegrationTest {
                 "RefNo='BBB' DivId='999' CatId='999' MajorPF='False'"
         );
 
+        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolders);
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
@@ -364,6 +386,7 @@ public class IpscServiceIntegrationTest {
     // Test Group: Valid Complete Data Processing
     @Test
     public void testImportWinMssCabFile_whenDataIsCompleteAndValidWithClubNullAndFilter_thenReturnsIpscMatchRecordHolder() {
+        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
@@ -379,10 +402,12 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act
         List<IpscMatchRecordHolder> recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolder);
         assertFalse(recordHolder.isEmpty());
         assertNotNull(recordHolder.getFirst());
@@ -416,16 +441,19 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolder);
     }
 
     // Test Group: Empty XML Sections Handling
     @Test
     public void testImportWinMssCabFile_whenXmlSectionsAreEmpty_thenProcessesWithEmptyData() {
+        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -441,16 +469,19 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolder);
     }
 
     // Test Group: Multiple Records Processing
     @Test
     public void testImportWinMssCabFile_whenMultipleMatchesAreProvided_thenProcessesAllMatches() {
+        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Club A'/></data></xml>",
@@ -466,16 +497,19 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolder);
     }
 
     // Test Group: Error Handling During Processing
     @Test
     public void testImportWinMssCabFile_whenJsonStructureIsInvalid_thenDoesNotThrowValidationException() {
+        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data></data></xml>",
@@ -491,12 +525,14 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act & Assert
         assertDoesNotThrow(() -> ipscService.importWinMssCabFile(cabFileContent));
     }
 
     // Test Group: Empty Strings vs Null Values in XML
     @Test
     public void testImportWinMssCabFile_whenXmlFieldsAreEmptyStrings_thenProcessesSuccessfully() {
+        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='' Club=''/></data></xml>",
@@ -512,16 +548,19 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolder);
     }
 
     // Test Group: Special Characters and Unicode Handling
     @Test
     public void testImportWinMssCabFile_whenDataContainsSpecialCharacters_thenProcessesSuccessfully() {
+        // Arrange
         String cabFileContent = """
                 {
                     "club": "<xml><data><row ClubId='1' ClubCode='ABC' Club='Test Club &amp; Co.'/></data></xml>",
@@ -537,10 +576,12 @@ public class IpscServiceIntegrationTest {
                 }
                 """;
 
+        // Act
         var recordHolder = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolder);
     }
 
@@ -549,6 +590,7 @@ public class IpscServiceIntegrationTest {
     @Disabled
     @Test
     public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoHandgunDivisions_thenPersistsTwoMatchCompetitorsWithCorrectDivisions() {
+        // Arrange
         String matchName = "Two Handgun Divisions Match";
         String cabFileContent = """
                 {
@@ -565,10 +607,12 @@ public class IpscServiceIntegrationTest {
                 }
                 """.formatted(matchName);
 
+        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolders);
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
@@ -613,6 +657,7 @@ public class IpscServiceIntegrationTest {
     @Disabled
     @Test
     public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoFirearmTypes_thenPersistsTwoMatchCompetitorsWithCorrectFirearmTypes() {
+        // Arrange
         String matchName = "Two Firearm Types Match";
         String cabFileContent = """
                 {
@@ -629,10 +674,12 @@ public class IpscServiceIntegrationTest {
                 }
                 """.formatted(matchName);
 
+        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolders);
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
@@ -677,6 +724,7 @@ public class IpscServiceIntegrationTest {
     @Disabled
     @Test
     public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoDivisionsWithTwoStages_thenPersistsStageCompetitorsForEachDivisionOnEachStage() {
+        // Arrange
         String matchName = "Two Divisions Two Stages Match";
         String cabFileContent = """
                 {
@@ -693,10 +741,12 @@ public class IpscServiceIntegrationTest {
                 }
                 """.formatted(matchName);
 
+        // Act
         List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
                 ipscService.importWinMssCabFile(cabFileContent)
         );
 
+        // Assert
         assertNotNull(recordHolders);
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
