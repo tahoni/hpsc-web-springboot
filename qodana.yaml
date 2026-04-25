@@ -4,6 +4,8 @@
 version: "1.0"
 profile:
   name: qodana.recommended
+raiseLicenseProblems: true
+enablePackageSearch: true
 include:
   - name: CheckDependencyLicenses # enables Qodana licence-audit inspections
 exclude:

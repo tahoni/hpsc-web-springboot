@@ -242,46 +242,5 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>license</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <version>2.4.0</version>
-                        <executions>
-                            <!-- Generate third-party licence list (read by Qodana) -->
-                            <execution>
-                                <id>aggregate-add-third-party</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>aggregate-add-third-party</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- File Qodana reads for licence information -->
-                                    <outputDirectory>${project.build.directory}/qodana</outputDirectory>
-                                    <thirdPartyFilename>dependencies-licenses.txt</thirdPartyFilename>
-                                    <!-- Fail the build if a dependency has no recognised licence -->
-                                    <failOnMissing>true</failOnMissing>
-                                    <!-- List licences you explicitly allow in your project -->
-                                    <includedLicenses>
-                                        <includedLicense>Apache License, Version 2.0</includedLicense>
-                                        <includedLicense>MIT License</includedLicense>
-                                        <includedLicense>BSD 2-Clause License</includedLicense>
-                                        <includedLicense>BSD 3-Clause License</includedLicense>
-                                        <includedLicense>Eclipse Public License 1.0</includedLicense>
-                                        <includedLicense>Eclipse Public License 2.0</includedLicense>
-                                    </includedLicenses>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
     </profiles>
-
 </project>
