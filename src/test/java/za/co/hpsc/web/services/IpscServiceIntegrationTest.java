@@ -11,20 +11,11 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
-import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
-import za.co.hpsc.web.models.ipsc.records.CompetitorRecord;
-import za.co.hpsc.web.models.ipsc.records.CompetitorResultRecord;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchCompetitorOverallResultsRecord;
-import za.co.hpsc.web.models.ipsc.records.MatchCompetitorStageResultRecord;
+import za.co.hpsc.web.models.ipsc.records.*;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
@@ -550,6 +541,191 @@ public class IpscServiceIntegrationTest {
         );
 
         assertNotNull(recordHolder);
+    }
+
+    // Test Group: Same competitor enrolled in multiple divisions or firearm types
+
+    @Test
+    public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoHandgunDivisions_thenPersistsTwoMatchCompetitorsWithCorrectDivisions() {
+        String matchName = "Two Handgun Divisions Match";
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "match": "<xml><data><row MatchId='1210' MatchName='%s' MatchDt='2026-04-25T09:00:00' ClubId='1' FirearmId='1' Chrono='True'/></data></xml>",
+                    "stage": "<xml><data><row StageId='2210' StageName='Stage One' MatchId='1210'/></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data><row MemberId='162' Firstname='Jane' Lastname='Shooter' Register='True' DOB='1990-05-12T00:00:00' IcsAlias='12349'/></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='162' CompId='562' MatchId='1210' RefNo='BBB' DivId='4' MajorPF='True'/><row MemberId='162' CompId='563' MatchId='1210' RefNo='BBB' DivId='2' MajorPF='True'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data><row MemberId='162' StageId='2210' MatchId='1210' HitFactor='7.5000' ShootTime='1.20' FinalScore='105'/><row MemberId='162' StageId='2210' MatchId='1210' HitFactor='7.5000' ShootTime='1.20' FinalScore='105'/></data></xml>"
+                }
+                """.formatted(matchName);
+
+        List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFile(cabFileContent)
+        );
+
+        assertNotNull(recordHolders);
+        assertEquals(1, recordHolders.size());
+        assertFalse(recordHolders.getFirst().matches().isEmpty());
+
+        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        assertEquals(matchName, matchRecord.name());
+        assertEquals(1, matchRecord.competitors().size());
+
+        // TODO: fix this test
+        List<String> resultDivisions = matchRecord.competitors().stream()
+                .map(c -> c.results().division())
+                .toList();
+        matchRecord.competitors().forEach(System.out::println);
+        resultDivisions.forEach(System.out::println);
+        assertEquals(2, resultDivisions.size());
+        assertTrue(resultDivisions.contains(Division.PRODUCTION.getName()));
+        assertTrue(resultDivisions.contains(Division.STANDARD.getName()));
+        matchRecord.competitors().forEach(c ->
+                assertEquals(FirearmType.HANDGUN.toString(), c.results().firearmType())
+        );
+
+        IpscMatch persistedMatch = loadSinglePersistedMatch(matchName);
+        List<MatchCompetitor> matchCompetitors = persistedMatch.getMatchCompetitors();
+        assertEquals(2, matchCompetitors.size());
+
+        List<Division> persistedDivisions = matchCompetitors.stream()
+                .map(MatchCompetitor::getDivision)
+                .toList();
+        assertTrue(persistedDivisions.contains(Division.PRODUCTION));
+        assertTrue(persistedDivisions.contains(Division.STANDARD));
+        matchCompetitors.forEach(mc -> assertEquals(FirearmType.HANDGUN, mc.getFirearmType()));
+        matchCompetitors.forEach(mc -> assertEquals(PowerFactor.MAJOR, mc.getPowerFactor()));
+
+        IpscMatchStage persistedStage = persistedMatch.getMatchStages().getFirst();
+        List<Division> stageDivisions = persistedStage.getMatchStageCompetitors().stream()
+                .map(MatchStageCompetitor::getDivision)
+                .toList();
+        assertEquals(2, stageDivisions.size());
+        assertTrue(stageDivisions.contains(Division.PRODUCTION));
+        assertTrue(stageDivisions.contains(Division.STANDARD));
+    }
+
+    @Test
+    public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoFirearmTypes_thenPersistsTwoMatchCompetitorsWithCorrectFirearmTypes() {
+        String matchName = "Two Firearm Types Match";
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "match": "<xml><data><row MatchId='1211' MatchName='%s' MatchDt='2026-04-25T09:00:00' ClubId='1' Chrono='True'/></data></xml>",
+                    "stage": "<xml><data><row StageId='2211' StageName='Stage One' MatchId='1211'/></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data><row MemberId='163' Firstname='Bob' Lastname='Allrounder' Register='True' DOB='1985-07-20T00:00:00' IcsAlias='12350'/></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='163' CompId='564' MatchId='1211' RefNo='BBB' DivId='4' MajorPF='False'/><row MemberId='163' CompId='565' MatchId='1211' RefNo='BBB' DivId='6' MajorPF='False'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data><row MemberId='163' StageId='2211' MatchId='1211' HitFactor='6.8000' ShootTime='1.50' FinalScore='98'/></data></xml>"
+                }
+                """.formatted(matchName);
+
+        List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFile(cabFileContent)
+        );
+
+        assertNotNull(recordHolders);
+        assertEquals(1, recordHolders.size());
+        assertFalse(recordHolders.getFirst().matches().isEmpty());
+
+        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        assertEquals(matchName, matchRecord.name());
+        assertEquals(1, matchRecord.competitors().size());
+
+        // TODO: fix this test
+        List<String> resultFirearmTypes = matchRecord.competitors().stream()
+                .map(c -> c.results().firearmType())
+                .toList();
+        resultFirearmTypes.forEach(System.out::println);
+        assertEquals(2, resultFirearmTypes.size());
+        assertTrue(resultFirearmTypes.contains(FirearmType.HANDGUN.toString()));
+        assertTrue(resultFirearmTypes.contains(FirearmType.RIFLE.toString()));
+
+        List<String> resultDivisions = matchRecord.competitors().stream()
+                .map(c -> c.results().division())
+                .toList();
+        assertTrue(resultDivisions.contains(Division.PRODUCTION.getName()));
+        assertTrue(resultDivisions.contains(Division.RIFLE_SEMI_AUTO_OPEN.getName()));
+
+        IpscMatch persistedMatch = loadSinglePersistedMatch(matchName);
+        List<MatchCompetitor> matchCompetitors = persistedMatch.getMatchCompetitors();
+        assertEquals(2, matchCompetitors.size());
+
+        List<FirearmType> persistedFirearmTypes = matchCompetitors.stream()
+                .map(MatchCompetitor::getFirearmType)
+                .toList();
+        assertTrue(persistedFirearmTypes.contains(FirearmType.HANDGUN));
+        assertTrue(persistedFirearmTypes.contains(FirearmType.RIFLE));
+
+        List<Division> persistedDivisions = matchCompetitors.stream()
+                .map(MatchCompetitor::getDivision)
+                .toList();
+        assertTrue(persistedDivisions.contains(Division.PRODUCTION));
+        assertTrue(persistedDivisions.contains(Division.RIFLE_SEMI_AUTO_OPEN));
+
+        matchCompetitors.forEach(mc -> assertEquals(PowerFactor.MINOR, mc.getPowerFactor()));
+    }
+
+    @Test
+    public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoDivisionsWithTwoStages_thenPersistsStageCompetitorsForEachDivisionOnEachStage() {
+        String matchName = "Two Divisions Two Stages Match";
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='BBB' Club='Test Club' Contact='Admin'/></data></xml>",
+                    "match": "<xml><data><row MatchId='1212' MatchName='%s' MatchDt='2026-04-25T09:00:00' ClubId='1' Chrono='True'/></data></xml>",
+                    "stage": "<xml><data><row StageId='2212' StageName='Stage One' MatchId='1212'/><row StageId='2213' StageName='Stage Two' MatchId='1212'/></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data><row MemberId='164' Firstname='Alice' Lastname='Versatile' Register='True' DOB='1988-03-15T00:00:00' IcsAlias='12351'/></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='164' CompId='566' MatchId='1212' RefNo='BBB' DivId='4' MajorPF='True'/><row MemberId='164' CompId='567' MatchId='1212' RefNo='BBB' DivId='29' MajorPF='False'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data><row MemberId='164' StageId='2212' MatchId='1212' HitFactor='8.0000' ShootTime='1.10' FinalScore='112'/><row MemberId='164' StageId='2213' MatchId='1212' HitFactor='7.2000' ShootTime='1.30' FinalScore='100'/></data></xml>"
+                }
+                """.formatted(matchName);
+
+        List<IpscMatchRecordHolder> recordHolders = assertDoesNotThrow(() ->
+                ipscService.importWinMssCabFile(cabFileContent)
+        );
+
+        assertNotNull(recordHolders);
+        assertEquals(1, recordHolders.size());
+        assertFalse(recordHolders.getFirst().matches().isEmpty());
+
+        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        assertEquals(matchName, matchRecord.name());
+        assertEquals(1, matchRecord.competitors().size());
+        // TODO: fix this test? / fix this method to support this case better?
+        matchRecord.competitors().forEach(System.out::println);
+        matchRecord.competitors().forEach(c -> assertEquals(2, c.results().stages().size()));
+
+        IpscMatch persistedMatch = loadSinglePersistedMatch(matchName);
+        List<MatchCompetitor> matchCompetitors = persistedMatch.getMatchCompetitors();
+        assertEquals(1, matchCompetitors.size());
+
+        List<Division> persistedDivisions = matchCompetitors.stream()
+                .map(MatchCompetitor::getDivision)
+                .toList();
+        assertTrue(persistedDivisions.contains(Division.PRODUCTION));
+        assertTrue(persistedDivisions.contains(Division.PCC_OPTICS));
+
+        List<FirearmType> persistedFirearmTypes = matchCompetitors.stream()
+                .map(MatchCompetitor::getFirearmType)
+                .toList();
+        assertTrue(persistedFirearmTypes.contains(FirearmType.HANDGUN));
+        assertTrue(persistedFirearmTypes.contains(FirearmType.PCC));
+
+        assertEquals(2, persistedMatch.getMatchStages().size());
+        persistedMatch.getMatchStages().forEach(stage ->
+                assertEquals(2, stage.getMatchStageCompetitors().size())
+        );
     }
 
     private String buildCabFileContent(int matchId, int stageId, int memberId, int competitorId,

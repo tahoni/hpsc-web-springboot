@@ -8,6 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.*;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.data.DtoToEntityMapping;
@@ -259,6 +261,43 @@ public class TransactionServiceTest {
 
         // Assert
         verify(matchStageCompetitorRepository).saveAll(anyList());
+    }
+
+    @Test
+    public void testSaveMatchResults_whenSameCompetitorEnrollsInTwoDivisions_thenSavesTwoMatchCompetitorEntities() {
+        // Arrange
+        DtoMapping dtoMapping = buildMinimalDtoMapping();
+        CompetitorDto competitor = buildCompetitorDto();
+        dtoMapping.getCompetitorMap().put(competitor.getUuid(), competitor);
+
+        MatchCompetitorDto mc1 = new MatchCompetitorDto();
+        mc1.setCompetitor(competitor);
+        mc1.setMatch(dtoMapping.getMatch());
+        mc1.setDivision(Division.PRODUCTION);
+        mc1.setFirearmType(FirearmType.HANDGUN);
+
+        MatchCompetitorDto mc2 = new MatchCompetitorDto();
+        mc2.setCompetitor(competitor);
+        mc2.setMatch(dtoMapping.getMatch());
+        mc2.setDivision(Division.STANDARD);
+        mc2.setFirearmType(FirearmType.HANDGUN);
+
+        dtoMapping.getMatchCompetitorMap().put(mc1.getUuid(), mc1);
+        dtoMapping.getMatchCompetitorMap().put(mc2.getUuid(), mc2);
+        stubTransactionStart();
+
+        // Act
+        Optional<MatchHolder> result = assertDoesNotThrow(() ->
+                transactionService.saveMatchResults(dtoMapping));
+
+        // Assert
+        assertTrue(result.isPresent());
+        List<MatchCompetitor> saved = result.get().getMatchCompetitors();
+        assertEquals(2, saved.size());
+        List<Division> divisions = saved.stream().map(MatchCompetitor::getDivision).toList();
+        assertTrue(divisions.contains(Division.PRODUCTION));
+        assertTrue(divisions.contains(Division.STANDARD));
+        verify(matchCompetitorRepository).saveAll(anyList());
     }
 
     // Test Group: saveMatchResults – Error / Rollback Handling
@@ -848,6 +887,84 @@ public class TransactionServiceTest {
         assertEquals(2, result.size());
     }
 
+    @Test
+    public void testGetMatchCompetitors_whenSameCompetitorEntersInTwoDivisions_thenReturnsBothWithCorrectDivisions() {
+        // Arrange
+        DtoMapping dtoMapping = buildMinimalDtoMapping();
+        CompetitorDto competitor = buildCompetitorDto();
+        dtoMapping.getCompetitorMap().put(competitor.getUuid(), competitor);
+
+        MatchCompetitorDto mc1 = new MatchCompetitorDto();
+        mc1.setCompetitor(competitor);
+        mc1.setMatch(dtoMapping.getMatch());
+        mc1.setDivision(Division.PRODUCTION);
+        mc1.setFirearmType(FirearmType.HANDGUN);
+
+        MatchCompetitorDto mc2 = new MatchCompetitorDto();
+        mc2.setCompetitor(competitor);
+        mc2.setMatch(dtoMapping.getMatch());
+        mc2.setDivision(Division.STANDARD);
+        mc2.setFirearmType(FirearmType.HANDGUN);
+
+        dtoMapping.getMatchCompetitorMap().put(mc1.getUuid(), mc1);
+        dtoMapping.getMatchCompetitorMap().put(mc2.getUuid(), mc2);
+
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
+        IpscMatch matchEntity = new IpscMatch();
+        matchEntity.setName("Test Match");
+        matchEntity.setScheduledDate(LocalDateTime.now());
+        mapping.setMatch(matchEntity);
+        mapping.setCompetitor(competitor, new Competitor());
+
+        // Act
+        List<MatchCompetitor> result = transactionService.getMatchCompetitors(mapping);
+
+        // Assert
+        assertEquals(2, result.size());
+        List<Division> divisions = result.stream().map(MatchCompetitor::getDivision).toList();
+        assertTrue(divisions.contains(Division.PRODUCTION));
+        assertTrue(divisions.contains(Division.STANDARD));
+    }
+
+    @Test
+    public void testGetMatchCompetitors_whenSameCompetitorEntersWithTwoFirearmTypes_thenReturnsBothWithCorrectFirearmTypes() {
+        // Arrange
+        DtoMapping dtoMapping = buildMinimalDtoMapping();
+        CompetitorDto competitor = buildCompetitorDto();
+        dtoMapping.getCompetitorMap().put(competitor.getUuid(), competitor);
+
+        MatchCompetitorDto mc1 = new MatchCompetitorDto();
+        mc1.setCompetitor(competitor);
+        mc1.setMatch(dtoMapping.getMatch());
+        mc1.setFirearmType(FirearmType.HANDGUN);
+        mc1.setDivision(Division.PRODUCTION);
+
+        MatchCompetitorDto mc2 = new MatchCompetitorDto();
+        mc2.setCompetitor(competitor);
+        mc2.setMatch(dtoMapping.getMatch());
+        mc2.setFirearmType(FirearmType.RIFLE);
+        mc2.setDivision(Division.RIFLE_SEMI_AUTO_OPEN);
+
+        dtoMapping.getMatchCompetitorMap().put(mc1.getUuid(), mc1);
+        dtoMapping.getMatchCompetitorMap().put(mc2.getUuid(), mc2);
+
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
+        IpscMatch matchEntity = new IpscMatch();
+        matchEntity.setName("Test Match");
+        matchEntity.setScheduledDate(LocalDateTime.now());
+        mapping.setMatch(matchEntity);
+        mapping.setCompetitor(competitor, new Competitor());
+
+        // Act
+        List<MatchCompetitor> result = transactionService.getMatchCompetitors(mapping);
+
+        // Assert
+        assertEquals(2, result.size());
+        List<FirearmType> firearmTypes = result.stream().map(MatchCompetitor::getFirearmType).toList();
+        assertTrue(firearmTypes.contains(FirearmType.HANDGUN));
+        assertTrue(firearmTypes.contains(FirearmType.RIFLE));
+    }
+
     // Test Group: getAllMatchStageCompetitors
 
     @Test
@@ -1077,6 +1194,52 @@ public class TransactionServiceTest {
         // Assert
         assertFalse(result.isEmpty());
         assertEquals(77L, result.get(0).getId());
+    }
+
+    @Test
+    public void testGetMatchStageCompetitors_whenSameCompetitorCompetesInSameStageWithTwoDivisions_thenReturnsBothWithCorrectDivisions() {
+        // Arrange
+        DtoMapping dtoMapping = buildMinimalDtoMapping();
+        CompetitorDto competitor = buildCompetitorDto();
+        dtoMapping.getCompetitorMap().put(competitor.getUuid(), competitor);
+
+        MatchStageDto matchStageDto = buildMatchStageDto();
+        dtoMapping.getMatchStageMap().put(matchStageDto.getUuid(), matchStageDto);
+
+        MatchStageCompetitorDto msc1 = new MatchStageCompetitorDto();
+        msc1.setCompetitor(competitor);
+        msc1.setMatchStage(matchStageDto);
+        msc1.setDivision(Division.PRODUCTION);
+        msc1.setFirearmType(FirearmType.HANDGUN);
+
+        MatchStageCompetitorDto msc2 = new MatchStageCompetitorDto();
+        msc2.setCompetitor(competitor);
+        msc2.setMatchStage(matchStageDto);
+        msc2.setDivision(Division.STANDARD);
+        msc2.setFirearmType(FirearmType.HANDGUN);
+
+        dtoMapping.getMatchStageCompetitorMap().put(msc1.getUuid(), msc1);
+        dtoMapping.getMatchStageCompetitorMap().put(msc2.getUuid(), msc2);
+
+        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
+        IpscMatch matchEntity = new IpscMatch();
+        matchEntity.setName("Test Match");
+        matchEntity.setScheduledDate(LocalDateTime.now());
+        mapping.setMatch(matchEntity);
+        mapping.setCompetitor(competitor, new Competitor());
+        IpscMatchStage stageEntity = new IpscMatchStage();
+        stageEntity.setStageNumber(1);
+        mapping.setMatchStage(matchStageDto, stageEntity);
+
+        // Act
+        List<MatchStageCompetitor> result =
+                transactionService.getMatchStageCompetitors(matchStageDto, mapping);
+
+        // Assert
+        assertEquals(2, result.size());
+        List<Division> divisions = result.stream().map(MatchStageCompetitor::getDivision).toList();
+        assertTrue(divisions.contains(Division.PRODUCTION));
+        assertTrue(divisions.contains(Division.STANDARD));
     }
 
     @Test

@@ -2374,4 +2374,198 @@ public class IpscServiceTest {
         assertNull(enrolled.getDivisionId());
         assertNull(enrolled.getCompetitorCategoryId());
     }
+
+    // Test Group: Same competitor enrolled in multiple divisions or firearm types
+
+    @Test
+    public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoDivisionsOfSameFirearmType_thenParsesBothEnrolledRows() {
+        // Arrange – MemberId=50 enrolled as Production (DivId=4) and Standard (DivId=2), both Handgun
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='HPSC' Club='HPSC Club'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Multi-Division Match'/></data></xml>",
+                    "stage": "<xml><data><row StageId='200' StageName='Stage 1' MatchId='100'/></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='Jane' Lastname='Doe' Register='True' DOB='1990-05-15T00:00:00'/></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' DivId='4' MajorPF='False'/><row MemberId='50' CompId='501' MatchId='100' DivId='2' MajorPF='True'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data></data></xml>"
+                }
+                """;
+
+        ArgumentCaptor<IpscRequestHolder> requestHolderCaptor = ArgumentCaptor.forClass(IpscRequestHolder.class);
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of());
+        when(transformationService.mapMatchResults(requestHolderCaptor.capture()))
+                .thenReturn(ipscResponseHolder);
+
+        // Act
+        assertDoesNotThrow(() -> ipscService.importWinMssCabFile(cabFileContent));
+
+        // Assert
+        IpscRequestHolder captured = requestHolderCaptor.getValue();
+        assertNotNull(captured);
+        assertEquals(2, captured.getEnrolledMembers().size());
+
+        EnrolledRequest firstEnrollment = captured.getEnrolledMembers().getFirst();
+        assertEquals(50, firstEnrollment.getMemberId());
+        assertEquals(500, firstEnrollment.getCompetitorId());
+        assertEquals(100, firstEnrollment.getMatchId());
+        assertEquals(4, firstEnrollment.getDivisionId()); // Production
+
+        EnrolledRequest secondEnrollment = captured.getEnrolledMembers().get(1);
+        assertEquals(50, secondEnrollment.getMemberId());
+        assertEquals(501, secondEnrollment.getCompetitorId());
+        assertEquals(100, secondEnrollment.getMatchId());
+        assertEquals(2, secondEnrollment.getDivisionId()); // Standard
+
+        verify(transformationService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
+    }
+
+    @Test
+    public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoFirearmTypes_thenParsesBothEnrolledRows() {
+        // Arrange – MemberId=50 enrolled as Production (DivId=4/Handgun) and Rifle Semi-Auto Open (DivId=6/Rifle)
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='HPSC' Club='HPSC Club'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Multi-Firearm Match'/></data></xml>",
+                    "stage": "<xml><data><row StageId='200' StageName='Stage 1' MatchId='100'/></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='John' Lastname='Doe' Register='True' DOB='1985-03-20T00:00:00'/></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' DivId='4' MajorPF='False'/><row MemberId='50' CompId='502' MatchId='100' DivId='6' MajorPF='False'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data></data></xml>"
+                }
+                """;
+
+        ArgumentCaptor<IpscRequestHolder> requestHolderCaptor = ArgumentCaptor.forClass(IpscRequestHolder.class);
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of());
+        when(transformationService.mapMatchResults(requestHolderCaptor.capture()))
+                .thenReturn(ipscResponseHolder);
+
+        // Act
+        assertDoesNotThrow(() -> ipscService.importWinMssCabFile(cabFileContent));
+
+        // Assert
+        IpscRequestHolder captured = requestHolderCaptor.getValue();
+        assertNotNull(captured);
+        assertEquals(2, captured.getEnrolledMembers().size());
+
+        captured.getEnrolledMembers().forEach(e -> assertEquals(50, e.getMemberId()));
+
+        List<Integer> divisionIds = captured.getEnrolledMembers().stream()
+                .map(EnrolledRequest::getDivisionId)
+                .toList();
+        assertTrue(divisionIds.contains(4)); // Production – Handgun
+        assertTrue(divisionIds.contains(6)); // Rifle Semi-Auto Open – Rifle
+
+        verify(transformationService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
+    }
+
+    @Test
+    public void testReadIpscRequests_whenSameCompetitorEnrolledInTwoDivisionsWithScores_thenParsesAllEnrolledAndScoreRows() {
+        // Arrange – same member enrolled in PCC Optics (DivId=29) and Production (DivId=4), with scores on two stages
+        String cabFileContent = """
+                {
+                    "club": "<xml><data></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Dual Division Match'/></data></xml>",
+                    "stage": "<xml><data><row StageId='200' StageName='Stage 1' MatchId='100'/><row StageId='201' StageName='Stage 2' MatchId='100'/></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data><row MemberId='50' Firstname='Alice' Lastname='Smith' Register='True'/></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='50' CompId='500' MatchId='100' DivId='4' MajorPF='False'/><row MemberId='50' CompId='501' MatchId='100' DivId='29' MajorPF='False'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data><row MemberId='50' StageId='200' MatchId='100' FinalScore='95' HitFactor='7.50'/><row MemberId='50' StageId='201' MatchId='100' FinalScore='88' HitFactor='6.90'/></data></xml>"
+                }
+                """;
+
+        // Act
+        IpscRequestHolder result = assertDoesNotThrow(() -> ipscService.readIpscRequests(cabFileContent));
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getMembers().size());
+        assertEquals(2, result.getStages().size());
+        assertEquals(2, result.getScores().size());
+        assertEquals(2, result.getEnrolledMembers().size());
+
+        result.getEnrolledMembers().forEach(e -> assertEquals(50, e.getMemberId()));
+
+        List<Integer> divisionIds = result.getEnrolledMembers().stream()
+                .map(EnrolledRequest::getDivisionId)
+                .toList();
+        List<Integer> competitorIds = result.getEnrolledMembers().stream()
+                .map(EnrolledRequest::getCompetitorId)
+                .toList();
+        assertTrue(divisionIds.contains(4));   // Production
+        assertTrue(divisionIds.contains(29));  // PCC Optics
+        assertTrue(competitorIds.contains(500));
+        assertTrue(competitorIds.contains(501));
+
+        result.getScores().forEach(s -> assertEquals(50, s.getMemberId()));
+        List<Integer> stageIds = result.getScores().stream()
+                .map(ScoreRequest::getStageId)
+                .toList();
+        assertTrue(stageIds.contains(200));
+        assertTrue(stageIds.contains(201));
+    }
+
+    @Test
+    public void testImportWinMssCabFile_whenSameCompetitorEnrolledInTwoDivisionsWithScoresOnTwoStages_thenForwardsAllDataToTransformationService() {
+        // Arrange – MemberId=75 enrolled as Open (DivId=1) and Standard (DivId=2), scores on two stages
+        String cabFileContent = """
+                {
+                    "club": "<xml><data><row ClubId='1' ClubCode='HPSC' Club='HPSC Club'/></data></xml>",
+                    "match": "<xml><data><row MatchId='100' MatchName='Open and Standard Match'/></data></xml>",
+                    "stage": "<xml><data><row StageId='200' StageName='Stage 1' MatchId='100'/><row StageId='201' StageName='Stage 2' MatchId='100'/></data></xml>",
+                    "tag": "<xml><data></data></xml>",
+                    "member": "<xml><data><row MemberId='75' Firstname='Bob' Lastname='Jones' Register='True' DOB='1980-11-30T00:00:00'/></data></xml>",
+                    "classify": "<xml><data></data></xml>",
+                    "enrolled": "<xml><data><row MemberId='75' CompId='600' MatchId='100' DivId='1' MajorPF='True'/><row MemberId='75' CompId='601' MatchId='100' DivId='2' MajorPF='True'/></data></xml>",
+                    "squad": "<xml><data></data></xml>",
+                    "team": "<xml><data></data></xml>",
+                    "score": "<xml><data><row MemberId='75' StageId='200' MatchId='100' FinalScore='110' HitFactor='8.50'/><row MemberId='75' StageId='201' MatchId='100' FinalScore='95' HitFactor='7.20'/></data></xml>"
+                }
+                """;
+
+        ArgumentCaptor<IpscRequestHolder> requestHolderCaptor = ArgumentCaptor.forClass(IpscRequestHolder.class);
+        IpscResponseHolder ipscResponseHolder = new IpscResponseHolder(List.of());
+        when(transformationService.mapMatchResults(requestHolderCaptor.capture()))
+                .thenReturn(ipscResponseHolder);
+
+        // Act
+        assertDoesNotThrow(() -> ipscService.importWinMssCabFile(cabFileContent));
+
+        // Assert
+        IpscRequestHolder captured = requestHolderCaptor.getValue();
+        assertNotNull(captured);
+
+        assertEquals(2, captured.getEnrolledMembers().size());
+        captured.getEnrolledMembers().forEach(e -> assertEquals(75, e.getMemberId()));
+        List<Integer> capturedDivIds = captured.getEnrolledMembers().stream()
+                .map(EnrolledRequest::getDivisionId)
+                .toList();
+        assertTrue(capturedDivIds.contains(1)); // Open
+        assertTrue(capturedDivIds.contains(2)); // Standard
+        List<Integer> capturedCompIds = captured.getEnrolledMembers().stream()
+                .map(EnrolledRequest::getCompetitorId)
+                .toList();
+        assertTrue(capturedCompIds.contains(600));
+        assertTrue(capturedCompIds.contains(601));
+
+        assertEquals(2, captured.getScores().size());
+        captured.getScores().forEach(s -> assertEquals(75, s.getMemberId()));
+        List<Integer> capturedStageIds = captured.getScores().stream()
+                .map(ScoreRequest::getStageId)
+                .toList();
+        assertTrue(capturedStageIds.contains(200));
+        assertTrue(capturedStageIds.contains(201));
+
+        assertEquals(2, captured.getStages().size());
+        verify(transformationService, times(1)).mapMatchResults(any(IpscRequestHolder.class));
+    }
 }
