@@ -31,7 +31,7 @@ Complete historical archive and documentation of all HPSC Website Backend releas
 ## 📖 Overview
 
 This directory contains comprehensive documentation of the project's evolution from version 1.0.0
-(January 4, 2026) through version 5.3.0 (March 15, 2026).
+(January 4, 2026) through version 5.4.0 (April 26, 2026).
 
 –––
 
@@ -39,16 +39,18 @@ This directory contains comprehensive documentation of the project's evolution f
 
 ### 🎯 Current Release
 
-— **[Version 5.3.0](RELEASE_NOTES_v5.3.0.md)** – Service Consolidation, Custom JPA Converters & Repository
-Optimisation
-– **Release Date:** March 15, 2026
+— **[Version 5.4.0](RELEASE_NOTES_v5.4.0.md)** – Competitor Enrolment, Service Transformation &
+Comprehensive Test Expansion
+– **Release Date:** April 26, 2026
 – **Status:** Current/Stable
-– **Key Features:** Custom JPA attribute converters, IpscMatchResultService removal, DtoMapping as Java
-record, repository query optimisation
+– **Key Features:** EnrolledCompetitorDto, IpscMatchService renamed to TransformationService,
+ClubIdentifier abbreviation, SAPSA validation, 20+ new test classes, Qodana JVM linting, JaCoCo coverage
 
 ### 📊 Previous Major Releases
 
-— **[Version 5.2.0](RELEASE_NOTES_v5.2.0.md)** – Match Results Processing Enhancement & Architecture
+— **[Version 5.3.0](RELEASE_NOTES_v5.3.0.md)** – Service Consolidation, Custom JPA Converters &
+Repository Optimisation (Mar 15, 2026)
+– **[Version 5.2.0](RELEASE_NOTES_v5.2.0.md)** – Match Results Processing Enhancement & Architecture
 Refactoring (Feb 27, 2026)
 – **[Version 5.1.0](RELEASE_NOTES_v5.1.0.md)** – Test Suite Enhancement & Code Quality Consolidation
 (Feb 25, 2026)
@@ -88,7 +90,7 @@ Breaking Changes
 ### 📚 Complete Release Notes Archive
 
 — **[RELEASE_NOTES_HISTORY.md](RELEASE_NOTES_HISTORY.md)** – Complete archive of all release notes
-– All 11 versions in one document
+– All versions in one document
 – Version progression summary table
 – Breaking changes documentation
 – Cumulative feature matrix
@@ -104,7 +106,8 @@ documentation/history/
 ├── README.md                          ← You are here
 ├── HISTORY.md                         (Project history & evolution)
 ├── RELEASE_NOTES_HISTORY.md          (Complete release archive)
-├── RELEASE_NOTES_v5.3.0.md           (Current release)
+├── RELEASE_NOTES_v5.4.0.md           (Current release)
+├── RELEASE_NOTES_v5.3.0.md
 ├── RELEASE_NOTES_v5.2.0.md
 ├── RELEASE_NOTES_v5.1.0.md
 ├── RELEASE_NOTES_v5.0.0.md
@@ -138,7 +141,7 @@ documentation/history/
 3. **Plan your upgrade:**
    – Follow specific migration instructions
    – Allocate time for testing
-   – Review dependencies changes
+   – Review dependency changes
 
 ### 👥 For New Team Members
 
@@ -154,7 +157,7 @@ documentation/history/
 
 3. **Understand the current state:**
    – Read `v5.0.0.md` for current features
-   – Review recent releases (v4.x and v5.0.0)
+   – Review recent releases (v4.x and v5.x)
    – Check known issues and TODOs
 
 ### 👔 For Project Managers/Leads
@@ -171,7 +174,7 @@ documentation/history/
 
 3. **Understand testing coverage:**
    – Check testing evolution table in `RELEASE_NOTES_HISTORY.md`
-   – See progression from ~30% to ~85% coverage
+   – See progression from ~30% to ~92% coverage
    – Plan testing investments
 
 ### 💻 For Developers
@@ -182,7 +185,7 @@ documentation/history/
    – Understand domain-specific decisions
 
 2. **Learn about recent changes:**
-   – Review recent release notes (v4.x – v5.0.0)
+   – Review recent release notes (v4.x – v5.x)
    – Check breaking changes documentation
    – Understand the entity initialisation framework
 
@@ -197,6 +200,7 @@ documentation/history/
 
 | Version | Date | Theme | Status | Breaking Changes |
 |–––––––––––|––––––––––––––|––––––––––––––––––––––––––––––––|––––––––|––––––––––––––––––––|
+| **5.4.0** | Apr 26, 2026 | Enrolment & Service Transformation | Stable | ✅ None |
 | **5.3.0** | Mar 15, 2026 | Service Consolidation & Converters | Stable | ✅ None |
 | **5.2.0** | Feb 27, 2026 | Architecture Refactoring | Stable | ✅ None |
 | **5.1.0** | Feb 25, 2026 | Test Suite Enhancement | Stable | ✅ None |
@@ -226,7 +230,8 @@ response models
 
 ### ✅ Non–Breaking Releases
 
-— **v5.3.0, v5.2.0, v5.1.0, v5.0.0, v4.1.0, v3.1.0, v1.1.3, v1.1.2, v1.1.1, v1.1.0** – All fully backward compatible
+— **v5.4.0, v5.3.0, v5.2.0, v5.1.0, v5.0.0, v4.1.0, v3.1.0, v1.1.3, v1.1.2, v1.1.1, v1.1.0** – All fully
+backward compatible
 
 –––
 
@@ -234,18 +239,20 @@ response models
 
 ### 🎯 Feature Availability by Version
 
-| Feature | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 | v5.3 |
-|–––––––––––––––––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|
-| Image Gallery | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Award Processing | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Match Management | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Competitor Tracking | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| IPSC Integration | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| CRUD Operations | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Semantic Versioning | | | | | | | ✅ | ✅ | ✅ | ✅ |
-| Test Organisation | | | | | | | | ✅ | ✅ | ✅ |
-| Three-Tier Mapping | | | | | | | | | ✅ | ✅ |
-| Custom JPA Converters | | | | | | | | | | ✅ |
+| Feature | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 |
+|–––––––––––––––––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|
+| Image Gallery | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Award Processing | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Match Management | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Competitor Tracking | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| IPSC Integration | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| CRUD Operations | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Semantic Versioning | | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Test Organisation | | | | | | | | ✅ | ✅ | ✅ | ✅ |
+| Three-Tier Mapping | | | | | | | | | ✅ | ✅ | ✅ |
+| Custom JPA Converters | | | | | | | | | | ✅ | ✅ |
+| Competitor Enrolment | | | | | | | | | | | ✅ |
+| SAPSA Validation | | | | | | | | | | | ✅ |
 
 –––
 
@@ -266,11 +273,12 @@ response models
                                                        └─→ 2026–02–25 ──→ v5.1.0 (Tests)
                                                            └─→ 2026–02–27 ──→ v5.2.0 (Architecture)
                                                                └─→ 2026–03–15 ──→ v5.3.0 (Consolidation)
+                                                                   └─→ 2026–04–26 ──→ v5.4.0 (Enrolment)
 ```
 
-**Duration:** ~70 days (Jan 4 – Mar 15, 2026)  
-**Total Releases:** 14  
-**Average Release Frequency:** ~5 days
+**Duration:** ~112 days (Jan 4 – Apr 26, 2026)  
+**Total Releases:** 15  
+**Average Release Frequency:** ~7.5 days
 
 –––
 
@@ -288,6 +296,7 @@ response models
 – **v5.1.0:** ~85% coverage (improved organisation and consolidation)
 – **v5.2.0:** ~90% coverage (comprehensive test consolidation, 3,000+ duplicates removed)
 – **v5.3.0:** ~90% coverage (service consolidation, IpscMatchResultServiceTest and ScoreDtoTest removed)
+– **v5.4.0:** ~92% coverage (20+ new test classes, 7,000+ lines of new test code across all layers)
 
 ### 📚 Documentation Evolution
 
@@ -304,11 +313,19 @@ response models
 
 ## 🚀 Migration Guides
 
+### ⬆️ Upgrading to v5.4.0
+
+**From v5.3.0:** ✅ No migration required for API consumers (drop–in replacement)
+
+**For developers:** See [RELEASE_NOTES_v5.4.0.md](RELEASE_NOTES_v5.4.0.md) "Migration Guide" – note
+renaming of `IpscMatchService` → `TransformationService`, package move of mapping classes
+(`domain` → `data`), and list-based returns from `MatchCompetitorEntityService`
+
 ### ⬆️ Upgrading to v5.3.0
 
 **From v5.2.0:** ✅ No migration required for API consumers (drop–in replacement)
 
-**For developers:** See [v5.3.0.md](RELEASE_NOTES_v5.3.0.md) "Migration Guide" – note removal of
+**For developers:** See [RELEASE_NOTES_v5.3.0.md](RELEASE_NOTES_v5.3.0.md) "Migration Guide" – note removal of
 `IpscMatchResultService`, `ScoreDto`, and `ClubEntityService` method simplification
 
 ### ⬆️ Upgrading to v5.0.0
@@ -338,6 +355,11 @@ response models
 –––
 
 ## ⚠️ Known Issues by Version
+
+### v5.4.0
+
+— ✅ No known issues reported
+– 🧪 All major components working as expected
 
 ### v5.3.0
 
@@ -399,7 +421,7 @@ Please report issues at:
 
 For questions about specific releases:
 
-1. Check the individual version file (e.g., `v5.0.0.md`)
+1. Check the individual version file (e.g., `v5.4.0.md`)
 2. Review `HISTORY.md` for architectural context
 3. Check `RELEASE_NOTES_HISTORY.md` for feature matrix
 
@@ -412,17 +434,17 @@ Please follow the contribution guidelines in the main repository.
 ## 📝 Document Metadata
 
 — **Created:** February 24, 2026
-– **Last Updated:** March 15, 2026
-– **Coverage:** v1.0.0 – v5.3.0 (14 releases)
-– **Timeline:** January 4 – March 15, 2026 (~70 days)
-– **Total Files:** 16 documentation files
-– **Total Content:** ~2,800+ lines
+– **Last Updated:** April 26, 2026
+– **Coverage:** v1.0.0 – v5.4.0 (15 releases)
+– **Timeline:** January 4 – April 26, 2026 (~112 days)
+– **Total Files:** 17 documentation files
+– **Total Content:** ~3,200+ lines
 
 –––
 
 ## 🔗 Quick Links
 
-– 📖 [Architecture Guide](/ARCHITECTURE.md)
+— 📖 [Architecture Guide](/ARCHITECTURE.md)
 – 📋 [Current Release Notes](/RELEASE_NOTES.md)
 – 📝 [Change Log](/CHANGELOG.md)
 – 📚 [Project History](/HISTORY.md)
@@ -430,6 +452,5 @@ Please follow the contribution guidelines in the main repository.
 
 –––
 
-**Last Updated:** March 15, 2026  
+**Last Updated:** April 26, 2026  
 **Status:** Complete and Current
-
