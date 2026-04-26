@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.MatchStageCompetitor;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * The {@code MatchStageCompetitorEntityService} interface defines the contract for operations
@@ -11,14 +11,23 @@ import java.util.Optional;
  * based on specific criteria.
  */
 public interface MatchStageCompetitorEntityService {
+
     /**
-     * Searches for a {@link MatchStageCompetitor} entity by its match stage ID
-     * and competitor ID.
+     * Retrieves a list of {@link MatchStageCompetitor} entities matching the specified match
+     * stage and competitor identifiers.
      *
-     * @param matchStageId the unique identifier of the match stage
-     * @param competitorId the unique identifier of the competitor.
-     * @return an {@code Optional} containing the {@link MatchStageCompetitor} if a matching entity
-     * is found, or an empty {@code Optional} if no match is found.
+     * <p>
+     * Either or both parameters may be {@code null}. When a parameter is {@code null},
+     * it is not used as a filter criterion, and all records matching the remaining
+     * non-null parameters are returned.
+     * </p>
+     *
+     * @param matchStageId the unique identifier of the match stage to filter by, or
+     *                     {@code null} to include all match stages.
+     * @param competitorId the unique identifier of the competitor to filter by, or
+     *                     {@code null} to include all competitors.
+     * @return a {@link List} of {@link MatchStageCompetitor} entities matching the given
+     * criteria; never {@code null}, but may be empty if no matches are found.
      */
-    Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchStageId, Long competitorId);
+    List<MatchStageCompetitor> findMatchStageCompetitors(Long matchStageId, Long competitorId);
 }

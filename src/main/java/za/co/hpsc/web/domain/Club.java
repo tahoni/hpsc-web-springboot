@@ -82,12 +82,17 @@ public class Club {
 
     @Override
     public String toString() {
-        if ((abbreviation != null) && (!abbreviation.isBlank()) &&
-                (!abbreviation.equalsIgnoreCase(name))) {
-            return this.name + " (" + this.abbreviation + ")";
-        } else {
-            return this.name;
+        StringBuilder sb = new StringBuilder();
+
+        String name = ((this.name != null) ? this.name.trim() : "");
+        sb.append(name).append(" ");
+
+        String abbreviation = ((this.abbreviation != null) ? this.abbreviation.trim() : "");
+        if ((!abbreviation.isEmpty()) && (!abbreviation.equalsIgnoreCase(name))) {
+            sb.append("(").append(abbreviation).append(")");
         }
+
+        return sb.toString().trim();
     }
 
     @PrePersist

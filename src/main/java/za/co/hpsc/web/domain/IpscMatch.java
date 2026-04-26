@@ -83,8 +83,17 @@ public class IpscMatch {
 
     @Override
     public String toString() {
-        return this.name + " (" + DateUtil.formatDateTime(this.scheduledDate,
-                IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT) + ")";
+        StringBuilder sb = new StringBuilder();
+
+        String name = ((this.name != null) ? this.name.trim() : "");
+        sb.append(name).append(" ");
+
+        String scheduledDate = DateUtil.formatDateTime(this.scheduledDate, IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
+        if (!scheduledDate.isEmpty()) {
+            sb.append("(").append(scheduledDate).append(")");
+        }
+
+        return sb.toString().trim();
     }
 
     @PrePersist

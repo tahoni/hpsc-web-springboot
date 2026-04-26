@@ -2,7 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.domain.MatchCompetitor;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * The {@code MatchCompetitorEntityService} interface defines the contract related to
@@ -11,13 +11,23 @@ import java.util.Optional;
  * based on specific criteria.
  */
 public interface MatchCompetitorEntityService {
+    
     /**
-     * Searches for a {@link MatchCompetitor} by its match ID and competitor ID.
+     * Retrieves a list of {@link MatchCompetitor} entities matching the specified match
+     * and competitor identifiers.
      *
-     * @param matchId      the unique identifier of the match.
-     * @param competitorId the unique identifier of the competitor.
-     * @return an {@code Optional} containing the {@link MatchCompetitor} if a match is found,
-     * or an empty {@code Optional} if no matching record exists.
+     * <p>
+     * Either or both parameters may be {@code null}. When a parameter is {@code null},
+     * it is not used as a filter criterion, and all records matching the remaining
+     * non-null parameters are returned.
+     * </p>
+     *
+     * @param matchId      the unique identifier of the match to filter by, or {@code null}
+     *                     to include all matches.
+     * @param competitorId the unique identifier of the competitor to filter by, or
+     *                     {@code null} to include all competitors.
+     * @return a {@link List} of {@link MatchCompetitor} entities matching the given
+     * criteria; never {@code null}, but may be empty if no matches are found.
      */
-    Optional<MatchCompetitor> findMatchCompetitor(Long matchId, Long competitorId);
+    List<MatchCompetitor> findMatchCompetitors(Long matchId, Long competitorId);
 }

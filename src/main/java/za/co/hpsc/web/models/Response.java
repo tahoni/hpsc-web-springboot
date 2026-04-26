@@ -23,7 +23,7 @@ import java.util.UUID;
 public class Response extends Request {
     @Getter
     @NotNull
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid;
 
     /**
      * Constructs a new {@code Response} object with a unique identifier (UUID).

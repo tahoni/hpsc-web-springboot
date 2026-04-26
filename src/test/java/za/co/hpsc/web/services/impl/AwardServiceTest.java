@@ -22,9 +22,7 @@ public class AwardServiceTest {
     @InjectMocks
     private AwardServiceImpl awardService;
 
-    // =====================================================================
-    // Tests for processCsv - Valid Data Processing
-    // =====================================================================
+    // Test Group: processCsv - Valid Data Processing
 
     @Test
     public void testProcessCsv_whenValidCsvData_thenReturnsAwardCeremonyResponseHolder() {
@@ -87,9 +85,7 @@ public class AwardServiceTest {
         assertEquals("wZ.png", secondAward.getThirdPlace().getImageFilePath());
     }
 
-    // =====================================================================
-    // Tests for processCsv - Input Validation and Error Handling
-    // =====================================================================
+    // Test Group: processCsv - Input Validation and Error Handling
 
     @Test
     public void testProcessCsv_whenInvalidCsvData_thenThrowsValidationException() {
@@ -99,19 +95,19 @@ public class AwardServiceTest {
                 Ceremony 1,path/to/image1.png
                 """;
 
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
     @Test
     public void testProcessCsv_whenEmptyCsvData_thenThrowsValidationException() {
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(""));
     }
 
     @Test
     public void testProcessCsv_whenNullCsvData_thenThrowsValidationException() {
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(null));
     }
 
@@ -120,13 +116,11 @@ public class AwardServiceTest {
         // Arrange
         String csvData = "Invalid CSV Format";
 
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
-    // =====================================================================
-    // Tests for readAwards - Valid Data Processing
-    // =====================================================================
+    // Test Group: readAwards - Valid Data Processing
 
     @Test
     public void testReadAwards_whenValidCsv_thenReturnsAwardRequestList() {
@@ -198,7 +192,7 @@ public class AwardServiceTest {
 
     @Test
     public void testReadAwards_whenValidCsvWithRearrangedColumns_thenReturnsAwardRequestList() {
-        // Arrange - CSV with columns in different order
+        // Arrange
         String csvData = """
                 title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Award 1,Description 1,Summary 1,Category 1,tag1|tag2,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png
@@ -249,7 +243,7 @@ public class AwardServiceTest {
 
     @Test
     public void testReadAwards_whenLargeCsv_thenReturnsAwardRequestList() {
-        // Arrange - Create large CSV with 1000 rows
+        // Arrange
         StringBuilder largeCsv = new StringBuilder("title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n");
 
         for (int i = 0; i < 1000; i++) {
@@ -302,13 +296,11 @@ public class AwardServiceTest {
         assertEquals("imgC999.png", awardRequests.get(999).getThirdPlaceImageFileName());
     }
 
-    // =====================================================================
-    // Tests for readAwards - Input Validation and Error Handling
-    // =====================================================================
+    // Test Group: readAwards - Input Validation and Error Handling
 
     @Test
     public void testReadAwards_whenEmptyCsvData_thenReturnsEmptyList() {
-        // Arrange - CSV with only header, no data rows
+        // Arrange
         String emptyCsvData = "title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n";
 
         // Act
@@ -322,77 +314,75 @@ public class AwardServiceTest {
 
     @Test
     public void testReadAwards_whenMissingCsvColumns_thenThrowsValidationException() {
-        // Arrange - CSV with missing required columns
+        // Arrange
         String csvData = """
                 title,summary,imageFilePath,ceremonyTitle,ceremonySummary
                 Award 1,Summary 1,/path/to,Ceremony 1,Ceremony Summary 1
                 Award 2,Summary 2,/path/to,Ceremony 1,Ceremony Summary 1
                 """;
 
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(csvData));
     }
 
     @Test
     public void testReadAwards_whenInvalidCsvData_thenThrowsValidationException() {
-        // Arrange - CSV row with incorrect number of columns
+        // Arrange
         String invalidCsvData = """
                 title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Invalid Row Without Correct Columns
                 """;
 
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(invalidCsvData));
     }
 
     @Test
     public void testReadAwards_whenInvalidCsvStructure_thenThrowsValidationException() {
-        // Arrange - CSV with invalid headers
+        // Arrange
         String invalidCsvStructure = """
                 Invalid_Header1,Invalid_Header2,Invalid_Header3
                 value1,value2
                 """;
 
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(invalidCsvStructure));
     }
 
     @Test
     public void testReadAwards_whenInvalidCsvFormat_thenThrowsValidationException() {
-        // Arrange - Single column with no proper header
+        // Arrange
         String invalidCsv = """
                 Invalid CSV With One Column and no Header
                 """;
 
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () ->
                 awardService.readAwards(invalidCsv));
     }
 
     @Test
     public void testReadAwards_whenBlankCsv_thenThrowsValidationException() {
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.readAwards("  "));
     }
 
     @Test
     public void testReadAwards_whenEmptyStringCsv_thenThrowsValidationException() {
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.readAwards(""));
     }
 
     @Test
     public void testReadAwards_whenNullCsv_thenThrowsValidationException() {
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.readAwards(null));
     }
 
-    // =====================================================================
-    // Tests for mapAwards - Valid Data Processing
-    // =====================================================================
+    // Test Group: mapAwards - Valid Data Processing
 
     @Test
     public void testMapAwards_whenValidAwardRequests_thenReturnsAwardCeremonyResponseList() {
@@ -447,9 +437,7 @@ public class AwardServiceTest {
         assertEquals("Ivan", awardsCeremonyB.getFirst().getThirdPlace().getName());
     }
 
-    // =====================================================================
-    // Tests for mapAwards - Input Validation and Error Handling
-    // =====================================================================
+    // Test Group: mapAwards - Input Validation and Error Handling
 
     @Test
     public void testMapAwards_whenEmptyAwardRequestList_thenReturnsEmptyList() {
@@ -465,7 +453,7 @@ public class AwardServiceTest {
 
     @Test
     public void testMapAwards_whenNullAwardRequestList_thenThrowsValidationException() {
-        // Act & Assert
+        // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
     }
 }

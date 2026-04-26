@@ -9,5 +9,8 @@ package za.co.hpsc.web.constants;
  * </p>
  */
 public final class HpscConstants {
+    private HpscConstants() {
+    }
+
     public static final String HPSC_INPUT_DATE_FORMAT = SystemConstants.ISO_DATE_FORMAT;
 }

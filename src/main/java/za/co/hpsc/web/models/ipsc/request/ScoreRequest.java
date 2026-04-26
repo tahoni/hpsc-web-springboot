@@ -72,7 +72,7 @@ public class ScoreRequest {
     private String time;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "Deduction", required = true)
+    @JsonProperty(value = "Deduction", defaultValue = "false")
     private Boolean deduction;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "DedPctg")
@@ -87,11 +87,11 @@ public class ScoreRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "HitFactor", required = true)
+    @JsonProperty(value = "HitFactor", defaultValue = "0")
     private String hitFactor;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "FinalScore", required = true)
+    @JsonProperty(value = "FinalScore", defaultValue = "0")
     private Integer finalScore;
 
     @JacksonXmlProperty(isAttribute = true)

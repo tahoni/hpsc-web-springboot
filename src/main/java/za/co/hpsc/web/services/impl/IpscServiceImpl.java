@@ -10,20 +10,21 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchResultsDtoHolder;
-import za.co.hpsc.web.models.ipsc.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDtoHolder;
+import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.request.*;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.response.IpscResponseHolder;
 import za.co.hpsc.web.services.DomainService;
-import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.IpscService;
 import za.co.hpsc.web.services.TransactionService;
+import za.co.hpsc.web.services.TransformationService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,16 +36,16 @@ import java.util.Optional;
 @Service
 public class IpscServiceImpl implements IpscService {
 
-    protected final IpscMatchService ipscMatchService;
+    protected final TransformationService transformationService;
     protected final DomainService domainService;
     protected final TransactionService transactionService;
 
     @Value("${hpsc.web.app.club.filter.abbreviation:'HPSC'}")
     protected String filterClubIdentifier;
 
-    public IpscServiceImpl(IpscMatchService ipscMatchService,
+    public IpscServiceImpl(TransformationService transformationService,
                            DomainService domainService, TransactionService transactionService) {
-        this.ipscMatchService = ipscMatchService;
+        this.transformationService = transformationService;
         this.domainService = domainService;
         this.transactionService = transactionService;
     }
@@ -65,21 +66,22 @@ public class IpscServiceImpl implements IpscService {
                 .filter(Objects::nonNull)
                 .toList();
 
-        List<IpscMatch> ipscMatchList = new ArrayList<>();
+        List<MatchHolder> matchHolderList = new ArrayList<>();
         // Iterates the DTOs, maps them to entities, and persists the results
         for (MatchResultsDto matchResultsDto : ipscResultsList) {
             // Maps the DTO to an entity
             Optional<DtoMapping> optionalDtoToEntityMapping =
-                    domainService.initMatchEntities(matchResultsDto, filterClubIdentifier);
+                    domainService.initMatchEntities(matchResultsDto, filterClubIdentifier, null);
             if (optionalDtoToEntityMapping.isPresent()) {
                 // Persists the entity
                 DtoMapping dtoMapping = optionalDtoToEntityMapping.get();
-                transactionService.saveMatchResults(dtoMapping).ifPresent(ipscMatchList::add);
+                Optional<MatchHolder> matchHolder = transactionService.saveMatchResults(dtoMapping);
+                matchHolder.ifPresent(matchHolderList::add);
             }
 
             // Generates a match record holder for the current match and adds it to the list
             IpscMatchRecordHolder ipscMatchRecordHolder =
-                    ipscMatchService.generateIpscMatchRecordHolder(ipscMatchList);
+                    transformationService.generateIpscMatchRecordHolder(matchHolderList);
             ipscMatchRecordHolders.add(ipscMatchRecordHolder);
         }
 
@@ -114,7 +116,7 @@ public class IpscServiceImpl implements IpscService {
         }
 
         // Maps the results of each match
-        IpscResponseHolder ipscResponseHolder = ipscMatchService.mapMatchResults(ipscRequestHolder);
+        IpscResponseHolder ipscResponseHolder = transformationService.mapMatchResults(ipscRequestHolder);
         if (ipscResponseHolder == null) {
             log.error("IPSC response holder is null.");
             throw new ValidationException("IPSC response holder can not be null.");
@@ -125,7 +127,7 @@ public class IpscServiceImpl implements IpscService {
         // Iterates responses and accumulates DTOs
         for (IpscResponse ipscResponse : ipscResponseHolder.getIpscList()) {
             Optional<MatchResultsDto> optionalMatchResults =
-                    ipscMatchService.initMatchResults(ipscResponse);
+                    transformationService.initMatchResults(ipscResponse);
             optionalMatchResults.ifPresent(matchResultsList::add);
         }
 

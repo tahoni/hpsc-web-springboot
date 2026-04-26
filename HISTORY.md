@@ -21,6 +21,23 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ## 📅 Historical Timeline
 
+### Version 5.4.0 (April 26, 2026)
+
+**Theme:** Competitor Enrolment, Service Transformation & Comprehensive Test Expansion
+
+**Key Focus:**
+
+- `EnrolledCompetitorDto` introduced (138 lines) for tracking enrolled competitors through the IPSC pipeline
+- `IpscMatchService` renamed to `TransformationService`; `TransformationServiceImpl` introduced (1,098 lines)
+- `ClubIdentifier` enhanced with abbreviation field; `ClubIdentifierConverter` updated for persistence
+- Competitor SAPSA number validation and duplicate filtering added to `CompetitorDto`
+- Package restructure: `ipsc/domain` → `ipsc/data`; records and holders reorganised
+- 20+ new test classes added (~7,000 lines): controllers, converters, domain entities, exceptions, integration
+- `IpscMatchServiceTest` removed (10,076 lines); `TransformationServiceTest` introduced (1,026 lines)
+- Qodana JVM linter and JaCoCo 0.8.14 code coverage added to the CI/CD pipeline
+- Bug fixes: PCC Optics division code, ControllerAdvice error handling, ClubIdentifier abbreviation
+- Statistics: ~75 commits, 123 files changed, +12,713 insertions, -13,358 deletions
+
 ### Version 5.3.0 (March 15, 2026)
 
 **Theme:** Service Consolidation, Custom JPA Converters & Repository Optimisation
@@ -148,7 +165,7 @@ functionality.
 
 ---
 
-### 📈 Phase 2: Feature Expansion (v1.1.0 - v1.1.3)
+### 📈 Phase 2: Feature Expansion (v1.1.0 – v1.1.3)
 
 **Duration:** January 14, 2026 – January 28, 2026
 
@@ -173,7 +190,7 @@ Rapid iteration adding award processing, improving code quality, and establishin
 - Enhanced validation annotations
 - Better IDE assistance through improved documentation
 
-**v1.1.2 - Project Documentation**
+**v1.1.2 – Project Documentation**
 
 - Creation of README.md (project overview and setup)
 - Creation of ARCHITECTURE.md (detailed system design)
@@ -191,7 +208,7 @@ Rapid iteration adding award processing, improving code quality, and establishin
 
 - Formalised service layer pattern
 - Introduction of generic request/response base classes
-- Centralized error response handling
+- Centralised error response handling
 - OpenAPI integration for automatic documentation
 
 **Technical Focus:**
@@ -574,7 +591,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
     - No-argument constructor tests (3 tests)
     - MatchStageCompetitor entity constructor tests with edge cases (10 tests)
     - CompetitorDto + MatchStageDto constructor tests (6 tests)
-    - All-arguments constructor tests with 28 parameters (3 tests)
+    - All-arguments' constructor tests with 28 parameters (3 tests)
     - init() method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
     - toString() method tests with comprehensive scenarios (29 tests)
     - Edge cases: null entities, partial/full population, zero/negative/max values, enum mapping (PowerFactor,
@@ -791,6 +808,96 @@ test coverage.
 
 ---
 
+### 👥 Phase 12: Competitor Enrolment & Service Transformation (v5.4.0)
+
+**Duration:** April 26, 2026
+
+The most extensive single-release test expansion in the project's history, alongside competitor enrolment
+support, a major service renaming, and CI/CD quality gate integration.
+
+**Key Accomplishments:**
+
+**Competitor Enrolment & Members CRUD**
+
+- `EnrolledCompetitorDto` introduced (138 lines) for tracking enrolled competitors through the processing pipeline
+- Competitor SAPSA number validation via `IpscUtil` (max number check)
+- Duplicate competitor filtering in `CompetitorDto` by SAPSA number and ID
+- Updated ICS alias and competitor number constants in `IpscConstants`
+
+**Service Transformation Architecture**
+
+- `IpscMatchService` renamed to `TransformationService` for improved semantic clarity
+- `TransformationServiceImpl` introduced (1,098 lines) replacing `IpscMatchServiceImpl` (867 lines removed)
+- `MatchHolder` data class (23 lines) introduced for match data encapsulation
+- `MatchCompetitorEntityService` updated to return lists for bulk retrieval
+- `MatchStageCompetitorEntityService` enhanced with list-based retrieval
+
+**ClubIdentifier Enhancement**
+
+- Abbreviation field added to `ClubIdentifier` enum (38 lines changed)
+- `ClubIdentifierConverter` updated to use abbreviation for database persistence
+- `DomainServiceImpl` updated to use abbreviation for club lookup
+
+**Model Package Restructuring**
+
+- `domain` package renamed to `data`: `DtoMapping`, `DtoToEntityMapping`, `EntityMapping` relocated
+- Holders reorganised: `MatchResultsDto`, `MatchResultsDtoHolder` → `holders/dto`; new `IpscMatchRecordHolder`
+- Records restructured: `CompetitorMatchRecord` → `CompetitorRecord`; new `CompetitorResultRecord`,
+  `MatchCompetitorOverallResultsRecord`, `MatchCompetitorStageResultRecord`
+
+**Comprehensive Test Suite Expansion**
+
+- 20+ new test classes, ~7,000 lines of new test code — the largest single-release test expansion
+- New controller tests: `AwardControllerTest`, `ImageControllerTest`, `IpscControllerTest`,
+  `ControllerAdviceTest`
+- New converter tests: all 6 JPA attribute converters now have dedicated test classes
+- New domain entity tests: `ClubTest`, `CompetitorTest`, `IpscMatchTest`, `IpscMatchStageTest`,
+  `MatchCompetitorTest`, `MatchStageCompetitorTest`
+- New exception tests: `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`
+- New integration tests: `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`,
+  `DtoToEntityMappingIntegrationTest`
+- New service tests: `TransformationServiceTest` (1,026 lines), `MatchCompetitorDtoTest`
+- Removed: `IpscMatchServiceTest` (10,076 lines — service renamed)
+
+**CI/CD & Code Quality**
+
+- Qodana JVM linter configured in `qodana.yaml` (`jetbrains/qodana-jvm`)
+- JaCoCo 0.8.14 coverage profile added to `pom.xml`; reports to `/coverage` directory
+- `code_quality.yml` enhanced with extended branch patterns and dependency installation step
+- `qodana.yml` removed (duplicate); `.aiignore` file added
+
+**Bug Fixes**
+
+- PCC Optics division constant value corrected
+- `ControllerAdvice` error handling improved
+- `ClubIdentifierConverter` updated to use abbreviation for persistence
+- Unused firearm type assignment removed
+- Spring Framework version stabilised from 7.0.8 to 7.0.7
+
+**Statistics**
+
+- ~75 commits
+- 123 files changed
+- +12,713 insertions
+- -13,358 deletions
+- Net: -645 lines
+
+**Architecture Highlights:**
+
+- `TransformationService` replacing `IpscMatchService` for semantic clarity
+- `MatchHolder` encapsulating match data
+- List-based returns from `MatchCompetitorEntityService`
+- Qodana static analysis and JaCoCo coverage gates in CI/CD
+
+**Technical Focus:**
+
+- Competitor enrolment and SAPSA validation
+- Service renaming and semantic clarity
+- Comprehensive test suite expansion across all layers
+- CI/CD quality automation
+
+---
+
 ### 🔌 Phase 11: Service Consolidation & Type Safety (v5.3.0)
 
 **Duration:** March 15, 2026
@@ -805,7 +912,7 @@ Focused consolidation of services, introduction of custom JPA converters, and re
     - `ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`
     - `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`
 - Explicit, testable conversion logic per enum type
-- No data migration required; column values unchanged
+- No data migration required; column values are unchanged
 
 **Service Consolidation**
 
@@ -830,7 +937,7 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 
 **Repository Query Optimisation**
 
-- Added scheduled date to match retrieval for uniqueness constraints
+- Added the scheduled date to match retrieval for uniqueness constraints
 - Optimised competitor retrieval using `Set` for deduplication and performance
 - Removed unnecessary fetch joins across repository methods
 - Improved null handling in match stage competitor retrieval
@@ -993,6 +1100,20 @@ clarity.
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null
 safety, and comprehensive test coverage across all services and utilities.
+
+---
+
+### 👥 Milestone 12: Competitor Enrolment & Service Transformation (v5.4.0)
+
+- ✅ `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
+- ✅ `IpscMatchService` renamed to `TransformationService` for semantic clarity
+- ✅ SAPSA number validation and competitor deduplication in `CompetitorDto`
+- ✅ 20+ new test classes (~7,000 lines) — the largest single-release test expansion in project history
+- ✅ Qodana JVM linting and JaCoCo code coverage integrated into the CI/CD pipeline
+
+**Achievement:** Delivered the project's most comprehensive test suite expansion, introduced competitor
+enrolment support and SAPSA validation, modernised the service naming for improved clarity, and
+strengthened the CI/CD pipeline with static analysis and code coverage quality gates.
 
 ---
 
@@ -1162,6 +1283,39 @@ Entity Layer
 
 ---
 
+### v5.4.0: Transformation Service Architecture
+
+```
+       IpscController
+            ↓
+  ┌─────────┼─────────┐
+  ↓         ↓         ↓
+Service   Domain    Transformation
+Layer     Service    Service
+  ↓       (init)   (processing)
+  ↓         ↓    MatchHolder ↓
+  ↓    DtoToEntity   ↓
+  ↓     Mapping      ↓
+  ↓    (data pkg)    ↓
+  ↓         ↓        ↓
+Repository Layer
+  ↓  (List-based returns)
+Entity Layer
+  ↓
+AttributeConverters
+(ClubIdentifier uses abbreviation)
+```
+
+**Characteristics:**
+
+- `TransformationService` replacing `IpscMatchService` for semantic clarity
+- `MatchHolder` encapsulating match data passing
+- `MatchCompetitorEntityService` returns lists for bulk operations
+- `domain` package renamed to `data` for mapping classes
+- CI/CD quality gates: Qodana JVM static analysis + JaCoCo coverage
+
+---
+
 ### v5.3.0: Consolidated Service Architecture
 
 ```
@@ -1197,6 +1351,8 @@ AttributeConverters
 
 ---
 
+## ✨ Feature Timeline
+
 ### 📊 Data Processing Features
 
 - **v1.0.0:** Image CSV processing, MIME type inference
@@ -1207,6 +1363,7 @@ AttributeConverters
 - **v5.0.0:** Entity initialisation framework, record generation
 - **v5.2.0:** Three-tier mapping architecture, enhanced match entity handling
 - **v5.3.0:** Custom JPA converters; optimised repository queries; `Set`-based competitor deduplication
+- **v5.4.0:** `EnrolledCompetitorDto`; SAPSA number validation; competitor deduplication by SAPSA+ID
 
 ### 🏛️ Domain Management Features
 
@@ -1219,6 +1376,8 @@ AttributeConverters
 - **v5.2.0:** DtoMapping, EntityMapping, DtoToEntityMapping, MatchEntityService
 - **v5.3.0:** Custom AttributeConverters for all enums; DtoMapping as Java record; corrected
   `@OneToMany` mappedBy declarations; ClubEntityService simplified
+- **v5.4.0:** `EnrolledCompetitorDto`; `ClubIdentifier` abbreviation; records' restructuring;
+  `domain` → `data` package; `MatchHolder`; `TransformationService`
 
 ### 🌐 API Capabilities
 
@@ -1230,7 +1389,8 @@ AttributeConverters
 - **v4.1.0:** Complete CRUD endpoints
 - **v5.0.0:** Mature API with record generation
 - **v5.2.0:** Enhanced null safety with Optional return types
-- **v5.3.0:** Consolidated service API; IpscMatchResultService removed from internal contract
+- **v5.3.0:** Consolidated service API; IpscMatchResultService removed from the internal contract
+- **v5.4.0:** Improved error handling in ControllerAdvice; IpscController updates
 
 ### 🧪 Testing Coverage
 
@@ -1269,6 +1429,15 @@ AttributeConverters
     - IpscServiceIntegrationTest: 113 lines changed – `importWinMssCabFile` integration tests
     - Removed IpscMatchResultServiceTest (1,802 lines) – service deleted
     - Removed ScoreDtoTest (643 lines) – class deleted
+- **v5.4.0:** Largest single-release test expansion in project history
+    - 20+ new test classes, ~7,000 lines of new test code
+    - New controller tests (4), converter tests (6), domain entity tests (6), exception tests (3)
+    - New integration tests (3): `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`,
+      `DtoToEntityMappingIntegrationTest`
+    - New service tests: `TransformationServiceTest` (1,026 lines), `MatchCompetitorDtoTest`
+    - Removed `IpscMatchServiceTest` (10,076 lines – service renamed to `TransformationService`)
+    - Updated major suites: DomainServiceTest (1,428), TransactionServiceTest (1,736),
+      IpscServiceIntegrationTest (649), IpscServiceTest (737)
 
 ### 📚 Documentation Quality
 
@@ -1280,6 +1449,8 @@ AttributeConverters
 - **v5.2.0:** Comprehensive release documentation with breaking changes analysis
 - **v5.3.0:** v5.3.0 release notes, changelog entry, history update; Javadoc for
   `IpscMatchStage.init()` and `findMatchByNameAndScheduledDate`
+- **v5.4.0:** v5.4.0 release notes, changelog entry, history update; Javadoc on `EnrolledCompetitorDto`
+  and `TransformationService` interface
 
 ---
 
@@ -1294,7 +1465,7 @@ AttributeConverters
 - Create basic API endpoints
 - Error handling foundation
 
-### 📈 Growth Phase (v1.1.0 - v2.0.0)
+### 📈 Growth Phase (v1.1.0 – v2.0.0)
 
 **Focus:** Feature Expansion & Modularity
 
@@ -1303,7 +1474,7 @@ AttributeConverters
 - Establish documentation standards
 - Improve code quality
 
-### 🎯 Specialisation Phase (v3.0.0 - v4.0.0)
+### 🎯 Specialisation Phase (v3.0.0 – v4.0.0)
 
 **Focus:** IPSC Domain Compliance & Quality
 
@@ -1312,7 +1483,7 @@ AttributeConverters
 - Comprehensive testing
 - Production readiness
 
-### 🚀 Maturity Phase (v4.1.0 - v5.0.0)
+### 🚀 Maturity Phase (v4.1.0 – v5.0.0)
 
 **Focus:** Completeness, Standards & Infrastructure
 
@@ -1321,7 +1492,7 @@ AttributeConverters
 - Infrastructure consolidation
 - Entity initialisation framework
 
-### 🔬 Refinement Phase (v5.1.0 - v5.2.0)
+### 🔬 Refinement Phase (v5.1.0 – v5.2.0)
 
 **Focus:** Quality, Architecture & Maintainability
 
@@ -1344,6 +1515,17 @@ AttributeConverters
 - Correct JPA bidirectional relationship declarations
 - Repository query optimisation for performance and accuracy
 - Continued test suite refinement and integration test expansion
+
+### 👥 Enrolment Phase (v5.4.0)
+
+**Focus:** Competitor Enrolment, Service Clarity & Comprehensive Test Coverage
+
+- Introduce `EnrolledCompetitorDto` for member enrolment tracking through the IPSC pipeline
+- Rename `IpscMatchService` to `TransformationService` for semantic accuracy
+- SAPSA number validation and competitor deduplication in `CompetitorDto`
+- Expand test coverage to all layers — controllers, converters, entities, exceptions, integration
+- Establish Qodana JVM linting and JaCoCo coverage as CI/CD quality gates
+- Package reorganisation (`domain` → `data`) and records restructuring for semantic clarity
 
 ---
 
@@ -1411,6 +1593,13 @@ AttributeConverters
     - Repository queries optimised: `Set` deduplication, scheduled date constraints, fetch join removal
     - Test suite overhaul: DomainServiceTest (+787 lines), IpscMatchServiceTest (3,156 lines changed)
     - Statistics: ~45 commits, 59 files changed, +5,686 insertions, -4,613 deletions
+10. **Competitor Enrolment & Service Transformation (v5.4.0):** Largest single-release test expansion
+    - `EnrolledCompetitorDto` introduced for competitor enrolment tracking; SAPSA validation added
+    - `IpscMatchService` renamed to `TransformationService`; `TransformationServiceImpl` (1,098 lines)
+    - `ClubIdentifier` abbreviation field added; `ClubIdentifierConverter` updated for persistence
+    - 20+ new test classes (~7,000 lines) across controllers, converters, entities, exceptions, integration
+    - Qodana JVM linting and JaCoCo 0.8.14 code coverage integrated into CI/CD
+    - Statistics: ~75 commits, 123 files changed, +12,713 insertions, -13,358 deletions
 
 ---
 
@@ -1418,7 +1607,19 @@ AttributeConverters
 
 Based on the evolution to v5.3.0, the following areas are identified for future enhancement:
 
-### ✅ Recently Completed (v5.3.0)
+### ✅ Recently Completed (v5.4.0)
+
+- ✅ `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
+- ✅ `IpscMatchService` renamed to `TransformationService`; `TransformationServiceImpl` (1,098 lines)
+- ✅ `ClubIdentifier` abbreviation field added; `ClubIdentifierConverter` updated
+- ✅ SAPSA number validation and competitor deduplication in `CompetitorDto`
+- ✅ 20+ new test classes (~7,000 lines) — the largest single-release expansion
+- ✅ Qodana JVM linting (`jetbrains/qodana-jvm`) integrated into CI/CD
+- ✅ JaCoCo 0.8.14 code coverage profile added; reports to `/coverage`
+- ✅ Package restructure: `ipsc/domain` → `ipsc/data`; records and holders reorganised
+- ✅ PCC Optics division constant and ControllerAdvice error handling fixed
+
+### ✅ Previously Completed (v5.3.0)
 
 - ✅ Six custom JPA attribute converters (ClubIdentifier, CompetitorCategory, Division, FirearmType,
   MatchCategory, PowerFactor)
@@ -1480,30 +1681,54 @@ platform for managing practical shooting competition data. This evolution demons
 - **Standards Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
 - **Code Maintainability:** Systematic refinement of test organisation, consolidation, and architectural
-  separation (v5.1.0, v5.2.0, v5.3.0)
+  separation (v5.1.0, v5.2.0, v5.3.0, v5.4.0)
 - **Type Safety:** Custom JPA converters ensuring explicit, testable enum persistence (v5.3.0)
 - **Service Simplicity:** Removal of unnecessary abstractions for cleaner, more cohesive architecture
-  (v5.3.0)
+  (v5.3.0, v5.4.0)
+- **Competitor Enrolment:** First-class tracking of competitor participation through dedicated DTOs and
+  validation workflows (v5.4.0)
+- **CI/CD Quality Gates:** Qodana JVM static analysis and JaCoCo coverage enforcement raising the quality
+  baseline across the entire codebase (v5.4.0)
 
 The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major
-architectural refactoring in v5.2.0, and the service consolidation with custom converters in v5.3.0 mark
-significant maturation points where the project demonstrates stable, predictable releases with clear
-separation of concerns. These releases serve as a solid foundation for the shooting club's digital
-operations, with a clear commitment to long-term maintainability and quality.
+architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, and the
+competitor enrolment system with service transformation in v5.4.0 mark significant maturation points where
+the project demonstrates stable, predictable releases with clear separation of concerns. These releases
+serve as a solid foundation for the shooting club's digital operations, with a clear commitment to
+long-term maintainability and quality.
 
 Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity
 relationships, optimised repositories, and a consolidated service architecture that reduces complexity
 without sacrificing capability.
 
+Version 5.4.0 extends that foundation with competitor enrolment tracking, SAPSA number validation,
+`TransformationService` replacing `IpscMatchService`, a comprehensive package restructure from
+`ipsc/domain` to `ipsc/data`, and a significant test expansion — all underpinned by Qodana JVM static
+analysis and JaCoCo code coverage enforcement that set a new quality baseline for the project.
+
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** March 15, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.3.0 (March 15, 2026)  
+**Last Updated:** April 26, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.4.0 (April 26, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for
 detailed technical information
 
-**Recent Updates (v5.3.0):**
+**Recent Updates (v5.4.0):**
+
+- `EnrolledCompetitorDto` introduced for first-class competitor enrolment tracking
+- SAPSA number validation and competitor deduplication logic was added
+- `IpscMatchService` renamed to `TransformationService` for clearer intent
+- Package restructure: `ipsc/domain` → `ipsc/data` across all entities, repositories, and services
+- `CompetitorMatchRecord` split into `CompetitorRecord`, `CompetitorResultRecord`,
+  `MatchCompetitorOverallResultsRecord`, and `MatchCompetitorStageResultRecord`
+- `MatchHolder` data class introduced for match context management
+- `ClubIdentifier` enum extended with abbreviation field
+- Qodana JVM linter (`jetbrains/qodana-jvm:2025.3`) and JaCoCo 0.8.14 code coverage added
+- Significant test expansion across integration and unit test suites
+- Statistics: ~75 commits, 123 files changed, +12,713 insertions, -13,358 deletions
+
+**Previous Update (v5.3.0):**
 
 - Six custom JPA attribute converters replacing `@Enumerated(EnumType.STRING)` across all enum-mapped fields
 - Complete removal of `IpscMatchResultService` (interface + implementation, 379 lines) and `ScoreDto`

@@ -11,6 +11,8 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -31,7 +33,7 @@ import java.util.UUID;
 public class CompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
-    private Integer index;
+    private transient List<Integer> indexes = new ArrayList<>();
 
     @NotNull
     private String firstName = "";
@@ -82,7 +84,7 @@ public class CompetitorDto {
     public void init(MemberResponse memberResponse) {
         if (memberResponse != null) {
             // Initialises competitor details
-            this.index = memberResponse.getMemberId();
+            this.indexes.add(memberResponse.getMemberId());
 
             // Initialises competitor attributes
             this.firstName = memberResponse.getFirstName().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX,
@@ -97,7 +99,10 @@ public class CompetitorDto {
             this.competitorNumber = memberResponse.getIcsAlias();
             if ((NumberUtils.isCreatable(memberResponse.getIcsAlias())) &&
                     (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(memberResponse.getIcsAlias()))) {
-                this.sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+                int sapsaNumber = Integer.parseInt(memberResponse.getIcsAlias());
+                if (sapsaNumber <= IpscConstants.MAX_SAPSA_NUMBER) {
+                    this.sapsaNumber = sapsaNumber;
+                }
             } else {
                 this.sapsaNumber = null;
             }
@@ -122,7 +127,7 @@ public class CompetitorDto {
         String lastNameString = ((this.lastName != null) ? this.lastName.trim() : "");
         String middleNamesString = ((this.middleNames != null) ? this.middleNames.trim() : "");
 
-        String result = "";
+        String result;
         if (!middleNamesString.isBlank()) {
             result = firstNameString + " " + middleNamesString + " " + lastNameString;
         } else {

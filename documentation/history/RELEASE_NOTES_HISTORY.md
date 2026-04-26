@@ -1,31 +1,131 @@
 # Release Notes History
 
 A complete archive of all release notes for the HPSC Website Backend project from version 1.0.0 through
-version 5.3.0, documenting the evolution of features, improvements, and changes across the entire project
+version 5.4.0, documenting the evolution of features, improvements, and changes across the entire project
 lifecycle.
 
 ---
 
 ## 📑 Table of Contents
 
-- [🧾 Version 5.3.0](#-version-530---march-15-2026) ← Current Release
-- [🧾 Version 5.2.0](#-version-520---february-27-2026)
-- [🧾 Version 5.1.0](#-version-510---february-25-2026)
+- [🧾 Version 5.4.0](#-version-540---april-26-2026) ← Current Release
+- [🧾 Version 5.3.0](#-version-530--march-15-2026)
+- [🧾 Version 5.2.0](#-version-520--february-27-2026)
+- [🧾 Version 5.1.0](#-version-510--february-25-2026)
 - [🧾 Version 5.0.0](#-version-500---february-24-2026)
-- [🧾 Version 4.1.0](#-version-410---february-13-2026)
-- [🧾 Version 4.0.0](#-version-400---february-11-2026)
-- [🧾 Version 3.1.0](#-version-310---february-10-2026)
-- [🧾 Version 3.0.0](#-version-300---february-10-2026)
+- [🧾 Version 4.1.0](#-version-410--february-13-2026)
+- [🧾 Version 4.0.0](#-version-400--february-11-2026)
+- [🧾 Version 3.1.0](#-version-310--february-10-2026)
+- [🧾 Version 3.0.0](#-version-300--february-10-2026)
 - [🧾 Version 2.0.0](#-version-200---february-8-2026)
 - [🧾 Version 1.1.3](#-version-113---january-28-2026)
-- [🧾 Version 1.1.2](#-version-112---january-20-2026)
-- [🧾 Version 1.1.1](#-version-111---january-16-2026)
-- [🧾 Version 1.1.0](#-version-110---january-14-2026)
+- [🧾 Version 1.1.2](#-version-112--january-20-2026)
+- [🧾 Version 1.1.1](#-version-111--january-16-2026)
+- [🧾 Version 1.1.0](#-version-110--january-14-2026)
 - [🧾 Version 1.0.0](#-version-100---january-4-2026)
 
 ---
 
-## 🧾 Version 5.3.0 - March 15, 2026
+## 🧾 Version 5.4.0 - April 26, 2026
+
+**Theme:** Competitor Enrolment, Service Transformation & Comprehensive Test Expansion
+
+### 📖 Overview
+
+Version 5.4.0 delivers a significant expansion of member and competitor handling capabilities, a major
+service-layer architectural transformation, and the most extensive test suite growth in the project's
+history. This release introduces `EnrolledCompetitorDto` for tracking enrolled competitors through the
+IPSC processing pipeline; renames and restructures `IpscMatchService` into the more descriptive
+`TransformationService`; enhances the `ClubIdentifier` enum with abbreviation support; adds SAPSA
+number validation and duplicate competitor filtering; and reorganises the model package hierarchy for
+improved clarity. The release also introduces twenty-plus new test classes covering controllers, converters,
+domain entities, exception types, models, and service integration, along with improved CI/CD pipelines
+featuring Qodana JVM linting and JaCoCo code coverage integration.
+
+### ⭐ Key Highlights
+
+#### 👥 Competitor Enrolment & Members CRUD
+
+- **`EnrolledCompetitorDto` introduced:** New DTO (138 lines) capturing the full enrolled competitor
+  profile through the IPSC processing pipeline with comprehensive Javadoc
+- **Competitor duplicate filtering:** `CompetitorDto` enhanced to deduplicate competitors based on SAPSA
+  number and ID via `IpscUtil`
+- **SAPSA number validation:** Maximum SAPSA number validation enforced during competitor loading
+- **ICS alias value updates:** Updated ICS alias and competitor number constants in `IpscConstants`
+
+#### 🏗️ Service Transformation Architecture
+
+- **`IpscMatchService` renamed to `TransformationService`:** Interface and implementation restructured for
+  improved semantic clarity
+    - `TransformationServiceImpl` introduced (1,098 lines) replacing `IpscMatchServiceImpl` (867 lines removed)
+    - Interface updated with comprehensive Javadoc and improved method naming
+- **`MatchHolder` introduced:** New data class (23 lines) for match data encapsulation
+- **`MatchCompetitorEntityService`:** Updated to return lists for bulk competitor retrieval
+- **`MatchStageCompetitorEntityService`:** Enhanced with list-based retrieval
+
+#### 🏷️ ClubIdentifier Enhancement
+
+- **Abbreviation field added** (38 lines changed) – each club identifier now carries a dedicated abbreviation
+- **`ClubIdentifierConverter`** updated to use abbreviation for database persistence
+- **`DomainServiceImpl`** updated to use abbreviation for club lookup
+- No database schema migration required
+
+#### 📦 Model Package Restructuring
+
+- **`domain` package renamed to `data`:** `DtoMapping`, `DtoToEntityMapping`, `EntityMapping` moved from
+  `ipsc/domain` to `ipsc/data`
+- **Holders reorganised:** `MatchResultsDto`, `MatchResultsDtoHolder`, `IpscRequestHolder`,
+  `IpscResponseHolder` moved to dedicated `holders` sub-packages; new `IpscMatchRecordHolder` added
+- **Records restructured:** `CompetitorMatchRecord` → `CompetitorRecord`; new `CompetitorResultRecord`,
+  `MatchCompetitorOverallResultsRecord`, and `MatchCompetitorStageResultRecord` introduced; `MatchCompetitorRecord`
+  removed
+
+#### 🧪 Comprehensive Test Suite Expansion
+
+The most extensive single-release test expansion in the project's history — over 7,000 lines of new test
+code across 20+ new test classes:
+
+- **Controller tests (4 new):** `AwardControllerTest`, `ImageControllerTest`, `IpscControllerTest`,
+  `ControllerAdviceTest`
+- **Converter tests (6 new):** All 6 JPA attribute converters now have dedicated test classes
+- **Domain entity tests (6 new):** `ClubTest`, `CompetitorTest`, `IpscMatchTest`, `IpscMatchStageTest`,
+  `MatchCompetitorTest`, `MatchStageCompetitorTest`
+- **Exception tests (3 new):** `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`
+- **Model & utility tests (7 new):** Including `EnrolledCompetitorDtoTest`, `AwardRequestForCSVTest`,
+  `ValueUtilTest`, and others
+- **Integration tests (3 new):** `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`,
+  `DtoToEntityMappingIntegrationTest`
+- **Service tests (2 new):** `TransformationServiceTest` (1,026 lines), `MatchCompetitorDtoTest`
+- **Removed:** `IpscMatchServiceTest` (10,076 lines – service renamed)
+
+#### 🔄 Code Quality & CI/CD
+
+- **Qodana JVM Linter:** `qodana.yaml` configured with `jetbrains/qodana-jvm` for JVM-targeted static analysis
+- **JaCoCo 0.8.14:** Coverage profile added to `pom.xml`; reports output to `/coverage` directory
+- **Code quality workflow:** Branch patterns extended (feature, bugfix, hotfix); dependency installation added
+- **`qodana.yml` removed:** Duplicate configuration eliminated
+
+#### 🐛 Bug Fixes
+
+- **PCC Optics division code:** Fixed incorrect division constant value in `IpscConstants`
+- **`ControllerAdvice` error handling:** Fixed exception handler methods for improved response management
+- **`ClubIdentifierConverter`:** Updated to correctly use abbreviation for database persistence
+- **Unused firearm type assignment** removed from the match processing path
+
+### 📊 Statistics
+
+- **~75 commits**, **123 files changed**
+- **+12,713 insertions**, **-13,358 deletions**
+- **Net: -645 lines**
+- **New Test Files: 20+**, **Test Lines Added: ~7,000**
+
+### 🔄 Backward Compatibility
+
+✅ **FULLY BACKWARD COMPATIBLE** – No breaking changes to public APIs, safe for direct upgrade
+
+---
+
+## 🧾 Version 5.3.0 – March 15, 2026
 
 **Theme:** Service Consolidation, Custom JPA Converters & Repository Optimisation
 
@@ -88,7 +188,7 @@ full backward compatibility.
 
 ---
 
-## 🧾 Version 5.2.0 - February 27, 2026
+## 🧾 Version 5.2.0 – February 27, 2026
 
 **Theme:** Match Results Processing Enhancement & Architecture Refactoring
 
@@ -136,27 +236,24 @@ entities while maintaining full backward compatibility.
 
 ---
 
-## 🧾 Version 5.1.0 - February 25, 2026
+## 🧾 Version 5.1.0 – February 25, 2026
 
 **Theme:** Test Suite Enhancement & Code Quality Consolidation
 
 ### 📖 Overview
 
 Version 5.1.0 focuses on strengthening the project's test infrastructure through comprehensive test
-reorganisation,
-elimination of duplicate test cases, and improved test organisation patterns. This release consolidates gains
-from
-version 5.0.0's semantic versioning transition and builds upon the extensive testing frameworks established in
-recent releases, delivering enhanced test maintainability and clarity while maintaining full backward
-compatibility.
+reorganisation, elimination of duplicate test cases, and improved test organisation patterns. This release
+consolidates gains from version 5.0.0's semantic versioning transition and builds upon the extensive testing
+frameworks established in recent releases, delivering enhanced test maintainability and clarity while
+maintaining full backward compatibility.
 
 ### ⭐ Key Highlights
 
 #### 🧪 Test Suite Refactoring
 
 - **Test organisation enhancement:** Comprehensive reorganisation of `IpscMatchResultServiceImplTest` with
-  logical
-  test grouping by functionality
+  logical test grouping by functionality
 - **Duplicate elimination:** Removal of duplicate test cases ensuring a cleaner, more maintainable test suite
 - **Section-based structure:** Introduction of clearly defined test sections for improved navigation:
     - Null Input Handling
@@ -191,8 +288,8 @@ The `IpscMatchResultServiceImplTest` class now features improved structure with 
 2. **Null Collections and Fields** – Comprehensive null handling for collections and individual fields
 3. **Match Name Field Handling** – Specific tests for match name null/empty/blank scenarios
 4. **Club Fields Handling** – Dedicated tests for club name and club code field variations
-5. **Partial and Complete Data Scenarios** - Consolidated section covering all data composition levels
-6. **Edge Cases** - Advanced scenarios including null entries, special characters, large datasets
+5. **Partial and Complete Data Scenarios** – Consolidated section covering all data composition levels
+6. **Edge Cases** – Advanced scenarios including null entries, special characters, large datasets
 
 #### 🔄 Duplicate Test Elimination
 
@@ -497,7 +594,7 @@ No migration required. Version 5.0.0 is a drop-in replacement for version 4.1.0.
 
 ---
 
-## 🧾 Version 4.1.0 - February 13, 2026
+## 🧾 Version 4.1.0 – February 13, 2026
 
 **Theme:** CRUD Enhancement & API Maturity
 
@@ -586,7 +683,7 @@ Comprehensive unit and integration tests for all CRUD operations
 
 ---
 
-## 🧾 Version 4.0.0 - February 11, 2026
+## 🧾 Version 4.0.0 – February 11, 2026
 
 **Theme:** Domain Refactoring & Quality Assurance
 
@@ -705,7 +802,7 @@ Comprehensive unit and integration tests covering:
 
 ---
 
-## 🧾 Version 3.1.0 - February 10, 2026
+## 🧾 Version 3.1.0 – February 10, 2026
 
 **Theme:** Exception Handling Consolidation
 
@@ -748,7 +845,7 @@ fixing critical bugs in XML parsing while maintaining backward compatibility.
 
 ---
 
-## 🧾 Version 3.0.0 - February 10, 2026
+## 🧾 Version 3.0.0 – February 10, 2026
 
 **Theme:** Domain Model Restructuring & IPSC Specialisation
 
@@ -862,7 +959,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 
 - Comprehensive validation at the service layer
 - Error responses for all operations
-- Input sanitization
+- Input sanitisation
 
 ### 🧪 Testing Summary
 
@@ -897,8 +994,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 ### 📖 Overview
 
 Improved maintainability and clarity through expanded Javadoc coverage and the introduction of centralised
-mapping
-patterns.
+mapping patterns.
 
 ### ⭐ Key Highlights
 
@@ -939,7 +1035,7 @@ patterns.
 
 ---
 
-## 🧾 Version 1.1.2 - January 20, 2026
+## 🧾 Version 1.1.2 – January 20, 2026
 
 **Theme:** Project Documentation
 
@@ -984,7 +1080,7 @@ and deploy workflows.
 
 ---
 
-## 🧾 Version 1.1.1 - January 16, 2026
+## 🧾 Version 1.1.1 – January 16, 2026
 
 **Theme:** API Clarity & Javadoc Standardisation
 
@@ -1019,7 +1115,7 @@ components.
 
 ### 📚 Documentation
 
-- Standardized Javadoc across codebase
+- Standardised Javadoc across codebase
 - API documentation enhancements
 - Clear method and parameter documentation
 
@@ -1039,7 +1135,7 @@ components.
 #### Model Layer Documentation
 
 - **Javadoc annotations:** Improved annotations and validation constraints across models
-- **Nullability descriptions:** Standardized descriptions to improve IDE assistance
+- **Nullability descriptions:** Standardised descriptions to improve IDE assistance
 - **API documentation:** Enhanced clarity for OpenAPI documentation generation
 
 ### Impact
@@ -1050,7 +1146,7 @@ components.
 
 ---
 
-## 🧾 Version 1.1.0 - January 14, 2026
+## 🧾 Version 1.1.0 – January 14, 2026
 
 **Theme:** Award Processing & Core Model Refactoring
 
@@ -1072,9 +1168,9 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 #### 📦 Core Model Refactoring
 
 - **Base classes:** Introduced generic `Request` and `Response` base classes for metadata standardisation
-- **Error handling:** Standardized error responses using new `ErrorResponse` model
+- **Error handling:** Standardised error responses using new `ErrorResponse` model
 - **Validation:** Enhanced field validation across all models using `@NotNull` and `@NotBlank`
-- **Utilities:** Introduced `ValueUtil` for consistent null-to-default initialization
+- **Utilities:** Introduced `ValueUtil` for consistent null-to-default initialisation
 
 ### 📚 API Documentation
 
@@ -1113,8 +1209,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 Introduced the initial release of the HPSC Website Backend with a focus on robust image gallery
 functionality in a Spring Boot application, including CSV-based image data processing, improved error
-handling,
-and better maintainability.
+handling, and better maintainability.
 
 ### ⭐ Key Highlights
 
@@ -1185,24 +1280,39 @@ and better maintainability.
 
 ## 📊 Version Progression Summary
 
-| Version   | Date         | Theme                          | Key Focus                    |
-|-----------|--------------|--------------------------------|------------------------------|
-| **5.1.0** | Feb 25, 2026 | Test Suite Enhancement         | Code quality consolidation   |
-| **5.0.0** | Feb 24, 2026 | Semantic Versioning Transition | Infrastructure consolidation |
-| **4.1.0** | Feb 13, 2026 | CRUD Enhancement               | API maturity                 |
-| **4.0.0** | Feb 11, 2026 | Domain Refactoring             | Quality assurance            |
-| **3.1.0** | Feb 10, 2026 | Exception Consolidation        | Code simplification          |
-| **3.0.0** | Feb 10, 2026 | Domain Specialisation          | IPSC alignment               |
-| **2.0.0** | Feb 8, 2026  | Service Architecture           | Modularity                   |
-| **1.1.3** | Jan 28, 2026 | Documentation                  | Mapper centralization        |
-| **1.1.2** | Jan 20, 2026 | Documentation                  | Project guides               |
-| **1.1.1** | Jan 16, 2026 | API Clarity                    | Javadoc                      |
-| **1.1.0** | Jan 14, 2026 | Award Processing               | Core refactoring             |
-| **1.0.0** | Jan 4, 2026  | Foundation                     | Image gallery                |
+| Version   | Date         | Theme                              | Key Focus                    |
+|-----------|--------------|------------------------------------|------------------------------|
+| **5.4.0** | Apr 26, 2026 | Enrolment & Service Transformation | Test expansion & CI/CD       |
+| **5.3.0** | Mar 15, 2026 | Service Consolidation & Converters | JPA type safety              |
+| **5.2.0** | Feb 27, 2026 | Architecture Refactoring           | Three-tier mapping           |
+| **5.1.0** | Feb 25, 2026 | Test Suite Enhancement             | Code quality consolidation   |
+| **5.0.0** | Feb 24, 2026 | Semantic Versioning Transition     | Infrastructure consolidation |
+| **4.1.0** | Feb 13, 2026 | CRUD Enhancement                   | API maturity                 |
+| **4.0.0** | Feb 11, 2026 | Domain Refactoring                 | Quality assurance            |
+| **3.1.0** | Feb 10, 2026 | Exception Consolidation            | Code simplification          |
+| **3.0.0** | Feb 10, 2026 | Domain Specialisation              | IPSC alignment               |
+| **2.0.0** | Feb 8, 2026  | Service Architecture               | Modularity                   |
+| **1.1.3** | Jan 28, 2026 | Documentation                      | Mapper centralization        |
+| **1.1.2** | Jan 20, 2026 | Documentation                      | Project guides               |
+| **1.1.1** | Jan 16, 2026 | API Clarity                        | Javadoc                      |
+| **1.1.0** | Jan 14, 2026 | Award Processing                   | Core refactoring             |
+| **1.0.0** | Jan 4, 2026  | Foundation                         | Image gallery                |
 
 ---
 
 ## ⚠️ Breaking Changes by Version
+
+### 🧾 Version 5.4.0
+
+- ✅ **No breaking changes**
+
+### 🧾 Version 5.3.0
+
+- ✅ **No breaking changes**
+
+### 🧾 Version 5.2.0
+
+- ✅ **No breaking changes**
 
 ### 🧾 Version 5.1.0
 
@@ -1234,7 +1344,7 @@ and better maintainability.
 - ⚠️ **Removed legacy response models** (replaced with DTOs)
 - ⚠️ **Removed `Club` entity** (replaced with `ClubReference` enum)
 
-### 🧾 Versions 1.0.0 - 1.1.3
+### 🧾 Versions 1.0.0–1.1.3
 
 - ✅ **No breaking changes**
 
@@ -1242,31 +1352,35 @@ and better maintainability.
 
 ## 📈 Cumulative Feature Matrix
 
-| Feature               | v1.0.0 | v1.1.0 | v1.1.1 | v1.1.2 | v1.1.3 | v2.0.0 | v3.0.0 | v3.1.0 | v4.0.0 | v4.1.0 | v5.0.0 | v5.1.0 |
-|-----------------------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
-| Image Gallery         | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      |
-| Award Processing      |        | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      |
-| Match Management      |        |        |        |        |        | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      |
-| IPSC Integration      |        |        |        |        |        | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      |
-| Competitor Tracking   |        |        |        |        |        | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      |
-| OpenAPI Documentation |        | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      | ✅      |
-| CRUD Operations       |        |        |        |        |        |        |        |        |        | ✅      | ✅      | ✅      |
-| Semantic Versioning   |        |        |        |        |        |        |        |        |        |        | ✅      | ✅      |
-| Test Organisation     |        |        |        |        |        |        |        |        |        |        |        | ✅      |
+| Feature               | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 |
+|-----------------------|------|------|------|------|------|------|------|------|------|------|------|
+| Image Gallery         | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Award Processing      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Match Management      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| IPSC Integration      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Competitor Tracking   |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| OpenAPI Documentation |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| CRUD Operations       |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Semantic Versioning   |      |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Test Organisation     |      |      |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    |
+| Three-Tier Mapping    |      |      |      |      |      |      |      |      | ✅    | ✅    | ✅    |
+| Custom JPA Converters |      |      |      |      |      |      |      |      |      | ✅    | ✅    |
+| Competitor Enrolment  |      |      |      |      |      |      |      |      |      |      | ✅    |
+| SAPSA Validation      |      |      |      |      |      |      |      |      |      |      | ✅    |
 
 ---
 
 ## 📚 Documentation Evolution
 
-| Document                    | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v5.0 | v5.1 |
-|-----------------------------|------|------|------|------|------|------|------|
-| README.md                   |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| ARCHITECTURE.md             |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| CHANGELOG.md                |      |      |      |      |      | ✅    | ✅    |
-| RELEASE_NOTES.md            |      |      |      |      |      | ✅    | ✅    |
-| HISTORY.md                  |      |      |      |      |      | ✅    | ✅    |
-| API Documentation (OpenAPI) |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| Javadoc                     | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Document                    | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 |
+|-----------------------------|------|------|------|------|------|------|------|------|------|------|
+| README.md                   |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| ARCHITECTURE.md             |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| CHANGELOG.md                |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
+| RELEASE_NOTES.md            |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
+| HISTORY.md                  |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
+| API Documentation (OpenAPI) |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Javadoc                     | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
 
 ---
 
@@ -1282,6 +1396,9 @@ and better maintainability.
 | v4.1.0  | Very Comprehensive | Very Extensive    | ~80%          | Basic             |
 | v5.0.0  | Comprehensive      | Extensive         | ~85%          | Basic             |
 | v5.1.0  | Comprehensive      | Extensive         | ~85%          | Advanced          |
+| v5.2.0  | Comprehensive      | Very Extensive    | ~90%          | Advanced          |
+| v5.3.0  | Comprehensive      | Very Extensive    | ~90%          | Advanced          |
+| v5.4.0  | Very Comprehensive | Very Extensive    | ~92%          | Advanced          |
 
 ---
 
@@ -1289,59 +1406,62 @@ and better maintainability.
 
 ### 🏢 Spring Boot Evolution
 
-- **v1.0.0 - v1.1.2:** Spring Boot 4.0.2
-- **v1.1.3 – v5.0.0:** Spring Boot 4.0.3 (security patch)
+- **v1.0.0 – v1.1.2:** Spring Boot 4.0.2
+- **v1.1.3 – v5.3.0:** Spring Boot 4.0.3 (security patch)
+- **v5.3.0:** Upgraded to Spring Boot 4.1.0-SNAPSHOT (snapshot repository added)
 
 ### ☕ Java Version
 
-- **v1.0.0 - v5.0.0:** Java 25
+- **v1.0.0 – v5.4.0:** Java 25
 
-### 📚 Key Library Versions (Maintained)
+### 📚 Key Library Versions
 
 - **Hibernate:** 7.2
 - **Jackson:** Latest stable
 - **Lombok:** Latest stable
 - **SpringDoc OpenAPI:** 2.8.5
+- **JaCoCo:** 0.8.14 (added v5.4.0)
+- **Spring Framework:** 7.0.7 (stabilised in v5.4.0 from 7.0.8)
 
 ---
 
 ## ⚡ Performance & Scalability Evolution
 
-| Aspect               | v1.0.0  | v2.0.0    | v3.0.0    | v4.0.0    | v5.0.0    | v5.1.0    |
-|----------------------|---------|-----------|-----------|-----------|-----------|-----------|
-| Entity Fetching      | Basic   | Optimised | Optimised | Optimised | Advanced  | Advanced  |
-| Transaction Handling | Basic   | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
-| Memory Efficiency    | Good    | Excellent | Excellent | Excellent | Excellent | Excellent |
-| Error Recovery       | Basic   | Good      | Good      | Good      | Good      | Good      |
-| Batch Processing     | Limited | Supported | Supported | Supported | Advanced  | Advanced  |
-| Test Organisation    | Basic   | Basic     | Basic     | Basic     | Basic     | Advanced  |
+| Aspect               | v1.0.0  | v2.0.0    | v3.0.0    | v4.0.0    | v5.0.0    | v5.1.0    | v5.2.0    | v5.3.0    | v5.4.0    |
+|----------------------|---------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+| Entity Fetching      | Basic   | Optimised | Optimised | Optimised | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
+| Transaction Handling | Basic   | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
+| Memory Efficiency    | Good    | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent |
+| Error Recovery       | Basic   | Good      | Good      | Good      | Good      | Good      | Good      | Good      | Good      |
+| Batch Processing     | Limited | Supported | Supported | Supported | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
+| Test Organisation    | Basic   | Basic     | Basic     | Basic     | Basic     | Advanced  | Advanced  | Advanced  | Advanced  |
+| CI/CD Quality Gates  | None    | None      | None      | None      | None      | None      | None      | Basic     | Advanced  |
 
 ---
 
 ## 🎓 Conclusion
 
-The HPSC Website Backend has evolved significantly over 12 releases, from a simple image gallery application
+The HPSC Website Backend has evolved significantly over 15 releases, from a simple image gallery application
 to a sophisticated platform for managing practical shooting competition data with comprehensive test
-organisation
-and maintainability focus. This release notes history documents:
+organisation and maintainability focus. This release notes history documents:
 
-- **Feature evolution:** From image gallery to comprehensive IPSC match management
-- **Architectural progression:** From monolithic to modular, service-oriented architecture
-- **Quality improvements:** Increasing test coverage, documentation, and code organisation
-- **Standards adoption:** From custom versioning to Semantic Versioning
-- **Domain specialisation:** From generic match management to IPSC-specific focus
-- **Code quality:** Systematic test organisation and consolidation for long-term maintainability
+- **Feature evolution:** From image gallery to comprehensive IPSC match management with competitor enrolment
+- **Architectural progression:** From monolithic to modular, service-oriented, transformation-based architecture
+- **Quality improvements:** Increasing test coverage (~30% to ~92%), documentation, and code organisation
+- **Standards adoption:** From custom versioning to Semantic Versioning with CI/CD quality gates
+- **Domain specialisation:** From generic match management to IPSC-specific focus with SAPSA validation
+- **Code quality:** Systematic test organisation, consolidation, and Qodana static analysis for long-term
+  maintainability
 
 Each version built upon previous releases while introducing improvements in architecture, functionality, and
-maintainability. The adoption of Semantic Versioning in v5.0.0 and the test suite consolidation in v5.1.0 mark
-a maturation point for predictable, standards-based future releases with strong emphasis on code quality and
-maintainability.
+maintainability. The adoption of Semantic Versioning in v5.0.0, the test suite consolidation across v5.1.0–
+v5.3.0, and the massive test expansion in v5.4.0 mark a clear maturation point for predictable, standards-based
+future releases with strong emphasis on code quality, competitor data integrity, and CI/CD automation.
 
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** February 25, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.1.0 (February 25, 2026)  
-**Total Versions:** 12 releases  
-**Total Timeline:** 52+ weeks (Jan 4 – Feb 25, 2026)
-
+**Last Updated:** April 26, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.4.0 (April 26, 2026)  
+**Total Versions:** 15 releases  
+**Total Timeline:** ~112 days (Jan 4 – Apr 26, 2026)

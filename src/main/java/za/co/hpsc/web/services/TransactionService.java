@@ -1,8 +1,8 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.domain.DtoMapping;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 
 import java.util.Optional;
 
@@ -21,9 +21,9 @@ public interface TransactionService {
      * @param dtoMapping an instance of {@link DtoMapping} containing all the relevant
      *                   information about the match, including competitors, scores, stages,
      *                   and related metadata.
-     * @return an {@link IpscMatch} containing the saved match object.
+     * @return an {@link MatchHolder} containing the saved match entity and any related entities.
      * @throws FatalException if an unrecoverable error occurs during the operation.
      */
-    Optional<IpscMatch> saveMatchResults(DtoMapping dtoMapping)
+    Optional<MatchHolder> saveMatchResults(DtoMapping dtoMapping)
             throws FatalException;
 }

@@ -7,9 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.ClubIdentifier;
+import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.*;
+import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.repositories.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +20,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DomainServiceTest {
+
     @Mock
     private ClubRepository clubRepository;
 
@@ -30,1061 +34,981 @@ public class DomainServiceTest {
     private IpscMatchStageRepository ipscMatchStageRepository;
 
     @Mock
+    private MatchCompetitorRepository matchCompetitorRepository;
+
+    @Mock
     private MatchStageCompetitorRepository matchStageCompetitorRepository;
 
     @InjectMocks
     private DomainServiceImpl domainService;
 
-    private final String DEFAULT_FILTER_CLUB_ABBREVIATION = "HPSC";
-
-    // =====================================================================
-    // Tests for initMatchEntities - Input Validation and Error Handling
-    // =====================================================================
+    // Test Group: initMatchEntities(...) public methods
     @Test
-    public void testInitMatchEntities_whenMatchResultsIsNull_thenReturnsEmptyOptional() {
+    public void testInitMatchEntities_whenMatchResultsNull_thenEmptyFromMatchResults() {
         // Act
-        var result = domainService.initMatchEntities(null, null);
+        Optional<DtoMapping> result = domainService.initMatchEntities(null, "HPSC", null);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testInitMatchEntities_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
+    public void testInitMatchEntities_whenMatchNull_thenEmptyFromMatchResults() {
         // Arrange
-        MatchResultsDto matchResults = new MatchResultsDto();
-        matchResults.setMatch(null);
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(null);
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, null);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testInitMatchEntities_whenMatchIdIsNull_thenReturnsMatchEntityHolder() {
+    public void testInitMatchEntities_whenValidMinimalInput_thenReturnsMapping() {
         // Arrange
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(null);
-        matchResults.setMatch(matchDto);
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        MatchDto matchDto = buildMatchDto();
+        matchResultsDto.setMatch(matchDto);
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, null);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
-        var holder = result.get();
-        assertNotNull(holder.getMatch());
-        assertNull(holder.getClub());
-    }
-
-    // =====================================================================
-    // Tests for initMatchEntities - Club Entity Handling
-    // =====================================================================
-
-    @Test
-    public void testInitMatchEntities_whenClubDtoIsPresent_thenInitializesClubFromDto() {
-        // Arrange
-        String filterClub = "TEST";
-
-        Long matchId = 1L;
-        Long clubId = 100L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-
-        ClubDto clubDto = new ClubDto();
-        clubDto.setId(clubId);
-        clubDto.setAbbreviation(filterClub);
-        clubDto.setName("Test Club");
-        matchResults.setClub(clubDto);
-
-        Club club = new Club();
-        when(clubRepository.findById(clubId)).thenReturn(Optional.of(club));
-
-        // Act
-        var result = domainService.initMatchEntities(matchResults, filterClub);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
+        assertEquals(matchDto.getUuid(), result.get().getMatch().getUuid());
     }
 
     @Test
-    public void testInitMatchEntities_whenClubDtoIsAbsent_thenDontSetClub() {
+    public void testInitMatchEntities_whenMatchClubMissingFromMatchResultsAndIdentifierNameProvided_thenUsesIdentifierNameLookup() {
         // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setClub(null);
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(buildMatchDto());
+        matchResultsDto.setClub(null);
+
+        Club clubEntity = new Club();
+        clubEntity.setId(11L);
+        clubEntity.setName("Holster Club");
+        clubEntity.setAbbreviation("HPSC");
+        when(clubRepository.findByAbbreviation(ClubIdentifier.HPSC.getAbbreviation())).thenReturn(Optional.of(clubEntity));
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, "HPSC");
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
+        assertNotNull(result.get().getClub());
+        assertEquals(11L, result.get().getClub().getId());
+        verify(clubRepository).findByAbbreviation(ClubIdentifier.HPSC.getAbbreviation());
     }
 
     @Test
-    public void testInitMatchEntities_whenClubDtoHasNullId_thenDontSetClub() {
+    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_thenFiltersMatchCompetitorsFromMatchResults() {
         // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
+        MatchDto matchDto = buildMatchDto();
+        CompetitorDto competitorDto = buildCompetitorDto("John", "Doe");
+
+        MatchCompetitorDto included = buildMatchCompetitorDto(matchDto, competitorDto);
+        included.setClub(ClubIdentifier.HPSC);
+
+        MatchCompetitorDto excluded = buildMatchCompetitorDto(matchDto, competitorDto);
+        excluded.setClub(ClubIdentifier.SOSC);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitorDto));
+        matchResultsDto.setMatchCompetitors(List.of(included, excluded));
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
-    }
-
-    // =====================================================================
-    // Tests for initMatchEntities - Match Entity Handling
-    // =====================================================================
-
-    @Test
-    public void testInitMatchEntities_whenExistingMatch_thenLoadsFromRepository() {
-        // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-
-        IpscMatch existingMatch = new IpscMatch();
-        existingMatch.setId(matchId);
-        existingMatch.setName("Existing Match");
-
-        // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
+        assertEquals(1, result.get().getMatchCompetitorMap().size());
+        assertTrue(result.get().getMatchCompetitorMap().containsKey(included.getUuid()));
     }
 
     @Test
-    public void testInitMatchEntities_whenNewMatch_thenCreatesNewEntity() {
+    public void testInitMatchEntitiesThreeArgs_whenFilterClubProvided_thenFiltersMatchStageCompetitorsFromMatchResults() {
         // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
+        MatchDto matchDto = buildMatchDto();
+        CompetitorDto competitorDto = buildCompetitorDto("Jane", "Doe");
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+
+        MatchStageCompetitorDto included = buildMatchStageCompetitorDto(stageDto, competitorDto);
+        included.setClub(ClubIdentifier.HPSC);
+
+        MatchStageCompetitorDto excluded = buildMatchStageCompetitorDto(stageDto, competitorDto);
+        excluded.setClub(ClubIdentifier.SOSC);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitorDto));
+        matchResultsDto.setStages(List.of(stageDto));
+        matchResultsDto.setMatchStageCompetitors(List.of(included, excluded));
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, "HPSC", null);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
-    }
-
-    // =====================================================================
-    // Tests for initMatchEntities - Competitor Entity Handling
-    // =====================================================================
-
-    @Test
-    public void testInitMatchEntities_whenEmptyCompetitorList_thenReturnsEmptyCompetitorList() {
-        // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setCompetitors(Collections.emptyList());
-
-        // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertTrue(result.get().getCompetitorMap().isEmpty());
+        assertEquals(1, result.get().getMatchStageCompetitorMap().size());
+        assertTrue(result.get().getMatchStageCompetitorMap().containsKey(included.getUuid()));
     }
 
     @Test
-    public void testInitMatchEntities_whenCompetitorList_thenInitializesAllCompetitors() {
+    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForMatchCompetitor_thenReturnsEmptyMapForMatchCompetitorsFromMatchResults() {
         // Arrange
-        Long matchId = 1L;
-        Long competitor1Id = 100L;
-        Long competitor2Id = 101L;
+        MatchDto matchDto = buildMatchDto();
+        CompetitorDto competitorNotInList = buildCompetitorDto("Ghost", "Rider");
 
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
+        MatchCompetitorDto matchCompetitorDto = buildMatchCompetitorDto(matchDto, competitorNotInList);
 
-        CompetitorDto competitor1 = new CompetitorDto();
-        competitor1.setId(competitor1Id);
-        competitor1.setUuid(UUID.randomUUID());
-        competitor1.setFirstName("John");
-
-        CompetitorDto competitor2 = new CompetitorDto();
-        competitor2.setId(competitor2Id);
-        competitor2.setUuid(UUID.randomUUID());
-        competitor2.setFirstName("Jane");
-
-        matchResults.setCompetitors(List.of(competitor1, competitor2));
-
-        Competitor comp1Entity = new Competitor();
-        Competitor comp2Entity = new Competitor();
-
-        when(competitorRepository.findById(competitor1Id)).thenReturn(Optional.of(comp1Entity));
-        when(competitorRepository.findById(competitor2Id)).thenReturn(Optional.of(comp2Entity));
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(new ArrayList<>());
+        matchResultsDto.setMatchCompetitors(List.of(matchCompetitorDto));
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
 
         // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertFalse(result.get().getCompetitorMap().isEmpty());
-    }
-
-    @Test
-    public void testInitMatchEntities_whenNullCompetitorList_thenReturnsEmptyCompetitorList() {
-        // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setCompetitors(null);
-
-        // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
-
-        // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().getMatchCompetitorMap().isEmpty());
     }
 
-    // =====================================================================
-    // Tests for initMatchEntities - Match Stage Entity Handling
-    // =====================================================================
-
     @Test
-    public void testInitMatchEntities_whenEmptyStageList_thenReturnsEmptyStageList() {
+    public void testInitMatchEntitiesThreeArgs_whenCompetitorMissingForStageCompetitor_thenReturnsEmptyMapForStageCompetitors() {
         // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setStages(Collections.emptyList());
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        CompetitorDto competitorNotInList = buildCompetitorDto("Ghost", "Rider");
+
+        MatchStageCompetitorDto stageCompetitorDto = buildMatchStageCompetitorDto(stageDto, competitorNotInList);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(new ArrayList<>());
+        matchResultsDto.setStages(List.of(stageDto));
+        matchResultsDto.setMatchStageCompetitors(List.of(stageCompetitorDto));
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchStageMap().isEmpty());
+        assertTrue(result.get().getMatchStageCompetitorMap().isEmpty());
+    }
+
+    // Test Group: initClubEntity(ClubDto)
+    @Test
+    public void testInitClubEntityFromDto_whenNull_thenEmpty() {
+        // Act
+        Optional<ClubDto> result = domainService.initClubEntity((ClubDto) null);
+
+        // Assert
+        assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testInitMatchEntities_whenStageList_thenInitializesAllStages() {
+    public void testInitClubEntityFromDto_whenNoId_thenReturnsSameDtoWithoutLookup() {
         // Arrange
-        Long matchId = 1L;
-        Long stage1Id = 200L;
-        Long stage2Id = 201L;
-
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-
-        MatchStageDto stage1 = new MatchStageDto();
-        stage1.setId(stage1Id);
-        stage1.setUuid(UUID.randomUUID());
-        stage1.setStageName("Stage 1");
-        stage1.setMatch(matchResults.getMatch());
-
-        MatchStageDto stage2 = new MatchStageDto();
-        stage2.setId(stage2Id);
-        stage2.setUuid(UUID.randomUUID());
-        stage2.setStageName("Stage 2");
-        stage2.setMatch(matchResults.getMatch());
-
-        matchResults.setStages(List.of(stage1, stage2));
-
-        IpscMatch match = new IpscMatch();
-        IpscMatchStage stageEntity1 = new IpscMatchStage();
-        stageEntity1.setMatch(match);
-        IpscMatchStage stageEntity2 = new IpscMatchStage();
-        stageEntity2.setMatch(match);
-
-        when(ipscMatchRepository.findById(matchId)).thenReturn(Optional.of(match));
-        when(ipscMatchStageRepository.findById(stage1Id)).thenReturn(Optional.of(stageEntity1));
-        when(ipscMatchStageRepository.findById(stage2Id)).thenReturn(Optional.of(stageEntity2));
+        ClubDto clubDto = buildClubDto("No Id Club", "NIC");
+        clubDto.setId(null);
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, null);
+        Optional<ClubDto> result = domainService.initClubEntity(clubDto);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
-        assertFalse(result.get().getMatchStageMap().isEmpty());
+        assertEquals("No Id Club", result.get().getName());
+        verifyNoInteractions(clubRepository);
     }
 
     @Test
-    public void testInitMatchEntities_whenNullStageList_thenReturnsEmptyStageList() {
+    public void testInitClubEntityFromDto_whenIdFound_thenKeepsResolvedId() {
         // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setStages(null);
+        ClubDto clubDto = buildClubDto("Known Club", "KC");
+        clubDto.setId(10L);
+
+        Club clubEntity = new Club();
+        clubEntity.setId(10L);
+        when(clubRepository.findById(10L)).thenReturn(Optional.of(clubEntity));
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<ClubDto> result = domainService.initClubEntity(clubDto);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchStageMap().isEmpty());
+        assertEquals(10L, result.get().getId());
+        verify(clubRepository).findById(10L);
     }
 
-    // =====================================================================
-    // Tests for initMatchEntities - Complete Data Processing
-    // =====================================================================
-
     @Test
-    public void testInitMatchEntities_whenCompleteMatchData_thenReturnsFullMatchEntityHolder() {
+    public void testInitClubEntityFromDto_whenIdNotFound_thenStillReturnsDto() {
         // Arrange
-        Long matchId = 1L;
-        Long clubId = 100L;
-        Long competitor1Id = 200L;
-        Long stage1Id = 300L;
+        ClubDto clubDto = buildClubDto("Unknown Club", "UC");
+        clubDto.setId(99L);
 
-        MatchResultsDto matchResults = new MatchResultsDto();
-
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Complete Match");
-        matchResults.setMatch(matchDto);
-
-        ClubDto clubDto = new ClubDto();
-        clubDto.setId(clubId);
-        clubDto.setAbbreviation(null);
-        matchResults.setClub(clubDto);
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setId(competitor1Id);
-        competitorDto.setUuid(UUID.randomUUID());
-        competitorDto.setFirstName("John");
-        matchResults.setCompetitors(List.of(competitorDto));
-
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setId(stage1Id);
-        stageDto.setUuid(UUID.randomUUID());
-        stageDto.setStageName("Stage 1");
-        stageDto.setMatch(matchDto);
-        matchResults.setStages(List.of(stageDto));
-
-        matchResults.setMatchCompetitors(Collections.emptyList());
-        matchResults.setMatchStageCompetitors(Collections.emptyList());
-
-        Club club = new Club();
-        Competitor competitor = new Competitor();
-        IpscMatch match = new IpscMatch();
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setMatch(match);
-
-        when(clubRepository.findById(clubId)).thenReturn(Optional.of(club));
-        when(competitorRepository.findById(competitor1Id)).thenReturn(Optional.of(competitor));
-        when(ipscMatchRepository.findById(matchId)).thenReturn(Optional.of(match));
-        when(ipscMatchStageRepository.findById(stage1Id)).thenReturn(Optional.of(stage));
+        when(clubRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, null);
+        Optional<ClubDto> result = domainService.initClubEntity(clubDto);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
-        var holder = result.get();
-        assertNotNull(holder.getMatch());
-        assertNotNull(holder.getClub());
-        assertFalse(holder.getCompetitorMap().isEmpty());
-        assertFalse(holder.getMatchStageMap().isEmpty());
+        assertEquals(99L, result.get().getId());
+        verify(clubRepository).findById(99L);
     }
 
-    // =====================================================================
-    // Tests for initMatchEntities - Edge Cases and Boundary Conditions
-    // =====================================================================
+    // Test Group: initClubEntity(ClubIdentifier)
+    @Test
+    public void testInitClubEntityFromIdentifier_whenNull_thenEmpty() {
+        // Act
+        Optional<ClubDto> result = domainService.initClubEntity((ClubIdentifier) null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 
     @Test
-    public void testInitMatchEntities_whenNullCompetitorInList_thenFiltersOutNull() {
+    public void testInitClubEntityFromIdentifier_whenExcludedUnknown_thenEmpty() {
+        // Act
+        Optional<ClubDto> result = domainService.initClubEntity(ClubIdentifier.UNKNOWN);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testInitClubEntityFromIdentifier_whenIdentifierNameIsFound_thenReturnsClubDto() {
         // Arrange
+        Club clubEntity = new Club();
+        clubEntity.setId(101L);
+        clubEntity.setName("Holster Club");
+        clubEntity.setAbbreviation("HPSC");
 
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-
-        CompetitorDto competitor1 = new CompetitorDto();
-        competitor1.setId(200L);
-        competitor1.setUuid(UUID.randomUUID());
-
-        List<CompetitorDto> competitorList = new ArrayList<>();
-        competitorList.add(competitor1);
-        matchResults.setCompetitors(competitorList);
-
-        Competitor comp1Entity = new Competitor();
-        when(competitorRepository.findById(any())).thenReturn(Optional.of(comp1Entity));
+        when(clubRepository.findByAbbreviation(ClubIdentifier.HPSC.getAbbreviation())).thenReturn(Optional.of(clubEntity));
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<ClubDto> result = domainService.initClubEntity(ClubIdentifier.HPSC);
 
         // Assert
-        assertNotNull(result);
         assertTrue(result.isPresent());
+        assertEquals(101L, result.get().getId());
+        assertEquals("Holster Club", result.get().getName());
     }
 
     @Test
-    public void testInitMatchEntities_whenNullStageInList_thenFiltersOutNull() {
+    public void testInitClubEntityFromIdentifier_whenIdentifierNameIsNotFound_thenReturnsEmpty() {
         // Arrange
-        Long matchId = 1L;
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(matchId);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-
-        MatchStageDto stage1 = new MatchStageDto();
-        stage1.setId(300L);
-        stage1.setUuid(UUID.randomUUID());
-
-        List<MatchStageDto> stageList = new ArrayList<>();
-        stageList.add(stage1);
-        matchResults.setStages(stageList);
+        when(clubRepository.findByAbbreviation(ClubIdentifier.SOSC.getAbbreviation())).thenReturn(Optional.empty());
 
         // Act
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
+        Optional<ClubDto> result = domainService.initClubEntity(ClubIdentifier.SOSC);
 
         // Assert
-        assertNotNull(result);
-        assertTrue(result.isPresent());
+        assertTrue(result.isEmpty());
+    }
+
+    // Test Group: initMatchEntity
+    @Test
+    public void testInitMatchEntity_whenNull_thenEmpty() {
+        // Act
+        Optional<MatchDto> result = domainService.initMatchEntity(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
     }
 
     @Test
-    public void initMatchEntities_whenMatchClubAbbreviationResolvesClub_thenSetsClubInMapping() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setClub(null);
+    public void testInitMatchEntity_whenNoId_thenReturnsDtoWithoutLookup() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        matchDto.setId(null);
 
-        Club club = new Club();
-        club.setId(15L);
-        club.setName("HPSC");
-        club.setAbbreviation("HPSC");
+        // Act
+        Optional<MatchDto> result = domainService.initMatchEntity(matchDto);
 
-        when(clubRepository.findByAbbreviation("HPSC")).thenReturn(Optional.of(club));
-
-        var result = domainService.initMatchEntities(matchResults, "HPSC", null);
-
+        // Assert
         assertTrue(result.isPresent());
-        assertNotNull(result.get().getClub());
-        assertEquals(15L, result.get().getClub().getId());
-        assertEquals("HPSC", result.get().getClub().getAbbreviation());
+        assertEquals(matchDto.getUuid(), result.get().getUuid());
+        verifyNoInteractions(ipscMatchRepository);
     }
 
     @Test
-    public void initMatchEntities_whenMatchCompetitorsBelongToDifferentMatches_thenKeepsOnlyCurrentMatchCompetitors() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.getMatch().setUuid(UUID.randomUUID());
+    public void testInitMatchEntity_whenIdFound_thenSetsResolvedId() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        matchDto.setId(5L);
 
-        CompetitorDto competitor1 = new CompetitorDto();
-        competitor1.setUuid(UUID.randomUUID());
-        competitor1.setFirstName("Alice");
+        IpscMatch matchEntity = new IpscMatch();
+        matchEntity.setId(5L);
+        when(ipscMatchRepository.findById(5L)).thenReturn(Optional.of(matchEntity));
 
-        CompetitorDto competitor2 = new CompetitorDto();
-        competitor2.setUuid(UUID.randomUUID());
-        competitor2.setFirstName("Bob");
+        // Act
+        Optional<MatchDto> result = domainService.initMatchEntity(matchDto);
 
-        matchResults.setCompetitors(List.of(competitor1, competitor2));
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(5L, result.get().getId());
+        verify(ipscMatchRepository).findById(5L);
+    }
 
-        MatchCompetitorDto included = new MatchCompetitorDto();
-        included.setUuid(UUID.randomUUID());
-        included.setCompetitor(competitor1);
-        included.setMatch(matchResults.getMatch());
+    @Test
+    public void testInitMatchEntity_whenIdNotFound_thenStillReturnsDto() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        matchDto.setId(55L);
+        when(ipscMatchRepository.findById(55L)).thenReturn(Optional.empty());
 
-        MatchDto otherMatch = new MatchDto();
-        otherMatch.setUuid(UUID.randomUUID());
-        otherMatch.setName("Other Match");
+        // Act
+        Optional<MatchDto> result = domainService.initMatchEntity(matchDto);
 
-        MatchCompetitorDto excluded = new MatchCompetitorDto();
-        excluded.setUuid(UUID.randomUUID());
-        excluded.setCompetitor(competitor2);
-        excluded.setMatch(otherMatch);
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(55L, result.get().getId());
+    }
 
-        matchResults.setMatchCompetitors(List.of(included, excluded));
+    // Test Group: initCompetitorEntities
+    @Test
+    public void testInitCompetitorEntities_whenNullList_thenEmptyMap() {
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(null);
 
-        var result = domainService.initMatchEntities(matchResults, null, null);
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 
+    @Test
+    public void testInitCompetitorEntities_whenListContainsNull_thenNullFilteredOut() {
+        // Arrange
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+        List<CompetitorDto> list = new ArrayList<>();
+        list.add(competitorDto);
+        list.add(null);
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(list);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(competitorDto.getUuid()));
+    }
+
+    @Test
+    public void testInitCompetitorEntities_whenIdFound_thenPerformsRepositoryLookup() {
+        // Arrange
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+        competitorDto.setId(7L);
+
+        Competitor competitorEntity = new Competitor();
+        competitorEntity.setId(7L);
+        when(competitorRepository.findById(7L)).thenReturn(Optional.of(competitorEntity));
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(List.of(competitorDto));
+
+        // Assert
+        assertEquals(1, result.size());
+        verify(competitorRepository).findById(7L);
+    }
+
+    @Test
+    public void testInitCompetitorEntities_whenIdNotFound_thenStillAddsToMap() {
+        // Arrange
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+        competitorDto.setId(77L);
+        when(competitorRepository.findById(77L)).thenReturn(Optional.empty());
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(List.of(competitorDto));
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(competitorDto.getUuid()));
+    }
+
+    // Test Group: initCompetitorEntities - SAPSA number deduplication
+    @Test
+    public void testInitCompetitorEntities_whenTwoCompetitorDtosWithSameSapsaNumber_thenBothAddedToMap() {
+        // Arrange
+        CompetitorDto competitor1 = buildCompetitorDto("John", "Doe");
+        competitor1.setSapsaNumber(12345);
+        competitor1.setCompetitorNumber("12345");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Jane", "Smith");
+        competitor2.setSapsaNumber(12345);
+        competitor2.setCompetitorNumber("ALIAS-001");
+
+        List<CompetitorDto> list = List.of(competitor1, competitor2);
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(list);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsKey(competitor1.getUuid()));
+        assertTrue(result.containsKey(competitor2.getUuid()));
+    }
+
+    @Test
+    public void testInitCompetitorEntities_whenTwoCompetitorDtosWithExcludedSapsaNumber15000_thenBothAddedToMap() {
+        // Arrange
+        CompetitorDto competitor1 = buildCompetitorDto("Alice", "Johnson");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("15000");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Bob", "Brown");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("15000");
+
+        List<CompetitorDto> list = List.of(competitor1, competitor2);
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(list);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsKey(competitor1.getUuid()));
+        assertTrue(result.containsKey(competitor2.getUuid()));
+        assertNull(result.get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get(competitor2.getUuid()).getSapsaNumber());
+    }
+
+    @Test
+    public void testInitCompetitorEntities_whenTwoCompetitorDtosWithExcludedSapsaNumber16000_thenBothAddedToMap() {
+        // Arrange
+        CompetitorDto competitor1 = buildCompetitorDto("Charlie", "Davis");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("16000");
+
+        CompetitorDto competitor2 = buildCompetitorDto("Diana", "Evans");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("16000");
+
+        List<CompetitorDto> list = List.of(competitor1, competitor2);
+
+        // Act
+        Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(list);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsKey(competitor1.getUuid()));
+        assertTrue(result.containsKey(competitor2.getUuid()));
+        assertNull(result.get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get(competitor2.getUuid()).getSapsaNumber());
+    }
+
+    // Test Group: initMatchEntities - Multiple competitors with same/excluded SAPSA numbers
+    @Test
+    public void testInitMatchEntitiesWithCompetitors_whenTwoCompetitorDtosWithSameSapsaNumber_thenBothInCompetitorMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        CompetitorDto competitor1 = buildCompetitorDto("John", "Doe");
+        competitor1.setSapsaNumber(54321);
+
+        CompetitorDto competitor2 = buildCompetitorDto("Jane", "Smith");
+        competitor2.setSapsaNumber(54321);
+
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitor1, competitor2));
+
+        // Act
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
+
+        // Assert
         assertTrue(result.isPresent());
         assertEquals(2, result.get().getCompetitorMap().size());
         assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
         assertTrue(result.get().getCompetitorMap().containsKey(competitor2.getUuid()));
-        assertEquals(1, result.get().getMatchCompetitorMap().size());
-        assertTrue(result.get().getMatchCompetitorMap().containsKey(included.getUuid()));
-        assertFalse(result.get().getMatchCompetitorMap().containsKey(excluded.getUuid()));
+        assertEquals(54321, result.get().getCompetitorMap().get(competitor1.getUuid()).getSapsaNumber());
+        assertEquals(54321, result.get().getCompetitorMap().get(competitor2.getUuid()).getSapsaNumber());
     }
 
     @Test
-    public void initMatchEntities_whenMatchCompetitorReferencesUnknownCompetitor_thenReturnsEmptyMatchCompetitorMap() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.getMatch().setUuid(UUID.randomUUID());
+    public void testInitMatchEntitiesWithCompetitors_whenTwoCompetitorDtosWithExcludedSapsaNumber15000_thenBothInCompetitorMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
 
-        CompetitorDto existingCompetitor = new CompetitorDto();
-        existingCompetitor.setUuid(UUID.randomUUID());
-        existingCompetitor.setFirstName("Known");
-        matchResults.setCompetitors(List.of(existingCompetitor));
+        CompetitorDto competitor1 = buildCompetitorDto("Alice", "Johnson");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("15000");
 
-        CompetitorDto unknownCompetitor = new CompetitorDto();
-        unknownCompetitor.setUuid(UUID.randomUUID());
-        unknownCompetitor.setFirstName("Unknown");
+        CompetitorDto competitor2 = buildCompetitorDto("Bob", "Wilson");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("15000");
 
-        MatchCompetitorDto matchCompetitor = new MatchCompetitorDto();
-        matchCompetitor.setUuid(UUID.randomUUID());
-        matchCompetitor.setMatch(matchResults.getMatch());
-        matchCompetitor.setCompetitor(unknownCompetitor);
-        matchCompetitor.setClub(ClubIdentifier.HPSC);
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitor1, competitor2));
 
-        matchResults.setMatchCompetitors(List.of(matchCompetitor));
+        // Act
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
 
-        var result = domainService.initMatchEntities(matchResults, null, null);
-
+        // Assert
         assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchCompetitorMap().isEmpty());
-    }
-
-    @Test
-    public void initMatchEntities_whenClubDtoExists_thenPrefersClubDtoOverMatchClubAbbreviation() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-
-        ClubDto clubDto = new ClubDto();
-        clubDto.setId(101L);
-        clubDto.setAbbreviation("DTO");
-        clubDto.setName("DTO Club");
-        matchResults.setClub(clubDto);
-
-        Club persistedClub = new Club();
-        persistedClub.setId(101L);
-        when(clubRepository.findById(101L)).thenReturn(Optional.of(persistedClub));
-
-        var result = domainService.initMatchEntities(matchResults, "HPSC", null);
-
-        assertTrue(result.isPresent());
-        assertNotNull(result.get().getClub());
-        assertEquals(101L, result.get().getClub().getId());
-        assertEquals("DTO", result.get().getClub().getAbbreviation());
-        verify(clubRepository, never()).findByAbbreviation("HPSC");
-    }
-
-    @Test
-    public void initMatchEntities_whenNullCompetitorInList_thenSkipsNullAndKeepsValidCompetitors() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-
-        CompetitorDto competitor1 = new CompetitorDto();
-        competitor1.setId(200L);
-        competitor1.setUuid(UUID.randomUUID());
-        competitor1.setFirstName("Alice");
-
-        List<CompetitorDto> competitorList = new ArrayList<>();
-        competitorList.add(competitor1);
-        competitorList.add(null);
-        matchResults.setCompetitors(competitorList);
-
-        when(competitorRepository.findById(200L)).thenReturn(Optional.of(new Competitor()));
-
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
-
-        assertTrue(result.isPresent());
-        assertEquals(1, result.get().getCompetitorMap().size());
+        assertEquals(2, result.get().getCompetitorMap().size());
         assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor2.getUuid()));
+        assertNull(result.get().getCompetitorMap().get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get().getCompetitorMap().get(competitor2.getUuid()).getSapsaNumber());
     }
 
     @Test
-    public void initMatchEntities_whenStageBelongsToDifferentMatch_thenExcludesStageFromStageMap() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        MatchDto currentMatch = matchResults.getMatch();
-        currentMatch.setUuid(UUID.randomUUID());
+    public void testInitMatchEntitiesWithCompetitors_whenTwoCompetitorDtosWithExcludedSapsaNumber16000_thenBothInCompetitorMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
 
-        MatchStageDto stageInMatch = new MatchStageDto();
-        stageInMatch.setId(300L);
-        stageInMatch.setUuid(UUID.randomUUID());
-        stageInMatch.setStageName("Included Stage");
-        stageInMatch.setMatch(currentMatch);
+        CompetitorDto competitor1 = buildCompetitorDto("Charlie", "Brown");
+        competitor1.setSapsaNumber(null);
+        competitor1.setCompetitorNumber("16000");
 
-        MatchDto otherMatch = new MatchDto();
-        otherMatch.setUuid(UUID.randomUUID());
+        CompetitorDto competitor2 = buildCompetitorDto("Diana", "Garcia");
+        competitor2.setSapsaNumber(null);
+        competitor2.setCompetitorNumber("16000");
 
-        MatchStageDto stageInOtherMatch = new MatchStageDto();
-        stageInOtherMatch.setId(301L);
-        stageInOtherMatch.setUuid(UUID.randomUUID());
-        stageInOtherMatch.setStageName("Excluded Stage");
-        stageInOtherMatch.setMatch(otherMatch);
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        matchResultsDto.setMatch(matchDto);
+        matchResultsDto.setCompetitors(List.of(competitor1, competitor2));
 
-        matchResults.setStages(List.of(stageInMatch, stageInOtherMatch));
+        // Act
+        Optional<DtoMapping> result = domainService.initMatchEntities(matchResultsDto, null, null);
 
-        IpscMatch stageMatchEntity = new IpscMatch();
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(2, result.get().getCompetitorMap().size());
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor1.getUuid()));
+        assertTrue(result.get().getCompetitorMap().containsKey(competitor2.getUuid()));
+        assertNull(result.get().getCompetitorMap().get(competitor1.getUuid()).getSapsaNumber());
+        assertNull(result.get().getCompetitorMap().get(competitor2.getUuid()).getSapsaNumber());
+    }
+
+    // Test Group: initMatchStageEntities
+    @Test
+    public void testInitMatchStageEntities_whenNullList_thenEmptyMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        // Act
+        Map<UUID, MatchStageDto> result = domainService.initMatchStageEntities(null, matchDto);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testInitMatchStageEntities_whenNullOrMismatchedStages_thenFilteredOut() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchDto otherMatch = buildMatchDto();
+
+        MatchStageDto matchingStage = buildMatchStageDto(matchDto, 1);
+        MatchStageDto nullMatchStage = new MatchStageDto();
+        nullMatchStage.setMatch(null);
+        MatchStageDto mismatchedStage = buildMatchStageDto(otherMatch, 2);
+
+        List<MatchStageDto> input = new ArrayList<>();
+        input.add(matchingStage);
+        input.add(null);
+        input.add(nullMatchStage);
+        input.add(mismatchedStage);
+
+        // Act
+        Map<UUID, MatchStageDto> result = domainService.initMatchStageEntities(input, matchDto);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(matchingStage.getUuid()));
+    }
+
+    @Test
+    public void testInitMatchStageEntities_whenIdFound_thenPerformsRepositoryLookup() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        stageDto.setId(9L);
+
         IpscMatchStage stageEntity = new IpscMatchStage();
-        stageEntity.setId(300L);
-        stageEntity.setMatch(stageMatchEntity);
-        stageEntity.setStageNumber(1);
+        stageEntity.setId(9L);
+        when(ipscMatchStageRepository.findById(9L)).thenReturn(Optional.of(stageEntity));
 
-        when(ipscMatchStageRepository.findById(300L)).thenReturn(Optional.of(stageEntity));
+        // Act
+        Map<UUID, MatchStageDto> result = domainService.initMatchStageEntities(List.of(stageDto), matchDto);
 
-        var result = domainService.initMatchEntities(matchResults, null, null);
-
-        assertTrue(result.isPresent());
-        assertEquals(1, result.get().getMatchStageMap().size());
-        assertTrue(result.get().getMatchStageMap().containsKey(stageInMatch.getUuid()));
-        assertFalse(result.get().getMatchStageMap().containsKey(stageInOtherMatch.getUuid()));
-    }
-
-    @Test
-    public void initMatchEntities_whenMatchCompetitorHasNullMatch_thenExcludesFromMatchCompetitorMap() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.getMatch().setUuid(UUID.randomUUID());
-
-        CompetitorDto competitor = new CompetitorDto();
-        competitor.setUuid(UUID.randomUUID());
-        competitor.setFirstName("Known");
-        matchResults.setCompetitors(List.of(competitor));
-
-        MatchCompetitorDto nullMatchCompetitor = new MatchCompetitorDto();
-        nullMatchCompetitor.setUuid(UUID.randomUUID());
-        nullMatchCompetitor.setCompetitor(competitor);
-        nullMatchCompetitor.setMatch(null);
-
-        matchResults.setMatchCompetitors(List.of(nullMatchCompetitor));
-
-        var result = domainService.initMatchEntities(matchResults, null, null);
-
-        assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchCompetitorMap().isEmpty());
-    }
-
-    // =====================================================================
-    // Tests for initMatchEntities - matchStageCompetitorMap integration
-    // =====================================================================
-
-    @Test
-    public void initMatchEntities_whenNullMatchStageCompetitorList_thenMatchStageCompetitorMapIsEmpty() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(null);
-
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
-
-        assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchStageCompetitorMap().isEmpty());
-    }
-
-    @Test
-    public void initMatchEntities_whenEmptyMatchStageCompetitorList_thenMatchStageCompetitorMapIsEmpty() {
-        MatchResultsDto matchResults = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.setId(1L);
-        matchDto.setName("Test Match");
-        matchResults.setMatch(matchDto);
-        matchResults.setCompetitors(new ArrayList<>());
-        matchResults.setStages(new ArrayList<>());
-        matchResults.setMatchCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(new ArrayList<>());
-        matchResults.setMatchStageCompetitors(Collections.emptyList());
-
-        var result = domainService.initMatchEntities(matchResults, DEFAULT_FILTER_CLUB_ABBREVIATION);
-
-        assertTrue(result.isPresent());
-        assertTrue(result.get().getMatchStageCompetitorMap().isEmpty());
-    }
-
-    // =====================================================================
-    // Tests for initMatchStageCompetitorEntities (direct protected method)
-    // =====================================================================
-
-    @Test
-    public void initMatchStageCompetitorEntities_whenNullList_thenReturnsEmptyMap() {
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-
-        var result = domainService.initMatchStageCompetitorEntities(null, matchStageMap, competitorMap, null);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void initMatchStageCompetitorEntities_whenMatchStageCompetitorHasNullMatchStage_thenFiltersOut() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setUuid(UUID.randomUUID());
-
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(UUID.randomUUID());
-        mscDto.setMatchStage(null);           // null matchStage — must be filtered
-        mscDto.setCompetitor(competitorDto);
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
-
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(competitorDto.getUuid(), competitorDto);
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, competitorMap, null);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void initMatchStageCompetitorEntities_whenMatchStageUuidNotInMap_thenExcludesFromResult() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageInMap = new MatchStageDto();
-        stageInMap.setUuid(stageUuid);
-
-        // competitor DTO object whose matchStage points to a DIFFERENT UUID
-        MatchStageDto differentStage = new MatchStageDto();
-        differentStage.setUuid(UUID.randomUUID());
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setUuid(UUID.randomUUID());
-
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(UUID.randomUUID());
-        mscDto.setMatchStage(differentStage);
-        mscDto.setCompetitor(competitorDto);
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageInMap);
-
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(competitorDto.getUuid(), competitorDto);
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, competitorMap, null);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void initMatchStageCompetitorEntities_whenCompetitorNotInCompetitorMap_thenReturnsEmptyMap() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
-
-        // Competitor whose UUID is NOT in the competitorMap
-        CompetitorDto unknownCompetitor = new CompetitorDto();
-        unknownCompetitor.setUuid(UUID.randomUUID());
-
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(UUID.randomUUID());
-        mscDto.setMatchStage(stageDto);
-        mscDto.setCompetitor(unknownCompetitor);
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
-
-        Map<UUID, CompetitorDto> emptyCompetitorMap = new HashMap<>();
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, emptyCompetitorMap, null);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void initMatchStageCompetitorEntities_whenEntityFoundAndNoClubFilter_thenIncludesEntry() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
-
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setUuid(UUID.randomUUID());
-
-        UUID mscUuid = UUID.randomUUID();
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(mscUuid);
-        mscDto.setId(500L);
-        mscDto.setMatchStage(stageDto);
-        mscDto.setCompetitor(competitorDto);
-        mscDto.setClub(ClubIdentifier.SOSC);
-
-        when(matchStageCompetitorRepository.findById(500L)).thenReturn(Optional.of(new MatchStageCompetitor()));
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
-
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(competitorDto.getUuid(), competitorDto);
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, competitorMap, null);  // null = no club filter
-
-        assertNotNull(result);
+        // Assert
         assertEquals(1, result.size());
-        assertTrue(result.containsKey(mscUuid));
+        verify(ipscMatchStageRepository).findById(9L);
     }
 
     @Test
-    public void initMatchStageCompetitorEntities_whenEntityFoundAndClubFilterMatches_thenIncludesEntry() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
+    public void testInitMatchStageEntities_whenIdNotFound_thenStillAddsToMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        stageDto.setId(19L);
+        when(ipscMatchStageRepository.findById(19L)).thenReturn(Optional.empty());
 
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setUuid(UUID.randomUUID());
+        // Act
+        Map<UUID, MatchStageDto> result = domainService.initMatchStageEntities(List.of(stageDto), matchDto);
 
-        UUID mscUuid = UUID.randomUUID();
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(mscUuid);
-        mscDto.setId(501L);
-        mscDto.setMatchStage(stageDto);
-        mscDto.setCompetitor(competitorDto);
-        mscDto.setClub(ClubIdentifier.HPSC);      // matches filter
-
-        when(matchStageCompetitorRepository.findById(501L)).thenReturn(Optional.of(new MatchStageCompetitor()));
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
-
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(competitorDto.getUuid(), competitorDto);
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, competitorMap, ClubIdentifier.HPSC);
-
-        assertNotNull(result);
+        // Assert
         assertEquals(1, result.size());
-        assertTrue(result.containsKey(mscUuid));
+        assertTrue(result.containsKey(stageDto.getUuid()));
     }
 
+    // Test Group: initMatchCompetitorEntities
     @Test
-    public void initMatchStageCompetitorEntities_whenEntityFoundAndClubFilterDoesNotMatch_thenExcludesEntry() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
+    public void testInitMatchCompetitorEntities_whenNullList_thenEmptyMap() {
+        // Act
+        Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
+                null,
+                buildMatchDto(),
+                new HashMap<>(),
+                null);
 
-        CompetitorDto competitorDto = new CompetitorDto();
-        competitorDto.setUuid(UUID.randomUUID());
-
-        MatchStageCompetitorDto mscDto = new MatchStageCompetitorDto();
-        mscDto.setUuid(UUID.randomUUID());
-        mscDto.setId(502L);
-        mscDto.setMatchStage(stageDto);
-        mscDto.setCompetitor(competitorDto);
-        mscDto.setClub(ClubIdentifier.SOSC);      // does NOT match HPSC filter
-
-        when(matchStageCompetitorRepository.findById(502L)).thenReturn(Optional.of(new MatchStageCompetitor()));
-
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
-
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(competitorDto.getUuid(), competitorDto);
-
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscDto), matchStageMap, competitorMap, ClubIdentifier.HPSC);
-
-        assertNotNull(result);
+        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void initMatchStageCompetitorEntities_whenMultipleEntries_onlyMatchingClubIncluded() {
-        UUID stageUuid = UUID.randomUUID();
-        MatchStageDto stageDto = new MatchStageDto();
-        stageDto.setUuid(stageUuid);
+    public void testInitMatchCompetitorEntities_whenMissingCompetitorInMap_thenReturnsEmptyMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        CompetitorDto missingCompetitor = buildCompetitorDto("M", "C");
+        MatchCompetitorDto dto = buildMatchCompetitorDto(matchDto, missingCompetitor);
 
-        CompetitorDto comp1 = new CompetitorDto();
-        comp1.setUuid(UUID.randomUUID());
-        CompetitorDto comp2 = new CompetitorDto();
-        comp2.setUuid(UUID.randomUUID());
+        // Act
+        Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
+                List.of(dto),
+                matchDto,
+                new HashMap<>(),
+                null);
 
-        UUID mscUuid1 = UUID.randomUUID();
-        MatchStageCompetitorDto mscIncluded = new MatchStageCompetitorDto();
-        mscIncluded.setUuid(mscUuid1);
-        mscIncluded.setId(600L);
-        mscIncluded.setMatchStage(stageDto);
-        mscIncluded.setCompetitor(comp1);
-        mscIncluded.setClub(ClubIdentifier.HPSC);
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 
-        UUID mscUuid2 = UUID.randomUUID();
-        MatchStageCompetitorDto mscExcluded = new MatchStageCompetitorDto();
-        mscExcluded.setUuid(mscUuid2);
-        mscExcluded.setId(601L);
-        mscExcluded.setMatchStage(stageDto);
-        mscExcluded.setCompetitor(comp2);
-        mscExcluded.setClub(ClubIdentifier.SOSC);     // filtered out
+    @Test
+    public void testInitMatchCompetitorEntities_whenValidAndIdFound_thenAddsAndLooksUpEntity() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+        Map<UUID, CompetitorDto> competitorMap = Map.of(competitorDto.getUuid(), competitorDto);
 
-        when(matchStageCompetitorRepository.findById(600L)).thenReturn(Optional.of(new MatchStageCompetitor()));
-        when(matchStageCompetitorRepository.findById(601L)).thenReturn(Optional.of(new MatchStageCompetitor()));
+        MatchCompetitorDto dto = buildMatchCompetitorDto(matchDto, competitorDto);
+        dto.setId(31L);
 
-        Map<UUID, MatchStageDto> matchStageMap = new HashMap<>();
-        matchStageMap.put(stageUuid, stageDto);
+        MatchCompetitor entity = new MatchCompetitor();
+        entity.setId(31L);
+        when(matchCompetitorRepository.findById(31L)).thenReturn(Optional.of(entity));
 
-        Map<UUID, CompetitorDto> competitorMap = new HashMap<>();
-        competitorMap.put(comp1.getUuid(), comp1);
-        competitorMap.put(comp2.getUuid(), comp2);
+        // Act
+        Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
+                List.of(dto),
+                matchDto,
+                competitorMap,
+                null);
 
-        var result = domainService.initMatchStageCompetitorEntities(
-                List.of(mscIncluded, mscExcluded), matchStageMap, competitorMap, ClubIdentifier.HPSC);
-
-        assertNotNull(result);
+        // Assert
         assertEquals(1, result.size());
-        assertTrue(result.containsKey(mscUuid1));
-        assertFalse(result.containsKey(mscUuid2));
+        assertTrue(result.containsKey(dto.getUuid()));
+        verify(matchCompetitorRepository).findById(31L);
+    }
+
+    @Test
+    public void testInitMatchCompetitorEntities_whenFilterClubSet_thenOnlyMatchingClubIncluded() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+        Map<UUID, CompetitorDto> competitorMap = Map.of(competitorDto.getUuid(), competitorDto);
+
+        MatchCompetitorDto included = buildMatchCompetitorDto(matchDto, competitorDto);
+        included.setClub(ClubIdentifier.HPSC);
+
+        MatchCompetitorDto excluded = buildMatchCompetitorDto(matchDto, competitorDto);
+        excluded.setClub(ClubIdentifier.SOSC);
+
+        // Act
+        Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
+                List.of(included, excluded),
+                matchDto,
+                competitorMap,
+                ClubIdentifier.HPSC);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(included.getUuid()));
+    }
+
+    @Test
+    public void testInitMatchCompetitorEntities_whenFilterClubIsExcludedIdentifier_thenNoFilteringApplied() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+        Map<UUID, CompetitorDto> competitorMap = Map.of(competitorDto.getUuid(), competitorDto);
+
+        MatchCompetitorDto first = buildMatchCompetitorDto(matchDto, competitorDto);
+        first.setClub(ClubIdentifier.HPSC);
+        MatchCompetitorDto second = buildMatchCompetitorDto(matchDto, competitorDto);
+        second.setClub(ClubIdentifier.SOSC);
+
+        // Act
+        Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
+                List.of(first, second),
+                matchDto,
+                competitorMap,
+                ClubIdentifier.UNKNOWN);
+
+        // Assert
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testInitMatchCompetitorEntities_whenMismatchedMatchUuid_thenFilteredOut() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchDto otherMatch = buildMatchDto();
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+        Map<UUID, CompetitorDto> competitorMap = Map.of(competitorDto.getUuid(), competitorDto);
+
+        MatchCompetitorDto dto = buildMatchCompetitorDto(otherMatch, competitorDto);
+
+        // Act
+        Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
+                List.of(dto),
+                matchDto,
+                competitorMap,
+                null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    // Test Group: initMatchStageCompetitorEntities
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenNullList_thenEmptyMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                null,
+                Map.of(stageDto.getUuid(), stageDto),
+                new HashMap<>(),
+                null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenStageMapHasNullValue_thenIgnored() {
+        // Arrange
+        Map<UUID, MatchStageDto> stageMap = new HashMap<>();
+        stageMap.put(UUID.randomUUID(), null);
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                new ArrayList<>(),
+                stageMap,
+                new HashMap<>(),
+                null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenMissingCompetitorInMap_thenReturnsEmptyMap() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+
+        MatchStageCompetitorDto dto = buildMatchStageCompetitorDto(stageDto, competitorDto);
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                List.of(dto),
+                Map.of(stageDto.getUuid(), stageDto),
+                new HashMap<>(),
+                null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenIdFound_thenLooksUpAndAddsEntry() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+
+        MatchStageCompetitorDto dto = buildMatchStageCompetitorDto(stageDto, competitorDto);
+        dto.setId(41L);
+
+        MatchStageCompetitor entity = new MatchStageCompetitor();
+        entity.setId(41L);
+        when(matchStageCompetitorRepository.findById(41L)).thenReturn(Optional.of(entity));
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                List.of(dto),
+                Map.of(stageDto.getUuid(), stageDto),
+                Map.of(competitorDto.getUuid(), competitorDto),
+                null);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(dto.getUuid()));
+        verify(matchStageCompetitorRepository).findById(41L);
+    }
+
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenFilterClubSet_thenOnlyMatchingClubIncluded() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+
+        MatchStageCompetitorDto included = buildMatchStageCompetitorDto(stageDto, competitorDto);
+        included.setClub(ClubIdentifier.HPSC);
+
+        MatchStageCompetitorDto excluded = buildMatchStageCompetitorDto(stageDto, competitorDto);
+        excluded.setClub(ClubIdentifier.SOSC);
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                List.of(included, excluded),
+                Map.of(stageDto.getUuid(), stageDto),
+                Map.of(competitorDto.getUuid(), competitorDto),
+                ClubIdentifier.HPSC);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(included.getUuid()));
+    }
+
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenFilterClubExcludedIdentifier_thenNoFilteringApplied() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+
+        MatchStageCompetitorDto first = buildMatchStageCompetitorDto(stageDto, competitorDto);
+        first.setClub(ClubIdentifier.HPSC);
+
+        MatchStageCompetitorDto second = buildMatchStageCompetitorDto(stageDto, competitorDto);
+        second.setClub(ClubIdentifier.SOSC);
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                List.of(first, second),
+                Map.of(stageDto.getUuid(), stageDto),
+                Map.of(competitorDto.getUuid(), competitorDto),
+                ClubIdentifier.UNKNOWN);
+
+        // Assert
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenTwoStages_thenAggregatesBoth() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stage1 = buildMatchStageDto(matchDto, 1);
+        MatchStageDto stage2 = buildMatchStageDto(matchDto, 2);
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+
+        MatchStageCompetitorDto dto1 = buildMatchStageCompetitorDto(stage1, competitorDto);
+        MatchStageCompetitorDto dto2 = buildMatchStageCompetitorDto(stage2, competitorDto);
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                List.of(dto1, dto2),
+                Map.of(stage1.getUuid(), stage1, stage2.getUuid(), stage2),
+                Map.of(competitorDto.getUuid(), competitorDto),
+                null);
+
+        // Assert
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testInitMatchStageCompetitorEntities_whenMismatchedStageUuid_thenFilteredOut() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        MatchStageDto stageInMap = buildMatchStageDto(matchDto, 1);
+        MatchStageDto otherStage = buildMatchStageDto(matchDto, 2);
+        CompetitorDto competitorDto = buildCompetitorDto("A", "B");
+
+        MatchStageCompetitorDto dto = buildMatchStageCompetitorDto(otherStage, competitorDto);
+
+        // Act
+        Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
+                List.of(dto),
+                Map.of(stageInMap.getUuid(), stageInMap),
+                Map.of(competitorDto.getUuid(), competitorDto),
+                null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    // Helper methods
+
+    private MatchDto buildMatchDto() {
+        MatchDto matchDto = new MatchDto();
+        matchDto.setName("League Match");
+        matchDto.setScheduledDate(LocalDateTime.of(2026, 3, 31, 8, 0));
+        return matchDto;
+    }
+
+    private ClubDto buildClubDto(String name, String abbreviation) {
+        ClubDto clubDto = new ClubDto();
+        clubDto.setName(name);
+        clubDto.setAbbreviation(abbreviation);
+        return clubDto;
+    }
+
+    private CompetitorDto buildCompetitorDto(String firstName, String lastName) {
+        CompetitorDto competitorDto = new CompetitorDto();
+        competitorDto.setFirstName(firstName);
+        competitorDto.setLastName(lastName);
+        competitorDto.setCompetitorNumber(firstName + "-001");
+        return competitorDto;
+    }
+
+    private MatchStageDto buildMatchStageDto(MatchDto matchDto, int stageNumber) {
+        MatchStageDto stageDto = new MatchStageDto();
+        stageDto.setMatch(matchDto);
+        stageDto.setStageNumber(stageNumber);
+        stageDto.setStageName("Stage " + stageNumber);
+        return stageDto;
+    }
+
+    private MatchCompetitorDto buildMatchCompetitorDto(MatchDto matchDto, CompetitorDto competitorDto) {
+        MatchCompetitorDto dto = new MatchCompetitorDto();
+        dto.setMatch(matchDto);
+        dto.setCompetitor(competitorDto);
+        dto.setClub(ClubIdentifier.HPSC);
+        return dto;
+    }
+
+    private MatchStageCompetitorDto buildMatchStageCompetitorDto(MatchStageDto stageDto,
+                                                                 CompetitorDto competitorDto) {
+        MatchStageCompetitorDto dto = new MatchStageCompetitorDto();
+        dto.setMatchStage(stageDto);
+        dto.setCompetitor(competitorDto);
+        dto.setClub(ClubIdentifier.HPSC);
+        return dto;
     }
 }
 

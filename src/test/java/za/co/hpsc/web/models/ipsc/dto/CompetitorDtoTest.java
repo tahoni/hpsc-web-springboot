@@ -1,6 +1,7 @@
 package za.co.hpsc.web.models.ipsc.dto;
 
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.response.MemberResponse;
@@ -26,7 +27,7 @@ class CompetitorDtoTest {
         // Assert
         assertNotNull(dto.getUuid());
         assertNull(dto.getId());
-        assertNull(dto.getIndex());
+        assertTrue(dto.getIndexes().isEmpty());
         assertEquals("", firstName);
         assertEquals("", dto.getLastName());
         assertEquals("", dto.getMiddleNames());
@@ -188,7 +189,7 @@ class CompetitorDtoTest {
     void testInit_whenMemberResponseNull_thenKeepsExistingValues() {
         // Arrange
         CompetitorDto dto = new CompetitorDto();
-        dto.setIndex(5);
+        dto.getIndexes().add(5);
         dto.setFirstName("Existing");
         dto.setLastName("Member");
         dto.setMiddleNames("X");
@@ -200,7 +201,7 @@ class CompetitorDtoTest {
         dto.init(null);
 
         // Assert
-        assertEquals(5, dto.getIndex());
+        assertEquals(5, dto.getIndexes().getFirst());
         assertEquals("Existing", dto.getFirstName());
         assertEquals("Member", dto.getLastName());
         assertEquals("X", dto.getMiddleNames());
@@ -243,12 +244,56 @@ class CompetitorDtoTest {
         dto.init(memberResponse);
 
         // Assert
-        assertEquals(12, dto.getIndex());
+        assertEquals(12, dto.getIndexes().getFirst());
         assertEquals("Jane", dto.getFirstName());
         assertEquals("Doe", dto.getLastName());
         assertEquals(LocalDate.of(1995, 3, 10), dto.getDateOfBirth());
         assertEquals("12345", dto.getCompetitorNumber());
         assertEquals(12345, dto.getSapsaNumber());
+    }
+
+    @Test
+    void testInit_whenSingleMemberResponse_thenAddsOneIndex() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(101);
+        memberResponse.setFirstName("John");
+        memberResponse.setLastName("Doe");
+        memberResponse.setIcsAlias("1001");
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(1, dto.getIndexes().size());
+        assertEquals(101, dto.getIndexes().getFirst());
+    }
+
+    @Test
+    void testInit_whenCalledWithMultipleMemberResponses_thenAppendsIndexesInOrder() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse firstMemberResponse = new MemberResponse();
+        firstMemberResponse.setMemberId(201);
+        firstMemberResponse.setFirstName("Jane");
+        firstMemberResponse.setLastName("Smith");
+        firstMemberResponse.setIcsAlias("2001");
+
+        MemberResponse secondMemberResponse = new MemberResponse();
+        secondMemberResponse.setMemberId(202);
+        secondMemberResponse.setFirstName("Alex");
+        secondMemberResponse.setLastName("Stone");
+        secondMemberResponse.setIcsAlias("2002");
+
+        // Act
+        dto.init(firstMemberResponse);
+        dto.init(secondMemberResponse);
+
+        // Assert
+        assertEquals(2, dto.getIndexes().size());
+        assertEquals(201, dto.getIndexes().getFirst());
+        assertEquals(202, dto.getIndexes().get(1));
     }
 
     // Category Mapping
@@ -268,7 +313,7 @@ class CompetitorDtoTest {
         dto.init(memberResponse);
 
         // Assert
-        assertEquals(20, dto.getIndex());
+        assertEquals(20, dto.getIndexes().getFirst());
     }
 
     // ICS Alias and SAPSA Number Handling
@@ -298,14 +343,70 @@ class CompetitorDtoTest {
         memberResponse.setMemberId(22);
         memberResponse.setFirstName("Sam");
         memberResponse.setLastName("Jones");
-        memberResponse.setIcsAlias("1500");
+        memberResponse.setIcsAlias("15000");
 
         // Act
         dto.init(memberResponse);
 
         // Assert
-        assertEquals("1500", dto.getCompetitorNumber());
+        assertEquals("15000", dto.getCompetitorNumber());
         assertNull(dto.getSapsaNumber());
+    }
+
+    @Test
+    void testInit_whenIcsAliasEqualsMaxSapsaNumber_thenSetsSapsaNumber() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(24);
+        memberResponse.setFirstName("Max");
+        memberResponse.setLastName("Boundary");
+        memberResponse.setIcsAlias(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER));
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER), dto.getCompetitorNumber());
+        assertEquals(IpscConstants.MAX_SAPSA_NUMBER, dto.getSapsaNumber());
+    }
+
+    @Test
+    void testInit_whenIcsAliasAboveMaxSapsaNumber_thenLeavesSapsaNumberNull() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(25);
+        memberResponse.setFirstName("Over");
+        memberResponse.setLastName("Boundary");
+        memberResponse.setIcsAlias(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1));
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1), dto.getCompetitorNumber());
+        assertNull(dto.getSapsaNumber());
+    }
+
+    @Test
+    void testInit_whenExistingSapsaNumberSetAndIcsAliasAboveMax_thenPreservesExistingSapsaNumber() {
+        // Arrange
+        CompetitorDto dto = new CompetitorDto();
+        dto.setSapsaNumber(43210);
+
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(26);
+        memberResponse.setFirstName("Existing");
+        memberResponse.setLastName("Sapsa");
+        memberResponse.setIcsAlias(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1));
+
+        // Act
+        dto.init(memberResponse);
+
+        // Assert
+        assertEquals(String.valueOf(IpscConstants.MAX_SAPSA_NUMBER + 1), dto.getCompetitorNumber());
+        assertEquals(43210, dto.getSapsaNumber());
     }
 
 
@@ -706,7 +807,7 @@ class CompetitorDtoTest {
         // Arrange
         CompetitorDto competitorDto = new CompetitorDto();
         competitorDto.setId(999L);
-        competitorDto.setIndex(888);
+        competitorDto.getIndexes().add(888);
         competitorDto.setFirstName("Robert");
         competitorDto.setLastName("Brown");
 
@@ -818,5 +919,3 @@ class CompetitorDtoTest {
         assertEquals("", result);
     }
 }
-
-

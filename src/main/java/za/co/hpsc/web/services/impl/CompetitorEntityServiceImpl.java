@@ -30,6 +30,7 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
         List<Competitor> competitorList = new ArrayList<>();
 
         // Attempts competitor lookup by SAPSA number or alias
+        boolean hasIpscAlias = false;
         if ((icsAlias != null) && (!icsAlias.isBlank()) && (NumberUtils.isCreatable((icsAlias)))) {
             Integer sapsaNumber = Integer.parseInt(icsAlias);
             if (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(icsAlias)) {
@@ -44,11 +45,13 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
             if (competitorList.isEmpty()) {
                 return Optional.empty();
             }
+        } else {
+            hasIpscAlias = true;
         }
 
         // Filters list by date of birth if present
         List<Competitor> filteredCompetitorList = competitorList;
-        if (dateTimeOfBirth != null) {
+        if ((!hasIpscAlias) && (dateTimeOfBirth != null)) {
             // Filters list to matching dates of birth
             filteredCompetitorList = competitorList.stream()
                     .filter(Objects::nonNull)
@@ -71,7 +74,7 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
                     .toList();
         }
 
-        List<Competitor> finalCompetitorList = new ArrayList<>();
+        List<Competitor> finalCompetitorList;
         if (!filteredListWithSapsaNumber.isEmpty()) {
             finalCompetitorList = filteredListWithSapsaNumber;
         } else if (!filteredListWithoutSapsaNumber.isEmpty()) {

@@ -6,7 +6,8 @@ import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
 import za.co.hpsc.web.services.MatchStageCompetitorEntityService;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -18,10 +19,10 @@ public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetit
     }
 
     @Override
-    public Optional<MatchStageCompetitor> findMatchStageCompetitor(Long matchStageId, Long competitorId) {
+    public List<MatchStageCompetitor> findMatchStageCompetitors(Long matchStageId, Long competitorId) {
         if ((matchStageId == null) || (competitorId == null)) {
-            return Optional.empty();
+            return new ArrayList<>();
         }
-        return matchStageCompetitorRepository.findByMatchStageIdAndCompetitorId(matchStageId, competitorId);
+        return matchStageCompetitorRepository.findAllByMatchStageIdAndCompetitorId(matchStageId, competitorId);
     }
 }

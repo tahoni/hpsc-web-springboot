@@ -39,11 +39,11 @@ public class ClassificationRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "IntlId", required = true)
+    @JsonProperty(value = "IntlId")
     private Integer internationalClassificationId;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "NatlId", required = true)
+    @JsonProperty(value = "NatlId")
     private Integer nationalClassificationId;
     @JacksonXmlProperty(isAttribute = true)
     @JsonProperty(value = "ClassId")

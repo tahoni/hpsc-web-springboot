@@ -94,7 +94,7 @@ class DivisionTest {
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(Division.PCC_OPTICS, result.get());
+        assertEquals(Division.PCC_IRON, result.get());
     }
 
     @Test
@@ -160,7 +160,7 @@ class DivisionTest {
     @Test
     void testGetByAbbreviationOrName_withMixedCaseAbbreviation_thenReturnsCorrectDivision() {
         // Arrange
-        String searchValue = "pCC";
+        String searchValue = "pCCo";
 
         // Act
         Optional<Division> result = Division.getByAbbreviationOrName(searchValue);

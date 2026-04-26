@@ -83,11 +83,20 @@ public class Competitor {
 
     @Override
     public String toString() {
-        if ((this.middleNames != null) && (!this.middleNames.isBlank())) {
-            return this.firstName + " " + this.middleNames + " " + this.lastName;
-        } else {
-            return this.firstName + " " + this.lastName;
+        StringBuilder sb = new StringBuilder();
+
+        String firstName = ((this.firstName != null) ? this.firstName.trim() : "");
+        sb.append(firstName).append(" ");
+
+        String middleNames = ((this.middleNames != null) ? this.middleNames.trim() : "");
+        if (!middleNames.isEmpty()) {
+            sb.append(middleNames).append(" ");
         }
+
+        String lastName = ((this.lastName != null) ? this.lastName.trim() : "");
+        sb.append(lastName);
+
+        return sb.toString().trim();
     }
 
     @PrePersist

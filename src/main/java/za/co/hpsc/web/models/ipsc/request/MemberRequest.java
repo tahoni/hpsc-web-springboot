@@ -45,11 +45,11 @@ public class MemberRequest {
 
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "Female", required = true)
+    @JsonProperty(value = "Female", defaultValue = "false")
     private Boolean female;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "DOB", required = true)
+    @JsonProperty(value = "DOB")
     private LocalDateTime dateOfBirth;
 
     @JacksonXmlProperty(isAttribute = true)
@@ -59,11 +59,11 @@ public class MemberRequest {
     @JsonProperty(value = "RefNo")
     private String refNo;
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "InActive", required = true)
+    @JsonProperty(value = "InActive", defaultValue = "false")
     private Boolean inactive;
     @NotNull
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "Register", required = true)
+    @JsonProperty(value = "Register", defaultValue = "false")
     private Boolean isRegisteredForMatch;
 
     @JacksonXmlProperty(isAttribute = true)
@@ -118,7 +118,7 @@ public class MemberRequest {
     private String email;
 
     @JacksonXmlProperty(isAttribute = true)
-    @JsonProperty(value = "PrintLabel", required = true)
+    @JsonProperty(value = "PrintLabel")
     private Boolean printLabel;
 
 

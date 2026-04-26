@@ -37,8 +37,8 @@ public class MatchCompetitorDto {
     private UUID uuid = UUID.randomUUID();
     private Long id;
 
-    private Integer competitorIndex;
-    private Integer matchIndex;
+    private transient Integer competitorIndex;
+    private transient Integer matchIndex;
 
     @NotNull
     private CompetitorDto competitor;
@@ -90,14 +90,16 @@ public class MatchCompetitorDto {
      * Constructs a new {@code MatchCompetitorDto} instance with data from the provided
      * {@link CompetitorDto} and {@link MatchDto} objects.
      *
-     * @param competitorDto the {@link CompetitorDto} representing the competitor in the match.
-     * @param matchDto      the {@link MatchDto} representing the match in which the
-     *                      competitor participates.
+     * @param competitorDto   the {@link CompetitorDto} representing the competitor in the match.
+     * @param matchDto        the {@link MatchDto} representing the match in which the
+     *                        competitor participates.
+     * @param competitorIndex the index of the competitor in the match, used for tracking
+     *                        and reference purposes.
      */
-    public MatchCompetitorDto(CompetitorDto competitorDto, MatchDto matchDto) {
+    public MatchCompetitorDto(CompetitorDto competitorDto, MatchDto matchDto, Integer competitorIndex) {
         if (competitorDto != null) {
             // Initialises the competitor and match details
-            this.competitorIndex = competitorDto.getIndex();
+            this.competitorIndex = competitorIndex;
             this.matchIndex = matchDto.getIndex();
             this.competitor = competitorDto;
             this.match = matchDto;
@@ -119,7 +121,7 @@ public class MatchCompetitorDto {
             this.matchIndex = enrolledResponse.getMatchId();
             this.competitorIndex = enrolledResponse.getCompetitorId();
 
-            // Initializes aggregate score from multiple score responses
+            // Initialises aggregate score from multiple score responses
             this.matchPoints = BigDecimal.ZERO;
             scoreResponses.forEach(scoreResponse -> matchPoints =
                     matchPoints.add(BigDecimal.valueOf(ValueUtil.nullAsZero(scoreResponse.getFinalScore()))));
@@ -145,8 +147,8 @@ public class MatchCompetitorDto {
             this.club = ClubIdentifier.getByCode(enrolledResponse.getRefNo()).orElse(ClubIdentifier.UNKNOWN);
 
             // Determines the power factor based on the major power factor flag
-            this.powerFactor = ((enrolledResponse.getMajorPowerFactor() != null) &&
-                    (enrolledResponse.getMajorPowerFactor()) ? PowerFactor.MAJOR : PowerFactor.MINOR);
+            this.powerFactor = (((enrolledResponse.getMajorPowerFactor() != null) &&
+                    (enrolledResponse.getMajorPowerFactor())) ? PowerFactor.MAJOR : PowerFactor.MINOR);
             // Determines the discipline based on the division ID
             this.division = Division.getByCode(enrolledResponse.getDivisionId()).orElse(null);
             // Determines the firearm type from the discipline

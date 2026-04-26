@@ -11,6 +11,9 @@ package za.co.hpsc.web.constants;
  * </p>
  */
 public class SystemConstants {
+    private SystemConstants() {
+    }
+
     public static final int DEFAULT_SCALE = 5;
 
     public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";

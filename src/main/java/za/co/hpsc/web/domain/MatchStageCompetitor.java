@@ -103,6 +103,7 @@ public class MatchStageCompetitor {
      */
     public void init(MatchStageCompetitorDto matchStageCompetitorDto) {
         // Initialises the match stage and competitor attributes
+        this.matchClub = matchStageCompetitorDto.getClub();
         this.competitorCategory = matchStageCompetitorDto.getCompetitorCategory();
         this.firearmType = matchStageCompetitorDto.getFirearmType();
         this.division = matchStageCompetitorDto.getDivision();
@@ -139,9 +140,20 @@ public class MatchStageCompetitor {
 
     @Override
     public String toString() {
-        String stage = (this.matchStage != null) ? this.matchStage.toString() : "Unknown";
-        String competitor = (this.competitor != null) ? this.competitor.toString() : "Unknown";
-        return stage + ": " + competitor;
+        StringBuilder sb = new StringBuilder();
+
+        String stage = (this.matchStage != null) ? this.matchStage.toString().trim() : "";
+        sb.append(stage);
+
+        String competitor = (this.competitor != null) ? this.competitor.toString().trim() : "";
+        if (!competitor.isEmpty()) {
+            if (!stage.isEmpty()) {
+                sb.append(": ");
+            }
+            sb.append(competitor);
+        }
+
+        return sb.toString().trim();
     }
 
     @PrePersist

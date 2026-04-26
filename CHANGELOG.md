@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## 📑 Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
+- [🧾 Version 5.4.0](#-540---2026-04-26) ← Current
 - [🧾 Version 5.3.0](#-530---2026-03-15)
 - [🧾 Version 5.2.0](#-520---2026-02-27)
 - [🧾 Version 5.1.0](#-510---2026-02-25)
@@ -44,6 +45,192 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### 🗑️ Removed
 
 ### 🔐 Security
+
+---
+
+## 🧾 [5.4.0] - 2026-04-26
+
+### ➕ Added
+
+#### 👥 Competitor Enrolment
+
+- **EnrolledCompetitorDto:** New DTO (138 lines) tracking enrolled competitors through the IPSC pipeline
+    - Complete field set for competitor enrolment state with comprehensive Javadoc
+- **MatchHolder:** New data class (23 lines) for match data encapsulation in service calls
+- **IpscMatchRecordHolder:** New holder class in the holders' package (10 lines)
+- **CompetitorResultRecord:** New record for competitor result data (13 lines)
+- **MatchCompetitorOverallResultsRecord:** New record for overall match results (9 lines)
+- **MatchCompetitorStageResultRecord:** New record for stage-level result data
+
+#### 🏗️ Service Architecture
+
+- **TransformationService interface:** Replaces `IpscMatchService`; semantically describes the data-transformation role
+- **TransformationServiceImpl:** 1,098 lines replacing `IpscMatchServiceImpl`
+
+#### 🏷️ Enumerations
+
+- **ClubIdentifier:** Abbreviation field added (38 lines changed); each identifier now carries a dedicated abbreviation
+
+#### 📦 Constants
+
+- **HpscConstants:** 3 lines updated
+- **MatchConstants:** 3 lines updated
+- **SystemConstants:** 3 lines updated
+
+#### 🧪 Test Coverage (20+ new test classes, ~7,000 lines)
+
+- **Controller tests:** `AwardControllerTest` (163), `ImageControllerTest` (163),
+  `IpscControllerTest` (156), `ControllerAdviceTest` (299)
+- **Converter tests:** `ClubIdentifierConverterTest` (76), `CompetitorCategoryConverterTest` (85),
+  `DivisionConverterTest` (85), `FirearmTypeConverterTest` (103), `MatchCategoryConverterTest` (76),
+  `PowerFactorConverterTest` (85)
+- **Domain entity tests:** `ClubTest` (467), `CompetitorTest` (354), `IpscMatchTest` (367),
+  `IpscMatchStageTest` (333), `MatchCompetitorTest` (364), `MatchStageCompetitorTest` (645)
+- **Exception tests:** `FatalExceptionTest` (161), `NonFatalExceptionTest` (173),
+  `ValidationExceptionTest` (115)
+- **Model & utility tests:** `ControllerResponseTest` (89), `RequestTest` (100),
+  `AwardRequestForCSVTest` (394), `ImageRequestForCSVTest` (244), `EnrolledCompetitorDtoTest` (196),
+  `FirearmTypeToDivisionsTest` (40), `ValueUtilTest` (100)
+- **Integration tests:** `AwardServiceIntegrationTest` (295), `ImageServiceIntegrationTest` (348),
+  `DtoToEntityMappingIntegrationTest` (71)
+- **Service tests:** `TransformationServiceTest` (1,026), `MatchCompetitorDtoTest` (253)
+
+#### 🔄 CI/CD & Configuration
+
+- **`.aiignore`:** New file for AI assistant context management
+- **Qodana JVM linter:** `qodana.yaml` configured with `jetbrains/qodana-jvm` for static analysis
+- **JaCoCo 0.8.14:** Coverage profile added to `pom.xml`; reports output to `/coverage` directory
+- **Branch patterns:** Extended in `code_quality.yml` (feature, bugfix, hotfix)
+
+### 🔄 Changed
+
+#### 🏗️ Core Services
+
+- **TransformationServiceImpl:** 1,098 lines introduced (replaces `IpscMatchServiceImpl`)
+- **DomainServiceImpl:** 139 lines changed – enhanced competitor and match handling
+- **TransactionServiceImpl:** 87 lines changed – list-based operation updates
+- **IpscServiceImpl:** 34 lines changed
+- **MatchCompetitorEntityServiceImpl:** 9 lines changed – returns lists
+- **MatchStageCompetitorEntityServiceImpl:** 9 lines changed – enhanced retrieval
+- **CompetitorEntityServiceImpl:** 7 lines changed
+- **ImageServiceImpl:** 2 lines changed
+
+#### 🔄 Service Interfaces
+
+- **TransformationService:** 27 lines (new interface replacing `IpscMatchService`)
+- **DomainService:** 37 lines changed
+- **MatchCompetitorEntityService:** 24 lines changed – returns lists
+- **MatchStageCompetitorEntityService:** 25 lines changed
+- **TransactionService:** 8 lines changed
+- **IpscService:** 2 lines changed
+
+#### 🗄️ Domain Entities
+
+- **Club:** 15 lines changed
+- **Competitor:** 17 lines changed
+- **IpscMatch:** 13 lines changed
+- **IpscMatchStage:** 12 lines changed
+- **MatchCompetitor:** 16 lines changed
+- **MatchStageCompetitor:** 18 lines changed
+
+#### 📦 DTOs & Models
+
+- **CompetitorDto:** 13 lines changed – SAPSA deduplication and max number validation
+- **MatchCompetitorDto:** 22 lines changed
+- **AwardRequestForCSV:** 40 lines changed – updated constructors and JSON handling
+- **ImageRequestForCsv:** 12 lines changed – updated constructors
+- **ClubDto:** 3 lines changed
+- **MatchStageCompetitorDto:** 5 lines changed
+- **MatchDto:** 2 lines changed
+- **AwardRequest:** 7 lines changed
+
+#### 🔌 Converters
+
+- **ClubIdentifierConverter:** 4 lines changed – uses abbreviation for database persistence
+
+#### 🌐 Controllers & Config
+
+- **ControllerAdvice:** 35 lines changed – improved error handling
+- **IpscController:** 6 lines changed
+- **AwardController:** 2 lines changed
+- **ImageController:** 2 lines changed
+
+#### 📦 Package Moves
+
+- `DtoMapping`, `DtoToEntityMapping`, `EntityMapping`: `ipsc/domain` → `ipsc/data`
+- `MatchResultsDto`, `MatchResultsDtoHolder`: moved to `ipsc/holders/dto`
+- `IpscRequestHolder`, `IpscResponseHolder`: moved to `ipsc/holders` sub-packages
+
+#### 🗂️ Repository Layer
+
+- **MatchCompetitorRepository:** 4 lines changed
+- **MatchStageCompetitorRepository:** 4 lines changed
+
+#### 🧪 Test Suites (Updated)
+
+- **DomainServiceTest:** 1,428 lines changed – enhanced coverage
+- **IpscServiceIntegrationTest:** 649 lines changed – expanded integration scenarios
+- **TransactionServiceTest:** 1,736 lines changed – comprehensive updates
+- **IpscServiceTest:** 737 lines changed
+- **CompetitorDtoTest:** 119 lines changed – SAPSA validation coverage
+- **DtoToEntityMappingTest:** 157 lines changed – package move updates
+- **ClubIdentifierTest:** 220 lines changed – abbreviation coverage
+
+#### 🏗️ Build & Configuration
+
+- **pom.xml:** 85 lines changed – JaCoCo 0.8.14, Spring Framework 7.0.7 (stabilised from 7.0.8)
+- **qodana.yaml:** Configured with `jetbrains/qodana-jvm` linter
+- **code_quality.yml:** 34 lines changed – branch patterns extended, a dependency install step added
+- **codeql.yml:** 4 lines changed
+- **HpscWebApplication:** Application version bumped to 5.4.0
+
+### 🐛 Fixed
+
+#### 🔧 Constants & Division
+
+- **PCC Optics division constant:** Fixed incorrect value in `IpscConstants`
+- **Division constants:** Updated competitor number and ICS alias values in `IpscConstants`
+- **Division enum:** 2 lines changed (PCC Optics fix)
+
+#### 🔌 Converter
+
+- **ClubIdentifierConverter:** Fixed to correctly use abbreviation for database persistence
+
+#### 🌐 Error Handling
+
+- **ControllerAdvice:** Fixed exception handler methods for improved error response management
+
+#### 🔧 Match Processing
+
+- Removed unused firearm type assignment from the match processing path
+
+### ⚠️ Deprecated
+
+None.
+
+### 🗑️ Removed
+
+#### 🏗️ Services & Implementations
+
+- **`IpscMatchService` interface:** Replaced by `TransformationService`
+- **`IpscMatchServiceImpl` class:** 867 lines replaced by `TransformationServiceImpl`
+
+#### 📦 Records
+
+- **`MatchCompetitorRecord`:** Replaced by `CompetitorRecord`
+- **`IpscMatchRecordHolder`** (from the records' package): Moved to holders
+
+#### ⚙️ Configuration
+
+- **`qodana.yml`:** Duplicate removed; configuration consolidated in `qodana.yaml`
+
+#### 🧪 Test Classes
+
+- **`IpscMatchServiceTest`:** 10,076 lines removed (service renamed to `TransformationService`)
+
+### 🔐 Security
+
+No security-related changes in this release.
 
 ---
 
@@ -91,14 +278,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
     - Improved list initialisation for match operations
 - **IpscServiceImpl:** 11 lines changed – minor updates
 - **MatchEntityServiceImpl:** 24 lines changed – streamlined implementation
-- **ClubEntityServiceImpl:** 24 lines changed – simplified to single method
+- **ClubEntityServiceImpl:** 24 lines changed – simplified to a single method
 - **ClubEntityService:** 27 lines changed – removed unused methods
 
 #### 📦 Domain Mapping
 
 - **DtoMapping:** Converted from class to Java record construct
-    - Simplified initialisation with compact record constructor
-    - Improved immutability and clarity of DTO mapping state
+    - Simplified initialisation with a compact record constructor
+    - Improved immutability and clarity of the DTO mapping state
     - Streamlined transaction stubbing in tests
 - **DtoToEntityMapping:** 79 lines changed – enhanced with additional test cases and documentation
 
@@ -120,7 +307,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **CompetitorDto:** 27 lines changed – optimised initialisation
 - **MatchDto:** 10 lines changed – minor updates
 - **ClubDto:** 6 lines changed – minor updates
-- **MatchResultsDto:** 1 line changed – minor cleanup
+- **MatchResultsDto:** 1 line changed – minor clean-up
 
 #### 🗂️ Repository Layer
 
@@ -151,7 +338,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **pom.xml:** Updated Spring Boot from 4.0.3 to 4.1.0-SNAPSHOT; added Spring Snapshots repository
 - **application-dev.properties:** 13 lines changed – datasource and logging configuration updates
 - **application-test.properties:** 6 lines changed – updated test datasource configuration
-- **application.properties:** 1 line removed – minor cleanup
+- **application.properties:** 1 line removed – minor clean-up
 - **logback-spring.xml:** 2 lines changed – logging improvements
 - **IpscConstants:** Updated competitor number and ICS alias constant values
 
@@ -209,6 +396,8 @@ No security-related changes in this release.
 
 ---
 
+## 🧾 [5.2.0] - 2026-02-27
+
 ### ➕ Added
 
 #### 🏗️ Architecture & Domain Model
@@ -232,7 +421,7 @@ No security-related changes in this release.
     - MatchCompetitor DTO list tests (6 scenarios)
     - MatchStageCompetitor DTO list tests (6 scenarios)
     - Entity setter tests (12 scenarios covering all entity types)
-    - Comprehensive null, empty, partial, and full data coverage
+    - Comprehensive null, empty, partial and full data coverage
 - **TransactionServiceTest:** 2,000+ lines with extensive edge case coverage
     - Null/empty/blank input tests
     - Partial and full input tests
@@ -300,7 +489,7 @@ No security-related changes in this release.
     - Null/empty/blank field edge cases
     - Partial and full field scenarios
     - Section-based organisation maintained from v5.1.0
-- **IpscMatchResultServiceTest:** 2,197 lines removed - migrated to ImplTest
+- **IpscMatchResultServiceTest:** 2,197 lines removed – migrated to ImplTest
 - **IpscServiceImplTest:** 2,010 lines changed – consolidated with improved test organisation
 - **IpscServiceTest:** 844 lines removed – duplicates eliminated
 - **IpscMatchServiceTest:** 2,197 lines changed – major consolidation including output verification tests
@@ -434,7 +623,7 @@ No security-related changes in this release.
 - **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
   for predefined club references
 - **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
-  repository lookup, optional entity creation, and club association
+  repository lookup, optional entity creation and club association
 - **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
   with UUID generation and optional database persistence
 - **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
@@ -484,7 +673,7 @@ No security-related changes in this release.
 - **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
   for predefined club references
 - **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
-  repository lookup, optional entity creation, and club association
+  repository lookup, optional entity creation and club association
 - **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
   with UUID generation and optional database persistence
 - **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
@@ -555,7 +744,7 @@ No security-related changes in this release.
 #### 🔀 Data Processing Pipelines
 
 - **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs,
-  matches, stages, and competitors
+  matches, stages and competitors
 - **Error Handling:** Enhanced validation and error messages for data transformation failures
 - **Null Safety:** Comprehensive null checks throughout data processing pipelines
 
@@ -653,7 +842,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 #### ✅ Improved Input Validation
 
-- **Multi-layered Validation:** Validation at controller, service, and entity levels
+- **Multi-layered Validation:** Validation at controller, service and entity levels
 - **Error Mapping:** Comprehensive error response generation with detailed messages
 
 #### ⚠️ Exception Handling Improvements
@@ -789,7 +978,7 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 - **MINOR** version for backward-compatible functionality additions
 - **PATCH** version for backward-compatible bug fixes
 
-### 📐 Legacy Versioning (v1.x - v4.x)
+### 📐 Legacy Versioning (v1.x – v4.x)
 
 Earlier releases used a non-semantic versioning scheme. For historical documentation,
 see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
@@ -797,6 +986,16 @@ see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 ---
 
 ## 🚀 Upgrade Guide
+
+### ⬆️ From v5.3.0 to v5.4.0
+
+**Breaking Changes:** None
+
+1. Update the version in `pom.xml` to `5.4.0`
+2. Replace any `IpscMatchService` injection points with `TransformationService`
+3. Update import statements for classes moved from `ipsc/domain` to `ipsc/data`
+4. Update `MatchCompetitorEntityService` call sites to handle `List<>` return types
+5. Run `./mvnw clean install` to rebuild the project
 
 ### ⬆️ From v4.1.0 to v5.0.0
 
@@ -830,13 +1029,13 @@ Contributions are welcome! Please follow these guidelines:
 1. Create a feature branch from `main`
 2. Make your changes with comprehensive test coverage
 3. Document your changes in the appropriate sections of this CHANGELOG
-4. Submit a pull request with detailed description
+4. Submit a pull request with a detailed description
 
 ---
 
 ## 💬 Support
 
-For issues, feature requests, or questions:
+For issues, feature requests or questions:
 
 - **GitHub Issues:**
   [tahoni/hpsc-web-springboot/issues](https://github.com/tahoni/hpsc-web-springboot/issues)
@@ -844,5 +1043,5 @@ For issues, feature requests, or questions:
 
 ---
 
-**Last Updated:** 2026-02-24
+**Last Updated:** 2026-04-26
 

@@ -15,6 +15,9 @@ package za.co.hpsc.web.constants;
  * </p>
  */
 public final class MatchConstants {
+    private MatchConstants() {
+    }
+
     public static final String MATCH_NAME_FORMAT = "${clubName} ${divisionName} ${categoryName}";
     public static final String STAGE_RANGE_NAME_FORMAT = "Stage ${stageNumber} Range ${rangeNumber}";
 
