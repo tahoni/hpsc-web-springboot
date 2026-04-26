@@ -49,6 +49,7 @@ jobs:
           # Pass the JaCoCo report directory; licence-audit uses enablePackageSearch in qodana.yaml
           args: >-
             --coverage-dir target/site/jacoco
+            --baseline baseline.sarif.json
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
