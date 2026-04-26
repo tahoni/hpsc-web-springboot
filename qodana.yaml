@@ -9,6 +9,8 @@ raiseLicenseProblems: true
 enablePackageSearch: true
 include:
   - name: CheckDependencyLicenses # enables Qodana licence-audit inspections
+  - name: VulnerableCodeUsagesInspection # enables Qodana security audit inspections
+  - name: JvmTaintAnalysis # enables Qodana taint analysis inspections
 exclude:
   - name: All
     paths:
