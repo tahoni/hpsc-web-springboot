@@ -4,6 +4,7 @@
 version: "1.0"
 profile:
   name: qodana.recommended
+bootstrap: mvn --batch-mode dependency:go-offline -q
 raiseLicenseProblems: true
 enablePackageSearch: true
 include:

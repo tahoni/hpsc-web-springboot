@@ -38,7 +38,7 @@ jobs:
         run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
       - name: Build and generate coverage report
-        run: mvn --batch-mode verify -Pcoverage,license
+        run: mvn --batch-mode verify -Pcoverage
         # The 'coverage' profile runs JaCoCo → target/site/jacoco/jacoco.xml
 
       # ── Qodana Scan (code quality + coverage upload + license audit) ─────────
@@ -46,9 +46,9 @@ jobs:
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          # Pass the JaCoCo XML report and enable licence-audit inspections
+          # Pass the JaCoCo report directory; licence-audit uses enablePackageSearch in qodana.yaml
           args: >-
-            --coverage-dir target/site/jacoco/jacoco.xml
+            --coverage-dir target/site/jacoco
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
