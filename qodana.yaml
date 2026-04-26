@@ -2,6 +2,7 @@
 # WARNING: Do not store sensitive information in this file, as its contents will be included in the Qodana report. #
 ####################################################################################################################
 version: "1.0"
+linter: jetbrains/qodana-jvm:latest
 profile:
   name: qodana.recommended
 bootstrap: mvn --batch-mode dependency:go-offline -q
