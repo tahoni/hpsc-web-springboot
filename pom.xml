@@ -19,16 +19,22 @@
     <!-- Overwrite default configuration -->
     <url/>
     <licenses>
-        <license/>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <id>tahoni</id>
+            <name>Leoni Lubbinge</name>
+            <email>leonil@tahoni.info</email>
+        </developer>
     </developers>
     <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
+        <connection>scm:git:https://github.com/tahoni/hpsc-web-springboot.git</connection>
+        <url>https://github.com/tahoni/hpsc-web-springboot/tree/develop</url>
     </scm>
 
     <properties>

@@ -53,6 +53,7 @@ jobs:
           args: >-
             --coverage-dir target/site/jacoco
             --baseline baseline.sarif.json
+            --profile-name qodana.recommended
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
