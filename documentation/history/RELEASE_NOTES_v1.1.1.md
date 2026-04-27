@@ -1,4 +1,4 @@
-# Release Notes - Version 1.1.1
+# Release Notes – Version 1.1.1
 
 **Status:** ✨ Stable
 

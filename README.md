@@ -15,7 +15,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [📚 API Documentation](#-api-documentation)
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
-- [📜 License](#-license)
+- [📜 Licence](#-licence)
 - [👤 Author](#-author)
 
 ## 📖 Introduction
@@ -153,7 +153,7 @@ Test coverage includes:
 
 A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md`](ARCHITECTURE.md) file.
 
-## 📜 License
+## 📜 Licence
 
 The copyright licence can be found in the [`LICENSE.md`](LICENSE.md) file.
 

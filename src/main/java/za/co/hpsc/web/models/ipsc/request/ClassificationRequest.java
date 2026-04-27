@@ -17,7 +17,7 @@ import java.util.List;
  *
  * <p>
  * The class maps to the `CLASSIFY.XML` content in the `WinMSS.cab` file.
- * It stores meta-data about members in the system, classifying them into divisions, etc.
+ * It stores metadata about members in the system, classifying them into divisions, etc.
  * </p>
  */
 @Getter

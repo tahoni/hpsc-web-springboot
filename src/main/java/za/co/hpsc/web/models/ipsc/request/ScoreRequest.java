@@ -20,7 +20,7 @@ import java.util.List;
  *
  * <p>
  * The class maps to the `SCORE.XML` content in the `WinMSS.cab` file.
- * It stores meta-data about members in the system, namely their scores for each stage
+ * It stores metadata about members in the system, namely their scores for each stage
  * of a match, including detailed and summarised performance data.
  * </p>
  */

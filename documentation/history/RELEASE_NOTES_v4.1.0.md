@@ -73,7 +73,8 @@ refactored IPSC domain introduced in version 4.0.0.
 ### 📋 Migration Notes
 
 - **Database schema:** Ensure tables `ipsc_match` and `ipsc_match_stage` are present
-- **Foreign-key constraints:** Review cascade behavior for delete operations to avoid accidental data loss
+- **Foreign-key constraints:** Review cascade behaviour for delete operations to avoid accidental 
+data loss
 - **Repositories/services:** Continue using new repository interfaces from v4.0.0
 - **Test fixtures:** Integration tests may require test data fixtures for create/update flows
 

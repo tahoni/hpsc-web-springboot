@@ -518,4 +518,4 @@ The CI/CD improvements — Qodana JVM linting, JaCoCo code coverage, and refined
 
 **For detailed change history, see [CHANGELOG.md](/CHANGELOG.md)**
 
-**For previous releases, see the [history folder](/documentation/history/)**
+**For previous releases, see the [history folder](/documentation/history)**

@@ -173,7 +173,7 @@ between the entry points, business logic, data access, and persistence layers.
 ### 📥 Data Import Flow (CSV/XML Processing)
 
 1. **File Upload**: Client uploads a CSV or XML file to an import endpoint.
-2. **Parser Invocation**: Service invokes appropriate parser (WinMSS, IPSC).
+2. **Parser Invocation**: Service invokes an appropriate parser (WinMSS, IPSC).
 3. **Data Extraction**: Parser reads file, applies mapping rules, and validates data.
 4. **Entity Creation**: Parsed data is transformed into JPA entities.
 5. **Persistence**: Entities are saved to the database via repositories within a transaction.

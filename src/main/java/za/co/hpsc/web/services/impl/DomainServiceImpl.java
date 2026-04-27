@@ -366,8 +366,8 @@ public class DomainServiceImpl implements DomainService {
 
     /**
      * Returns {@code true} when the given DTO's club should be excluded by the active club filter.
-     * A DTO is excluded when a non-null, non-ignored {@code clubIdentifier} is provided and it does
-     * not match the DTO's own club value.
+     * A DTO is excluded when a non-null, non-ignored {@code clubIdentifier} is provided,
+     * and it does not match the DTO's own club value.
      *
      * @param clubIdentifier the filter club identifier, or {@code null} to skip filtering
      * @param dtoClub        the club identifier carried by the DTO being evaluated
@@ -380,8 +380,8 @@ public class DomainServiceImpl implements DomainService {
     }
 
     /**
-     * Returns {@code true} when the competitor is absent from the competitor map —
-     * i.e. the DTO is null, its UUID is null, or no matching entry exists in the map.
+     * Returns {@code true} when the competitor is absent from the competitor map,
+     * for example, the DTO is null, its UUID is null, or no matching entry exists in the map.
      *
      * @param competitorMap a map of `UUID` to `CompetitorDto` used to resolve competitors by UUID.
      * @param competitorDto the competitor DTO to check.

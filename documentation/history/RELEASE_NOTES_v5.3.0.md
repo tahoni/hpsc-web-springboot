@@ -39,17 +39,17 @@ a Java record construct, improving immutability and clarity throughout the mappi
     - Score and competitor processing moved to `IpscMatchService`
     - Cleaner service boundaries with reduced inter-service dependencies
 - **ScoreDto Removed:** `ScoreDto` class removed as part of service consolidation
-    - Score data now handled directly through response objects
+    - Score data is now handled directly through response objects
     - Reduced DTO proliferation and simplified data flow
 - **ClubEntityService Simplified:** Streamlined to a single `findClubByNameOrAbbreviation` method
     - Removed `findClubById`, `findClubByName`, and `findClubByAbbreviation` methods
-    - Focused interface with single responsibility
+    - Focused interface with a single responsibility
 
 ### 📦 DtoMapping as Java Record
 
 - **DtoMapping converted to Java record:** Transitioned from a mutable class to an immutable record
-    - Simplified initialisation with compact record constructor
-    - Improved immutability and clarity of DTO mapping state
+    - Simplified initialisation with a compact record constructor
+    - Improved immutability and clarity of the DTO mapping state
     - Streamlined transaction stubbing and test setup
     - Better alignment with modern Java design patterns
 
@@ -67,12 +67,12 @@ a Java record construct, improving immutability and clarity throughout the mappi
 ### 🔍 Repository Query Optimisation
 
 - **Enhanced JPQL queries** for improved data fetching strategies
-    - Added scheduled date to match retrieval for uniqueness constraints
+    - Added the scheduled date to match retrieval for uniqueness constraints
     - Optimised competitor retrieval using `Set` for deduplication and performance
     - Removed unnecessary fetch joins to reduce query complexity
     - Streamlined club and competitor lookup methods
 - **Match stage competitor enhancements:** Improved null handling in retrieval methods
-- **Comprehensive query cleanup:** Removed unused query methods across repositories
+- **Comprehensive query clean-up:** Removed unused query methods across repositories
 
 ### 🔧 Service Layer Refinement
 
@@ -199,7 +199,7 @@ a Java record construct, improving immutability and clarity throughout the mappi
 - **TransactionServiceImpl:** 22 lines changed – improved null handling
 - **IpscServiceImpl:** 11 lines changed – minor updates
 - **MatchEntityServiceImpl:** 24 lines changed – streamlined implementation
-- **ClubEntityServiceImpl:** 24 lines changed – simplified to single method
+- **ClubEntityServiceImpl:** 24 lines changed – simplified to a single method
 - **ClubEntityService:** 27 lines changed – removed unused methods
 
 #### Domain Mapping
@@ -224,7 +224,7 @@ a Java record construct, improving immutability and clarity throughout the mappi
 - **CompetitorDto:** 27 lines changed – optimised initialisation
 - **MatchDto:** 10 lines changed – minor updates
 - **ClubDto:** 6 lines changed – minor updates
-- **MatchResultsDto:** 1 line changed – minor cleanup
+- **MatchResultsDto:** 1 line changed – minor clean-up
 
 #### Repository Layer
 
@@ -422,7 +422,7 @@ IpscController → IpscService → DomainService (match result init)
 
 #### Optimised Queries
 
-- Match retrieval includes scheduled date for uniqueness
+- Match retrieval includes the scheduled date for uniqueness
 - Competitor queries use `Set` to prevent duplicates
 - Unnecessary fetch joins removed for performance
 - Stage competitor queries include null safety
@@ -467,7 +467,7 @@ releases.
 
 **For detailed change history, see [CHANGELOG.md](/CHANGELOG.md)**
 
-**For previous releases, see the [history folder](/documentation/history/)**
+**For previous releases, see the [history folder](/documentation/history)**
 
 
 

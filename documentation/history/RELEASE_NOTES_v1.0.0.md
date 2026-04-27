@@ -1,4 +1,4 @@
-# Release Notes - Version 1.0.0
+# Release Notes – Version 1.0.0
 
 **Release Date:** January 4, 2026  
 **Status:** ✨ Stable
@@ -145,7 +145,7 @@ and better maintainability.
 
 ### 🖼️ Image Management
 
-- **POST /images** - Upload or process image data
+- **POST /images** – Upload or process image data
 - **GET /images** – Retrieve image information
 - **GET /images/{id}** - Get specific image details
 - **PUT /images/{id}** - Update image metadata

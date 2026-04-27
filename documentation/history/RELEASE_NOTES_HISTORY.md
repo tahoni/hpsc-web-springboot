@@ -57,7 +57,8 @@ featuring Qodana JVM linting and JaCoCo code coverage integration.
 
 - **`IpscMatchService` renamed to `TransformationService`:** Interface and implementation restructured for
   improved semantic clarity
-    - `TransformationServiceImpl` introduced (1,098 lines) replacing `IpscMatchServiceImpl` (867 lines removed)
+    - `TransformationServiceImpl` introduced (1,098 lines) replacing `IpscMatchServiceImpl` (867 lines
+      removed)
     - Interface updated with comprehensive Javadoc and improved method naming
 - **`MatchHolder` introduced:** New data class (23 lines) for match data encapsulation
 - **`MatchCompetitorEntityService`:** Updated to return lists for bulk competitor retrieval
@@ -77,7 +78,8 @@ featuring Qodana JVM linting and JaCoCo code coverage integration.
 - **Holders reorganised:** `MatchResultsDto`, `MatchResultsDtoHolder`, `IpscRequestHolder`,
   `IpscResponseHolder` moved to dedicated `holders` sub-packages; new `IpscMatchRecordHolder` added
 - **Records restructured:** `CompetitorMatchRecord` → `CompetitorRecord`; new `CompetitorResultRecord`,
-  `MatchCompetitorOverallResultsRecord`, and `MatchCompetitorStageResultRecord` introduced; `MatchCompetitorRecord`
+  `MatchCompetitorOverallResultsRecord`, and `MatchCompetitorStageResultRecord` introduced;
+  `MatchCompetitorRecord`
   removed
 
 #### 🧪 Comprehensive Test Suite Expansion
@@ -1009,7 +1011,7 @@ mapping patterns.
 
 - **Utility classes:** Ensured utility classes cannot be instantiated (via private constructors)
 - **String formatting:** Improved formatting and readability in match helper utilities
-- **Constants cleanup:** Removed unused constants from `MatchConstants`
+- **Constant clean-up:** Removed unused constants from `MatchConstants`
 - **Javadoc expansion:** Enhanced documentation across domain entities, enums, and division model classes
 
 ### 🛡️ Security & Updates
@@ -1446,17 +1448,16 @@ to a sophisticated platform for managing practical shooting competition data wit
 organisation and maintainability focus. This release notes history documents:
 
 - **Feature evolution:** From image gallery to comprehensive IPSC match management with competitor enrolment
-- **Architectural progression:** From monolithic to modular, service-oriented, transformation-based architecture
+- **Architectural progression:** From monolithic to modular, service-oriented, transformation-based
+  architecture
 - **Quality improvements:** Increasing test coverage (~30% to ~92%), documentation, and code organisation
-- **Standards adoption:** From custom versioning to Semantic Versioning with CI/CD quality gates
+- **Standard adoption:** From custom versioning to Semantic Versioning with CI/CD quality gates
 - **Domain specialisation:** From generic match management to IPSC-specific focus with SAPSA validation
 - **Code quality:** Systematic test organisation, consolidation, and Qodana static analysis for long-term
   maintainability
 
-Each version built upon previous releases while introducing improvements in architecture, functionality, and
-maintainability. The adoption of Semantic Versioning in v5.0.0, the test suite consolidation across v5.1.0–
-v5.3.0, and the massive test expansion in v5.4.0 mark a clear maturation point for predictable, standards-based
-future releases with strong emphasis on code quality, competitor data integrity, and CI/CD automation.
+Each version built upon previous releases while introducing improvements in architecture, functionality, and maintainability. The adoption of Semantic Versioning in v5.0.0, the test suite consolidation across v5.1.0– v5.3.0, and the massive test expansion in v5.4.0 mark a clear maturation point for predictable,
+standards-based future releases with strong emphasis on code quality, competitor data integrity, and CI/CD automation.
 
 ---
 

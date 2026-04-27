@@ -1,4 +1,4 @@
-# Release Notes - Version 5.0.0
+# Release Notes – Version 5.0.0
 
 **Release Date:** February 24, 2026  
 **Status:** ✨ Stable
@@ -159,7 +159,7 @@ This release includes stability improvements and bug fixes carried forward from 
 - Entity initialisation edge cases properly handled
 - Null-safety checks in all data transformation pipelines
 - Proper handling of optional entity relationships
-- Correct cascade behavior in entity deletion scenarios
+- Correct cascade behaviour in entity deletion scenarios
 
 ---
 

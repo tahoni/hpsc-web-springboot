@@ -258,7 +258,7 @@ entities.
 
 2. **Import Method Updates:**
     - `importWinMssCabFile()` now returns `Optional<MatchResultsDto>`
-    - Update null checks to use Optional pattern
+    - Update null checks to use the Optional pattern
 
 3. **DTO Changes:**
     - `MatchResultsDto` no longer contains match entity reference
@@ -399,7 +399,7 @@ productivity and makes the codebase easier to understand and maintain.
 
 **For detailed change history, see [CHANGELOG.md](/CHANGELOG.md)**
 
-**For previous releases, see the [history folder](/documentation/history/)**
+**For previous releases, see the [history folder](/documentation/history)**
 
 
 

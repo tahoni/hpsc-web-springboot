@@ -18,7 +18,7 @@ import java.util.List;
  *
  * <p>
  * The class maps to the `ENROLLED.XML` content in the `WinMSS.cab` file.
- * It stores meta-data about members in the system, namely the members enrolled in a match.
+ * It stores metadata about members in the system, namely the members enrolled in a match.
  * </p>
  */
 @Getter

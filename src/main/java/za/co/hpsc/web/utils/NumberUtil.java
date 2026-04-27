@@ -20,7 +20,7 @@ public final class NumberUtil {
     }
 
     /**
-     * Calculates the percentage of a part relative to a total.
+     * Calculates the percentage of a portion relative to a total.
      *
      * <p>
      * If the total is null or zero, the method returns a value of zero,
