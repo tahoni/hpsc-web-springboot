@@ -5,7 +5,6 @@ version: "1.0"
 linter: qodana-jvm
 profile:
   name: qodana.recommended
-bootstrap: mvn --batch-mode dependency:go-offline -q
 raiseLicenseProblems: true
 enablePackageSearch: true
 include:
