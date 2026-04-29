@@ -12,10 +12,7 @@ import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.request.MatchSearchRequest;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
-import za.co.hpsc.web.services.DomainService;
-import za.co.hpsc.web.services.IpscMatchService;
-import za.co.hpsc.web.services.TransactionService;
-import za.co.hpsc.web.services.TransformationService;
+import za.co.hpsc.web.services.*;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.ArrayList;
@@ -31,10 +28,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected final DomainService domainService;
     protected final TransactionService transactionService;
 
-    protected final MatchEntityServiceImpl matchEntityService;
+    protected final MatchEntityService matchEntityService;
 
     public IpscMatchServiceImpl(TransformationService transformationService, DomainService domainService,
-                                TransactionService transactionService, MatchEntityServiceImpl matchEntityService) {
+                                TransactionService transactionService, MatchEntityService matchEntityService) {
         this.transformationService = transformationService;
         this.domainService = domainService;
         this.transactionService = transactionService;

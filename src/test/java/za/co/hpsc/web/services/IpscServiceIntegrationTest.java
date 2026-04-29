@@ -18,6 +18,7 @@ import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.records.*;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.impl.IpscServiceImpl;
+import za.co.hpsc.web.services.impl.MatchEntityServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 import za.co.hpsc.web.services.impl.TransformationServiceImpl;
 
@@ -62,6 +63,11 @@ public class IpscServiceIntegrationTest {
         return new TransactionServiceImpl(platformTransactionManager, clubRepository,
                 competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
                 matchCompetitorRepository, matchStageCompetitorRepository);
+    }
+
+    @Bean
+    public MatchEntityService matchEntityService(IpscMatchRepository ipscMatchRepository) {
+        return new MatchEntityServiceImpl(ipscMatchRepository);
     }
 
     @Bean
