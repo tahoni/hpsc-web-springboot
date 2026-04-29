@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+// TODO: comment
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -66,10 +67,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public MatchResponse getMatch(Integer matchId) {
-        return null;
+    public Optional<MatchResponse> getMatch(String matchId) {
+        return Optional.empty();
     }
-
 
     protected Optional<MatchResponse> modifyMatchResponse(Long matchId, MatchResponse matchResponse, boolean fullUpdate)
             throws FatalException {
@@ -89,7 +89,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return optionalMatchResponse;
     }
 
-    // TODO: comment
     protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse, boolean fullUpdate) {
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
         Optional<IpscMatch> ipscMatch =

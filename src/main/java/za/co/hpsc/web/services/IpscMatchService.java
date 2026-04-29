@@ -5,6 +5,7 @@ import za.co.hpsc.web.models.ipsc.request.MatchSearchRequest;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IpscMatchService {
     boolean insertMatch(MatchResponse matchResponse)
@@ -17,5 +18,5 @@ public interface IpscMatchService {
 
     List<MatchResponse> getMatches(MatchSearchRequest matchSearchRequest);
 
-    MatchResponse getMatch(Integer matchId);
+    Optional<MatchResponse> getMatch(String matchId);
 }
