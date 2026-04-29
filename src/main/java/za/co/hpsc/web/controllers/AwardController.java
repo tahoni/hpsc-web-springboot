@@ -29,8 +29,8 @@ import za.co.hpsc.web.services.AwardService;
  * </p>
  */
 @Controller
-@RequestMapping("/award")
-@Tag(name = "Award", description = "API for award-related functionality.")
+@RequestMapping("/v1/awards")
+@Tag(name = "Awards API", description = "API for award-related functionality.")
 public class AwardController {
     private final AwardService awardService;
 

@@ -310,7 +310,7 @@ public class TransformationServiceTest {
         match.setScheduledDate(LocalDateTime.of(2026, 3, 31, 10, 0));
 
         // Act
-        Optional<IpscMatchRecord> result = transformationService.initIpscMatchRecord(match, club, new ArrayList<>());
+        Optional<MatchRecord> result = transformationService.initIpscMatchRecord(match, club, new ArrayList<>());
 
         // Assert
         assertTrue(result.isPresent());

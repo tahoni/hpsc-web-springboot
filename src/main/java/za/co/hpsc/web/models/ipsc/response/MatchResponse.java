@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.request.MatchRequest;
 
 import java.time.LocalDateTime;
@@ -48,5 +49,39 @@ public class MatchResponse {
 
         this.squadCount = matchRequest.getSquadCount();
         this.firearmId = matchRequest.getFirearmId();
+    }
+
+    public MatchResponse(Long matchId, MatchDto matchDto) {
+        this.matchId = matchId.intValue();
+        this.matchName = matchDto.getName();
+        this.matchDate = matchDto.getScheduledDate();
+        this.clubId = ((matchDto.getClub() != null) ? matchDto.getClub().getIndex() : null);
+    }
+
+    public MatchResponse(Long matchId, MatchResponse right) {
+        this.matchId = matchId.intValue();
+        this.matchName = right.matchName;
+        this.matchDate = right.matchDate;
+        this.clubId = right.getClubId();
+
+        this.squadCount = right.getSquadCount();
+        this.firearmId = right.getFirearmId();
+    }
+
+    // TODO: cater for missing values
+    public void init(MatchDto matchDto) {
+        this.matchName = matchDto.getName();
+        this.matchDate = matchDto.getScheduledDate();
+        this.clubId = ((matchDto.getClub() != null) ? matchDto.getClub().getIndex() : null);
+    }
+
+    // TODO: cater for missing values
+    public void init(MatchResponse right, boolean fullUpdate) {
+        this.matchName = right.matchName;
+        this.matchDate = right.matchDate;
+        this.clubId = right.getClubId();
+
+        this.squadCount = right.getSquadCount();
+        this.firearmId = right.getFirearmId();
     }
 }

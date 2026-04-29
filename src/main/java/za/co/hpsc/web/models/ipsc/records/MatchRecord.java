@@ -2,7 +2,7 @@ package za.co.hpsc.web.models.ipsc.records;
 
 import java.util.List;
 
-public record IpscMatchRecord(
+public record MatchRecord(
         String name,
         String scheduledDate,
         String clubName,

@@ -83,12 +83,25 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     @Override
+    public IpscResponseHolder mapMatchOnly(MatchResponse matchResponse) {
+        if (matchResponse == null) {
+            return new IpscResponseHolder(new ArrayList<>());
+        }
+
+        IpscResponse ipscResponse = new IpscResponse();
+        ipscResponse.setMatch(matchResponse);
+        ipscResponse.setClub(new ClubResponse(matchResponse.getClubId()));
+
+        return new IpscResponseHolder(List.of(ipscResponse));
+    }
+
+    @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<MatchHolder> ipscMatchHolderList) {
         if (ipscMatchHolderList == null) {
             return new IpscMatchRecordHolder(new ArrayList<>());
         }
 
-        List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
+        List<MatchRecord> matchRecordList = new ArrayList<>();
         for (MatchHolder matchHolder : ipscMatchHolderList.stream().filter(Objects::nonNull).toList()) {
             // Get the match name
             matchHolder.getMatch().setName(ValueUtil.nullAsEmptyString(matchHolder.getMatch().getName()));
@@ -130,12 +143,12 @@ public class TransformationServiceImpl implements TransformationService {
                 }
             }
 
-            Optional<IpscMatchRecord> ipscResponse = initIpscMatchRecord(matchHolder.getMatch(),
+            Optional<MatchRecord> ipscResponse = initIpscMatchRecord(matchHolder.getMatch(),
                     matchHolder.getClub(), new ArrayList<>(competitorRecordSet));
-            ipscResponse.ifPresent(ipscMatchRecordList::add);
+            ipscResponse.ifPresent(matchRecordList::add);
         }
 
-        return new IpscMatchRecordHolder(ipscMatchRecordList);
+        return new IpscMatchRecordHolder(matchRecordList);
     }
 
     @Override
@@ -156,6 +169,11 @@ public class TransformationServiceImpl implements TransformationService {
         MatchResultsDto matchResultsDto = new MatchResultsDto(match);
         matchResultsDto.setClub(optionalClub.orElse(null));
         matchResultsDto.setStages(initStages(match, ipscResponse.getStages()));
+
+        // Check if there are competitors
+        if (ipscResponse.getMembers() == null) {
+            return Optional.of(matchResultsDto);
+        }
 
         // Initialises competitors
         matchResultsDto.setCompetitors(initCompetitors(matchResultsDto, ipscResponse));
@@ -285,18 +303,18 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a {@link IpscMatchRecord} based on the provided match details and competitors list.
+     * Initialises a {@link MatchRecord} based on the provided match details and competitors list.
      *
      * @param match       The IPSC match object containing match details.
      *                    If null, an empty Optional is returned.
      * @param club        The club object associated with the match.
      * @param competitors A list of competitor match records associated with the match.
      *                    If null, an empty Optional is returned.
-     * @return An Optional containing the initialized {@link IpscMatchRecord} if both inputs
+     * @return An Optional containing the initialized {@link MatchRecord} if both inputs
      * are non-null, otherwise an empty Optional.
      */
-    protected Optional<IpscMatchRecord> initIpscMatchRecord(IpscMatch match, Club club,
-                                                            List<CompetitorRecord> competitors) {
+    protected Optional<MatchRecord> initIpscMatchRecord(IpscMatch match, Club club,
+                                                        List<CompetitorRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
@@ -315,9 +333,9 @@ public class TransformationServiceImpl implements TransformationService {
         String matchCategory = ValueUtil.nullAsEmptyString(match.getMatchCategory());
 
         // Creates match record from match details
-        IpscMatchRecord ipscMatchRecord = new IpscMatchRecord(match.getName(), scheduledDate,
+        MatchRecord matchRecord = new MatchRecord(match.getName(), scheduledDate,
                 clubName, matchFirearmType, matchCategory, competitors, dateEdited);
-        return Optional.of(ipscMatchRecord);
+        return Optional.of(matchRecord);
     }
 
     /**

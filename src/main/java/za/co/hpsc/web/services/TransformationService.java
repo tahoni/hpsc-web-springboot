@@ -7,6 +7,7 @@ import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,8 @@ public interface TransformationService {
      */
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
+
+    IpscResponseHolder mapMatchOnly(MatchResponse matchResponse);
 
     /**
      * Generates an {@code IpscMatchRecordHolder} from the given list of {@code IpscMatch} entities.

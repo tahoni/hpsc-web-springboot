@@ -62,6 +62,14 @@ public final class ValueUtil {
         return (value != null ? value : 0L);
     }
 
+    public static long nullAsZero(String value) {
+        try {
+            return (value != null ? Long.parseLong(value) : 0L);
+        } catch (NumberFormatException e) {
+            return 0L;
+        }
+    }
+
     /**
      * Converts a nullable string representation of a number to a {@code BigDecimal},
      * returning {@code BigDecimal.ZERO} if the input string is {@code null}.or not a number

@@ -155,7 +155,7 @@ public class IpscServiceIntegrationTest {
         IpscMatchRecordHolder firstRecord = recordHolder.getFirst();
 
         assertFalse(firstRecord.matches().isEmpty());
-        IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
+        MatchRecord matchRecord = firstRecord.matches().getFirst();
         assertEquals("Test Match", matchRecord.name());
         assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
         assertEquals("Test Club (BBB)", matchRecord.clubName());
@@ -204,7 +204,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals("Test Club (BBB)", matchRecord.clubName());
 
@@ -253,7 +253,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals("Test Club (BBB)", matchRecord.clubName());
         assertEquals(1, matchRecord.competitors().size());
@@ -303,7 +303,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals(2, matchRecord.competitors().size());
 
@@ -342,7 +342,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals("Handgun", matchRecord.matchFirearmType());
         assertEquals("Club Shoot", matchRecord.matchCategory());
@@ -396,7 +396,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals("", matchRecord.matchFirearmType());
         assertEquals("Club Shoot", matchRecord.matchCategory());
@@ -457,7 +457,7 @@ public class IpscServiceIntegrationTest {
         IpscMatchRecordHolder firstRecord = recordHolder.getFirst();
 
         assertFalse(firstRecord.matches().isEmpty());
-        IpscMatchRecord matchRecord = firstRecord.matches().getFirst();
+        MatchRecord matchRecord = firstRecord.matches().getFirst();
         assertEquals("Test Match", matchRecord.name());
         assertEquals("2025-09-06 10:00", matchRecord.scheduledDate());
         assertEquals("Test Club (BBB)", matchRecord.clubName());
@@ -659,7 +659,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals(2, matchRecord.competitors().size());
 
@@ -725,7 +725,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals(2, matchRecord.competitors().size());
 
@@ -791,7 +791,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals(2, matchRecord.competitors().size());
         matchRecord.competitors().forEach(System.out::println);
@@ -848,7 +848,7 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, recordHolders.size());
         assertFalse(recordHolders.getFirst().matches().isEmpty());
 
-        IpscMatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
+        MatchRecord matchRecord = recordHolders.getFirst().matches().getFirst();
         assertEquals(matchName, matchRecord.name());
         assertEquals(2, matchRecord.competitors().size());
 

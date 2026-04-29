@@ -12,6 +12,8 @@ import java.util.Optional;
  * specific criteria.
  */
 public interface MatchEntityService {
+    Optional<IpscMatch> findMatchById(Long matchId);
+
     /**
      * Searches for an {@link IpscMatch} entity by its name and scheduled date.
      *

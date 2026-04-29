@@ -116,6 +116,46 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
+    @Override
+    public Optional<MatchHolder> saveMatch(DtoMapping dtoMapping)
+            throws FatalException {
+        if ((dtoMapping == null) || (dtoMapping.getMatch() == null)) {
+            return Optional.empty();
+        }
+
+        TransactionStatus transaction = transactionManager.getTransaction(
+                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
+
+        // Executes transactional match result persistence; rolls back on failure
+        MatchHolder matchHolder = new MatchHolder();
+        try {
+            DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
+
+            Optional<Club> optionalClub = getClub(dtoMapping.getClub(), dtoToEntityMapping);
+            if (optionalClub.isPresent()) {
+                Club club = optionalClub.get();
+                clubRepository.save(club);
+                matchHolder.setClub(club);
+            }
+
+            Optional<IpscMatch> optionalIpscMatch = getIpscMatch(dtoToEntityMapping);
+            if (optionalIpscMatch.isEmpty()) {
+                throw new FatalException("Unable to save the match: Match is null");
+            }
+            IpscMatch ipscMatch = optionalIpscMatch.get();
+            ipscMatchRepository.save(ipscMatch);
+            matchHolder.setMatch(ipscMatch);
+            ipscMatchRepository.save(ipscMatch);
+            transactionManager.commit(transaction);
+            return Optional.of(matchHolder);
+
+        } catch (Exception e) {
+            transactionManager.rollback(transaction);
+            log.error(e.getMessage(), e);
+            throw new FatalException("Unable to save the match: " + e.getMessage(), e);
+        }
+    }
+
     /**
      * Retrieves a club entity based on the provided club DTO and maps it using the given DTO to entity mapping.
      * If the club DTO is null, an empty {@code Optional} is returned.
