@@ -88,7 +88,6 @@ public class TransformationServiceImpl implements TransformationService {
      * @param matchResponse match payload to wrap
      * @return holder containing one IPSC response with match and derived club, or empty holder when input is null
      */
-    // TODO: add tests
     @Override
     public IpscResponseHolder mapMatchOnly(MatchResponse matchResponse) {
         if (matchResponse == null) {
