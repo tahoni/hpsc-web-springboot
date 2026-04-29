@@ -60,7 +60,7 @@ public interface IpscMatchService {
      * @param matchWithStages search parameters used to filter returned matches
      * @return a list of matching {@link MatchResponse} objects; may be empty if no matches are found
      */
-    List<MatchWithStages> getMatches(MatchWithStages matchWithStages);
+    List<MatchResponse> getMatches(MatchWithStages matchWithStages);
 
     /**
      * Retrieves a single match by its identifier.
@@ -69,5 +69,5 @@ public interface IpscMatchService {
      * @return an {@link Optional} containing the matching {@link MatchResponse} if found,
      * otherwise {@link Optional#empty()}
      */
-    Optional<MatchWithStages> getMatch(Long matchId);
+    Optional<MatchResponse> getMatch(Long matchId);
 }

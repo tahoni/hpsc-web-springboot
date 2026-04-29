@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.IpscMatchService;
 
@@ -60,10 +61,10 @@ class IpscMatchControllerTest {
     @Test
     void getMatches_returnsListFromService_forGivenMatchWithStagesFilter() {
         MatchWithStages request = new MatchWithStages();
-        List<MatchWithStages> expected = List.of(new MatchWithStages(), new MatchWithStages());
+        List<MatchResponse> expected = List.of(new MatchWithStages(), new MatchWithStages());
         when(ipscMatchService.getMatches(request)).thenReturn(expected);
 
-        List<MatchWithStages> result = ipscMatchController.getMatches(request);
+        List<MatchResponse> result = ipscMatchController.getMatches(request);
 
         assertEquals(expected, result);
         verify(ipscMatchService).getMatches(request);
@@ -74,32 +75,31 @@ class IpscMatchControllerTest {
         MatchWithStages request = new MatchWithStages();
         when(ipscMatchService.getMatches(request)).thenReturn(List.of());
 
-        List<MatchWithStages> result = ipscMatchController.getMatches(request);
+        List<MatchResponse> result = ipscMatchController.getMatches(request);
 
         assertTrue(result.isEmpty());
         verify(ipscMatchService).getMatches(request);
     }
 
     @Test
-    void getMatch_returnsMatchWithStages_whenServiceFindsMatch() {
+    void getMatch_returnsMatchWithStages_whenServiceFindsMatch() throws FatalException {
         Long matchId = 7L;
         MatchWithStages expected = new MatchWithStages();
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.of(expected));
 
-        MatchWithStages result = ipscMatchController.getMatch(matchId);
+        MatchResponse result = ipscMatchController.getMatch(matchId);
 
         assertEquals(expected, result);
         verify(ipscMatchService).getMatch(matchId);
     }
 
     @Test
-    void getMatch_returnsNull_whenServiceReturnsEmptyOptional() {
+    void getMatch_returnsNull_whenServiceReturnsEmptyOptional() throws FatalException {
         Long matchId = 8L;
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.empty());
 
-        MatchWithStages result = ipscMatchController.getMatch(matchId);
+        assertThrows(FatalException.class, () -> ipscMatchController.getMatch(matchId));
 
-        assertNull(result);
         verify(ipscMatchService).getMatch(matchId);
     }
 

@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import za.co.hpsc.web.exceptions.FatalException;
+import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.IpscMatchService;
 
@@ -120,11 +121,11 @@ public final class IpscMatchController {
     })
     @GetMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    List<MatchWithStages> getMatches(
+    List<MatchResponse> getMatches(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Filter payload for match search",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = MatchWithStages.class))
+                    content = @Content(schema = @Schema(implementation = MatchResponse.class))
             )
             @RequestBody MatchWithStages matchWithStages) {
         return ipscMatchService.getMatches(matchWithStages);
@@ -143,9 +144,10 @@ public final class IpscMatchController {
                     content = @Content)
     })
     @GetMapping(value = "{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    MatchWithStages getMatch(
+    MatchResponse getMatch(
             @Parameter(description = "Unique identifier of the match", required = true, example = "123")
-            @PathVariable Long matchId) {
-        return ipscMatchService.getMatch(matchId).orElse(null);
+            @PathVariable Long matchId) throws FatalException {
+        return ipscMatchService.getMatch(matchId).orElseThrow(() ->
+                new FatalException("Match with id " + matchId + " not found"));
     }
 }

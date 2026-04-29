@@ -60,13 +60,23 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public List<MatchWithStages> getMatches(MatchWithStages matchWithStages) {
+    public List<MatchResponse> getMatches(MatchWithStages matchWithStages) {
         return List.of();
     }
 
     @Override
-    public Optional<MatchWithStages> getMatch(Long matchId) {
-        return Optional.empty();
+    public Optional<MatchResponse> getMatch(Long matchId) {
+        // Find the match by id
+        Optional<IpscMatch> optionalIpscMatch = matchEntityService.findMatchById(matchId);
+        if (optionalIpscMatch.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Convert the match to a match response
+        Long matchIdNumber = ValueUtil.nullAsZero(matchId);
+        IpscMatch ipscMatch = optionalIpscMatch.get();
+        MatchDto matchDto = new MatchDto(ipscMatch);
+        return Optional.of(new MatchResponse(matchIdNumber, matchDto));
     }
 
     /**
@@ -84,14 +94,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected void modifyMatchResponse(Long matchId, MatchResponse matchResponse,
                                        boolean fullUpdate)
             throws FatalException {
-        if ((matchId == null) || (matchId <= 0)) {
-            throw new ValidationException("Match id cannot be null or zero");
-        }
-        Long matchIdNumber = ValueUtil.nullAsZero(matchId);
-
+        // Merge the incoming payload with the persisted state for the given match id
         Optional<MatchResponse> optionalMatchResponse =
-                mergeMatchResponses(matchIdNumber, matchResponse, fullUpdate);
+                mergeMatchResponses(matchId, matchResponse, fullUpdate);
 
+        // If a merged response is returned, persist it
         if (optionalMatchResponse.isPresent()) {
             saveMatchResponse(optionalMatchResponse.get());
         }
@@ -114,14 +121,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      */
     protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse,
                                                           boolean fullUpdate) {
-        if ((matchId == null) || (matchId <= 0)) {
-            throw new ValidationException("Match id must be a positive integer value.");
-        }
+        // Fetch the persisted entity
+        IpscMatch ipscMatch = findMatchById(matchId)
+                .orElseThrow(() -> new NonFatalException("Match with id %d not found".formatted(matchId)));
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
 
-        IpscMatch ipscMatch = matchEntityService.findMatchById(matchIdNumber)
-                .orElseThrow(() -> new NonFatalException("Match with id %d not found".formatted(matchIdNumber)));
-
+        // Convert to a match response and merge with the incoming payload
         MatchDto matchDto = new MatchDto(ipscMatch);
         MatchResponse fetchedMatchResponse = new MatchResponse(matchIdNumber, matchDto);
         fetchedMatchResponse.init(matchResponse, fullUpdate);
@@ -153,21 +158,25 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throws FatalException {
         IpscResponseHolder ipscResponseHolder = transformationService.mapMatchOnly(matchResponse);
 
+        // Initialise the list of match results
         List<MatchResultsDto> matchResultsList = new ArrayList<>();
         for (IpscResponse ipscResponse : ipscResponseHolder.getIpscList()) {
             Optional<MatchResultsDto> optionalMatchResults = transformationService.initMatchResults(ipscResponse);
             optionalMatchResults.ifPresent(matchResultsList::add);
         }
 
+        // Initialise the match results holder and persist the results
         MatchResultsDtoHolder matchResultsDtoHolder = new MatchResultsDtoHolder(matchResultsList);
         if (matchResultsDtoHolder.getMatches() == null) {
             return;
         }
 
+        // Filters out null matches and persists the results
         List<MatchResultsDto> ipscResultsList = matchResultsDtoHolder.getMatches().stream()
                 .filter(Objects::nonNull)
                 .toList();
 
+        // Iterates the DTOs, maps them to entities, and persists the results
         for (MatchResultsDto matchResultsDto : ipscResultsList) {
             Optional<DtoMapping> optionalDtoToEntityMapping =
                     domainService.initMatchEntities(matchResultsDto, null, null);
@@ -176,5 +185,16 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 transactionService.saveMatchResults(dtoMapping);
             }
         }
+    }
+
+    protected Optional<IpscMatch> findMatchById(Long matchId) {
+        // Normalise the match id to zero if null or negative
+        if ((matchId == null) || (matchId <= 0)) {
+            throw new ValidationException("Match cannot be null, zero or negative");
+        }
+        Long matchIdNumber = ValueUtil.nullAsZero(matchId);
+
+        // Find the match by id
+        return matchEntityService.findMatchById(matchIdNumber);
     }
 }
