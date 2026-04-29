@@ -13,7 +13,6 @@ import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.DomainService;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
@@ -57,11 +56,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     @Override
     public void modifyMatch(Long matchId, MatchResponse matchResponse) throws FatalException {
         modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, false);
-    }
-
-    @Override
-    public List<MatchResponse> getMatches(MatchWithStages matchWithStages) {
-        return List.of();
     }
 
     @Override

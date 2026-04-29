@@ -15,8 +15,6 @@ import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.IpscMatchService;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("ipsc/matches")
 @Tag(name = "IPSC Matches", description = "Operations pertaining to IPSC matches")
@@ -105,30 +103,6 @@ public final class IpscMatchController {
             @RequestBody MatchWithStages matchWithStages)
             throws FatalException {
         ipscMatchService.modifyMatch(matchId, matchWithStages);
-    }
-
-    @Operation(
-            summary = "Search IPSC matches",
-            description = "Returns matches that satisfy the provided filter payload."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Matches retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = MatchWithStages.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid search payload",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Failed to retrieve matches",
-                    content = @Content)
-    })
-    @GetMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    List<MatchResponse> getMatches(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Filter payload for match search",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = MatchResponse.class))
-            )
-            @RequestBody MatchWithStages matchWithStages) {
-        return ipscMatchService.getMatches(matchWithStages);
     }
 
     @Operation(

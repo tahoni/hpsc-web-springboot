@@ -2,9 +2,7 @@ package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -53,14 +51,6 @@ public interface IpscMatchService {
      */
     void modifyMatch(Long matchId, MatchResponse matchResponse)
             throws FatalException;
-
-    /**
-     * Retrieves matches that satisfy the given search/filter criteria.
-     *
-     * @param matchWithStages search parameters used to filter returned matches
-     * @return a list of matching {@link MatchResponse} objects; may be empty if no matches are found
-     */
-    List<MatchResponse> getMatches(MatchWithStages matchWithStages);
 
     /**
      * Retrieves a single match by its identifier.

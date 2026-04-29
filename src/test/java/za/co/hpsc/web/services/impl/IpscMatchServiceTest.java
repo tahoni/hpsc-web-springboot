@@ -163,14 +163,4 @@ class IpscMatchServiceTest {
         verify(domainService).initMatchEntities(resultsDto, null, null);
         verifyNoInteractions(transactionService);
     }
-
-    @Test
-    void getMatches_whenCalled_thenReturnsEmptyListForNow() {
-        assertTrue(ipscMatchService.getMatches(null).isEmpty());
-    }
-
-    @Test
-    void getMatch_whenCalled_thenReturnsEmptyOptionalForNow() {
-        assertTrue(ipscMatchService.getMatch(1L).isEmpty());
-    }
 }

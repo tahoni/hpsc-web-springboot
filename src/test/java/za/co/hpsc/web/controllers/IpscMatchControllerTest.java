@@ -10,10 +10,10 @@ import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.IpscMatchService;
 
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,29 +56,6 @@ class IpscMatchControllerTest {
         ipscMatchController.modifyMatch(matchId, matchWithStages);
 
         verify(ipscMatchService).modifyMatch(matchId, matchWithStages);
-    }
-
-    @Test
-    void getMatches_returnsListFromService_forGivenMatchWithStagesFilter() {
-        MatchWithStages request = new MatchWithStages();
-        List<MatchResponse> expected = List.of(new MatchWithStages(), new MatchWithStages());
-        when(ipscMatchService.getMatches(request)).thenReturn(expected);
-
-        List<MatchResponse> result = ipscMatchController.getMatches(request);
-
-        assertEquals(expected, result);
-        verify(ipscMatchService).getMatches(request);
-    }
-
-    @Test
-    void getMatches_returnsEmptyList_whenServiceReturnsEmptyList() {
-        MatchWithStages request = new MatchWithStages();
-        when(ipscMatchService.getMatches(request)).thenReturn(List.of());
-
-        List<MatchResponse> result = ipscMatchController.getMatches(request);
-
-        assertTrue(result.isEmpty());
-        verify(ipscMatchService).getMatches(request);
     }
 
     @Test
