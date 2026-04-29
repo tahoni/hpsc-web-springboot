@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
+import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
@@ -93,7 +94,7 @@ class IpscMatchServiceTest {
 
         when(matchEntityService.findMatchById(matchId)).thenReturn(Optional.empty());
 
-        assertThrows(FatalException.class, () -> ipscMatchService.modifyMatch(matchId, incoming));
+        assertThrows(NonFatalException.class, () -> ipscMatchService.modifyMatch(matchId, incoming));
 
         verify(matchEntityService).findMatchById(matchId);
         verifyNoInteractions(transformationService);
@@ -125,7 +126,7 @@ class IpscMatchServiceTest {
     void mergeMatchResponses_whenMatchMissing_thenThrowsException() {
         when(matchEntityService.findMatchById(15L)).thenReturn(Optional.empty());
 
-        assertThrows(FatalException.class, () -> ipscMatchService.mergeMatchResponses(15L,
+        assertThrows(NonFatalException.class, () -> ipscMatchService.mergeMatchResponses(15L,
                 new MatchResponse(15, "Any", LocalDateTime.now(), 1, 1, 1), false));
     }
 

@@ -59,15 +59,15 @@ public class ControllerAdvice {
      * @param ex      the exception that was thrown.
      * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 422 (Unprocessable Content).
+     * with HTTP status 400 (Bad Request).
      */
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ControllerResponse> handleValidationException(ValidationException ex,
                                                                         WebRequest request) {
         ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
-                "Unprocessable Content");
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_CONTENT);
+                "Bad Request");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -78,14 +78,14 @@ public class ControllerAdvice {
      * @param ex      the exception that was thrown.
      * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 400 (Bad Request).
+     * with HTTP status 404 (Not Foundt).
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NonFatalException.class)
     public ResponseEntity<ControllerResponse> handleNonFataException(NonFatalException ex,
                                                                      WebRequest request) {
         ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
-                "Bad Request");
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+                "Not Found");
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 }

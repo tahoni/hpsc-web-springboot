@@ -49,8 +49,7 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     @Override
-    public IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
-            throws ValidationException {
+    public IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder) {
 
         // Validate input
         if (ipscRequestHolder == null) {

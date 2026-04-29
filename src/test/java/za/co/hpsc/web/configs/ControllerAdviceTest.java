@@ -132,7 +132,7 @@ public class ControllerAdviceTest {
         ResponseEntity<ControllerResponse> response = controllerAdvice.handleValidationException(ex, webRequest);
 
         // Assert
-        assertEquals(HttpStatus.UNPROCESSABLE_CONTENT, response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class ControllerAdviceTest {
 
         // Assert
         assertNotNull(response.getBody());
-        assertEquals("Unprocessable Content", response.getBody().getError());
+        assertEquals("Bad Request", response.getBody().getError());
     }
 
     @Test
@@ -198,7 +198,7 @@ public class ControllerAdviceTest {
         // Assert
         assertNotNull(response.getBody());
         assertNull(response.getBody().getMessage());
-        assertEquals(HttpStatus.UNPROCESSABLE_CONTENT, response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // =====================================================================
@@ -211,10 +211,11 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException("Match not found");
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex, webRequest);
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex,
+                webRequest);
 
         // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -240,7 +241,7 @@ public class ControllerAdviceTest {
 
         // Assert
         assertNotNull(response.getBody());
-        assertEquals("Bad Request", response.getBody().getError());
+        assertEquals("Not Found", response.getBody().getError());
     }
 
     @Test
@@ -280,7 +281,7 @@ public class ControllerAdviceTest {
         // Assert
         assertNotNull(response.getBody());
         assertNull(response.getBody().getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test

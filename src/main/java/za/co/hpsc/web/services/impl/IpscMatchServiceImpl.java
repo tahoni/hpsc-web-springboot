@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
+import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
@@ -80,7 +82,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @throws FatalException if persistence/transformation fails while saving the merged match
      */
     protected void modifyMatchResponse(Long matchId, MatchResponse matchResponse,
-                                       boolean fullUpdate) throws FatalException {
+                                       boolean fullUpdate)
+            throws FatalException {
+        if ((matchId == null) || (matchId <= 0)) {
+            throw new ValidationException("Match id cannot be null or zero");
+        }
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
 
         Optional<MatchResponse> optionalMatchResponse =
@@ -105,14 +111,16 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param matchResponse incoming payload to merge into persisted state
      * @param fullUpdate    {@code true} to apply full overwrite behaviour, {@code false} for patch behaviour
      * @return an {@link Optional} containing the merged {@link MatchResponse}
-     * @throws FatalException if no persisted match exists for the resolved {@code matchId}
      */
     protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse,
-                                                          boolean fullUpdate) throws FatalException {
+                                                          boolean fullUpdate) {
+        if ((matchId == null) || (matchId <= 0)) {
+            throw new ValidationException("Match id must be a positive integer value.");
+        }
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
 
         IpscMatch ipscMatch = matchEntityService.findMatchById(matchIdNumber)
-                .orElseThrow(() -> new FatalException("Match with id %d not found".formatted(matchIdNumber)));
+                .orElseThrow(() -> new NonFatalException("Match with id %d not found".formatted(matchIdNumber)));
 
         MatchDto matchDto = new MatchDto(ipscMatch);
         MatchResponse fetchedMatchResponse = new MatchResponse(matchIdNumber, matchDto);
@@ -141,7 +149,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param matchResponse match payload to persist
      * @throws FatalException if a fatal transformation or persistence error occurs
      */
-    protected void saveMatchResponse(MatchResponse matchResponse) throws FatalException {
+    protected void saveMatchResponse(MatchResponse matchResponse)
+            throws FatalException {
         IpscResponseHolder ipscResponseHolder = transformationService.mapMatchOnly(matchResponse);
 
         List<MatchResultsDto> matchResultsList = new ArrayList<>();

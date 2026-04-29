@@ -1,6 +1,5 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
@@ -35,10 +34,8 @@ public interface TransformationService {
      *
      * @param ipscRequestHolder container holding raw IPSC request collections to transform
      * @return an {@link IpscResponseHolder} containing mapped and grouped IPSC responses
-     * @throws ValidationException if the request content is invalid, inconsistent, or cannot be transformed
      */
-    IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
-            throws ValidationException;
+    IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder);
 
     /**
      * Creates an IPSC response holder from a single match response payload.
