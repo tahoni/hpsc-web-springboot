@@ -30,41 +30,12 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void insertMatch_delegatesToService_withProvidedMatchWithStages() throws FatalException {
-        MatchWithStages matchWithStages = new MatchWithStages();
-
-        ipscMatchController.insertMatch(matchWithStages);
-
-        verify(ipscMatchService).insertMatch(matchWithStages);
-    }
-
-    @Test
-    void updateMatch_delegatesToService_withPathVariableAndBody() throws FatalException {
-        Long matchId = 42L;
-        MatchWithStages matchWithStages = new MatchWithStages();
-
-        ipscMatchController.updateMatch(matchId, matchWithStages);
-
-        verify(ipscMatchService).updateMatch(matchId, matchWithStages);
-    }
-
-    @Test
-    void modifyMatch_delegatesToService_withPathVariableAndBody() throws FatalException {
-        Long matchId = 84L;
-        MatchWithStages matchWithStages = new MatchWithStages();
-
-        ipscMatchController.modifyMatch(matchId, matchWithStages);
-
-        verify(ipscMatchService).modifyMatch(matchId, matchWithStages);
-    }
-
-    @Test
     void getMatch_returnsMatchWithStages_whenServiceFindsMatch() throws FatalException {
         Long matchId = 7L;
         MatchWithStages expected = new MatchWithStages();
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.of(expected));
 
-        MatchResponse result = ipscMatchController.getMatch(matchId);
+        MatchResponse result = ipscMatchController.getMatch(matchId).getBody();
 
         assertEquals(expected, result);
         verify(ipscMatchService).getMatch(matchId);

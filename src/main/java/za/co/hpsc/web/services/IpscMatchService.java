@@ -16,47 +16,53 @@ import java.util.Optional;
 public interface IpscMatchService {
 
     /**
-     * Persists a new match based on the supplied match payload.
+     * Persists a new match using the supplied payload.
      *
      * @param matchResponse the match data to insert
-     * @throws FatalException if the match cannot be inserted due to a non-recoverable error
+     * @return an {@link Optional} containing the persisted {@link MatchResponse} when successful;
+     * {@link Optional#empty()} if no result is produced by the implementation
+     * @throws FatalException if insertion fails due to a non-recoverable error
      */
-    void insertMatch(MatchResponse matchResponse)
+    Optional<MatchResponse> insertMatch(MatchResponse matchResponse)
             throws FatalException;
 
     /**
-     * Performs a full update of an existing match identified by {@code matchId}.
+     * Fully updates an existing match identified by {@code matchId}.
      * <p>
-     * In a typical full update flow, omitted fields may be treated as replacements.
-     * Exact behaviour depends on implementation.
+     * Full update semantics typically treat omitted fields as replacement values,
+     * depending on implementation rules.
      * </p>
      *
      * @param matchId       the identifier of the match to update
-     * @param matchResponse the new match data to apply
+     * @param matchResponse the new match state to apply
+     * @return an {@link Optional} containing the updated {@link MatchResponse} when successful;
+     * {@link Optional#empty()} if the target is not updated or no result is produced
      * @throws FatalException if the update fails due to a non-recoverable error
      */
-    void updateMatch(Long matchId, MatchResponse matchResponse)
+    Optional<MatchResponse> updateMatch(Long matchId, MatchResponse matchResponse)
             throws FatalException;
 
     /**
-     * Performs a partial update (patch-like modification) on an existing match.
+     * Partially updates an existing match identified by {@code matchId}.
      * <p>
-     * In a typical partial update flow, only provided fields are changed while
-     * other existing values are retained. Exact behaviour depends on implementation.
+     * Partial update semantics typically apply only provided fields while retaining
+     * existing values for omitted fields.
      * </p>
      *
      * @param matchId       the identifier of the match to modify
      * @param matchResponse the partial match data to apply
-     * @throws FatalException if the modification fails due to a non-recoverable error
+     * @return an {@link Optional} containing the modified {@link MatchResponse} when successful;
+     * {@link Optional#empty()} if the target is not modified or no result is produced
+     * @throws FatalException if modification fails due to a non-recoverable error
      */
-    void modifyMatch(Long matchId, MatchResponse matchResponse)
+    Optional<MatchResponse> modifyMatch(Long matchId, MatchResponse matchResponse)
             throws FatalException;
 
     /**
      * Retrieves a single match by its identifier.
      *
      * @param matchId the identifier of the match to retrieve
-     * @return an {@link Optional} containing the matching {@link MatchResponse} if found,
+     * @return an {@link Optional} containing the matching {@link MatchResponse} if found;
      * otherwise {@link Optional#empty()}
      */
     Optional<MatchResponse> getMatch(Long matchId);

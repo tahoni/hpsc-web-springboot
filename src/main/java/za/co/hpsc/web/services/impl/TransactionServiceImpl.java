@@ -125,7 +125,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @return an {@code Optional} containing the club entity, or an empty {@code Optional} if the club DTO is null
      */
     protected Optional<Club> getClub(ClubDto clubDto, @NotNull DtoToEntityMapping dtoToEntityMapping) {
-        if (clubDto == null) {
+        if ((clubDto == null) || (clubDto.getName() == null)) {
             return Optional.empty();
         }
 

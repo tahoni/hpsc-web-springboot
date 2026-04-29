@@ -8,6 +8,7 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
@@ -31,6 +32,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected final TransformationService transformationService;
     protected final DomainService domainService;
     protected final TransactionService transactionService;
+
     protected final MatchEntityServiceImpl matchEntityService;
 
     public IpscMatchServiceImpl(TransformationService transformationService,
@@ -44,18 +46,18 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public void insertMatch(MatchResponse matchResponse) throws FatalException {
-        saveMatchResponse(matchResponse);
+    public Optional<MatchResponse> insertMatch(MatchResponse matchResponse) throws FatalException {
+        return saveMatchResponse(matchResponse);
     }
 
     @Override
-    public void updateMatch(Long matchId, MatchResponse matchResponse) throws FatalException {
-        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, true);
+    public Optional<MatchResponse> updateMatch(Long matchId, MatchResponse matchResponse) throws FatalException {
+        return modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, true);
     }
 
     @Override
-    public void modifyMatch(Long matchId, MatchResponse matchResponse) throws FatalException {
-        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, false);
+    public Optional<MatchResponse> modifyMatch(Long matchId, MatchResponse matchResponse) throws FatalException {
+        return modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, false);
     }
 
     @Override
@@ -74,19 +76,16 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Applies full or partial update semantics to an existing match and persists the merged result.
-     * <p>
-     * The method delegates merge logic to {@link #mergeMatchResponses(Long, MatchResponse, boolean)}
-     * and, when a merged payload is returned, persists it via {@link #saveMatchResponse(MatchResponse)}.
-     * </p>
+     * Applies full/partial merge semantics to an existing match and persists the result.
      *
-     * @param matchId       identifier of the target match; {@code null} is normalised to {@code 0}
-     * @param matchResponse incoming payload used to update persisted state
-     * @param fullUpdate    {@code true} for full replacement semantics, {@code false} for partial merge semantics
-     * @throws FatalException if persistence/transformation fails while saving the merged match
+     * @param matchId       identifier of the match to update
+     * @param matchResponse incoming payload to merge
+     * @param fullUpdate    {@code true} for full replacement semantics; {@code false} for partial merge semantics
+     * @return merged response if merge/persist produced a result; otherwise empty
+     * @throws FatalException if persistence/transformation fails during save
      */
-    protected void modifyMatchResponse(Long matchId, MatchResponse matchResponse,
-                                       boolean fullUpdate)
+    protected Optional<MatchResponse> modifyMatchResponse(Long matchId, MatchResponse matchResponse,
+                                                          boolean fullUpdate)
             throws FatalException {
         // Merge the incoming payload with the persisted state for the given match id
         Optional<MatchResponse> optionalMatchResponse =
@@ -96,22 +95,18 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (optionalMatchResponse.isPresent()) {
             saveMatchResponse(optionalMatchResponse.get());
         }
+
+        return optionalMatchResponse;
     }
 
     /**
-     * Merges an incoming match payload with the persisted match state for the given id.
-     * <p>
-     * The persisted entity is loaded and converted to {@link MatchResponse}, then merged with
-     * the incoming payload via {@link MatchResponse#init(MatchResponse, boolean)}.
-     * </p>
-     * <p>
-     * This implementation throws when the match is not found.
-     * </p>
+     * Builds a merged match response from persisted state and incoming payload.
      *
-     * @param matchId       identifier of the target match; {@code null} is normalised to {@code 0}
-     * @param matchResponse incoming payload to merge into persisted state
-     * @param fullUpdate    {@code true} to apply full overwrite behaviour, {@code false} for patch behaviour
-     * @return an {@link Optional} containing the merged {@link MatchResponse}
+     * @param matchId       identifier of the target persisted match
+     * @param matchResponse incoming payload
+     * @param fullUpdate    merge mode flag; true for a full replacement, false for partial replacement
+     * @return merged response wrapped in {@link Optional}
+     * @throws NonFatalException if the target match does not exist
      */
     protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse,
                                                           boolean fullUpdate) {
@@ -128,27 +123,23 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Persists a match payload through transformation, domain mapping, and transactional save.
+     * Persists a match using transformation, domain mapping, and transactional save.
      * <p>
-     * Processing flow:
+     * Processing steps:
      * </p>
      * <ol>
-     *   <li>Maps the incoming match payload to an {@link IpscResponseHolder} via
-     *       {@link TransformationService#mapMatchOnly(MatchResponse)}.</li>
-     *   <li>Transforms each {@link IpscResponse} entry into {@link MatchResultsDto} objects.</li>
-     *   <li>Builds {@link MatchResultsDtoHolder}, then filters out null DTO entries.</li>
-     *   <li>Maps each DTO to domain data using {@link DomainService#initMatchEntities(MatchResultsDto, String, String)}.</li>
-     *   <li>Persists successful mappings using {@link TransactionService#saveMatchResults(DtoMapping)}.</li>
+     *   <li>Map request payload to an {@link IpscResponseHolder}</li>
+     *   <li>Extract {@link MatchResultsDto} entries from each {@link IpscResponse}</li>
+     *   <li>Filter null result DTOs</li>
+     *   <li>Map each result DTO to {@link DtoMapping}</li>
+     *   <li>Persist mapping and map persisted entity back to {@link MatchResponse}</li>
      * </ol>
-     * <p>
-     * If the holder returns {@code null} for matches, processing exits without persistence.
-     * DTOs that cannot be mapped are skipped.
-     * </p>
      *
-     * @param matchResponse match payload to persist
-     * @throws FatalException if a fatal transformation or persistence error occurs
+     * @param matchResponse payload to persist
+     * @return persisted response when save succeeds; otherwise empty
+     * @throws FatalException if an unrecoverable transformation/persistence error occurs
      */
-    protected void saveMatchResponse(MatchResponse matchResponse)
+    protected Optional<MatchResponse> saveMatchResponse(MatchResponse matchResponse)
             throws FatalException {
         IpscResponseHolder ipscResponseHolder = transformationService.mapMatchOnly(matchResponse);
 
@@ -162,7 +153,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Initialise the match results holder and persist the results
         MatchResultsDtoHolder matchResultsDtoHolder = new MatchResultsDtoHolder(matchResultsList);
         if (matchResultsDtoHolder.getMatches() == null) {
-            return;
+            return Optional.empty();
         }
 
         // Filters out null matches and persists the results
@@ -176,11 +167,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     domainService.initMatchEntities(matchResultsDto, null, null);
             if (optionalDtoToEntityMapping.isPresent()) {
                 DtoMapping dtoMapping = optionalDtoToEntityMapping.get();
-                transactionService.saveMatchResults(dtoMapping);
+                return saveMatch(dtoMapping);
             }
         }
+
+        return Optional.empty();
     }
 
+    /**
+     * Validates and retrieves a match by id.
+     *
+     * @param matchId match identifier; must be non-null and greater than zero
+     * @return optional persisted match
+     * @throws ValidationException if {@code matchId} is null, zero, or negative
+     */
     protected Optional<IpscMatch> findMatchById(Long matchId) {
         // Normalise the match id to zero if null or negative
         if ((matchId == null) || (matchId <= 0)) {
@@ -190,5 +190,26 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Find the match by id
         return matchEntityService.findMatchById(matchIdNumber);
+    }
+
+    /**
+     * Persists mapped domain data and converts the saved entity into an API response form.
+     *
+     * @param dtoMapping mapped domain persistence payload
+     * @return persisted match response when transaction returns a match holder; otherwise empty
+     * @throws FatalException if transactional persistence fails fatally
+     */
+    protected Optional<MatchResponse> saveMatch(DtoMapping dtoMapping) throws FatalException {
+        Optional<MatchHolder> optionalMatchHolder = transactionService.saveMatchResults(dtoMapping);
+
+        // If the match is successfully persisted, convert it to a match response and return it
+        if (optionalMatchHolder.isPresent()) {
+            IpscMatch ipscMatch = optionalMatchHolder.get().getMatch();
+            MatchDto matchDto = new MatchDto(ipscMatch);
+            MatchResponse mr = new MatchResponse(ipscMatch.getId(), matchDto);
+            return Optional.of(mr);
+        }
+
+        return Optional.empty();
     }
 }
