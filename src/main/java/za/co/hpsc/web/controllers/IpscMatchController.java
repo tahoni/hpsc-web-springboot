@@ -5,8 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.request.MatchSearchRequest;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.List;
@@ -23,30 +22,30 @@ public final class IpscMatchController {
 
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    void insertMatch(@RequestBody MatchResponse matchResponse) throws FatalException {
-        ipscMatchService.insertMatch(matchResponse);
+    void insertMatch(@RequestBody MatchWithStages matchWithStages) throws FatalException {
+        ipscMatchService.insertMatch(matchWithStages);
     }
 
     @PutMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    void updateMatch(@PathVariable Long matchId, @RequestBody MatchResponse matchResponse) throws FatalException {
-        ipscMatchService.updateMatch(matchId, matchResponse);
+    void updateMatch(@PathVariable Long matchId, @RequestBody MatchWithStages matchWithStages) {
+        ipscMatchService.updateMatch(matchId, matchWithStages);
     }
 
     @PatchMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    void modifyMatch(@PathVariable Long matchId, @RequestBody MatchResponse matchResponse) throws FatalException {
-        ipscMatchService.modifyMatch(matchId, matchResponse);
+    void modifyMatch(@PathVariable Long matchId, @RequestBody MatchWithStages matchWithStages) {
+        ipscMatchService.modifyMatch(matchId, matchWithStages);
     }
 
     @GetMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    List<MatchResponse> getMatches(@RequestBody MatchSearchRequest matchSearchRequest) {
-        return ipscMatchService.getMatches(matchSearchRequest);
+    List<MatchWithStages> getMatches(@RequestBody MatchWithStages matchWithStages) {
+        return ipscMatchService.getMatches(matchWithStages);
     }
 
     @GetMapping(value = "{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    MatchResponse getMatch(@PathVariable Long matchId) {
+    MatchWithStages getMatch(@PathVariable Long matchId) {
         return ipscMatchService.getMatch(matchId).orElse(null);
     }
 }

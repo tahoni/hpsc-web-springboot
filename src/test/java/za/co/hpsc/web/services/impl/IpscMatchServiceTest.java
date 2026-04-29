@@ -13,6 +13,7 @@ import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.DomainService;
 import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.services.TransformationService;
@@ -42,8 +43,7 @@ class IpscMatchServiceTest {
 
     @Test
     void insertMatch_whenValidMatchResponse_thenDelegatesToSavePipeline() throws FatalException {
-        MatchResponse matchResponse = new MatchResponse(1, "Match 1",
-                LocalDateTime.of(2026, 4, 1, 10, 0), 100, 5, 1);
+        MatchWithStages matchResponse = new MatchWithStages();
         IpscResponseHolder holder = new IpscResponseHolder(List.of(new IpscResponse()));
         MatchResultsDto resultsDto = new MatchResultsDto(new MatchDto());
         DtoMapping mapping = new DtoMapping();
@@ -63,8 +63,7 @@ class IpscMatchServiceTest {
     @Test
     void updateMatch_whenMatchExists_thenMergesAndSavesUsingFullUpdate() throws FatalException {
         Long matchId = 10L;
-        MatchResponse incoming = new MatchResponse(10, "Updated",
-                LocalDateTime.of(2026, 5, 10, 8, 0), 200, 6, 2);
+        MatchWithStages incoming = new MatchWithStages();
 
         IpscMatch persisted = new IpscMatch();
         persisted.setId(matchId);
@@ -89,10 +88,9 @@ class IpscMatchServiceTest {
     }
 
     @Test
-    void modifyMatch_whenMatchDoesNotExist_thenDoesNotSave() throws FatalException {
+    void modifyMatch_whenMatchDoesNotExist_thenDoesNotSave() {
         Long matchId = 99L;
-        MatchResponse incoming = new MatchResponse(99, "Missing Match",
-                LocalDateTime.of(2026, 5, 10, 8, 0), 200, 6, 2);
+        MatchWithStages incoming = new MatchWithStages();
 
         when(matchEntityService.findMatchById(matchId)).thenReturn(Optional.empty());
 

@@ -17,20 +17,17 @@ import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.request.MatchSearchRequest;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.impl.MatchEntityServiceImpl;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = {HpscWebApplication.class, IpscMatchServiceIntegrationTest.IpscMatchServiceTestConfig.class})
@@ -61,8 +58,7 @@ public class IpscMatchServiceIntegrationTest {
 
     @Test
     public void testInsertMatch_whenMatchResponseContainsTransformableEntries_thenPersistsEachMapping() throws FatalException {
-        MatchResponse request = new MatchResponse(100, "Integration Match",
-                LocalDateTime.of(2026, 4, 29, 10, 0), 1, 5, 1);
+        MatchWithStages request = new MatchWithStages();
 
         transformationService.ipscResponsesToReturn = List.of(new IpscResponse(), new IpscResponse());
         transformationService.matchResultsToReturn = List.of(
@@ -84,8 +80,7 @@ public class IpscMatchServiceIntegrationTest {
 
     @Test
     public void testInsertMatch_whenNoMatchResultsProduced_thenSkipsDomainAndTransaction() throws FatalException {
-        MatchResponse request = new MatchResponse(101, "No Result Match",
-                LocalDateTime.of(2026, 4, 29, 11, 0), 1, 5, 1);
+        MatchWithStages request = new MatchWithStages();
 
         transformationService.ipscResponsesToReturn = List.of(new IpscResponse(), new IpscResponse());
         transformationService.matchResultsToReturn = List.of(Optional.empty(), Optional.empty());
@@ -99,10 +94,9 @@ public class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    public void testUpdateMatch_whenMatchDoesNotExist_thenExitsWithoutPersisting() throws FatalException {
+    public void testUpdateMatch_whenMatchDoesNotExist_thenExitsWithoutPersisting() {
         Long matchId = 500L;
-        MatchResponse request = new MatchResponse(500, "Missing Match",
-                LocalDateTime.of(2026, 4, 29, 12, 0), 1, 5, 1);
+        MatchWithStages request = new MatchWithStages();
 
         matchEntityService.findByIdResult = Optional.empty();
 
@@ -114,15 +108,13 @@ public class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    public void testUpdateMatch_whenMatchExists_thenMergesAndPersists() throws FatalException {
+    public void testUpdateMatch_whenMatchExists_thenMergesAndPersists() {
         Long matchId = 501L;
-        MatchResponse request = new MatchResponse(501, "Updated Match",
-                LocalDateTime.of(2026, 4, 29, 13, 0), 1, 5, 1);
+        MatchWithStages request = new MatchWithStages();
 
         IpscMatch existing = new IpscMatch();
         existing.setId(matchId);
         existing.setName("Persisted Match");
-        existing.setScheduledDate(LocalDateTime.of(2026, 4, 1, 9, 0));
         matchEntityService.findByIdResult = Optional.of(existing);
 
         transformationService.ipscResponsesToReturn = List.of(new IpscResponse());
@@ -138,15 +130,13 @@ public class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    public void testModifyMatch_whenMatchExists_thenMergesAndPersists() throws FatalException {
+    public void testModifyMatch_whenMatchExists_thenMergesAndPersists() {
         Long matchId = 502L;
-        MatchResponse request = new MatchResponse(502, "Patched Match",
-                LocalDateTime.of(2026, 4, 29, 14, 0), 1, 6, 2);
+        MatchWithStages request = new MatchWithStages();
 
         IpscMatch existing = new IpscMatch();
         existing.setId(matchId);
         existing.setName("Persisted Patch Target");
-        existing.setScheduledDate(LocalDateTime.of(2026, 4, 10, 9, 0));
         matchEntityService.findByIdResult = Optional.of(existing);
 
         transformationService.ipscResponsesToReturn = List.of(new IpscResponse());
@@ -163,7 +153,7 @@ public class IpscMatchServiceIntegrationTest {
 
     @Test
     public void testGetMatches_whenSearchRequestProvided_thenReturnsEmptyList() {
-        List<MatchResponse> results = ipscMatchService.getMatches(new MatchSearchRequest());
+        List<MatchWithStages> results = ipscMatchService.getMatches(new MatchWithStages());
 
         assertNotNull(results);
         assertTrue(results.isEmpty());
@@ -171,7 +161,7 @@ public class IpscMatchServiceIntegrationTest {
 
     @Test
     public void testGetMatch_whenIdProvided_thenReturnsEmptyOptional() {
-        Optional<MatchResponse> result = ipscMatchService.getMatch(123L);
+        Optional<MatchWithStages> result = ipscMatchService.getMatch(123L);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

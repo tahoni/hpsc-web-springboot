@@ -1,72 +1,82 @@
 package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.request.MatchSearchRequest;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Service contract for IPSC matches CRUD-style operations and retrieval queries.
+ * Defines CRUD-style operations for IPSC match aggregates represented by
+ * {@link MatchWithStages}.
  * <p>
- * Implementations of this interface are responsible for creating, updating, and
- * retrieving match records represented by {@link MatchResponse} DTOs, and for
- * converting unrecoverable processing failures into {@link FatalException}.
+ * Implementations are responsible for:
+ * </p>
+ * <ul>
+ *   <li>Creating new matches</li>
+ *   <li>Applying full or partial updates to existing matches</li>
+ *   <li>Returning filtered match lists and individual matches</li>
+ * </ul>
+ * <p>
+ * A {@link FatalException} indicates a non-recoverable failure during processing
+ * (for example, transformation, validation, or persistence errors that cannot be
+ * handled as a normal business outcome).
  * </p>
  */
 public interface IpscMatchService {
 
     /**
-     * Persists a new match based on the supplied match payload.
+     * Inserts a new IPSC match aggregate.
      *
-     * @param matchResponse the match data to insert
-     * @throws FatalException if the match cannot be inserted due to a non-recoverable error
+     * @param matchWithStages the incoming match payload, including match metadata
+     *                        and optional stage details
+     * @throws FatalException when the insert operation cannot be completed due to
+     *                        a non-recoverable error
      */
-    void insertMatch(MatchResponse matchResponse)
+    void insertMatch(MatchWithStages matchWithStages)
             throws FatalException;
 
     /**
      * Performs a full update of an existing match identified by {@code matchId}.
      * <p>
-     * In a typical full update flow, omitted fields may be treated as replacements.
-     * Exact behaviour depends on implementation.
+     * Full update semantics typically mean the submitted payload is treated as the
+     * authoritative state for updatable fields.
      * </p>
      *
-     * @param matchId       the identifier of the match to update
-     * @param matchResponse the new match data to apply
-     * @throws FatalException if the update fails due to a non-recoverable error
+     * @param matchId         the identifier of the match to update
+     * @param matchWithStages the new match state to apply
      */
-    void updateMatch(Long matchId, MatchResponse matchResponse)
-            throws FatalException;
+    void updateMatch(Long matchId, MatchWithStages matchWithStages);
 
     /**
-     * Performs a partial update (patch-like modification) on an existing match.
+     * Performs a partial update (patch-style) of an existing match identified by
+     * {@code matchId}.
      * <p>
-     * In a typical partial update flow, only provided fields are changed while
-     * other existing values are retained. Exact behaviour depends on implementation.
+     * Partial update semantics typically mean only provided fields are changed and
+     * omitted fields remain unchanged.
      * </p>
      *
-     * @param matchId       the identifier of the match to modify
-     * @param matchResponse the partial match data to apply
-     * @throws FatalException if the modification fails due to a non-recoverable error
+     * @param matchId         the identifier of the match to modify
+     * @param matchWithStages the partial match payload to merge
      */
-    void modifyMatch(Long matchId, MatchResponse matchResponse) throws FatalException;
+    void modifyMatch(Long matchId, MatchWithStages matchWithStages);
 
     /**
-     * Retrieves matches that satisfy the given search/filter criteria.
+     * Retrieves matches that satisfy the provided filter criteria.
      *
-     * @param matchSearchRequest search parameters used to filter returned matches
-     * @return a list of matching {@link MatchResponse} objects; may be empty if no matches are found
+     * @param matchWithStages filter fields used to constrain the search; implementations
+     *                        may treat null/empty fields as wildcards
+     * @return a non-null list of matching {@link MatchWithStages} records; empty when
+     * no matches satisfy the filter
      */
-    List<MatchResponse> getMatches(MatchSearchRequest matchSearchRequest);
+    List<MatchWithStages> getMatches(MatchWithStages matchWithStages);
 
     /**
      * Retrieves a single match by its identifier.
      *
-     * @param matchId the identifier of the match to retrieve
-     * @return an {@link Optional} containing the matching {@link MatchResponse} if found,
+     * @param matchId the unique identifier of the match to load
+     * @return {@link Optional#of(Object)} containing the requested match when found;
      * otherwise {@link Optional#empty()}
      */
-    Optional<MatchResponse> getMatch(Long matchId);
+    Optional<MatchWithStages> getMatch(Long matchId);
 }

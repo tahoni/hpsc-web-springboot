@@ -6,8 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.request.MatchSearchRequest;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.List;
@@ -30,41 +29,41 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void insertMatch_delegatesToService_withProvidedMatchResponse() throws FatalException {
-        MatchResponse matchResponse = new MatchResponse();
+    void insertMatch_delegatesToService_withProvidedMatchWithStages() throws FatalException {
+        MatchWithStages matchWithStages = new MatchWithStages();
 
-        ipscMatchController.insertMatch(matchResponse);
+        ipscMatchController.insertMatch(matchWithStages);
 
-        verify(ipscMatchService).insertMatch(matchResponse);
+        verify(ipscMatchService).insertMatch(matchWithStages);
     }
 
     @Test
-    void updateMatch_delegatesToService_withPathVariableAndBody() throws FatalException {
+    void updateMatch_delegatesToService_withPathVariableAndBody() {
         Long matchId = 42L;
-        MatchResponse matchResponse = new MatchResponse();
+        MatchWithStages matchWithStages = new MatchWithStages();
 
-        ipscMatchController.updateMatch(matchId, matchResponse);
+        ipscMatchController.updateMatch(matchId, matchWithStages);
 
-        verify(ipscMatchService).updateMatch(matchId, matchResponse);
+        verify(ipscMatchService).updateMatch(matchId, matchWithStages);
     }
 
     @Test
-    void modifyMatch_delegatesToService_withPathVariableAndBody() throws FatalException {
+    void modifyMatch_delegatesToService_withPathVariableAndBody() {
         Long matchId = 84L;
-        MatchResponse matchResponse = new MatchResponse();
+        MatchWithStages matchWithStages = new MatchWithStages();
 
-        ipscMatchController.modifyMatch(matchId, matchResponse);
+        ipscMatchController.modifyMatch(matchId, matchWithStages);
 
-        verify(ipscMatchService).modifyMatch(matchId, matchResponse);
+        verify(ipscMatchService).modifyMatch(matchId, matchWithStages);
     }
 
     @Test
-    void getMatches_returnsListFromService_forGivenSearchRequest() {
-        MatchSearchRequest request = new MatchSearchRequest();
-        List<MatchResponse> expected = List.of(new MatchResponse(), new MatchResponse());
+    void getMatches_returnsListFromService_forGivenMatchWithStagesFilter() {
+        MatchWithStages request = new MatchWithStages();
+        List<MatchWithStages> expected = List.of(new MatchWithStages(), new MatchWithStages());
         when(ipscMatchService.getMatches(request)).thenReturn(expected);
 
-        List<MatchResponse> result = ipscMatchController.getMatches(request);
+        List<MatchWithStages> result = ipscMatchController.getMatches(request);
 
         assertEquals(expected, result);
         verify(ipscMatchService).getMatches(request);
@@ -72,22 +71,22 @@ class IpscMatchControllerTest {
 
     @Test
     void getMatches_returnsEmptyList_whenServiceReturnsEmptyList() {
-        MatchSearchRequest request = new MatchSearchRequest();
+        MatchWithStages request = new MatchWithStages();
         when(ipscMatchService.getMatches(request)).thenReturn(List.of());
 
-        List<MatchResponse> result = ipscMatchController.getMatches(request);
+        List<MatchWithStages> result = ipscMatchController.getMatches(request);
 
         assertTrue(result.isEmpty());
         verify(ipscMatchService).getMatches(request);
     }
 
     @Test
-    void getMatch_returnsMatchResponse_whenServiceFindsMatch() {
+    void getMatch_returnsMatchWithStages_whenServiceFindsMatch() {
         Long matchId = 7L;
-        MatchResponse expected = new MatchResponse();
+        MatchWithStages expected = new MatchWithStages();
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.of(expected));
 
-        MatchResponse result = ipscMatchController.getMatch(matchId);
+        MatchWithStages result = ipscMatchController.getMatch(matchId);
 
         assertEquals(expected, result);
         verify(ipscMatchService).getMatch(matchId);
@@ -98,7 +97,7 @@ class IpscMatchControllerTest {
         Long matchId = 8L;
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.empty());
 
-        MatchResponse result = ipscMatchController.getMatch(matchId);
+        MatchWithStages result = ipscMatchController.getMatch(matchId);
 
         assertNull(result);
         verify(ipscMatchService).getMatch(matchId);
@@ -106,33 +105,11 @@ class IpscMatchControllerTest {
 
     @Test
     void insertMatch_propagatesFatalException_fromService() throws FatalException {
-        MatchResponse matchResponse = new MatchResponse();
-        doThrow(new FatalException("insert failed")).when(ipscMatchService).insertMatch(matchResponse);
+        MatchWithStages matchWithStages = new MatchWithStages();
+        doThrow(new FatalException("insert failed")).when(ipscMatchService).insertMatch(matchWithStages);
 
-        assertThrows(FatalException.class, () -> ipscMatchController.insertMatch(matchResponse));
+        assertThrows(FatalException.class, () -> ipscMatchController.insertMatch(matchWithStages));
 
-        verify(ipscMatchService).insertMatch(matchResponse);
-    }
-
-    @Test
-    void updateMatch_propagatesFatalException_fromService() throws FatalException {
-        Long matchId = 9L;
-        MatchResponse matchResponse = new MatchResponse();
-        doThrow(new FatalException("update failed")).when(ipscMatchService).updateMatch(matchId, matchResponse);
-
-        assertThrows(FatalException.class, () -> ipscMatchController.updateMatch(matchId, matchResponse));
-
-        verify(ipscMatchService).updateMatch(matchId, matchResponse);
-    }
-
-    @Test
-    void modifyMatch_propagatesFatalException_fromService() throws FatalException {
-        Long matchId = 10L;
-        MatchResponse matchResponse = new MatchResponse();
-        doThrow(new FatalException("modify failed")).when(ipscMatchService).modifyMatch(matchId, matchResponse);
-
-        assertThrows(FatalException.class, () -> ipscMatchController.modifyMatch(matchId, matchResponse));
-
-        verify(ipscMatchService).modifyMatch(matchId, matchResponse);
+        verify(ipscMatchService).insertMatch(matchWithStages);
     }
 }
