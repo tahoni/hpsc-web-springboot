@@ -71,7 +71,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.empty();
     }
 
-    protected Optional<MatchResponse> modifyMatchResponse(Long matchId, MatchResponse matchResponse, boolean fullUpdate)
+    protected Optional<MatchResponse> modifyMatchResponse(Long matchId, MatchResponse matchResponse,
+                                                          boolean fullUpdate)
             throws FatalException {
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
 
@@ -81,7 +82,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             return Optional.empty();
         }
 
-        Optional<MatchResponse> optionalMatchResponse = mergeMatchResponses(matchIdNumber, matchResponse, fullUpdate);
+        Optional<MatchResponse> optionalMatchResponse = mergeMatchResponses(matchIdNumber, matchResponse,
+                fullUpdate);
         if (optionalMatchResponse.isPresent()) {
             saveMatchResponse(optionalMatchResponse.get());
         }
@@ -89,10 +91,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return optionalMatchResponse;
     }
 
-    protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse, boolean fullUpdate) {
+    protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse,
+                                                          boolean fullUpdate) {
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
-        Optional<IpscMatch> ipscMatch =
-                matchEntityService.findMatchById(matchIdNumber);
+        Optional<IpscMatch> ipscMatch = matchEntityService.findMatchById(matchIdNumber);
         if (ipscMatch.isEmpty()) {
             return Optional.empty();
         }

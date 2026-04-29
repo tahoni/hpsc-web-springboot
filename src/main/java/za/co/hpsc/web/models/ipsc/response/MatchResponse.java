@@ -58,30 +58,22 @@ public class MatchResponse {
         this.clubId = ((matchDto.getClub() != null) ? matchDto.getClub().getIndex() : null);
     }
 
-    public MatchResponse(Long matchId, MatchResponse right) {
-        this.matchId = matchId.intValue();
-        this.matchName = right.matchName;
-        this.matchDate = right.matchDate;
-        this.clubId = right.getClubId();
-
-        this.squadCount = right.getSquadCount();
-        this.firearmId = right.getFirearmId();
-    }
-
-    // TODO: cater for missing values
-    public void init(MatchDto matchDto) {
-        this.matchName = matchDto.getName();
-        this.matchDate = matchDto.getScheduledDate();
-        this.clubId = ((matchDto.getClub() != null) ? matchDto.getClub().getIndex() : null);
-    }
-
-    // TODO: cater for missing values
     public void init(MatchResponse right, boolean fullUpdate) {
-        this.matchName = right.matchName;
-        this.matchDate = right.matchDate;
-        this.clubId = right.getClubId();
+        if (fullUpdate) {
+            this.matchName = right.matchName;
+            this.matchDate = right.matchDate;
+            this.clubId = right.clubId;
 
-        this.squadCount = right.getSquadCount();
-        this.firearmId = right.getFirearmId();
+            this.squadCount = right.squadCount;
+            this.firearmId = right.firearmId;
+
+        } else {
+            this.matchName = (right.matchName != null) ? right.matchName : this.matchName;
+            this.matchDate = (right.matchDate != null) ? right.matchDate : this.matchDate;
+            this.clubId = (right.clubId != null) ? right.clubId : this.clubId;
+
+            this.squadCount = (right.squadCount != null) ? right.squadCount : this.squadCount;
+            this.firearmId = (right.firearmId != null) ? right.firearmId : this.firearmId;
+        }
     }
 }
