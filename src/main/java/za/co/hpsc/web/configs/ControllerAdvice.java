@@ -63,8 +63,8 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ControllerResponse> handleNonFatalException(ValidationException ex,
-                                                                      WebRequest request) {
+    public ResponseEntity<ControllerResponse> handleValidationException(ValidationException ex,
+                                                                        WebRequest request) {
         ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
                 "Unprocessable Content");
         return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_CONTENT);
@@ -82,8 +82,8 @@ public class ControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NonFatalException.class)
-    public ResponseEntity<ControllerResponse> handleValidationException(NonFatalException ex,
-                                                                        WebRequest request) {
+    public ResponseEntity<ControllerResponse> handleNonFataException(NonFatalException ex,
+                                                                     WebRequest request) {
         ControllerResponse errorResponse = new ControllerResponse(LocalDateTime.now(), ex.getMessage(),
                 "Bad Request");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

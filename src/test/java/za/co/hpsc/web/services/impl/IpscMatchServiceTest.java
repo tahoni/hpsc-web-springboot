@@ -22,8 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -88,13 +87,13 @@ class IpscMatchServiceTest {
     }
 
     @Test
-    void modifyMatch_whenMatchDoesNotExist_thenDoesNotSave() {
+    void modifyMatch_whenMatchDoesNotExist_thenThrowsException() throws FatalException {
         Long matchId = 99L;
         MatchWithStages incoming = new MatchWithStages();
 
         when(matchEntityService.findMatchById(matchId)).thenReturn(Optional.empty());
 
-        ipscMatchService.modifyMatch(matchId, incoming);
+        assertThrows(FatalException.class, () -> ipscMatchService.modifyMatch(matchId, incoming));
 
         verify(matchEntityService).findMatchById(matchId);
         verifyNoInteractions(transformationService);
@@ -103,7 +102,7 @@ class IpscMatchServiceTest {
     }
 
     @Test
-    void mergeMatchResponses_whenMatchExists_thenReturnsMergedResponse() {
+    void mergeMatchResponses_whenMatchExists_thenReturnsMergedResponse() throws FatalException {
         Long matchId = 7L;
         MatchResponse incoming = new MatchResponse(7, "Incoming Name",
                 LocalDateTime.of(2026, 6, 1, 12, 0), 123, 3, 1);
@@ -123,13 +122,11 @@ class IpscMatchServiceTest {
     }
 
     @Test
-    void mergeMatchResponses_whenMatchMissing_thenReturnsEmpty() {
+    void mergeMatchResponses_whenMatchMissing_thenThrowsException() {
         when(matchEntityService.findMatchById(15L)).thenReturn(Optional.empty());
 
-        Optional<MatchResponse> result = ipscMatchService.mergeMatchResponses(15L,
-                new MatchResponse(15, "Any", LocalDateTime.now(), 1, 1, 1), false);
-
-        assertTrue(result.isEmpty());
+        assertThrows(FatalException.class, () -> ipscMatchService.mergeMatchResponses(15L,
+                new MatchResponse(15, "Any", LocalDateTime.now(), 1, 1, 1), false));
     }
 
     @Test

@@ -38,7 +38,7 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void updateMatch_delegatesToService_withPathVariableAndBody() {
+    void updateMatch_delegatesToService_withPathVariableAndBody() throws FatalException {
         Long matchId = 42L;
         MatchWithStages matchWithStages = new MatchWithStages();
 
@@ -48,7 +48,7 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void modifyMatch_delegatesToService_withPathVariableAndBody() {
+    void modifyMatch_delegatesToService_withPathVariableAndBody() throws FatalException {
         Long matchId = 84L;
         MatchWithStages matchWithStages = new MatchWithStages();
 

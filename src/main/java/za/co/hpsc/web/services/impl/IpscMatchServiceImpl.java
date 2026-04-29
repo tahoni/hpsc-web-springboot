@@ -12,7 +12,10 @@ import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
-import za.co.hpsc.web.services.*;
+import za.co.hpsc.web.services.DomainService;
+import za.co.hpsc.web.services.IpscMatchService;
+import za.co.hpsc.web.services.TransactionService;
+import za.co.hpsc.web.services.TransformationService;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.ArrayList;
@@ -27,12 +30,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected final TransformationService transformationService;
     protected final DomainService domainService;
     protected final TransactionService transactionService;
-    protected final MatchEntityService matchEntityService;
+    protected final MatchEntityServiceImpl matchEntityService;
 
     public IpscMatchServiceImpl(TransformationService transformationService,
                                 DomainService domainService,
                                 TransactionService transactionService,
-                                MatchEntityService matchEntityService) {
+                                MatchEntityServiceImpl matchEntityService) {
         this.transformationService = transformationService;
         this.domainService = domainService;
         this.transactionService = transactionService;
@@ -40,18 +43,18 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public void insertMatch(MatchWithStages matchWithStages) throws FatalException {
-        saveMatchResponse(matchWithStages);
+    public void insertMatch(MatchResponse matchResponse) throws FatalException {
+        saveMatchResponse(matchResponse);
     }
 
     @Override
-    public void updateMatch(Long matchId, MatchWithStages matchWithStages) {
-        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchWithStages, true);
+    public void updateMatch(Long matchId, MatchResponse matchResponse) throws FatalException {
+        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, true);
     }
 
     @Override
-    public void modifyMatch(Long matchId, MatchWithStages matchWithStages) {
-        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchWithStages, false);
+    public void modifyMatch(Long matchId, MatchResponse matchResponse) throws FatalException {
+        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, false);
     }
 
     @Override
@@ -65,79 +68,78 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Applies update semantics to an existing match and persists the merged result.
+     * Applies full or partial update semantics to an existing match and persists the merged result.
      * <p>
-     * This method is used by both full update (PUT-like) and partial update (PATCH-like) flows.
-     * It first normalises the identifier, checks whether the match exists, merges incoming values,
-     * and then persists the merged payload.
-     * </p>
-     * <p>
-     * If no match exists for the resolved id, the method exits without persisting anything.
+     * The method delegates merge logic to {@link #mergeMatchResponses(Long, MatchResponse, boolean)}
+     * and, when a merged payload is returned, persists it via {@link #saveMatchResponse(MatchResponse)}.
      * </p>
      *
-     * @param matchId       identifier of the target match; {@code null} resolves to {@code 0}
-     * @param matchResponse incoming payload containing fields to apply
-     * @param fullUpdate    {@code true} for replacement semantics, {@code false} for patch semantics
+     * @param matchId       identifier of the target match; {@code null} is normalised to {@code 0}
+     * @param matchResponse incoming payload used to update persisted state
+     * @param fullUpdate    {@code true} for full replacement semantics, {@code false} for partial merge semantics
+     * @throws FatalException if persistence/transformation fails while saving the merged match
      */
     protected void modifyMatchResponse(Long matchId, MatchResponse matchResponse,
-                                       boolean fullUpdate) {
+                                       boolean fullUpdate) throws FatalException {
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
-
-        Optional<IpscMatch> ipscMatch = matchEntityService.findMatchById(matchIdNumber);
-        if (ipscMatch.isEmpty()) {
-            return;
-        }
 
         Optional<MatchResponse> optionalMatchResponse =
                 mergeMatchResponses(matchIdNumber, matchResponse, fullUpdate);
-        optionalMatchResponse.ifPresent(response -> {
-            try {
-                saveMatchResponse(response);
-            } catch (FatalException e) {
-                throw new RuntimeFatalException(e);
-            }
-        });
+
+        if (optionalMatchResponse.isPresent()) {
+            saveMatchResponse(optionalMatchResponse.get());
+        }
     }
 
     /**
-     * Produces a merged {@link MatchResponse} by combining persisted match state with an incoming payload.
+     * Merges an incoming match payload with the persisted match state for the given id.
      * <p>
-     * The persisted entity is converted to {@link MatchDto}, then to {@link MatchResponse},
-     * and finally merged through {@link MatchResponse#init(MatchResponse, boolean)}.
+     * The persisted entity is loaded and converted to {@link MatchResponse}, then merged with
+     * the incoming payload via {@link MatchResponse#init(MatchResponse, boolean)}.
+     * </p>
+     * <p>
+     * This implementation throws when the match is not found.
      * </p>
      *
-     * @param matchId       identifier of the target match; {@code null} resolves to {@code 0}
-     * @param matchResponse incoming payload to merge into the persisted representation
-     * @param fullUpdate    {@code true} to overwrite fields, {@code false} for partial merge
-     * @return merged match response wrapped in {@link Optional}, or empty if no persisted match is found
+     * @param matchId       identifier of the target match; {@code null} is normalised to {@code 0}
+     * @param matchResponse incoming payload to merge into persisted state
+     * @param fullUpdate    {@code true} to apply full overwrite behaviour, {@code false} for patch behaviour
+     * @return an {@link Optional} containing the merged {@link MatchResponse}
+     * @throws FatalException if no persisted match exists for the resolved {@code matchId}
      */
     protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse,
-                                                          boolean fullUpdate) {
+                                                          boolean fullUpdate) throws FatalException {
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
 
-        Optional<IpscMatch> ipscMatch = matchEntityService.findMatchById(matchIdNumber);
-        if (ipscMatch.isEmpty()) {
-            return Optional.empty();
-        }
+        IpscMatch ipscMatch = matchEntityService.findMatchById(matchIdNumber)
+                .orElseThrow(() -> new FatalException("Match with id %d not found".formatted(matchIdNumber)));
 
-        MatchDto matchDto = new MatchDto(ipscMatch.get());
+        MatchDto matchDto = new MatchDto(ipscMatch);
         MatchResponse fetchedMatchResponse = new MatchResponse(matchIdNumber, matchDto);
         fetchedMatchResponse.init(matchResponse, fullUpdate);
         return Optional.of(fetchedMatchResponse);
     }
 
     /**
-     * Executes the match save pipeline from API payload to transactional persistence.
+     * Persists a match payload through transformation, domain mapping, and transactional save.
+     * <p>
+     * Processing flow:
+     * </p>
      * <ol>
-     *   <li>Maps the payload into an {@link IpscResponseHolder}</li>
-     *   <li>Transforms each response into {@link MatchResultsDto}</li>
-     *   <li>Filters null DTO entries</li>
-     *   <li>Maps each DTO into domain entities</li>
-     *   <li>Persists each successful mapping</li>
+     *   <li>Maps the incoming match payload to an {@link IpscResponseHolder} via
+     *       {@link TransformationService#mapMatchOnly(MatchResponse)}.</li>
+     *   <li>Transforms each {@link IpscResponse} entry into {@link MatchResultsDto} objects.</li>
+     *   <li>Builds {@link MatchResultsDtoHolder}, then filters out null DTO entries.</li>
+     *   <li>Maps each DTO to domain data using {@link DomainService#initMatchEntities(MatchResultsDto, String, String)}.</li>
+     *   <li>Persists successful mappings using {@link TransactionService#saveMatchResults(DtoMapping)}.</li>
      * </ol>
+     * <p>
+     * If the holder returns {@code null} for matches, processing exits without persistence.
+     * DTOs that cannot be mapped are skipped.
+     * </p>
      *
-     * @param matchResponse payload to transform and persist
-     * @throws FatalException when an unrecoverable transformation or persistence error occurs
+     * @param matchResponse match payload to persist
+     * @throws FatalException if a fatal transformation or persistence error occurs
      */
     protected void saveMatchResponse(MatchResponse matchResponse) throws FatalException {
         IpscResponseHolder ipscResponseHolder = transformationService.mapMatchOnly(matchResponse);
@@ -164,12 +166,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 DtoMapping dtoMapping = optionalDtoToEntityMapping.get();
                 transactionService.saveMatchResults(dtoMapping);
             }
-        }
-    }
-
-    private static class RuntimeFatalException extends RuntimeException {
-        RuntimeFatalException(FatalException cause) {
-            super(cause);
         }
     }
 }
