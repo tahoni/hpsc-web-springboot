@@ -78,7 +78,7 @@ public class ControllerAdvice {
      * @param ex      the exception that was thrown.
      * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a structured error response
-     * with HTTP status 404 (Not Foundt).
+     * with HTTP status 404 (Not Found).
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NonFatalException.class)
