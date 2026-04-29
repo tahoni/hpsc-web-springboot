@@ -8,12 +8,12 @@ import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.request.ClubRequest;
 
 /**
- * Represents a response model for club-related data in the system.
- *
+ * Response DTO that represents club data returned by the API.
  * <p>
- * This class encapsulates details such as name and other relevant fields. It provides
- * functionality to populate its fields directly from an {@link ClubRequest} object.
- * <.p>
+ * This model is typically used to expose club identity details to clients after
+ * processing a request, and can be constructed directly from a corresponding
+ * {@link ClubRequest} instance when values are carried over.
+ * </p>
  */
 @Getter
 @Setter
@@ -26,11 +26,9 @@ public class ClubResponse {
     private String clubName;
 
     /**
-     * Constructs a new {@code ClubResponse} object by initialising its fields using the values
-     * from a given {@link ClubRequest} object.
+     * Creates a {@code ClubResponse} by copying values from a {@link ClubRequest}.
      *
-     * @param clubRequest the {@link ClubRequest} object containing data to initialise
-     *                    the {@code ClubResponse} instance.
+     * @param clubRequest source request DTO containing club fields to map into this response DTO
      */
     public ClubResponse(ClubRequest clubRequest) {
         this.clubId = clubRequest.getClubId();
@@ -38,6 +36,14 @@ public class ClubResponse {
         this.clubName = clubRequest.getClubName();
     }
 
+    /**
+     * Creates a {@code ClubResponse} with only the required club identifier set.
+     * <p>
+     * Useful in flows where only the foreign-key/reference ID is needed.
+     * </p>
+     *
+     * @param clubId required club identifier
+     */
     public ClubResponse(@NotNull Integer clubId) {
         this.clubId = clubId;
     }

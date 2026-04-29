@@ -26,7 +26,4 @@ public interface TransactionService {
      */
     Optional<MatchHolder> saveMatchResults(DtoMapping dtoMapping)
             throws FatalException;
-
-    Optional<MatchHolder> saveMatch(DtoMapping dtoMapping)
-            throws FatalException;
 }

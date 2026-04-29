@@ -11,12 +11,12 @@ import za.co.hpsc.web.models.ipsc.request.MatchRequest;
 import java.time.LocalDateTime;
 
 /**
- * Represents a response model for match-related data within the system.
- *
+ * Response DTO representing match information exposed by the API.
  * <p>
- * This class encapsulates details of a match, such as its ID, name, date,
- * associated club, squad count, and firearm information. It provides
- * functionality to populate its fields directly from a {@link MatchRequest} object.
+ * This model contains identity and scheduling fields for a match, along with
+ * optional metadata such as squad count and firearm type reference.
+ * It can be created from request-layer objects or DTO-layer objects depending
+ * on the calling workflow.
  * </p>
  */
 @Getter
@@ -35,11 +35,9 @@ public class MatchResponse {
     private Integer firearmId;
 
     /**
-     * Constructs a new {@code MatchResponse} object by initialising its fields using
-     * the values from a given {@link MatchRequest} object.
+     * Constructs a response by copying values from a {@link MatchRequest}.
      *
-     * @param matchRequest the {@link MatchRequest} object containing data to initialise
-     *                     the {@code MatchResponse} instance.
+     * @param matchRequest source request object containing match values
      */
     public MatchResponse(MatchRequest matchRequest) {
         this.matchId = matchRequest.getMatchId();
@@ -51,6 +49,16 @@ public class MatchResponse {
         this.firearmId = matchRequest.getFirearmId();
     }
 
+    /**
+     * Constructs a response from a persisted/generated match ID and a {@link MatchDto}.
+     * <p>
+     * The {@code Long} ID is converted to {@code Integer}. Club ID is derived from
+     * {@code matchDto.getClub().getIndex()} when a club is present; otherwise it is {@code null}.
+     * </p>
+     *
+     * @param matchId  persisted or generated match ID
+     * @param matchDto source DTO containing match details
+     */
     public MatchResponse(Long matchId, MatchDto matchDto) {
         this.matchId = matchId.intValue();
         this.matchName = matchDto.getName();
@@ -58,6 +66,21 @@ public class MatchResponse {
         this.clubId = ((matchDto.getClub() != null) ? matchDto.getClub().getIndex() : null);
     }
 
+    /**
+     * Updates this response object using values from another {@code MatchResponse}.
+     * <p>
+     * Update mode behaviour:
+     * </p>
+     * <ul>
+     *   <li><b>Full update</b> ({@code fullUpdate = true}): all updatable fields are overwritten,
+     *   including {@code null} values from {@code right}.</li>
+     *   <li><b>Partial update</b> ({@code fullUpdate = false}): only non-null fields from
+     *   {@code right} overwrite existing values.</li>
+     * </ul>
+     *
+     * @param right      the source object providing new values
+     * @param fullUpdate whether to apply full replacement semantics or partial merge semantics
+     */
     public void init(MatchResponse right, boolean fullUpdate) {
         if (fullUpdate) {
             this.matchName = right.matchName;

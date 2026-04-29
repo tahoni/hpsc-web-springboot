@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.models.ipsc.request.MatchSearchRequest;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import za.co.hpsc.web.services.IpscMatchService;
@@ -22,19 +23,19 @@ public final class IpscMatchController {
 
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    void insertMatch(@RequestBody MatchResponse matchResponse) {
+    void insertMatch(@RequestBody MatchResponse matchResponse) throws FatalException {
         ipscMatchService.insertMatch(matchResponse);
     }
 
     @PutMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    void updateMatch(@PathVariable String matchId, @RequestBody MatchResponse matchResponse) {
+    void updateMatch(@PathVariable Long matchId, @RequestBody MatchResponse matchResponse) throws FatalException {
         ipscMatchService.updateMatch(matchId, matchResponse);
     }
 
     @PatchMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    void modifyMatch(@PathVariable String matchId, @RequestBody MatchResponse matchResponse) {
+    void modifyMatch(@PathVariable Long matchId, @RequestBody MatchResponse matchResponse) throws FatalException {
         ipscMatchService.modifyMatch(matchId, matchResponse);
     }
 
@@ -45,7 +46,7 @@ public final class IpscMatchController {
     }
 
     @GetMapping(value = "{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    MatchResponse getMatch(@PathVariable Integer matchId) {
-        return ipscMatchService.getMatch(matchId);
+    MatchResponse getMatch(@PathVariable Long matchId) {
+        return ipscMatchService.getMatch(matchId).orElse(null);
     }
 }

@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 // TODO: comment
+// TODO: add tests
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -43,22 +44,22 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public boolean insertMatch(MatchResponse matchResponse)
+    public void insertMatch(MatchResponse matchResponse)
             throws FatalException {
         // Saves the match
-        return saveMatchResponse(matchResponse).isPresent();
+        saveMatchResponse(matchResponse);
     }
 
     @Override
-    public boolean updateMatch(String matchId, MatchResponse matchResponse)
+    public void updateMatch(Long matchId, MatchResponse matchResponse)
             throws FatalException {
-        return modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, true).isPresent();
+        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, true);
     }
 
     @Override
-    public boolean modifyMatch(String matchId, MatchResponse matchResponse)
+    public void modifyMatch(Long matchId, MatchResponse matchResponse)
             throws FatalException {
-        return modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, false).isPresent();
+        modifyMatchResponse(ValueUtil.nullAsZero(matchId), matchResponse, false);
     }
 
     @Override
@@ -67,19 +68,19 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public Optional<MatchResponse> getMatch(String matchId) {
+    public Optional<MatchResponse> getMatch(Long matchId) {
         return Optional.empty();
     }
 
-    protected Optional<MatchResponse> modifyMatchResponse(Long matchId, MatchResponse matchResponse,
-                                                          boolean fullUpdate)
+    protected void modifyMatchResponse(Long matchId, MatchResponse matchResponse,
+                                       boolean fullUpdate)
             throws FatalException {
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
 
         Optional<IpscMatch> ipscMatch =
                 matchEntityService.findMatchById(matchIdNumber);
         if (ipscMatch.isEmpty()) {
-            return Optional.empty();
+            return;
         }
 
         Optional<MatchResponse> optionalMatchResponse = mergeMatchResponses(matchIdNumber, matchResponse,
@@ -88,7 +89,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             saveMatchResponse(optionalMatchResponse.get());
         }
 
-        return optionalMatchResponse;
     }
 
     protected Optional<MatchResponse> mergeMatchResponses(Long matchId, MatchResponse matchResponse,
@@ -105,7 +105,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return Optional.of(fetchedMatchResponse);
     }
 
-    protected Optional<MatchHolder> saveMatchResponse(MatchResponse matchResponse)
+    protected void saveMatchResponse(MatchResponse matchResponse)
             throws FatalException {
         IpscResponseHolder ipscResponseHolder = transformationService.mapMatchOnly(matchResponse);
 
@@ -121,7 +121,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Initialises the match results DTO holder with the accumulated DTOs
         MatchResultsDtoHolder matchResultsDtoHolder = new MatchResultsDtoHolder(matchResultsList);
         if (matchResultsDtoHolder.getMatches() == null) {
-            return Optional.empty();
+            return;
         }
 
         // Filter out null matches
@@ -143,6 +143,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             }
         }
 
-        return matchHolderList.stream().findFirst();
+        matchHolderList.stream().findFirst();
     }
 }

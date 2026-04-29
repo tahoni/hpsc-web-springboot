@@ -7,16 +7,17 @@ import za.co.hpsc.web.models.ipsc.response.MatchResponse;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: Javadoc
 public interface IpscMatchService {
-    boolean insertMatch(MatchResponse matchResponse)
+    void insertMatch(MatchResponse matchResponse)
             throws FatalException;
 
-    boolean updateMatch(String matchId, MatchResponse matchResponse)
+    void updateMatch(Long matchId, MatchResponse matchResponse)
             throws FatalException;
 
-    boolean modifyMatch(String matchId, MatchResponse matchResponse) throws FatalException;
+    void modifyMatch(Long matchId, MatchResponse matchResponse) throws FatalException;
 
     List<MatchResponse> getMatches(MatchSearchRequest matchSearchRequest);
 
-    Optional<MatchResponse> getMatch(String matchId);
+    Optional<MatchResponse> getMatch(Long matchId);
 }

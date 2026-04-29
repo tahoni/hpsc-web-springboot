@@ -13,52 +13,62 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface representing the transformation service for processing and mapping IPSC
- * (International Practical Shooting Confederation) related data.
- *
+ * Contract for transforming IPSC-related payloads between request, DTO, and response models.
  * <p>
- * It provides methods for converting raw data into structured response objects and
- * initializing variousIPSC-related records and DTOs for further usage.
+ * This service is responsible for:
  * </p>
+ * <ul>
+ *   <li>Mapping incoming request holders into structured response holders.</li>
+ *   <li>Producing record-holder views from grouped match data.</li>
+ *   <li>Initialising internal DTO aggregates used by downstream domain/persistence flows.</li>
+ * </ul>
  */
 public interface TransformationService {
+
     /**
-     * Maps IPSC requests to a list of IPSC responses. This method processes the matches, stages,
-     * enrolled members, scores, tags, and clubs from the given {@link IpscRequestHolder}, groups
-     * them based on match IDs, and constructs corresponding {@link IpscResponse} objects.
+     * Maps a full IPSC request payload into a structured response holder.
+     * <p>
+     * Implementations typically align and group related collections (matches, stages,
+     * scores, competitors, tags, clubs) by match context and then assemble a coherent
+     * list of {@link IpscResponse} entries.
+     * </p>
      *
-     * @param ipscRequestHolder A holder object that contains lists of matches, stages, enrolled
-     *                          members, scores, tags, members, and clubs to be processed.
-     * @return A list of {@link IpscResponse} objects that encapsulate the mapped data, including
-     * match details, associated tags, stages, enrolled members, scores, members, and club
-     * information.
-     * @throws ValidationException if the input data is invalid or cannot be processed.
+     * @param ipscRequestHolder container holding raw IPSC request collections to transform
+     * @return an {@link IpscResponseHolder} containing mapped and grouped IPSC responses
+     * @throws ValidationException if the request content is invalid, inconsistent, or cannot be transformed
      */
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
             throws ValidationException;
 
+    /**
+     * Creates an IPSC response holder from a single match response payload.
+     * <p>
+     * This is commonly used when only match-level data is available or required.
+     * </p>
+     *
+     * @param matchResponse source match response to wrap/map
+     * @return an {@link IpscResponseHolder} representing the transformed match-only response data
+     */
     IpscResponseHolder mapMatchOnly(MatchResponse matchResponse);
 
     /**
-     * Generates an {@code IpscMatchRecordHolder} from the given list of {@code IpscMatch} entities.
-     * This method processes the input list and structures the data into a record holder
-     * for convenient access and manipulation.
+     * Generates an {@link IpscMatchRecordHolder} from a list of grouped match-holder objects.
+     * <p>
+     * Implementations convert match holder structures into record-oriented output suitable
+     * for downstream consumption (for example, export/reporting layers).
+     * </p>
      *
-     * @param ipscMatchHolderList a list of {@code MatchHolder} objects representing the matches
-     *                            to be included in the generated {@code IpscMatchRecordHolder}.
-     * @return an {@code IpscMatchRecordHolder} containing a list of structured match records
-     * generated from the provided {@code IpscMatch} entities.
+     * @param ipscMatchHolderList list of {@link MatchHolder} items to convert
+     * @return an {@link IpscMatchRecordHolder} containing generated IPSC match records
      */
     IpscMatchRecordHolder generateIpscMatchRecordHolder(List<MatchHolder> ipscMatchHolderList);
 
-    /*
-     * Initialises and returns the match results data transfer object (DTO) based on the
-     * provided IPSC response.
+    /**
+     * Initialises a match-results DTO aggregate from a single IPSC response object.
      *
-     * @param ipscResponse the {@link IpscResponse} object containing data related to the match,
-     *                     such as club information, match details, stages, scores, and participants.
-     * @return an {@link Optional} containing the initialised {@link MatchResultsDto} if successful,
-     * or an empty {@link Optional} if the initialisation cannot be performed.
+     * @param ipscResponse source IPSC response containing match, club, stage, competitor, and score data
+     * @return an {@link Optional} containing {@link MatchResultsDto} when initialisation succeeds;
+     * otherwise {@link Optional#empty()}
      */
     Optional<MatchResultsDto> initMatchResults(IpscResponse ipscResponse);
 }

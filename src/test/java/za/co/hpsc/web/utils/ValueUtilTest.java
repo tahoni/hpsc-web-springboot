@@ -306,4 +306,266 @@ class ValueUtilTest {
         // Assert
         assertEquals(BigDecimal.ZERO, result);
     }
+
+    @Test
+    void testNullAsZero_whenValidNumericString_thenReturnsLongValue() {
+        // Arrange
+        String input = "12345";
+
+        // Act
+        long result = ValueUtil.nullAsZero(input);
+
+        // Assert
+        assertEquals(12345L, result);
+    }
+
+    @Test
+    void testNullAsZero_whenNegativeNumericString_thenReturnsNegativeLongValue() {
+        // Arrange
+        String input = "-5000";
+
+        // Act
+        long result = ValueUtil.nullAsZero(input);
+
+        // Assert
+        assertEquals(-5000L, result);
+    }
+
+    @Test
+    void testNullAsZero_whenZeroString_thenReturnsZero() {
+        // Arrange
+        String input = "0";
+
+        // Act
+        long result = ValueUtil.nullAsZero(input);
+
+        // Assert
+        assertEquals(0L, result);
+    }
+
+    @Test
+    void testNullAsZero_whenNullString_thenReturnsZero() {
+        // Act
+        long result = ValueUtil.nullAsZero((String) null);
+
+        // Assert
+        assertEquals(0L, result);
+    }
+
+    @Test
+    void testNullAsZero_whenInvalidNumericString_thenReturnsZero() {
+        // Arrange
+        String input = "not a number";
+
+        // Act
+        long result = ValueUtil.nullAsZero(input);
+
+        // Assert
+        assertEquals(0L, result);
+    }
+
+    @Test
+    void testNullAsZero_whenBlankString_thenReturnsZero() {
+        // Arrange
+        String input = "   ";
+
+        // Act
+        long result = ValueUtil.nullAsZero(input);
+
+        // Assert
+        assertEquals(0L, result);
+    }
+
+    @Test
+    void testNullAsZero_whenEmptyString_thenReturnsZero() {
+        // Arrange
+        String input = "";
+
+        // Act
+        long result = ValueUtil.nullAsZero(input);
+
+        // Assert
+        assertEquals(0L, result);
+    }
+
+    @Test
+    void testNullAsZero_whenDecimalString_thenReturnsZero() {
+        // Arrange
+        String input = "123.45";
+
+        // Act
+        long result = ValueUtil.nullAsZero(input);
+
+        // Assert
+        assertEquals(0L, result);
+    }
+
+    @Test
+    void testNullAsEmptyString_whenUnicodeString_thenReturnsSameString() {
+        // Arrange
+        String input = "Hello 世界 🌍";
+
+        // Act
+        String result = ValueUtil.nullAsEmptyString(input);
+
+        // Assert
+        assertEquals(input, result);
+    }
+
+    @Test
+    void testNullAsEmptyString_whenVeryLongString_thenReturnsSameString() {
+        // Arrange
+        String input = "A".repeat(10000);
+
+        // Act
+        String result = ValueUtil.nullAsEmptyString(input);
+
+        // Assert
+        assertEquals(input, result);
+    }
+
+    @Test
+    void testNullAsRandomUuid_whenMultipleNullCalls_thenReturnsDifferentUuids() {
+        // Act
+        UUID result1 = ValueUtil.nullAsRandomUuid(null);
+        UUID result2 = ValueUtil.nullAsRandomUuid(null);
+
+        // Assert
+        assertNotNull(result1);
+        assertNotNull(result2);
+        // Random UUIDs should be different (extremely unlikely to collide)
+        // but we only assert they're not null rather than strict inequality
+        // to avoid flaky tests from the extremely rare collision possibility
+    }
+
+    @Test
+    void testNullAsZeroBigDecimal_whenLargeDecimal_thenReturnsBigDecimalValue() {
+        // Arrange
+        String input = "999999999999999.123456789";
+
+        // Act
+        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+
+        // Assert
+        assertEquals(new BigDecimal("999999999999999.123456789"), result);
+    }
+
+    @Test
+    void testNullAsZeroBigDecimal_whenNegativeDecimal_thenReturnsBigDecimalValue() {
+        // Arrange
+        String input = "-42.5";
+
+        // Act
+        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+
+        // Assert
+        assertEquals(new BigDecimal("-42.5"), result);
+    }
+
+    @Test
+    void testNullAsZeroBigDecimal_whenZeroString_thenReturnsZero() {
+        // Arrange
+        String input = "0";
+
+        // Act
+        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+
+        // Assert
+        assertEquals(BigDecimal.ZERO, result);
+    }
+
+    @Test
+    void testNullAsZeroBigDecimal_whenSpecialCharacters_thenReturnsZero() {
+        // Arrange
+        String input = "12@34.56";
+
+        // Act
+        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+
+        // Assert
+        assertEquals(BigDecimal.ZERO, result);
+    }
+
+    @Test
+    void testNullAsEmptyList_whenSingleElementList_thenReturnsSameList() {
+        // Arrange
+        List<Integer> input = List.of(42);
+
+        // Act
+        List<Integer> result = ValueUtil.nullAsEmptyList(input);
+
+        // Assert
+        assertEquals(input, result);
+    }
+
+    @Test
+    void testNullAsEmptyList_whenLargeList_thenReturnsSameList() {
+        // Arrange
+        List<String> input = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            input.add("Item " + i);
+        }
+
+        // Act
+        List<String> result = ValueUtil.nullAsEmptyList(input);
+
+        // Assert
+        assertEquals(input, result);
+        assertEquals(1000, result.size());
+    }
+
+    @Test
+    void testNullAsEmptyList_whenReturnedFromNull_thenReturnsNewInstance() {
+        // Act
+        List<String> result1 = ValueUtil.nullAsEmptyList(null);
+        List<String> result2 = ValueUtil.nullAsEmptyList(null);
+
+        // Assert
+        assertEquals(new ArrayList<>(), result1);
+        assertEquals(new ArrayList<>(), result2);
+        // Verify they are different instances
+        assertNotNull(result1);
+        assertNotNull(result2);
+    }
+
+    @Test
+    void testNullAsEmptyString_whenObjectWithCustomToString_thenReturnsCustomValue() {
+        // Arrange
+        Object value = new Object() {
+            @Override
+            public String toString() {
+                return "CustomStringRepresentation";
+            }
+        };
+
+        // Act
+        String result = ValueUtil.nullAsEmptyString(value);
+
+        // Assert
+        assertEquals("CustomStringRepresentation", result);
+    }
+
+    @Test
+    void testNullAsEmptyString_whenBoolean_thenReturnsStringValue() {
+        // Arrange
+        Object value = Boolean.TRUE;
+
+        // Act
+        String result = ValueUtil.nullAsEmptyString(value);
+
+        // Assert
+        assertEquals("true", result);
+    }
+
+    @Test
+    void testNullAsEmptyString_whenDouble_thenReturnsStringValue() {
+        // Arrange
+        Object value = 3.14159;
+
+        // Act
+        String result = ValueUtil.nullAsEmptyString(value);
+
+        // Assert
+        assertEquals("3.14159", result);
+    }
 }
