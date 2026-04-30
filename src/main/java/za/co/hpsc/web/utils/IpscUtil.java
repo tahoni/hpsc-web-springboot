@@ -2,6 +2,8 @@ package za.co.hpsc.web.utils;
 
 import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 
+// TODO: add JavaDoc
+// TODO: add test
 public class IpscUtil {
     public static String clubTostring(String name, String abbreviation) {
         StringBuilder sb = new StringBuilder();

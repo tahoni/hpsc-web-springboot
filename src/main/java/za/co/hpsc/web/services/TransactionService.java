@@ -37,6 +37,8 @@ public interface TransactionService {
     Optional<MatchHolder> saveMatchResults(DtoMapping dtoMapping)
             throws FatalException;
 
+    // TODO: add JavaDoc
+    // TODO: add tests
     Optional<MatchHolder> saveMatch(MatchOnlyResultsDto matchOnlyResultsDto)
             throws FatalException;
 }

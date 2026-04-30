@@ -36,5 +36,7 @@ public interface DomainService {
     Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults,
                                            String filterClubAbbreviation, String matchClubAbbreviation);
 
+    // TODO: add JavaDoc
+    // TODO: add tests
     Optional<MatchOnlyResultsDto> initMatchOnlyEntities(MatchOnlyDto matchOnlyDto);
 }

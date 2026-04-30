@@ -10,6 +10,8 @@ import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 
 import java.util.List;
 
+// TODO: add JavaDoc
+// TODO: add test
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor

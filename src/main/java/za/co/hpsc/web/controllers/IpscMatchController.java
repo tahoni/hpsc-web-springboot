@@ -16,6 +16,9 @@ import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchOnlyResponse;
 import za.co.hpsc.web.services.IpscMatchService;
 
+// TODO: add JavaDoc
+// TODO: add tests
+// TODO: check OpenAPI annotations for accuracy and completeness
 @Controller
 @RequestMapping("/v2/ipsc/matches")
 @Tag(name = "IPSC Matches", description = "Operations pertaining to IPSC matches")
