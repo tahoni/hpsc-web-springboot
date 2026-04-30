@@ -8,6 +8,7 @@ import lombok.Setter;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.common.response.ClubResponse;
+import za.co.hpsc.web.utils.IpscUtil;
 
 import java.util.UUID;
 
@@ -147,30 +148,6 @@ public class ClubDto {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        // Appends the club name if it is not null and not blank
-        if ((this.name != null && (!this.name.isBlank()))) {
-            sb.append(this.name.trim());
-            sb.append(" ");
-        }
-
-        // Appends the club abbreviation in parentheses if it is not null, not blank,
-        // and different from the name
-        if ((this.abbreviation != null) && (!this.abbreviation.isBlank()) &&
-                (!this.abbreviation.equalsIgnoreCase(this.name))) {
-            sb.append("(");
-            sb.append(this.abbreviation.trim());
-            sb.append(")");
-        }
-
-        // Trim all leading and trailing whitespace and remove parentheses
-        // if they are the leading and trailing characters
-        String result = sb.toString().trim();
-        if (result.startsWith("(") && result.endsWith(")")) {
-            result = result.substring(1, result.length() - 1).trim();
-        }
-
-        return result.trim();
+        return IpscUtil.clubTostring(this.name, this.abbreviation);
     }
 }

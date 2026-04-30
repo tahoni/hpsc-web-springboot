@@ -53,6 +53,6 @@ public class MatchOnlyDto {
 
     @Override
     public String toString() {
-        return IpscUtil.matchToString(this.name, this.clubName);
+        return IpscUtil.matchToString(this.name, this.clubName, "");
     }
 }
