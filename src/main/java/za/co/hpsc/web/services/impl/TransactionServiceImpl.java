@@ -120,12 +120,12 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    // TODO: add JavaDoc
+    // TODO: add Javadoc
     // TODO: add tests
     @Override
-    public Optional<MatchHolder> saveMatch(MatchOnlyResultsDto matchOnlyResultsDto) throws FatalException {
+    public void saveMatch(MatchOnlyResultsDto matchOnlyResultsDto) throws FatalException {
         if (matchOnlyResultsDto == null) {
-            return Optional.empty();
+            return;
         }
 
         TransactionStatus transaction = transactionManager.getTransaction(
@@ -152,7 +152,6 @@ public class TransactionServiceImpl implements TransactionService {
             matchHolder.setMatch(ipscMatch);
 
             transactionManager.commit(transaction);
-            return Optional.of(matchHolder);
 
         } catch (Exception e) {
             transactionManager.rollback(transaction);

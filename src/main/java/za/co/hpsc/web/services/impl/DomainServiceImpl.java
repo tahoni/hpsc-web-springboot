@@ -155,7 +155,7 @@ public class DomainServiceImpl implements DomainService {
         return initClubEntity(clubIdentifier.getAbbreviation());
     }
 
-    // TODO: add JavaDoc
+    // TODO: add Javadoc
     // TODO: add tests
     protected Optional<ClubDto> initClubEntity(String clubName) {
         if (clubName == null) {
