@@ -9,9 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchStageDtoTest {
 
-    // Constructor mapping - Single Parameter
-
-    // Null and Empty Cases
     @Test
     void testConstructor_whenIpscMatchStageNull_thenKeepsDefaults() {
         // Arrange & Act
@@ -103,7 +100,6 @@ public class MatchStageDtoTest {
         assertNull(dto2.getStageName()); // Single param constructor doesn't map stageName
     }
 
-    // Partially Populated
     @Test
     void testConstructor_whenIpscMatchStagePartiallyPopulated_thenMapsSetFieldsAndNulls() {
         // Arrange
@@ -132,7 +128,6 @@ public class MatchStageDtoTest {
         assertNull(dto.getMaxPoints());
     }
 
-    // Fully Populated
     @Test
     void testConstructor_whenIpscMatchStageFullyPopulated_thenMapsAllFields() {
         // Arrange
@@ -189,9 +184,6 @@ public class MatchStageDtoTest {
         assertNotNull(dto.getUuid());
     }
 
-    // Constructor mapping - Two Parameters
-
-    // Null and Empty Cases
     @Test
     void testConstructor_whenIpscMatchStageAndMatchDtoNull_thenKeepsDefaults() {
         // Act
@@ -240,7 +232,6 @@ public class MatchStageDtoTest {
         assertEquals(2, dto.getStageNumber());
     }
 
-    // Fully Populated
     @Test
     void testConstructor_whenIpscMatchStageAndMatchDtoProvided_thenUsesMatchDto() {
         // Arrange
@@ -307,9 +298,6 @@ public class MatchStageDtoTest {
         assertEquals(150, dto.getMaxPoints());
     }
 
-    // init() mappings
-
-    // Null and Existing Value Handling
     @Test
     void testInit_whenBothParametersNull_thenKeepsExistingValues() {
         // Arrange
@@ -364,7 +352,6 @@ public class MatchStageDtoTest {
         assertEquals("Test Match", dto.getMatch().getName());
     }
 
-    // Basic Field Mapping
     @Test
     void testInit_whenMatchDtoAndStageResponseProvided_thenMapsAllFields() {
         // Arrange
@@ -403,7 +390,6 @@ public class MatchStageDtoTest {
         assertEquals(75, dto.getMaxPoints());
     }
 
-    // Edge Cases - Null/Empty/Blank Stage Name
     @Test
     void testInit_whenStageResponseHasNullEmptyOrBlankStageName_thenMapsCorrectly() {
         // Test 1: Null stageName
@@ -479,7 +465,6 @@ public class MatchStageDtoTest {
         assertNull(dto.getMaxPoints());
     }
 
-    // Partially Populated
     @Test
     void testInit_whenStageResponsePartiallyPopulated_thenMapsSetFieldsAndNulls() {
         // Arrange
@@ -505,7 +490,6 @@ public class MatchStageDtoTest {
         assertNull(dto.getMaxPoints());
     }
 
-    // Range Number Behavior
     @Test
     void testInit_whenStageResponseProvided_thenRangeNumberSetToZero() {
         // Arrange
@@ -523,7 +507,6 @@ public class MatchStageDtoTest {
         assertEquals(0, dto.getRangeNumber());
     }
 
-    // Fully Populated
     @Test
     void testInit_whenStageResponseFullyPopulated_thenMapsAllFields() {
         // Arrange
@@ -562,7 +545,6 @@ public class MatchStageDtoTest {
         assertEquals(200, dto.getMaxPoints());
     }
 
-    // Special Cases - Zero and Max Values
     @Test
     void testInit_whenStageResponseHasAllZeroTargets_thenMapsZeros() {
         // Arrange
@@ -632,7 +614,6 @@ public class MatchStageDtoTest {
         assertEquals(99999, dto.getMaxPoints());
     }
 
-    // Selective Field Population
     @Test
     void testInit_whenOnlyStageNamePopulated_thenMapsOnlyNameAndKeepsNulls() {
         // Arrange
@@ -721,7 +702,6 @@ public class MatchStageDtoTest {
         assertEquals(500, dto.getMaxPoints());
     }
 
-    // Match DTO with Various Name States
     @Test
     void testInit_whenMatchDtoHasNullName_thenStillMapsStageData() {
         // Arrange
@@ -791,7 +771,6 @@ public class MatchStageDtoTest {
         assertEquals(4, dto.getTargetPlates());
     }
 
-    // Overwriting Existing Values
     @Test
     void testInit_whenOverwritingExistingValues_thenReplacesProperly() {
         // Arrange
@@ -839,9 +818,6 @@ public class MatchStageDtoTest {
         assertEquals(50, dto.getMaxPoints());
     }
 
-    // toString() behavior
-
-    // Fully Populated - Stage Number and Match Provided
     @Test
     void testToString_whenStageNumberProvided_thenReturnsStageNumberAndMatch() {
         // Arrange
@@ -881,7 +857,6 @@ public class MatchStageDtoTest {
         assertEquals("5 for Simple Match", result);
     }
 
-    // Stage Number Null/Missing or High Values
     @Test
     void testToString_whenStageNumberHighValue_thenReturnsHighNumber() {
         // Arrange
@@ -899,7 +874,6 @@ public class MatchStageDtoTest {
         assertEquals("99 for Multi-Stage Match", result);
     }
 
-    // Stage Number Missing or Null
     @Test
     void testToString_whenStageNumberMissing_thenReturnsZeroAndMatch() {
         // Arrange
@@ -933,7 +907,6 @@ public class MatchStageDtoTest {
         assertEquals("0 for Eufees Club Shoot", result);
     }
 
-    // Match Name Null/Empty/Blank
     @Test
     void testToString_whenMatchNameNull_thenReturnsStageNumber() {
         // Arrange
@@ -985,7 +958,6 @@ public class MatchStageDtoTest {
         assertEquals("2 for", result);
     }
 
-    // Match Null
     @Test
     void testToString_whenMatchNull_thenReturnsStageNumber() {
         // Arrange
@@ -1000,7 +972,6 @@ public class MatchStageDtoTest {
         assertEquals("7 for", result);
     }
 
-    // Club Information Variations
     @Test
     void testToString_whenClubWithName_thenIncludesClubName() {
         // Arrange
@@ -1089,7 +1060,6 @@ public class MatchStageDtoTest {
         assertEquals("9 for Tournament @ ABC", result);
     }
 
-    // Stage Number with Various Values
     @Test
     void testToString_whenStageNumberZero_thenReturnsZero() {
         // Arrange
@@ -1124,7 +1094,6 @@ public class MatchStageDtoTest {
         assertEquals("-1 for Negative Test", result);
     }
 
-    // Full Field Population Variations
     @Test
     void testToString_whenFullyPopulatedWithAllDetails_thenReturnsCompleteString() {
         // Arrange
@@ -1156,7 +1125,6 @@ public class MatchStageDtoTest {
         assertEquals("15 for Annual Championship @ Premier Shooting Range (PSR)", result);
     }
 
-    // Partial Field Population
     @Test
     void testToString_whenPartiallyPopulated_thenReturnsFormattedString() {
         // Arrange

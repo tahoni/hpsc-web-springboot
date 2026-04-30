@@ -555,8 +555,6 @@ public class TransformationServiceTest {
         assertTrue(results.getMatchCompetitors().isEmpty());
     }
 
-    // ─── initCompetitorRecord ───────────────────────────────────────────────────
-
     @Test
     public void testInitCompetitorRecord_whenAnyArgIsNull_thenEmpty() {
         Competitor competitor = buildCompetitor("John", "Doe");
@@ -628,8 +626,6 @@ public class TransformationServiceTest {
         assertEquals("", result.get().clubName());
     }
 
-    // ─── initCompetitorResult ───────────────────────────────────────────────────
-
     @Test
     public void testInitCompetitorResult_whenCompetitorIsNull_thenEmpty() {
         MatchCompetitor matchCompetitor = buildMatchCompetitor(new Competitor());
@@ -678,8 +674,6 @@ public class TransformationServiceTest {
         assertEquals(Division.PRODUCTION.toString(), result.get().division());
         assertEquals(PowerFactor.MINOR.toString(), result.get().powerFactor());
     }
-
-    // ─── initMatchCompetitorOverallResult ───────────────────────────────────────
 
     @Test
     public void testInitMatchCompetitorOverallResult_whenCompetitorIsNull_thenEmpty() {
@@ -737,8 +731,6 @@ public class TransformationServiceTest {
         assertEquals("0.0000", result.get().matchPoints());
         assertEquals("0.00", result.get().matchRanking());
     }
-
-    // ─── initMatchCompetitorStageResults ────────────────────────────────────────
 
     @Test
     public void testInitMatchCompetitorStageResults_whenCompetitorIsNull_thenEmptyList() {
@@ -802,8 +794,6 @@ public class TransformationServiceTest {
         // Assert
         assertEquals(2, results.size());
     }
-
-    // ─── deDuplicateCompetitorDtoList ───────────────────────────────────────────
 
     @Test
     public void testDeDuplicateCompetitorDtoList_whenNull_thenReturnsNull() {
@@ -1518,8 +1508,6 @@ public class TransformationServiceTest {
         // Assert
         assertEquals(1, result.size());
     }
-
-    // Helper methods
 
     private MatchRequest buildMatchRequest(int matchId) {
         MatchRequest request = new MatchRequest();

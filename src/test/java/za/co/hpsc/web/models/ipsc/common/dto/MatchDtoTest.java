@@ -15,9 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchDtoTest {
 
-    // Constructor mapping
-
-    // Single parameter constructor - IpscMatch
     @Test
     void testConstructor_whenIpscMatchNull_thenKeepsDefaults() {
         // Arrange & Act
@@ -131,7 +128,6 @@ public class MatchDtoTest {
         assertEquals("   ", dto2.getName());
     }
 
-    // Two parameter constructor - IpscMatch and ClubDto
     @Test
     void testConstructor_whenIpscMatchAndClubDtoNull_thenKeepsDefaults() {
         // Act
@@ -242,10 +238,6 @@ public class MatchDtoTest {
         assertNotNull(dto.getUuid());
     }
 
-
-    // init() mapping
-
-    // Null and existing value handling
     @Test
     void testInit_whenMatchResponseNull_thenKeepsExistingValues() {
         // Arrange
@@ -268,7 +260,6 @@ public class MatchDtoTest {
         assertNull(dto.getDateEdited());
     }
 
-    // Basic field mapping
     @Test
     void testInit_whenMatchResponseProvidedAndClubDtoNull_thenMapsMatchAndSetsDateToNow() {
         // Arrange
@@ -299,7 +290,6 @@ public class MatchDtoTest {
                 dto.getDateEdited().isBefore(afterInit.plusSeconds(1)));
     }
 
-    // Club handling
     @Test
     void testInit_whenMatchResponseAndClubDtoProvided_thenMapsClubDto() {
         // Arrange
@@ -326,7 +316,6 @@ public class MatchDtoTest {
         assertEquals("Elite Shooting Club", dto.getClub().getName());
     }
 
-    // Score response handling
     @Test
     void testInit_whenMatchResponseWithScoreResponses_thenSetsDateEditedToLatestScore() {
         // Arrange
@@ -415,7 +404,6 @@ public class MatchDtoTest {
         assertEquals(LocalDateTime.of(2026, 8, 21, 16, 0), dto.getDateEdited());
     }
 
-    // Edge cases - null/empty/blank field handling
     @Test
     void testInit_whenMatchResponseHasNullEmptyOrBlankMatchName_thenMapsCorrectly() {
         // Test 1: Null matchName
@@ -458,7 +446,6 @@ public class MatchDtoTest {
         assertEquals("   ", dto3.getName());
     }
 
-    // Firearm type mapping
     @Test
     void testInit_whenMatchResponseHasNullFirearmId_thenKeepsExistingFirearmType() {
         // Arrange
@@ -478,7 +465,6 @@ public class MatchDtoTest {
         assertEquals(FirearmType.HANDGUN, dto.getMatchFirearmType());
     }
 
-    // Comprehensive mapping tests
     @Test
     void testInit_whenMatchResponseFullyPopulated_thenMapsAllFields() {
         // Arrange
@@ -498,7 +484,6 @@ public class MatchDtoTest {
         assertEquals(FirearmType.HANDGUN, dto.getMatchFirearmType());
     }
 
-    // Comprehensive mapping tests
     @Test
     void testInit_whenScoreResponsesContainNulls_thenFiltersNulls() {
         // Arrange
@@ -522,10 +507,6 @@ public class MatchDtoTest {
         assertEquals(90, dto.getIndex());
     }
 
-
-    // toString() behavior
-
-    // Fully Populated - Club and Club Name Provided
     @Test
     void testToString_whenClubAndClubNameProvided_thenReturnsMatchNameAtNameOfClub() {
         // Arrange
@@ -577,7 +558,6 @@ public class MatchDtoTest {
         assertEquals("National Qualification Round - February 2026 @ South African Practical Shooting Championship Club (SAPSCC)", result);
     }
 
-    // Partially Populated - Club Missing
     @Test
     void testToString_whenClubAndClubNameMissing_thenReturnsMatchName() {
         // Arrange
@@ -624,7 +604,6 @@ public class MatchDtoTest {
         assertTrue(result.contains("Match Name"));
     }
 
-    // Null Name Handling
     @Test
     void testToString_whenMatchNameNull_thenReturnsEmptyString() {
         // Arrange
@@ -656,7 +635,6 @@ public class MatchDtoTest {
         assertTrue(result.contains("Test Club"));
     }
 
-    // Empty Name Handling
     @Test
     void testToString_whenMatchNameEmpty_thenReturnsEmptyString() {
         // Arrange
@@ -689,7 +667,6 @@ public class MatchDtoTest {
         assertTrue(result.contains("Test Club"));
     }
 
-    // Blank Name Handling
     @Test
     void testToString_whenMatchNameBlank_thenReturnsEmptyString() {
         // Arrange
@@ -722,7 +699,6 @@ public class MatchDtoTest {
         assertTrue(result.contains("Test Club"));
     }
 
-    // Club Name Null/Empty/Blank Handling
     @Test
     void testToString_whenClubNameNullButAbbreviationProvided_thenHandlesNullClubName() {
         // Arrange
@@ -774,7 +750,6 @@ public class MatchDtoTest {
         assertNotNull(result);
     }
 
-    // Club Abbreviation Null/Empty/Blank Handling
     @Test
     void testToString_whenClubAbbreviationNull_thenHandlesNullAbbreviation() {
         // Arrange
@@ -832,7 +807,6 @@ public class MatchDtoTest {
         assertTrue(result.contains("Test Club"));
     }
 
-    // Both Club Name and Abbreviation Null/Empty/Blank
     @Test
     void testToString_whenClubNameAndAbbreviationBothNull_thenHandlesNullClubFields() {
         // Arrange
@@ -884,7 +858,6 @@ public class MatchDtoTest {
         assertNotNull(result);
     }
 
-    // Default Constructor
     @Test
     void testToString_whenDefaultConstructor_thenReturnsEmptyOrDefault() {
         // Arrange
@@ -897,7 +870,6 @@ public class MatchDtoTest {
         assertNotNull(result);
     }
 
-    // With Other Fields Set (Not Affecting toString)
     @Test
     void testToString_whenWithIdAndIndex_thenIgnoresIdAndIndex() {
         // Arrange
@@ -987,7 +959,6 @@ public class MatchDtoTest {
         assertFalse(result.contains("CLUB_SHOOT"));
     }
 
-    // Consistency and Mutability
     @Test
     void testToString_whenCalledMultipleTimes_thenReturnsConsistentResults() {
         // Arrange
@@ -1067,7 +1038,6 @@ public class MatchDtoTest {
         assertNotEquals(result1, result2);
     }
 
-    // Special Characters
     @Test
     void testToString_whenNamesContainSpecialCharacters_thenIncludesCharacters() {
         // Arrange
@@ -1108,7 +1078,6 @@ public class MatchDtoTest {
         assertTrue(result.contains("5"));
     }
 
-    // Very Long Names
     @Test
     void testToString_whenNamesAreLong_thenReturnsFullLength() {
         // Arrange
@@ -1128,7 +1097,6 @@ public class MatchDtoTest {
         assertTrue(result.length() > 100);
     }
 
-    // With Extra Whitespace
     @Test
     void testToString_whenNamesHaveLeadingTrailingWhitespace_thenIncludesWhitespace() {
         // Arrange

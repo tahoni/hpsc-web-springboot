@@ -42,7 +42,6 @@ public class DomainServiceTest {
     @InjectMocks
     private DomainServiceImpl domainService;
 
-    // Test Group: initMatchEntities(...) public methods
     @Test
     public void testInitMatchEntities_whenMatchResultsNull_thenEmptyFromMatchResults() {
         // Act
@@ -201,7 +200,6 @@ public class DomainServiceTest {
         assertTrue(result.get().getMatchStageCompetitorMap().isEmpty());
     }
 
-    // Test Group: initClubEntity(ClubDto)
     @Test
     public void testInitClubEntityFromDto_whenNull_thenEmpty() {
         // Act
@@ -262,7 +260,6 @@ public class DomainServiceTest {
         verify(clubRepository).findById(99L);
     }
 
-    // Test Group: initClubEntity(ClubIdentifier)
     @Test
     public void testInitClubEntityFromIdentifier_whenNull_thenEmpty() {
         // Act
@@ -312,7 +309,6 @@ public class DomainServiceTest {
         assertTrue(result.isEmpty());
     }
 
-    // Test Group: initMatchEntity
     @Test
     public void testInitMatchEntity_whenNull_thenEmpty() {
         // Act
@@ -371,7 +367,6 @@ public class DomainServiceTest {
         assertEquals(55L, result.get().getId());
     }
 
-    // Test Group: initCompetitorEntities
     @Test
     public void testInitCompetitorEntities_whenNullList_thenEmptyMap() {
         // Act
@@ -430,7 +425,6 @@ public class DomainServiceTest {
         assertTrue(result.containsKey(competitorDto.getUuid()));
     }
 
-    // Test Group: initCompetitorEntities - SAPSA number deduplication
     @Test
     public void testInitCompetitorEntities_whenTwoCompetitorDtosWithSameSapsaNumber_thenBothAddedToMap() {
         // Arrange
@@ -501,7 +495,6 @@ public class DomainServiceTest {
         assertNull(result.get(competitor2.getUuid()).getSapsaNumber());
     }
 
-    // Test Group: initMatchEntities - Multiple competitors with same/excluded SAPSA numbers
     @Test
     public void testInitMatchEntitiesWithCompetitors_whenTwoCompetitorDtosWithSameSapsaNumber_thenBothInCompetitorMap() {
         // Arrange
@@ -587,7 +580,6 @@ public class DomainServiceTest {
         assertNull(result.get().getCompetitorMap().get(competitor2.getUuid()).getSapsaNumber());
     }
 
-    // Test Group: initMatchStageEntities
     @Test
     public void testInitMatchStageEntities_whenNullList_thenEmptyMap() {
         // Arrange
@@ -660,7 +652,6 @@ public class DomainServiceTest {
         assertTrue(result.containsKey(stageDto.getUuid()));
     }
 
-    // Test Group: initMatchCompetitorEntities
     @Test
     public void testInitMatchCompetitorEntities_whenNullList_thenEmptyMap() {
         // Act
@@ -788,7 +779,6 @@ public class DomainServiceTest {
         assertTrue(result.isEmpty());
     }
 
-    // Test Group: initMatchStageCompetitorEntities
     @Test
     public void testInitMatchStageCompetitorEntities_whenNullList_thenEmptyMap() {
         // Arrange
@@ -961,8 +951,6 @@ public class DomainServiceTest {
         // Assert
         assertTrue(result.isEmpty());
     }
-
-    // Helper methods
 
     private MatchDto buildMatchDto() {
         MatchDto matchDto = new MatchDto();

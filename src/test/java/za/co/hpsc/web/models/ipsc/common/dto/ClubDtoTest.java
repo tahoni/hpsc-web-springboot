@@ -7,12 +7,8 @@ import za.co.hpsc.web.models.ipsc.common.response.ClubResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 public class ClubDtoTest {
 
-    // Constructor mapping
-
-    // Single parameter: Club entity
     @Test
     void testConstructor_whenClubEntityProvided_thenMapsFields() {
         // Arrange
@@ -30,7 +26,6 @@ public class ClubDtoTest {
         assertEquals("AC", dto.getAbbreviation());
     }
 
-    // Single parameter: ClubResponse
     @Test
     void testConstructor_whenClubResponseProvided_thenMapsFields() {
         // Arrange
@@ -165,8 +160,6 @@ public class ClubDtoTest {
         assertNull(dto.getAbbreviation());
     }
 
-
-    // init() mapping
     @Test
     void testInit_whenClubResponseProvided_thenMapsFields() {
         // Arrange
@@ -220,8 +213,6 @@ public class ClubDtoTest {
         assertNull(dto.getAbbreviation());
     }
 
-
-    // toString() behavior
     @Test
     void testToString_whenAbbreviationProvided_thenReturnsNameWithAbbreviation() {
         // Arrange
@@ -347,7 +338,6 @@ public class ClubDtoTest {
         assertEquals("HPSC", result);
     }
 
-    // Combined null/empty/blank name and abbreviation handling
     @Test
     void testToString_whenNameEmptyAndAbbreviationNull_thenReturnsEmptyName() {
         // Arrange
@@ -432,7 +422,6 @@ public class ClubDtoTest {
         assertEquals("", result);
     }
 
-    // Special characters and long names
     @Test
     void testToString_whenNameHasSpecialCharacters_thenIncludesCharactersInOutput() {
         // Arrange
@@ -494,7 +483,6 @@ public class ClubDtoTest {
         assertEquals("Club (" + longAbbrev + ")", result);
     }
 
-    // Numeric and whitespace variations
     @Test
     void testToString_whenNameIsNumeric_thenReturnsNumericString() {
         // Arrange
@@ -553,7 +541,6 @@ public class ClubDtoTest {
         assertEquals("Mixed   Spaces (MIX)", result);
     }
 
-    // Fully and partially populated variations
     @Test
     void testToString_whenFullyPopulated_thenReturnsCompleteString() {
         // Arrange
@@ -617,7 +604,6 @@ public class ClubDtoTest {
         assertFalse(result.contains("456"));
     }
 
-    // Name and abbreviation same value variations
     @Test
     void testToString_whenNameAndAbbreviationBothSame_thenReturnsValueOnce() {
         // Arrange
@@ -650,7 +636,6 @@ public class ClubDtoTest {
         assertEquals("HPSC", result);
     }
 
-    // Whitespace-only abbreviation variations
     @Test
     void testToString_whenAbbreviationIsMultipleSpaces_thenTreatsAsBlank() {
         // Arrange
@@ -679,7 +664,6 @@ public class ClubDtoTest {
         assertEquals("Club Name", result);
     }
 
-    // Edge case combinations
     @Test
     void testToString_whenNameBlankAndAbbreviationBlank_thenReturnsEmpty() {
         // Arrange
@@ -788,5 +772,4 @@ public class ClubDtoTest {
         assertEquals("", result);
     }
 }
-
 

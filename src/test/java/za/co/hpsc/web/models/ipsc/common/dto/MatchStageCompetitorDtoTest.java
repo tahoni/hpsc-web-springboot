@@ -13,9 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchStageCompetitorDtoTest {
 
-    // Constructor mapping - No Parameter
-
-    // Default Construction
     @Test
     void testDefaultConstructor_whenNoArguments_thenInitializesWithDefaults() {
         // Arrange & Act
@@ -73,9 +70,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // Constructor mapping - MatchStageCompetitor Entity Parameter
-
-    // Null Entity
     @Test
     void testConstructor_whenMatchStageCompetitorEntityNull_thenInitializesWithDefaults() {
         // Act & Assert
@@ -112,7 +106,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getDateEdited());
     }
 
-    // Null Fields in Entity
     @Test
     void testConstructor_whenMatchStageCompetitorEntityHasNullFields_thenMapsNulls() {
         // Arrange
@@ -192,7 +185,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getDateEdited());
     }
 
-    // Partially Populated Entity
     @Test
     void testConstructor_whenMatchStageCompetitorEntityPartiallyPopulated_thenMapsSetFieldsAndNulls() {
         // Arrange
@@ -260,7 +252,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getStageRanking());
     }
 
-    // Fully Populated Entity
     @Test
     void testConstructor_whenMatchStageCompetitorEntityFullyPopulated_thenMapsAllFields() {
         // Arrange
@@ -380,7 +371,6 @@ public class MatchStageCompetitorDtoTest {
         assertNotNull(dto.getUuid());
     }
 
-    // Edge Cases - Zero Values
     @Test
     void testConstructor_whenMatchStageCompetitorEntityHasZeroScores_thenMapsZeros() {
         // Arrange
@@ -441,7 +431,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(BigDecimal.ZERO, dto.getDeductionPercentage());
     }
 
-    // Edge Cases - Negative Values
     @Test
     void testConstructor_whenMatchStageCompetitorEntityHasNegativeScores_thenMapsNegatives() {
         // Arrange
@@ -481,7 +470,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(BigDecimal.valueOf(-1.0), dto.getTime());
     }
 
-    // Edge Cases - Large Values
     @Test
     void testConstructor_whenMatchStageCompetitorEntityHasMaxValues_thenMapsMaxValues() {
         // Arrange
@@ -526,9 +514,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(new BigDecimal("999.99"), dto.getHitFactor());
     }
 
-    // Constructor mapping - CompetitorDto and MatchStageDto Parameters
-
-    // Both Parameters Null
     @Test
     void testConstructor_whenBothParametersNull_thenHandlesNullGracefully() {
         // Arrange & Act
@@ -541,7 +526,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // CompetitorDto Null
     @Test
     void testConstructor_whenCompetitorDtoNull_thenMatchStageNotSet() {
         // Arrange
@@ -558,7 +542,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // MatchStageDto Null
     @Test
     void testConstructor_whenMatchStageDtoNull_thenSetsCompetitorOnly() {
         // Arrange
@@ -578,7 +561,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // Both Parameters Provided
     @Test
     void testConstructor_whenBothParametersProvided_thenMapsAllFields() {
         // Arrange
@@ -603,7 +585,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals("Speed Stage", dto.getMatchStage().getStageName());
     }
 
-    // CompetitorDto with Null Default Category
     @Test
     void testConstructor_whenCompetitorDtoHasNullDefaultCategory_thenSetsNullCategory() {
         // Arrange
@@ -621,7 +602,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // CompetitorDto with NONE Category
     @Test
     void testConstructor_whenCompetitorDtoHasNoneCategory_thenSetsNoneCategory() {
         // Arrange
@@ -639,9 +619,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // Constructor mapping - All Parameters
-
-    // Fully Populated with All Parameters
     @Test
     void testAllArgsConstructor_whenAllParametersProvided_thenMapsAllFields() {
         // Arrange
@@ -722,7 +699,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(dateEdited, dto.getDateEdited());
     }
 
-    // All Parameters Null
     @Test
     void testAllArgsConstructor_whenAllParametersNull_thenMapsAllNulls() {
         // Arrange & Act
@@ -763,7 +739,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getDateEdited());
     }
 
-    // Partial Parameters Provided
     @Test
     void testAllArgsConstructor_whenPartialParametersProvided_thenMapsProvidedFields() {
         // Arrange
@@ -835,9 +810,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getDateEdited());
     }
 
-    // init() mappings
-
-    // Null Parameters
     @Test
     void testInit_whenAllParametersNull_thenKeepsExistingValues() {
         // Arrange
@@ -928,7 +900,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getMatchStageIndex());
     }
 
-    // Basic Field Mapping from ScoreResponse
     @Test
     void testInit_whenScoreResponseProvided_thenMapsAllScoreFields() {
         // Arrange
@@ -976,7 +947,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(LocalDateTime.of(2026, 2, 20, 10, 30), dto.getDateEdited());
     }
 
-    // Null Fields in ScoreResponse
     @Test
     void testInit_whenScoreResponseHasNullFields_thenMapsNulls() {
         // Arrange
@@ -1022,7 +992,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getDateEdited());
     }
 
-    // Empty String Fields in ScoreResponse
     @Test
     void testInit_whenScoreResponseHasEmptyStrings_thenConvertsToZero() {
         // Arrange
@@ -1047,7 +1016,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(BigDecimal.ZERO, dto.getDeductionPercentage());
     }
 
-    // Blank String Fields in ScoreResponse
     @Test
     void testInit_whenScoreResponseHasBlankStrings_thenConvertsToZero() {
         // Arrange
@@ -1072,7 +1040,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(BigDecimal.ZERO, dto.getDeductionPercentage());
     }
 
-    // Partially Populated ScoreResponse
     @Test
     void testInit_whenScoreResponsePartiallyPopulated_thenMapsSetFieldsAndNulls() {
         // Arrange
@@ -1107,7 +1074,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(BigDecimal.ZERO, dto.getHitFactor());
     }
 
-    // Fully Populated with All Three Parameters
     @Test
     void testInit_whenAllParametersFullyPopulated_thenMapsAllFields() {
         // Arrange
@@ -1181,7 +1147,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(8, dto.getMatchStage().getStageNumber());
     }
 
-    // EnrolledResponse Field Mapping
     @Test
     void testInit_whenEnrolledResponseProvided_thenMapsCompetitorAttributes() {
         // Arrange
@@ -1213,7 +1178,6 @@ public class MatchStageCompetitorDtoTest {
         assertNotNull(dto.getMatchStage());
     }
 
-    // EnrolledResponse with Null Fields
     @Test
     void testInit_whenEnrolledResponseHasNullFields_thenHandlesNullsGracefully() {
         // Arrange
@@ -1244,7 +1208,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // Edge Cases - Zero Values
     @Test
     void testInit_whenScoreResponseHasZeroValues_thenMapsZeros() {
         // Arrange
@@ -1284,7 +1247,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(BigDecimal.ZERO, dto.getStagePoints());
     }
 
-    // Edge Cases - Negative Values
     @Test
     void testInit_whenScoreResponseHasNegativeValues_thenMapsNegatives() {
         // Arrange
@@ -1311,7 +1273,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(new BigDecimal("-1.00"), dto.getTime());
     }
 
-    // Edge Cases - Large Values
     @Test
     void testInit_whenScoreResponseHasMaxValues_thenMapsMaxValues() {
         // Arrange
@@ -1341,7 +1302,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(new BigDecimal("999.99"), dto.getHitFactor());
     }
 
-    // Stage Percentage Calculation
     @Test
     void testInit_whenMatchStageDtoHasMaxPoints_thenCalculatesStagePercentage() {
         // Arrange
@@ -1385,7 +1345,6 @@ public class MatchStageCompetitorDtoTest {
         assertNull(dto.getStagePercentage());
     }
 
-    // PowerFactor Mapping
     @Test
     void testInit_whenEnrolledResponseHasMajorPowerFactorTrue_thenSetsMajor() {
         // Arrange
@@ -1430,7 +1389,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(PowerFactor.MINOR, dto.getPowerFactor());
     }
 
-    // CompetitorCategory Mapping
     @Test
     void testInit_whenEnrolledResponseHasCompetitorCategoryId_thenMapsCategory() {
         // Arrange
@@ -1498,7 +1456,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(CompetitorCategory.NONE, dto.getCompetitorCategory());
     }
 
-    // Overwriting Existing Values
     @Test
     void testInit_whenOverwritingExistingValues_thenReplacesProperly() {
         // Arrange
@@ -1545,9 +1502,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(20, dto.getMatchStageIndex());
     }
 
-    // toString() behavior
-
-    // Fully Populated - MatchStage and Competitor Provided
     @Test
     void testToString_whenMatchStageAndCompetitorFullyPopulated_thenReturnsCompleteString() {
         // Arrange
@@ -1619,7 +1573,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Smith"));
     }
 
-    // MatchStage Null
     @Test
     void testToString_whenMatchStageNull_thenThrowsNullPointerException() {
         // Arrange
@@ -1635,7 +1588,6 @@ public class MatchStageCompetitorDtoTest {
         assertThrows(NullPointerException.class, dto::toString);
     }
 
-    // Competitor Null
     @Test
     void testToString_whenCompetitorNull_thenThrowsNullPointerException() {
         // Arrange
@@ -1650,7 +1602,6 @@ public class MatchStageCompetitorDtoTest {
         assertThrows(NullPointerException.class, dto::toString);
     }
 
-    // Both Null
     @Test
     void testToString_whenBothMatchStageAndCompetitorNull_thenThrowsNullPointerException() {
         // Arrange
@@ -1662,7 +1613,6 @@ public class MatchStageCompetitorDtoTest {
         assertThrows(NullPointerException.class, dto::toString);
     }
 
-    // MatchStage with Null Fields
     @Test
     void testToString_whenMatchStageHasNullFields_thenReturnsStringWithNullValues() {
         // Arrange
@@ -1685,7 +1635,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains(":"));
     }
 
-    // Competitor with Null Name Fields
     @Test
     void testToString_whenCompetitorHasNullNames_thenReturnsStringWithNullNames() {
         // Arrange
@@ -1711,7 +1660,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Test Match"));
     }
 
-    // Competitor with Empty Names
     @Test
     void testToString_whenCompetitorHasEmptyNames_thenReturnsStringWithEmptyNames() {
         // Arrange
@@ -1737,7 +1685,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains(":"));
     }
 
-    // Competitor with Blank Names
     @Test
     void testToString_whenCompetitorHasBlankNames_thenReturnsStringWithBlankNames() {
         // Arrange
@@ -1763,7 +1710,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains(":"));
     }
 
-    // Partially Populated MatchStage
     @Test
     void testToString_whenMatchStagePartiallyPopulated_thenReturnsPartialString() {
         // Arrange
@@ -1787,7 +1733,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("User"));
     }
 
-    // Partially Populated Competitor
     @Test
     void testToString_whenCompetitorPartiallyPopulated_thenReturnsPartialString() {
         // Arrange
@@ -1814,7 +1759,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("OnlyFirst"));
     }
 
-    // Score Fields Do Not Affect toString
     @Test
     void testToString_whenScoreFieldsSet_thenDoesNotIncludeScores() {
         // Arrange
@@ -1851,7 +1795,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Score"));
     }
 
-    // Stage Number Zero
     @Test
     void testToString_whenStageNumberZero_thenReturnsZero() {
         // Arrange
@@ -1877,7 +1820,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Zero Stage"));
     }
 
-    // Stage Number Negative
     @Test
     void testToString_whenStageNumberNegative_thenReturnsNegative() {
         // Arrange
@@ -1902,7 +1844,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("-1"));
     }
 
-    // Large Stage Number
     @Test
     void testToString_whenStageNumberLarge_thenReturnsLargeNumber() {
         // Arrange
@@ -1927,7 +1868,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("999"));
     }
 
-    // Club Information in MatchStage
     @Test
     void testToString_whenMatchStageHasClub_thenIncludesClubInfo() {
         // Arrange
@@ -1961,7 +1901,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Shooter"));
     }
 
-    // Format Consistency
     @Test
     void testToString_whenCalledMultipleTimes_thenReturnsConsistentFormat() {
         // Arrange
@@ -1988,7 +1927,6 @@ public class MatchStageCompetitorDtoTest {
         assertEquals(result2, result3);
     }
 
-    // Mutability Check
     @Test
     void testToString_whenFieldsChangedAfterCreation_thenReflectsChanges() {
         // Arrange
@@ -2022,7 +1960,6 @@ public class MatchStageCompetitorDtoTest {
         assertNotEquals(originalResult, modifiedResult);
     }
 
-    // Special Characters in Names
     @Test
     void testToString_whenNamesContainSpecialCharacters_thenHandlesCorrectly() {
         // Arrange
@@ -2049,7 +1986,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Special-Match #1"));
     }
 
-    // Unicode Characters
     @Test
     void testToString_whenNamesContainUnicodeCharacters_thenHandlesCorrectly() {
         // Arrange
@@ -2076,7 +2012,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Чемпионат"));
     }
 
-    // Long Names
     @Test
     void testToString_whenNamesAreLong_thenHandlesCorrectly() {
         // Arrange
@@ -2103,7 +2038,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Very Long Match Name"));
     }
 
-    // Competitor Number Not in toString
     @Test
     void testToString_whenCompetitorNumberSet_thenDoesNotIncludeCompetitorNumber() {
         // Arrange
@@ -2132,7 +2066,6 @@ public class MatchStageCompetitorDtoTest {
         assertTrue(result.contains("Test"));
     }
 
-    // Category and Division Do Not Affect toString
     @Test
     void testToString_whenCategoryAndDivisionSet_thenDoesNotIncludeThem() {
         // Arrange

@@ -14,10 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchCompetitorTest {
 
-    // =====================================================================
-    // init(MatchCompetitorDto)
-    // =====================================================================
-
     @Test
     void testInit_whenDtoIsFullyPopulated_thenMapsAllFields() {
         // Arrange
@@ -177,10 +173,6 @@ public class MatchCompetitorTest {
         assertEquals(new BigDecimal("300.00"), matchCompetitor.getMatchPoints());
         assertEquals(new BigDecimal("95.50"), matchCompetitor.getMatchRanking());
     }
-
-    // =====================================================================
-    // toString()
-    // =====================================================================
 
     @Test
     void testToString_whenMatchAndCompetitorAreSet_thenFormatsMatchAndCompetitorWithColon() {
@@ -344,8 +336,6 @@ public class MatchCompetitorTest {
         assertNotNull(matchCompetitor.getDateUpdated());
         assertFalse(matchCompetitor.getDateUpdated().isBefore(updatedBeforeUpdate));
     }
-
-    // Helper methods
 
     private IpscMatch buildMatch(String name, LocalDateTime scheduledDate) {
         IpscMatch match = new IpscMatch();

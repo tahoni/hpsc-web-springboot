@@ -12,10 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NumberUtilTest {
 
-    // =====================================================================
-    // Tests for calculatePercentage - Valid Data Processing
-    // =====================================================================
-
     @Test
     void testCalculatePercentage_whenValidInputs_thenReturnsCorrectPercentage() {
         // Arrange
@@ -76,10 +72,6 @@ public class NumberUtilTest {
         assertEquals(expected, result);
     }
 
-    // =====================================================================
-    // Tests for calculatePercentage - Input Validation and Error Handling
-    // =====================================================================
-
     @Test
     void testCalculatePercentage_whenTotalZero_thenReturnsZero() {
         // Arrange
@@ -108,10 +100,6 @@ public class NumberUtilTest {
         // Assert
         assertEquals(expected, result);
     }
-
-    // =====================================================================
-    // Tests for calculateSum - Valid Data Processing
-    // =====================================================================
 
     @Test
     void testCalculateSum_whenPositiveNumbers_thenReturnsCorrectSum() {
@@ -149,10 +137,6 @@ public class NumberUtilTest {
         assertEquals(expected, result);
     }
 
-    // =====================================================================
-    // Tests for calculateSum - Input Validation and Error Handling
-    // =====================================================================
-
     @Test
     void testCalculateSum_whenEmptyList_thenReturnsZero() {
         // Arrange
@@ -177,10 +161,6 @@ public class NumberUtilTest {
         // Assert
         assertEquals(expected, result);
     }
-
-    // =====================================================================
-    // Tests for formatBigDecimal - Valid Data Processing
-    // =====================================================================
 
     @Test
     void testFormatBigDecimal_whenNonNullValue_thenReturnsFormattedString() {
@@ -237,10 +217,6 @@ public class NumberUtilTest {
         // Assert
         assertEquals(expected, result);
     }
-
-    // =====================================================================
-    // Tests for formatBigDecimal - Input Validation and Error Handling
-    // =====================================================================
 
     @Test
     void testFormatBigDecimal_whenNullValue_thenReturnsZeroString() {

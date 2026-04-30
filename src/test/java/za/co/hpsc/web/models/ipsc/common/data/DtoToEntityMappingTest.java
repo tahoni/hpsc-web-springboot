@@ -24,10 +24,6 @@ public class DtoToEntityMappingTest {
         dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
     }
 
-    // =====================================================================
-    // Constructor Tests
-    // =====================================================================
-
     @Test
     public void testConstructor_withDtoMapping_thenInitializesWithEntityMapping() {
         // Arrange
@@ -66,10 +62,6 @@ public class DtoToEntityMappingTest {
         assertNotNull(mapping.dtoMapping());
         assertNotNull(mapping.entityMapping());
     }
-
-    // =====================================================================
-    // Tests for getMatchDto()
-    // =====================================================================
 
     @Test
     public void testGetMatchDto_whenMatchIsNull_thenReturnsEmpty() {
@@ -111,10 +103,6 @@ public class DtoToEntityMappingTest {
         assertTrue(result.isPresent());
         assertNotNull(result.get());
     }
-
-    // =====================================================================
-    // Tests for getMatchEntity()
-    // =====================================================================
 
     @Test
     public void getClubDto_whenClubIsNull_thenReturnsEmptyOptional() {
@@ -162,10 +150,6 @@ public class DtoToEntityMappingTest {
         assertTrue(result.isPresent());
         assertEquals("Match Entity", result.get().getName());
     }
-
-    // =====================================================================
-    // Tests for getCompetitorDtoList()
-    // =====================================================================
 
     @Test
     public void testGetCompetitorDtoList_whenMapIsNull_thenThrowsValidationException() {
@@ -249,10 +233,6 @@ public class DtoToEntityMappingTest {
         assertEquals("John", result.getFirst().getFirstName());
     }
 
-    // =====================================================================
-    // Tests for getMatchStageDtoList()
-    // =====================================================================
-
     @Test
     public void testGetMatchStageDtoList_whenMapIsNull_thenThrowsValidationException() {
         // Arrange
@@ -334,10 +314,6 @@ public class DtoToEntityMappingTest {
         assertEquals("Stage 1", result.getFirst().getStageName());
     }
 
-    // =====================================================================
-    // Tests for getMatchCompetitorDtoList()
-    // =====================================================================
-
     @Test
     public void testGetMatchCompetitorDtoList_whenMapIsNull_thenThrowsValidationException() {
         // Arrange
@@ -395,10 +371,6 @@ public class DtoToEntityMappingTest {
         assertNotNull(result);
         assertEquals(1, result.size());
     }
-
-    // =====================================================================
-    // Tests for getMatchStageCompetitorDtoList()
-    // =====================================================================
 
     @Test
     public void testGetMatchStageCompetitorDtoList_whenMapIsNull_thenThrowsValidationException() {
@@ -458,10 +430,6 @@ public class DtoToEntityMappingTest {
         assertEquals(1, result.size());
     }
 
-    // =====================================================================
-    // Tests for setMatch()
-    // =====================================================================
-
     @Test
     public void setClub_whenClubIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> dtoToEntityMapping.setClub(null));
@@ -515,10 +483,6 @@ public class DtoToEntityMappingTest {
         assertTrue(dtoToEntityMapping.getMatchEntity().isPresent());
     }
 
-    // =====================================================================
-    // Tests for setCompetitor()
-    // =====================================================================
-
     @Test
     public void testSetCompetitor_withValidData_thenStoresCompetitor() {
         // Arrange
@@ -564,10 +528,6 @@ public class DtoToEntityMappingTest {
         assertThrows(ValidationException.class, () -> dtoToEntityMapping.setCompetitor(competitorDto, null));
     }
 
-    // =====================================================================
-    // Tests for setMatchStage()
-    // =====================================================================
-
     @Test
     public void testSetMatchStage_withValidData_thenStoresMatchStage() {
         // Arrange
@@ -606,10 +566,6 @@ public class DtoToEntityMappingTest {
         // Act & Assert
         assertThrows(ValidationException.class, () -> dtoToEntityMapping.setMatchStage(matchStageDto, null));
     }
-
-    // =====================================================================
-    // Tests for setMatchCompetitor()
-    // =====================================================================
 
     @Test
     public void testSetMatchCompetitor_withValidData_thenStoresMatchCompetitor() {
@@ -680,10 +636,6 @@ public class DtoToEntityMappingTest {
         assertSame(matchEntity, matchCompetitorEntity.getMatch());
         assertNull(matchCompetitorEntity.getCompetitor());
     }
-
-    // =====================================================================
-    // Tests for setMatchStageCompetitor()
-    // =====================================================================
 
     @Test
     public void testSetMatchStageCompetitor_withValidData_thenStoresMatchStageCompetitor() {

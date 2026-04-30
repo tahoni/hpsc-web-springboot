@@ -13,9 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CompetitorDtoTest {
 
-    // Constructor mapping
-
-    // Null and Empty Cases
     @Test
     void testConstructor_whenCompetitorNull_thenKeepsDefaults() {
         // Arrange
@@ -61,7 +58,6 @@ class CompetitorDtoTest {
         assertNull(dto.getCompetitorNumber());
     }
 
-    // Fully Populated
     @Test
     void testConstructor_whenCompetitorPopulated_thenMapsAllFields() {
         // Arrange
@@ -106,7 +102,6 @@ class CompetitorDtoTest {
         assertNotNull(dto.getUuid());
     }
 
-    // Partially Populated
     @Test
     void testConstructor_whenCompetitorPartiallyPopulated_thenMapsSetFieldsAndNulls() {
         // Arrange
@@ -143,7 +138,6 @@ class CompetitorDtoTest {
         assertNotNull(dto.getUuid());
     }
 
-    // Edge Cases - Competitor Number and Sapsa Number
     @Test
     void testConstructor_whenCompetitorNumberNullAndSapsaSet_thenMapsNullAndSapsa() {
         // Arrange
@@ -182,9 +176,6 @@ class CompetitorDtoTest {
         assertNull(dto.getSapsaNumber());
     }
 
-    // init() mapping
-
-    // Null/Empty Cases
     @Test
     void testInit_whenMemberResponseNull_thenKeepsExistingValues() {
         // Arrange
@@ -228,7 +219,6 @@ class CompetitorDtoTest {
         assertNull(dto.getDateOfBirth());
     }
 
-    // Fully Populated
     @Test
     void testInit_whenEnrolledResponseNull_thenMapsMemberAndSetsNoneCategory() {
         // Arrange
@@ -296,7 +286,6 @@ class CompetitorDtoTest {
         assertEquals(202, dto.getIndexes().get(1));
     }
 
-    // Category Mapping
     @Test
     void testInit_whenEnrolledResponseHasCategoryCode_thenMapsCategory() {
         // Arrange
@@ -316,7 +305,6 @@ class CompetitorDtoTest {
         assertEquals(20, dto.getIndexes().getFirst());
     }
 
-    // ICS Alias and SAPSA Number Handling
     @Test
     void testInit_whenIcsAliasNonNumeric_thenSapsaNumberIsNull() {
         // Arrange
@@ -409,10 +397,6 @@ class CompetitorDtoTest {
         assertEquals(43210, dto.getSapsaNumber());
     }
 
-
-    // toString() behavior
-
-    // Middle Names Handling
     @Test
     void testToString_whenMiddleNamesProvided_thenReturnsFullName() {
         // Arrange
@@ -502,7 +486,6 @@ class CompetitorDtoTest {
         assertEquals("John Michael James Doe", result);
     }
 
-    // Null Name Handling
     @Test
     void testToString_whenFirstNameNull_thenReturnsLastName() {
         // Arrange
@@ -575,7 +558,6 @@ class CompetitorDtoTest {
         assertEquals("John Michael", result);
     }
 
-    // Empty Name Handling
     @Test
     void testToString_whenFirstNameEmpty_thenReturnsLastName() {
         // Arrange
@@ -618,7 +600,6 @@ class CompetitorDtoTest {
         assertEquals("", result);
     }
 
-    // Blank Name Handling
     @Test
     void testToString_whenFirstNameBlank_thenReturnsLastName() {
         // Arrange
@@ -661,7 +642,6 @@ class CompetitorDtoTest {
         assertEquals("", result);
     }
 
-    // Fully Populated
     @Test
     void testToString_whenFullyPopulated_thenReturnsCompleteString() {
         // Arrange
@@ -677,7 +657,6 @@ class CompetitorDtoTest {
         assertEquals("James Alexander Michael Smith", result);
     }
 
-    // Partially Populated
     @Test
     void testToString_whenOnlyFirstNameSet_thenReturnsFirstName() {
         // Arrange
@@ -717,7 +696,6 @@ class CompetitorDtoTest {
         assertEquals("Joseph", result);
     }
 
-    // Special Characters and Formatting
     @Test
     void testToString_whenNamesHaveSpecialCharacters_thenIncludesCharacters() {
         // Arrange
@@ -763,7 +741,6 @@ class CompetitorDtoTest {
         assertEquals("John Paul Smith", result);
     }
 
-    // Very Long Names
     @Test
     void testToString_whenNamesAreLong_thenReturnsFullLength() {
         // Arrange
@@ -784,7 +761,6 @@ class CompetitorDtoTest {
         assertTrue(result.length() > 30);
     }
 
-    // Middle Names with Other Fields Null
     @Test
     void testToString_whenMiddleNamesNullOtherFieldsSet_thenExcludesMiddleNames() {
         // Arrange
@@ -801,7 +777,6 @@ class CompetitorDtoTest {
         assertFalse(result.contains("null"));
     }
 
-    // With Other Fields Set (Not Affecting toString)
     @Test
     void testToString_whenWithIdAndIndex_thenIgnoresIdAndIndex() {
         // Arrange
@@ -851,7 +826,6 @@ class CompetitorDtoTest {
         assertFalse(result.contains("SENIOR"));
     }
 
-    // Consistency and Mutability
     @Test
     void testToString_whenCalledMultipleTimes_thenReturnsConsistentResults() {
         // Arrange

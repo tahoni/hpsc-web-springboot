@@ -9,10 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DateUtilTest {
 
-    // =====================================================================
-    // Tests for formatDate - Valid Data Processing
-    // =====================================================================
-
     @Test
     void testFormatDate_whenValidDateAndFormat_thenReturnsFormattedString() {
         // Arrange
@@ -26,10 +22,6 @@ class DateUtilTest {
         // Assert
         assertEquals(expected, result);
     }
-
-    // =====================================================================
-    // Tests for formatDate - Input Validation and Error Handling
-    // =====================================================================
 
     @Test
     void testFormatDate_whenNullDate_thenReturnsEmptyString() {
@@ -55,10 +47,6 @@ class DateUtilTest {
         assertEquals("", result);
     }
 
-    // =====================================================================
-    // Tests for formatDateTime - Valid Data Processing
-    // =====================================================================
-
     @Test
     void testFormatDateTime_whenValidDateTimeAndFormat_thenReturnsFormattedString() {
         // Arrange
@@ -72,10 +60,6 @@ class DateUtilTest {
         // Assert
         assertEquals(expected, result);
     }
-
-    // =====================================================================
-    // Tests for formatDateTime - Input Validation and Error Handling
-    // =====================================================================
 
     @Test
     void testFormatDateTime_whenNullDateTime_thenReturnsEmptyString() {

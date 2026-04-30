@@ -47,8 +47,6 @@ public class TransactionServiceTest {
     @InjectMocks
     private TransactionServiceImpl transactionService;
 
-    // Helper methods
-
     private MatchDto buildMatchDto() {
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Test Match");
@@ -94,8 +92,6 @@ public class TransactionServiceTest {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
     }
 
-    // Test Group: saveMatchResults – Input Validation
-
     @Test
     public void testSaveMatchResults_whenDtoMappingIsNull_thenReturnsEmptyOptional() {
         // Act
@@ -123,8 +119,6 @@ public class TransactionServiceTest {
         assertTrue(result.isEmpty());
         verifyNoInteractions(transactionManager);
     }
-
-    // Test Group: saveMatchResults – Happy Path
 
     @Test
     public void testSaveMatchResults_whenValidDtoMappingWithNoClubOrCollections_thenSavesMatchAndCommits() {
@@ -299,8 +293,6 @@ public class TransactionServiceTest {
         verify(matchCompetitorRepository).saveAll(anyList());
     }
 
-    // Test Group: saveMatchResults – Error / Rollback Handling
-
     @Test
     public void testSaveMatchResults_whenRepositoryThrowsException_thenRollsBackTransaction() {
         // Arrange
@@ -330,8 +322,6 @@ public class TransactionServiceTest {
         assertNotNull(ex.getMessage());
         assertTrue(ex.getMessage().startsWith("Unable to save the match:"));
     }
-
-    // Test Group: getClub
 
     @Test
     public void testGetClub_whenClubDtoIsNull_thenReturnsEmptyOptional() {
@@ -402,8 +392,6 @@ public class TransactionServiceTest {
         verify(clubRepository).findById(99L);
     }
 
-    // Test Group: getIpscMatch
-
     @Test
     public void testGetIpscMatch_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
         // Act
@@ -414,8 +402,6 @@ public class TransactionServiceTest {
         assertTrue(result.isEmpty());
         verifyNoInteractions(ipscMatchRepository);
     }
-
-    // Test Group: getIpscMatchStages
 
     @Test
     public void testGetIpscMatchStages_whenMatchEntityIsAbsent_thenReturnsEmptyList() {
@@ -561,8 +547,6 @@ public class TransactionServiceTest {
         assertTrue(result.isEmpty());
     }
 
-    // Test Group: getCompetitors
-
     @Test
     public void testGetCompetitors_whenCompetitorDtoListIsEmpty_thenReturnsEmptyList() {
         // Arrange
@@ -675,8 +659,6 @@ public class TransactionServiceTest {
         assertFalse(competitors.isEmpty());
         assertEquals("John", competitors.getFirst().getFirstName());
     }
-
-    // Test Group: getMatchCompetitors
 
     @Test
     public void testGetMatchCompetitors_whenMatchCompetitorListIsEmpty_thenReturnsEmptyList() {
@@ -861,8 +843,6 @@ public class TransactionServiceTest {
         assertTrue(firearmTypes.contains(FirearmType.RIFLE));
     }
 
-    // Test Group: getAllMatchStageCompetitors
-
     @Test
     public void testGetAllMatchStageCompetitors_whenMatchStageDtoListIsEmpty_thenReturnsEmptyList() {
         // Arrange
@@ -944,8 +924,6 @@ public class TransactionServiceTest {
         // Assert
         assertEquals(2, result.size());
     }
-
-    // Test Group: getMatchStageCompetitors
 
     @Test
     public void testGetMatchStageCompetitors_whenMatchStageCompetitorListIsEmpty_thenReturnsEmptyList() {

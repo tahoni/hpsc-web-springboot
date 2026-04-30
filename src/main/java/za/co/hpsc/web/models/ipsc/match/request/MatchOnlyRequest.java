@@ -9,7 +9,6 @@ import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 import java.time.LocalDateTime;
 
 // TODO: add Javadoc
-// TODO: add test
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
