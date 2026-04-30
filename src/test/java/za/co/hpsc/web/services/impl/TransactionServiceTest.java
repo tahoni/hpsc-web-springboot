@@ -335,11 +335,8 @@ public class TransactionServiceTest {
 
     @Test
     public void testGetClub_whenClubDtoIsNull_thenReturnsEmptyOptional() {
-        // Arrange
-        DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
-
         // Act
-        Optional<Club> result = transactionService.getClub(null, mapping);
+        Optional<Club> result = transactionService.getClub(null);
 
         // Assert
         assertNotNull(result);
@@ -350,14 +347,13 @@ public class TransactionServiceTest {
     @Test
     public void testGetClub_whenClubDtoHasNullId_thenCreatesNewClubWithoutRepositoryCall() {
         // Arrange
-        DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
         ClubDto clubDto = new ClubDto();
         clubDto.setId(null);
         clubDto.setName("New Club");
         clubDto.setAbbreviation("NC");
 
         // Act
-        Optional<Club> result = transactionService.getClub(clubDto, mapping);
+        Optional<Club> result = transactionService.getClub(clubDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -369,7 +365,6 @@ public class TransactionServiceTest {
     @Test
     public void testGetClub_whenClubDtoHasIdAndClubExistsInRepository_thenReturnsFetchedAndUpdatedClub() {
         // Arrange
-        DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
         ClubDto clubDto = new ClubDto();
         clubDto.setId(1L);
         clubDto.setName("Updated Club");
@@ -381,7 +376,7 @@ public class TransactionServiceTest {
         when(clubRepository.findById(1L)).thenReturn(Optional.of(existingClub));
 
         // Act
-        Optional<Club> result = transactionService.getClub(clubDto, mapping);
+        Optional<Club> result = transactionService.getClub(clubDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -393,14 +388,13 @@ public class TransactionServiceTest {
     @Test
     public void testGetClub_whenClubDtoHasIdButClubNotInRepository_thenCreatesNewClub() {
         // Arrange
-        DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
         ClubDto clubDto = new ClubDto();
         clubDto.setId(99L);
         clubDto.setName("New Club");
         when(clubRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<Club> result = transactionService.getClub(clubDto, mapping);
+        Optional<Club> result = transactionService.getClub(clubDto);
 
         // Assert
         assertTrue(result.isPresent());
@@ -408,114 +402,17 @@ public class TransactionServiceTest {
         verify(clubRepository).findById(99L);
     }
 
-    @Test
-    public void testGetClub_whenClubDtoProvided_thenSetsClubInEntityMapping() {
-        // Arrange
-        DtoMapping dtoMapping = buildMinimalDtoMapping();
-        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
-        ClubDto clubDto = new ClubDto();
-        clubDto.setName("HPSC");
-        clubDto.setAbbreviation("HPSC");
-
-        // Act
-        transactionService.getClub(clubDto, mapping);
-        Optional<IpscMatch> matchResult = transactionService.getIpscMatch(mapping);
-
-        // Assert
-        assertTrue(matchResult.isPresent());
-        assertNotNull(matchResult.get().getClub());
-        assertEquals("HPSC", matchResult.get().getClub().getName());
-    }
-
     // Test Group: getIpscMatch
 
     @Test
     public void testGetIpscMatch_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
-        // Arrange
-        DtoToEntityMapping mapping = new DtoToEntityMapping(new DtoMapping());
-
         // Act
-        Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
+        Optional<IpscMatch> result = transactionService.getIpscMatch(null);
 
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verifyNoInteractions(ipscMatchRepository);
-    }
-
-    @Test
-    public void testGetIpscMatch_whenMatchDtoHasNullId_thenCreatesNewMatchWithoutRepositoryCall() {
-        // Arrange
-        DtoMapping dtoMapping = new DtoMapping();
-        MatchDto matchDto = buildMatchDto();
-        matchDto.setId(null);
-        dtoMapping.setMatch(matchDto);
-        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
-
-        // Act
-        Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals("Test Match", result.get().getName());
-        verifyNoInteractions(ipscMatchRepository);
-    }
-
-    @Test
-    public void testGetIpscMatch_whenMatchDtoHasIdAndMatchExistsInRepository_thenReturnsFetchedAndUpdatedMatch() {
-        // Arrange
-        DtoMapping dtoMapping = new DtoMapping();
-        MatchDto matchDto = buildMatchDto();
-        matchDto.setId(5L);
-        dtoMapping.setMatch(matchDto);
-        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
-
-        IpscMatch existingMatch = new IpscMatch();
-        existingMatch.setId(5L);
-        existingMatch.setName("Old Match");
-        existingMatch.setScheduledDate(LocalDateTime.now());
-        when(ipscMatchRepository.findById(5L)).thenReturn(Optional.of(existingMatch));
-
-        // Act
-        Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals("Test Match", result.get().getName());
-        verify(ipscMatchRepository).findById(5L);
-    }
-
-    @Test
-    public void testGetIpscMatch_whenMatchDtoHasIdButMatchNotInRepository_thenCreatesNewMatch() {
-        // Arrange
-        DtoMapping dtoMapping = new DtoMapping();
-        MatchDto matchDto = buildMatchDto();
-        matchDto.setId(99L);
-        dtoMapping.setMatch(matchDto);
-        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
-        when(ipscMatchRepository.findById(99L)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<IpscMatch> result = transactionService.getIpscMatch(mapping);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals("Test Match", result.get().getName());
-        verify(ipscMatchRepository).findById(99L);
-    }
-
-    @Test
-    public void testGetIpscMatch_whenCalled_thenSetsMatchEntityInMapping() {
-        // Arrange
-        DtoMapping dtoMapping = new DtoMapping();
-        dtoMapping.setMatch(buildMatchDto());
-        DtoToEntityMapping mapping = new DtoToEntityMapping(dtoMapping);
-
-        // Act
-        transactionService.getIpscMatch(mapping);
-
-        // Assert
-        assertTrue(mapping.getMatchEntity().isPresent());
     }
 
     // Test Group: getIpscMatchStages
@@ -1274,6 +1171,104 @@ public class TransactionServiceTest {
         // Assert
         assertFalse(result.isEmpty());
         assertNull(result.getFirst().getId());
+    }
+
+    @Test
+    public void saveMatch_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
+        // Act
+        Optional<MatchHolder> result = assertDoesNotThrow(() ->
+                transactionService.saveMatch(null, null));
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(transactionManager);
+    }
+
+    @Test
+    public void saveMatch_whenValidMatchAndNullClub_thenCommitsAndReturnsMatchHolder() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
+
+        // Act
+        Optional<MatchHolder> result = assertDoesNotThrow(() ->
+                transactionService.saveMatch(matchDto, null));
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getMatch());
+        assertEquals("Test Match", result.get().getMatch().getName());
+        verify(ipscMatchRepository).save(any(IpscMatch.class));
+        verify(transactionManager).commit(transactionStatus);
+        verify(transactionManager, never()).rollback(any());
+    }
+
+    @Test
+    public void saveMatch_whenClubProvidedWithName_thenSavesClubAndMatch() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        ClubDto clubDto = new ClubDto();
+        clubDto.setName("Test Club");
+
+        when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
+
+        // Act
+        Optional<MatchHolder> result = assertDoesNotThrow(() ->
+                transactionService.saveMatch(matchDto, clubDto));
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getClub());
+        assertEquals("Test Club", result.get().getClub().getName());
+        verify(clubRepository).save(any(Club.class));
+        verify(ipscMatchRepository).save(any(IpscMatch.class));
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    public void saveMatch_whenMatchCreationFails_thenRollsBackAndThrowsFatalException() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+
+        when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
+        when(ipscMatchRepository.save(any(IpscMatch.class))).thenThrow(new RuntimeException("DB error"));
+
+        // Act / Assert
+        FatalException ex = assertThrows(FatalException.class, () ->
+                transactionService.saveMatch(matchDto, null));
+
+        assertNotNull(ex.getMessage());
+        assertTrue(ex.getMessage().startsWith("Unable to save the match:"));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
+    @Test
+    public void saveMatch_whenClubDtoProvidedWithoutName_thenSkipsClubSave() {
+        // Arrange
+        MatchDto matchDto = buildMatchDto();
+        matchDto.setName("No Club Name Match");
+        matchDto.setScheduledDate(LocalDateTime.of(2026, 5, 1, 11, 0));
+
+        ClubDto clubDto = new ClubDto();
+        clubDto.setId(10L);
+        clubDto.setName(null);
+
+        when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
+
+        // Act
+        Optional<MatchHolder> result = assertDoesNotThrow(() -> transactionService.saveMatch(matchDto, clubDto));
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getMatch());
+        verifyNoInteractions(clubRepository);
+        verify(ipscMatchRepository).save(any(IpscMatch.class));
+        verify(transactionManager).commit(transactionStatus);
+        verify(transactionManager, never()).rollback(any());
     }
 }
 

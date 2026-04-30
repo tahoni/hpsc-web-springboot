@@ -81,35 +81,24 @@ public class TransformationServiceImpl implements TransformationService {
         return new IpscResponseHolder(ipscResponses);
     }
 
-    /**
-     * Wraps a single {@link MatchResponse} as an {@link IpscResponseHolder}.
-     *
-     * @param matchResponse match payload to wrap
-     * @return holder containing one IPSC response with match and derived club, or empty holder when input is null
-     */
     @Override
-    public IpscResponseHolder mapMatchOnly(MatchResponse matchResponse) {
+    public Optional<MatchResultsDto> mapMatchOnly(MatchResponse matchResponse) {
         if (matchResponse == null) {
-            return new IpscResponseHolder(new ArrayList<>());
+            return Optional.empty();
         }
 
         IpscResponse ipscResponse = new IpscResponse();
         ipscResponse.setMatch(matchResponse);
         ipscResponse.setClub(new ClubResponse(matchResponse.getClubId()));
 
-        return new IpscResponseHolder(List.of(ipscResponse));
+        MatchResultsDto matchResultsDto = new MatchResultsDto();
+        MatchDto matchDto = new MatchDto();
+        matchDto.init(matchResponse, null, null);
+        matchResultsDto.setMatch(matchDto);
+
+        return Optional.of(matchResultsDto);
     }
 
-    /**
-     * Builds an export record holder from domain match holders.
-     * <p>
-     * The method composes competitor records per enrollment/division, including
-     * overall and per-stage results, then assembles them into match records.
-     * </p>
-     *
-     * @param ipscMatchHolderList match-holder inputs (may include null entries)
-     * @return record holder containing generated match records; empty when input is null
-     */
     @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<MatchHolder> ipscMatchHolderList) {
         if (ipscMatchHolderList == null) {

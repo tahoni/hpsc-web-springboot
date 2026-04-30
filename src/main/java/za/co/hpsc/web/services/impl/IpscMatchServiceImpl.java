@@ -10,7 +10,6 @@ import za.co.hpsc.web.models.ipsc.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDtoHolder;
 import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.response.IpscResponse;
 import za.co.hpsc.web.models.ipsc.response.MatchResponse;
@@ -20,9 +19,6 @@ import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.services.TransformationService;
 import za.co.hpsc.web.utils.ValueUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -116,7 +112,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         // Convert to a match response and merge with the incoming payload
         MatchDto matchDto = new MatchDto(ipscMatch);
         MatchResponse fetchedMatchResponse = new MatchResponse(matchIdNumber, matchDto);
-        fetchedMatchResponse.init(matchResponse, fullUpdate);
+        fetchedMatchResponse.init(matchIdNumber, matchResponse, fullUpdate);
         return Optional.of(fetchedMatchResponse);
     }
 
@@ -139,36 +135,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      */
     protected Optional<MatchResponse> saveMatchResponse(MatchResponse matchResponse)
             throws FatalException {
-        IpscResponseHolder ipscResponseHolder = transformationService.mapMatchOnly(matchResponse);
-
-        // Initialise the list of match results
-        List<MatchResultsDto> matchResultsList = new ArrayList<>();
-        for (IpscResponse ipscResponse : ipscResponseHolder.getIpscList()) {
-            Optional<MatchResultsDto> optionalMatchResults = transformationService.initMatchResults(ipscResponse);
-            optionalMatchResults.ifPresent(matchResultsList::add);
-        }
-
-        // Initialise the match results holder and persist the results
-        MatchResultsDtoHolder matchResultsDtoHolder = new MatchResultsDtoHolder(matchResultsList);
-        if (matchResultsDtoHolder.getMatches() == null) {
-            return Optional.empty();
-        }
-
-        // Filters out null matches and persists the results
-        List<MatchResultsDto> ipscResultsList = matchResultsDtoHolder.getMatches().stream()
-                .filter(Objects::nonNull)
-                .toList();
-
-        // Iterates the DTOs, maps them to entities, and persists the results
-        for (MatchResultsDto matchResultsDto : ipscResultsList) {
-            Optional<DtoMapping> optionalDtoToEntityMapping =
-                    domainService.initMatchEntities(matchResultsDto, null, null);
-            if (optionalDtoToEntityMapping.isPresent()) {
-                DtoMapping dtoMapping = optionalDtoToEntityMapping.get();
-                return saveMatch(dtoMapping);
-            }
-        }
-
         return Optional.empty();
     }
 

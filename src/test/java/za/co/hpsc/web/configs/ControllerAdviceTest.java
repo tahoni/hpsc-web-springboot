@@ -1,6 +1,5 @@
 package za.co.hpsc.web.configs;
 
-import jakarta.xml.bind.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,9 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.context.request.WebRequest;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -211,7 +212,7 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException("Match not found");
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex,
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
                 webRequest);
 
         // Assert
@@ -224,7 +225,8 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException("Competitor already enrolled");
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex, webRequest);
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
+                webRequest);
 
         // Assert
         assertNotNull(response.getBody());
@@ -237,7 +239,8 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException("Cannot process request");
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex, webRequest);
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
+                webRequest);
 
         // Assert
         assertNotNull(response.getBody());
@@ -250,7 +253,8 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException("Business rule violated");
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex, webRequest);
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
+                webRequest);
 
         // Assert
         assertNotNull(response.getBody());
@@ -263,7 +267,8 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException("Timestamp check");
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex, webRequest);
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
+                webRequest);
 
         // Assert
         assertNotNull(response.getBody());
@@ -276,7 +281,8 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException((String) null);
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex, webRequest);
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
+                webRequest);
 
         // Assert
         assertNotNull(response.getBody());
@@ -290,11 +296,188 @@ public class ControllerAdviceTest {
         NonFatalException ex = new NonFatalException("   ");
 
         // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFataException(ex, webRequest);
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
+                webRequest);
 
         // Assert
         assertNotNull(response.getBody());
         assertEquals("   ", response.getBody().getMessage());
+    }
+
+// =====================================================================
+// handleHttpMessageConversionException(HttpMessageConversionException, WebRequest)
+// =====================================================================
+
+    @Test
+    void testHandleHttpMessageConversionException_whenThrown_thenReturns400() {
+        // Arrange
+        HttpMessageConversionException ex = new HttpMessageConversionException("Invalid JSON input");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodyContainsExceptionMessage() {
+        // Arrange
+        HttpMessageConversionException ex = new HttpMessageConversionException("Cannot deserialize value");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertEquals("Cannot deserialize value", response.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodyContainsBadRequestLabel() {
+        // Arrange
+        HttpMessageConversionException ex = new HttpMessageConversionException("Malformed request");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertEquals("Bad Request", response.getBody().getError());
+    }
+
+    @Test
+    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodySuccessIsFalse() {
+        // Arrange
+        HttpMessageConversionException ex = new HttpMessageConversionException("Bad payload");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isSuccess());
+    }
+
+    @Test
+    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodyTimestampIsNotNull() {
+        // Arrange
+        HttpMessageConversionException ex = new HttpMessageConversionException("Timestamp check");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertNotNull(response.getBody().getTimestamp());
+    }
+
+    @Test
+    void testHandleHttpMessageConversionException_whenMessageIsNull_thenResponseBodyMessageIsNull() {
+        // Arrange
+        HttpMessageConversionException ex = new HttpMessageConversionException(null);
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertNull(response.getBody().getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+// =====================================================================
+// handleUnhandledException(Exception, WebRequest)
+// =====================================================================
+
+    @Test
+    void testHandleUnhandledException_whenThrown_thenReturns500() {
+        // Arrange
+        Exception ex = new Exception("Something went wrong");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleUnhandledException(ex, webRequest);
+
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void testHandleUnhandledException_whenThrown_thenResponseBodyContainsExceptionMessage() {
+        // Arrange
+        Exception ex = new Exception("Uncaught processing error");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleUnhandledException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertEquals("Uncaught processing error", response.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleUnhandledException_whenThrown_thenResponseBodyContainsInternalServerErrorLabel() {
+        // Arrange
+        Exception ex = new Exception("System failure");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleUnhandledException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertEquals("Internal Server Error", response.getBody().getError());
+    }
+
+    @Test
+    void testHandleUnhandledException_whenThrown_thenResponseBodySuccessIsFalse() {
+        // Arrange
+        Exception ex = new Exception("Failure state");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleUnhandledException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isSuccess());
+    }
+
+    @Test
+    void testHandleUnhandledException_whenThrown_thenResponseBodyTimestampIsNotNull() {
+        // Arrange
+        Exception ex = new Exception("Timestamp check");
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleUnhandledException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertNotNull(response.getBody().getTimestamp());
+    }
+
+    @Test
+    void testHandleUnhandledException_whenMessageIsNull_thenResponseBodyUsesDefaultMessage() {
+        // Arrange
+        Exception ex = new Exception((String) null);
+
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleUnhandledException(ex, webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertEquals("Unexpected error occurred", response.getBody().getMessage());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }
 

@@ -46,7 +46,7 @@ public interface TransformationService {
      * @param matchResponse source match response to wrap/map
      * @return an {@link IpscResponseHolder} representing the transformed match-only response data
      */
-    IpscResponseHolder mapMatchOnly(MatchResponse matchResponse);
+    Optional<MatchResultsDto> mapMatchOnly(MatchResponse matchResponse);
 
     /**
      * Generates an {@link IpscMatchRecordHolder} from a list of grouped match-holder objects.

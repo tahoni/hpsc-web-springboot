@@ -67,21 +67,25 @@ public class MatchResponse {
     }
 
     /**
-     * Updates this response object using values from another {@code MatchResponse}.
+     * Applies values from another {@link MatchResponse} to this instance using
+     * either full-replacement or partial-merge semantics.
      * <p>
-     * Update mode behaviour:
+     * The provided {@code matchId} is always applied to this object first.
      * </p>
      * <ul>
      *   <li><b>Full update</b> ({@code fullUpdate = true}): all updatable fields are overwritten,
-     *   including {@code null} values from {@code right}.</li>
+     *       including {@code null} values from {@code right}.</li>
      *   <li><b>Partial update</b> ({@code fullUpdate = false}): only non-null fields from
-     *   {@code right} overwrite existing values.</li>
+     *       {@code right} overwrite existing values.</li>
      * </ul>
      *
-     * @param right      the source object providing new values
-     * @param fullUpdate whether to apply full replacement semantics or partial merge semantics
+     * @param matchId    identifier to assign to this response; converted from {@link Long} to {@link Integer}
+     * @param right      source response containing values to apply
+     * @param fullUpdate {@code true} for full replacement, {@code false} for partial merge
      */
-    public void init(MatchResponse right, boolean fullUpdate) {
+    public void init(Long matchId, MatchResponse right, boolean fullUpdate) {
+        this.matchId = matchId.intValue();
+
         if (fullUpdate) {
             this.matchName = right.matchName;
             this.matchDate = right.matchDate;
