@@ -15,6 +15,8 @@ import za.co.hpsc.web.models.ipsc.common.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.common.records.*;
 import za.co.hpsc.web.models.ipsc.common.request.*;
 import za.co.hpsc.web.models.ipsc.common.response.*;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 import za.co.hpsc.web.services.*;
 import za.co.hpsc.web.utils.DateUtil;
 import za.co.hpsc.web.utils.NumberUtil;
@@ -82,21 +84,15 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     @Override
-    public Optional<MatchResultsDto> mapMatchOnly(MatchResponse matchResponse) {
-        if (matchResponse == null) {
+    public Optional<MatchOnlyDto> mapMatchOnly(MatchOnlyRequest matchOnlyRequest) {
+        if (matchOnlyRequest == null) {
             return Optional.empty();
         }
 
-        IpscResponse ipscResponse = new IpscResponse();
-        ipscResponse.setMatch(matchResponse);
-        ipscResponse.setClub(new ClubResponse(matchResponse.getClubId()));
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.init(matchOnlyRequest);
 
-        MatchResultsDto matchResultsDto = new MatchResultsDto();
-        MatchDto matchDto = new MatchDto();
-        matchDto.init(matchResponse, null, null);
-        matchResultsDto.setMatch(matchDto);
-
-        return Optional.of(matchResultsDto);
+        return Optional.of(matchOnlyDto);
     }
 
     @Override

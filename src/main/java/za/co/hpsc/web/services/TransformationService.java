@@ -6,7 +6,8 @@ import za.co.hpsc.web.models.ipsc.common.holders.records.IpscMatchRecordHolder;
 import za.co.hpsc.web.models.ipsc.common.holders.request.IpscRequestHolder;
 import za.co.hpsc.web.models.ipsc.common.holders.response.IpscResponseHolder;
 import za.co.hpsc.web.models.ipsc.common.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,16 +38,7 @@ public interface TransformationService {
      */
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder);
 
-    /**
-     * Creates an IPSC response holder from a single match response payload.
-     * <p>
-     * This is commonly used when only match-level data is available or required.
-     * </p>
-     *
-     * @param matchResponse source match response to wrap/map
-     * @return an {@link IpscResponseHolder} representing the transformed match-only response data
-     */
-    Optional<MatchResultsDto> mapMatchOnly(MatchResponse matchResponse);
+    Optional<MatchOnlyDto> mapMatchOnly(MatchOnlyRequest matchOnlyRequest);
 
     /**
      * Generates an {@link IpscMatchRecordHolder} from a list of grouped match-holder objects.

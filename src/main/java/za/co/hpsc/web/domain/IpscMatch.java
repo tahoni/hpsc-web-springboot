@@ -12,6 +12,7 @@ import za.co.hpsc.web.converters.MatchCategoryConverter;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 import za.co.hpsc.web.utils.DateUtil;
 
 import java.time.LocalDateTime;
@@ -78,6 +79,20 @@ public class IpscMatch {
 
             // Initialise the date fields
             this.dateEdited = matchDto.getDateEdited();
+        }
+    }
+
+    public void init(MatchOnlyDto matchOnlyDto) {
+        if (matchOnlyDto != null) {
+            // Initialises the match attributes
+            this.name = matchOnlyDto.getName();
+            this.scheduledDate = ((matchOnlyDto.getScheduledDate() != null) ?
+                    matchOnlyDto.getScheduledDate() : LocalDateTime.now());
+            this.matchFirearmType = matchOnlyDto.getMatchFirearmType();
+            this.matchCategory = matchOnlyDto.getMatchCategory();
+
+            // Initialise the date fields
+            this.dateEdited = matchOnlyDto.getDateEdited();
         }
     }
 

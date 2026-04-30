@@ -1177,7 +1177,7 @@ public class TransactionServiceTest {
     public void saveMatch_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
         // Act
         Optional<MatchHolder> result = assertDoesNotThrow(() ->
-                transactionService.saveMatch(null, null));
+                transactionService.saveMatch(null));
 
         // Assert
         assertNotNull(result);
@@ -1194,7 +1194,7 @@ public class TransactionServiceTest {
 
         // Act
         Optional<MatchHolder> result = assertDoesNotThrow(() ->
-                transactionService.saveMatch(matchDto, null));
+                transactionService.saveMatch(null));
 
         // Assert
         assertTrue(result.isPresent());
@@ -1217,7 +1217,7 @@ public class TransactionServiceTest {
 
         // Act
         Optional<MatchHolder> result = assertDoesNotThrow(() ->
-                transactionService.saveMatch(matchDto, clubDto));
+                transactionService.saveMatch(null));
 
         // Assert
         assertTrue(result.isPresent());
@@ -1238,7 +1238,7 @@ public class TransactionServiceTest {
 
         // Act / Assert
         FatalException ex = assertThrows(FatalException.class, () ->
-                transactionService.saveMatch(matchDto, null));
+                transactionService.saveMatch(null));
 
         assertNotNull(ex.getMessage());
         assertTrue(ex.getMessage().startsWith("Unable to save the match:"));
@@ -1260,7 +1260,7 @@ public class TransactionServiceTest {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
 
         // Act
-        Optional<MatchHolder> result = assertDoesNotThrow(() -> transactionService.saveMatch(matchDto, clubDto));
+        Optional<MatchHolder> result = assertDoesNotThrow(() -> transactionService.saveMatch(null));
 
         // Assert
         assertTrue(result.isPresent());

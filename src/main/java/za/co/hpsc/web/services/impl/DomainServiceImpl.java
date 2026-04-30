@@ -8,6 +8,8 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.common.dto.*;
 import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.DomainService;
 
@@ -94,6 +96,24 @@ public class DomainServiceImpl implements DomainService {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<MatchOnlyResultsDto> initMatchOnlyEntities(MatchOnlyDto matchOnlyDto) {
+        if (matchOnlyDto == null) {
+            return Optional.empty();
+        }
+
+        ClubDto clubDto = matchOnlyDto.getClub();
+        if (clubDto == null) {
+            clubDto = initClubEntity(matchOnlyDto.getClubName()).orElse(null);
+        }
+
+        MatchOnlyResultsDto matchOnlyResultsDto = new MatchOnlyResultsDto();
+        matchOnlyResultsDto.setMatch(matchOnlyDto);
+        matchOnlyResultsDto.setClub(clubDto);
+
+        return Optional.of(matchOnlyResultsDto);
+    }
+
     /**
      * Initialises a Club entity based on the provided ClubDto.
      * If the ClubDto contains a valid ID, attempts to find the existing Club entity
@@ -125,14 +145,29 @@ public class DomainServiceImpl implements DomainService {
      * @return an Optional containing the club entity if found, or an empty Optional
      * if no match is found
      */
+    // TODO: Verify tests
     protected Optional<ClubDto> initClubEntity(ClubIdentifier clubIdentifier) {
         if ((clubIdentifier == null) || (IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
             return Optional.empty();
         }
 
         // Find the club entity if present
+        return initClubEntity(clubIdentifier.getAbbreviation());
+    }
+
+    // TODO: add tests
+    protected Optional<ClubDto> initClubEntity(String clubName) {
+        if (clubName == null) {
+            return Optional.empty();
+        }
+
+        // Find the club entity if present
+        Optional<Club> optionalClub = clubRepository.findByName(clubName);
+        if (optionalClub.isEmpty()) {
+            optionalClub = clubRepository.findByAbbreviation(clubName);
+        }
+
         ClubDto clubDto = null;
-        Optional<Club> optionalClub = clubRepository.findByAbbreviation(clubIdentifier.getAbbreviation());
         if (optionalClub.isPresent()) {
             clubDto = new ClubDto(optionalClub.get());
         }

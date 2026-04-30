@@ -13,6 +13,8 @@ import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.common.data.DtoToEntityMapping;
 import za.co.hpsc.web.models.ipsc.common.dto.*;
 import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 import za.co.hpsc.web.repositories.*;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -119,8 +121,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<MatchHolder> saveMatch(MatchDto matchDto, ClubDto clubDto) throws FatalException {
-        if (matchDto == null) {
+    public Optional<MatchHolder> saveMatch(MatchOnlyResultsDto matchOnlyResultsDto) throws FatalException {
+        if (matchOnlyResultsDto == null) {
             return Optional.empty();
         }
 
@@ -130,6 +132,7 @@ public class TransactionServiceImpl implements TransactionService {
         // Executes transactional match result persistence; rolls back on failure
         MatchHolder matchHolder = new MatchHolder();
         try {
+            ClubDto clubDto = matchOnlyResultsDto.getClub();
             Optional<Club> optionalClub = getClub(clubDto);
             if (optionalClub.isPresent()) {
                 Club club = optionalClub.get();
@@ -137,7 +140,8 @@ public class TransactionServiceImpl implements TransactionService {
                 matchHolder.setClub(club);
             }
 
-            Optional<IpscMatch> optionalIpscMatch = getIpscMatch(matchDto);
+            MatchOnlyDto matchOnlyDto = matchOnlyResultsDto.getMatch();
+            Optional<IpscMatch> optionalIpscMatch = getIpscMatch(matchOnlyDto);
             if (optionalIpscMatch.isEmpty()) {
                 throw new FatalException("Unable to save the match: Match is null");
             }
@@ -196,6 +200,20 @@ public class TransactionServiceImpl implements TransactionService {
             matchEntity = ipscMatchRepository.findById(matchDto.getId()).orElseGet(IpscMatch::new);
         }
         matchEntity.init(matchDto);
+
+        return Optional.of(matchEntity);
+    }
+
+    protected Optional<IpscMatch> getIpscMatch(MatchOnlyDto matchOnlyDto) {
+        if (matchOnlyDto == null) {
+            return Optional.empty();
+        }
+
+        IpscMatch matchEntity = new IpscMatch();
+        if (matchOnlyDto.getId() != null) {
+            matchEntity = ipscMatchRepository.findById(matchOnlyDto.getId()).orElseGet(IpscMatch::new);
+        }
+        matchEntity.init(matchOnlyDto);
 
         return Optional.of(matchEntity);
     }

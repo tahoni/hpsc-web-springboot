@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.request.MatchWithStagesRequest;
+import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
+import za.co.hpsc.web.models.ipsc.match.response.MatchOnlyResponse;
 import za.co.hpsc.web.services.IpscMatchService;
 
 @Controller
@@ -38,15 +38,15 @@ public final class IpscMatchController {
                     content = @Content)
     })
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<MatchResponse> insertMatch(
+    ResponseEntity<MatchOnlyResponse> insertMatch(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Match payload including stages",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = MatchWithStagesRequest.class))
+                    content = @Content(schema = @Schema(implementation = MatchOnlyRequest.class))
             )
-            @RequestBody MatchWithStagesRequest matchWithStagesRequest)
+            @RequestBody MatchOnlyRequest matchOnlyRequest)
             throws FatalException {
-        return ResponseEntity.ok(ipscMatchService.insertMatch(matchWithStagesRequest)
+        return ResponseEntity.ok(ipscMatchService.insertMatch(matchOnlyRequest)
                 .orElseThrow(() -> new FatalException("Failed to create match")));
     }
 
@@ -65,17 +65,17 @@ public final class IpscMatchController {
     })
     @PutMapping(value = "{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<MatchResponse> updateMatch(
+    ResponseEntity<MatchOnlyResponse> updateMatch(
             @Parameter(description = "Unique identifier of the match", required = true, example = "123")
             @PathVariable Long matchId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Full replacement payload for the match",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = MatchWithStagesRequest.class))
+                    content = @Content(schema = @Schema(implementation = MatchOnlyRequest.class))
             )
-            @RequestBody MatchWithStagesRequest matchWithStagesRequest)
+            @RequestBody MatchOnlyRequest matchOnlyRequest)
             throws FatalException {
-        return ResponseEntity.ok(ipscMatchService.updateMatch(matchId, matchWithStagesRequest).orElse(null));
+        return ResponseEntity.ok(ipscMatchService.updateMatch(matchId, matchOnlyRequest).orElse(null));
     }
 
     @Operation(
@@ -93,19 +93,19 @@ public final class IpscMatchController {
     })
     @PatchMapping(value = "{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<MatchResponse> modifyMatch(
+    ResponseEntity<MatchOnlyResponse> modifyMatch(
             @Parameter(description = "Unique identifier of the match", required = true, example = "123")
             @PathVariable Long matchId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Partial payload with fields to modify",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = MatchWithStagesRequest.class))
+                    content = @Content(schema = @Schema(implementation = MatchOnlyRequest.class))
             )
-            @RequestBody MatchWithStagesRequest matchWithStagesRequest)
+            @RequestBody MatchOnlyRequest matchOnlyRequest)
             throws FatalException {
 
 
-        return ResponseEntity.ok(ipscMatchService.modifyMatch(matchId, matchWithStagesRequest)
+        return ResponseEntity.ok(ipscMatchService.modifyMatch(matchId, matchOnlyRequest)
                 .orElseThrow(() -> new FatalException("Failed to modify match")));
     }
 
@@ -115,14 +115,14 @@ public final class IpscMatchController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Match retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = MatchWithStagesRequest.class))),
+                    content = @Content(schema = @Schema(implementation = MatchOnlyRequest.class))),
             @ApiResponse(responseCode = "404", description = "Match not found",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Failed to retrieve match",
                     content = @Content)
     })
     @GetMapping(value = "/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<MatchResponse> getMatch(
+    ResponseEntity<MatchOnlyResponse> getMatch(
             @Parameter(description = "Unique identifier of the match", required = true, example = "123")
             @PathVariable Long matchId) throws FatalException {
         return ResponseEntity.ok(ipscMatchService.getMatch(matchId)
