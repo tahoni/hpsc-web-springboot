@@ -75,8 +75,7 @@ public final class IpscMatchController {
             )
             @RequestBody MatchWithStages matchWithStages)
             throws FatalException {
-        return ResponseEntity.ok(ipscMatchService.updateMatch(matchId, matchWithStages)
-                .orElseThrow(() -> new FatalException("Failed to update match")));
+        return ResponseEntity.ok(ipscMatchService.updateMatch(matchId, matchWithStages).orElse(null));
     }
 
     @Operation(

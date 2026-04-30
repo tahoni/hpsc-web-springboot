@@ -34,6 +34,7 @@
             <encoder>
                 <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             </encoder>
+            <withJansi>false</withJansi>
         </appender>
 
         <logger name="za.co.hpsc" level="debug" additivity="false">
@@ -63,6 +64,7 @@
             <encoder>
                 <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             </encoder>
+            <withJansi>false</withJansi>
         </appender>
 
         <root level="info">
@@ -87,6 +89,7 @@
             <encoder>
                 <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             </encoder>
+            <withJansi>false</withJansi>
         </appender>
 
         <root level="info">

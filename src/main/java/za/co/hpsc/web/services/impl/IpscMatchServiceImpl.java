@@ -64,13 +64,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     public Optional<MatchResponse> getMatch(Long matchId) {
         // Find the match by id
         Optional<IpscMatch> optionalIpscMatch = matchEntityService.findMatchById(matchId);
-        if (optionalIpscMatch.isEmpty()) {
-            return Optional.empty();
-        }
+        IpscMatch ipscMatch = optionalIpscMatch.orElseThrow(() ->
+                new NonFatalException("Match with id %d not found".formatted(matchId)));
 
         // Convert the match to a match response
-        Long matchIdNumber = ValueUtil.nullAsZero(matchId);
-        IpscMatch ipscMatch = optionalIpscMatch.get();
+        Long matchIdNumber = ipscMatch.getId();
         MatchDto matchDto = new MatchDto(ipscMatch);
         return Optional.of(new MatchResponse(matchIdNumber, matchDto));
     }
