@@ -9,7 +9,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
-import za.co.hpsc.web.models.ipsc.match.response.MatchOnlyResponse;
+import za.co.hpsc.web.utils.IpscUtil;
 
 import java.time.LocalDateTime;
 
@@ -30,10 +30,6 @@ public class MatchOnlyDto {
     private MatchCategory matchCategory;
 
     private LocalDateTime dateEdited;
-
-    public void init(MatchOnlyResponse matchOnlyResponse) {
-        init((MatchOnlyRequest) matchOnlyResponse);
-    }
 
     public void init(MatchOnlyRequest matchOnlyRequest) {
         if (matchOnlyRequest != null) {
@@ -57,16 +53,6 @@ public class MatchOnlyDto {
 
     @Override
     public String toString() {
-        String clubString = this.clubName;
-        String nameString = ((this.name != null) ? this.name.trim() : null);
-
-        // Returns name, optionally with club if available
-        String result = "";
-        if ((clubString != null) && (!clubString.isBlank())) {
-            result = nameString + " @ " + clubString;
-        } else if (nameString != null) {
-            result = nameString;
-        }
-        return result.trim();
+        return IpscUtil.matchToString(this.name, this.clubName);
     }
 }

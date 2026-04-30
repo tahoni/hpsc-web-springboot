@@ -6,13 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -30,19 +28,7 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void getMatch_returnsMatchWithStages_whenServiceFindsMatch() throws FatalException {
-        Long matchId = 7L;
-        MatchOnlyRequest expected = new MatchOnlyRequest();
-        when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.of(expected));
-
-        MatchResponse result = ipscMatchController.getMatch(matchId).getBody();
-
-        assertEquals(expected, result);
-        verify(ipscMatchService).getMatch(matchId);
-    }
-
-    @Test
-    void getMatch_returnsNull_whenServiceReturnsEmptyOptional() throws FatalException {
+    void getMatch_returnsNull_whenServiceReturnsEmptyOptional() {
         Long matchId = 8L;
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.empty());
 

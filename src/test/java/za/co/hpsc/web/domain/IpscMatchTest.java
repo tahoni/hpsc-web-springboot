@@ -50,7 +50,7 @@ public class IpscMatchTest {
         match.setMatchCategory(MatchCategory.LEAGUE);
 
         // Act
-        match.init(null);
+        match.init((MatchDto) null);
 
         // Assert
         assertEquals("Existing Match", match.getName());

@@ -11,6 +11,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.common.response.ScoreResponse;
+import za.co.hpsc.web.utils.IpscUtil;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -189,16 +190,6 @@ public class MatchDto {
      */
     @Override
     public String toString() {
-        String clubString = ((this.club != null) ? this.club.toString().trim() : null);
-        String nameString = ((this.name != null) ? this.name.trim() : null);
-
-        // Returns name, optionally with club if available
-        String result = "";
-        if ((clubString != null) && (!clubString.isBlank())) {
-            result = nameString + " @ " + clubString;
-        } else if (nameString != null) {
-            result = nameString;
-        }
-        return result.trim();
+        return IpscUtil.matchToString(this.name, this.club);
     }
 }

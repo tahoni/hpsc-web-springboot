@@ -407,7 +407,7 @@ public class TransactionServiceTest {
     @Test
     public void testGetIpscMatch_whenMatchDtoIsNull_thenReturnsEmptyOptional() {
         // Act
-        Optional<IpscMatch> result = transactionService.getIpscMatch(null);
+        Optional<IpscMatch> result = transactionService.getIpscMatch((MatchDto) null);
 
         // Assert
         assertNotNull(result);

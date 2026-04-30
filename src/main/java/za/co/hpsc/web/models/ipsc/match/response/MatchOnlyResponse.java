@@ -25,15 +25,6 @@ public class MatchOnlyResponse extends MatchOnlyRequest {
         super(matchOnlyRequest);
     }
 
-    public void init(Long matchId, MatchDto matchDto) {
-        this.setMatchId(matchId);
-        this.setMatchName(matchDto.getName());
-        this.setMatchDate(matchDto.getScheduledDate());
-        this.setClub(((matchDto.getClub() != null) ? matchDto.getClub().getName() : null));
-        this.setFirearm(((matchDto.getMatchFirearmType() != null) ?
-                matchDto.getMatchFirearmType().getNames().getFirst() : null));
-    }
-
     public void init(Long matchId, MatchOnlyRequest right, boolean fullUpdate) {
         this.setMatchId(matchId);
 
