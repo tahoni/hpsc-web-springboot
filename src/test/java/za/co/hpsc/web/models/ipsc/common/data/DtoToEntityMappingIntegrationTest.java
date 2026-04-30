@@ -1,10 +1,8 @@
-package za.co.hpsc.web.models.ipsc.data;
+package za.co.hpsc.web.models.ipsc.common.data;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.common.data.DtoToEntityMapping;
 import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
 import za.co.hpsc.web.models.ipsc.common.dto.MatchStageDto;
 

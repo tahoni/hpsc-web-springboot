@@ -1,10 +1,9 @@
-package za.co.hpsc.web.models.ipsc.divisions;
+package za.co.hpsc.web.models.ipsc.common.divisions;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.common.divisions.*;
 
 import java.util.Map;
 import java.util.Optional;

@@ -1,8 +1,7 @@
-package za.co.hpsc.web.models.ipsc.response;
+package za.co.hpsc.web.models.ipsc.common.response;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.models.ipsc.common.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
 
 import java.time.LocalDateTime;
 

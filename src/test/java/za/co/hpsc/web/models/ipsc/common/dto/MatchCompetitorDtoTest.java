@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.dto;
+package za.co.hpsc.web.models.ipsc.common.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.Club;
@@ -6,9 +6,6 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchCompetitorDto;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.common.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.common.response.ScoreResponse;
 

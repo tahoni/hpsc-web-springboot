@@ -1,9 +1,8 @@
-package za.co.hpsc.web.models.ipsc.dto;
+package za.co.hpsc.web.models.ipsc.common.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.models.ipsc.common.dto.*;
 import za.co.hpsc.web.models.ipsc.common.response.EnrolledResponse;
 import za.co.hpsc.web.models.ipsc.common.response.ScoreResponse;
 

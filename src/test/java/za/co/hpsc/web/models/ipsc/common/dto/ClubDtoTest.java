@@ -1,9 +1,8 @@
-package za.co.hpsc.web.models.ipsc.dto;
+package za.co.hpsc.web.models.ipsc.common.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.common.response.ClubResponse;
 
 import static org.junit.jupiter.api.Assertions.*;

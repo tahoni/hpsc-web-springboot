@@ -1,12 +1,10 @@
-package za.co.hpsc.web.models.ipsc.dto;
+package za.co.hpsc.web.models.ipsc.common.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.common.response.ScoreResponse;
 

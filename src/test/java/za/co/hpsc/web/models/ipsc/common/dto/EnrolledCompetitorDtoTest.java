@@ -1,13 +1,9 @@
-package za.co.hpsc.web.models.ipsc.dto;
+package za.co.hpsc.web.models.ipsc.common.dto;
 
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
-import za.co.hpsc.web.models.ipsc.common.dto.EnrolledCompetitorDto;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchCompetitorDto;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchStageCompetitorDto;
 
 import java.util.UUID;
 
