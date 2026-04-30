@@ -5,8 +5,10 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.common.response.ScoreResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -10,14 +10,14 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
-import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
-import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
+import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.common.holders.response.IpscResponseHolder;
+import za.co.hpsc.web.models.ipsc.common.response.IpscResponse;
+import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.match.request.MatchWithStagesRequest;
 import za.co.hpsc.web.services.DomainService;
 import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.services.TransformationService;
@@ -47,7 +47,7 @@ class IpscMatchServiceTest {
 
     @Test
     void insertMatch_whenValidMatchResponse_thenDelegatesToSavePipeline() throws FatalException {
-        MatchWithStages matchResponse = new MatchWithStages();
+        MatchWithStagesRequest matchResponse = new MatchWithStagesRequest();
         IpscResponseHolder holder = new IpscResponseHolder(List.of(new IpscResponse()));
         MatchResultsDto resultsDto = new MatchResultsDto(new MatchDto());
         DtoMapping mapping = new DtoMapping();
@@ -67,7 +67,7 @@ class IpscMatchServiceTest {
     @Test
     void updateMatch_whenMatchExists_thenMergesAndSavesUsingFullUpdate() throws FatalException {
         Long matchId = 10L;
-        MatchWithStages incoming = new MatchWithStages();
+        MatchWithStagesRequest incoming = new MatchWithStagesRequest();
 
         IpscMatch persisted = new IpscMatch();
         persisted.setId(matchId);
@@ -94,7 +94,7 @@ class IpscMatchServiceTest {
     @Test
     void modifyMatch_whenMatchDoesNotExist_thenThrowsException() {
         Long matchId = 99L;
-        MatchWithStages incoming = new MatchWithStages();
+        MatchWithStagesRequest incoming = new MatchWithStagesRequest();
 
         when(matchEntityService.findMatchById(matchId)).thenReturn(Optional.empty());
 

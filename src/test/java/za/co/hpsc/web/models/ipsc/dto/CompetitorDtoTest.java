@@ -3,8 +3,9 @@ package za.co.hpsc.web.models.ipsc.dto;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
-import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
-import za.co.hpsc.web.models.ipsc.response.MemberResponse;
+import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.response.EnrolledResponse;
+import za.co.hpsc.web.models.ipsc.common.response.MemberResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.ipsc.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
 
 import java.util.Optional;
 

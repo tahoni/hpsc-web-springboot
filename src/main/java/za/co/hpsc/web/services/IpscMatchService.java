@@ -1,7 +1,7 @@
 package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
 
 import java.util.Optional;
 

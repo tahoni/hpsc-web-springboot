@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.shared.MatchWithStages;
+import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.match.request.MatchWithStagesRequest;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.Optional;
@@ -32,7 +32,7 @@ class IpscMatchControllerTest {
     @Test
     void getMatch_returnsMatchWithStages_whenServiceFindsMatch() throws FatalException {
         Long matchId = 7L;
-        MatchWithStages expected = new MatchWithStages();
+        MatchWithStagesRequest expected = new MatchWithStagesRequest();
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.of(expected));
 
         MatchResponse result = ipscMatchController.getMatch(matchId).getBody();
@@ -53,11 +53,11 @@ class IpscMatchControllerTest {
 
     @Test
     void insertMatch_propagatesFatalException_fromService() throws FatalException {
-        MatchWithStages matchWithStages = new MatchWithStages();
-        doThrow(new FatalException("insert failed")).when(ipscMatchService).insertMatch(matchWithStages);
+        MatchWithStagesRequest matchWithStagesRequest = new MatchWithStagesRequest();
+        doThrow(new FatalException("insert failed")).when(ipscMatchService).insertMatch(matchWithStagesRequest);
 
-        assertThrows(FatalException.class, () -> ipscMatchController.insertMatch(matchWithStages));
+        assertThrows(FatalException.class, () -> ipscMatchController.insertMatch(matchWithStagesRequest));
 
-        verify(ipscMatchService).insertMatch(matchWithStages);
+        verify(ipscMatchService).insertMatch(matchWithStagesRequest);
     }
 }

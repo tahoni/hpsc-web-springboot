@@ -5,7 +5,7 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
-import za.co.hpsc.web.models.ipsc.request.MatchRequest;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.request.MatchRequest;
+import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
 
 import java.time.LocalDateTime;
 

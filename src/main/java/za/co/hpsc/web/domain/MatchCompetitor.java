@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.converters.*;
 import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

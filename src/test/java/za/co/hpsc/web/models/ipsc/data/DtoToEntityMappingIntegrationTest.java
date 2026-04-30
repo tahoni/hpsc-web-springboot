@@ -3,8 +3,10 @@ package za.co.hpsc.web.models.ipsc.data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.common.data.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchStageDto;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,12 +1,12 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
-import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
-import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
-import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.response.IpscResponse;
-import za.co.hpsc.web.models.ipsc.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.common.holders.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.common.holders.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.common.holders.response.IpscResponseHolder;
+import za.co.hpsc.web.models.ipsc.common.response.IpscResponse;
+import za.co.hpsc.web.models.ipsc.common.response.MatchResponse;
 
 import java.util.List;
 import java.util.Optional;

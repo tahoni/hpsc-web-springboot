@@ -11,7 +11,7 @@ import za.co.hpsc.web.converters.DivisionConverter;
 import za.co.hpsc.web.converters.FirearmTypeConverter;
 import za.co.hpsc.web.converters.PowerFactorConverter;
 import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

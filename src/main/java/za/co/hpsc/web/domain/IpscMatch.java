@@ -11,7 +11,7 @@ import za.co.hpsc.web.converters.FirearmTypeConverter;
 import za.co.hpsc.web.converters.MatchCategoryConverter;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 import za.co.hpsc.web.utils.DateUtil;
 
 import java.time.LocalDateTime;

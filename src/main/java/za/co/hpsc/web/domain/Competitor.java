@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

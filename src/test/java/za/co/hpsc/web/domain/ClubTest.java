@@ -1,7 +1,7 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.dto.ClubDto;
+import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 
 import java.time.LocalDateTime;
 

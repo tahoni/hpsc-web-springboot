@@ -11,10 +11,10 @@ import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.data.DtoToEntityMapping;
-import za.co.hpsc.web.models.ipsc.dto.*;
-import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.common.data.DtoToEntityMapping;
+import za.co.hpsc.web.models.ipsc.common.dto.*;
+import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
 import za.co.hpsc.web.repositories.*;
 
 import java.time.LocalDateTime;

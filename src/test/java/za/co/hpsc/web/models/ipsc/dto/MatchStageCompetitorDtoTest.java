@@ -3,8 +3,9 @@ package za.co.hpsc.web.models.ipsc.dto;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.*;
 import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.models.ipsc.response.EnrolledResponse;
-import za.co.hpsc.web.models.ipsc.response.ScoreResponse;
+import za.co.hpsc.web.models.ipsc.common.dto.*;
+import za.co.hpsc.web.models.ipsc.common.response.EnrolledResponse;
+import za.co.hpsc.web.models.ipsc.common.response.ScoreResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

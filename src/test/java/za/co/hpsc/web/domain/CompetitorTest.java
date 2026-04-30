@@ -1,7 +1,7 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
