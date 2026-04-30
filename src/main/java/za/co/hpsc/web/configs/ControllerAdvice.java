@@ -96,8 +96,8 @@ public class ControllerAdvice {
             return;
         }
 
-        log.error("Error message: {})", throwable.getMessage(), throwable);
         log.error("Exception: {}", throwable.getClass().getName());
+        log.error("Error message: {})", throwable.getMessage(), throwable);
 
         Throwable cause = throwable.getCause();
         if (cause != null) {
