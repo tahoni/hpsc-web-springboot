@@ -168,7 +168,6 @@ public class DomainServiceImpl implements DomainService {
     }
 
     // TODO: add Javadoc
-    // TODO: add test
     protected Optional<ClubDto> initClubEntity(String clubName, String clubAbbreviation) {
         if (clubName == null) {
             return Optional.empty();

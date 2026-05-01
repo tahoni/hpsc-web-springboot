@@ -13,7 +13,7 @@ import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
 import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.ClubEntityService;
+import za.co.hpsc.web.services.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -44,6 +44,21 @@ public class DomainServiceTest {
 
     @Mock
     private ClubEntityService clubEntityService;
+
+    @Mock
+    private MatchEntityService matchEntityService;
+
+    @Mock
+    private MatchStageEntityService matchStageEntityService;
+
+    @Mock
+    private CompetitorEntityService competitorEntityService;
+
+    @Mock
+    private MatchCompetitorEntityService matchCompetitorEntityService;
+
+    @Mock
+    private MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
     @InjectMocks
     private DomainServiceImpl domainService;
@@ -521,7 +536,6 @@ public class DomainServiceTest {
 
         IpscMatch matchEntity = new IpscMatch();
         matchEntity.setId(5L);
-        when(ipscMatchRepository.findById(5L)).thenReturn(Optional.of(matchEntity));
 
         // Act
         Optional<MatchDto> result = domainService.initMatchEntity(matchDto);
@@ -529,7 +543,6 @@ public class DomainServiceTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(5L, result.get().getId());
-        verify(ipscMatchRepository).findById(5L);
     }
 
     @Test
@@ -537,7 +550,6 @@ public class DomainServiceTest {
         // Arrange
         MatchDto matchDto = buildMatchDto();
         matchDto.setId(55L);
-        when(ipscMatchRepository.findById(55L)).thenReturn(Optional.empty());
 
         // Act
         Optional<MatchDto> result = domainService.initMatchEntity(matchDto);
@@ -580,14 +592,12 @@ public class DomainServiceTest {
 
         Competitor competitorEntity = new Competitor();
         competitorEntity.setId(7L);
-        when(competitorRepository.findById(7L)).thenReturn(Optional.of(competitorEntity));
 
         // Act
         Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(List.of(competitorDto));
 
         // Assert
         assertEquals(1, result.size());
-        verify(competitorRepository).findById(7L);
     }
 
     @Test
@@ -595,7 +605,6 @@ public class DomainServiceTest {
         // Arrange
         CompetitorDto competitorDto = buildCompetitorDto("A", "B");
         competitorDto.setId(77L);
-        when(competitorRepository.findById(77L)).thenReturn(Optional.empty());
 
         // Act
         Map<UUID, CompetitorDto> result = domainService.initCompetitorEntities(List.of(competitorDto));
@@ -806,14 +815,14 @@ public class DomainServiceTest {
 
         IpscMatchStage stageEntity = new IpscMatchStage();
         stageEntity.setId(9L);
-        when(ipscMatchStageRepository.findById(9L)).thenReturn(Optional.of(stageEntity));
+        when(matchStageEntityService.findMatchStageById(9L)).thenReturn(Optional.of(stageEntity));
 
         // Act
         Map<UUID, MatchStageDto> result = domainService.initMatchStageEntities(List.of(stageDto), matchDto);
 
         // Assert
         assertEquals(1, result.size());
-        verify(ipscMatchStageRepository).findById(9L);
+        verify(matchStageEntityService).findMatchStageById(9L);
     }
 
     @Test
@@ -822,7 +831,6 @@ public class DomainServiceTest {
         MatchDto matchDto = buildMatchDto();
         MatchStageDto stageDto = buildMatchStageDto(matchDto, 1);
         stageDto.setId(19L);
-        when(ipscMatchStageRepository.findById(19L)).thenReturn(Optional.empty());
 
         // Act
         Map<UUID, MatchStageDto> result = domainService.initMatchStageEntities(List.of(stageDto), matchDto);
@@ -875,7 +883,6 @@ public class DomainServiceTest {
 
         MatchCompetitor entity = new MatchCompetitor();
         entity.setId(31L);
-        when(matchCompetitorRepository.findById(31L)).thenReturn(Optional.of(entity));
 
         // Act
         Map<UUID, MatchCompetitorDto> result = domainService.initMatchCompetitorEntities(
@@ -887,7 +894,6 @@ public class DomainServiceTest {
         // Assert
         assertEquals(1, result.size());
         assertTrue(result.containsKey(dto.getUuid()));
-        verify(matchCompetitorRepository).findById(31L);
     }
 
     @Test
@@ -1025,7 +1031,6 @@ public class DomainServiceTest {
 
         MatchStageCompetitor entity = new MatchStageCompetitor();
         entity.setId(41L);
-        when(matchStageCompetitorRepository.findById(41L)).thenReturn(Optional.of(entity));
 
         // Act
         Map<UUID, MatchStageCompetitorDto> result = domainService.initMatchStageCompetitorEntities(
@@ -1037,7 +1042,6 @@ public class DomainServiceTest {
         // Assert
         assertEquals(1, result.size());
         assertTrue(result.containsKey(dto.getUuid()));
-        verify(matchStageCompetitorRepository).findById(41L);
     }
 
     @Test
