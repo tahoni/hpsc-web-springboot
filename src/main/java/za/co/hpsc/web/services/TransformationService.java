@@ -39,7 +39,6 @@ public interface TransformationService {
     IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder);
 
     // TODO: add Javadoc
-    // TODO: add tests
     Optional<MatchOnlyDto> mapMatchOnly(MatchOnlyRequest matchOnlyRequest);
 
     /**

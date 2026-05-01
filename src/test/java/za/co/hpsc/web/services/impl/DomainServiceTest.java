@@ -10,6 +10,8 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.common.dto.*;
 import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 import za.co.hpsc.web.repositories.*;
 
 import java.time.LocalDateTime;
@@ -201,6 +203,114 @@ public class DomainServiceTest {
     }
 
     @Test
+    public void testInitMatchOnlyEntities_withNullInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<MatchOnlyResultsDto> result = domainService.initMatchOnlyEntities(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(clubRepository);
+    }
+
+    @Test
+    public void testInitMatchOnlyEntities_withNonNullClub_thenReturnsSameClubAndSkipsLookup() {
+        // Arrange
+        ClubDto clubDto = buildClubDto("HPSC Club", "HPSC");
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("Match Name");
+        matchOnlyDto.setClub(clubDto);
+        matchOnlyDto.setClubName("IGNORED CLUB NAME");
+
+        // Act
+        Optional<MatchOnlyResultsDto> result = domainService.initMatchOnlyEntities(matchOnlyDto);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertSame(matchOnlyDto, result.get().getMatch());
+        assertSame(clubDto, result.get().getClub());
+        verifyNoInteractions(clubRepository);
+    }
+
+    @Test
+    public void testInitMatchOnlyEntities_withNullClubAndClubNameFoundByName_thenSetsResolvedClub() {
+        // Arrange
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("League Match");
+        matchOnlyDto.setClub(null);
+        matchOnlyDto.setClubName("Hartbeespoortdam Practical Shooting Club");
+
+        Club clubEntity = new Club();
+        clubEntity.setId(501L);
+        clubEntity.setName("Hartbeespoortdam Practical Shooting Club");
+        clubEntity.setAbbreviation("HPSC");
+        when(clubRepository.findByName("Hartbeespoortdam Practical Shooting Club"))
+                .thenReturn(Optional.of(clubEntity));
+
+        // Act
+        Optional<MatchOnlyResultsDto> result = domainService.initMatchOnlyEntities(matchOnlyDto);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertSame(matchOnlyDto, result.get().getMatch());
+        assertNotNull(result.get().getClub());
+        assertEquals(501L, result.get().getClub().getId());
+        assertEquals("Hartbeespoortdam Practical Shooting Club", result.get().getClub().getName());
+        assertEquals("HPSC", result.get().getClub().getAbbreviation());
+        verify(clubRepository).findByName("Hartbeespoortdam Practical Shooting Club");
+        verify(clubRepository, never()).findByAbbreviation(anyString());
+    }
+
+    @Test
+    public void testInitMatchOnlyEntities_withNullClubAndClubNameFoundByAbbreviation_thenSetsResolvedClub() {
+        // Arrange
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("League Match");
+        matchOnlyDto.setClub(null);
+        matchOnlyDto.setClubName("HPSC");
+
+        Club clubEntity = new Club();
+        clubEntity.setId(502L);
+        clubEntity.setName("Hartbeespoortdam Practical Shooting Club");
+        clubEntity.setAbbreviation("HPSC");
+        when(clubRepository.findByName("HPSC")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("HPSC")).thenReturn(Optional.of(clubEntity));
+
+        // Act
+        Optional<MatchOnlyResultsDto> result = domainService.initMatchOnlyEntities(matchOnlyDto);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertSame(matchOnlyDto, result.get().getMatch());
+        assertNotNull(result.get().getClub());
+        assertEquals(502L, result.get().getClub().getId());
+        assertEquals("Hartbeespoortdam Practical Shooting Club", result.get().getClub().getName());
+        assertEquals("HPSC", result.get().getClub().getAbbreviation());
+        verify(clubRepository).findByName("HPSC");
+        verify(clubRepository).findByAbbreviation("HPSC");
+    }
+
+    @Test
+    public void testInitMatchOnlyEntities_withNullClubAndClubNameNotFound_thenReturnsPresentOptionalWithNullClub() {
+        // Arrange
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("League Match");
+        matchOnlyDto.setClub(null);
+        matchOnlyDto.setClubName("UNKNOWN");
+        when(clubRepository.findByName("UNKNOWN")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("UNKNOWN")).thenReturn(Optional.empty());
+
+        // Act
+        Optional<MatchOnlyResultsDto> result = domainService.initMatchOnlyEntities(matchOnlyDto);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertSame(matchOnlyDto, result.get().getMatch());
+        assertNull(result.get().getClub());
+        verify(clubRepository).findByName("UNKNOWN");
+        verify(clubRepository).findByAbbreviation("UNKNOWN");
+    }
+
+    @Test
     public void testInitClubEntityFromDto_whenNull_thenEmpty() {
         // Act
         Optional<ClubDto> result = domainService.initClubEntity((ClubDto) null);
@@ -307,6 +417,75 @@ public class DomainServiceTest {
 
         // Assert
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testInitClubEntity_withNullClubName_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubDto> result = domainService.initClubEntity((String) null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(clubRepository);
+    }
+
+    @Test
+    public void testInitClubEntity_withClubFoundByName_thenReturnsMappedClubDto() {
+        // Arrange
+        Club clubEntity = new Club();
+        clubEntity.setId(121L);
+        clubEntity.setName("Hartbeespoortdam Practical Shooting Club");
+        clubEntity.setAbbreviation("HPSC");
+        when(clubRepository.findByName("Hartbeespoortdam Practical Shooting Club"))
+                .thenReturn(Optional.of(clubEntity));
+
+        // Act
+        Optional<ClubDto> result = domainService.initClubEntity("Hartbeespoortdam Practical Shooting Club");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(121L, result.get().getId());
+        assertEquals("Hartbeespoortdam Practical Shooting Club", result.get().getName());
+        assertEquals("HPSC", result.get().getAbbreviation());
+        verify(clubRepository).findByName("Hartbeespoortdam Practical Shooting Club");
+        verify(clubRepository, never()).findByAbbreviation(anyString());
+    }
+
+    @Test
+    public void testInitClubEntity_withClubFoundByAbbreviationFallback_thenReturnsMappedClubDto() {
+        // Arrange
+        Club clubEntity = new Club();
+        clubEntity.setId(122L);
+        clubEntity.setName("Hartbeespoortdam Practical Shooting Club");
+        clubEntity.setAbbreviation("HPSC");
+        when(clubRepository.findByName("HPSC")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("HPSC")).thenReturn(Optional.of(clubEntity));
+
+        // Act
+        Optional<ClubDto> result = domainService.initClubEntity("HPSC");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(122L, result.get().getId());
+        assertEquals("Hartbeespoortdam Practical Shooting Club", result.get().getName());
+        assertEquals("HPSC", result.get().getAbbreviation());
+        verify(clubRepository).findByName("HPSC");
+        verify(clubRepository).findByAbbreviation("HPSC");
+    }
+
+    @Test
+    public void testInitClubEntity_withClubNotFoundByNameOrAbbreviation_thenReturnsEmptyOptional() {
+        // Arrange
+        when(clubRepository.findByName("UNKNOWN")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("UNKNOWN")).thenReturn(Optional.empty());
+
+        // Act
+        Optional<ClubDto> result = domainService.initClubEntity("UNKNOWN");
+
+        // Assert
+        assertTrue(result.isEmpty());
+        verify(clubRepository).findByName("UNKNOWN");
+        verify(clubRepository).findByAbbreviation("UNKNOWN");
     }
 
     @Test
@@ -999,4 +1178,7 @@ public class DomainServiceTest {
         return dto;
     }
 }
+
+
+
 

@@ -3,8 +3,7 @@ package za.co.hpsc.web.utils;
 import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 
 // TODO: add Javadoc
-// TODO: add test
-public class IpscUtil {
+public final class IpscUtil {
     public static String clubTostring(String name, String abbreviation) {
         StringBuilder sb = new StringBuilder();
 
@@ -34,16 +33,18 @@ public class IpscUtil {
 
     }
 
-    // TODO: comment
     public static String matchToString(String name, String clubName, String clubAbbreviation) {
         String clubNameTrimmed = clubTostring(clubName, clubAbbreviation);
         String matchNameTrimmed = ValueUtil.nullAsEmptyString(name).trim();
 
         StringBuilder sb = new StringBuilder();
 
+        // Appends the match name if it is not null and not blank
         if (!matchNameTrimmed.isEmpty()) {
             sb.append(matchNameTrimmed);
         }
+
+        // Appends the club name if it is not null and not blank, separating it from the name with an @ sign
         if (!clubNameTrimmed.isEmpty()) {
             sb.append(" @ ").append(clubNameTrimmed);
         }

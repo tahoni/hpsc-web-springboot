@@ -11,10 +11,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchOnlyRequestTest {
 
-    // No-args constructor
-
     @Test
-    void noArgsConstructor_createsInstanceWithNullFields() {
+    void testNoArgsConstructor_withNoArguments_thenCreatesInstanceWithNullFields() {
         // Act
         MatchOnlyRequest request = new MatchOnlyRequest();
 
@@ -27,10 +25,8 @@ public class MatchOnlyRequestTest {
         assertEquals(0, request.getSquadCount());
     }
 
-    // All-args constructor
-
     @Test
-    void allArgsConstructor_copiesAllFieldsExactly() {
+    void testAllArgsConstructor_withAllFieldsProvided_thenCopiesAllFieldsExactly() {
         // Arrange
         LocalDateTime matchDate = LocalDateTime.of(2026, 5, 10, 9, 0);
 
@@ -47,7 +43,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void allArgsConstructor_whenOptionalFieldsAreNull_thenSetsNulls() {
+    void testAllArgsConstructor_withOptionalFieldsNull_thenSetsNulls() {
         // Arrange
         LocalDateTime matchDate = LocalDateTime.of(2026, 6, 1, 10, 0);
 
@@ -62,10 +58,8 @@ public class MatchOnlyRequestTest {
         assertNull(request.getSquadCount());
     }
 
-    // MatchDto constructor
-
     @Test
-    void matchDtoConstructor_whenMatchDtoHasClubAndFirearmType_thenMapsAllFields() {
+    void testMatchDtoConstructor_withClubAndFirearmTypeProvided_thenMapsAllFields() {
         // Arrange
         ClubDto clubDto = new ClubDto();
         clubDto.setName("HPSC Club");
@@ -88,7 +82,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void matchDtoConstructor_whenClubIsNull_thenClubIsNull() {
+    void testMatchDtoConstructor_withNullClub_thenKeepsClubNull() {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("No Club Match");
@@ -106,7 +100,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void matchDtoConstructor_whenFirearmTypeIsNull_thenFirearmIsNull() {
+    void testMatchDtoConstructor_withNullFirearmType_thenKeepsFirearmNull() {
         // Arrange
         ClubDto clubDto = new ClubDto();
         clubDto.setName("Open Club");
@@ -127,7 +121,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void matchDtoConstructor_whenBothClubAndFirearmTypeAreNull_thenBothAreNull() {
+    void testMatchDtoConstructor_withNullClubAndFirearmType_thenKeepsBothNull() {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Minimal Match");
@@ -146,7 +140,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void matchDtoConstructor_whenFirearmTypeHasMultipleNames_thenUsesFirstName() {
+    void testMatchDtoConstructor_withFirearmTypeHavingMultipleNames_thenUsesFirstName() {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("PCC Match");
@@ -161,7 +155,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void matchDtoConstructor_setsSquadCountToDefault() {
+    void testMatchDtoConstructor_withNewInstance_thenSetsSquadCountToDefault() {
         // Arrange
         MatchDto matchDto = new MatchDto();
         matchDto.setName("Default Squad Count Match");
@@ -174,10 +168,8 @@ public class MatchOnlyRequestTest {
         assertEquals(0, request.getSquadCount());
     }
 
-    // Copy constructor
-
     @Test
-    void copyConstructor_copiesAllFieldsFromSource() {
+    void testCopyConstructor_withFullyPopulatedSource_thenCopiesAllFieldsFromSource() {
         // Arrange
         LocalDateTime matchDate = LocalDateTime.of(2026, 5, 20, 13, 0);
         MatchOnlyRequest original = new MatchOnlyRequest(99L, "Copy Match", matchDate, "Copy Club", "Handgun", 6);
@@ -195,7 +187,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void copyConstructor_whenOptionalFieldsAreNull_thenCopiesNulls() {
+    void testCopyConstructor_withOptionalFieldsNull_thenCopiesNulls() {
         // Arrange
         MatchOnlyRequest original = new MatchOnlyRequest();
         original.setMatchId(3L);
@@ -212,7 +204,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void copyConstructor_producesIndependentInstance() {
+    void testCopyConstructor_withSourceModifiedAfterCopy_thenProducesIndependentInstance() {
         // Arrange
         LocalDateTime matchDate = LocalDateTime.of(2026, 6, 1, 10, 0);
         MatchOnlyRequest original = new MatchOnlyRequest(50L, "Independence Test", matchDate, "Club A", "Rifle", 4);
@@ -226,7 +218,7 @@ public class MatchOnlyRequestTest {
     }
 
     @Test
-    void copyConstructor_whenSquadCountIsZero_thenCopiesZero() {
+    void testCopyConstructor_withZeroSquadCount_thenCopiesZero() {
         // Arrange
         MatchOnlyRequest original = new MatchOnlyRequest(
                 8L, "Zero Squad Match", LocalDateTime.of(2026, 12, 1, 10, 0), "Club B", "Shotgun", 0);

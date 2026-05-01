@@ -121,7 +121,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     // TODO: add Javadoc
-    // TODO: add tests
     @Override
     public void saveMatch(MatchOnlyResultsDto matchOnlyResultsDto) throws FatalException {
         if (matchOnlyResultsDto == null) {

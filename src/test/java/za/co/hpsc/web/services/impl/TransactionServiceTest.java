@@ -15,6 +15,8 @@ import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
 import za.co.hpsc.web.models.ipsc.common.data.DtoToEntityMapping;
 import za.co.hpsc.web.models.ipsc.common.dto.*;
 import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 import za.co.hpsc.web.repositories.*;
 
 import java.time.LocalDateTime;
@@ -58,6 +60,19 @@ public class TransactionServiceTest {
         DtoMapping dtoMapping = new DtoMapping();
         dtoMapping.setMatch(buildMatchDto());
         return dtoMapping;
+    }
+
+    private MatchOnlyDto buildMatchOnlyDto() {
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("Test Match");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 3, 31, 10, 0));
+        return matchOnlyDto;
+    }
+
+    private MatchOnlyResultsDto buildMatchOnlyResultsDto() {
+        MatchOnlyResultsDto matchOnlyResultsDto = new MatchOnlyResultsDto();
+        matchOnlyResultsDto.setMatch(buildMatchOnlyDto());
+        return matchOnlyResultsDto;
     }
 
     private CompetitorDto buildCompetitorDto() {
@@ -321,6 +336,91 @@ public class TransactionServiceTest {
         // Assert
         assertNotNull(ex.getMessage());
         assertTrue(ex.getMessage().startsWith("Unable to save the match:"));
+    }
+
+    @Test
+    public void testSaveMatch_withNullInput_thenReturnsWithoutTransaction() {
+        // Act
+        assertDoesNotThrow(() -> transactionService.saveMatch(null));
+
+        // Assert
+        verifyNoInteractions(transactionManager);
+        verifyNoInteractions(clubRepository);
+        verifyNoInteractions(ipscMatchRepository);
+    }
+
+    @Test
+    public void testSaveMatch_withClubAndMatch_thenSavesEntitiesAndCommits() {
+        // Arrange
+        MatchOnlyResultsDto matchOnlyResultsDto = buildMatchOnlyResultsDto();
+        ClubDto clubDto = new ClubDto();
+        clubDto.setName("Test Club");
+        clubDto.setAbbreviation("TC");
+        matchOnlyResultsDto.setClub(clubDto);
+        stubTransactionStart();
+
+        // Act
+        assertDoesNotThrow(() -> transactionService.saveMatch(matchOnlyResultsDto));
+
+        // Assert
+        verify(clubRepository).save(any(Club.class));
+        verify(ipscMatchRepository).save(any(IpscMatch.class));
+        verify(transactionManager).commit(transactionStatus);
+        verify(transactionManager, never()).rollback(any());
+    }
+
+    @Test
+    public void testSaveMatch_withClubAbsent_thenSavesMatchAndCommits() {
+        // Arrange
+        MatchOnlyResultsDto matchOnlyResultsDto = buildMatchOnlyResultsDto();
+        matchOnlyResultsDto.setClub(null);
+        stubTransactionStart();
+
+        // Act
+        assertDoesNotThrow(() -> transactionService.saveMatch(matchOnlyResultsDto));
+
+        // Assert
+        verifyNoInteractions(clubRepository);
+        verify(ipscMatchRepository).save(any(IpscMatch.class));
+        verify(transactionManager).commit(transactionStatus);
+        verify(transactionManager, never()).rollback(any());
+    }
+
+    @Test
+    public void testSaveMatch_withMatchAbsent_thenRollsBackAndThrowsFatalException() {
+        // Arrange
+        MatchOnlyResultsDto matchOnlyResultsDto = new MatchOnlyResultsDto();
+        matchOnlyResultsDto.setClub(null);
+        matchOnlyResultsDto.setMatch(null);
+        stubTransactionStart();
+
+        // Act
+        FatalException exception = assertThrows(FatalException.class,
+                () -> transactionService.saveMatch(matchOnlyResultsDto));
+
+        // Assert
+        assertNotNull(exception.getMessage());
+        assertTrue(exception.getMessage().startsWith("Unable to save the match:"));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
+    @Test
+    public void testSaveMatch_withRepositoryFailure_thenRollsBackAndThrowsFatalException() {
+        // Arrange
+        MatchOnlyResultsDto matchOnlyResultsDto = buildMatchOnlyResultsDto();
+        stubTransactionStart();
+        when(ipscMatchRepository.save(any(IpscMatch.class))).thenThrow(new RuntimeException("DB error"));
+
+        // Act
+        FatalException exception = assertThrows(FatalException.class,
+                () -> transactionService.saveMatch(matchOnlyResultsDto));
+
+        // Assert
+        assertNotNull(exception.getMessage());
+        assertTrue(exception.getMessage().startsWith("Unable to save the match:"));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
     }
 
     @Test

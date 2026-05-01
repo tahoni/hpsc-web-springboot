@@ -37,6 +37,5 @@ public interface DomainService {
                                            String filterClubAbbreviation, String matchClubAbbreviation);
 
     // TODO: add Javadoc
-    // TODO: add tests
     Optional<MatchOnlyResultsDto> initMatchOnlyEntities(MatchOnlyDto matchOnlyDto);
 }

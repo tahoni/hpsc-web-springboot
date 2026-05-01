@@ -96,6 +96,7 @@ public class DomainServiceImpl implements DomainService {
         return Optional.empty();
     }
 
+    // TODO: add Javadoc
     @Override
     public Optional<MatchOnlyResultsDto> initMatchOnlyEntities(MatchOnlyDto matchOnlyDto) {
         if (matchOnlyDto == null) {
@@ -145,7 +146,6 @@ public class DomainServiceImpl implements DomainService {
      * @return an Optional containing the club entity if found, or an empty Optional
      * if no match is found
      */
-    // TODO: Verify tests
     protected Optional<ClubDto> initClubEntity(ClubIdentifier clubIdentifier) {
         if ((clubIdentifier == null) || (IpscConstants.EXCLUDE_CLUB_IDENTIFIERS.contains(clubIdentifier))) {
             return Optional.empty();
@@ -156,7 +156,6 @@ public class DomainServiceImpl implements DomainService {
     }
 
     // TODO: add Javadoc
-    // TODO: add tests
     protected Optional<ClubDto> initClubEntity(String clubName) {
         if (clubName == null) {
             return Optional.empty();

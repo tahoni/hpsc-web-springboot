@@ -8,7 +8,6 @@ import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 
 // TODO: add Javadoc
-// TODO: add test
 @Getter
 @Setter
 @NoArgsConstructor

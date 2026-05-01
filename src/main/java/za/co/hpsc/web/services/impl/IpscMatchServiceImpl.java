@@ -20,7 +20,6 @@ import za.co.hpsc.web.utils.ValueUtil;
 import java.util.Optional;
 
 // TODO: add Javadoc
-// TODO: add tests
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
