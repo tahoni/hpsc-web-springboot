@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -41,42 +42,6 @@ public class IpscServiceIntegrationTest {
 
     @Autowired
     private IpscService ipscService;
-
-    @Bean
-    public TransformationService ipscMatchService(ClubEntityService clubEntityService,
-                                                  MatchEntityService matchEntityService,
-                                                  MatchStageEntityService matchStageEntityService,
-                                                  CompetitorEntityService competitorEntityService,
-                                                  MatchCompetitorEntityService matchCompetitorEntityService,
-                                                  MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
-        return new TransformationServiceImpl(clubEntityService, matchEntityService,
-                matchStageEntityService, competitorEntityService,
-                matchCompetitorEntityService, matchStageCompetitorEntityService);
-    }
-
-    @Bean
-    public TransactionService transactionService(ClubRepository clubRepository,
-                                                 IpscMatchRepository ipscMatchRepository,
-                                                 IpscMatchStageRepository ipscMatchStageRepository,
-                                                 MatchCompetitorRepository matchCompetitorRepository,
-                                                 MatchStageCompetitorRepository matchStageCompetitorRepository) {
-        return new TransactionServiceImpl(platformTransactionManager, clubRepository,
-                competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
-                matchCompetitorRepository, matchStageCompetitorRepository);
-    }
-
-    @Bean
-    public MatchEntityService matchEntityService(IpscMatchRepository ipscMatchRepository) {
-        return new MatchEntityServiceImpl(ipscMatchRepository);
-    }
-
-    @Bean
-    public IpscService ipscService(TransformationService transformationService,
-                                   DomainService domainService,
-                                   TransactionService transactionService) {
-        return new IpscServiceImpl(transformationService, domainService,
-                transactionService);
-    }
 
     // Test Group: importWinMssCabFile - Integration tests
     // Test Group: Null/Empty/Blank Input Handling
@@ -928,5 +893,43 @@ public class IpscServiceIntegrationTest {
         assertEquals(1, persistedStage.getMatchStageCompetitors().size());
         return persistedStage.getMatchStageCompetitors().getFirst();
     }
-}
 
+    @TestConfiguration
+    class TestConfig {
+        @Bean
+        public TransformationService transformationService(ClubEntityService clubEntityService,
+                                                           MatchEntityService matchEntityService,
+                                                           MatchStageEntityService matchStageEntityService,
+                                                           CompetitorEntityService competitorEntityService,
+                                                           MatchCompetitorEntityService matchCompetitorEntityService,
+                                                           MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
+            return new TransformationServiceImpl(clubEntityService, matchEntityService,
+                    matchStageEntityService, competitorEntityService,
+                    matchCompetitorEntityService, matchStageCompetitorEntityService);
+        }
+
+        @Bean
+        public TransactionService transactionService(ClubRepository clubRepository,
+                                                     IpscMatchRepository ipscMatchRepository,
+                                                     IpscMatchStageRepository ipscMatchStageRepository,
+                                                     MatchCompetitorRepository matchCompetitorRepository,
+                                                     MatchStageCompetitorRepository matchStageCompetitorRepository) {
+            return new TransactionServiceImpl(platformTransactionManager, clubRepository,
+                    competitorRepository, ipscMatchRepository, ipscMatchStageRepository,
+                    matchCompetitorRepository, matchStageCompetitorRepository);
+        }
+
+        @Bean
+        public MatchEntityService matchEntityService(IpscMatchRepository ipscMatchRepository) {
+            return new MatchEntityServiceImpl(ipscMatchRepository);
+        }
+
+        @Bean
+        public IpscService ipscService(TransformationService transformationService,
+                                       DomainService domainService,
+                                       TransactionService transactionService) {
+            return new IpscServiceImpl(transformationService, domainService,
+                    transactionService);
+        }
+    }
+}

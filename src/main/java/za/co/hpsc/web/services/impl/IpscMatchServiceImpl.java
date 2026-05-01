@@ -6,16 +6,12 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchOnlyResponse;
-import za.co.hpsc.web.services.DomainService;
-import za.co.hpsc.web.services.IpscMatchService;
-import za.co.hpsc.web.services.TransactionService;
-import za.co.hpsc.web.services.TransformationService;
+import za.co.hpsc.web.services.*;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.Optional;
@@ -29,12 +25,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected final DomainService domainService;
     protected final TransactionService transactionService;
 
-    protected final MatchEntityServiceImpl matchEntityService;
+    protected final MatchEntityService matchEntityService;
 
     public IpscMatchServiceImpl(TransformationService transformationService,
                                 DomainService domainService,
                                 TransactionService transactionService,
-                                MatchEntityServiceImpl matchEntityService) {
+                                MatchEntityService matchEntityService) {
         this.transformationService = transformationService;
         this.domainService = domainService;
         this.transactionService = transactionService;
@@ -67,8 +63,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         // Convert the match to a match response
         Long matchIdNumber = ipscMatch.getId();
-        MatchDto matchDto = new MatchDto(ipscMatch);
-        return Optional.of(new MatchOnlyResponse(matchIdNumber, matchDto));
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto(ipscMatch);
+        return Optional.of(new MatchOnlyResponse(matchIdNumber, matchOnlyDto));
     }
 
     protected Optional<MatchOnlyResponse> modifyMatchResponse(Long matchId,
@@ -97,8 +93,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         Long matchIdNumber = ValueUtil.nullAsZero(matchId);
 
         // Convert to a match response and merge with the incoming payload
-        MatchDto matchDto = new MatchDto(ipscMatch);
-        MatchOnlyResponse fetchedMatchWithStagesResponse = new MatchOnlyResponse(matchIdNumber, matchDto);
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto(ipscMatch);
+        MatchOnlyResponse fetchedMatchWithStagesResponse = new MatchOnlyResponse(matchIdNumber, matchOnlyDto);
         fetchedMatchWithStagesResponse.init(matchIdNumber, matchOnlyRequest, fullUpdate);
         return Optional.of(fetchedMatchWithStagesResponse);
     }
@@ -119,7 +115,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         Optional<MatchOnlyResponse> optionalMatchOnlyResponse = Optional.empty();
         if (optionalMatchHolder.isPresent()) {
             optionalMatchOnlyResponse = Optional.of(new MatchOnlyResponse(optionalMatchHolder.get()));
+        } else if (optionalMatchOnlyDto.isPresent()) {
+            optionalMatchOnlyResponse = Optional.of(new MatchOnlyResponse(optionalMatchOnlyDto.get()));
         }
+
         return optionalMatchOnlyResponse;
     }
 

@@ -27,7 +27,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@Disabled
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
 
@@ -137,6 +136,7 @@ public class TransactionServiceTest {
         verifyNoInteractions(transactionManager);
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenValidDtoMappingWithNoClubOrCollections_thenSavesMatchAndCommits() {
         // Arrange
@@ -161,6 +161,7 @@ public class TransactionServiceTest {
         verifyNoInteractions(matchStageCompetitorRepository);
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenClubDtoProvided_thenSavesClub() {
         // Arrange
@@ -177,6 +178,7 @@ public class TransactionServiceTest {
         verify(clubRepository).save(any(Club.class));
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenExistingMatchIdProvided_thenFetchesMatchFromRepository() {
         // Arrange
@@ -200,6 +202,7 @@ public class TransactionServiceTest {
         verify(ipscMatchRepository).findById(10L);
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenCompetitorsProvided_thenSavesAllCompetitors() {
         // Arrange
@@ -215,6 +218,7 @@ public class TransactionServiceTest {
         verify(competitorRepository).saveAll(anyList());
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenMatchStagesProvided_thenSavesAllMatchStages() {
         // Arrange
@@ -230,6 +234,7 @@ public class TransactionServiceTest {
         verify(ipscMatchStageRepository).saveAll(anyList());
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenMatchCompetitorsProvided_thenSavesAllMatchCompetitors() {
         // Arrange
@@ -250,6 +255,7 @@ public class TransactionServiceTest {
         verify(matchCompetitorRepository).saveAll(anyList());
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenMatchStageCompetitorsProvided_thenSavesAllMatchStageCompetitors() {
         // Arrange
@@ -273,6 +279,7 @@ public class TransactionServiceTest {
         verify(matchStageCompetitorRepository).saveAll(anyList());
     }
 
+    @Disabled
     @Test
     public void testSaveMatchResults_whenSameCompetitorEnrollsInTwoDivisions_thenSavesTwoMatchCompetitorEntities() {
         // Arrange

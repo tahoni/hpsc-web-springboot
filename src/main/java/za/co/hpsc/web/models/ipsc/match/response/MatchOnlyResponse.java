@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.common.response.StageResponse;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 import za.co.hpsc.web.utils.ValueUtil;
 
@@ -20,12 +20,23 @@ import java.util.List;
 public class MatchOnlyResponse extends MatchOnlyRequest {
     private List<StageResponse> stages;
 
-    public MatchOnlyResponse(Long matchId, MatchDto matchDto) {
-        super(matchId, matchDto);
+    public MatchOnlyResponse(Long matchId, MatchOnlyDto matchOnlyDto) {
+        super(matchId, matchOnlyDto);
     }
 
     public MatchOnlyResponse(MatchOnlyRequest matchOnlyRequest) {
         super(matchOnlyRequest);
+    }
+
+    public MatchOnlyResponse(MatchOnlyDto matchOnlyDto) {
+        super();
+        if (matchOnlyDto != null) {
+            this.setClub(matchOnlyDto.getClubName());
+            this.setMatchId(ValueUtil.nullAsDefault(matchOnlyDto.getId(), null));
+            this.setMatchName(ValueUtil.nullAsDefaultString(matchOnlyDto.getName(), null));
+            this.setMatchDate(ValueUtil.nullAsDefault(matchOnlyDto.getScheduledDate(), null));
+            this.setFirearm(ValueUtil.nullAsDefaultString(matchOnlyDto.getMatchFirearmType(), null));
+        }
     }
 
     public MatchOnlyResponse(MatchHolder matchHolder) {

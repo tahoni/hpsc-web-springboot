@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 
 import java.time.LocalDateTime;
 
@@ -24,15 +24,15 @@ public class MatchOnlyRequest {
 
     private Integer squadCount = 0;
 
-    public MatchOnlyRequest(Long matchId, MatchDto matchDto) {
+    public MatchOnlyRequest(Long matchId, MatchOnlyDto matchOnlyDto) {
         this.matchId = matchId;
 
-        if (matchDto != null) {
-            this.matchName = matchDto.getName();
-            this.matchDate = matchDto.getScheduledDate();
-            this.club = ((matchDto.getClub() != null) ? matchDto.getClub().getName() : null);
-            this.firearm = ((matchDto.getMatchFirearmType() != null) ?
-                    matchDto.getMatchFirearmType().getNames().getFirst() : null);
+        if (matchOnlyDto != null) {
+            this.matchName = matchOnlyDto.getName();
+            this.matchDate = matchOnlyDto.getScheduledDate();
+            this.club = ((matchOnlyDto.getClub() != null) ? matchOnlyDto.getClub().getName() : null);
+            this.firearm = ((matchOnlyDto.getMatchFirearmType() != null) ?
+                    matchOnlyDto.getMatchFirearmType().getNames().getFirst() : null);
         }
     }
 

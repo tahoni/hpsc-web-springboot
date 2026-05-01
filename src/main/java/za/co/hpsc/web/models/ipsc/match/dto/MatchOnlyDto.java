@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
@@ -49,6 +50,28 @@ public class MatchOnlyDto {
 
             // Sets the date edited to the current date and time
             this.dateEdited = LocalDateTime.now();
+        }
+    }
+
+    // TODO: add tests
+    public MatchOnlyDto(IpscMatch matchEntity) {
+        if (matchEntity != null) {
+            // Initialises match details
+            this.id = matchEntity.getId();
+
+            // Initialises club details from the associated entity
+            if (matchEntity.getClub() != null) {
+                this.club = new ClubDto(matchEntity.getClub());
+            }
+
+            // Initialises the match attributes
+            this.name = matchEntity.getName();
+            this.scheduledDate = matchEntity.getScheduledDate();
+            this.matchFirearmType = matchEntity.getMatchFirearmType();
+            this.matchCategory = matchEntity.getMatchCategory();
+
+            // Initialises the date fields
+            this.dateEdited = matchEntity.getDateEdited();
         }
     }
 

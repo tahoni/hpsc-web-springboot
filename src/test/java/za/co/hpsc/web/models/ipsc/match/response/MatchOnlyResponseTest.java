@@ -3,8 +3,8 @@ package za.co.hpsc.web.models.ipsc.match.response;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 import za.co.hpsc.web.models.ipsc.common.response.StageResponse;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 
 import java.time.LocalDateTime;
@@ -52,14 +52,14 @@ class MatchOnlyResponseTest {
         ClubDto clubDto = new ClubDto();
         clubDto.setName("HPSC Club");
 
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Summer Shoot");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 5, 1, 9, 0));
-        matchDto.setClub(clubDto);
-        matchDto.setMatchFirearmType(FirearmType.HANDGUN);
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("Summer Shoot");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 5, 1, 9, 0));
+        matchOnlyDto.setClub(clubDto);
+        matchOnlyDto.setMatchFirearmType(FirearmType.HANDGUN);
 
         // Act
-        MatchOnlyResponse response = new MatchOnlyResponse(42L, matchDto);
+        MatchOnlyResponse response = new MatchOnlyResponse(42L, matchOnlyDto);
 
         // Assert
         assertEquals(42L, response.getMatchId());

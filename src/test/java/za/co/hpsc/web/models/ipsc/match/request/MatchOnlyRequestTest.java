@@ -3,11 +3,12 @@ package za.co.hpsc.web.models.ipsc.match.request;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MatchOnlyRequestTest {
 
@@ -64,14 +65,14 @@ public class MatchOnlyRequestTest {
         ClubDto clubDto = new ClubDto();
         clubDto.setName("HPSC Club");
 
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Regional Match");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 6, 15, 10, 0));
-        matchDto.setClub(clubDto);
-        matchDto.setMatchFirearmType(FirearmType.HANDGUN);
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("Regional Match");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 6, 15, 10, 0));
+        matchOnlyDto.setClub(clubDto);
+        matchOnlyDto.setMatchFirearmType(FirearmType.HANDGUN);
 
         // Act
-        MatchOnlyRequest request = new MatchOnlyRequest(42L, matchDto);
+        MatchOnlyRequest request = new MatchOnlyRequest(42L, matchOnlyDto);
 
         // Assert
         assertEquals(42L, request.getMatchId());
@@ -84,14 +85,14 @@ public class MatchOnlyRequestTest {
     @Test
     void testMatchDtoConstructor_withNullClub_thenKeepsClubNull() {
         // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("No Club Match");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 7, 1, 8, 0));
-        matchDto.setClub(null);
-        matchDto.setMatchFirearmType(FirearmType.RIFLE);
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("No Club Match");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 7, 1, 8, 0));
+        matchOnlyDto.setClub(null);
+        matchOnlyDto.setMatchFirearmType(FirearmType.RIFLE);
 
         // Act
-        MatchOnlyRequest request = new MatchOnlyRequest(10L, matchDto);
+        MatchOnlyRequest request = new MatchOnlyRequest(10L, matchOnlyDto);
 
         // Assert
         assertEquals(10L, request.getMatchId());
@@ -105,14 +106,14 @@ public class MatchOnlyRequestTest {
         ClubDto clubDto = new ClubDto();
         clubDto.setName("Open Club");
 
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Open Match");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 8, 20, 14, 0));
-        matchDto.setClub(clubDto);
-        matchDto.setMatchFirearmType(null);
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("Open Match");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 8, 20, 14, 0));
+        matchOnlyDto.setClub(clubDto);
+        matchOnlyDto.setMatchFirearmType(null);
 
         // Act
-        MatchOnlyRequest request = new MatchOnlyRequest(5L, matchDto);
+        MatchOnlyRequest request = new MatchOnlyRequest(5L, matchOnlyDto);
 
         // Assert
         assertEquals(5L, request.getMatchId());
@@ -123,14 +124,14 @@ public class MatchOnlyRequestTest {
     @Test
     void testMatchDtoConstructor_withNullClubAndFirearmType_thenKeepsBothNull() {
         // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Minimal Match");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 9, 5, 11, 0));
-        matchDto.setClub(null);
-        matchDto.setMatchFirearmType(null);
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("Minimal Match");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 9, 5, 11, 0));
+        matchOnlyDto.setClub(null);
+        matchOnlyDto.setMatchFirearmType(null);
 
         // Act
-        MatchOnlyRequest request = new MatchOnlyRequest(7L, matchDto);
+        MatchOnlyRequest request = new MatchOnlyRequest(7L, matchOnlyDto);
 
         // Assert
         assertEquals(7L, request.getMatchId());
@@ -142,13 +143,13 @@ public class MatchOnlyRequestTest {
     @Test
     void testMatchDtoConstructor_withFirearmTypeHavingMultipleNames_thenUsesFirstName() {
         // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("PCC Match");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 10, 1, 10, 0));
-        matchDto.setMatchFirearmType(FirearmType.PCC);
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("PCC Match");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 10, 1, 10, 0));
+        matchOnlyDto.setMatchFirearmType(FirearmType.PCC);
 
         // Act
-        MatchOnlyRequest request = new MatchOnlyRequest(15L, matchDto);
+        MatchOnlyRequest request = new MatchOnlyRequest(15L, matchOnlyDto);
 
         // Assert
         assertEquals("PCC", request.getFirearm());
@@ -157,12 +158,12 @@ public class MatchOnlyRequestTest {
     @Test
     void testMatchDtoConstructor_withNewInstance_thenSetsSquadCountToDefault() {
         // Arrange
-        MatchDto matchDto = new MatchDto();
-        matchDto.setName("Default Squad Count Match");
-        matchDto.setScheduledDate(LocalDateTime.of(2026, 11, 10, 9, 0));
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.setName("Default Squad Count Match");
+        matchOnlyDto.setScheduledDate(LocalDateTime.of(2026, 11, 10, 9, 0));
 
         // Act
-        MatchOnlyRequest request = new MatchOnlyRequest(20L, matchDto);
+        MatchOnlyRequest request = new MatchOnlyRequest(20L, matchOnlyDto);
 
         // Assert
         assertEquals(0, request.getSquadCount());

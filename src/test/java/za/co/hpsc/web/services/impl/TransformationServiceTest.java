@@ -1156,7 +1156,6 @@ public class TransformationServiceTest {
         assertEquals(99L, result.getFirst().getId());
     }
 
-    @Disabled
     @Test
     public void initCompetitors_whenAllScoresAreZero_thenReturnsEmptyList() {
         // Arrange
@@ -1174,9 +1173,6 @@ public class TransformationServiceTest {
                 new MemberResponse(9, "Doe", "John", "", false, LocalDateTime.of(1990, 1, 1, 0, 0), "111", "BBB", true, null, null, null),
                 new MemberResponse(10, "Poe", "Jane", "", false, LocalDateTime.of(1991, 1, 1, 0, 0), "222", "BBB", true, null, null, null)
         ));
-
-        when(competitorEntityService.findCompetitor(anyString(), anyString(), anyString(), any()))
-                .thenReturn(Optional.empty());
 
         // Act
         List<CompetitorDto> result = transformationService.initCompetitors(results, response);
@@ -1483,7 +1479,7 @@ public class TransformationServiceTest {
         assertEquals(2, result.size());
     }
 
-    @Disabled("need to fix method")
+    @Disabled
     @Test
     public void generateIpscMatchRecordHolder_whenCompetitorWithNullStages_thenSkipsCompetitor() {
         // Arrange
