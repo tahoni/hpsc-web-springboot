@@ -31,7 +31,7 @@ Complete historical archive and documentation of all HPSC Website Backend releas
 ## 📖 Overview
 
 This directory contains comprehensive documentation of the project's evolution from version 1.0.0
-(January 4, 2026) through version 5.4.0 (April 26, 2026).
+(January 4, 2026) through version 6.0.0 (May 1, 2026).
 
 –––
 
@@ -39,15 +39,18 @@ This directory contains comprehensive documentation of the project's evolution f
 
 ### 🎯 Current Release
 
-— **[Version 5.4.0](RELEASE_NOTES_v5.4.0.md)** – Competitor Enrolment, Service Transformation &
-Comprehensive Test Expansion
-– **Release Date:** April 26, 2026
+— **[Version 6.0.0](RELEASE_NOTES_v6.0.0.md)** – Dedicated Match CRUD API, Service Encapsulation &
+Package Restructuring
+– **Release Date:** May 1, 2026
 – **Status:** Current/Stable
-– **Key Features:** EnrolledCompetitorDto, IpscMatchService renamed to TransformationService,
-ClubIdentifier abbreviation, SAPSA validation, 20+ new test classes, Qodana JVM linting, JaCoCo coverage
+– **Key Features:** `IpscMatchController` at `/v2/ipsc/matches` (POST/PUT/PATCH/GET),
+`IpscMatchService`, `MatchOnlyDto/Request/Response`, `DomainServiceImpl` repository decoupling,
+`models/ipsc/common/` + `models/ipsc/match/` restructure, `IpscUtil`, Spring Boot 4.0.6
 
 ### 📊 Previous Major Releases
 
+— **[Version 5.4.0](RELEASE_NOTES_v5.4.0.md)** – Competitor Enrolment, Service Transformation &
+Comprehensive Test Expansion (Apr 26, 2026)
 — **[Version 5.3.0](RELEASE_NOTES_v5.3.0.md)** – Service Consolidation, Custom JPA Converters &
 Repository Optimisation (Mar 15, 2026)
 – **[Version 5.2.0](RELEASE_NOTES_v5.2.0.md)** – Match Results Processing Enhancement & Architecture
@@ -106,7 +109,8 @@ documentation/history/
 ├── README.md                          ← You are here
 ├── HISTORY.md                         (Project history & evolution)
 ├── RELEASE_NOTES_HISTORY.md          (Complete release archive)
-├── RELEASE_NOTES_v5.4.0.md           (Current release)
+├── RELEASE_NOTES_v6.0.0.md           (Current release)
+├── RELEASE_NOTES_v5.4.0.md
 ├── RELEASE_NOTES_v5.3.0.md
 ├── RELEASE_NOTES_v5.2.0.md
 ├── RELEASE_NOTES_v5.1.0.md
@@ -200,6 +204,7 @@ documentation/history/
 
 | Version | Date | Theme | Status | Breaking Changes |
 |–––––––––––|––––––––––––––|––––––––––––––––––––––––––––––––|––––––––|––––––––––––––––––––|
+| **6.0.0** | May 1, 2026  | Dedicated Match API & Encapsulation | Stable | ✅ None (public API) |
 | **5.4.0** | Apr 26, 2026 | Enrolment & Service Transformation | Stable | ✅ None |
 | **5.3.0** | Mar 15, 2026 | Service Consolidation & Converters | Stable | ✅ None |
 | **5.2.0** | Feb 27, 2026 | Architecture Refactoring | Stable | ✅ None |
@@ -230,8 +235,9 @@ response models
 
 ### ✅ Non–Breaking Releases
 
-— **v5.4.0, v5.3.0, v5.2.0, v5.1.0, v5.0.0, v4.1.0, v3.1.0, v1.1.3, v1.1.2, v1.1.1, v1.1.0** – All fully
-backward compatible
+— **v6.0.0, v5.4.0, v5.3.0, v5.2.0, v5.1.0, v5.0.0, v4.1.0, v3.1.0, v1.1.3, v1.1.2, v1.1.1, v1.1.0** –
+All fully backward compatible for API consumers
+> **v6.0.0 developer note:** Internal IPSC model package paths changed — update import statements.
 
 –––
 
@@ -239,20 +245,22 @@ backward compatible
 
 ### 🎯 Feature Availability by Version
 
-| Feature | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 |
-|–––––––––––––––––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|
-| Image Gallery | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Award Processing | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Match Management | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Competitor Tracking | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| IPSC Integration | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| CRUD Operations | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Semantic Versioning | | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Test Organisation | | | | | | | | ✅ | ✅ | ✅ | ✅ |
-| Three-Tier Mapping | | | | | | | | | ✅ | ✅ | ✅ |
-| Custom JPA Converters | | | | | | | | | | ✅ | ✅ |
-| Competitor Enrolment | | | | | | | | | | | ✅ |
-| SAPSA Validation | | | | | | | | | | | ✅ |
+| Feature | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 | v6.0 |
+|–––––––––––––––––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|––––––|
+| Image Gallery | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Award Processing | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Match Management | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Competitor Tracking | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| IPSC Integration | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| CRUD Operations | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Semantic Versioning | | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Test Organisation | | | | | | | | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Three-Tier Mapping | | | | | | | | | ✅ | ✅ | ✅ | ✅ |
+| Custom JPA Converters | | | | | | | | | | ✅ | ✅ | ✅ |
+| Competitor Enrolment | | | | | | | | | | | ✅ | ✅ |
+| SAPSA Validation | | | | | | | | | | | ✅ | ✅ |
+| Match CRUD API (v2) | | | | | | | | | | | | ✅ |
+| Entity Svc Encapsulation | | | | | | | | | | | | ✅ |
 
 –––
 
@@ -274,11 +282,12 @@ backward compatible
                                                            └─→ 2026–02–27 ──→ v5.2.0 (Architecture)
                                                                └─→ 2026–03–15 ──→ v5.3.0 (Consolidation)
                                                                    └─→ 2026–04–26 ──→ v5.4.0 (Enrolment)
+                                                                       └─→ 2026–05–01 ──→ v6.0.0 (Match API)
 ```
 
-**Duration:** ~112 days (Jan 4 – Apr 26, 2026)  
-**Total Releases:** 15  
-**Average Release Frequency:** ~7.5 days
+**Duration:** ~117 days (Jan 4 – May 1, 2026)  
+**Total Releases:** 16  
+**Average Release Frequency:** ~7.3 days
 
 –––
 
@@ -297,6 +306,7 @@ backward compatible
 – **v5.2.0:** ~90% coverage (comprehensive test consolidation, 3,000+ duplicates removed)
 – **v5.3.0:** ~90% coverage (service consolidation, IpscMatchResultServiceTest and ScoreDtoTest removed)
 – **v5.4.0:** ~92% coverage (20+ new test classes, 7,000+ lines of new test code across all layers)
+– **v6.0.0:** ~93% coverage (8 new test classes covering match CRUD, integration, DTOs, and utility)
 
 ### 📚 Documentation Evolution
 
@@ -312,6 +322,16 @@ backward compatible
 –––
 
 ## 🚀 Migration Guides
+
+### ⬆️ Upgrading to v6.0.0
+
+**From v5.4.0:** ✅ No migration required for API consumers (additive release — existing endpoints unchanged)
+
+**For developers:** See [RELEASE_NOTES_v6.0.0.md](RELEASE_NOTES_v6.0.0.md) "Migration Guide" — note
+internal IPSC model package changes (`models/ipsc.*` → `models/ipsc.common.*`; match-specific models at
+`models/ipsc.match.*`), removal of `throws ValidationException` from
+`TransformationService.mapMatchResults`, and the `DomainServiceImpl` constructor parameter change
+(repositories replaced by entity services)
 
 ### ⬆️ Upgrading to v5.4.0
 
@@ -355,6 +375,11 @@ renaming of `IpscMatchService` → `TransformationService`, package move of mapp
 –––
 
 ## ⚠️ Known Issues by Version
+
+### v6.0.0
+
+— ✅ No known issues reported
+– 🧪 All major components working as expected
 
 ### v5.4.0
 
@@ -434,11 +459,11 @@ Please follow the contribution guidelines in the main repository.
 ## 📝 Document Metadata
 
 — **Created:** February 24, 2026
-– **Last Updated:** April 26, 2026
-– **Coverage:** v1.0.0 – v5.4.0 (15 releases)
-– **Timeline:** January 4 – April 26, 2026 (~112 days)
-– **Total Files:** 17 documentation files
-– **Total Content:** ~3,200+ lines
+– **Last Updated:** May 1, 2026
+– **Coverage:** v1.0.0 – v6.0.0 (16 releases)
+– **Timeline:** January 4 – May 1, 2026 (~117 days)
+– **Total Files:** 18 documentation files
+– **Total Content:** ~3,500+ lines
 
 –––
 
@@ -452,5 +477,5 @@ Please follow the contribution guidelines in the main repository.
 
 –––
 
-**Last Updated:** April 26, 2026  
+**Last Updated:** May 1, 2026  
 **Status:** Complete and Current
