@@ -204,6 +204,8 @@ public class TransactionServiceImpl implements TransactionService {
         return Optional.of(matchEntity);
     }
 
+    // TODO: add Javadoc
+    // TODO: add tests
     protected Optional<IpscMatch> getIpscMatch(MatchOnlyDto matchOnlyDto) {
         if (matchOnlyDto == null) {
             return Optional.empty();

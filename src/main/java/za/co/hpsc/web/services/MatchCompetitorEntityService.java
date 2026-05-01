@@ -3,6 +3,7 @@ package za.co.hpsc.web.services;
 import za.co.hpsc.web.domain.MatchCompetitor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The {@code MatchCompetitorEntityService} interface defines the contract related to
@@ -11,7 +12,11 @@ import java.util.List;
  * based on specific criteria.
  */
 public interface MatchCompetitorEntityService {
-    
+    // TODO: add Javadoc
+    // TODO: add tests
+    Optional<MatchCompetitor> findMatchCompetitorById(Long matchCompetitorId);
+
+
     /**
      * Retrieves a list of {@link MatchCompetitor} entities matching the specified match
      * and competitor identifiers.

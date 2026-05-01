@@ -18,6 +18,11 @@ public class MatchStageEntityServiceImpl implements MatchStageEntityService {
     }
 
     @Override
+    public Optional<IpscMatchStage> findMatchStageById(Long matchStageId) {
+        return matchStageRepository.findById(matchStageId);
+    }
+
+    @Override
     public Optional<IpscMatchStage> findMatchStage(Long matchId, Integer stageNumber) {
         if ((matchId == null) || (stageNumber == null)) {
             return Optional.empty();

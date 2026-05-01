@@ -4,6 +4,10 @@ import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 
 // TODO: add Javadoc
 public final class IpscUtil {
+    private IpscUtil() {
+        // Private constructor to prevent instantiation
+    }
+
     public static String clubTostring(String name, String abbreviation) {
         StringBuilder sb = new StringBuilder();
 

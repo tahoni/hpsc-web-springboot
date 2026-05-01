@@ -12,6 +12,10 @@ import java.util.Optional;
  * specific criteria.
  */
 public interface CompetitorEntityService {
+    // TODO: add Javadoc
+    // TODO: add tests
+    Optional<Competitor> findCompetitorById(Long competitorId);
+
     /**
      * Searches for a {@link Competitor} based on the provided details.
      *
