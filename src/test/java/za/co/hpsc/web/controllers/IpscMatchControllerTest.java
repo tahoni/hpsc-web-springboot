@@ -28,7 +28,7 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void getMatch_returnsNull_whenServiceReturnsEmptyOptional() {
+    void testGetMatch_whenServiceReturnsEmptyOptional_thenThrowsFatalException() {
         Long matchId = 8L;
         when(ipscMatchService.getMatch(matchId)).thenReturn(Optional.empty());
 
@@ -38,7 +38,7 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void insertMatch_propagatesFatalException_fromService() throws FatalException {
+    void testInsertMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws FatalException {
         MatchOnlyRequest matchOnlyRequest = new MatchOnlyRequest();
         doThrow(new FatalException("insert failed")).when(ipscMatchService).insertMatch(matchOnlyRequest);
 
