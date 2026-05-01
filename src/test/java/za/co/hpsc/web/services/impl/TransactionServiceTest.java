@@ -504,6 +504,80 @@ public class TransactionServiceTest {
     }
 
     @Test
+    public void testGetIpscMatch_withNullMatchOnlyDto_thenReturnsEmptyOptional() {
+        // Act
+        Optional<IpscMatch> result = transactionService.getIpscMatch((MatchOnlyDto) null);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(ipscMatchRepository);
+    }
+
+    @Test
+    public void testGetIpscMatch_withMatchOnlyDtoWithoutId_thenCreatesNewMatchWithoutRepositoryLookup() {
+        // Arrange
+        MatchOnlyDto matchOnlyDto = buildMatchOnlyDto();
+        matchOnlyDto.setId(null);
+        matchOnlyDto.setMatchFirearmType(FirearmType.HANDGUN);
+
+        // Act
+        Optional<IpscMatch> result = transactionService.getIpscMatch(matchOnlyDto);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("Test Match", result.get().getName());
+        assertEquals(LocalDateTime.of(2026, 3, 31, 10, 0), result.get().getScheduledDate());
+        assertEquals(FirearmType.HANDGUN, result.get().getMatchFirearmType());
+        verifyNoInteractions(ipscMatchRepository);
+    }
+
+    @Test
+    public void testGetIpscMatch_withMatchOnlyDtoIdAndRepositoryHit_thenReturnsFetchedAndUpdatedEntity() {
+        // Arrange
+        MatchOnlyDto matchOnlyDto = buildMatchOnlyDto();
+        matchOnlyDto.setId(12L);
+        matchOnlyDto.setName("Updated Match");
+        matchOnlyDto.setMatchFirearmType(FirearmType.RIFLE);
+
+        IpscMatch existingMatch = new IpscMatch();
+        existingMatch.setId(12L);
+        existingMatch.setName("Existing Match");
+        existingMatch.setScheduledDate(LocalDateTime.of(2025, 1, 1, 8, 0));
+        when(ipscMatchRepository.findById(12L)).thenReturn(Optional.of(existingMatch));
+
+        // Act
+        Optional<IpscMatch> result = transactionService.getIpscMatch(matchOnlyDto);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("Updated Match", result.get().getName());
+        assertEquals(LocalDateTime.of(2026, 3, 31, 10, 0), result.get().getScheduledDate());
+        assertEquals(FirearmType.RIFLE, result.get().getMatchFirearmType());
+        verify(ipscMatchRepository).findById(12L);
+    }
+
+    @Test
+    public void testGetIpscMatch_withMatchOnlyDtoIdAndRepositoryMiss_thenCreatesNewEntity() {
+        // Arrange
+        MatchOnlyDto matchOnlyDto = buildMatchOnlyDto();
+        matchOnlyDto.setId(99L);
+        matchOnlyDto.setName("New Match");
+        matchOnlyDto.setMatchFirearmType(FirearmType.SHOTGUN);
+        when(ipscMatchRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act
+        Optional<IpscMatch> result = transactionService.getIpscMatch(matchOnlyDto);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals("New Match", result.get().getName());
+        assertEquals(LocalDateTime.of(2026, 3, 31, 10, 0), result.get().getScheduledDate());
+        assertEquals(FirearmType.SHOTGUN, result.get().getMatchFirearmType());
+        verify(ipscMatchRepository).findById(99L);
+    }
+
+    @Test
     public void testGetIpscMatchStages_whenMatchEntityIsAbsent_thenReturnsEmptyList() {
         // Arrange
         DtoMapping dtoMapping = buildMinimalDtoMapping();
