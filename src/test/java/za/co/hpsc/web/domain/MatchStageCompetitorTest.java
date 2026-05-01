@@ -579,12 +579,20 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenFieldsAreUnchanged() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> entity.init(null));
+        // Act
+        assertDoesNotThrow(() -> entity.init(null));
+
+        // Assert
+        assertEquals(CompetitorCategory.NONE, entity.getCompetitorCategory());
+        assertNull(entity.getFirearmType());
+        assertNull(entity.getDivision());
+        assertNull(entity.getPowerFactor());
+        assertNull(entity.getScoreA());
+        assertNull(entity.getPenalties());
     }
 
     @Test

@@ -11,6 +11,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
 
@@ -74,7 +75,7 @@ public class ControllerAdvice {
                                                                        WebRequest request) {
         logError(ex, request);
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        String message = ((ex.getMessage() != null) ? ex.getMessage() : "Unexpected error occurred");
+        String message = ValueUtil.nullAsDefaultString(ex.getMessage(), "Unexpected error occurred");
         ControllerResponse errorResponse = buildErrorResponse(message, status);
         return new ResponseEntity<>(errorResponse, status);
     }

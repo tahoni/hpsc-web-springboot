@@ -33,7 +33,9 @@ public class TagResponse {
      *                   the {@code TagResponse} instance.
      */
     public TagResponse(TagRequest tagRequest) {
-        this.tagId = tagRequest.getTagId();
-        this.tagName = tagRequest.getTagName();
+        if (tagRequest != null) {
+            this.tagId = tagRequest.getTagId();
+            this.tagName = tagRequest.getTagName();
+        }
     }
 }

@@ -39,12 +39,14 @@ public class MatchResponse {
      * @param matchRequest source request object containing match values
      */
     public MatchResponse(MatchRequest matchRequest) {
-        this.matchId = matchRequest.getMatchId();
-        this.matchName = matchRequest.getMatchName();
-        this.matchDate = matchRequest.getMatchDate();
-        this.clubId = matchRequest.getClubId();
+        if (matchRequest != null) {
+            this.matchId = matchRequest.getMatchId();
+            this.matchName = matchRequest.getMatchName();
+            this.matchDate = matchRequest.getMatchDate();
+            this.clubId = matchRequest.getClubId();
 
-        this.squadCount = matchRequest.getSquadCount();
-        this.firearmId = matchRequest.getFirearmId();
+            this.squadCount = matchRequest.getSquadCount();
+            this.firearmId = matchRequest.getFirearmId();
+        }
     }
 }

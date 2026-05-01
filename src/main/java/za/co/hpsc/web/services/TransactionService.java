@@ -38,6 +38,6 @@ public interface TransactionService {
             throws FatalException;
 
     // TODO: add Javadoc
-    void saveMatch(MatchOnlyResultsDto matchOnlyResultsDto)
+    Optional<MatchHolder> saveMatch(MatchOnlyResultsDto matchOnlyResultsDto)
             throws FatalException;
 }

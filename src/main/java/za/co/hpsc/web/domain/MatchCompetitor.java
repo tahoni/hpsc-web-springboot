@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.converters.*;
 import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.models.ipsc.common.dto.MatchCompetitorDto;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -74,25 +75,27 @@ public class MatchCompetitor {
      *                           this MatchCompetitor.
      */
     public void init(MatchCompetitorDto matchCompetitorDto) {
-        // Initialises the competitor attributes
-        this.matchClub = matchCompetitorDto.getClub();
-        this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
-        this.firearmType = matchCompetitorDto.getFirearmType();
-        this.division = matchCompetitorDto.getDivision();
-        this.powerFactor = matchCompetitorDto.getPowerFactor();
+        if (matchCompetitorDto != null) {
+            // Initialises the competitor attributes
+            this.matchClub = matchCompetitorDto.getClub();
+            this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
+            this.firearmType = matchCompetitorDto.getFirearmType();
+            this.division = matchCompetitorDto.getDivision();
+            this.powerFactor = matchCompetitorDto.getPowerFactor();
 
-        // Initialises the match scoring attributes
-        this.matchPoints = matchCompetitorDto.getMatchPoints();
-        this.matchRanking = matchCompetitorDto.getMatchRanking();
+            // Initialises the match scoring attributes
+            this.matchPoints = matchCompetitorDto.getMatchPoints();
+            this.matchRanking = matchCompetitorDto.getMatchRanking();
+        }
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        String match = ((this.match != null) ? this.match.toString().trim() : "");
+        String match = ValueUtil.nullAsDefaultString(this.match, "").trim();
         sb.append(match);
 
-        String competitor = ((this.competitor != null) ? this.competitor.toString().trim() : "");
+        String competitor = ValueUtil.nullAsDefaultString(this.competitor, "").trim();
         if (!competitor.isEmpty()) {
             if (!match.isEmpty()) {
                 sb.append(": ");

@@ -62,24 +62,26 @@ public class ScoreResponse {
      *                     the {@code ScoreResponse} instance.
      */
     public ScoreResponse(ScoreRequest scoreRequest) {
-        this.matchId = scoreRequest.getMatchId();
-        this.stageId = scoreRequest.getStageId();
-        this.memberId = scoreRequest.getMemberId();
-        this.scoreA = scoreRequest.getScoreA();
-        this.scoreB = scoreRequest.getScoreB();
-        this.scoreC = scoreRequest.getScoreC();
-        this.scoreD = scoreRequest.getScoreD();
-        this.misses = scoreRequest.getMisses();
-        this.penalties = scoreRequest.getPenalties();
-        this.procedurals = scoreRequest.getProcedurals();
-        this.time = scoreRequest.getTime();
-        this.deduction = scoreRequest.getDeduction();
-        this.deductionPercentage = scoreRequest.getDeductionPercentage();
-        this.extraShot = scoreRequest.getExtraShot();
-        this.overTime = scoreRequest.getOverTime();
-        this.hitFactor = scoreRequest.getHitFactor();
-        this.finalScore = scoreRequest.getFinalScore();
-        this.isDisqualified = scoreRequest.getIsDisqualified();
-        this.lastModified = scoreRequest.getLastModified();
+        if (scoreRequest != null) {
+            this.matchId = scoreRequest.getMatchId();
+            this.stageId = scoreRequest.getStageId();
+            this.memberId = scoreRequest.getMemberId();
+            this.scoreA = scoreRequest.getScoreA();
+            this.scoreB = scoreRequest.getScoreB();
+            this.scoreC = scoreRequest.getScoreC();
+            this.scoreD = scoreRequest.getScoreD();
+            this.misses = scoreRequest.getMisses();
+            this.penalties = scoreRequest.getPenalties();
+            this.procedurals = scoreRequest.getProcedurals();
+            this.time = scoreRequest.getTime();
+            this.deduction = scoreRequest.getDeduction();
+            this.deductionPercentage = scoreRequest.getDeductionPercentage();
+            this.extraShot = scoreRequest.getExtraShot();
+            this.overTime = scoreRequest.getOverTime();
+            this.hitFactor = scoreRequest.getHitFactor();
+            this.finalScore = scoreRequest.getFinalScore();
+            this.isDisqualified = scoreRequest.getIsDisqualified();
+            this.lastModified = scoreRequest.getLastModified();
+        }
     }
 }

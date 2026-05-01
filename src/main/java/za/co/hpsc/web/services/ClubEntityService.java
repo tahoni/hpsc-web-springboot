@@ -12,7 +12,6 @@ import java.util.Optional;
  */
 public interface ClubEntityService {
     // TODO: add Javadoc
-    // TODO: add tests
     Optional<Club> findClubById(Long clubId);
 
     /**
@@ -31,7 +30,6 @@ public interface ClubEntityService {
     Optional<Club> findClubByNameOrAbbreviation(String name, String abbreviation);
 
     // TODO: add Javadoc
-    // TODO: add tests
     Optional<Club> findClubByNameOrAbbreviation(String name);
 }
 

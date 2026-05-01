@@ -52,20 +52,22 @@ public class StageResponse {
      *                     the {@code StageResponse} instance.
      */
     public StageResponse(StageRequest stageRequest) {
-        this.matchId = stageRequest.getMatchId();
-        this.stageId = stageRequest.getStageId();
-        this.stageName = stageRequest.getStageName();
-        this.description = stageRequest.getDescription();
-        this.firearmId = stageRequest.getFirearmId();
-        this.scoreClassificationId = stageRequest.getScoreClassificationId();
-        this.targetPaper = stageRequest.getTargetPaper();
-        this.targetPopper = stageRequest.getTargetPopper();
-        this.targetPlates = stageRequest.getTargetPlates();
-        this.targetDisappear = stageRequest.getTargetDisappear();
-        this.targetPenalty = stageRequest.getTargetPenalty();
-        this.minRounds = stageRequest.getMinRounds();
-        this.maxPoints = stageRequest.getMaxPoints();
-        this.startPosition = stageRequest.getStartPosition();
-        this.startOn = stageRequest.getStartOn();
+        if (stageRequest != null) {
+            this.matchId = stageRequest.getMatchId();
+            this.stageId = stageRequest.getStageId();
+            this.stageName = stageRequest.getStageName();
+            this.description = stageRequest.getDescription();
+            this.firearmId = stageRequest.getFirearmId();
+            this.scoreClassificationId = stageRequest.getScoreClassificationId();
+            this.targetPaper = stageRequest.getTargetPaper();
+            this.targetPopper = stageRequest.getTargetPopper();
+            this.targetPlates = stageRequest.getTargetPlates();
+            this.targetDisappear = stageRequest.getTargetDisappear();
+            this.targetPenalty = stageRequest.getTargetPenalty();
+            this.minRounds = stageRequest.getMinRounds();
+            this.maxPoints = stageRequest.getMaxPoints();
+            this.startPosition = stageRequest.getStartPosition();
+            this.startOn = stageRequest.getStartOn();
+        }
     }
 }

@@ -306,7 +306,7 @@ public class TransformationServiceImpl implements TransformationService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Initialises match details
-        String clubName = ((club != null) ? club.toString() : "");
+        String clubName = ValueUtil.nullAsDefaultString(club, "");
 
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
@@ -709,8 +709,8 @@ public class TransformationServiceImpl implements TransformationService {
                         .equals(matchResultsDto.getMatch().getIndex()))
                 .toList();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
-        List<EnrolledResponse> enrolledResponses = ((ipscResponse.getEnrolledMembers() != null) ?
-                ipscResponse.getEnrolledMembers() : new ArrayList<>());
+        List<EnrolledResponse> enrolledResponses =
+                ValueUtil.nullAsDefault(ipscResponse.getEnrolledMembers(), new ArrayList<>());
 
         // Seed competitors when not already initialised
         if ((matchResultsDto.getCompetitors() == null) || (matchResultsDto.getCompetitors().isEmpty())) {

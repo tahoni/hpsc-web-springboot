@@ -5,8 +5,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.common.response.StageResponse;
 import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;
 
@@ -26,8 +28,26 @@ public class MatchOnlyResponse extends MatchOnlyRequest {
         super(matchOnlyRequest);
     }
 
+    public MatchOnlyResponse(MatchHolder matchHolder) {
+        super();
+        if (matchHolder != null) {
+            this.setClub((matchHolder.getClub() != null) ? matchHolder.getClub().getName() : null);
+
+            if (matchHolder.getMatch() != null) {
+                this.setMatchId(ValueUtil.nullAsDefault(matchHolder.getMatch().getId(), null));
+                this.setMatchName(ValueUtil.nullAsDefaultString(matchHolder.getMatch().getName(), null));
+                this.setFirearm(ValueUtil.nullAsDefaultString(matchHolder.getMatch().getMatchFirearmType(),
+                        null));
+            }
+        }
+    }
+
     public void init(Long matchId, MatchOnlyRequest right, boolean fullUpdate) {
         this.setMatchId(matchId);
+
+        if (right == null) {
+            return;
+        }
 
         if (fullUpdate) {
             this.setMatchName(right.getMatchName());

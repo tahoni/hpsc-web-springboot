@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -70,30 +71,32 @@ public class Competitor {
      * @param competitorDto the DTO containing data needed to populate the entity fields.
      */
     public void init(CompetitorDto competitorDto) {
-        // Initialises competitor attributes
-        this.firstName = competitorDto.getFirstName();
-        this.lastName = competitorDto.getLastName();
-        this.middleNames = competitorDto.getMiddleNames();
+        if (competitorDto != null) {
+            // Initialises competitor attributes
+            this.firstName = competitorDto.getFirstName();
+            this.lastName = competitorDto.getLastName();
+            this.middleNames = competitorDto.getMiddleNames();
 
-        // Initialises competitor number and SAPSA number
-        this.sapsaNumber = competitorDto.getSapsaNumber();
-        this.competitorNumber = competitorDto.getCompetitorNumber();
-        this.dateOfBirth = competitorDto.getDateOfBirth();
+            // Initialises competitor number and SAPSA number
+            this.sapsaNumber = competitorDto.getSapsaNumber();
+            this.competitorNumber = competitorDto.getCompetitorNumber();
+            this.dateOfBirth = competitorDto.getDateOfBirth();
+        }
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        String firstName = ((this.firstName != null) ? this.firstName.trim() : "");
+        String firstName = ValueUtil.nullAsDefaultString(this.firstName, "").trim();
         sb.append(firstName).append(" ");
 
-        String middleNames = ((this.middleNames != null) ? this.middleNames.trim() : "");
+        String middleNames = ValueUtil.nullAsDefaultString(this.middleNames, "").trim();
         if (!middleNames.isEmpty()) {
             sb.append(middleNames).append(" ");
         }
 
-        String lastName = ((this.lastName != null) ? this.lastName.trim() : "");
+        String lastName = ValueUtil.nullAsDefaultString(this.lastName, "").trim();
         sb.append(lastName);
 
         return sb.toString().trim();

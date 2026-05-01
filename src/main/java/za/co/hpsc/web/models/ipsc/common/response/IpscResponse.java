@@ -58,9 +58,13 @@ public class IpscResponse {
                         List<ScoreRequest> scoreRequests) {
 
         this.match = matchResponse;
-        this.tags = tagRequests.stream().map(TagResponse::new).toList();
-        this.stages = stageRequests.stream().map(StageResponse::new).toList();
-        this.enrolledMembers = enrolledRequests.stream().map(EnrolledResponse::new).toList();
-        this.scores = scoreRequests.stream().map(ScoreResponse::new).toList();
+        this.tags = ((tagRequests != null) ?
+                tagRequests.stream().map(TagResponse::new).toList() : new ArrayList<>());
+        this.stages = ((stageRequests != null) ?
+                stageRequests.stream().map(StageResponse::new).toList() : new ArrayList<>());
+        this.enrolledMembers = ((enrolledRequests != null) ?
+                enrolledRequests.stream().map(EnrolledResponse::new).toList() : new ArrayList<>());
+        this.scores = ((scoreRequests != null) ?
+                scoreRequests.stream().map(ScoreResponse::new).toList() : new ArrayList<>());
     }
 }

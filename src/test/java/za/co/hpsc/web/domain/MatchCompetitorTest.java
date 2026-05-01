@@ -274,8 +274,15 @@ public class MatchCompetitorTest {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> matchCompetitor.init(null));
+        // Act
+        assertDoesNotThrow(() -> matchCompetitor.init(null));
+
+        // Assert
+        assertNull(matchCompetitor.getMatch());
+        assertNull(matchCompetitor.getCompetitor());
+        assertNull(matchCompetitor.getFirearmType());
+        assertNull(matchCompetitor.getDivision());
+        assertNull(matchCompetitor.getPowerFactor());
     }
 
     @Test

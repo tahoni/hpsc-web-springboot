@@ -53,20 +53,22 @@ public class EnrolledResponse {
      *                        the {@code EnrolledResponse} instance.
      */
     public EnrolledResponse(EnrolledRequest enrolledRequest) {
-        this.memberId = enrolledRequest.getMemberId();
-        this.competitorId = enrolledRequest.getCompetitorId();
-        this.matchId = enrolledRequest.getMatchId();
-        this.squadId = enrolledRequest.getSquadId();
-        this.divisionId = enrolledRequest.getDivisionId();
-        this.refNo = enrolledRequest.getRefNo();
-        this.tagId = enrolledRequest.getTagId();
-        this.competitorCategoryId = enrolledRequest.getCompetitorCategoryId();
-        this.majorPowerFactor = enrolledRequest.getMajorPowerFactor();
-        this.scoreClassificationId = enrolledRequest.getScoreClassificationId();
-        this.isDisqualified = enrolledRequest.getIsDisqualified();
-        this.disqualificationRuleId = enrolledRequest.getDisqualificationRuleId();
-        this.stageDisqualification = enrolledRequest.getStageDisqualification();
-        this.disqualifiedDate = enrolledRequest.getDisqualifiedDate();
-        this.disqualifiedNote = enrolledRequest.getDisqualifiedNote();
+        if (enrolledRequest != null) {
+            this.memberId = enrolledRequest.getMemberId();
+            this.competitorId = enrolledRequest.getCompetitorId();
+            this.matchId = enrolledRequest.getMatchId();
+            this.squadId = enrolledRequest.getSquadId();
+            this.divisionId = enrolledRequest.getDivisionId();
+            this.refNo = enrolledRequest.getRefNo();
+            this.tagId = enrolledRequest.getTagId();
+            this.competitorCategoryId = enrolledRequest.getCompetitorCategoryId();
+            this.majorPowerFactor = enrolledRequest.getMajorPowerFactor();
+            this.scoreClassificationId = enrolledRequest.getScoreClassificationId();
+            this.isDisqualified = enrolledRequest.getIsDisqualified();
+            this.disqualificationRuleId = enrolledRequest.getDisqualificationRuleId();
+            this.stageDisqualification = enrolledRequest.getStageDisqualification();
+            this.disqualifiedDate = enrolledRequest.getDisqualifiedDate();
+            this.disqualifiedNote = enrolledRequest.getDisqualifiedNote();
+        }
     }
 }

@@ -12,7 +12,6 @@ import java.util.Optional;
  */
 public interface MatchStageEntityService {
     // TODO: add Javadoc
-    // TODO: add tests
     Optional<IpscMatchStage> findMatchStageById(Long matchStageId);
 
     /**

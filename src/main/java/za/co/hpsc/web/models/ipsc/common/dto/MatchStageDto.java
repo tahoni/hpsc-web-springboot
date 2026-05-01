@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.models.ipsc.common.response.StageResponse;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.UUID;
 
@@ -56,19 +57,18 @@ public class MatchStageDto {
      *                         such as the unique identifier, associated match, and stage number.
      */
     public MatchStageDto(@NotNull IpscMatchStage matchStageEntity) {
-        if (matchStageEntity == null) {
-            return;
+        if (matchStageEntity != null) {
+            // Initialises the stage details
+            this.id = matchStageEntity.getId();
+            this.match = new MatchDto(matchStageEntity.getMatch());
+
+            // Initialises the stage attributes
+            this.stageNumber = matchStageEntity.getStageNumber();
+            this.rangeNumber = matchStageEntity.getRangeNumber();
+
+            // Initialises the scoring-related attributes
+            setTargetsAndScoringFromEntity(matchStageEntity);
         }
-
-        // Initialises the stage details
-        this.id = matchStageEntity.getId();
-        this.match = new MatchDto(matchStageEntity.getMatch());
-
-        // Initialises the stage attributes
-        this.stageNumber = matchStageEntity.getStageNumber();
-        this.rangeNumber = matchStageEntity.getRangeNumber();
-
-        setTargetsAndScoringFromEntity(matchStageEntity);
     }
 
     /**
@@ -139,41 +139,43 @@ public class MatchStageDto {
     }
 
     private void setTargetsAndScoringFromEntity(IpscMatchStage stage) {
-        setTargetsAndScoring(
-                stage.getTargetPaper(),
-                stage.getTargetPopper(),
-                stage.getTargetPlates(),
-                stage.getTargetDisappear(),
-                stage.getTargetPenalty(),
-                stage.getMinRounds(),
-                stage.getMaxPoints()
-        );
+        if (stage != null) {
+            setTargetsAndScoring(
+                    stage.getTargetPaper(),
+                    stage.getTargetPopper(),
+                    stage.getTargetPlates(),
+                    stage.getTargetDisappear(),
+                    stage.getTargetPenalty(),
+                    stage.getMinRounds(),
+                    stage.getMaxPoints()
+            );
+        }
     }
 
     private void setTargetsAndScoringFromResponse(StageResponse stageResponse) {
-        setTargetsAndScoring(
-                stageResponse.getTargetPaper(),
-                stageResponse.getTargetPopper(),
-                stageResponse.getTargetPlates(),
-                stageResponse.getTargetDisappear(),
-                stageResponse.getTargetPenalty(),
-                stageResponse.getMinRounds(),
-                stageResponse.getMaxPoints()
-        );
+        if (stageResponse != null) {
+            setTargetsAndScoring(
+                    stageResponse.getTargetPaper(),
+                    stageResponse.getTargetPopper(),
+                    stageResponse.getTargetPlates(),
+                    stageResponse.getTargetDisappear(),
+                    stageResponse.getTargetPenalty(),
+                    stageResponse.getMinRounds(),
+                    stageResponse.getMaxPoints()
+            );
+        }
     }
 
     public void copyTargetsAndScoringTo(IpscMatchStage stageEntity) {
-        if (stageEntity == null) {
-            return;
+        if (stageEntity != null) {
+            stageEntity.setTargetPaper(this.targetPaper);
+            stageEntity.setTargetPopper(this.targetPopper);
+            stageEntity.setTargetPlates(this.targetPlates);
+            stageEntity.setTargetDisappear(this.targetDisappear);
+            stageEntity.setTargetPenalty(this.targetPenalty);
+            stageEntity.setMinRounds(this.minRounds);
+            stageEntity.setMaxPoints(this.maxPoints);
         }
-
-        stageEntity.setTargetPaper(this.targetPaper);
-        stageEntity.setTargetPopper(this.targetPopper);
-        stageEntity.setTargetPlates(this.targetPlates);
-        stageEntity.setTargetDisappear(this.targetDisappear);
-        stageEntity.setTargetPenalty(this.targetPenalty);
-        stageEntity.setMinRounds(this.minRounds);
-        stageEntity.setMaxPoints(this.maxPoints);
     }
 
     /**
@@ -187,8 +189,8 @@ public class MatchStageDto {
      */
     @Override
     public String toString() {
-        String matchString = (this.match != null) ? this.match.toString() : "";
-        String result = ((this.stageNumber != null) ? this.stageNumber : "0") + " for " + matchString;
+        String matchString = ValueUtil.nullAsDefaultString(this.match, "");
+        String result = ValueUtil.nullAsDefaultString(this.stageNumber, "0") + " for " + matchString;
         return result.trim();
     }
 }

@@ -26,19 +26,24 @@ public class MatchOnlyRequest {
 
     public MatchOnlyRequest(Long matchId, MatchDto matchDto) {
         this.matchId = matchId;
-        this.matchName = matchDto.getName();
-        this.matchDate = matchDto.getScheduledDate();
-        this.club = ((matchDto.getClub() != null) ? matchDto.getClub().getName() : null);
-        this.firearm = ((matchDto.getMatchFirearmType() != null) ?
-                matchDto.getMatchFirearmType().getNames().getFirst() : null);
+
+        if (matchDto != null) {
+            this.matchName = matchDto.getName();
+            this.matchDate = matchDto.getScheduledDate();
+            this.club = ((matchDto.getClub() != null) ? matchDto.getClub().getName() : null);
+            this.firearm = ((matchDto.getMatchFirearmType() != null) ?
+                    matchDto.getMatchFirearmType().getNames().getFirst() : null);
+        }
     }
 
     public MatchOnlyRequest(MatchOnlyRequest right) {
-        this.matchId = right.getMatchId();
-        this.matchName = right.getMatchName();
-        this.matchDate = right.getMatchDate();
-        this.club = right.getClub();
-        this.firearm = right.getFirearm();
-        this.squadCount = right.getSquadCount();
+        if (right != null) {
+            this.matchId = right.getMatchId();
+            this.matchName = right.getMatchName();
+            this.matchDate = right.getMatchDate();
+            this.club = right.getClub();
+            this.firearm = right.getFirearm();
+            this.squadCount = right.getSquadCount();
+        }
     }
 }

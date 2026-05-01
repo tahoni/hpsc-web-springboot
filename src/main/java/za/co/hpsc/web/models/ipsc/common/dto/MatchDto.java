@@ -60,26 +60,24 @@ public class MatchDto {
      *                    firearm type, match category, creation timestamp, and update timestamp.
      */
     public MatchDto(IpscMatch matchEntity) {
-        if (matchEntity == null) {
-            return;
+        if (matchEntity != null) {
+            // Initialises match details
+            this.id = matchEntity.getId();
+
+            // Initialises club details from the associated entity
+            if (matchEntity.getClub() != null) {
+                this.club = new ClubDto(matchEntity.getClub());
+            }
+
+            // Initialises the match attributes
+            this.name = matchEntity.getName();
+            this.scheduledDate = matchEntity.getScheduledDate();
+            this.matchFirearmType = matchEntity.getMatchFirearmType();
+            this.matchCategory = matchEntity.getMatchCategory();
+
+            // Initialises the date fields
+            this.dateEdited = matchEntity.getDateEdited();
         }
-
-        // Initialises match details
-        this.id = matchEntity.getId();
-
-        // Initialises club details from the associated entity
-        if (matchEntity.getClub() != null) {
-            this.club = new ClubDto(matchEntity.getClub());
-        }
-
-        // Initialises the match attributes
-        this.name = matchEntity.getName();
-        this.scheduledDate = matchEntity.getScheduledDate();
-        this.matchFirearmType = matchEntity.getMatchFirearmType();
-        this.matchCategory = matchEntity.getMatchCategory();
-
-        // Initialises the date fields
-        this.dateEdited = matchEntity.getDateEdited();
     }
 
     /**

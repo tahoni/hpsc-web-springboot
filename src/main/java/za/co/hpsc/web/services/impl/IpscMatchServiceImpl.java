@@ -7,6 +7,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
 import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
@@ -106,16 +107,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throws FatalException {
         Optional<MatchOnlyDto> optionalMatchOnlyDto = transformationService.mapMatchOnly(matchOnlyRequest);
 
+        Optional<MatchHolder> optionalMatchHolder = Optional.empty();
         if (optionalMatchOnlyDto.isPresent()) {
             Optional<MatchOnlyResultsDto> optionalMatchOnlyResultsDto =
                     domainService.initMatchOnlyEntities(optionalMatchOnlyDto.get());
             if (optionalMatchOnlyResultsDto.isPresent()) {
-                transactionService.saveMatch(optionalMatchOnlyResultsDto.get());
+                optionalMatchHolder = transactionService.saveMatch(optionalMatchOnlyResultsDto.get());
             }
         }
 
-        MatchOnlyResponse matchOnlyResponse = new MatchOnlyResponse(matchOnlyRequest);
-        return Optional.of(matchOnlyResponse);
+        Optional<MatchOnlyResponse> optionalMatchOnlyResponse = Optional.empty();
+        if (optionalMatchHolder.isPresent()) {
+            optionalMatchOnlyResponse = Optional.of(new MatchOnlyResponse(optionalMatchHolder.get()));
+        }
+        return optionalMatchOnlyResponse;
     }
 
     protected Optional<IpscMatch> findMatchById(Long matchId) {

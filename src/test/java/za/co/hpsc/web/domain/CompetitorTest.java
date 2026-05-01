@@ -275,12 +275,19 @@ public class CompetitorTest {
     }
 
     @Test
-    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenDoesNotThrowsNullPointerException() {
         // Arrange
         Competitor competitor = new Competitor();
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> competitor.init(null));
+        // Act
+        assertDoesNotThrow(() -> competitor.init(null));
+
+        // Assert
+        assertNull(competitor.getFirstName());
+        assertNull(competitor.getLastName());
+        assertNull(competitor.getSapsaNumber());
+        assertNull(competitor.getCompetitorNumber());
+        assertNull(competitor.getDateOfBirth());
     }
 
     @Test

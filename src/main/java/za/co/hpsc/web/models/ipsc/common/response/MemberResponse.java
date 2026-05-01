@@ -49,17 +49,19 @@ public class MemberResponse {
      *                      the {@code MemberResponse} instance.
      */
     public MemberResponse(MemberRequest memberRequest) {
-        this.memberId = memberRequest.getMemberId();
-        this.lastName = memberRequest.getLastName();
-        this.firstName = memberRequest.getFirstName();
-        this.comment = memberRequest.getComment();
-        this.female = memberRequest.getFemale();
-        this.dateOfBirth = memberRequest.getDateOfBirth();
-        this.icsAlias = memberRequest.getIcsAlias();
-        this.refNo = memberRequest.getRefNo();
-        this.isRegisteredForMatch = memberRequest.getIsRegisteredForMatch();
-        this.qualificationId = memberRequest.getQualificationId();
-        this.scoreClassificationId = memberRequest.getScoreClassificationId();
-        this.email = memberRequest.getEmail();
+        if (memberRequest != null) {
+            this.memberId = memberRequest.getMemberId();
+            this.lastName = memberRequest.getLastName();
+            this.firstName = memberRequest.getFirstName();
+            this.comment = memberRequest.getComment();
+            this.female = memberRequest.getFemale();
+            this.dateOfBirth = memberRequest.getDateOfBirth();
+            this.icsAlias = memberRequest.getIcsAlias();
+            this.refNo = memberRequest.getRefNo();
+            this.isRegisteredForMatch = memberRequest.getIsRegisteredForMatch();
+            this.qualificationId = memberRequest.getQualificationId();
+            this.scoreClassificationId = memberRequest.getScoreClassificationId();
+            this.email = memberRequest.getEmail();
+        }
     }
 }

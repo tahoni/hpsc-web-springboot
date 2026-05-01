@@ -69,9 +69,10 @@ public class TransactionServiceImpl implements TransactionService {
             DtoToEntityMapping dtoToEntityMapping = new DtoToEntityMapping(dtoMapping);
 
             Optional<Club> optionalClub = getClub(dtoMapping.getClub());
+
             if (optionalClub.isPresent()) {
                 Club club = optionalClub.get();
-                clubRepository.save(club);
+                club = clubRepository.save(club);
                 matchHolder.setClub(club);
                 dtoToEntityMapping.setClub(club);
             }
@@ -81,7 +82,7 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new FatalException("Unable to save the match: Match is null");
             }
             IpscMatch ipscMatch = optionalIpscMatch.get();
-            ipscMatchRepository.save(ipscMatch);
+            ipscMatch = ipscMatchRepository.save(ipscMatch);
             matchHolder.setMatch(ipscMatch);
             dtoToEntityMapping.setMatch(ipscMatch);
 
@@ -122,9 +123,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     // TODO: add Javadoc
     @Override
-    public void saveMatch(MatchOnlyResultsDto matchOnlyResultsDto) throws FatalException {
+    public Optional<MatchHolder> saveMatch(MatchOnlyResultsDto matchOnlyResultsDto) throws FatalException {
         if (matchOnlyResultsDto == null) {
-            return;
+            return Optional.empty();
         }
 
         TransactionStatus transaction = transactionManager.getTransaction(
@@ -137,7 +138,7 @@ public class TransactionServiceImpl implements TransactionService {
             Optional<Club> optionalClub = getClub(clubDto);
             if (optionalClub.isPresent()) {
                 Club club = optionalClub.get();
-                clubRepository.save(club);
+                club = clubRepository.save(club);
                 matchHolder.setClub(club);
             }
 
@@ -147,7 +148,7 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new FatalException("Unable to save the match: Match is null");
             }
             IpscMatch ipscMatch = optionalIpscMatch.get();
-            ipscMatchRepository.save(ipscMatch);
+            ipscMatch = ipscMatchRepository.save(ipscMatch);
             matchHolder.setMatch(ipscMatch);
 
             transactionManager.commit(transaction);
@@ -157,6 +158,8 @@ public class TransactionServiceImpl implements TransactionService {
             log.error(e.getMessage(), e);
             throw new FatalException("Unable to save the match: " + e.getMessage(), e);
         }
+
+        return Optional.empty();
     }
 
     /**
@@ -205,7 +208,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     // TODO: add Javadoc
-    // TODO: add tests
     protected Optional<IpscMatch> getIpscMatch(MatchOnlyDto matchOnlyDto) {
         if (matchOnlyDto == null) {
             return Optional.empty();

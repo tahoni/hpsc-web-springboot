@@ -31,9 +31,11 @@ public class ClubResponse {
      * @param clubRequest source request DTO containing club fields to map into this response DTO
      */
     public ClubResponse(ClubRequest clubRequest) {
-        this.clubId = clubRequest.getClubId();
-        this.clubCode = clubRequest.getClubCode();
-        this.clubName = clubRequest.getClubName();
+        if (clubRequest != null) {
+            this.clubId = clubRequest.getClubId();
+            this.clubCode = clubRequest.getClubCode();
+            this.clubName = clubRequest.getClubName();
+        }
     }
 
     /**

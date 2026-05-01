@@ -43,7 +43,7 @@ public final class ValueUtil {
      * @return the original string if non-null; otherwise {@code ""}
      */
     public static String nullAsEmptyString(String value) {
-        return (value != null ? value : "");
+        return nullAsDefaultString(value, "");
     }
 
     /**
@@ -57,7 +57,7 @@ public final class ValueUtil {
      * @return the string representation of the object if non-null; otherwise {@code ""}
      */
     public static String nullAsEmptyString(Object value) {
-        return (value != null ? value.toString() : "");
+        return nullAsDefaultString(value, "");
     }
 
     /**
@@ -67,7 +67,7 @@ public final class ValueUtil {
      * @return the original integer if non-null; otherwise {@code 0}
      */
     public static int nullAsZero(Integer value) {
-        return (value != null ? value : 0);
+        return nullAsDefault(value, 0);
     }
 
     /**
@@ -77,7 +77,7 @@ public final class ValueUtil {
      * @return the original long if non-null; otherwise {@code 0L}
      */
     public static long nullAsZero(Long value) {
-        return (value != null ? value : 0L);
+        return nullAsDefault(value, 0L);
     }
 
     /**
@@ -134,7 +134,7 @@ public final class ValueUtil {
      * @see UUID#randomUUID()
      */
     public static UUID nullAsRandomUuid(UUID value) {
-        return (value != null ? value : UUID.randomUUID());
+        return nullAsDefault(value, UUID.randomUUID());
     }
 
     /**
@@ -148,6 +148,19 @@ public final class ValueUtil {
      * @return the original list if non-null; otherwise a new empty {@code ArrayList}
      */
     public static <T> List<T> nullAsEmptyList(List<T> value) {
-        return (value != null ? value : new ArrayList<>());
+        return nullAsDefault(value, new ArrayList<>());
+    }
+
+    // TODO: Javadoc
+    // TODO: tests
+    public static <T> T nullAsDefault(T value, T defaultValue) {
+        return (value != null ? value : defaultValue);
+    }
+
+    // TODO: Javadoc
+    // TODO: tests
+    public static <T> String nullAsDefaultString(T value, T defaultValue) {
+        String defaultString = ((defaultValue != null) ? defaultValue.toString() : null);
+        return ((value != null) ? value.toString() : defaultString);
     }
 }

@@ -82,7 +82,7 @@ public final class NumberUtil {
      * @return the formatted {@code BigDecimal} value as a String, scaled to the specified scale.
      */
     public static String formatBigDecimal(BigDecimal value, int scale) {
-        BigDecimal result = ((value != null) ? value : BigDecimal.ZERO);
+        BigDecimal result = ValueUtil.nullAsDefault(value, BigDecimal.ZERO);
         // Scales the result to the default scale
         return result.setScale(scale, RoundingMode.HALF_UP).toString();
     }

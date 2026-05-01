@@ -9,6 +9,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.models.ipsc.common.response.MemberResponse;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -123,9 +124,9 @@ public class CompetitorDto {
      */
     @Override
     public String toString() {
-        String firstNameString = ((this.firstName != null) ? this.firstName.trim() : "");
-        String lastNameString = ((this.lastName != null) ? this.lastName.trim() : "");
-        String middleNamesString = ((this.middleNames != null) ? this.middleNames.trim() : "");
+        String firstNameString = ValueUtil.nullAsDefaultString(this.firstName, "").trim();
+        String lastNameString = ValueUtil.nullAsDefaultString(this.lastName, "").trim();
+        String middleNamesString = ValueUtil.nullAsDefaultString(this.middleNames, "").trim();
 
         String result;
         if (!middleNamesString.isBlank()) {

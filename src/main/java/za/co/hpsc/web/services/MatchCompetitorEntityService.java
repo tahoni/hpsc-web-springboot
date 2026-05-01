@@ -13,7 +13,6 @@ import java.util.Optional;
  */
 public interface MatchCompetitorEntityService {
     // TODO: add Javadoc
-    // TODO: add tests
     Optional<MatchCompetitor> findMatchCompetitorById(Long matchCompetitorId);
 
 
