@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.dto.ClubDto;
+import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -84,10 +85,10 @@ public class Club {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        String name = ((this.name != null) ? this.name.trim() : "");
+        String name = ValueUtil.nullAsDefaultString(this.name, "").trim();
         sb.append(name).append(" ");
 
-        String abbreviation = ((this.abbreviation != null) ? this.abbreviation.trim() : "");
+        String abbreviation = ValueUtil.nullAsDefaultString(this.abbreviation, "").trim();
         if ((!abbreviation.isEmpty()) && (!abbreviation.equalsIgnoreCase(name))) {
             sb.append("(").append(abbreviation).append(")");
         }

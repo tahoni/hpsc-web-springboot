@@ -94,8 +94,8 @@ public abstract class AwardRequestForCSV {
      * @param title           the title of the award. Must not be null or blank.
      * @param ceremonyTitle   the title of the award ceremony. Must not be null or blank.
      * @param firstPlaceName  the name of the first-place winner. Must not be null or blank.
-     * @param secondPlaceName the name of the second-place winner. May be null.
-     * @param thirdPlaceName  the name of the third-place winner. May be null.
+     * @param secondPlaceName the name of the second-place winner. Can be null.
+     * @param thirdPlaceName  the name of the third-place winner. Can be null.
      */
     public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
                               @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,

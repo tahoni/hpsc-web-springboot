@@ -1,14 +1,15 @@
 # Release Notes History
 
 A complete archive of all release notes for the HPSC Website Backend project from version 1.0.0 through
-version 5.4.0, documenting the evolution of features, improvements, and changes across the entire project
+version 6.0.0, documenting the evolution of features, improvements, and changes across the entire project
 lifecycle.
 
 ---
 
 ## 📑 Table of Contents
 
-- [🧾 Version 5.4.0](#-version-540---april-26-2026) ← Current Release
+- [🧾 Version 6.0.0](#-version-600--may-1-2026) ← Current Release
+- [🧾 Version 5.4.0](#-version-540---april-26-2026)
 - [🧾 Version 5.3.0](#-version-530--march-15-2026)
 - [🧾 Version 5.2.0](#-version-520--february-27-2026)
 - [🧾 Version 5.1.0](#-version-510--february-25-2026)
@@ -23,6 +24,122 @@ lifecycle.
 - [🧾 Version 1.1.1](#-version-111--january-16-2026)
 - [🧾 Version 1.1.0](#-version-110--january-14-2026)
 - [🧾 Version 1.0.0](#-version-100---january-4-2026)
+
+---
+
+## 🧾 Version 6.0.0 – May 1, 2026
+
+**Theme:** Dedicated Match CRUD API, Service Encapsulation & Package Restructuring
+
+### 📖 Overview
+
+Version 6.0.0 introduces a dedicated IPSC match management REST API at `/v2/ipsc/matches`, backed by the
+new `IpscMatchService` and a full set of match-specific request/response models. `DomainServiceImpl` is
+decoupled from JPA repositories and now delegates entirely to entity services, completing the intended
+layered architecture. All IPSC model classes are reorganised under a `common` sub-package, with a
+dedicated `match` sub-package for match-only models. Three new match search request types are introduced
+for future query endpoints, `IpscUtil` lands as a dedicated string-formatting utility, and Spring Boot is
+upgraded to 4.0.6. The release is supported by eight new test classes covering the new controller,
+service, DTOs, and utility.
+
+### ⭐ Key Highlights
+
+#### 🆕 Dedicated Match CRUD API
+
+- **`IpscMatchController`** — new controller at `/v2/ipsc/matches` (134 lines)
+    - `POST /v2/ipsc/matches` — create a new IPSC match
+    - `PUT /v2/ipsc/matches/{matchId}` — fully replace an existing match
+    - `PATCH /v2/ipsc/matches/{matchId}` — partially update an existing match
+    - `GET /v2/ipsc/matches/{matchId}` — retrieve a match by ID
+    - Full OpenAPI/Swagger annotations; returns `ResponseEntity<MatchOnlyResponse>`
+- **`IpscMemberController`** — stub controller registered at `/ipsc/member` for upcoming member management
+
+#### 🏗️ IpscMatchService Layer
+
+- **`IpscMatchService` interface** (22 lines) — dedicated match CRUD contract:
+    - `insertMatch`, `updateMatch`, `modifyMatch`, `getMatch` — all return `Optional<MatchOnlyResponse>`
+- **`IpscMatchServiceImpl`** (135 lines) — full implementation
+
+#### 📦 Match-Specific Model Layer
+
+- **`MatchOnlyDto`** (82 lines) — lightweight match DTO; auto-resolves `FirearmType` and stamps
+  `dateEdited` on init
+- **`MatchOnlyRequest`** (49 lines) — JSON request body for match CRUD operations
+- **`MatchOnlyResponse`** (83 lines) — response envelope returned by `IpscMatchController`
+- **`MatchOnlyResultsDto`** (18 lines) — internal results holder passed through the service chain
+- **`MatchSearchRequest`**, **`MatchSearchDateRequest`**, **`MatchSearchIdRequest`** — future search support
+
+#### 🔧 DomainServiceImpl — Repository Decoupling
+
+- Removed direct injection of all six JPA repositories from `DomainServiceImpl`
+- All data access delegated to entity services exclusively:
+    - `ClubEntityService`, `CompetitorEntityService`, `MatchEntityService`
+    - `MatchStageEntityService`, `MatchCompetitorEntityService`,
+      `MatchStageCompetitorEntityService`
+- New entity service methods: `findClubById`, `findCompetitorById`,
+  `findMatchStageCompetitorById`
+
+#### 📂 IPSC Model Package Restructuring
+
+- All `models/ipsc/` classes moved to `models/ipsc/common/` sub-package
+- New sibling `models/ipsc/match/` sub-package for match-only models
+- Old `models/ipsc/response/ClubResponse` and `MatchResponse` replaced by `common/response/` counterparts
+
+#### 🛠️ IpscUtil
+
+- New utility class (66 lines) — `clubTostring` and `matchToString` centralise
+  `"Match @ Club (ABBR)"` display-string construction
+
+#### 🔄 TransformationService Updates
+
+- `mapMatchOnly(MatchOnlyRequest)` added for the match CRUD pipeline
+- `mapMatchResults` no longer declares `throws ValidationException`
+
+#### 🪵 Enhanced Logging & Error Handling
+
+- Structured logging added to all `ControllerAdvice` exception handlers (119 lines changed)
+- `ValidationException` removed from handler method signatures
+
+#### ⬆️ Build & Metadata
+
+- Spring Boot upgraded `4.0.5` → `4.0.6`
+- MIT License, developer profile, and SCM connection added to `pom.xml`
+
+#### 🧪 Test Coverage
+
+- **8 new test classes (~1,300 lines):**
+
+| Class                      | Lines | Scope                  |
+|----------------------------|-------|------------------------|
+| `IpscMatchControllerTest`  | 49    | Unit — controller      |
+| `IpscMatchServiceTest`     | 269   | Unit — service         |
+| `IpscMatchIntegrationTest` | 237   | Integration — H2       |
+| `MatchOnlyDtoTest`         | 202   | Unit — DTO             |
+| `MatchOnlyRequestTest`     | 234   | Unit — request model   |
+| `MatchOnlyResponseTest`    | 165   | Unit — response model  |
+| `MatchResponseTest`        | 46    | Unit — common response |
+| `IpscUtilTest`             | 114   | Unit — utility         |
+
+- **Updated:** `TransformationServiceTest` (+747), `DomainServiceTest` (+247),
+  `TransactionServiceTest` (+246), `ValueUtilTest` (+294)
+- **Removed:** `IpscControllerTest` (156 lines — superseded by `IpscMatchControllerTest`)
+
+### 📊 Statistics
+
+- **40 commits**, **165 files changed**
+- **+6,779 insertions**, **-3,501 deletions**
+- **Net: +3,278 lines**
+- **New Test Files: 8**, **New Source Files: 15**
+
+### 🔄 Backward Compatibility
+
+✅ **FULLY BACKWARD COMPATIBLE** — No breaking changes to existing public API endpoints.
+All existing `/v1/ipsc/` endpoints remain unchanged. The new match CRUD endpoints are additive
+at `/v2/ipsc/matches`.
+
+> **Developer note:** Internal package paths for IPSC models have changed from `models/ipsc.*` to
+> `models/ipsc.common.*`. Match-specific models are now at `models/ipsc.match.*`. Update all import
+> statements accordingly. See the [full release notes](RELEASE_NOTES_v6.0.0.md) for the migration guide.
 
 ---
 
@@ -57,7 +174,8 @@ featuring Qodana JVM linting and JaCoCo code coverage integration.
 
 - **`IpscMatchService` renamed to `TransformationService`:** Interface and implementation restructured for
   improved semantic clarity
-    - `TransformationServiceImpl` introduced (1,098 lines) replacing `IpscMatchServiceImpl` (867 lines removed)
+    - `TransformationServiceImpl` introduced (1,098 lines) replacing `IpscMatchServiceImpl` (867 lines
+      removed)
     - Interface updated with comprehensive Javadoc and improved method naming
 - **`MatchHolder` introduced:** New data class (23 lines) for match data encapsulation
 - **`MatchCompetitorEntityService`:** Updated to return lists for bulk competitor retrieval
@@ -77,7 +195,8 @@ featuring Qodana JVM linting and JaCoCo code coverage integration.
 - **Holders reorganised:** `MatchResultsDto`, `MatchResultsDtoHolder`, `IpscRequestHolder`,
   `IpscResponseHolder` moved to dedicated `holders` sub-packages; new `IpscMatchRecordHolder` added
 - **Records restructured:** `CompetitorMatchRecord` → `CompetitorRecord`; new `CompetitorResultRecord`,
-  `MatchCompetitorOverallResultsRecord`, and `MatchCompetitorStageResultRecord` introduced; `MatchCompetitorRecord`
+  `MatchCompetitorOverallResultsRecord`, and `MatchCompetitorStageResultRecord` introduced;
+  `MatchCompetitorRecord`
   removed
 
 #### 🧪 Comprehensive Test Suite Expansion
@@ -1009,7 +1128,7 @@ mapping patterns.
 
 - **Utility classes:** Ensured utility classes cannot be instantiated (via private constructors)
 - **String formatting:** Improved formatting and readability in match helper utilities
-- **Constants cleanup:** Removed unused constants from `MatchConstants`
+- **Constant clean-up:** Removed unused constants from `MatchConstants`
 - **Javadoc expansion:** Enhanced documentation across domain entities, enums, and division model classes
 
 ### 🛡️ Security & Updates
@@ -1280,27 +1399,35 @@ handling, and better maintainability.
 
 ## 📊 Version Progression Summary
 
-| Version   | Date         | Theme                              | Key Focus                    |
-|-----------|--------------|------------------------------------|------------------------------|
-| **5.4.0** | Apr 26, 2026 | Enrolment & Service Transformation | Test expansion & CI/CD       |
-| **5.3.0** | Mar 15, 2026 | Service Consolidation & Converters | JPA type safety              |
-| **5.2.0** | Feb 27, 2026 | Architecture Refactoring           | Three-tier mapping           |
-| **5.1.0** | Feb 25, 2026 | Test Suite Enhancement             | Code quality consolidation   |
-| **5.0.0** | Feb 24, 2026 | Semantic Versioning Transition     | Infrastructure consolidation |
-| **4.1.0** | Feb 13, 2026 | CRUD Enhancement                   | API maturity                 |
-| **4.0.0** | Feb 11, 2026 | Domain Refactoring                 | Quality assurance            |
-| **3.1.0** | Feb 10, 2026 | Exception Consolidation            | Code simplification          |
-| **3.0.0** | Feb 10, 2026 | Domain Specialisation              | IPSC alignment               |
-| **2.0.0** | Feb 8, 2026  | Service Architecture               | Modularity                   |
-| **1.1.3** | Jan 28, 2026 | Documentation                      | Mapper centralization        |
-| **1.1.2** | Jan 20, 2026 | Documentation                      | Project guides               |
-| **1.1.1** | Jan 16, 2026 | API Clarity                        | Javadoc                      |
-| **1.1.0** | Jan 14, 2026 | Award Processing                   | Core refactoring             |
-| **1.0.0** | Jan 4, 2026  | Foundation                         | Image gallery                |
+| Version   | Date         | Theme                               | Key Focus                    |
+|-----------|--------------|-------------------------------------|------------------------------|
+| **6.0.0** | May 1, 2026  | Dedicated Match API & Encapsulation | CRUD API & repo decoupling   |
+| **5.4.0** | Apr 26, 2026 | Enrolment & Service Transformation  | Test expansion & CI/CD       |
+| **5.3.0** | Mar 15, 2026 | Service Consolidation & Converters  | JPA type safety              |
+| **5.2.0** | Feb 27, 2026 | Architecture Refactoring            | Three-tier mapping           |
+| **5.1.0** | Feb 25, 2026 | Test Suite Enhancement              | Code quality consolidation   |
+| **5.0.0** | Feb 24, 2026 | Semantic Versioning Transition      | Infrastructure consolidation |
+| **4.1.0** | Feb 13, 2026 | CRUD Enhancement                    | API maturity                 |
+| **4.0.0** | Feb 11, 2026 | Domain Refactoring                  | Quality assurance            |
+| **3.1.0** | Feb 10, 2026 | Exception Consolidation             | Code simplification          |
+| **3.0.0** | Feb 10, 2026 | Domain Specialisation               | IPSC alignment               |
+| **2.0.0** | Feb 8, 2026  | Service Architecture                | Modularity                   |
+| **1.1.3** | Jan 28, 2026 | Documentation                       | Mapper centralization        |
+| **1.1.2** | Jan 20, 2026 | Documentation                       | Project guides               |
+| **1.1.1** | Jan 16, 2026 | API Clarity                         | Javadoc                      |
+| **1.1.0** | Jan 14, 2026 | Award Processing                    | Core refactoring             |
+| **1.0.0** | Jan 4, 2026  | Foundation                          | Image gallery                |
 
 ---
 
 ## ⚠️ Breaking Changes by Version
+
+### 🧾 Version 6.0.0
+
+- ✅ **No breaking changes to public APIs**
+- ⚠️ **Developer note:** Internal IPSC model package paths changed (`models/ipsc.*` →
+  `models/ipsc.common.*`; match-specific models at `models/ipsc.match.*`). Update all
+  import statements in any code that extends or tests internal classes.
 
 ### 🧾 Version 5.4.0
 
@@ -1352,35 +1479,38 @@ handling, and better maintainability.
 
 ## 📈 Cumulative Feature Matrix
 
-| Feature               | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 |
-|-----------------------|------|------|------|------|------|------|------|------|------|------|------|
-| Image Gallery         | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| Award Processing      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| Match Management      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| IPSC Integration      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| Competitor Tracking   |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| OpenAPI Documentation |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| CRUD Operations       |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| Semantic Versioning   |      |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
-| Test Organisation     |      |      |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    |
-| Three-Tier Mapping    |      |      |      |      |      |      |      |      | ✅    | ✅    | ✅    |
-| Custom JPA Converters |      |      |      |      |      |      |      |      |      | ✅    | ✅    |
-| Competitor Enrolment  |      |      |      |      |      |      |      |      |      |      | ✅    |
-| SAPSA Validation      |      |      |      |      |      |      |      |      |      |      | ✅    |
+| Feature                  | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v4.1 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 | v6.0 |
+|--------------------------|------|------|------|------|------|------|------|------|------|------|------|------|
+| Image Gallery            | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Award Processing         |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Match Management         |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| IPSC Integration         |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Competitor Tracking      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| OpenAPI Documentation    |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| CRUD Operations          |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Semantic Versioning      |      |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Test Organisation        |      |      |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Three-Tier Mapping       |      |      |      |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    |
+| Custom JPA Converters    |      |      |      |      |      |      |      |      |      | ✅    | ✅    | ✅    |
+| Competitor Enrolment     |      |      |      |      |      |      |      |      |      |      | ✅    | ✅    |
+| SAPSA Validation         |      |      |      |      |      |      |      |      |      |      | ✅    | ✅    |
+| Match CRUD API (v2)      |      |      |      |      |      |      |      |      |      |      |      | ✅    |
+| Entity Svc Encapsulation |      |      |      |      |      |      |      |      |      |      |      | ✅    |
 
 ---
 
 ## 📚 Documentation Evolution
 
-| Document                    | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 |
-|-----------------------------|------|------|------|------|------|------|------|------|------|------|
-| README.md                   |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| ARCHITECTURE.md             |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| CHANGELOG.md                |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
-| RELEASE_NOTES.md            |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
-| HISTORY.md                  |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    |
-| API Documentation (OpenAPI) |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
-| Javadoc                     | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Document                    | v1.0 | v1.1 | v2.0 | v3.0 | v4.0 | v5.0 | v5.1 | v5.2 | v5.3 | v5.4 | v6.0 |
+|-----------------------------|------|------|------|------|------|------|------|------|------|------|------|
+| README.md                   |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| ARCHITECTURE.md             |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| CLAUDE.md                   |      |      |      |      |      |      |      |      |      |      | ✅    |
+| CHANGELOG.md                |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| RELEASE_NOTES.md            |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| HISTORY.md                  |      |      |      |      |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| API Documentation (OpenAPI) |      | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
+| Javadoc                     | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    | ✅    |
 
 ---
 
@@ -1399,6 +1529,7 @@ handling, and better maintainability.
 | v5.2.0  | Comprehensive      | Very Extensive    | ~90%          | Advanced          |
 | v5.3.0  | Comprehensive      | Very Extensive    | ~90%          | Advanced          |
 | v5.4.0  | Very Comprehensive | Very Extensive    | ~92%          | Advanced          |
+| v6.0.0  | Very Comprehensive | Very Extensive    | ~93%          | Advanced          |
 
 ---
 
@@ -1409,6 +1540,7 @@ handling, and better maintainability.
 - **v1.0.0 – v1.1.2:** Spring Boot 4.0.2
 - **v1.1.3 – v5.3.0:** Spring Boot 4.0.3 (security patch)
 - **v5.3.0:** Upgraded to Spring Boot 4.1.0-SNAPSHOT (snapshot repository added)
+- **v6.0.0:** Upgraded to Spring Boot 4.0.6 (reverted to stable; snapshot removed)
 
 ### ☕ Java Version
 
@@ -1427,41 +1559,46 @@ handling, and better maintainability.
 
 ## ⚡ Performance & Scalability Evolution
 
-| Aspect               | v1.0.0  | v2.0.0    | v3.0.0    | v4.0.0    | v5.0.0    | v5.1.0    | v5.2.0    | v5.3.0    | v5.4.0    |
-|----------------------|---------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-| Entity Fetching      | Basic   | Optimised | Optimised | Optimised | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
-| Transaction Handling | Basic   | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
-| Memory Efficiency    | Good    | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent |
-| Error Recovery       | Basic   | Good      | Good      | Good      | Good      | Good      | Good      | Good      | Good      |
-| Batch Processing     | Limited | Supported | Supported | Supported | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
-| Test Organisation    | Basic   | Basic     | Basic     | Basic     | Basic     | Advanced  | Advanced  | Advanced  | Advanced  |
-| CI/CD Quality Gates  | None    | None      | None      | None      | None      | None      | None      | Basic     | Advanced  |
+| Aspect               | v1.0.0  | v2.0.0    | v3.0.0    | v4.0.0    | v5.0.0    | v5.1.0    | v5.2.0    | v5.3.0    | v5.4.0    | v6.0.0    |
+|----------------------|---------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+| Entity Fetching      | Basic   | Optimised | Optimised | Optimised | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
+| Transaction Handling | Basic   | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
+| Memory Efficiency    | Good    | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent | Excellent |
+| Error Recovery       | Basic   | Good      | Good      | Good      | Good      | Good      | Good      | Good      | Good      | Good      |
+| Batch Processing     | Limited | Supported | Supported | Supported | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
+| Test Organisation    | Basic   | Basic     | Basic     | Basic     | Basic     | Advanced  | Advanced  | Advanced  | Advanced  | Advanced  |
+| CI/CD Quality Gates  | None    | None      | None      | None      | None      | None      | None      | Basic     | Advanced  | Advanced  |
+| Layer Enforcement    | None    | Partial   | Partial   | Partial   | Partial   | Partial   | Partial   | Partial   | Partial   | Full      |
 
 ---
 
 ## 🎓 Conclusion
 
-The HPSC Website Backend has evolved significantly over 15 releases, from a simple image gallery application
+The HPSC Website Backend has evolved significantly over 16 releases, from a simple image gallery application
 to a sophisticated platform for managing practical shooting competition data with comprehensive test
 organisation and maintainability focus. This release notes history documents:
 
-- **Feature evolution:** From image gallery to comprehensive IPSC match management with competitor enrolment
-- **Architectural progression:** From monolithic to modular, service-oriented, transformation-based architecture
-- **Quality improvements:** Increasing test coverage (~30% to ~92%), documentation, and code organisation
-- **Standards adoption:** From custom versioning to Semantic Versioning with CI/CD quality gates
-- **Domain specialisation:** From generic match management to IPSC-specific focus with SAPSA validation
-- **Code quality:** Systematic test organisation, consolidation, and Qodana static analysis for long-term
-  maintainability
+- **Feature evolution:** From image gallery to comprehensive IPSC match management with a dedicated versioned
+  match CRUD API
+- **Architectural progression:** From monolithic to modular, service-oriented, fully encapsulated layer
+  architecture with no repository leakage past entity services
+- **Quality improvements:** Increasing test coverage (~30% to ~93%), documentation, and code organisation
+- **Standard adoption:** From custom versioning to Semantic Versioning with CI/CD quality gates
+- **Domain specialisation:** From generic match management to IPSC-specific focus with SAPSA validation,
+  competitor enrolment, and versioned match API
+- **Code quality:** Systematic test organisation, consolidation, Qodana static analysis, and JaCoCo
+  coverage for long-term maintainability
 
 Each version built upon previous releases while introducing improvements in architecture, functionality, and
-maintainability. The adoption of Semantic Versioning in v5.0.0, the test suite consolidation across v5.1.0–
-v5.3.0, and the massive test expansion in v5.4.0 mark a clear maturation point for predictable, standards-based
-future releases with strong emphasis on code quality, competitor data integrity, and CI/CD automation.
+maintainability. The adoption of Semantic Versioning in v5.0.0, the test suite consolidation across
+v5.1.0–v5.3.0, the massive test expansion in v5.4.0, and the repository encapsulation and dedicated match
+API in v6.0.0 mark clear maturation points for predictable, standards-based future releases with strong
+emphasis on code quality, competitor data integrity, and CI/CD automation.
 
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** April 26, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.4.0 (April 26, 2026)  
-**Total Versions:** 15 releases  
-**Total Timeline:** ~112 days (Jan 4 – Apr 26, 2026)
+**Last Updated:** May 1, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 6.0.0 (May 1, 2026)  
+**Total Versions:** 16 releases  
+**Total Timeline:** ~117 days (Jan 4 – May 1, 2026)

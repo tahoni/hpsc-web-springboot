@@ -92,7 +92,7 @@ public class AwardResponse extends Response {
      * @param uuid        the unique identifier for the response. If null, a random UUID
      *                    is generated.
      * @param title       the title of the award response.
-     *                    Must not be null or blank.
+     *                    Must not be null or empty.
      * @param firstPlace  the award place representing the first position.
      *                    Must not be null.
      * @param secondPlace the award place representing the second position.

@@ -9,10 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StringUtilTest {
 
-    // =====================================================================
-    // Tests for formatStringWithNamedParameters - Valid Data Processing
-    // =====================================================================
-
     @Test
     void testFormatStringWithNamedParameters_whenValidTemplateAndParameters_thenReplacesPlaceholders() {
         // Arrange
@@ -115,10 +111,6 @@ public class StringUtilTest {
         assertEquals("Simple text without placeholders.", result);
     }
 
-    // =====================================================================
-    // Tests for formatStringWithNamedParameters - Edge Cases and Boundary Conditions
-    // =====================================================================
-
     @Test
     void testFormatStringWithNamedParameters_whenEmptyTemplate_thenReturnsEmptyString() {
         // Arrange
@@ -149,10 +141,6 @@ public class StringUtilTest {
         assertEquals(template, result);
     }
 
-    // =====================================================================
-    // Tests for formatStringWithNamedParameters - Input Validation and Error Handling
-    // =====================================================================
-
     @Test
     void testFormatStringWithNamedParameters_whenNullParameters_thenReturnsOriginalTemplate() {
         // Arrange
@@ -178,10 +166,6 @@ public class StringUtilTest {
         assertThrows(NullPointerException.class, () ->
                 StringUtil.formatStringWithNamedParameters(null, parameters));
     }
-
-    // =====================================================================
-    // Tests for toString - Valid Data Processing
-    // =====================================================================
 
     @Test
     void testToString_whenValidObject_thenReturnsObjectStringRepresentation() {
@@ -211,10 +195,6 @@ public class StringUtilTest {
         // Assert
         assertEquals("CustomToString", result);
     }
-
-    // =====================================================================
-    // Tests for toString - Input Validation and Error Handling
-    // =====================================================================
 
     @Test
     void testToString_whenNullObject_thenReturnsNull() {

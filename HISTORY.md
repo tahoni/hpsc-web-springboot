@@ -21,6 +21,32 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ## 📅 Historical Timeline
 
+### Version 6.0.0 (May 1, 2026)
+
+**Theme:** Dedicated Match CRUD API, Service Encapsulation & Package Restructuring
+
+**Key Focus:**
+
+- `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
+- `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service layer
+- `MatchOnlyDto`, `MatchOnlyRequest`, `MatchOnlyResponse`, `MatchOnlyResultsDto` introduced for
+  match-only operations without stages
+- `DomainServiceImpl` decoupled from JPA repositories — now delegates to entity services exclusively
+- New entity service methods: `findClubById`, `findCompetitorById`, `findMatchStageCompetitorById`
+- `IpscUtil` utility class added for club and match display-string formatting
+- All IPSC models moved from `models/ipsc/` to `models/ipsc/common/`; new `models/ipsc/match/` sub-package
+- Three new match search request models: `MatchSearchRequest`, `MatchSearchDateRequest`,
+  `MatchSearchIdRequest`
+- `IpscMemberController` stub registered at `/ipsc/member`
+- `TransformationService.mapMatchOnly(MatchOnlyRequest)` added; `mapMatchResults` no longer throws
+  `ValidationException`
+- `ControllerAdvice` enhanced with structured logging across all exception handlers
+- Spring Boot upgraded from 4.0.5 to 4.0.6; MIT licence and SCM metadata added to `pom.xml`
+- 8 new test classes (~1,300 lines): `IpscMatchControllerTest`, `IpscMatchServiceTest`,
+  `IpscMatchIntegrationTest`, `MatchOnlyDtoTest`, `MatchOnlyRequestTest`, `MatchOnlyResponseTest`,
+  `MatchResponseTest`, `IpscUtilTest`; `IpscControllerTest` removed
+- Statistics: 40 commits, 165 files changed, +6,779 insertions, -3,501 deletions
+
 ### Version 5.4.0 (April 26, 2026)
 
 **Theme:** Competitor Enrolment, Service Transformation & Comprehensive Test Expansion
@@ -808,6 +834,112 @@ test coverage.
 
 ---
 
+### 🆕 Phase 13: Dedicated Match CRUD API & Service Encapsulation (v6.0.0)
+
+**Duration:** May 1, 2026
+
+Introduced a versioned, resource-oriented match management API, completed the entity service
+encapsulation layer, and restructured all IPSC model packages for long-term growth.
+
+**Key Accomplishments:**
+
+**Dedicated Match CRUD API**
+
+- **`IpscMatchController`** introduced at `/v2/ipsc/matches` (134 lines) with full CRUD:
+    - `POST` — create a new IPSC match
+    - `PUT {matchId}` — fully replace an existing match
+    - `PATCH {matchId}` — partially update an existing match
+    - `GET {matchId}` — retrieve a match by ID
+    - All operations return `ResponseEntity<MatchOnlyResponse>` with typed OpenAPI annotations
+- **`IpscMemberController`** stub registered at `/ipsc/member` for future member management
+
+**IpscMatchService Layer**
+
+- **`IpscMatchService` interface** (22 lines) — dedicated match CRUD contract:
+    - `insertMatch`, `updateMatch`, `modifyMatch`, `getMatch` — all return `Optional<MatchOnlyResponse>`
+- **`IpscMatchServiceImpl`** (135 lines) — full implementation backed by `DomainService` and
+  `TransactionService`
+
+**Match-Specific Model Layer**
+
+- `MatchOnlyDto` (82 lines) — lightweight match DTO; auto-resolves `FirearmType` and stamps
+  `dateEdited` on init
+- `MatchOnlyRequest` (49 lines) — JSON request body for match CRUD operations
+- `MatchOnlyResponse` (83 lines) — response envelope returned by `IpscMatchController`
+- `MatchOnlyResultsDto` (18 lines) — internal results holder
+- `MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest` — future search support
+
+**DomainServiceImpl — Repository Decoupling**
+
+- Removed direct injection of all six JPA repositories from `DomainServiceImpl`
+- All data access delegated to the entity service layer:
+    - `ClubEntityService`, `CompetitorEntityService`, `MatchEntityService`
+    - `MatchStageEntityService`, `MatchCompetitorEntityService`,
+      `MatchStageCompetitorEntityService`
+- New entity service methods: `findClubById`, `findCompetitorById`,
+  `findMatchStageCompetitorById`
+
+**IPSC Model Package Restructuring**
+
+- All `models/ipsc/` classes promoted to `models/ipsc/common/` sub-package
+- New sibling `models/ipsc/match/` sub-package for match-only models
+- Old flat `models/ipsc/response/` (`ClubResponse`, `MatchResponse`) replaced by
+  `models/ipsc/common/response/` counterparts
+
+**IpscUtil — String Formatting Utility**
+
+- `IpscUtil` (66 lines): `clubTostring`, `matchToString` — centralises `"Match @ Club (ABBR)"`
+  display-string construction used across the match and club DTOs
+
+**TransformationService Updates**
+
+- `mapMatchOnly(MatchOnlyRequest)` method added for the match CRUD pipeline
+- `mapMatchResults` no longer declares `throws ValidationException`
+
+**Enhanced Logging & Error Handling**
+
+- Structured logging added to all `ControllerAdvice` exception handlers (119 lines changed)
+- `ValidationException` removed from handler method signatures
+
+**Build & Metadata**
+
+- Spring Boot upgraded 4.0.5 → 4.0.6
+- MIT License, developer profile, and SCM connection added to `pom.xml`
+- `logback-spring.xml` updated with additional logger configuration
+
+**Test Coverage**
+
+- **New (8 classes, ~1,300 lines):** `IpscMatchControllerTest`, `IpscMatchServiceTest`,
+  `IpscMatchIntegrationTest`, `MatchOnlyDtoTest`, `MatchOnlyRequestTest`,
+  `MatchOnlyResponseTest`, `MatchResponseTest`, `IpscUtilTest`
+- **Updated:** `TransformationServiceTest` (+747 lines), `DomainServiceTest` (+247 lines),
+  `TransactionServiceTest` (+246 lines), `ValueUtilTest` (+294 lines)
+- **Removed:** `IpscControllerTest` (156 lines — superseded by `IpscMatchControllerTest`)
+
+**Statistics**
+
+- 40 commits
+- 165 files changed
+- +6,779 insertions
+- -3,501 deletions
+- Net: +3,278 lines
+
+**Architecture Highlights:**
+
+- Dedicated `/v2/ipsc/matches` API separate from the bulk-import flow
+- `DomainServiceImpl` no longer reaches past entity services to repositories
+- `models/ipsc/common/` + `models/ipsc/match/` provide clear model homes as the domain grows
+- `IpscUtil` centralises display-string logic previously scattered across DTOs
+
+**Technical Focus:**
+
+- Versioned match management API
+- Service layer encapsulation and repository decoupling
+- Package restructuring for domain growth
+- Continued test coverage expansion
+
+---
+
 ### 👥 Phase 12: Competitor Enrolment & Service Transformation (v5.4.0)
 
 **Duration:** April 26, 2026
@@ -1103,6 +1235,22 @@ safety, and comprehensive test coverage across all services and utilities.
 
 ---
 
+### 🆕 Milestone 13: Dedicated Match CRUD API & Service Encapsulation (v6.0.0)
+
+- ✅ `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
+- ✅ `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service
+- ✅ `DomainServiceImpl` fully decoupled from repositories — entity services used exclusively
+- ✅ All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
+- ✅ `IpscUtil` added for centralised club/match display-string formatting
+- ✅ Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata populated in `pom.xml`
+
+**Achievement:** Established a versioned, resource-oriented match management API and completed the
+entity service encapsulation layer, ensuring `DomainServiceImpl` respects the layered architecture
+described in CLAUDE.md. The IPSC model package restructuring provides dedicated homes for shared
+and match-specific models as the domain grows.
+
+---
+
 ### 👥 Milestone 12: Competitor Enrolment & Service Transformation (v5.4.0)
 
 - ✅ `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
@@ -1283,6 +1431,51 @@ Entity Layer
 
 ---
 
+### v6.0.0: Versioned Match API & Fully Encapsulated Domain Layer
+
+```
+IpscController          IpscMatchController (/v2/ipsc/matches)
+     ↓                        ↓
+IpscService          IpscMatchService
+     ↓               (insert/update/modify/get)
+TransformationService        ↓
+     ↓               DomainService
+     ↓               (entity services only — no direct repo access)
+     ↓                    ↓
+     └──────────► ClubEntityService
+                  CompetitorEntityService
+                  MatchEntityService
+                  MatchStageEntityService
+                  MatchCompetitorEntityService
+                  MatchStageCompetitorEntityService
+                        ↓
+                  Repository Layer
+                        ↓
+                  Entity Layer
+                        ↓
+                  AttributeConverters
+```
+
+**Model package structure:**
+
+```
+models/ipsc/
+├── common/   ← all shared IPSC models
+│   ├── dto/, request/, response/, records/, holders/, data/, divisions/
+└── match/    ← match-only models
+    ├── dto/, request/, response/, holders/dto/
+```
+
+**Characteristics:**
+
+- Dedicated `/v2/ipsc/matches` API — create, replace, patch, retrieve matches
+- `DomainServiceImpl` no longer injects repositories directly; entity services are the only access path
+- `models/ipsc/common/` + `models/ipsc/match/` provide clear package boundaries
+- `IpscUtil` centralises club and match display-string construction
+- `IpscMemberController` stub registered for upcoming member management
+
+---
+
 ### v5.4.0: Transformation Service Architecture
 
 ```
@@ -1364,6 +1557,8 @@ AttributeConverters
 - **v5.2.0:** Three-tier mapping architecture, enhanced match entity handling
 - **v5.3.0:** Custom JPA converters; optimised repository queries; `Set`-based competitor deduplication
 - **v5.4.0:** `EnrolledCompetitorDto`; SAPSA number validation; competitor deduplication by SAPSA+ID
+- **v6.0.0:** `IpscUtil` for club/match string formatting; `MatchOnlyDto` match pipeline; match search
+  request models (`MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest`)
 
 ### 🏛️ Domain Management Features
 
@@ -1378,6 +1573,9 @@ AttributeConverters
   `@OneToMany` mappedBy declarations; ClubEntityService simplified
 - **v5.4.0:** `EnrolledCompetitorDto`; `ClubIdentifier` abbreviation; records' restructuring;
   `domain` → `data` package; `MatchHolder`; `TransformationService`
+- **v6.0.0:** `MatchOnlyDto`/`Request`/`Response` for match CRUD; `models/ipsc/common/` +
+  `models/ipsc/match/` package split; entity service methods `findClubById`, `findCompetitorById`,
+  `findMatchStageCompetitorById`; `DomainServiceImpl` fully decoupled from repositories
 
 ### 🌐 API Capabilities
 
@@ -1391,6 +1589,8 @@ AttributeConverters
 - **v5.2.0:** Enhanced null safety with Optional return types
 - **v5.3.0:** Consolidated service API; IpscMatchResultService removed from the internal contract
 - **v5.4.0:** Improved error handling in ControllerAdvice; IpscController updates
+- **v6.0.0:** `/v2/ipsc/matches` CRUD API (POST, PUT, PATCH, GET) via `IpscMatchController`;
+  structured logging in `ControllerAdvice`; `IpscMemberController` stub at `/ipsc/member`
 
 ### 🧪 Testing Coverage
 
@@ -1438,6 +1638,14 @@ AttributeConverters
     - Removed `IpscMatchServiceTest` (10,076 lines – service renamed to `TransformationService`)
     - Updated major suites: DomainServiceTest (1,428), TransactionServiceTest (1,736),
       IpscServiceIntegrationTest (649), IpscServiceTest (737)
+- **v6.0.0:** 8 new test classes (~1,300 lines) covering the match CRUD pipeline end-to-end
+    - `IpscMatchControllerTest`, `IpscMatchServiceTest` (unit)
+    - `IpscMatchIntegrationTest` (H2 integration — match persistence)
+    - `MatchOnlyDtoTest`, `MatchOnlyRequestTest`, `MatchOnlyResponseTest`, `MatchResponseTest` (model)
+    - `IpscUtilTest` (utility — string formatting edge cases)
+    - `IpscControllerTest` removed; covered by `IpscMatchControllerTest`
+    - Major suite updates: `TransformationServiceTest` (+747), `DomainServiceTest` (+247),
+      `TransactionServiceTest` (+246), `ValueUtilTest` (+294)
 
 ### 📚 Documentation Quality
 
@@ -1451,6 +1659,8 @@ AttributeConverters
   `IpscMatchStage.init()` and `findMatchByNameAndScheduledDate`
 - **v5.4.0:** v5.4.0 release notes, changelog entry, history update; Javadoc on `EnrolledCompetitorDto`
   and `TransformationService` interface
+- **v6.0.0:** v6.0.0 release notes, changelog entry, history update; CLAUDE.md added for AI
+  assistant context
 
 ---
 
@@ -1527,6 +1737,19 @@ AttributeConverters
 - Establish Qodana JVM linting and JaCoCo coverage as CI/CD quality gates
 - Package reorganisation (`domain` → `data`) and records restructuring for semantic clarity
 
+### 🆕 API Productisation Phase (v6.0.0)
+
+**Focus:** Versioned Match API, Repository Decoupling & Package Structure
+
+- Introduce a dedicated, versioned match CRUD API (`/v2/ipsc/matches`) separate from the bulk-import
+  controller
+- Complete the entity service encapsulation: `DomainServiceImpl` no longer bypasses the service layer
+  to reach JPA repositories
+- Restructure all IPSC model packages under `models/ipsc/common/` with a dedicated `models/ipsc/match/`
+  sub-package, providing clear boundaries for shared vs. match-specific models
+- Centralise display-string construction in `IpscUtil`, eliminating scattered formatting logic
+- Support future member management and match search features with stub controller and search request models
+
 ---
 
 ## 📚 Key Learnings
@@ -1600,14 +1823,36 @@ AttributeConverters
     - 20+ new test classes (~7,000 lines) across controllers, converters, entities, exceptions, integration
     - Qodana JVM linting and JaCoCo 0.8.14 code coverage integrated into CI/CD
     - Statistics: ~75 commits, 123 files changed, +12,713 insertions, -13,358 deletions
+11. **Dedicated Match CRUD API & Service Encapsulation (v6.0.0):** Versioned API and layer enforcement
+    - `IpscMatchController` at `/v2/ipsc/matches` establishes a versioned, resource-oriented match API
+    - `DomainServiceImpl` fully decoupled from repositories — completing the intended layered architecture
+    - All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` added for match-specific classes
+    - `IpscUtil` centralises display-string construction; `MatchOnlyDto/Request/Response` support match CRUD
+    - 8 new test classes (~1,300 lines) covering controller, service, integration, DTO, and utility layers
+    - Statistics: 40 commits, 165 files changed, +6,779 insertions, -3,501 deletions
 
 ---
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v5.3.0, the following areas are identified for future enhancement:
+Based on the evolution to v6.0.0, the following areas are identified for future enhancement:
 
-### ✅ Recently Completed (v5.4.0)
+### ✅ Recently Completed (v6.0.0)
+
+- ✅ `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
+- ✅ `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service
+- ✅ `MatchOnlyDto`, `MatchOnlyRequest`, `MatchOnlyResponse`, `MatchOnlyResultsDto` introduced
+- ✅ `DomainServiceImpl` fully decoupled from JPA repositories; delegates to entity services only
+- ✅ New entity service methods: `findClubById`, `findCompetitorById`, `findMatchStageCompetitorById`
+- ✅ `IpscUtil` added for centralised club/match display-string formatting
+- ✅ All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
+- ✅ Match search request models: `MatchSearchRequest`, `MatchSearchDateRequest`,
+  `MatchSearchIdRequest`
+- ✅ `IpscMemberController` stub registered at `/ipsc/member`
+- ✅ Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata added to `pom.xml`
+- ✅ 8 new test classes (~1,300 lines); `IpscControllerTest` removed
+
+### ✅ Previously Completed (v5.4.0)
 
 - ✅ `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
 - ✅ `IpscMatchService` renamed to `TransformationService`; `TransformationServiceImpl` (1,098 lines)
@@ -1619,7 +1864,7 @@ Based on the evolution to v5.3.0, the following areas are identified for future 
 - ✅ Package restructure: `ipsc/domain` → `ipsc/data`; records and holders reorganised
 - ✅ PCC Optics division constant and ControllerAdvice error handling fixed
 
-### ✅ Previously Completed (v5.3.0)
+### ✅ Previously Completed (v5.3.0 and earlier)
 
 - ✅ Six custom JPA attribute converters (ClubIdentifier, CompetitorCategory, Division, FirearmType,
   MatchCategory, PowerFactor)
@@ -1627,45 +1872,35 @@ Based on the evolution to v5.3.0, the following areas are identified for future 
 - ✅ DtoMapping converted to Java record for immutability
 - ✅ All @OneToMany relationships corrected with mappedBy declarations
 - ✅ Repository query optimisation (Set deduplication, scheduled date, fetch join removal)
-- ✅ DomainServiceTest comprehensive coverage (+787 lines)
-- ✅ IpscServiceIntegrationTest integration tests for importWinMssCabFile
-- ✅ Spring Boot upgraded to 4.1.0-SNAPSHOT
-
-### ✅ Previously Completed (v5.2.0 and earlier)
-
 - ✅ Three-tier mapping architecture (DtoMapping, EntityMapping, DtoToEntityMapping)
 - ✅ Enhanced match entity handling with MatchEntityService
 - ✅ Comprehensive test consolidation across all services and utilities
-- ✅ Enhanced null safety with array initialisation and Optional return types
-- ✅ Major service refactoring (IpscMatchServiceImpl, IpscMatchResultServiceImpl, TransactionServiceImpl)
-- ✅ DtoToEntityMappingTest with 716 lines of comprehensive coverage
-- ✅ TransactionServiceTest with 2,000+ lines of edge case testing
-- ✅ Removed 3,000+ lines of duplicate tests
-- ✅ All utility tests consolidated (DateUtil, NumberUtil, StringUtil, ValueUtil)
-- ✅ Test suite reorganisation and consolidation (from v5.1.0)
-- ✅ Elimination of duplicate test cases (from v5.1.0)
+- ✅ Test suite reorganisation and consolidation (from v5.1.0, v5.2.0)
 
 ### 🔄 Short-term (Minor Releases)
 
-- Complete Javadoc documentation across all methods
+- Implement match search endpoints using `MatchSearchRequest`, `MatchSearchDateRequest`,
+  `MatchSearchIdRequest`
+- Full `IpscMemberController` implementation for member CRUD
+- Complete Javadoc coverage for `IpscMatchController`, `IpscMatchService`, `IpscUtil`, `MatchOnlyDto`
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
-- Additional integration test scenarios
 
-### 📦 Medium-term (v5.4+)
+### 📦 Medium-term (v6.x+)
 
+- REST API endpoints for enrolled competitor management
 - Additional IPSC data format support
 - Bulk match processing capabilities
 - Enhanced error reporting and recovery
 - Performance metrics and monitoring
 - Advanced query optimisation
 
-### 🎯 Long-term (v6.0+)
+### 🎯 Long-term (v7.0+)
 
 - Potential domain model expansions
-- Advanced query optimisation
-- Possible API versioning strategy
+- Real-time match result processing
 - Enhanced integrations with external systems
+- Advanced reporting and analytics
 
 ---
 
@@ -1689,13 +1924,17 @@ platform for managing practical shooting competition data. This evolution demons
   validation workflows (v5.4.0)
 - **CI/CD Quality Gates:** Qodana JVM static analysis and JaCoCo coverage enforcement raising the quality
   baseline across the entire codebase (v5.4.0)
+- **Versioned Match API:** Dedicated `/v2/ipsc/matches` controller providing resource-oriented CRUD
+  separate from the bulk-import flow (v6.0.0)
+- **Layer Enforcement:** `DomainServiceImpl` no longer reaches past entity services into repositories,
+  fully realising the layered architecture (v6.0.0)
 
 The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major
-architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, and the
-competitor enrolment system with service transformation in v5.4.0 mark significant maturation points where
-the project demonstrates stable, predictable releases with clear separation of concerns. These releases
-serve as a solid foundation for the shooting club's digital operations, with a clear commitment to
-long-term maintainability and quality.
+architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the
+competitor enrolment system with service transformation in v5.4.0, and the dedicated match CRUD API with
+service encapsulation in v6.0.0 mark significant maturation points where the project demonstrates stable,
+predictable releases with clear separation of concerns. These releases serve as a solid foundation for the
+shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
 
 Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity
 relationships, optimised repositories, and a consolidated service architecture that reduces complexity
@@ -1706,15 +1945,36 @@ Version 5.4.0 extends that foundation with competitor enrolment tracking, SAPSA 
 `ipsc/domain` to `ipsc/data`, and a significant test expansion — all underpinned by Qodana JVM static
 analysis and JaCoCo code coverage enforcement that set a new quality baseline for the project.
 
+Version 6.0.0 marks a decisive architectural milestone: `DomainServiceImpl` no longer bypasses the
+entity service boundary to reach JPA repositories, `IpscMatchController` establishes a versioned,
+resource-oriented match API at `/v2/ipsc/matches`, and the IPSC model packages are restructured under
+`models/ipsc/common/` and `models/ipsc/match/` — providing clear, scalable homes for shared and
+match-specific models as the domain continues to grow.
+
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** April 26, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 5.4.0 (April 26, 2026)  
+**Last Updated:** May 1, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 6.0.0 (May 1, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for
 detailed technical information
 
-**Recent Updates (v5.4.0):**
+**Recent Updates (v6.0.0):**
+
+- `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
+- `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service layer
+- `MatchOnlyDto`, `MatchOnlyRequest`, `MatchOnlyResponse`, `MatchOnlyResultsDto` introduced
+- `DomainServiceImpl` fully decoupled from JPA repositories; delegates exclusively to entity services
+- New entity service methods: `findClubById`, `findCompetitorById`, `findMatchStageCompetitorById`
+- `IpscUtil` utility class added for club and match display-string formatting
+- All IPSC models moved from `models/ipsc/` to `models/ipsc/common/`; new `models/ipsc/match/` added
+- Match search request models: `MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest`
+- `IpscMemberController` stub registered at `/ipsc/member`
+- Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata added to `pom.xml`
+- 8 new test classes (~1,300 lines); `IpscControllerTest` removed (superseded)
+- Statistics: 40 commits, 165 files changed, +6,779 insertions, -3,501 deletions
+
+**Previous Update (v5.4.0):**
 
 - `EnrolledCompetitorDto` introduced for first-class competitor enrolment tracking
 - SAPSA number validation and competitor deduplication logic was added

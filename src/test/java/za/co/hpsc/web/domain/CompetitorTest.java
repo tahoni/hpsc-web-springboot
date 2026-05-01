@@ -1,7 +1,7 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.dto.CompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -275,12 +275,19 @@ public class CompetitorTest {
     }
 
     @Test
-    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenDoesNotThrowsNullPointerException() {
         // Arrange
         Competitor competitor = new Competitor();
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> competitor.init(null));
+        // Act
+        assertDoesNotThrow(() -> competitor.init(null));
+
+        // Assert
+        assertNull(competitor.getFirstName());
+        assertNull(competitor.getLastName());
+        assertNull(competitor.getSapsaNumber());
+        assertNull(competitor.getCompetitorNumber());
+        assertNull(competitor.getDateOfBirth());
     }
 
     @Test

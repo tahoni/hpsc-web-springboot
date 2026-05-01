@@ -5,17 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.*;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.dto.*;
-import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
-import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
-import za.co.hpsc.web.models.ipsc.holders.records.IpscMatchRecordHolder;
-import za.co.hpsc.web.models.ipsc.holders.request.IpscRequestHolder;
-import za.co.hpsc.web.models.ipsc.holders.response.IpscResponseHolder;
-import za.co.hpsc.web.models.ipsc.records.*;
-import za.co.hpsc.web.models.ipsc.request.*;
-import za.co.hpsc.web.models.ipsc.response.*;
+import za.co.hpsc.web.models.ipsc.common.dto.*;
+import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.common.holders.records.IpscMatchRecordHolder;
+import za.co.hpsc.web.models.ipsc.common.holders.request.IpscRequestHolder;
+import za.co.hpsc.web.models.ipsc.common.holders.response.IpscResponseHolder;
+import za.co.hpsc.web.models.ipsc.common.records.*;
+import za.co.hpsc.web.models.ipsc.common.request.*;
+import za.co.hpsc.web.models.ipsc.common.response.*;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
 import za.co.hpsc.web.services.*;
 import za.co.hpsc.web.utils.DateUtil;
 import za.co.hpsc.web.utils.NumberUtil;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class TransformationServiceImpl implements TransformationService {
+
     protected final ClubEntityService clubEntityService;
     protected final MatchEntityService matchEntityService;
     protected final MatchStageEntityService matchStageEntityService;
@@ -49,8 +51,7 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     @Override
-    public IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder)
-            throws ValidationException {
+    public IpscResponseHolder mapMatchResults(IpscRequestHolder ipscRequestHolder) {
 
         // Validate input
         if (ipscRequestHolder == null) {
@@ -83,12 +84,24 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     @Override
+    public Optional<MatchOnlyDto> mapMatchOnly(MatchOnlyRequest matchOnlyRequest) {
+        if (matchOnlyRequest == null) {
+            return Optional.empty();
+        }
+
+        MatchOnlyDto matchOnlyDto = new MatchOnlyDto();
+        matchOnlyDto.init(matchOnlyRequest);
+
+        return Optional.of(matchOnlyDto);
+    }
+
+    @Override
     public IpscMatchRecordHolder generateIpscMatchRecordHolder(List<MatchHolder> ipscMatchHolderList) {
         if (ipscMatchHolderList == null) {
             return new IpscMatchRecordHolder(new ArrayList<>());
         }
 
-        List<IpscMatchRecord> ipscMatchRecordList = new ArrayList<>();
+        List<MatchRecord> matchRecordList = new ArrayList<>();
         for (MatchHolder matchHolder : ipscMatchHolderList.stream().filter(Objects::nonNull).toList()) {
             // Get the match name
             matchHolder.getMatch().setName(ValueUtil.nullAsEmptyString(matchHolder.getMatch().getName()));
@@ -130,12 +143,12 @@ public class TransformationServiceImpl implements TransformationService {
                 }
             }
 
-            Optional<IpscMatchRecord> ipscResponse = initIpscMatchRecord(matchHolder.getMatch(),
+            Optional<MatchRecord> ipscResponse = initIpscMatchRecord(matchHolder.getMatch(),
                     matchHolder.getClub(), new ArrayList<>(competitorRecordSet));
-            ipscResponse.ifPresent(ipscMatchRecordList::add);
+            ipscResponse.ifPresent(matchRecordList::add);
         }
 
-        return new IpscMatchRecordHolder(ipscMatchRecordList);
+        return new IpscMatchRecordHolder(matchRecordList);
     }
 
     @Override
@@ -157,6 +170,11 @@ public class TransformationServiceImpl implements TransformationService {
         matchResultsDto.setClub(optionalClub.orElse(null));
         matchResultsDto.setStages(initStages(match, ipscResponse.getStages()));
 
+        // Check if there are competitors
+        if (ipscResponse.getMembers() == null) {
+            return Optional.of(matchResultsDto);
+        }
+
         // Initialises competitors
         matchResultsDto.setCompetitors(initCompetitors(matchResultsDto, ipscResponse));
 
@@ -167,15 +185,11 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Creates a basic match representation by filtering relevant data from the provided
-     * request holder based on the given match details.
+     * Creates a minimal match-scoped {@link IpscResponse} from request collections.
      *
-     * @param ipscRequestHolder the container for all IPSC-related input requests, including
-     *                          stages, tags, scores, enrolled members, and more.
-     * @param match             the match data used to identify and extract the corresponding subsets
-     *                          of stages, tags, scores, and enrolled members.
-     * @return an {@link IpscResponse} object containing the filtered data associated with the
-     * provided match.
+     * @param ipscRequestHolder full request holder
+     * @param match             match request used as the grouping anchor
+     * @return optional response containing tags plus stage/enrollment/score lists filtered by match ID
      */
     protected Optional<IpscResponse> createBasicMatch(IpscRequestHolder ipscRequestHolder, MatchRequest match) {
         if (match == null) {
@@ -219,17 +233,10 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Filters and assigns members with corresponding scores to the given IPSC response.
+     * Populates {@link IpscResponse#setMembers(List)} with members referenced by scores.
      *
-     * <p>
-     * The method iterates through the list of scores in the request holder, filters members
-     * matching the score's member ID, and sets these members in the provided IPSC response.
-     * </p>
-     *
-     * @param ipscResponse      the IPSC response object to which the filtered members
-     *                          will be assigned.
-     * @param ipscRequestHolder the request holder containing scores and members to be
-     *                          filtered and matched.
+     * @param ipscResponse      response being enriched
+     * @param ipscRequestHolder source holder with members and scores
      */
     protected void addMembersToMatch(IpscResponse ipscResponse, IpscRequestHolder ipscRequestHolder) {
         if (ipscResponse == null) {
@@ -254,18 +261,14 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Associates a club with the given match by matching the club ID from the provided
-     * IPSC response with the list of clubs in the request holder.
-     *
+     * Resolves and assigns a club for the response match.
      * <p>
-     * If a matching club is found, it is set on the response. Otherwise, a default
-     * club response is created using the club ID from the match.
+     * If a matching club request exists by club ID, it is mapped; otherwise a fallback
+     * {@link ClubResponse} is created from the match club ID only.
      * </p>
      *
-     * @param ipscResponse      the IPSC response containing the match details, including the club ID
-     *                          to match against the provided club data.
-     * @param ipscRequestHolder the request holder that contains the list of clubs to be searched
-     *                          for a match.
+     * @param ipscResponse      response containing match data
+     * @param ipscRequestHolder source holder containing available clubs
      */
     protected void addClubToMatch(IpscResponse ipscResponse, IpscRequestHolder ipscRequestHolder) {
         if ((ipscResponse == null) || (ipscRequestHolder == null)) {
@@ -285,18 +288,15 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a {@link IpscMatchRecord} based on the provided match details and competitors list.
+     * Creates a {@link MatchRecord} from domain match, club, and competitor export records.
      *
-     * @param match       The IPSC match object containing match details.
-     *                    If null, an empty Optional is returned.
-     * @param club        The club object associated with the match.
-     * @param competitors A list of competitor match records associated with the match.
-     *                    If null, an empty Optional is returned.
-     * @return An Optional containing the initialized {@link IpscMatchRecord} if both inputs
-     * are non-null, otherwise an empty Optional.
+     * @param match       match entity (required)
+     * @param club        optional club entity for display naming
+     * @param competitors competitor export records (required, may be empty)
+     * @return optional containing created record, or empty if required inputs are missing
      */
-    protected Optional<IpscMatchRecord> initIpscMatchRecord(IpscMatch match, Club club,
-                                                            List<CompetitorRecord> competitors) {
+    protected Optional<MatchRecord> initIpscMatchRecord(IpscMatch match, Club club,
+                                                        List<CompetitorRecord> competitors) {
         if ((match == null) || (competitors == null)) {
             return Optional.empty();
         }
@@ -306,7 +306,7 @@ public class TransformationServiceImpl implements TransformationService {
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
 
         // Initialises match details
-        String clubName = ((club != null) ? club.toString() : "");
+        String clubName = ValueUtil.nullAsDefaultString(club, "");
 
         String scheduledDate = DateUtil.formatDateTime(match.getScheduledDate(),
                 IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);
@@ -315,31 +315,18 @@ public class TransformationServiceImpl implements TransformationService {
         String matchCategory = ValueUtil.nullAsEmptyString(match.getMatchCategory());
 
         // Creates match record from match details
-        IpscMatchRecord ipscMatchRecord = new IpscMatchRecord(match.getName(), scheduledDate,
+        MatchRecord matchRecord = new MatchRecord(match.getName(), scheduledDate,
                 clubName, matchFirearmType, matchCategory, competitors, dateEdited);
-        return Optional.of(ipscMatchRecord);
+        return Optional.of(matchRecord);
     }
 
     /**
-     * Initialises a {@link CompetitorRecord} from the provided competitor, match competitor,
-     * and competitor result data.
+     * Creates a {@link CompetitorRecord} combining personal details and result record data.
      *
-     * <p>
-     * The club name is resolved by first checking the match competitor's associated
-     * {@link ClubIdentifier}. If that is absent or has no name, the club is resolved from
-     * the match entity itself. If neither source provides a club name, an empty string is used.
-     * </p>
-     *
-     * @param competitor             the competitor whose personal details are used to populate
-     *                               the record. If {@code null}, an empty {@code Optional} is returned.
-     * @param matchCompetitor        the match competitor entity providing club, category, and match
-     *                               association details. If {@code null}, an empty {@code Optional}
-     *                               is returned.
-     * @param competitorResultRecord the competitor's result record containing firearm type, division,
-     *                               power factor, and stage results. If {@code null}, an empty
-     *                               {@code Optional} is returned.
-     * @return an {@code Optional} containing the initialised {@link CompetitorRecord}, or
-     * {@code Optional.empty()} if any of the required arguments are {@code null}.
+     * @param competitor             competitor entity (required)
+     * @param matchCompetitor        enrollment/match-competitor entity (required)
+     * @param competitorResultRecord precomputed result record (required)
+     * @return optional containing competitor record, or empty when any required argument is null
      */
     protected Optional<CompetitorRecord> initCompetitorRecord(Competitor competitor,
                                                               MatchCompetitor matchCompetitor,
@@ -375,25 +362,14 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a {@link CompetitorResultRecord} from the provided competitor, match competitor,
-     * overall results, and stage results.
+     * Creates a {@link CompetitorResultRecord} containing firearm/division/power-factor metadata
+     * and precomputed overall + stage results.
      *
-     * <p>
-     * The firearm type, division, and power factor are derived from the {@code matchCompetitor}
-     * entity. Null enum values are converted to empty strings.
-     * </p>
-     *
-     * @param competitor                   the competitor entity. If {@code null}, an empty
-     *                                     {@code Optional} is returned.
-     * @param matchCompetitor              the match competitor providing firearm type, division,
-     *                                     and power factor for the record.
-     * @param matchCompetitorOverallResult the pre-computed overall match results record for the
-     *                                     competitor. If {@code null}, an empty {@code Optional}
-     *                                     is returned.
-     * @param matchCompetitorStageResults  the list of per-stage result records for the competitor.
-     *                                     If {@code null}, an empty {@code Optional} is returned.
-     * @return an {@code Optional} containing the initialised {@link CompetitorResultRecord}, or
-     * {@code Optional.empty()} if any required argument is {@code null}.
+     * @param competitor                   competitor entity (required for null-guard consistency)
+     * @param matchCompetitor              match-competitor source for enum metadata
+     * @param matchCompetitorOverallResult precomputed overall result (required)
+     * @param matchCompetitorStageResults  precomputed stage results (required)
+     * @return optional containing result record when required args are present
      */
     protected Optional<CompetitorResultRecord> initCompetitorResult(
             Competitor competitor, MatchCompetitor matchCompetitor,
@@ -415,24 +391,11 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a {@link MatchCompetitorOverallResultsRecord} for the given competitor based
-     * on their entry in the provided list of match competitors.
+     * Computes overall match results for one competitor from match-competitor entities.
      *
-     * <p>
-     * The method filters the {@code matchCompetitorList} to find the first entry whose competitor
-     * equals the provided {@code competitor}. Match points and ranking values are formatted to their
-     * respective scales as defined in {@link IpscConstants}. Null numeric values are represented
-     * as empty strings.
-     * </p>
-     *
-     * @param competitor          the competitor for whom the overall result record is initialised.
-     *                            If {@code null}, an empty {@code Optional} is returned.
-     * @param matchCompetitorList the list of match competitor entities to search. If {@code null},
-     *                            an empty {@code Optional} is returned. If no entry matches the
-     *                            competitor, an empty {@code Optional} is returned.
-     * @return an {@code Optional} containing the initialised
-     * {@link MatchCompetitorOverallResultsRecord}, or {@code Optional.empty()} if the
-     * competitor is not found or any required argument is {@code null}.
+     * @param competitor          competitor to resolve
+     * @param matchCompetitorList candidate match-competitor rows
+     * @return optional overall-result record, or empty when input is null or no row matches
      */
     protected Optional<MatchCompetitorOverallResultsRecord> initMatchCompetitorOverallResult(
             Competitor competitor, List<MatchCompetitor> matchCompetitorList) {
@@ -440,7 +403,6 @@ public class TransformationServiceImpl implements TransformationService {
         if ((competitor == null) || (matchCompetitorList == null)) {
             return Optional.empty();
         }
-
 
         // Filters and maps match data for the competitor in this division
         Optional<MatchCompetitor> optionalMatchCompetitor = matchCompetitorList.stream()
@@ -469,22 +431,11 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a list of {@link MatchCompetitorStageResultRecord} objects for the given
-     * competitor based on their entries in the provided list of match stage competitors.
+     * Computes per-stage result records for one competitor.
      *
-     * <p>
-     * The method filters the {@code matchStageCompetitorList} for entries belonging to the given
-     * competitor and maps each to a stage result record. Time, hit factor, stage points, percentage,
-     * and ranking are formatted to their respective scales as defined in {@link IpscConstants}.
-     * Null numeric values are represented as empty strings.
-     * </p>
-     *
-     * @param competitor               the competitor for whom stage result records are initialised.
-     *                                 If {@code null}, an empty list is returned.
-     * @param matchStageCompetitorList the list of match stage competitor entities to process.
-     *                                 If {@code null}, an empty list is returned.
-     * @return a {@link List} of {@link MatchCompetitorStageResultRecord} objects for the competitor;
-     * never {@code null}, but may be empty if no matching entries are found.
+     * @param competitor               competitor to resolve
+     * @param matchStageCompetitorList candidate stage rows
+     * @return non-null list of stage records (possibly empty)
      */
     protected List<MatchCompetitorStageResultRecord> initMatchCompetitorStageResults(
             Competitor competitor, List<MatchStageCompetitor> matchStageCompetitorList) {
@@ -536,13 +487,10 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Retrieves a set of unique competitors from the provided list of competitors.
-     * If the input list is null, an empty set is returned.
+     * Returns unique non-null competitors from a list.
      *
-     * @param competitorList the list of competitors from which to extract a unique set;
-     *                       may contain null values
-     * @return a set of unique, non-null competitors derived from the input list;
-     * returns an empty set if the input list is null
+     * @param competitorList input competitors
+     * @return deduplicated set; empty when input is null
      */
     protected Set<Competitor> getCompetitorSet(List<Competitor> competitorList) {
         if (competitorList == null) {
@@ -556,11 +504,10 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Retrieves a set of unique, non-null MatchCompetitor objects from the input list.
+     * Returns unique non-null match-competitor entities from a list.
      *
-     * @param matchCompetitors the list of MatchCompetitor objects, which may include null values
-     * @return a Set containing unique, non-null MatchCompetitor objects;
-     * if the input list is null, an empty Set is returned
+     * @param matchCompetitors input list
+     * @return deduplicated set; empty when input is null
      */
     protected Set<MatchCompetitor> getMatchCompetitorSet(List<MatchCompetitor> matchCompetitors) {
         if (matchCompetitors == null) {
@@ -574,12 +521,10 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Retrieves a set of unique {@code MatchStageCompetitor} objects from the provided list.
+     * Returns unique non-null match-stage-competitor entities from a list.
      *
-     * @param matchStageCompetitors the list of {@code MatchStageCompetitor} objects to be processed;
-     *                              may be {@code null}.
-     * @return a {@code Set} containing unique {@code MatchStageCompetitor} objects from the input list.
-     * If the input list is {@code null}, returns an empty {@code Set}.
+     * @param matchStageCompetitors input list
+     * @return deduplicated set; empty when input is null
      */
     protected Set<MatchStageCompetitor> getMatchStageCompetitorSet(List<MatchStageCompetitor> matchStageCompetitors) {
         if (matchStageCompetitors == null) {
@@ -593,19 +538,10 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a {@link ClubDto} object based on the provided club response.
+     * Initialises a {@link ClubDto} from a response model, reusing an existing club when matched.
      *
-     * <p>
-     * If a matching club entity with the same name and abbreviation is found in the database,`
-     * it is used to populate the DTO; otherwise, a new DTO is created and initialised
-     * using the club response.
-     * </p>
-     *
-     * @param clubResponse the response containing club information, which may be used to
-     *                     initialise the DTO.
-     *                     If null, the method will return an empty optional.
-     * @return an {@code Optional} containing the initialized {@link ClubDto},
-     * or {@code Optional.empty} if the provided clubResponse is null.
+     * @param clubResponse response club payload
+     * @return initialized DTO or empty when input is null
      */
     protected Optional<ClubDto> initClub(ClubResponse clubResponse) {
         if (clubResponse == null) {
@@ -626,15 +562,12 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a {@link MatchDto} object based on the provided IPSC response data
-     * and club information.
+     * Initialises a {@link MatchDto} from IPSC response and club context, reusing existing match
+     * by name and scheduled date when found.
      *
-     * @param ipscResponse The response object containing match details and scores from
-     *                     the IPSC system.
-     * @param clubDto      The club data transfer object containing information about the club
-     *                     associated with the match.
-     * @return An {@code Optional} containing the initialised {@link MatchDto} if the match is valid
-     * and meets the update criteria, or {@code Optional.empty()} if no match is initialised.
+     * @param ipscResponse source response containing match metadata
+     * @param clubDto      optional club DTO association
+     * @return initialised match DTO or empty when input match data is missing
      */
     protected Optional<MatchDto> initMatch(IpscResponse ipscResponse, ClubDto clubDto) {
         if ((ipscResponse == null) || (ipscResponse.getMatch() == null)) {
@@ -656,12 +589,11 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a list of {@link MatchStageDto} objects based on the given match details
-     * and stage response data. If no stage responses are provided, an empty list is returned.
+     * Initialises match stage DTOs from stage response payloads for a given match.
      *
-     * @param matchDto       the match details.
-     * @param stageResponses a list of stage response objects.
-     * @return a list of initialised {@link MatchStageDto} objects based on the input parameters.
+     * @param matchDto       parent match DTO
+     * @param stageResponses stage responses to map
+     * @return non-null list of initialised stage DTOs
      */
     protected List<MatchStageDto> initStages(MatchDto matchDto, List<StageResponse> stageResponses) {
         if ((matchDto == null) || (stageResponses == null)) {
@@ -690,13 +622,15 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises a list of competitors based on the provided match results and IPSC response data.
-     * Filters and maps scores and member responses to construct a list of valid competitor DTOs.
-     * Ignores null data and members without valid scores.
+     * Initialises competitor DTOs for participating members based on score/member data.
+     * <p>
+     * Competitors with null/zero final score are excluded, then deduplicated by SAPSA number
+     * and entity ID while merging source indexes.
+     * </p>
      *
-     * @param matchResultsDto the match results data transfer object containing details of the match.
-     * @param ipscResponse    the response object containing scores and member information from the IPSC system.
-     * @return a list of {@code CompetitorDto} objects representing the competitors with valid scores.
+     * @param matchResultsDto match-results context
+     * @param ipscResponse    response containing scores and members
+     * @return non-null list of competitor DTOs
      */
     protected List<CompetitorDto> initCompetitors(@NotNull MatchResultsDto matchResultsDto,
                                                   IpscResponse ipscResponse) {
@@ -752,30 +686,10 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises enrolled competitor data for the given match results by mapping score and
-     * member responses to match competitor and match stage competitor DTOs.
+     * Initialises match-competitor and match-stage-competitor DTO collections on {@code matchResultsDto}.
      *
-     * <p>
-     * For each member present in the IPSC response, the method finds the corresponding competitor
-     * in the match results, then delegates to {@link #initCompetitorScores} to create the
-     * relevant {@link MatchCompetitorDto} and {@link MatchStageCompetitorDto} entries. The
-     * resulting lists are set back on the provided {@code matchResultsDto}.
-     * </p>
-     *
-     * <p>
-     * If {@code ipscResponse} is {@code null}, its scores or members collections are {@code null},
-     * or the match on {@code matchResultsDto} is {@code null}, the method returns without making
-     * any changes.
-     * </p>
-     *
-     * <p>
-     * If {@code matchResultsDto} does not yet have competitors initialised, they are seeded by
-     * calling {@link #initCompetitors} before processing.
-     * </p>
-     *
-     * @param matchResultsDto the match results DTO to which the enrolled competitor data is written.
-     *                        Must not be {@code null}.
-     * @param ipscResponse    the IPSC response containing scores, members, and enrolled member data.
+     * @param matchResultsDto target aggregate to update
+     * @param ipscResponse    response providing members/scores/enrollments
      */
     protected void initEnrolledCompetitors(@NotNull MatchResultsDto matchResultsDto, IpscResponse ipscResponse) {
         // Checks for null or missing data in the IPSC response
@@ -795,8 +709,8 @@ public class TransformationServiceImpl implements TransformationService {
                         .equals(matchResultsDto.getMatch().getIndex()))
                 .toList();
         List<MemberResponse> memberResponses = ipscResponse.getMembers();
-        List<EnrolledResponse> enrolledResponses = ((ipscResponse.getEnrolledMembers() != null) ?
-                ipscResponse.getEnrolledMembers() : new ArrayList<>());
+        List<EnrolledResponse> enrolledResponses =
+                ValueUtil.nullAsDefault(ipscResponse.getEnrolledMembers(), new ArrayList<>());
 
         // Seed competitors when not already initialised
         if ((matchResultsDto.getCompetitors() == null) || (matchResultsDto.getCompetitors().isEmpty())) {
@@ -874,35 +788,14 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Initialises and returns an {@link EnrolledCompetitorDto} for the given member index by
-     * resolving match competitor and match stage competitor data from both the database and the
-     * provided score and enrolled response maps.
+     * Initialises all score-derived competitor DTOs for one member index.
      *
-     * <p>
-     * For the match competitor, the method attempts to find an existing {@link MatchCompetitor}
-     * entity by match ID and competitor ID. If none is found, a new {@link MatchCompetitorDto}
-     * is created from the competitor DTO and match details. All match competitor DTOs are
-     * initialised with their scores and enrolled response.
-     * </p>
-     *
-     * <p>
-     * For each match stage in {@code matchResultsDto}, the method filters scores by stage ID and
-     * attempts to find an existing {@link MatchStageCompetitor} entity. If none is found, a new
-     * {@link MatchStageCompetitorDto} is created. All stage competitor DTOs are initialised with
-     * the corresponding score and enrolled response.
-     * </p>
-     *
-     * @param memberIndex         the member index used to filter scores and retrieve the competitor
-     *                            DTO from {@code competitorDtoMap}.
-     * @param matchResultsDto     the match results DTO containing the match and stage details.
-     * @param competitorDtoMap    a map of member index to {@link CompetitorDto}, used to look up
-     *                            the competitor for the given member index.
-     * @param scoreResponses      the list of score responses filtered to the current match, used
-     *                            to find scores for the competitor per stage.
-     * @param enrolledResponseMap a map of member index to all {@link EnrolledResponse} entries
-     *                            (one per enrollment/division), used to initialise competitor
-     *                            category and classification data.
-     * @return the fully initialised {@link EnrolledCompetitorDto} for the given member index.
+     * @param memberIndex         member ID/index in the request domain
+     * @param matchResultsDto     aggregate context with match/stage metadata
+     * @param competitorDtoMap    member-index to competitor mapping
+     * @param scoreResponses      match-filtered score responses
+     * @param enrolledResponseMap member-index to enrollment rows (division/classification context)
+     * @return initialised enrolled competitor DTO
      */
     protected EnrolledCompetitorDto initCompetitorScores(int memberIndex, MatchResultsDto matchResultsDto,
                                                          Map<Integer, CompetitorDto> competitorDtoMap,
@@ -998,29 +891,18 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     /**
-     * Removes duplicate {@link CompetitorDto} entries from the provided map, first by SAPSA number
-     * and then by competitor ID.
-     *
-     * <p>
-     * Deduplication is performed in two passes:
-     * </p>
+     * Deduplicates competitor DTO map entries in two passes:
      * <ol>
-     *   <li><b>SAPSA number pass:</b> entries sharing a non-null SAPSA number with a previously
-     *       seen entry are removed. The indexes of the duplicate are merged into the first
-     *       occurrence's index list.</li>
-     *   <li><b>ID pass:</b> entries sharing a non-null ID with a previously seen entry are removed.
-     *       The indexes of the duplicate are merged into the first occurrence's index list.</li>
+     *   <li>By non-null SAPSA number.</li>
+     *   <li>By non-null persisted competitor ID.</li>
      * </ol>
-     *
      * <p>
-     * Entries with {@code null} SAPSA numbers or IDs are never considered duplicates and are
-     * always retained.
+     * Duplicate entries are merged by appending index references to the first occurrence.
+     * Insertion order is preserved via {@link LinkedHashMap}.
      * </p>
      *
-     * @param competitorDtoMap the map of member index to {@link CompetitorDto} to deduplicate.
-     *                         If {@code null}, {@code null} is returned.
-     * @return a new {@link Map} containing only unique {@link CompetitorDto} entries with merged
-     * indexes, preserving insertion order; or {@code null} if the input is {@code null}.
+     * @param competitorDtoMap input map keyed by member index
+     * @return deduplicated map with merged indexes, or {@code null} when input is null
      */
     protected Map<Integer, CompetitorDto> deDuplicateCompetitorDtoList(Map<Integer, CompetitorDto> competitorDtoMap) {
         if (competitorDtoMap == null) {

@@ -11,6 +11,9 @@ import java.util.Optional;
  * specific criteria.
  */
 public interface ClubEntityService {
+    // TODO: add Javadoc
+    Optional<Club> findClubById(Long clubId);
+
     /**
      * Searches for a {@link Club} entity by its name or abbreviation.
      *
@@ -25,5 +28,8 @@ public interface ClubEntityService {
      * or an empty {@code Optional} if no matching club is found.
      */
     Optional<Club> findClubByNameOrAbbreviation(String name, String abbreviation);
+
+    // TODO: add Javadoc
+    Optional<Club> findClubByNameOrAbbreviation(String name);
 }
 

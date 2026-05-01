@@ -1,0 +1,196 @@
+package za.co.hpsc.web.models.ipsc.common.dto;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import za.co.hpsc.web.domain.IpscMatchStage;
+import za.co.hpsc.web.models.ipsc.common.response.StageResponse;
+import za.co.hpsc.web.utils.ValueUtil;
+
+import java.util.UUID;
+
+/**
+ * Data Transfer Object (DTO) that represents a stage in a shooting match.
+ *
+ * <p>
+ * The {@code MatchstageDto} class is used to transfer stage-related data between various layers
+ * of the application.
+ * It encapsulates details such as the stage's unique identifier, associated match details,
+ * stage-specific attributes such as name and number, and target-related information.
+ * It also provides utility methods for mapping data from entity and response models.
+ * </p>
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MatchStageDto {
+    private UUID uuid = UUID.randomUUID();
+    private Long id;
+    private transient Integer index;
+
+    @NotNull
+    private MatchDto match;
+    private Integer matchIndex;
+
+    @NotNull
+    private Integer stageNumber = 0;
+    private String stageName;
+    private Integer rangeNumber;
+
+    private Integer targetPaper;
+    private Integer targetPopper;
+    private Integer targetPlates;
+    private Integer targetDisappear;
+    private Integer targetPenalty;
+
+    private Integer minRounds;
+    private Integer maxPoints;
+
+    /**
+     * Constructs a new {@code MatchStageDto} instance with ata from the
+     * provided {@link IpscMatchStage} entity.
+     *
+     * @param matchStageEntity the {@link IpscMatchStage} entity containing stage-related information,
+     *                         such as the unique identifier, associated match, and stage number.
+     */
+    public MatchStageDto(@NotNull IpscMatchStage matchStageEntity) {
+        if (matchStageEntity != null) {
+            // Initialises the stage details
+            this.id = matchStageEntity.getId();
+            this.match = new MatchDto(matchStageEntity.getMatch());
+
+            // Initialises the stage attributes
+            this.stageNumber = matchStageEntity.getStageNumber();
+            this.rangeNumber = matchStageEntity.getRangeNumber();
+
+            // Initialises the scoring-related attributes
+            setTargetsAndScoringFromEntity(matchStageEntity);
+        }
+    }
+
+    /**
+     * Constructs a new {@code MatchStageDto} instance using the provided
+     * {@link IpscMatchStage} entity and {@link MatchDto} object.
+     *
+     * @param matchStageEntity the {@link IpscMatchStage} entity containing stage-related information,
+     *                         such as the unique identifier, stage number, and stage name.
+     * @param matchDto         the {@link  MatchDto} object representing the associated match.
+     */
+    public MatchStageDto(IpscMatchStage matchStageEntity, MatchDto matchDto) {
+        if (matchStageEntity != null) {
+            // Initialises the stage details
+            this.id = matchStageEntity.getId();
+            this.match = matchDto;
+
+            // Initialises the stage attributes
+            this.stageNumber = matchStageEntity.getStageNumber();
+            this.stageName = matchStageEntity.getStageName();
+            this.rangeNumber = matchStageEntity.getRangeNumber();
+
+            setTargetsAndScoringFromEntity(matchStageEntity);
+        }
+    }
+
+    /**
+     * Initialises the current {@code MatchStageDto} object using the provided
+     * {@link MatchDto} and {@link StageResponse} objects.
+     *
+     * @param matchDto      the {@link MatchDto} object representing match-related information.
+     * @param stageResponse the {@link StageResponse} object containing stage-related information,
+     *                      such as stage number, targets, and possible points.
+     */
+    public void init(MatchDto matchDto, StageResponse stageResponse) {
+        if (matchDto != null) {
+            // Initialises the stage details
+            this.match = matchDto;
+        }
+
+        if (stageResponse != null) {
+            // Initialises the stage details
+            this.index = stageResponse.getStageId();
+            this.matchIndex = stageResponse.getMatchId();
+
+            // Initialises the stage attributes
+            this.stageNumber = stageResponse.getStageId();
+            this.stageName = stageResponse.getStageName();
+            this.rangeNumber = 0;
+
+            setTargetsAndScoringFromResponse(stageResponse);
+        }
+    }
+
+    private void setTargetsAndScoring(Integer targetPaper,
+                                      Integer targetPopper,
+                                      Integer targetPlates,
+                                      Integer targetDisappear,
+                                      Integer targetPenalty,
+                                      Integer minRounds,
+                                      Integer maxPoints) {
+        this.targetPaper = targetPaper;
+        this.targetPopper = targetPopper;
+        this.targetPlates = targetPlates;
+        this.targetDisappear = targetDisappear;
+        this.targetPenalty = targetPenalty;
+        this.minRounds = minRounds;
+        this.maxPoints = maxPoints;
+    }
+
+    private void setTargetsAndScoringFromEntity(IpscMatchStage stage) {
+        if (stage != null) {
+            setTargetsAndScoring(
+                    stage.getTargetPaper(),
+                    stage.getTargetPopper(),
+                    stage.getTargetPlates(),
+                    stage.getTargetDisappear(),
+                    stage.getTargetPenalty(),
+                    stage.getMinRounds(),
+                    stage.getMaxPoints()
+            );
+        }
+    }
+
+    private void setTargetsAndScoringFromResponse(StageResponse stageResponse) {
+        if (stageResponse != null) {
+            setTargetsAndScoring(
+                    stageResponse.getTargetPaper(),
+                    stageResponse.getTargetPopper(),
+                    stageResponse.getTargetPlates(),
+                    stageResponse.getTargetDisappear(),
+                    stageResponse.getTargetPenalty(),
+                    stageResponse.getMinRounds(),
+                    stageResponse.getMaxPoints()
+            );
+        }
+    }
+
+    public void copyTargetsAndScoringTo(IpscMatchStage stageEntity) {
+        if (stageEntity != null) {
+            stageEntity.setTargetPaper(this.targetPaper);
+            stageEntity.setTargetPopper(this.targetPopper);
+            stageEntity.setTargetPlates(this.targetPlates);
+            stageEntity.setTargetDisappear(this.targetDisappear);
+            stageEntity.setTargetPenalty(this.targetPenalty);
+            stageEntity.setMinRounds(this.minRounds);
+            stageEntity.setMaxPoints(this.maxPoints);
+        }
+    }
+
+    /**
+     * Returns a string representation of the stage of the match.
+     *
+     * <p>
+     * The returned string includes the stage of the match, as well as the match itself.
+     * </p>
+     *
+     * @return a string combining the stage number and the associated match information.
+     */
+    @Override
+    public String toString() {
+        String matchString = ValueUtil.nullAsDefaultString(this.match, "");
+        String result = ValueUtil.nullAsDefaultString(this.stageNumber, "0") + " for " + matchString;
+        return result.trim();
+    }
+}

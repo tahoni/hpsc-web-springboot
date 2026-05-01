@@ -5,7 +5,7 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
-import za.co.hpsc.web.models.ipsc.dto.MatchCompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchCompetitorDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,10 +13,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchCompetitorTest {
-
-    // =====================================================================
-    // init(MatchCompetitorDto)
-    // =====================================================================
 
     @Test
     void testInit_whenDtoIsFullyPopulated_thenMapsAllFields() {
@@ -178,10 +174,6 @@ public class MatchCompetitorTest {
         assertEquals(new BigDecimal("95.50"), matchCompetitor.getMatchRanking());
     }
 
-    // =====================================================================
-    // toString()
-    // =====================================================================
-
     @Test
     void testToString_whenMatchAndCompetitorAreSet_thenFormatsMatchAndCompetitorWithColon() {
         // Arrange
@@ -282,8 +274,15 @@ public class MatchCompetitorTest {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> matchCompetitor.init(null));
+        // Act
+        assertDoesNotThrow(() -> matchCompetitor.init(null));
+
+        // Assert
+        assertNull(matchCompetitor.getMatch());
+        assertNull(matchCompetitor.getCompetitor());
+        assertNull(matchCompetitor.getFirearmType());
+        assertNull(matchCompetitor.getDivision());
+        assertNull(matchCompetitor.getPowerFactor());
     }
 
     @Test
@@ -344,8 +343,6 @@ public class MatchCompetitorTest {
         assertNotNull(matchCompetitor.getDateUpdated());
         assertFalse(matchCompetitor.getDateUpdated().isBefore(updatedBeforeUpdate));
     }
-
-    // Helper methods
 
     private IpscMatch buildMatch(String name, LocalDateTime scheduledDate) {
         IpscMatch match = new IpscMatch();

@@ -27,7 +27,7 @@ import java.util.List;
 public class AwardServiceImpl implements AwardService {
     @Override
     public AwardCeremonyResponseHolder processCsv(String csvData)
-            throws ValidationException, FatalException {
+            throws FatalException {
 
         if (csvData == null || csvData.isBlank()) {
             log.error("The provided csv data is null or empty.");
@@ -55,11 +55,10 @@ public class AwardServiceImpl implements AwardService {
      *                such as title, file path, file name, and optional metadata.
      *                Must not be null or blank.
      * @return a list of {@link AwardRequest} objects parsed from the provided CSV data.
-     * @throws ValidationException if the CSV data format is invalid or contains mismatched input.
-     * @throws FatalException      if an I/O error occurs while processing the CSV data.
+     * @throws FatalException if an I/O error occurs while processing the CSV data.
      */
     protected List<AwardRequest> readAwards(@NotNull @NotBlank String csvData)
-            throws ValidationException, FatalException {
+            throws FatalException {
         // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
@@ -100,7 +99,6 @@ public class AwardServiceImpl implements AwardService {
      *                         Must not be null.
      * @return a list of {@link AwardCeremonyResponse} objects, each representing a group
      * of awards associated with the same ceremony. It will never be null, but it may be empty.
-     * @throws ValidationException if the input list is null.
      */
     protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {

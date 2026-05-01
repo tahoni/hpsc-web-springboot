@@ -1,4 +1,4 @@
-# Release Notes - Version 5.1.0
+# Release Notes – Version 5.1.0
 
 **Release Date:** February 25, 2026  
 **Status:** ✨ Stable
@@ -103,7 +103,7 @@ Tests are now grouped by functionality rather than scattered throughout the file
 
 - **Null scenarios** grouped together for easy location of these scenarios
 - **Field-specific tests** separated by field type
-- **Data scenario tests** consolidated in dedicated section
+- **Data scenario tests** consolidated in a dedicated section
 - **Edge cases** clearly marked and isolated
 
 #### Better Test Readability

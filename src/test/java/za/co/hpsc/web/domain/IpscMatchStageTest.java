@@ -1,7 +1,7 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchStageDto;
 
 import java.time.LocalDateTime;
 
@@ -259,12 +259,17 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenDoesNotThrowsNullPointerException() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
 
         // Act & Assert
-        assertThrows(NullPointerException.class, () -> stage.init(null));
+        assertDoesNotThrow(() -> stage.init(null));
+
+        // Assert
+        assertNull(stage.getStageNumber());
+        assertNull(stage.getStageName());
+        assertNull(stage.getRangeNumber());
     }
 
     @Test

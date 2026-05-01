@@ -1,29 +1,43 @@
 package za.co.hpsc.web.services;
 
 import za.co.hpsc.web.exceptions.FatalException;
-import za.co.hpsc.web.models.ipsc.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
+import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 
 import java.util.Optional;
 
 /**
- * Provides operations for managing and persisting transaction-related data within the system.
- *
+ * Defines transactional persistence operations for IPSC match-related workflows.
  * <p>
- * This interface is responsible for defining the contract for saving match results
- * and other transaction-based activities that interact with the underlying persistence layer.
+ * Implementations of this interface coordinate writing match data and related
+ * entities to the persistence layer, typically within a transactional boundary
+ * to maintain consistency.
+ * </p>
+ * <p>
+ * Methods return {@link Optional} wrappers to indicate that a persistence action
+ * may legitimately produce no saved aggregate (for example, when an operation is
+ * short-circuited by validation/business rules in the implementation).
  * </p>
  */
 public interface TransactionService {
+
     /**
-     * Saves the results of a match into the system.
+     * Persists a complete match result aggregate built from mapped DTO data.
+     * <p>
+     * The supplied {@link DtoMapping} is expected to contain all structures required
+     * to save a match and its related graph (for example, stages, competitors, and scores).
+     * </p>
      *
-     * @param dtoMapping an instance of {@link DtoMapping} containing all the relevant
-     *                   information about the match, including competitors, scores, stages,
-     *                   and related metadata.
-     * @return an {@link MatchHolder} containing the saved match entity and any related entities.
-     * @throws FatalException if an unrecoverable error occurs during the operation.
+     * @param dtoMapping mapped input containing all data required to persist match results
+     * @return an {@link Optional} containing the saved {@link MatchHolder} when persistence succeeds;
+     * {@link Optional#empty()} if no aggregate is persisted
+     * @throws FatalException if an unrecoverable persistence error or transaction error occurs
      */
     Optional<MatchHolder> saveMatchResults(DtoMapping dtoMapping)
+            throws FatalException;
+
+    // TODO: add Javadoc
+    Optional<MatchHolder> saveMatch(MatchOnlyResultsDto matchOnlyResultsDto)
             throws FatalException;
 }

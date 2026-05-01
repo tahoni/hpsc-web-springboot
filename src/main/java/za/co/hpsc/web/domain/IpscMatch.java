@@ -11,8 +11,10 @@ import za.co.hpsc.web.converters.FirearmTypeConverter;
 import za.co.hpsc.web.converters.MatchCategoryConverter;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
 import za.co.hpsc.web.utils.DateUtil;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -71,8 +73,7 @@ public class IpscMatch {
         if (matchDto != null) {
             // Initialises the match attributes
             this.name = matchDto.getName();
-            this.scheduledDate = ((matchDto.getScheduledDate() != null) ?
-                    matchDto.getScheduledDate() : LocalDateTime.now());
+            this.scheduledDate = ValueUtil.nullAsDefault(matchDto.getScheduledDate(), LocalDateTime.now());
             this.matchFirearmType = matchDto.getMatchFirearmType();
             this.matchCategory = matchDto.getMatchCategory();
 
@@ -81,11 +82,24 @@ public class IpscMatch {
         }
     }
 
+    public void init(MatchOnlyDto matchOnlyDto) {
+        if (matchOnlyDto != null) {
+            // Initialises the match attributes
+            this.name = matchOnlyDto.getName();
+            this.scheduledDate = ValueUtil.nullAsDefault(matchOnlyDto.getScheduledDate(), LocalDateTime.now());
+            this.matchFirearmType = matchOnlyDto.getMatchFirearmType();
+            this.matchCategory = matchOnlyDto.getMatchCategory();
+
+            // Initialise the date fields
+            this.dateEdited = matchOnlyDto.getDateEdited();
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        String name = ((this.name != null) ? this.name.trim() : "");
+        String name = ValueUtil.nullAsDefaultString(this.name, "").trim();
         sb.append(name).append(" ");
 
         String scheduledDate = DateUtil.formatDateTime(this.scheduledDate, IpscConstants.IPSC_OUTPUT_DATE_TIME_FORMAT);

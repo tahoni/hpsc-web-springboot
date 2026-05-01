@@ -1,17 +1,13 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.dto.ClubDto;
+import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClubTest {
-
-    // =====================================================================
-    // Constructor Club(String, String)
-    // =====================================================================
 
     @Test
     void testConstructor_whenNameAndAbbreviationAreProvided_thenSetsFields() {
@@ -43,10 +39,6 @@ public class ClubTest {
         assertEquals("Hillcrest Practical Shooting Club", club.getName());
         assertNull(club.getAbbreviation());
     }
-
-    // =====================================================================
-    // Constructor Club(ClubDto)
-    // =====================================================================
 
     @Test
     void testConstructor_whenClubDtoIsProvided_thenMapsAllFields() {
@@ -97,10 +89,6 @@ public class ClubTest {
         assertNull(club.getName());
         assertNull(club.getAbbreviation());
     }
-
-    // =====================================================================
-    // init(ClubDto)
-    // =====================================================================
 
     @Test
     void testInit_whenNameAndAbbreviationAreValid_thenUpdatesFields() {
@@ -261,10 +249,6 @@ public class ClubTest {
         assertEquals("Third", club.getName());
         assertEquals("SC", club.getAbbreviation());
     }
-
-    // =====================================================================
-    // toString()
-    // =====================================================================
 
     @Test
     void testToString_whenAbbreviationIsDifferentFromName_thenReturnsNameWithAbbreviation() {

@@ -24,6 +24,11 @@ public class CompetitorEntityServiceImpl implements CompetitorEntityService {
     }
 
     @Override
+    public Optional<Competitor> findCompetitorById(Long competitorId) {
+        return competitorRepository.findById(competitorId);
+    }
+
+    @Override
     public Optional<Competitor> findCompetitor(String icsAlias, String firstName, String lastName,
                                                LocalDateTime dateTimeOfBirth) {
 

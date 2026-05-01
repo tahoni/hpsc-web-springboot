@@ -26,7 +26,7 @@ import java.util.Objects;
 public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResponseHolder processCsv(String csvData)
-            throws ValidationException, FatalException {
+            throws FatalException {
 
         if (csvData == null || csvData.isBlank()) {
             log.error("The provided csv data is null or empty.");
@@ -55,11 +55,10 @@ public class ImageServiceImpl implements ImageService {
      *                and third place recipient, and optional metadata.
      *                Must not be null or blank.
      * @return a list of {@link ImageRequest} objects parsed from the provided CSV data.
-     * @throws ValidationException if the CSV data format is invalid or contains mismatched input.
-     * @throws FatalException      if an I/O error occurs while processing the CSV data.
+     * @throws FatalException if an I/O error occurs while processing the CSV data.
      */
     protected List<ImageRequest> readImages(@NotNull @NotBlank String csvData)
-            throws ValidationException, FatalException {
+            throws FatalException {
 
         // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
@@ -98,10 +97,8 @@ public class ImageServiceImpl implements ImageService {
      * @param imageRequestList the list of {@link ImageRequest} objects to be mapped.
      * @return a list of {@link ImageResponse} objects resulting from mapping the input list.
      * It will never be null, but it may be empty.
-     * @throws ValidationException if the input list is null.
      */
-    protected List<ImageResponse> mapImages(List<ImageRequest> imageRequestList)
-            throws ValidationException {
+    protected List<ImageResponse> mapImages(List<ImageRequest> imageRequestList) {
 
         if (imageRequestList == null) {
             throw new ValidationException("Image request list cannot be null.");

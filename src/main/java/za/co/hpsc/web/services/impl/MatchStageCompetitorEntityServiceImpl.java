@@ -8,6 +8,7 @@ import za.co.hpsc.web.services.MatchStageCompetitorEntityService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -16,6 +17,11 @@ public class MatchStageCompetitorEntityServiceImpl implements MatchStageCompetit
 
     public MatchStageCompetitorEntityServiceImpl(MatchStageCompetitorRepository matchStageCompetitorRepository) {
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;
+    }
+
+    @Override
+    public Optional<MatchStageCompetitor> findMatchStageCompetitorById(Long matchStageCompetitorId) {
+        return matchStageCompetitorRepository.findById(matchStageCompetitorId);
     }
 
     @Override

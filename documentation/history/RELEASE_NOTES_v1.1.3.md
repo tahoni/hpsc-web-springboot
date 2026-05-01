@@ -1,4 +1,4 @@
-# Release Notes - Version 1.1.3
+# Release Notes – Version 1.1.3
 
 **Release Date:** January 28, 2026  
 **Status:** ✨ Stable
@@ -7,7 +7,7 @@
 
 ## 🎯 Theme
 
-Documentation Enhancement & Mapper Centralization
+Documentation Enhancement & Mapper Centralisation
 
 ---
 
@@ -33,7 +33,7 @@ patterns.
 
 - **Utility classes:** Ensured utility classes cannot be instantiated (via private constructors)
 - **String formatting:** Improved formatting and readability in match helper utilities
-- **Constants cleanup:** Removed unused constants from `MatchConstants`
+- **Constant clean-up:** Removed unused constants from `MatchConstants`
 
 ### 📚 Documentation
 

@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## 📑 Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 5.4.0](#-540---2026-04-26) ← Current
+- [🧾 Version 6.0.0](#-600---2026-05-01) ← Current
+- [🧾 Version 5.4.0](#-540---2026-04-26)
 - [🧾 Version 5.3.0](#-530---2026-03-15)
 - [🧾 Version 5.2.0](#-520---2026-02-27)
 - [🧾 Version 5.1.0](#-510---2026-02-25)
@@ -45,6 +46,138 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### 🗑️ Removed
 
 ### 🔐 Security
+
+---
+
+## 🧾 [6.0.0] - 2026-05-01
+
+### ➕ Added
+
+#### 🌐 Controllers
+
+- **`IpscMatchController`:** New dedicated match CRUD controller mapped to `/v2/ipsc/matches`
+    - `POST /v2/ipsc/matches` — create a new IPSC match
+    - `PUT /v2/ipsc/matches/{matchId}` — fully replace an existing match
+    - `PATCH /v2/ipsc/matches/{matchId}` — partially update an existing match
+    - `GET /v2/ipsc/matches/{matchId}` — retrieve a match by ID
+    - Full OpenAPI/Swagger annotations; returns `ResponseEntity<MatchOnlyResponse>`
+- **`IpscMemberController`:** Stub controller at `/ipsc/member` (placeholder for member management)
+
+#### 🏗️ Services
+
+- **`IpscMatchService` interface:** Match CRUD contract — `insertMatch`, `updateMatch`, `modifyMatch`,
+  `getMatch`; all return `Optional<MatchOnlyResponse>`
+- **`IpscMatchServiceImpl`:** Full implementation (135 lines)
+- **`ClubEntityService.findClubById(Long)`:** New entity service method; implemented in
+  `ClubEntityServiceImpl`
+- **`CompetitorEntityService.findCompetitorById(Long)`:** New entity service method; implemented in
+  `CompetitorEntityServiceImpl`
+- **`MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)`:** New entity service
+  method; implemented in `MatchStageCompetitorEntityServiceImpl`
+- **`TransformationService.mapMatchOnly(MatchOnlyRequest)`:** New method for the match CRUD pipeline
+
+#### 📦 Models — `models/ipsc/match/`
+
+- **`MatchOnlyDto`:** Lightweight match DTO (no stages); initialised from `MatchOnlyRequest` with
+  automatic `FirearmType` resolution and `dateEdited` stamping
+- **`MatchOnlyRequest`:** JSON request body for match create / update operations
+- **`MatchOnlyResponse`:** Response envelope returned by `IpscMatchController`
+- **`MatchOnlyResultsDto`:** Internal results holder passed through the service chain
+
+#### 📦 Models — `models/ipsc/common/request/`
+
+- **`MatchSearchRequest`:** Multi-criteria search — match IDs array, name, date range
+- **`MatchSearchDateRequest`:** Date-range search — `startDate`, `endDate`, `matchName`
+- **`MatchSearchIdRequest`:** ID-array-based lookup
+
+#### 🛠️ Utilities
+
+- **`IpscUtil`:** New utility class (66 lines) for club and match display-string formatting
+    - `clubTostring(name, abbreviation)`
+    - `matchToString(name, clubName, abbreviation)`
+    - `matchToString(name, ClubDto)` — convenience overload
+
+#### 🧪 Test Coverage
+
+- **`IpscMatchControllerTest`** (49 lines) — controller unit tests
+- **`IpscMatchServiceTest`** (269 lines) — service unit tests
+- **`IpscMatchIntegrationTest`** (237 lines) — end-to-end match persistence via H2
+- **`MatchOnlyDtoTest`** (202 lines) — DTO initialisation and field mapping
+- **`MatchOnlyRequestTest`** (234 lines) — request constructor and field coverage
+- **`MatchOnlyResponseTest`** (165 lines) — response constructor and field coverage
+- **`MatchResponseTest`** (46 lines) — common `MatchResponse` model
+- **`IpscUtilTest`** (114 lines) — string formatting edge cases
+
+#### 📜 Build & Metadata
+
+- **MIT License** declared in `pom.xml` (`<license>`)
+- **Developer profile** populated in `pom.xml` (`tahoni / Leoni Lubbinge`)
+- **SCM connection and URL** filled in `pom.xml` for GitHub
+
+### 🔄 Changed
+
+#### 🌐 Controllers
+
+- **`IpscController`:** Match-related endpoints extracted to `IpscMatchController` (78 lines removed)
+
+#### 🏗️ Services
+
+- **`DomainServiceImpl`:** Replaced direct JPA repository injection with entity service injection
+  (`ClubEntityService`, `CompetitorEntityService`, `MatchEntityService`, `MatchStageEntityService`,
+  `MatchCompetitorEntityService`, `MatchStageCompetitorEntityService`)
+- **`TransformationService.mapMatchResults`:** Removed `throws ValidationException` from signature
+- **`TransformationServiceImpl`:** All imports updated to `models/ipsc/common/*`; `mapMatchOnly`
+  method added
+
+#### ⚙️ Config & Infrastructure
+
+- **`ControllerAdvice`:** Structured logging added to all exception handlers; `ValidationException`
+  removed from handler method signatures (119 lines changed)
+- **`pom.xml`:** Spring Boot BOM upgraded `4.0.5` → `4.0.6`; Lombok exclusion plugin block
+  reorganised
+- **`logback-spring.xml`:** Additional appender/logger configuration added
+
+#### 📦 Package Paths — All IPSC Models
+
+All `models/ipsc/` classes moved to `models/ipsc/common/`:
+
+| Old path                   | New path                          |
+|----------------------------|-----------------------------------|
+| `models/ipsc/data/`        | `models/ipsc/common/data/`        |
+| `models/ipsc/divisions/`   | `models/ipsc/common/divisions/`   |
+| `models/ipsc/dto/`         | `models/ipsc/common/dto/`         |
+| `models/ipsc/holders/`     | `models/ipsc/common/holders/`     |
+| `models/ipsc/records/`     | `models/ipsc/common/records/`     |
+| `models/ipsc/request/`     | `models/ipsc/common/request/`     |
+| `models/ipsc/response/`    | `models/ipsc/common/response/`    |
+
+#### 🧪 Updated Tests
+
+- **`TransformationServiceTest`** — +747 lines covering `mapMatchOnly` and updated signatures
+- **`DomainServiceTest`** — +247 lines covering entity-service delegation
+- **`TransactionServiceTest`** — +246 lines covering `findMatchStageCompetitorById` path
+- **`ValueUtilTest`** — +294 lines covering null-handling improvements
+- **`IpscServiceIntegrationTest`** — +99 lines for expanded integration scenarios
+- Domain entity and DTO tests updated for `common` package import paths
+
+### 🗑️ Removed
+
+#### 🌐 Controllers & Endpoints
+
+- Match CRUD endpoints removed from `IpscController` (moved to `IpscMatchController`)
+
+#### 📦 Models
+
+- **`models/ipsc/response/ClubResponse`** — superseded by `models/ipsc/common/response/ClubResponse`
+- **`models/ipsc/response/MatchResponse`** — superseded by `models/ipsc/common/response/MatchResponse`
+
+#### 🏗️ Service Internals
+
+- Direct repository injection from `DomainServiceImpl` (replaced by entity services)
+
+#### 🧪 Tests
+
+- **`IpscControllerTest`** (156 lines) — replaced by `IpscMatchControllerTest`
 
 ---
 

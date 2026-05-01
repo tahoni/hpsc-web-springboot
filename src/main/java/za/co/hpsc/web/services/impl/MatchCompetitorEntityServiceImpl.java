@@ -8,6 +8,7 @@ import za.co.hpsc.web.services.MatchCompetitorEntityService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -16,6 +17,11 @@ public class MatchCompetitorEntityServiceImpl implements MatchCompetitorEntitySe
 
     public MatchCompetitorEntityServiceImpl(MatchCompetitorRepository matchCompetitorRepository) {
         this.matchCompetitorRepository = matchCompetitorRepository;
+    }
+
+    @Override
+    public Optional<MatchCompetitor> findMatchCompetitorById(Long matchCompetitorId) {
+        return matchCompetitorRepository.findById(matchCompetitorId);
     }
 
     @Override

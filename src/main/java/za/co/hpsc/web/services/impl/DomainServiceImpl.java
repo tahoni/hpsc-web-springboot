@@ -5,37 +5,35 @@ import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.models.ipsc.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.dto.*;
-import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
-import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.DomainService;
+import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.common.dto.*;
+import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
+import za.co.hpsc.web.services.*;
 
 import java.util.*;
 
 @Slf4j
 @Service
 public class DomainServiceImpl implements DomainService {
-    protected final ClubRepository clubRepository;
-    protected final CompetitorRepository competitorRepository;
-    protected final IpscMatchRepository ipscMatchRepository;
-    protected final IpscMatchStageRepository ipscMatchStageRepository;
-    protected final MatchCompetitorRepository matchCompetitorRepository;
-    protected final MatchStageCompetitorRepository matchStageCompetitorRepository;
+    protected final ClubEntityService clubEntityService;
+    protected final CompetitorEntityService competitorEntityService;
+    protected final MatchEntityService matchEntityService;
+    protected final MatchStageEntityService matchStageEntityService;
+    protected final MatchCompetitorEntityService matchCompetitorEntityService;
+    protected final MatchStageCompetitorEntityService matchStageCompetitorEntityService;
 
-    public DomainServiceImpl(ClubRepository clubRepository,
-                             CompetitorRepository competitorRepository,
-                             IpscMatchRepository ipscMatchRepository,
-                             IpscMatchStageRepository ipscMatchStageRepository,
-                             MatchCompetitorRepository matchCompetitorRepository,
-                             MatchStageCompetitorRepository matchStageCompetitorRepository) {
-
-        this.clubRepository = clubRepository;
-        this.competitorRepository = competitorRepository;
-        this.ipscMatchRepository = ipscMatchRepository;
-        this.ipscMatchStageRepository = ipscMatchStageRepository;
-        this.matchCompetitorRepository = matchCompetitorRepository;
-        this.matchStageCompetitorRepository = matchStageCompetitorRepository;
+    public DomainServiceImpl(ClubEntityService clubEntityService, CompetitorEntityService competitorEntityService,
+                             MatchEntityService matchEntityService, MatchStageEntityService matchStageEntityService,
+                             MatchCompetitorEntityService matchCompetitorEntityService,
+                             MatchStageCompetitorEntityService matchStageCompetitorEntityService) {
+        this.clubEntityService = clubEntityService;
+        this.competitorEntityService = competitorEntityService;
+        this.matchEntityService = matchEntityService;
+        this.matchStageEntityService = matchStageEntityService;
+        this.matchCompetitorEntityService = matchCompetitorEntityService;
+        this.matchStageCompetitorEntityService = matchStageCompetitorEntityService;
     }
 
     @Override
@@ -94,6 +92,25 @@ public class DomainServiceImpl implements DomainService {
         return Optional.empty();
     }
 
+    // TODO: add Javadoc
+    @Override
+    public Optional<MatchOnlyResultsDto> initMatchOnlyEntities(MatchOnlyDto matchOnlyDto) {
+        if (matchOnlyDto == null) {
+            return Optional.empty();
+        }
+
+        ClubDto clubDto = matchOnlyDto.getClub();
+        if (clubDto == null) {
+            clubDto = initClubEntity(matchOnlyDto.getClubName()).orElse(null);
+        }
+
+        MatchOnlyResultsDto matchOnlyResultsDto = new MatchOnlyResultsDto();
+        matchOnlyResultsDto.setMatch(matchOnlyDto);
+        matchOnlyResultsDto.setClub(clubDto);
+
+        return Optional.of(matchOnlyResultsDto);
+    }
+
     /**
      * Initialises a Club entity based on the provided ClubDto.
      * If the ClubDto contains a valid ID, attempts to find the existing Club entity
@@ -111,7 +128,7 @@ public class DomainServiceImpl implements DomainService {
 
         // Initialise the club entity from DTO or create a new entity
         Optional.ofNullable(clubDto.getId())
-                .flatMap(clubRepository::findById)
+                .flatMap(clubEntityService::findClubById)
                 .ifPresent(club -> clubDto.setId(club.getId()));
 
         // Add attributes to the club
@@ -131,8 +148,34 @@ public class DomainServiceImpl implements DomainService {
         }
 
         // Find the club entity if present
+        return initClubEntity(clubIdentifier.getName(), clubIdentifier.getAbbreviation());
+    }
+
+    // TODO: add Javadoc
+    protected Optional<ClubDto> initClubEntity(String clubName) {
+        if (clubName == null) {
+            return Optional.empty();
+        }
+
+        // Find the club entity if present
+        Optional<Club> optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubName);
         ClubDto clubDto = null;
-        Optional<Club> optionalClub = clubRepository.findByAbbreviation(clubIdentifier.getAbbreviation());
+        if (optionalClub.isPresent()) {
+            clubDto = new ClubDto(optionalClub.get());
+        }
+
+        return Optional.ofNullable(clubDto);
+    }
+
+    // TODO: add Javadoc
+    protected Optional<ClubDto> initClubEntity(String clubName, String clubAbbreviation) {
+        if (clubName == null) {
+            return Optional.empty();
+        }
+
+        // Find the club entity if present
+        Optional<Club> optionalClub = clubEntityService.findClubByNameOrAbbreviation(clubName, clubAbbreviation);
+        ClubDto clubDto = null;
         if (optionalClub.isPresent()) {
             clubDto = new ClubDto(optionalClub.get());
         }
@@ -154,7 +197,7 @@ public class DomainServiceImpl implements DomainService {
         // Initialise the match entity from DTO or create a new entity
         Optional.ofNullable(matchDto)
                 .map(MatchDto::getId)
-                .flatMap(ipscMatchRepository::findById)
+                .flatMap(matchCompetitorEntityService::findMatchCompetitorById)
                 .ifPresent(match -> matchDto.setId(match.getId()));
 
         return Optional.ofNullable(matchDto);
@@ -185,7 +228,7 @@ public class DomainServiceImpl implements DomainService {
         filteredCompetitorDtoList.forEach(competitorDto -> {
             // Initialise the competitor entity from DTO or create a new entity
             Optional.ofNullable(competitorDto.getId())
-                    .flatMap(competitorRepository::findById)
+                    .flatMap(competitorEntityService::findCompetitorById)
                     .ifPresent(competitor -> competitor.setId(competitorDto.getId()));
 
             // Update the map of competitors
@@ -228,7 +271,7 @@ public class DomainServiceImpl implements DomainService {
         filteredMatchStageDtoList.forEach(matchStageDto -> {
             // Initialise the match stage entity from DTO or create a new entity
             Optional.ofNullable(matchStageDto.getId())
-                    .flatMap(ipscMatchStageRepository::findById)
+                    .flatMap(matchStageEntityService::findMatchStageById)
                     .ifPresent(ipscMatchStage -> matchStageDto.setId(ipscMatchStage.getId()));
 
             // Update the map of match stages
@@ -282,7 +325,7 @@ public class DomainServiceImpl implements DomainService {
 
             // Initialise the match competitor entity from DTO or create a new entity
             Optional.ofNullable(matchCompetitorDto.getId())
-                    .flatMap(matchCompetitorRepository::findById)
+                    .flatMap(matchCompetitorEntityService::findMatchCompetitorById)
                     .ifPresent(matchCompetitor -> matchCompetitorDto.setId(matchCompetitor.getId()));
 
             // Filter by club reference if specified
@@ -348,7 +391,7 @@ public class DomainServiceImpl implements DomainService {
 
                 // Initialises the match stage competitor entity from DTO or create a new entity
                 Optional.ofNullable(matchStageCompetitorDto.getId())
-                        .flatMap(matchStageCompetitorRepository::findById)
+                        .flatMap(matchCompetitorEntityService::findMatchCompetitorById)
                         .ifPresent(matchStageCompetitor -> matchStageCompetitorDto.setId(matchStageCompetitor.getId()));
 
                 // Filter by club reference if specified
@@ -366,8 +409,8 @@ public class DomainServiceImpl implements DomainService {
 
     /**
      * Returns {@code true} when the given DTO's club should be excluded by the active club filter.
-     * A DTO is excluded when a non-null, non-ignored {@code clubIdentifier} is provided and it does
-     * not match the DTO's own club value.
+     * A DTO is excluded when a non-null, non-ignored {@code clubIdentifier} is provided,
+     * and it does not match the DTO's own club value.
      *
      * @param clubIdentifier the filter club identifier, or {@code null} to skip filtering
      * @param dtoClub        the club identifier carried by the DTO being evaluated
@@ -380,8 +423,8 @@ public class DomainServiceImpl implements DomainService {
     }
 
     /**
-     * Returns {@code true} when the competitor is absent from the competitor map —
-     * i.e. the DTO is null, its UUID is null, or no matching entry exists in the map.
+     * Returns {@code true} when the competitor is absent from the competitor map,
+     * for example, the DTO is null, its UUID is null, or no matching entry exists in the map.
      *
      * @param competitorMap a map of `UUID` to `CompetitorDto` used to resolve competitors by UUID.
      * @param competitorDto the competitor DTO to check.

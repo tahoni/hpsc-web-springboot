@@ -1,4 +1,4 @@
-# HPSC Website Backend - Legacy Release Archive
+# HPSC Website Backend – Legacy Release Archive
 
 > **Note:** This archive contains the history of releases from the legacy non-semantic versioning structure
 > that was previously used for this project. This versioning approach is no longer active and has been
@@ -61,7 +61,7 @@ introduced in `4.0.0`.
 
 #### API Changes
 
-- Request/response DTOs updated to include necessary fields for create/update flows.
+- Request/response DTOs updated to include all necessary fields for create/update flows.
 
 #### Testing and Quality
 
@@ -140,7 +140,7 @@ exception handling, comprehensive test coverage, and bug fixes for XML parsing.
 - **Removed default values**: Cleaned up response model fields by removing default values in `ClubResponse`,
   `EnrolledResponse`, `MemberResponse`, `ScoreResponse`, `StageResponse`, `MatchResponse`, `TagResponse`, and
   `IpscResponse` for cleaner JSON serialization
-- **Consistent null handling**: Standardized nullable field handling across all response models
+- **Consistent null handling**: Standardised nullable field handling across all response models
 
 **_Exception Handling Improvements_**
 
@@ -357,7 +357,7 @@ throughout the codebase.
 #### Code Quality Improvements
 
 - **Javadoc enhancement**: Added detailed Javadoc across all domain entities, DTOs, enums, and services
-- **TODO cleanup**: Removed outdated TODO comments across codebase
+- **TODO clean-up**: Removed outdated TODO comments across codebase
 - **Null safety**: Enhanced null handling in enum lookup methods
 - **Code formatting**: Improved readability and consistency
 
@@ -508,7 +508,7 @@ Introduced a central `Division` → `DisciplinesInDivision` mapping.
 #### Licence and Documentation
 
 - Expanded and refined Javadoc across multiple areas including:
-    - Domain entities (e.g., match-related entities)
+    - Domain entities (e.g. match-related entities)
     - Enums (improved descriptions/clarity)
     - Division discipline model classes (`Disciplines*` classes)
 

@@ -1,4 +1,4 @@
-# Release Notes - Version 1.1.2
+# Release Notes – Version 1.1.2
 
 **Release Date:** January 20, 2026  
 **Status:** ✨ Stable

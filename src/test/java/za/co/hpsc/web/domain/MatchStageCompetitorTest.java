@@ -5,7 +5,7 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageCompetitorDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchStageCompetitorDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -579,12 +579,20 @@ public class MatchStageCompetitorTest {
     }
 
     @Test
-    void testInit_whenDtoIsNull_thenThrowsNullPointerException() {
+    void testInit_whenDtoIsNull_thenFieldsAreUnchanged() {
         // Arrange
         MatchStageCompetitor entity = new MatchStageCompetitor();
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> entity.init(null));
+        // Act
+        assertDoesNotThrow(() -> entity.init(null));
+
+        // Assert
+        assertEquals(CompetitorCategory.NONE, entity.getCompetitorCategory());
+        assertNull(entity.getFirearmType());
+        assertNull(entity.getDivision());
+        assertNull(entity.getPowerFactor());
+        assertNull(entity.getScoreA());
+        assertNull(entity.getPenalties());
     }
 
     @Test

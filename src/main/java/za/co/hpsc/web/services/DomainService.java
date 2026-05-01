@@ -1,7 +1,9 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.models.ipsc.data.DtoMapping;
-import za.co.hpsc.web.models.ipsc.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.common.data.DtoMapping;
+import za.co.hpsc.web.models.ipsc.common.holders.dto.MatchResultsDto;
+import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
+import za.co.hpsc.web.models.ipsc.match.holders.dto.MatchOnlyResultsDto;
 
 import java.util.Optional;
 
@@ -33,4 +35,7 @@ public interface DomainService {
      */
     Optional<DtoMapping> initMatchEntities(MatchResultsDto matchResults,
                                            String filterClubAbbreviation, String matchClubAbbreviation);
+
+    // TODO: add Javadoc
+    Optional<MatchOnlyResultsDto> initMatchOnlyEntities(MatchOnlyDto matchOnlyDto);
 }

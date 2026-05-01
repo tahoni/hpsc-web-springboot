@@ -1,4 +1,4 @@
-# Release Notes - Version 1.1.0
+# Release Notes – Version 1.1.0
 
 **Release Date:** January 14, 2026  
 **Status:** ✨ Stable
@@ -34,13 +34,13 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 ### 📦 Core Model Refactoring
 
 - **Base classes:** Introduced generic `Request` and `Response` base classes for metadata standardisation
-- **Error handling:** Standardized error responses using new `ErrorResponse` model
+- **Error handling:** Standardised error responses using new `ErrorResponse` model
 - **Validation:** Enhanced field validation across all models using:
     - `@NotNull` annotation
     - `@NotBlank` annotation
     - Additional validation annotations
 
-- **Utilities:** Introduced `ValueUtil` for consistent null-to-default initialization
+- **Utilities:** Introduced `ValueUtil` for consistent null-to-default initialisation
 
 ### 📚 API Documentation
 
@@ -64,12 +64,12 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 
 - Base `Request` class - Generic request model
 - Base `Response` class - Generic response model
-- `ErrorResponse` - Standardized error response model
+- `ErrorResponse` - Standardised error response model
 - Award-specific models (AwardRequest, AwardResponse, etc.)
 
 ### 🔌 Utilities
 
-- `ValueUtil` - Consistent null-to-default initialization
+- `ValueUtil` - Consistent null-to-default initialisation
 
 ---
 
@@ -128,7 +128,7 @@ consistency. Integrated OpenAPI documentation and significantly improved test co
 ### 🏆 Award Processing
 
 - **POST /awards** – Create or process awards
-- **GET /awards** - Retrieve award data
+- **GET /awards** – Retrieve award data
 - **POST /award-ceremonies** - Group awards by ceremony
 
 ### 🖼️ Image Processing (Enhanced)

@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.dto.MatchStageDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchStageDto;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,22 +71,24 @@ public class IpscMatchStage {
      *              target/scoring details to be copied to the current stage
      */
     public void init(MatchStageDto stage) {
-        // Initialises the stage attributes
-        this.stageNumber = stage.getStageNumber();
-        this.stageName = stage.getStageName();
-        this.rangeNumber = stage.getRangeNumber();
+        if (stage != null) {
+            // Initialises the stage attributes
+            this.stageNumber = stage.getStageNumber();
+            this.stageName = stage.getStageName();
+            this.rangeNumber = stage.getRangeNumber();
 
-        stage.copyTargetsAndScoringTo(this);
+            stage.copyTargetsAndScoringTo(this);
+        }
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        String stageName = ((this.stageName != null) ? this.stageName.trim() : "");
+        String stageName = ValueUtil.nullAsDefaultString(this.stageName, "").trim();
         sb.append(stageName).append(" ");
 
-        Integer stageNumber = (this.stageNumber != null) ? this.stageNumber : null;
+        Integer stageNumber = ValueUtil.nullAsDefault(this.stageNumber, null);
         if (stageNumber != null) {
             sb.append("(").append(stageNumber).append(")");
         }

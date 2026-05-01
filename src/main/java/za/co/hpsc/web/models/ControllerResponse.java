@@ -28,6 +28,13 @@ public class ControllerResponse {
     private String message;
     private String error;
 
+    public ControllerResponse(boolean success, String message) {
+        this.timestamp = LocalDateTime.now();
+        this.success = success;
+        this.error = (!success ? message : "");
+        this.message = (success ? message : "");
+    }
+
     /**
      * Constructs a new {@code ControllerResponse} object with the specified timestamp,
      * message, and error details.
@@ -44,9 +51,9 @@ public class ControllerResponse {
      */
     public ControllerResponse(@NotNull LocalDateTime timestamp, String message, String error) {
         this.timestamp = timestamp;
+        this.success = ((error != null) && (!error.isBlank()));
         this.message = message;
         this.error = error;
-        this.success = false;
     }
 
     /**

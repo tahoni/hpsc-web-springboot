@@ -11,6 +11,9 @@ import java.util.Optional;
  * specific criteria.
  */
 public interface MatchStageEntityService {
+    // TODO: add Javadoc
+    Optional<IpscMatchStage> findMatchStageById(Long matchStageId);
+
     /**
      * Searches for a specific match stage within a match based on the provided match ID
      * and stage number.

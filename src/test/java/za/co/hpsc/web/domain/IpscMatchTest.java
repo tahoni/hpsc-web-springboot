@@ -3,7 +3,7 @@ package za.co.hpsc.web.domain;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.models.ipsc.dto.MatchDto;
+import za.co.hpsc.web.models.ipsc.common.dto.MatchDto;
 
 import java.time.LocalDateTime;
 
@@ -50,7 +50,7 @@ public class IpscMatchTest {
         match.setMatchCategory(MatchCategory.LEAGUE);
 
         // Act
-        match.init(null);
+        match.init((MatchDto) null);
 
         // Assert
         assertEquals("Existing Match", match.getName());
