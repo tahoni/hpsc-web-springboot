@@ -36,6 +36,7 @@ public class MatchOnlyResponse extends MatchOnlyRequest {
             if (matchHolder.getMatch() != null) {
                 this.setMatchId(ValueUtil.nullAsDefault(matchHolder.getMatch().getId(), null));
                 this.setMatchName(ValueUtil.nullAsDefaultString(matchHolder.getMatch().getName(), null));
+                this.setMatchDate(ValueUtil.nullAsDefault(matchHolder.getMatch().getScheduledDate(), null));
                 this.setFirearm(ValueUtil.nullAsDefaultString(matchHolder.getMatch().getMatchFirearmType(),
                         null));
             }
