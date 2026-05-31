@@ -1,7 +1,6 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ClubTest {
 
+    // All args constructor
     @Test
     void testConstructor_whenNameAndAbbreviationAreProvided_thenSetsFields() {
         // Arrange & Act
@@ -40,216 +40,7 @@ public class ClubTest {
         assertNull(club.getAbbreviation());
     }
 
-    @Test
-    void testConstructor_whenClubDtoIsProvided_thenMapsAllFields() {
-        // Arrange
-        ClubDto dto = new ClubDto();
-        dto.setId(5L);
-        dto.setName("Alpha Club");
-        dto.setAbbreviation("AC");
-
-        // Act
-        Club club = new Club(dto);
-
-        // Assert
-        assertEquals(5L, club.getId());
-        assertEquals("Alpha Club", club.getName());
-        assertEquals("AC", club.getAbbreviation());
-    }
-
-    @Test
-    void testConstructor_whenClubDtoHasNullId_thenIdIsNull() {
-        // Arrange
-        ClubDto dto = new ClubDto();
-        dto.setName("Beta Club");
-        dto.setAbbreviation("BC");
-
-        // Act
-        Club club = new Club(dto);
-
-        // Assert
-        assertNull(club.getId());
-        assertEquals("Beta Club", club.getName());
-        assertEquals("BC", club.getAbbreviation());
-    }
-
-    @Test
-    void testConstructor_whenClubDtoHasNullFields_thenFieldsAreNull() {
-        // Arrange
-        ClubDto dto = new ClubDto();
-        dto.setId(null);
-        dto.setName(null);
-        dto.setAbbreviation(null);
-
-        // Act
-        Club club = new Club(dto);
-
-        // Assert
-        assertNull(club.getId());
-        assertNull(club.getName());
-        assertNull(club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenNameAndAbbreviationAreValid_thenUpdatesFields() {
-        // Arrange
-        Club club = new Club("Old Name", "ON");
-        ClubDto dto = new ClubDto();
-        dto.setName("New Name");
-        dto.setAbbreviation("NN");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("New Name", club.getName());
-        assertEquals("NN", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenDtoIsNull_thenFieldsAreUnchanged() {
-        // Arrange
-        Club club = new Club("Unchanged Name", "UN");
-
-        // Act
-        club.init(null);
-
-        // Assert
-        assertEquals("Unchanged Name", club.getName());
-        assertEquals("UN", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenDtoNameIsNull_thenNameIsRetained() {
-        // Arrange
-        Club club = new Club("Retained Name", "RN");
-        ClubDto dto = new ClubDto();
-        dto.setName(null);
-        dto.setAbbreviation("NEW");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("Retained Name", club.getName());
-        assertEquals("NEW", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenDtoNameIsBlank_thenNameIsRetained() {
-        // Arrange
-        Club club = new Club("Retained Name", "RN");
-        ClubDto dto = new ClubDto();
-        dto.setName("   ");
-        dto.setAbbreviation("NEW");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("Retained Name", club.getName());
-        assertEquals("NEW", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenDtoNameIsEmpty_thenNameIsRetained() {
-        // Arrange
-        Club club = new Club("Retained Name", "RN");
-        ClubDto dto = new ClubDto();
-        dto.setName("");
-        dto.setAbbreviation("NEW");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("Retained Name", club.getName());
-    }
-
-    @Test
-    void testInit_whenDtoAbbreviationIsNull_thenAbbreviationIsRetained() {
-        // Arrange
-        Club club = new Club("Club Name", "OLD");
-        ClubDto dto = new ClubDto();
-        dto.setName("New Name");
-        dto.setAbbreviation(null);
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("New Name", club.getName());
-        assertEquals("OLD", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenDtoAbbreviationIsBlank_thenAbbreviationIsRetained() {
-        // Arrange
-        Club club = new Club("Club Name", "OLD");
-        ClubDto dto = new ClubDto();
-        dto.setName("New Name");
-        dto.setAbbreviation("   ");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("OLD", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenDtoAbbreviationIsEmpty_thenAbbreviationIsRetained() {
-        // Arrange
-        Club club = new Club("Club Name", "OLD");
-        ClubDto dto = new ClubDto();
-        dto.setName("New Name");
-        dto.setAbbreviation("");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("OLD", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenBothDtoFieldsAreBlank_thenBothFieldsAreRetained() {
-        // Arrange
-        Club club = new Club("Retained Name", "RN");
-        ClubDto dto = new ClubDto();
-        dto.setName("   ");
-        dto.setAbbreviation("   ");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("Retained Name", club.getName());
-        assertEquals("RN", club.getAbbreviation());
-    }
-
-    @Test
-    void testInit_whenCalledMultipleTimes_thenLastNonBlankValueWins() {
-        // Arrange
-        Club club = new Club("Original", "OR");
-
-        ClubDto first = new ClubDto();
-        first.setName("Second");
-        first.setAbbreviation("SC");
-
-        ClubDto second = new ClubDto();
-        second.setName("Third");
-        second.setAbbreviation("   "); // blank — should retain "SC"
-
-        // Act
-        club.init(first);
-        club.init(second);
-
-        // Assert
-        assertEquals("Third", club.getName());
-        assertEquals("SC", club.getAbbreviation());
-    }
-
+    // toString()
     @Test
     void testToString_whenAbbreviationIsDifferentFromName_thenReturnsNameWithAbbreviation() {
         // Arrange
@@ -361,44 +152,6 @@ public class ClubTest {
     }
 
     @Test
-    void testToString_whenNameIsChangedViaInit_thenReflectsUpdatedName() {
-        // Arrange
-        Club club = new Club("Original Name", "ON");
-        ClubDto dto = new ClubDto();
-        dto.setName("Updated Name");
-        dto.setAbbreviation("UN");
-        club.init(dto);
-
-        // Act
-        String result = club.toString();
-
-        // Assert
-        assertEquals("Updated Name (UN)", result);
-    }
-
-    @Test
-    void testConstructor_whenClubDtoIsNull_thenThrowsNullPointerException() {
-        // Arrange, Act & Assert
-        assertThrows(NullPointerException.class, () -> new Club(null));
-    }
-
-    @Test
-    void testInit_whenDtoValuesContainWhitespace_thenAppliesValuesWithoutTrimming() {
-        // Arrange
-        Club club = new Club("Original Name", "ON");
-        ClubDto dto = new ClubDto();
-        dto.setName("  Updated Name  ");
-        dto.setAbbreviation("  UN  ");
-
-        // Act
-        club.init(dto);
-
-        // Assert
-        assertEquals("  Updated Name  ", club.getName());
-        assertEquals("  UN  ", club.getAbbreviation());
-    }
-
-    @Test
     void testToString_whenNameIsNullAndAbbreviationIsPresent_thenReturnsAbbreviationOnly() {
         // Arrange
         Club club = new Club(null, "AB");
@@ -410,6 +163,7 @@ public class ClubTest {
         assertEquals("(AB)", result);
     }
 
+    // onInsert()
     @Test
     void testOnInsert_whenInvoked_thenInitializesCreatedAndUpdatedDatesToSameCurrentValue() {
         // Arrange
@@ -428,6 +182,7 @@ public class ClubTest {
         assertFalse(club.getDateCreated().isAfter(after));
     }
 
+    // onUpdate()
     @Test
     void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
         // Arrange

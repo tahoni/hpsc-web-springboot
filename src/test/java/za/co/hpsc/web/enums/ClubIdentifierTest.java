@@ -7,6 +7,94 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClubIdentifierTest {
+    // getByCode()
+    @Test
+    void testGetByCode_whenCodeIsKnown_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("CCC");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.PMPSC, result.get());
+    }
+
+    @Test
+    void testGetByCode_whenInputIsNull_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_whenInputIsBlank_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("   ");
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_whenNoClubMatches_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ZZZ");
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_whenCodeIsSosc_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("AAA");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.SOSC, result.get());
+    }
+
+    @Test
+    void testGetByCode_whenCodeIsHpsc_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("BBB");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.HPSC, result.get());
+    }
+
+    @Test
+    void testGetByCode_whenCodeIsVisitor_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("UUU");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.VISITOR, result.get());
+    }
+
+    @Test
+    void testGetByCode_whenCodeIsCaseInsensitive_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ccc");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.PMPSC, result.get());
+    }
+
+    @Test
+    void testGetByCode_whenInputIsEmpty_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("");
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    // getByAbbreviation()
     @Test
     void testGetByAbbreviation_whenAbbreviationIsExact_thenReturnsMatchingClub() {
         // Act
@@ -60,43 +148,7 @@ public class ClubIdentifierTest {
         assertFalse(result.isPresent());
     }
 
-    @Test
-    void testGetByCode_whenCodeIsKnown_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("CCC");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.PMPSC, result.get());
-    }
-
-    @Test
-    void testGetByCode_whenInputIsNull_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode(null);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_whenInputIsBlank_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("   ");
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_whenNoClubMatches_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ZZZ");
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
+    // getByName()
     @Test
     void testGetByName_whenClubNameIsExact_thenReturnsMatchingClub() {
         // Act
@@ -182,6 +234,7 @@ public class ClubIdentifierTest {
         assertFalse(result.isPresent());
     }
 
+    // getByAbbreviation()
     @Test
     void testGetByAbbreviation_whenInputIsEmpty_thenReturnsEmptyOptional() {
         // Act
@@ -211,55 +264,7 @@ public class ClubIdentifierTest {
         assertEquals(ClubIdentifier.VISITOR, result.get());
     }
 
-    @Test
-    void testGetByCode_whenCodeIsSosc_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("AAA");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.SOSC, result.get());
-    }
-
-    @Test
-    void testGetByCode_whenCodeIsHpsc_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("BBB");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.HPSC, result.get());
-    }
-
-    @Test
-    void testGetByCode_whenCodeIsVisitor_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("UUU");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.VISITOR, result.get());
-    }
-
-    @Test
-    void testGetByCode_whenCodeIsCaseInsensitive_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ccc");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.PMPSC, result.get());
-    }
-
-    @Test
-    void testGetByCode_whenInputIsEmpty_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("");
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
+    // toString()
     @Test
     void testToString_whenIdentifierIsHpsc_thenReturnsNameAndAbbreviation() {
         // Act

@@ -1,124 +1,14 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CompetitorTest {
 
-    // =====================================================================
-    // init(CompetitorDto)
-    // =====================================================================
-
-    @Test
-    void testInit_whenDtoIsFullyPopulated_thenMapsAllFields() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        CompetitorDto dto = new CompetitorDto();
-        dto.setFirstName("John");
-        dto.setLastName("Doe");
-        dto.setMiddleNames("William");
-        dto.setSapsaNumber(12345);
-        dto.setCompetitorNumber("C001");
-        dto.setDateOfBirth(LocalDate.of(1990, 6, 15));
-
-        // Act
-        competitor.init(dto);
-
-        // Assert
-        assertEquals("John", competitor.getFirstName());
-        assertEquals("Doe", competitor.getLastName());
-        assertEquals("William", competitor.getMiddleNames());
-        assertEquals(12345, competitor.getSapsaNumber());
-        assertEquals("C001", competitor.getCompetitorNumber());
-        assertEquals(LocalDate.of(1990, 6, 15), competitor.getDateOfBirth());
-    }
-
-    @Test
-    void testInit_whenMiddleNamesAreNull_thenMiddleNamesAreNull() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        CompetitorDto dto = new CompetitorDto();
-        dto.setFirstName("Jane");
-        dto.setLastName("Smith");
-        dto.setMiddleNames(null);
-        dto.setCompetitorNumber("C002");
-
-        // Act
-        competitor.init(dto);
-
-        // Assert
-        assertEquals("Jane", competitor.getFirstName());
-        assertEquals("Smith", competitor.getLastName());
-        assertNull(competitor.getMiddleNames());
-    }
-
-    @Test
-    void testInit_whenSapsaNumberIsNull_thenSapsaNumberIsNull() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        CompetitorDto dto = new CompetitorDto();
-        dto.setFirstName("Alice");
-        dto.setLastName("Jones");
-        dto.setSapsaNumber(null);
-        dto.setCompetitorNumber("C003");
-
-        // Act
-        competitor.init(dto);
-
-        // Assert
-        assertNull(competitor.getSapsaNumber());
-    }
-
-    @Test
-    void testInit_whenDateOfBirthIsNull_thenDateOfBirthIsNull() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        CompetitorDto dto = new CompetitorDto();
-        dto.setFirstName("Bob");
-        dto.setLastName("Brown");
-        dto.setDateOfBirth(null);
-        dto.setCompetitorNumber("C004");
-
-        // Act
-        competitor.init(dto);
-
-        // Assert
-        assertNull(competitor.getDateOfBirth());
-    }
-
-    @Test
-    void testInit_whenCalledTwice_thenLastDtoValueOverwrites() {
-        // Arrange
-        Competitor competitor = new Competitor();
-
-        CompetitorDto first = new CompetitorDto();
-        first.setFirstName("First");
-        first.setLastName("Version");
-        first.setCompetitorNumber("V1");
-
-        CompetitorDto second = new CompetitorDto();
-        second.setFirstName("Second");
-        second.setLastName("Version");
-        second.setCompetitorNumber("V2");
-
-        // Act
-        competitor.init(first);
-        competitor.init(second);
-
-        // Assert
-        assertEquals("Second", competitor.getFirstName());
-        assertEquals("V2", competitor.getCompetitorNumber());
-    }
-
-    // =====================================================================
     // toString()
-    // =====================================================================
-
     @Test
     void testToString_whenOnlyFirstAndLastNameAreSet_thenReturnsFirstSpaceLast() {
         // Arrange
@@ -224,42 +114,6 @@ public class CompetitorTest {
     }
 
     @Test
-    void testToString_whenInitialisedWithMiddleName_thenReturnsFullName() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        CompetitorDto dto = new CompetitorDto();
-        dto.setFirstName("Alice");
-        dto.setMiddleNames("Grace");
-        dto.setLastName("Cooper");
-        dto.setCompetitorNumber("C010");
-        competitor.init(dto);
-
-        // Act
-        String result = competitor.toString();
-
-        // Assert
-        assertEquals("Alice Grace Cooper", result);
-    }
-
-    @Test
-    void testToString_whenInitialisedWithoutMiddleName_thenReturnsFirstAndLastOnly() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        CompetitorDto dto = new CompetitorDto();
-        dto.setFirstName("Alice");
-        dto.setMiddleNames(null);
-        dto.setLastName("Cooper");
-        dto.setCompetitorNumber("C011");
-        competitor.init(dto);
-
-        // Act
-        String result = competitor.toString();
-
-        // Assert
-        assertEquals("Alice Cooper", result);
-    }
-
-    @Test
     void testToString_whenCalledMultipleTimes_thenReturnsConsistentResult() {
         // Arrange
         Competitor competitor = new Competitor();
@@ -272,22 +126,6 @@ public class CompetitorTest {
 
         // Assert
         assertEquals(result1, result2);
-    }
-
-    @Test
-    void testInit_whenDtoIsNull_thenDoesNotThrowsNullPointerException() {
-        // Arrange
-        Competitor competitor = new Competitor();
-
-        // Act
-        assertDoesNotThrow(() -> competitor.init(null));
-
-        // Assert
-        assertNull(competitor.getFirstName());
-        assertNull(competitor.getLastName());
-        assertNull(competitor.getSapsaNumber());
-        assertNull(competitor.getCompetitorNumber());
-        assertNull(competitor.getDateOfBirth());
     }
 
     @Test
@@ -320,6 +158,7 @@ public class CompetitorTest {
         assertEquals("John William", result);
     }
 
+    // onInsert()
     @Test
     void testOnInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameCurrentValue() {
         // Arrange
@@ -338,6 +177,7 @@ public class CompetitorTest {
         assertFalse(competitor.getDateCreated().isAfter(after));
     }
 
+    // onUpdate()
     @Test
     void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedAndKeepsDateCreatedUnchanged() {
         // Arrange

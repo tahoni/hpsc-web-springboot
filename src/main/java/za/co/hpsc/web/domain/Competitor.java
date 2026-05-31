@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.common.dto.CompetitorDto;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDate;
@@ -59,30 +58,6 @@ public class Competitor {
     private List<MatchCompetitor> competitorMatches = new ArrayList<>();
     @OneToMany(mappedBy = "competitor", fetch = FetchType.EAGER)
     private List<MatchStageCompetitor> competitorStageMatches = new ArrayList<>();
-
-    /**
-     * Initialises the current {@code Competitor} entity with data from a DTO.
-     *
-     * <p>
-     * This method sets the relevant fields in the entity, including association with a stage,
-     * competitor information, performance metrics, and date attributes.
-     * </p>
-     *
-     * @param competitorDto the DTO containing data needed to populate the entity fields.
-     */
-    public void init(CompetitorDto competitorDto) {
-        if (competitorDto != null) {
-            // Initialises competitor attributes
-            this.firstName = competitorDto.getFirstName();
-            this.lastName = competitorDto.getLastName();
-            this.middleNames = competitorDto.getMiddleNames();
-
-            // Initialises competitor number and SAPSA number
-            this.sapsaNumber = competitorDto.getSapsaNumber();
-            this.competitorNumber = competitorDto.getCompetitorNumber();
-            this.dateOfBirth = competitorDto.getDateOfBirth();
-        }
-    }
 
     @Override
     public String toString() {

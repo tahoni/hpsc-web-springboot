@@ -18,7 +18,17 @@ public class ResponseTest {
     }
 
     @Test
-    void testConstructor_withUuid_thenUsesProvidedValue() {
+    void testDefaultConstructor_thenInstancesHaveUniqueUuids() {
+        // Act
+        Response response1 = new Response();
+        Response response2 = new Response();
+
+        // Assert
+        assertNotEquals(response1.getUuid(), response2.getUuid());
+    }
+
+    @Test
+    void testShortConstructor_withUuid_thenUsesProvidedValue() {
         // Arrange
         UUID expectedUuid = UUID.randomUUID();
 
@@ -30,7 +40,7 @@ public class ResponseTest {
     }
 
     @Test
-    void testConstructor_withNullUuid_thenGeneratesNewUuid() {
+    void testShortConstructor_withNullUuid_thenGeneratesNewUuid() {
         // Act
         Response response = new Response(null);
 
@@ -39,7 +49,21 @@ public class ResponseTest {
     }
 
     @Test
-    void testFullConstructor_thenInitializesAllFields() {
+    void testShortConstructor_thenInitializesUuidAndTitle() {
+        // Arrange
+        UUID expectedUuid = UUID.randomUUID();
+        String title = "Brief Title";
+
+        // Act
+        Response response = new Response(expectedUuid, title);
+
+        // Assert
+        assertEquals(expectedUuid, response.getUuid());
+        assertEquals(title, response.getTitle());
+    }
+
+    @Test
+    void testFullConstructor_whenAllFieldsProvided_thenInitializesAllFields() {
         // Arrange
         UUID expectedUuid = UUID.randomUUID();
         String title = "Test Title";
@@ -58,29 +82,5 @@ public class ResponseTest {
         assertEquals(description, response.getDescription());
         assertEquals(category, response.getCategory());
         assertEquals(tags, response.getTags());
-    }
-
-    @Test
-    void testShortConstructor_thenInitializesUuidAndTitle() {
-        // Arrange
-        UUID expectedUuid = UUID.randomUUID();
-        String title = "Brief Title";
-
-        // Act
-        Response response = new Response(expectedUuid, title);
-
-        // Assert
-        assertEquals(expectedUuid, response.getUuid());
-        assertEquals(title, response.getTitle());
-    }
-
-    @Test
-    void testDefaultConstructor_thenInstancesHaveUniqueUuids() {
-        // Act
-        Response response1 = new Response();
-        Response response2 = new Response();
-
-        // Assert
-        assertNotEquals(response1.getUuid(), response2.getUuid());
     }
 }

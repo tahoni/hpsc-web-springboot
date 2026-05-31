@@ -10,6 +10,7 @@ class FirearmTypeConverterTest {
 
     private final FirearmTypeConverter converter = new FirearmTypeConverter();
 
+    // convertToDatabaseColumn()
     @Test
     void testConvertToDatabaseColumn_whenTypeHasSingleName_thenReturnsName() {
         // Act
@@ -37,6 +38,7 @@ class FirearmTypeConverterTest {
         assertNull(databaseValue);
     }
 
+    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenNameIsKnown_thenReturnsType() {
         // Act

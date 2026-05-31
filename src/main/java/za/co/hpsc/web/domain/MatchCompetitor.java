@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.converters.*;
 import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchCompetitorDto;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.math.BigDecimal;
@@ -64,30 +63,6 @@ public class MatchCompetitor {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
     private LocalDateTime dateEdited;
-
-    /**
-     * Initialises the attributes of the MatchCompetitor instance using data from the
-     * provided MatchCompetitorDto.
-     *
-     * @param matchCompetitorDto an instance of MatchCompetitorDto containing the
-     *                           competitor's category, firearm type, division,
-     *                           power factor, match points, and match ranking to be assigned to
-     *                           this MatchCompetitor.
-     */
-    public void init(MatchCompetitorDto matchCompetitorDto) {
-        if (matchCompetitorDto != null) {
-            // Initialises the competitor attributes
-            this.matchClub = matchCompetitorDto.getClub();
-            this.competitorCategory = matchCompetitorDto.getCompetitorCategory();
-            this.firearmType = matchCompetitorDto.getFirearmType();
-            this.division = matchCompetitorDto.getDivision();
-            this.powerFactor = matchCompetitorDto.getPowerFactor();
-
-            // Initialises the match scoring attributes
-            this.matchPoints = matchCompetitorDto.getMatchPoints();
-            this.matchRanking = matchCompetitorDto.getMatchRanking();
-        }
-    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.common.dto.ClubDto;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
@@ -51,34 +50,6 @@ public class Club {
         // Initialises club attributes
         this.name = name;
         this.abbreviation = abbreviation;
-    }
-
-    public Club(ClubDto clubDto) {
-        // Initialises club details
-        this.id = clubDto.getId();
-
-        // Initialises club attributes
-        this.name = clubDto.getName();
-        this.abbreviation = clubDto.getAbbreviation();
-    }
-
-    /**
-     * Initialises the current {@code Club} entity with data from a DTO.
-     *
-     * <p>
-     * This method sets the relevant fields in the entity, including name and abbreviation.
-     * </p>
-     *
-     * @param clubDto the DTO containing data needed to populate the entity fields.
-     */
-    public void init(@NotNull ClubDto clubDto) {
-        if (clubDto != null) {
-            // Initialises club attributes
-            this.name = (((clubDto.getName() != null) && (!clubDto.getName().isBlank())) ?
-                    clubDto.getName() : this.name);
-            this.abbreviation = (((clubDto.getAbbreviation() != null) && (!clubDto.getAbbreviation().isBlank())) ?
-                    clubDto.getAbbreviation() : this.abbreviation);
-        }
     }
 
     @Override

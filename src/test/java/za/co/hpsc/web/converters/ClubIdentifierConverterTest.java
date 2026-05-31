@@ -10,6 +10,7 @@ class ClubIdentifierConverterTest {
 
     private final ClubIdentifierConverter converter = new ClubIdentifierConverter();
 
+    // convertToDatabaseColumn()
     @Test
     void testConvertToDatabaseColumn_whenClubIdentifierIsValid_thenReturnsAbbreviation() {
         // Act
@@ -37,6 +38,7 @@ class ClubIdentifierConverterTest {
         assertEquals(ClubIdentifier.SOSC, entityValue);
     }
 
+    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenAbbreviationHasDifferentCase_thenReturnsClubIdentifier() {
         // Act

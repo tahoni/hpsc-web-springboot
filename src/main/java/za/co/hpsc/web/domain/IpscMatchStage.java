@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchStageDto;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
@@ -61,25 +60,6 @@ public class IpscMatchStage {
 
     @OneToMany(mappedBy = "matchStage", fetch = FetchType.EAGER)
     private List<MatchStageCompetitor> matchStageCompetitors = new ArrayList<>();
-
-    /**
-     * Initialises the current stage with details provided by the given MatchStageDto object.
-     * The method sets the stage number, stage name, and range number and copies the targets
-     * and scoring information from the provided DTO to the current stage.
-     *
-     * @param stage the {@code MatchStageDto} object containing the stage attributes and
-     *              target/scoring details to be copied to the current stage
-     */
-    public void init(MatchStageDto stage) {
-        if (stage != null) {
-            // Initialises the stage attributes
-            this.stageNumber = stage.getStageNumber();
-            this.stageName = stage.getStageName();
-            this.rangeNumber = stage.getRangeNumber();
-
-            stage.copyTargetsAndScoringTo(this);
-        }
-    }
 
     @Override
     public String toString() {

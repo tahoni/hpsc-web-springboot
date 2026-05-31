@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MatchCategoryTest {
 
+    // getByName()
     @Test
     void testGetByName_withExactMatch_thenReturnsCorrectCategory() {
         // Arrange

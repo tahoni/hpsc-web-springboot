@@ -10,6 +10,7 @@ class MatchCategoryConverterTest {
 
     private final MatchCategoryConverter converter = new MatchCategoryConverter();
 
+    // convertToDatabaseColumn()
     @Test
     void testConvertToDatabaseColumn_whenCategoryIsValid_thenReturnsName() {
         // Act
@@ -28,6 +29,7 @@ class MatchCategoryConverterTest {
         assertNull(databaseValue);
     }
 
+    // testConvertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenNameIsKnown_thenReturnsCategory() {
         // Act

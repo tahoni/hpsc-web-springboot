@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import za.co.hpsc.web.repositories.*;
-import za.co.hpsc.web.services.TransactionService;
 
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @ActiveProfiles("test")
@@ -18,8 +17,6 @@ class HpscWebApplicationTests {
 
     @MockitoBean
     private TestEntityManager testEntityManager;
-    @MockitoBean
-    private TransactionService transactionService;
 
     @MockitoBean
     private ClubRepository clubRepository;

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FatalExceptionTest {
 
+    // No-args constructor
     @Test
     void testConstructor_whenNoArgumentsProvided_thenCreatesExceptionWithNullMessage() {
         // Act
@@ -19,6 +20,7 @@ public class FatalExceptionTest {
         assertNull(exception.getCause());
     }
 
+    // Constructor with message
     @Test
     void testConstructor_whenMessageIsProvided_thenCreatesExceptionWithMessage() {
         // Arrange
@@ -32,6 +34,17 @@ public class FatalExceptionTest {
         assertNull(exception.getCause());
     }
 
+    @Test
+    void testConstructor_whenMessageIsEmpty_thenCreatesExceptionWithEmptyMessage() {
+        // Act
+        FatalException exception = new FatalException("");
+
+        // Assert
+        assertEquals("", exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    // Constructor with message and cause
     @Test
     void testConstructor_whenMessageAndCauseAreProvided_thenCreatesExceptionWithBoth() {
         // Arrange
@@ -47,6 +60,17 @@ public class FatalExceptionTest {
     }
 
     @Test
+    void testConstructor_whenNullMessageAndNullCauseAreProvided_thenCreatesExceptionWithBothNull() {
+        // Act
+        FatalException exception = new FatalException(null, null);
+
+        // Assert
+        assertNull(exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    // Constructor with cause only
+    @Test
     void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
         // Arrange
         Throwable cause = new IOException("File system error");
@@ -59,6 +83,24 @@ public class FatalExceptionTest {
         assertTrue(exception.getMessage().contains("File system error"));
     }
 
+    // Constructor with cause chain
+    @Test
+    void testConstructor_whenCauseChainIsProvided_thenPreservesCauseChain() {
+        // Arrange
+        Throwable rootCause = new RuntimeException("Root failure");
+        Throwable intermediateCause = new IOException("IO error", rootCause);
+        String message = "Fatal system error";
+
+        // Act
+        FatalException exception = new FatalException(message, intermediateCause);
+
+        // Assert
+        assertSame(intermediateCause, exception.getCause());
+        assertSame(rootCause, intermediateCause.getCause());
+        assertEquals(message, exception.getMessage());
+    }
+
+    // All-args constructor
     @Test
     void testConstructor_whenAllParametersAreProvided_thenCreatesExceptionWithAllSettings() {
         // Arrange
@@ -76,6 +118,20 @@ public class FatalExceptionTest {
     }
 
     @Test
+    void testConstructor_whenNullMessageWithAllParameters_thenCreatesExceptionWithNullMessage() {
+        // Arrange
+        Throwable cause = new Exception("Cause");
+
+        // Act
+        FatalException exception = new FatalException(null, cause, true, true);
+
+        // Assert
+        assertNull(exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
+    // Constructor with suppression disabled
+    @Test
     void testConstructor_whenSuppressionIsDisabled_thenCreatesExceptionWithSuppressionDisabled() {
         // Arrange
         String message = "Fatal error";
@@ -91,6 +147,7 @@ public class FatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
+    // Inheritance tests
     @Test
     void testInheritance_whenInstantiated_thenIsInstanceOfException() {
         // Act
@@ -108,54 +165,4 @@ public class FatalExceptionTest {
         // Assert
         assertInstanceOf(Throwable.class, exception);
     }
-
-    @Test
-    void testConstructor_whenMessageIsEmpty_thenCreatesExceptionWithEmptyMessage() {
-        // Act
-        FatalException exception = new FatalException("");
-
-        // Assert
-        assertEquals("", exception.getMessage());
-        assertNull(exception.getCause());
-    }
-
-    @Test
-    void testConstructor_whenCauseChainIsProvided_thenPreservesCauseChain() {
-        // Arrange
-        Throwable rootCause = new RuntimeException("Root failure");
-        Throwable intermediateCause = new IOException("IO error", rootCause);
-        String message = "Fatal system error";
-
-        // Act
-        FatalException exception = new FatalException(message, intermediateCause);
-
-        // Assert
-        assertSame(intermediateCause, exception.getCause());
-        assertSame(rootCause, intermediateCause.getCause());
-        assertEquals(message, exception.getMessage());
-    }
-
-    @Test
-    void testConstructor_whenNullMessageAndNullCauseAreProvided_thenCreatesExceptionWithBothNull() {
-        // Act
-        FatalException exception = new FatalException(null, null);
-
-        // Assert
-        assertNull(exception.getMessage());
-        assertNull(exception.getCause());
-    }
-
-    @Test
-    void testConstructor_whenNullMessageWithAllParameters_thenCreatesExceptionWithNullMessage() {
-        // Arrange
-        Throwable cause = new Exception("Cause");
-
-        // Act
-        FatalException exception = new FatalException(null, cause, true, true);
-
-        // Assert
-        assertNull(exception.getMessage());
-        assertSame(cause, exception.getCause());
-    }
 }
-

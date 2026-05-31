@@ -1,179 +1,14 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchCompetitorDto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchCompetitorTest {
 
-    @Test
-    void testInit_whenDtoIsFullyPopulated_thenMapsAllFields() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.SENIOR);
-        dto.setFirearmType(FirearmType.HANDGUN);
-        dto.setDivision(Division.PRODUCTION);
-        dto.setPowerFactor(PowerFactor.MINOR);
-        dto.setMatchPoints(new BigDecimal("245.6700"));
-        dto.setMatchRanking(new BigDecimal("98.25"));
-
-        // Act
-        matchCompetitor.init(dto);
-
-        // Assert
-        assertEquals(CompetitorCategory.SENIOR, matchCompetitor.getCompetitorCategory());
-        assertEquals(FirearmType.HANDGUN, matchCompetitor.getFirearmType());
-        assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
-        assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
-        assertEquals(new BigDecimal("245.6700"), matchCompetitor.getMatchPoints());
-        assertEquals(new BigDecimal("98.25"), matchCompetitor.getMatchRanking());
-    }
-
-    @Test
-    void testInit_whenCompetitorCategoryIsNone_thenCompetitorCategoryIsNone() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.NONE);
-        dto.setFirearmType(FirearmType.HANDGUN);
-        dto.setDivision(Division.OPEN);
-        dto.setPowerFactor(PowerFactor.MAJOR);
-
-        // Act
-        matchCompetitor.init(dto);
-
-        // Assert
-        assertEquals(CompetitorCategory.NONE, matchCompetitor.getCompetitorCategory());
-    }
-
-    @Test
-    void testInit_whenFirearmTypeIsNull_thenFirearmTypeIsNull() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.JUNIOR);
-        dto.setFirearmType(null);
-        dto.setDivision(Division.STANDARD);
-        dto.setPowerFactor(PowerFactor.MINOR);
-
-        // Act
-        matchCompetitor.init(dto);
-
-        // Assert
-        assertNull(matchCompetitor.getFirearmType());
-    }
-
-    @Test
-    void testInit_whenDivisionIsNull_thenDivisionIsNull() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.LADY);
-        dto.setFirearmType(FirearmType.HANDGUN);
-        dto.setDivision(null);
-        dto.setPowerFactor(PowerFactor.MINOR);
-
-        // Act
-        matchCompetitor.init(dto);
-
-        // Assert
-        assertNull(matchCompetitor.getDivision());
-    }
-
-    @Test
-    void testInit_whenPowerFactorIsNull_thenPowerFactorIsNull() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.NONE);
-        dto.setFirearmType(FirearmType.RIFLE);
-        dto.setDivision(Division.RIFLE_SEMI_AUTO_OPEN);
-        dto.setPowerFactor(null);
-
-        // Act
-        matchCompetitor.init(dto);
-
-        // Assert
-        assertNull(matchCompetitor.getPowerFactor());
-    }
-
-    @Test
-    void testInit_whenMatchPointsAreNull_thenMatchPointsAreNull() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.NONE);
-        dto.setMatchPoints(null);
-        dto.setMatchRanking(null);
-
-        // Act
-        matchCompetitor.init(dto);
-
-        // Assert
-        assertNull(matchCompetitor.getMatchPoints());
-        assertNull(matchCompetitor.getMatchRanking());
-    }
-
-    @Test
-    void testInit_whenMatchPointsAreZero_thenMatchPointsAreZero() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.NONE);
-        dto.setMatchPoints(BigDecimal.ZERO);
-        dto.setMatchRanking(BigDecimal.ZERO);
-
-        // Act
-        matchCompetitor.init(dto);
-
-        // Assert
-        assertEquals(BigDecimal.ZERO, matchCompetitor.getMatchPoints());
-        assertEquals(BigDecimal.ZERO, matchCompetitor.getMatchRanking());
-    }
-
-    @Test
-    void testInit_whenCalledTwice_thenLastDtoValuesOverwrite() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-
-        MatchCompetitorDto first = new MatchCompetitorDto();
-        first.setCompetitorCategory(CompetitorCategory.JUNIOR);
-        first.setFirearmType(FirearmType.HANDGUN);
-        first.setDivision(Division.PRODUCTION);
-        first.setPowerFactor(PowerFactor.MINOR);
-        first.setMatchPoints(new BigDecimal("100.00"));
-        first.setMatchRanking(new BigDecimal("50.00"));
-
-        MatchCompetitorDto second = new MatchCompetitorDto();
-        second.setCompetitorCategory(CompetitorCategory.SENIOR);
-        second.setFirearmType(FirearmType.PCC);
-        second.setDivision(Division.PCC_OPTICS);
-        second.setPowerFactor(PowerFactor.MAJOR);
-        second.setMatchPoints(new BigDecimal("300.00"));
-        second.setMatchRanking(new BigDecimal("95.50"));
-
-        // Act
-        matchCompetitor.init(first);
-        matchCompetitor.init(second);
-
-        // Assert
-        assertEquals(CompetitorCategory.SENIOR, matchCompetitor.getCompetitorCategory());
-        assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
-        assertEquals(Division.PCC_OPTICS, matchCompetitor.getDivision());
-        assertEquals(PowerFactor.MAJOR, matchCompetitor.getPowerFactor());
-        assertEquals(new BigDecimal("300.00"), matchCompetitor.getMatchPoints());
-        assertEquals(new BigDecimal("95.50"), matchCompetitor.getMatchRanking());
-    }
-
+    // toString()
     @Test
     void testToString_whenMatchAndCompetitorAreSet_thenFormatsMatchAndCompetitorWithColon() {
         // Arrange
@@ -248,44 +83,6 @@ public class MatchCompetitorTest {
     }
 
     @Test
-    void testToString_whenCalledAfterInit_thenMatchAndCompetitorAreUnaffected() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-        matchCompetitor.setMatch(buildMatch("Winter Shoot", LocalDateTime.of(2026, 7, 10, 9, 0)));
-        matchCompetitor.setCompetitor(buildCompetitor("Tom", "Hardy"));
-
-        MatchCompetitorDto dto = new MatchCompetitorDto();
-        dto.setCompetitorCategory(CompetitorCategory.SENIOR);
-        dto.setFirearmType(FirearmType.HANDGUN);
-        dto.setDivision(Division.OPEN);
-        dto.setPowerFactor(PowerFactor.MAJOR);
-        matchCompetitor.init(dto);
-
-        // Act
-        String result = matchCompetitor.toString();
-
-        // Assert
-        assertTrue(result.contains("Winter Shoot"));
-        assertTrue(result.contains("Tom Hardy"));
-    }
-
-    @Test
-    void testInit_whenDtoIsNull_thenDoesNotThrowsNullPointerException() {
-        // Arrange
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-
-        // Act
-        assertDoesNotThrow(() -> matchCompetitor.init(null));
-
-        // Assert
-        assertNull(matchCompetitor.getMatch());
-        assertNull(matchCompetitor.getCompetitor());
-        assertNull(matchCompetitor.getFirearmType());
-        assertNull(matchCompetitor.getDivision());
-        assertNull(matchCompetitor.getPowerFactor());
-    }
-
-    @Test
     void testToString_whenMatchIsNull_thenReturnsCompetitorNameOnly() {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
@@ -313,6 +110,7 @@ public class MatchCompetitorTest {
         assertEquals("Spring Classic (2026-04-24 10:30)", result);
     }
 
+    // onInsert()
     @Test
     void testOnInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
         // Arrange
@@ -327,6 +125,7 @@ public class MatchCompetitorTest {
         assertEquals(matchCompetitor.getDateCreated(), matchCompetitor.getDateUpdated());
     }
 
+    // onUpdate()
     @Test
     void testOnUpdate_whenInvoked_thenRefreshesDateUpdatedAndPreservesDateCreated() {
         // Arrange
@@ -344,6 +143,7 @@ public class MatchCompetitorTest {
         assertFalse(matchCompetitor.getDateUpdated().isBefore(updatedBeforeUpdate));
     }
 
+    // Helpers
     private IpscMatch buildMatch(String name, LocalDateTime scheduledDate) {
         IpscMatch match = new IpscMatch();
         match.setName(name);

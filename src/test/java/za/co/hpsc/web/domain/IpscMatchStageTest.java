@@ -1,7 +1,6 @@
 package za.co.hpsc.web.domain;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.models.ipsc.common.dto.MatchStageDto;
 
 import java.time.LocalDateTime;
 
@@ -9,154 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class IpscMatchStageTest {
 
-    // =====================================================================
-    // init(MatchStageDto)
-    // =====================================================================
-
-    @Test
-    void testInit_whenDtoIsFullyPopulated_thenMapsAllFields() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-        MatchStageDto dto = new MatchStageDto();
-        dto.setStageNumber(3);
-        dto.setStageName("El Presidente");
-        dto.setRangeNumber(2);
-        dto.setTargetPaper(6);
-        dto.setTargetPopper(2);
-        dto.setTargetPlates(4);
-        dto.setTargetDisappear(1);
-        dto.setTargetPenalty(0);
-        dto.setMinRounds(12);
-        dto.setMaxPoints(60);
-
-        // Act
-        stage.init(dto);
-
-        // Assert
-        assertEquals(3, stage.getStageNumber());
-        assertEquals("El Presidente", stage.getStageName());
-        assertEquals(2, stage.getRangeNumber());
-        assertEquals(6, stage.getTargetPaper());
-        assertEquals(2, stage.getTargetPopper());
-        assertEquals(4, stage.getTargetPlates());
-        assertEquals(1, stage.getTargetDisappear());
-        assertEquals(0, stage.getTargetPenalty());
-        assertEquals(12, stage.getMinRounds());
-        assertEquals(60, stage.getMaxPoints());
-    }
-
-    @Test
-    void testInit_whenStageNameIsNull_thenStageNameIsNull() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-        MatchStageDto dto = new MatchStageDto();
-        dto.setStageNumber(1);
-        dto.setStageName(null);
-        dto.setRangeNumber(1);
-
-        // Act
-        stage.init(dto);
-
-        // Assert
-        assertNull(stage.getStageName());
-        assertEquals(1, stage.getStageNumber());
-    }
-
-    @Test
-    void testInit_whenRangeNumberIsNull_thenRangeNumberIsNull() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-        MatchStageDto dto = new MatchStageDto();
-        dto.setStageNumber(2);
-        dto.setStageName("Stage 2");
-        dto.setRangeNumber(null);
-
-        // Act
-        stage.init(dto);
-
-        // Assert
-        assertNull(stage.getRangeNumber());
-    }
-
-    @Test
-    void testInit_whenAllTargetsAreNull_thenTargetsAreNull() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-        MatchStageDto dto = new MatchStageDto();
-        dto.setStageNumber(1);
-        dto.setStageName("Null Targets Stage");
-        dto.setTargetPaper(null);
-        dto.setTargetPopper(null);
-        dto.setTargetPlates(null);
-        dto.setTargetDisappear(null);
-        dto.setTargetPenalty(null);
-        dto.setMinRounds(null);
-        dto.setMaxPoints(null);
-
-        // Act
-        stage.init(dto);
-
-        // Assert
-        assertNull(stage.getTargetPaper());
-        assertNull(stage.getTargetPopper());
-        assertNull(stage.getTargetPlates());
-        assertNull(stage.getTargetDisappear());
-        assertNull(stage.getTargetPenalty());
-        assertNull(stage.getMinRounds());
-        assertNull(stage.getMaxPoints());
-    }
-
-    @Test
-    void testInit_whenCalledTwice_thenLastDtoValuesOverwrite() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-
-        MatchStageDto first = new MatchStageDto();
-        first.setStageNumber(1);
-        first.setStageName("First Stage");
-        first.setRangeNumber(1);
-        first.setTargetPaper(4);
-        first.setMaxPoints(40);
-
-        MatchStageDto second = new MatchStageDto();
-        second.setStageNumber(5);
-        second.setStageName("Second Stage");
-        second.setRangeNumber(3);
-        second.setTargetPaper(8);
-        second.setMaxPoints(80);
-
-        // Act
-        stage.init(first);
-        stage.init(second);
-
-        // Assert
-        assertEquals(5, stage.getStageNumber());
-        assertEquals("Second Stage", stage.getStageName());
-        assertEquals(3, stage.getRangeNumber());
-        assertEquals(8, stage.getTargetPaper());
-        assertEquals(80, stage.getMaxPoints());
-    }
-
-    @Test
-    void testInit_whenTargetPaperIsZero_thenTargetPaperIsZero() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-        MatchStageDto dto = new MatchStageDto();
-        dto.setStageNumber(1);
-        dto.setStageName("Stage");
-        dto.setTargetPaper(0);
-
-        // Act
-        stage.init(dto);
-
-        // Assert
-        assertEquals(0, stage.getTargetPaper());
-    }
-
-    // =====================================================================
     // toString()
-    // =====================================================================
-
     @Test
     void testToString_whenStageNameAndStageNumberAreSet_thenFormatsNameAndNumber() {
         // Arrange
@@ -215,22 +67,6 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void testToString_whenCalledAfterInit_thenReflectsInitialisedValues() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-        MatchStageDto dto = new MatchStageDto();
-        dto.setStageNumber(7);
-        dto.setStageName("Final Stage");
-        stage.init(dto);
-
-        // Act
-        String result = stage.toString();
-
-        // Assert
-        assertEquals("Final Stage (7)", result);
-    }
-
-    @Test
     void testToString_whenCalled_thenContainsStageNumberInOutput() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
@@ -259,38 +95,6 @@ public class IpscMatchStageTest {
     }
 
     @Test
-    void testInit_whenDtoIsNull_thenDoesNotThrowsNullPointerException() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-
-        // Act & Assert
-        assertDoesNotThrow(() -> stage.init(null));
-
-        // Assert
-        assertNull(stage.getStageNumber());
-        assertNull(stage.getStageName());
-        assertNull(stage.getRangeNumber());
-    }
-
-    @Test
-    void testInit_whenDtoHasNullStageNumber_thenStageNumberBecomesNull() {
-        // Arrange
-        IpscMatchStage stage = new IpscMatchStage();
-        MatchStageDto dto = new MatchStageDto();
-        dto.setStageNumber(null);
-        dto.setStageName("Null Number Stage");
-        dto.setRangeNumber(5);
-
-        // Act
-        stage.init(dto);
-
-        // Assert
-        assertNull(stage.getStageNumber());
-        assertEquals("Null Number Stage", stage.getStageName());
-        assertEquals(5, stage.getRangeNumber());
-    }
-
-    @Test
     void testToString_whenStageNumberIsNull_thenDontIncludesNullLiteral() {
         // Arrange
         IpscMatchStage stage = new IpscMatchStage();
@@ -304,6 +108,7 @@ public class IpscMatchStageTest {
         assertEquals("No Number", result);
     }
 
+    // onInsert()
     @Test
     void testOnInsert_whenInvoked_thenSetsDateCreatedAndDateUpdatedToSameValue() {
         // Arrange
@@ -317,6 +122,10 @@ public class IpscMatchStageTest {
         assertNotNull(stage.getDateUpdated());
         assertEquals(stage.getDateCreated(), stage.getDateUpdated());
     }
+
+    // =====================================================================
+    // onUpdate()
+    // =====================================================================
 
     @Test
     void testOnUpdate_whenInvoked_thenUpdatesDateUpdatedOnly() {
