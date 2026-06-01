@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import za.co.hpsc.web.converters.*;
+import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,16 +29,24 @@ public class MatchStageCompetitor {
     @JoinColumn(name = "match_stage_id", nullable = false)
     private IpscMatchStage matchStage;
 
+    @Convert(converter = ClubIdentifierConverter.class)
     @Column(name = "match_club")
-    private String matchClub;
+    private ClubIdentifier matchClub;
 
+    @Convert(converter = CompetitorCategoryConverter.class)
+    @Column(name = "competitor_category")
+    private CompetitorCategory competitorCategory;
+
+    @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "firearm_type")
-    private String firearmType;
+    private FirearmType firearmType;
 
-    private String division;
+    @Convert(converter = DivisionConverter.class)
+    private Division division;
 
+    @Convert(converter = PowerFactorConverter.class)
     @Column(name = "power_factor")
-    private String powerFactor;
+    private PowerFactor powerFactor;
 
     @Column(name = "score_a")
     private Integer scoreA;
@@ -78,9 +88,6 @@ public class MatchStageCompetitor {
 
     @Column(name = "is_disqualified")
     private Boolean isDisqualified;
-
-    @Column(name = "competitor_category")
-    private String competitorCategory;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)

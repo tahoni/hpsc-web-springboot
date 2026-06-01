@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import za.co.hpsc.web.converters.FirearmTypeConverter;
+import za.co.hpsc.web.converters.MatchCategoryConverter;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDateTime;
 
@@ -28,11 +32,13 @@ public class IpscMatch {
     @Column(name = "scheduled_date", nullable = false)
     private LocalDateTime scheduledDate;
 
+    @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "match_firearm_type")
-    private String matchFirearmType;
+    private FirearmType matchFirearmType;
 
+    @Convert(converter = MatchCategoryConverter.class)
     @Column(name = "match_category")
-    private String matchCategory;
+    private MatchCategory matchCategory;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)

@@ -5,6 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import za.co.hpsc.web.converters.ClubIdentifierConverter;
+import za.co.hpsc.web.converters.CompetitorCategoryConverter;
+import za.co.hpsc.web.converters.FirearmTypeConverter;
+import za.co.hpsc.web.converters.PowerFactorConverter;
+import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,25 +32,29 @@ public class MatchCompetitor {
     @JoinColumn(name = "match_id", nullable = false)
     private IpscMatch match;
 
+    @Convert(converter = ClubIdentifierConverter.class)
     @Column(name = "match_club")
-    private String matchClub;
+    private ClubIdentifier matchClub;
 
+    @Convert(converter = CompetitorCategoryConverter.class)
+    @Column(name = "competitor_category")
+    private CompetitorCategory competitorCategory;
+
+    @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "firearm_type")
-    private String firearmType;
+    private FirearmType firearmType;
 
-    private String division;
+    private Division division;
 
+    @Convert(converter = PowerFactorConverter.class)
     @Column(name = "power_factor")
-    private String powerFactor;
+    private PowerFactor powerFactor;
 
     @Column(name = "match_points", precision = 19, scale = 6)
     private BigDecimal matchPoints;
 
     @Column(name = "match_ranking", precision = 19, scale = 6)
     private BigDecimal matchRanking;
-
-    @Column(name = "competitor_category")
-    private String competitorCategory;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
