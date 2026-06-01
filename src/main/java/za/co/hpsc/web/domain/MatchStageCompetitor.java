@@ -1,68 +1,52 @@
 package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import za.co.hpsc.web.converters.ClubIdentifierConverter;
-import za.co.hpsc.web.converters.DivisionConverter;
-import za.co.hpsc.web.converters.FirearmTypeConverter;
-import za.co.hpsc.web.converters.PowerFactorConverter;
-import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.utils.ValueUtil;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Represents the relationship between a competitor and a specific match stage,
- * along with performance metrics specific to that stage.
- *
- * <p>
- * The {@code MatchStageCompetitor} class serves as an entity in the persistence layer,
- * linking a competitor ({@link MatchCompetitor}) and a match stage ({@link IpscMatchStage})
- * while storing detailed performance data for the competitor in the stage.
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to provide a human-readable string
- * representation containing details about the match stage and competitor involved.
- * </p>
- */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@Table(name = "match_stage_competitor")
 public class MatchStageCompetitor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "competitor_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "competitor_id", nullable = false)
     private Competitor competitor;
-    @NotNull
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "match_stage_id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_stage_id", nullable = false)
     private IpscMatchStage matchStage;
 
-    @Convert(converter = ClubIdentifierConverter.class)
-    private ClubIdentifier matchClub;
-    @Convert(converter = FirearmTypeConverter.class)
-    private FirearmType firearmType;
-    @Convert(converter = DivisionConverter.class)
-    private Division division;
-    @Convert(converter = PowerFactorConverter.class)
-    private PowerFactor powerFactor;
+    @Column(name = "match_club")
+    private String matchClub;
+
+    @Column(name = "firearm_type")
+    private String firearmType;
+
+    private String division;
+
+    @Column(name = "power_factor")
+    private String powerFactor;
 
     @Column(name = "score_a")
     private Integer scoreA;
+
     @Column(name = "score_b")
     private Integer scoreB;
+
     @Column(name = "score_c")
     private Integer scoreC;
+
     @Column(name = "score_d")
     private Integer scoreD;
 
@@ -71,51 +55,38 @@ public class MatchStageCompetitor {
     private Integer penalties;
     private Integer procedurals;
 
+    @Column(name = "has_deduction")
     private Boolean hasDeduction;
+
+    @Column(name = "deduction_percentage", precision = 19, scale = 6)
     private BigDecimal deductionPercentage;
 
+    @Column(name = "time", precision = 19, scale = 6)
     private BigDecimal time;
+
+    @Column(name = "hit_factor", precision = 19, scale = 6)
     private BigDecimal hitFactor;
 
+    @Column(name = "stage_points", precision = 19, scale = 6)
     private BigDecimal stagePoints;
+
+    @Column(name = "stage_percentage", precision = 19, scale = 6)
     private BigDecimal stagePercentage;
+
+    @Column(name = "stage_ranking", precision = 19, scale = 6)
     private BigDecimal stageRanking;
 
+    @Column(name = "is_disqualified")
     private Boolean isDisqualified;
 
-    @Enumerated(EnumType.STRING)
-    private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
+    @Column(name = "competitor_category")
+    private String competitorCategory;
 
+    @CreationTimestamp
+    @Column(name = "date_created", updatable = false)
     private LocalDateTime dateCreated;
+
+    @UpdateTimestamp
+    @Column(name = "date_updated")
     private LocalDateTime dateUpdated;
-    private LocalDateTime dateEdited;
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        String stage = ValueUtil.nullAsDefaultString(this.matchStage, "").trim();
-        sb.append(stage);
-
-        String competitor = ValueUtil.nullAsDefaultString(this.competitor, "").trim();
-        if (!competitor.isEmpty()) {
-            if (!stage.isEmpty()) {
-                sb.append(": ");
-            }
-            sb.append(competitor);
-        }
-
-        return sb.toString().trim();
-    }
-
-    @PrePersist
-    void onInsert() {
-        this.dateCreated = LocalDateTime.now();
-        this.dateUpdated = this.dateCreated;
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        this.dateUpdated = LocalDateTime.now();
-    }
 }

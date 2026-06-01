@@ -401,7 +401,7 @@ class ValueUtilTest {
         // Assert
         assertNotNull(result1);
         assertNotNull(result2);
-        // Random UUIDs should be different (extremely unlikely to collide)
+        // Random UUIDs should be different (extremely unlikely to collide),
         // but we only assert they're not null rather than strict inequality
         // to avoid flaky tests from the extremely rare collision possibility
     }
@@ -515,11 +515,8 @@ class ValueUtilTest {
 
     @Test
     void testNullAsEmptyString_whenBoolean_thenReturnsStringValue() {
-        // Arrange
-        Object value = Boolean.TRUE;
-
         // Act
-        String result = ValueUtil.nullAsEmptyString(value);
+        String result = ValueUtil.nullAsEmptyString(true);
 
         // Assert
         assertEquals("true", result);

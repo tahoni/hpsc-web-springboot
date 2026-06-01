@@ -1,94 +1,57 @@
 package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import za.co.hpsc.web.converters.*;
-import za.co.hpsc.web.enums.*;
-import za.co.hpsc.web.utils.ValueUtil;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Represents the relationship between a competitor and a specific match,
- * along with specific details about the competitor's performance in the match.
- *
- * <p>
- * The {@code MatchCompetitor} class serves as an entity in the persistence layer, linking the
- * {@link Competitor} and {@link IpscMatch} entities while storing additional data such as the competitor's
- * division, discipline, power factor, and performance metrics (e.g., match points and percentage).
- * It provides constructors for creating instances with specific details or using default values.
- * Additionally, it overrides the {@code toString} method to provide a concise string representation
- * that includes the match and competitor details.
- * </p>
- */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@Table(name = "match_competitor")
 public class MatchCompetitor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "competitor_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "competitor_id", nullable = false)
     private Competitor competitor;
-    @NotNull
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "match_id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id", nullable = false)
     private IpscMatch match;
 
-    @Convert(converter = ClubIdentifierConverter.class)
-    private ClubIdentifier matchClub;
-    @Convert(converter = FirearmTypeConverter.class)
-    private FirearmType firearmType;
-    @Convert(converter = DivisionConverter.class)
-    private Division division;
-    @Convert(converter = PowerFactorConverter.class)
-    private PowerFactor powerFactor;
+    @Column(name = "match_club")
+    private String matchClub;
 
+    @Column(name = "firearm_type")
+    private String firearmType;
+
+    private String division;
+
+    @Column(name = "power_factor")
+    private String powerFactor;
+
+    @Column(name = "match_points", precision = 19, scale = 6)
     private BigDecimal matchPoints;
+
+    @Column(name = "match_ranking", precision = 19, scale = 6)
     private BigDecimal matchRanking;
 
-    @Convert(converter = CompetitorCategoryConverter.class)
-    private CompetitorCategory competitorCategory = CompetitorCategory.NONE;
+    @Column(name = "competitor_category")
+    private String competitorCategory;
 
+    @CreationTimestamp
+    @Column(name = "date_created", updatable = false)
     private LocalDateTime dateCreated;
+
+    @UpdateTimestamp
+    @Column(name = "date_updated")
     private LocalDateTime dateUpdated;
-    private LocalDateTime dateEdited;
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        String match = ValueUtil.nullAsDefaultString(this.match, "").trim();
-        sb.append(match);
-
-        String competitor = ValueUtil.nullAsDefaultString(this.competitor, "").trim();
-        if (!competitor.isEmpty()) {
-            if (!match.isEmpty()) {
-                sb.append(": ");
-            }
-            sb.append(competitor);
-        }
-
-        return sb.toString().trim();
-    }
-
-    @PrePersist
-    void onInsert() {
-        this.dateCreated = LocalDateTime.now();
-        this.dateUpdated = this.dateCreated;
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        this.dateUpdated = LocalDateTime.now();
-    }
 }
