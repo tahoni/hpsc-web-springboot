@@ -872,7 +872,7 @@ encapsulation layer, and restructured all IPSC model packages for long-term grow
 **DomainServiceImpl — Repository Decoupling**
 
 - Removed direct injection of all six JPA repositories from `DomainServiceImpl`
-- All data access delegated to the entity service layer:
+- All data access are delegated to the entity service layer:
     - `ClubEntityService`, `CompetitorEntityService`, `MatchEntityService`
     - `MatchStageEntityService`, `MatchCompetitorEntityService`,
       `MatchStageCompetitorEntityService`
@@ -904,7 +904,7 @@ encapsulation layer, and restructured all IPSC model packages for long-term grow
 **Build & Metadata**
 
 - Spring Boot upgraded 4.0.5 → 4.0.6
-- MIT License, developer profile, and SCM connection added to `pom.xml`
+- MIT Licence, developer profile, and SCM connection added to `pom.xml`
 - `logback-spring.xml` updated with additional logger configuration
 
 **Test Coverage**
@@ -1505,7 +1505,7 @@ AttributeConverters
 - `MatchHolder` encapsulating match data passing
 - `MatchCompetitorEntityService` returns lists for bulk operations
 - `domain` package renamed to `data` for mapping classes
-- CI/CD quality gates: Qodana JVM static analysis + JaCoCo coverage
+- CI/CD quality gates: Qodana JVM static analysis and JaCoCo coverage
 
 ---
 
@@ -1913,7 +1913,7 @@ platform for managing practical shooting competition data. This evolution demons
 - **Domain Alignment:** Progressive refinement toward IPSC compliance and specialisation
 - **Architectural Excellence:** Evolution from monolithic to modular, testable architecture with three-tier
   mapping and consolidated service boundaries
-- **Standards Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
+- **Standard Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
 - **Code Maintainability:** Systematic refinement of test organisation, consolidation, and architectural
   separation (v5.1.0, v5.2.0, v5.3.0, v5.4.0)

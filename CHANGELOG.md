@@ -110,7 +110,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 📜 Build & Metadata
 
-- **MIT License** declared in `pom.xml` (`<license>`)
+- **MIT Licence** declared in `pom.xml` (`<license>`)
 - **Developer profile** populated in `pom.xml` (`tahoni / Leoni Lubbinge`)
 - **SCM connection and URL** filled in `pom.xml` for GitHub
 
