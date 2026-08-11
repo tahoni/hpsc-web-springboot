@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.0.7</version>
         <relativePath/> <!-- lookup parent from the repository -->
     </parent>
 
@@ -41,13 +41,25 @@
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
-        <spring-framework.version>7.0.7</spring-framework.version>
-        <tomcat.version>11.0.21</tomcat.version>
+        <spring-framework.version>7.0.8</spring-framework.version>
+        <tomcat.version>11.0.22</tomcat.version>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.14</jacoco.version>
-        <jackson-bom.version>3.1.1</jackson-bom.version>
+        <jackson-bom.version>3.1.5</jackson-bom.version>
         <commons.lang3.version>3.19.0</commons.lang3.version>
     </properties>
+
+    <!-- Spring Boot 4.0.7 still manages jackson-databind (2.x) one patch behind its fix version;
+         override it explicitly until a Spring Boot release picks up 2.21.5 by default. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.21.5</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Web -->
@@ -193,8 +205,8 @@
                         <location>filesystem:src/main/resources/db/migration</location>
                     </locations>
                     <baselineOnMigrate>true</baselineOnMigrate>
-                    <baselineVersion>6.0.0</baselineVersion>
-                    <baselineDescription>v6.0.0 schema (manually managed, pre-Flyway)</baselineDescription>
+                    <baselineVersion>7.0.0</baselineVersion>
+                    <baselineDescription>v7.0.0 schema (built by hand via ddl-auto=update, pre-Flyway)</baselineDescription>
                 </configuration>
                 <dependencies>
                     <dependency>
