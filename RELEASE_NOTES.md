@@ -1,7 +1,7 @@
 # Release Notes – Version 7.0.0
 
-**Release Date:** TBD
-**Status:** 🚧 In Development (domain layer only — not yet wired into services/controllers, not yet committed)
+**Release Date:** August 11, 2026
+**Status:** ✨ Stable
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Match Results, Visitor Tracking & Shooter Log Data Model**
 
-Version 7.0.0 (in progress) extends the IPSC domain model to support club-scoped results, match
+Version 7.0.0 extends the IPSC domain model to support club-scoped results, match
 visitors, and a persisted "shooter log" — the best-4-matches ranking used by HPSC. The six entities
 that had been parked under `domain/old/` (pending a redesign) are promoted back into the live `domain`
 package, extended with the new fields and relations, and paired with a full set of Spring Data
@@ -171,7 +171,6 @@ basis for the future best-4 shooter-log calculation (results, excluding visitors
 - No service, controller, or CSV/XML import wiring for `homeClub`, `clubRanking`, `isVisitor`,
   `ShooterLog`, or `ShooterLogEntry` — the entities exist but nothing populates them yet.
 - No shooter-log calculation job/service exists — `ShooterLog`/`ShooterLogEntry` are schema only.
-- Changes are uncommitted at time of writing.
 
 ---
 

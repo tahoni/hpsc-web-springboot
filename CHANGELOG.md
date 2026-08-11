@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 6.0.0](#-600---2026-05-01) ← Current
+- [🧾 Version 7.0.0](#-700---2026-08-11) ← Current
+- [🧾 Version 6.0.0](#-600---2026-05-01)
 - [🧾 Version 5.4.0](#-540---2026-04-26)
 - [🧾 Version 5.3.0](#-530---2026-03-15)
 - [🧾 Version 5.2.0](#-520---2026-02-27)
@@ -46,6 +47,53 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### 🗑️ Removed
 
 ### 🔐 Security
+
+---
+
+## 🧾 [7.0.0] - 2026-08-11
+
+### ➕ Added
+
+#### Domain
+
+- **`ShooterLog`:** New entity — persisted best-4-match shooter-log snapshot (`competitor`, `club`,
+  `firearmType`, `logValue`, `calculatedDate`)
+- **`ShooterLogEntry`:** New entity — links a `ShooterLog` snapshot to the `MatchCompetitor` rows that
+  contributed to it (`rankInLog`, unique constraint `(shooter_log_id, match_competitor_id)`)
+- **`Club.identifier`:** New column (`ClubIdentifier`, via the existing `ClubIdentifierConverter`,
+  unique) — ties a `Club` row to `HPSC` / `SOSC` / `PMPSC`
+- **`Competitor.homeClub`:** New nullable `@ManyToOne Club` relation for home-club membership
+- **`MatchCompetitor.clubRanking`:** New column — rank among same-club competitors for a firearm type
+- **`MatchCompetitor.isVisitor`:** New `Boolean` column — `true` when `matchClub` differs from the host
+  match's club
+- **`IpscMatchStage`:** New unique constraint `(match_id, stage_number)`
+- **`MatchCompetitor`:** New unique constraint `(competitor_id, match_id, firearm_type)`
+- **`MatchStageCompetitor`:** New unique constraint `(match_competitor_id, match_stage_id)`
+
+#### Repositories
+
+- **`ClubRepository`, `CompetitorRepository`, `IpscMatchRepository`, `IpscMatchStageRepository`,
+  `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`,
+  `ShooterLogEntryRepository`:** `repositories/` package rebuilt from scratch (previously emptied in
+  preparation for this redesign)
+
+#### Build & Metadata
+
+- Project version bumped to **7.0.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
+### 🔄 Changed
+
+#### Domain
+
+- `za.co.hpsc.web.domain.old.*` promoted to `za.co.hpsc.web.domain.*` (the `.old` package is dropped)
+- **`MatchCompetitor.matchRanking`** renamed to **`overallRanking`**
+- **`MatchStageCompetitor`:** FK changed from `competitor` to `matchCompetitor`; duplicated
+  `competitorCategory` / `division` / `firearmType` / `powerFactor` / `matchClub` fields removed — now
+  inherited via the `matchCompetitor` relation
+
+### 🗑️ Removed
+
+- `za.co.hpsc.web.domain.old` package (all 6 files) — superseded by the promoted/extended entities above
 
 ---
 
