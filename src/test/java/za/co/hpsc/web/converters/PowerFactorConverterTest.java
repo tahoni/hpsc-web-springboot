@@ -10,6 +10,7 @@ class PowerFactorConverterTest {
 
     private final PowerFactorConverter converter = new PowerFactorConverter();
 
+    // convertToDatabaseColumn()
     @Test
     void testConvertToDatabaseColumn_whenPowerFactorIsMinor_thenReturnsMinorName() {
         // Act
@@ -37,6 +38,7 @@ class PowerFactorConverterTest {
         assertNull(databaseValue);
     }
 
+    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenNameIsKnown_thenReturnsPowerFactor() {
         // Act

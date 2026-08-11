@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NonFatalExceptionTest {
 
+    // No-args constructor
     @Test
     void testConstructor_whenNoArgumentsProvided_thenCreatesExceptionWithNullMessage() {
         // Act
@@ -17,6 +18,7 @@ public class NonFatalExceptionTest {
         assertNull(exception.getCause());
     }
 
+    // Constructor with message
     @Test
     void testConstructor_whenMessageIsProvided_thenCreatesExceptionWithMessage() {
         // Arrange
@@ -31,6 +33,30 @@ public class NonFatalExceptionTest {
     }
 
     @Test
+    void testConstructor_whenMessageIsEmpty_thenCreatesExceptionWithEmptyMessage() {
+        // Act
+        NonFatalException exception = new NonFatalException("");
+
+        // Assert
+        assertEquals("", exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void testConstructor_whenNullMessageWithAllParameters_thenCreatesExceptionWithNullMessage() {
+        // Arrange
+        Throwable cause = new Exception("Cause");
+
+        // Act
+        NonFatalException exception = new NonFatalException(null, cause, true, true);
+
+        // Assert
+        assertNull(exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
+    // Constructor with message and cause
+    @Test
     void testConstructor_whenMessageAndCauseAreProvided_thenCreatesExceptionWithBoth() {
         // Arrange
         String message = "Processing error: Invalid data format";
@@ -44,6 +70,7 @@ public class NonFatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
+    // Constructor with cause only
     @Test
     void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
         // Arrange
@@ -57,6 +84,24 @@ public class NonFatalExceptionTest {
         assertTrue(exception.getMessage().contains("State error"));
     }
 
+    // Constructor with cause chain
+    @Test
+    void testConstructor_whenCauseChainIsProvided_thenPreservesCauseChain() {
+        // Arrange
+        Throwable rootCause = new RuntimeException("Root issue");
+        Throwable intermediateCause = new IllegalArgumentException("Invalid input", rootCause);
+        String message = "Non-fatal error";
+
+        // Act
+        NonFatalException exception = new NonFatalException(message, intermediateCause);
+
+        // Assert
+        assertSame(intermediateCause, exception.getCause());
+        assertSame(rootCause, intermediateCause.getCause());
+        assertEquals(message, exception.getMessage());
+    }
+
+    // All-args constructor
     @Test
     void testConstructor_whenAllParametersAreProvided_thenCreatesExceptionWithAllSettings() {
         // Arrange
@@ -74,6 +119,17 @@ public class NonFatalExceptionTest {
     }
 
     @Test
+    void testConstructor_whenNullMessageAndNullCauseAreProvided_thenCreatesExceptionWithBothNull() {
+        // Act
+        NonFatalException exception = new NonFatalException(null, null);
+
+        // Assert
+        assertNull(exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    // Constructor with suppression disabled
+    @Test
     void testConstructor_whenSuppressionIsDisabled_thenCreatesExceptionWithSuppressionDisabled() {
         // Arrange
         String message = "Warning message";
@@ -89,6 +145,22 @@ public class NonFatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
+    // Constructor with both suppression and stack trace disabled
+    @Test
+    void testConstructor_whenBothSuppressionAndStackTraceAreDisabled_thenCreatesExceptionWithBothDisabled() {
+        // Arrange
+        String message = "No stack trace";
+        Throwable cause = new RuntimeException("Cause");
+
+        // Act
+        NonFatalException exception = new NonFatalException(message, cause, false, false);
+
+        // Assert
+        assertEquals(message, exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
+    // Inheritance tests
     @Test
     void testInheritance_whenInstantiated_thenIsInstanceOfRuntimeException() {
         // Act
@@ -105,69 +177,6 @@ public class NonFatalExceptionTest {
 
         // Assert
         assertInstanceOf(Exception.class, exception);
-    }
-
-    @Test
-    void testConstructor_whenMessageIsEmpty_thenCreatesExceptionWithEmptyMessage() {
-        // Act
-        NonFatalException exception = new NonFatalException("");
-
-        // Assert
-        assertEquals("", exception.getMessage());
-        assertNull(exception.getCause());
-    }
-
-    @Test
-    void testConstructor_whenCauseChainIsProvided_thenPreservesCauseChain() {
-        // Arrange
-        Throwable rootCause = new RuntimeException("Root issue");
-        Throwable intermediateCause = new IllegalArgumentException("Invalid input", rootCause);
-        String message = "Non-fatal error";
-
-        // Act
-        NonFatalException exception = new NonFatalException(message, intermediateCause);
-
-        // Assert
-        assertSame(intermediateCause, exception.getCause());
-        assertSame(rootCause, intermediateCause.getCause());
-        assertEquals(message, exception.getMessage());
-    }
-
-    @Test
-    void testConstructor_whenNullMessageAndNullCauseAreProvided_thenCreatesExceptionWithBothNull() {
-        // Act
-        NonFatalException exception = new NonFatalException(null, null);
-
-        // Assert
-        assertNull(exception.getMessage());
-        assertNull(exception.getCause());
-    }
-
-    @Test
-    void testConstructor_whenNullMessageWithAllParameters_thenCreatesExceptionWithNullMessage() {
-        // Arrange
-        Throwable cause = new Exception("Cause");
-
-        // Act
-        NonFatalException exception = new NonFatalException(null, cause, true, true);
-
-        // Assert
-        assertNull(exception.getMessage());
-        assertSame(cause, exception.getCause());
-    }
-
-    @Test
-    void testConstructor_whenBothSuppressionAndStackTraceAreDisabled_thenCreatesExceptionWithBothDisabled() {
-        // Arrange
-        String message = "No stack trace";
-        Throwable cause = new RuntimeException("Cause");
-
-        // Act
-        NonFatalException exception = new NonFatalException(message, cause, false, false);
-
-        // Assert
-        assertEquals(message, exception.getMessage());
-        assertSame(cause, exception.getCause());
     }
 }
 

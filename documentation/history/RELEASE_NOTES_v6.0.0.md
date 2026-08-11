@@ -140,7 +140,7 @@ New utility class `IpscUtil` (66 lines) centralises display-string construction:
 
 ### 📜 pom.xml Metadata
 
-- MIT License declaration added (`<license>`)
+- MIT Licence declaration added (`<license>`)
 - Developer profile populated (`<developer>: tahoni / Leoni Lubbinge`)
 - SCM connection and URL filled in for GitHub
 

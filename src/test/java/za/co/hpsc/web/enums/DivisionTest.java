@@ -8,6 +8,45 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DivisionTest {
 
+    // getByCode()
+    @Test
+    void testGetByCode_withMatch_thenReturnsCorrectDivision() {
+        // Act
+        Optional<Division> result = Division.getByCode(29);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(Division.PCC_OPTICS, result.get());
+    }
+
+    @Test
+    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByCode(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByCode(0);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withNoMatch_returnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByCode(100);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    // getByName()
     @Test
     void testGetByName_withExactName_thenReturnsCorrectDiscipline() {
         // Arrange & Act
@@ -74,6 +113,7 @@ class DivisionTest {
         assertFalse(result.isPresent());
     }
 
+    // getByAbbreviation()
     @Test
     void testGetByAbbreviation_withExactMatch_thenReturnsCorrectDivision() {
         // Arrange & Act
@@ -127,6 +167,7 @@ class DivisionTest {
         assertFalse(result.isPresent());
     }
 
+    // getByAbbreviationOrName()
     @Test
     void testGetByAbbreviationOrName_withExactName_thenReturnsCorrectDivision() {
         // Arrange & Act
@@ -198,42 +239,5 @@ class DivisionTest {
 
         // Assert
         assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByCode_withMatch_thenReturnsCorrectDivision() {
-        // Act
-        Optional<Division> result = Division.getByCode(29);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(Division.PCC_OPTICS, result.get());
-    }
-
-    @Test
-    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByCode(null);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByCode(0);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_withNoMatch_returnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByCode(100);
-
-        // Assert
-        assertTrue(result.isEmpty());
     }
 }

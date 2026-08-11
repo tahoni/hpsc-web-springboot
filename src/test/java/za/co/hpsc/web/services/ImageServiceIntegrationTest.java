@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: sync with AwardServiceIntegrationTest
 @Slf4j
 @ActiveProfiles("test")
 @SpringBootTest
@@ -25,7 +26,6 @@ public class ImageServiceIntegrationTest {
     private ImageService imageService;
 
     // Test Group: Null/Empty/Blank Input Handling
-
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> imageService.processCsv(null));
@@ -42,7 +42,6 @@ public class ImageServiceIntegrationTest {
     }
 
     // Test Group: Invalid CSV Format Handling
-
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
@@ -68,7 +67,6 @@ public class ImageServiceIntegrationTest {
     }
 
     // Test Group: Valid Single Image Processing
-
     @Test
     public void testProcessCsv_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
         String csvData = CSV_HEADER +
@@ -103,7 +101,6 @@ public class ImageServiceIntegrationTest {
     }
 
     // Test Group: Valid Multiple Images Processing
-
     @Test
     public void testProcessCsv_whenMultipleImages_thenReturnsAllMappedResponses() {
         String csvData = CSV_HEADER +
@@ -148,7 +145,6 @@ public class ImageServiceIntegrationTest {
     }
 
     // Test Group: CSV Field Parsing
-
     @Test
     public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         String csvData = """
@@ -197,9 +193,11 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenCsvUsesWindowsLineEndings_thenProcessesAllRows() {
-        String csvData = "title,summary,description,category,tags,filePath,fileName\r\n"
-                + "Windows A,Summary A,Description A,Category A,tag1|tag2,/windows/a,a.png\r\n"
-                + "Windows B,Summary B,Description B,Category B,tag3,/windows/b,b.gif\r\n";
+        String csvData = """
+                title,summary,description,category,tags,filePath,fileName\r
+                Windows A,Summary A,Description A,Category A,tag1|tag2,/windows/a,a.png\r
+                Windows B,Summary B,Description B,Category B,tag3,/windows/b,b.gif\r
+                """;
 
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.processCsv(csvData));
@@ -239,7 +237,6 @@ public class ImageServiceIntegrationTest {
     }
 
     // Test Group: MIME Type Detection
-
     @Test
     public void testProcessCsv_whenFileNameIsPng_thenMimeTypeIsImagePng() {
         String csvData = CSV_HEADER + "PNG Image,,,,,/photos,image.png\n";
@@ -301,7 +298,6 @@ public class ImageServiceIntegrationTest {
     }
 
     // Test Group: UUID Generation
-
     @Test
     public void testProcessCsv_whenMultipleImages_thenEachResponseHasUniqueUuid() {
         String csvData = CSV_HEADER +
@@ -320,7 +316,6 @@ public class ImageServiceIntegrationTest {
     }
 
     // Test Group: Large Dataset Processing
-
     @Test
     public void testProcessCsv_whenLargeDataset_thenProcessesAllRowsCorrectly() {
         StringBuilder csvData = new StringBuilder(CSV_HEADER);
@@ -338,7 +333,7 @@ public class ImageServiceIntegrationTest {
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(1000, images.size());
 
-        assertEquals("Title 0", images.get(0).getTitle());
+        assertEquals("Title 0", images.getFirst().getTitle());
         assertEquals("Title 499", images.get(499).getTitle());
         assertEquals("image/png", images.get(999).getMimeType());
         assertEquals("Title 999", images.get(999).getTitle());

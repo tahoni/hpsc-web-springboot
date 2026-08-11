@@ -33,10 +33,7 @@ public class ImageControllerTest {
             Image 1,Summary 1,Description 1,Category 1,Tag1|Tag2,/path/to/image1,image1.png
             """;
 
-    // =====================================================================
-    // processCsv
-    // =====================================================================
-
+    // processCsv()
     @Test
     void testProcessCsv_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
         // Arrange

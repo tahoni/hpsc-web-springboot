@@ -10,6 +10,7 @@ class CompetitorCategoryConverterTest {
 
     private final CompetitorCategoryConverter converter = new CompetitorCategoryConverter();
 
+    // convertToDatabaseColumn()
     @Test
     void testConvertToDatabaseColumn_whenCategoryIsValid_thenReturnsName() {
         // Act
@@ -28,6 +29,7 @@ class CompetitorCategoryConverterTest {
         assertNull(databaseValue);
     }
 
+    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenNameIsKnown_thenReturnsCategory() {
         // Act

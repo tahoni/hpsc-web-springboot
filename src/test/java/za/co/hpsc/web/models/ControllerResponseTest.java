@@ -20,7 +20,7 @@ public class ControllerResponseTest {
     }
 
     @Test
-    void testConstructorWithTimestampMessageAndError_whenValuesProvided_thenSetsFieldsAndSuccessFalse() {
+    void testShortConstructor_whenValuesProvided_thenSetsFieldsAndSuccessFalse() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 15);
         String message = "Operation completed";
@@ -36,7 +36,7 @@ public class ControllerResponseTest {
     }
 
     @Test
-    void testConstructorWithAllArguments_whenSuccessTrue_thenKeepsSuccessTrueAndMapsAllFields() {
+    void testFullConstructor_whenSuccessTrue_thenKeepsSuccessTrueAndMapsAllFields() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 11, 0);
         boolean success = true;
@@ -53,7 +53,7 @@ public class ControllerResponseTest {
     }
 
     @Test
-    void testConstructorWithAllArguments_whenSuccessFalseAndErrorProvided_thenMapsFailureState() {
+    void testFullConstructor_whenSuccessFalseAndErrorProvided_thenMapsFailureState() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 11, 30);
         boolean success = false;
@@ -71,7 +71,7 @@ public class ControllerResponseTest {
     }
 
     @Test
-    void testConstructorWithAllArguments_whenTimestampIsNull_thenAllowsNullTimestamp() {
+    void testFullConstructor_whenTimestampIsNull_thenAllowsNullTimestamp() {
         // Arrange
         boolean success = true;
         String message = "Message";
