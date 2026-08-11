@@ -3,7 +3,7 @@
 The official repository for the Spring Boot backend of the Hartbeespoortdam Practical Shooting Club
 (HPSC) platform.
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [📖 Introduction](#-introduction)
 - [🔗 Repository](#-repository)
@@ -44,14 +44,14 @@ Feature requests, suggestions for improvements, and bugs can be logged using the
 
 This is a Spring Boot application built with:
 
-- **Framework**: [Spring Boot 4.0.2](https://spring.io/projects/spring-boot)
-- **Language**: [Java 25](https://www.oracle.com/java/)
-- **Build Tool**: [Maven 3.9+](https://maven.apache.org/)
-- **Database**: MySQL with Spring Data JPA and Hibernate 7.2
+- **Framework**: [Spring Boot](https://spring.io/projects/spring-boot)
+- **Language**: [Java](https://www.oracle.com/java/)
+- **Build Tool**: [Maven](https://maven.apache.org/) (or the provided `./mvnw` wrapper)
+- **Database**: MySQL with Spring Data JPA and Hibernate
 - **Data Processing**: Jackson (JSON, CSV, XML), Apache Commons Lang3
-- **API Documentation**: SpringDoc OpenAPI 2.8.5 (Swagger UI)
+- **API Documentation**: SpringDoc OpenAPI (Swagger UI)
 - **Validation**: Hibernate Validator with Jakarta Validation
-- **Testing**: JUnit 5, Mockito, Spring Test, Spring REST Docs
+- **Testing**: JUnit, Mockito, Spring Test, Spring REST Docs
 
 Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
@@ -68,15 +68,15 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
 - **Data Integrity**: Multi-layered validation (controller, service, entity) with detailed error reporting.
 - **Comprehensive Testing**: Extensive unit and integration test coverage with Spring Test and Mockito.
-- **Modern Tech Stack**: Leveraging Java 25 features and Spring Boot 4 framework.
+- **Modern Tech Stack**: Leveraging current Java language features and the Spring Boot framework.
 
 ## 🚀 Instructions
 
 ### 📋 Prerequisites
 
-- **Java SDK**: Version 25 or higher
-- **Maven**: Version 3.9+ (or use the provided `./mvnw` wrapper)
-- **MySQL**: Version 8.0+ (or compatible database)
+- **Java SDK**: See `<java.version>` in `pom.xml` for the required version
+- **Maven**: Use the provided `./mvnw` wrapper (pins its own version automatically), or a compatible local install
+- **MySQL**: Any current version (or a compatible database)
 - **Database Configuration**: Configure connection details in `application.properties`
 
 ### 🔧 Installation and Execution
@@ -138,7 +138,7 @@ The application includes comprehensive test coverage with unit and integration t
 
 - **Unit Tests**: Domain entities, DTOs, enums, utilities, and service logic
 - **Integration Tests**: Service implementations and data access layers
-- **Test Frameworks**: JUnit 5, Mockito, Spring Test, AssertJ
+- **Test Frameworks**: JUnit, Mockito, Spring Test, AssertJ
 
 Test coverage includes:
 
