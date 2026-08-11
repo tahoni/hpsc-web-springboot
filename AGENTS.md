@@ -14,6 +14,7 @@ agent tool reads `CLAUDE.md`.
 - [🧪 Test Conventions](#-test-conventions)
 - [📁 Directory Tree Maintenance](#-directory-tree-maintenance)
 - [🔀 Git Workflow](#-git-workflow)
+- [🚢 Release Checklist](#-release-checklist)
 - [🌲 Evergreen Documentation](#-evergreen-documentation-readmemd--architecturemd)
 
 ---
@@ -95,6 +96,7 @@ repository's documentation:
 | 🔐   | Security                       |
 | ✅    | Quality attributes             |
 | 🔬   | CI/CD & quality gates          |
+| 🚢   | Release process                |
 
 ---
 
@@ -118,8 +120,9 @@ two ever drift):
 
 Two documentation-only folders supplement these:
 
-- **`documentation/history/`** holds one `RELEASE_NOTES_vX.Y.Z.md` per released version — an
-  archived snapshot of `RELEASE_NOTES.md` at release time.
+- **`documentation/history/`** holds one `RELEASE_NOTES_vX.Y.Z.md` (an archived snapshot of
+  `RELEASE_NOTES.md` at release time) and one `PR_DESCRIPTION_vX.Y.Z.md` (the release PR body)
+  per released version.
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's
   pre-v5.0.0, non-semantic-versioning era. It is a historical record only and is not maintained
   going forward.
@@ -153,6 +156,46 @@ Two documentation-only folders supplement these:
 - **Track complex work with a todo list.** For multistep or non-trivial tasks, maintain a
   tracked todo list and keep it updated as work progresses, so progress stays visible and the
   work stays on track.
+
+---
+
+## 🚢 Release Checklist
+
+When cutting a new version, work through these steps **in order** — the version number and date
+must be final before anything downstream references them:
+
+1. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to
+   the new `X.Y.Z`.
+2. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in
+   `HpscWebApplication.java` to match.
+3. **Add a `CHANGELOG.md` entry.** New `## 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the
+   Keep a Changelog categories that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`,
+   `🗑️ Removed`, `🔐 Security` — omit any that are empty). Update the Table of Contents and move
+   the "← Current" marker to the new version.
+4. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase, and a Milestone for the new
+   version, at the same narrative depth and in the same style as the existing entries. If the
+   release is significant enough to have shifted the project's trajectory, also thread it through
+   the other sections that already track version-by-version state (Architectural Evolution,
+   Feature Timeline, Key Learnings, Future Roadmap, Conclusion/footer) — use how the immediately
+   preceding version was woven into those sections as the template.
+5. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key
+   Highlights → What's New (Added/Changed/Fixed/Removed) → Migration Guide → Statistics →
+   Design Notes → Testing → Known Issues → Future Enhancements → Contributors → Notes. Cover
+   **everything** that changed for this version, not just the most recent commit — diff the
+   release branch against `main` (`git log main..HEAD`, `git diff --stat main...HEAD`) to confirm
+   full coverage before finalising.
+6. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming)
+   to `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
+7. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull
+   request, structured as:
+    - `## 🎯 Summary` — two to four bullets on what the release is and why
+    - `## 📦 Key Changes` — condensed from the CHANGELOG entry's categories (Added/Changed/Fixed/
+      Removed), high-level rather than exhaustive
+    - `## 🧪 Test Plan` — checklist of what was verified (build, tests, manual checks)
+    - `## 🔗 Related Documentation` — links to `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md`
+
+Commit these in logical chunks per the Git Workflow rule above — the version bump, the
+CHANGELOG/HISTORY/RELEASE_NOTES documentation, and the PR description are separate concerns.
 
 ---
 
