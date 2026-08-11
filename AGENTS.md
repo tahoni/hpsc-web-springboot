@@ -73,28 +73,28 @@ only pick a new emoji when introducing a genuinely new concept. Icons already es
 repository's documentation:
 
 | Icon | Concept                        |
-|------|---------------------------------|
-| 📖   | Introduction / overview          |
-| 🔗   | Repository / links               |
-| ⚙️   | Technology / configuration       |
-| ✨   | Features                         |
-| 🚀   | Instructions / getting started   |
-| 📋   | Prerequisites                    |
-| 🔧   | Installation / setup             |
-| 📚   | Documentation                    |
-| 🧪   | Testing                          |
-| 🏛️   | Architecture                     |
-| 📜   | Licence                          |
-| 👤   | Author                           |
-| 🎯   | Theme / system overview          |
-| 🔄   | Changed items / data flow        |
-| ➕   | Added items                      |
-| 🐛   | Fixed items                      |
-| ⚠️   | Deprecated items                 |
-| 🗑️   | Removed items                    |
-| 🔐   | Security                         |
-| ✅   | Quality attributes               |
-| 🔬   | CI/CD & quality gates            |
+|------|--------------------------------|
+| 📖   | Introduction / overview        |
+| 🔗   | Repository / links             |
+| ⚙️   | Technology / configuration     |
+| ✨    | Features                       |
+| 🚀   | Instructions / getting started |
+| 📋   | Prerequisites                  |
+| 🔧   | Installation / setup           |
+| 📚   | Documentation                  |
+| 🧪   | Testing                        |
+| 🏛️  | Architecture                   |
+| 📜   | Licence                        |
+| 👤   | Author                         |
+| 🎯   | Theme / system overview        |
+| 🔄   | Changed items / data flow      |
+| ➕    | Added items                    |
+| 🐛   | Fixed items                    |
+| ⚠️   | Deprecated items               |
+| 🗑️  | Removed items                  |
+| 🔐   | Security                       |
+| ✅    | Quality attributes             |
+| 🔬   | CI/CD & quality gates          |
 
 ---
 
@@ -104,17 +104,17 @@ Root-level documentation, and the goal of each file (see README.md's own
 [📚 Documentation](README.md#-documentation) section — README.md is the canonical version if the
 two ever drift):
 
-| File                  | Purpose                                                                    |
-|------------------------|-----------------------------------------------------------------------------|
-| `README.md`            | Project overview, setup, and links to the rest of the documentation        |
-| `ARCHITECTURE.md`      | Detailed architectural design, layered structure, and CI/CD quality gates  |
-| `CLAUDE.md`            | Guidance for Claude Code specifically when working in this repository      |
-| `AGENTS.md`            | Cross-tool agent conventions (this file)                                   |
-| `CHANGELOG.md`         | Notable changes per release, in Keep a Changelog format                    |
-| `HISTORY.md`           | Narrative history of the project's evolution across all versions           |
-| `RELEASE_NOTES.md`     | Detailed release notes for the current/latest version                      |
-| `LICENSE.md`           | MIT Licence                                                                 |
-| `HELP.md`              | Spring Initializr reference links (Maven, Spring Boot docs, guides)        |
+| File               | Purpose                                                                   |
+|--------------------|---------------------------------------------------------------------------|
+| `README.md`        | Project overview, setup, and links to the rest of the documentation       |
+| `ARCHITECTURE.md`  | Detailed architectural design, layered structure, and CI/CD quality gates |
+| `CLAUDE.md`        | Guidance for Claude Code specifically when working in this repository     |
+| `AGENTS.md`        | Cross-tool agent conventions (this file)                                  |
+| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                   |
+| `HISTORY.md`       | Narrative history of the project's evolution across all versions          |
+| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                     |
+| `LICENSE.md`       | MIT Licence                                                               |
+| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)       |
 
 Two documentation-only folders supplement these:
 

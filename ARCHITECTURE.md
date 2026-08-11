@@ -28,21 +28,21 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## ⚙️ Technology Stack
 
-| Component         | Technology                                                            |
-|-------------------|-------------------------------------------------------------------------|
-| Framework         | Spring Boot (see `pom.xml` for the pinned version)                      |
-| Language          | Java (see `<java.version>` in `pom.xml`)                                |
-| Build             | Maven, via the provided `./mvnw` wrapper                                |
-| Database (prod)   | MySQL (env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                        |
-| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                            |
-| ORM               | Spring Data JPA, Hibernate                                              |
-| Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                            |
-| API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`)     |
-| Validation        | Hibernate Validator, Jakarta Validation                                 |
-| Testing           | JUnit, Mockito, Spring Test                                             |
-| Code coverage     | JaCoCo (Maven `coverage` profile)                                       |
-| Code generation   | Lombok                                                                   |
-| Port / context    | `8081` / `/hpsc-web`                                                    |
+| Component         | Technology                                                          |
+|-------------------|---------------------------------------------------------------------|
+| Framework         | Spring Boot (see `pom.xml` for the pinned version)                  |
+| Language          | Java (see `<java.version>` in `pom.xml`)                            |
+| Build             | Maven, via the provided `./mvnw` wrapper                            |
+| Database (prod)   | MySQL (env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                    |
+| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
+| ORM               | Spring Data JPA, Hibernate                                          |
+| Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
+| API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
+| Validation        | Hibernate Validator, Jakarta Validation                             |
+| Testing           | JUnit, Mockito, Spring Test                                         |
+| Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
+| Code generation   | Lombok                                                              |
+| Port / context    | `8081` / `/hpsc-web`                                                |
 
 ---
 
@@ -210,16 +210,16 @@ All `@Transactional` boundaries live in the service layer.
 
 The JPA entities map to database tables:
 
-| Entity                 | Table                    | Key Relationships                                                                    |
-|------------------------|--------------------------|----------------------------------------------------------------------------------------|
-| `Club`                 | `club`                   | One-to-many → `IpscMatch`, `Competitor` (home club), `ShooterLog`                      |
-| `Competitor`           | `competitor`             | Many-to-one ← `Club` (home club, optional); One-to-many → `MatchCompetitor`, `ShooterLog` |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor`                |
-| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`                        |
+| Entity                 | Table                    | Key Relationships                                                                                |
+|------------------------|--------------------------|--------------------------------------------------------------------------------------------------|
+| `Club`                 | `club`                   | One-to-many → `IpscMatch`, `Competitor` (home club), `ShooterLog`                                |
+| `Competitor`           | `competitor`             | Many-to-one ← `Club` (home club, optional); One-to-many → `MatchCompetitor`, `ShooterLog`        |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor`                          |
+| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`                                  |
 | `MatchCompetitor`      | `match_competitor`       | Many-to-one ← `IpscMatch`, `Competitor`; One-to-many → `MatchStageCompetitor`, `ShooterLogEntry` |
-| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                                      |
-| `ShooterLog`           | `shooter_log`            | Many-to-one ← `Competitor`, `Club`; One-to-many → `ShooterLogEntry`                     |
-| `ShooterLogEntry`      | `shooter_log_entry`      | Many-to-one ← `ShooterLog`, `MatchCompetitor`                                          |
+| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                                                |
+| `ShooterLog`           | `shooter_log`            | Many-to-one ← `Competitor`, `Club`; One-to-many → `ShooterLogEntry`                              |
+| `ShooterLogEntry`      | `shooter_log_entry`      | Many-to-one ← `ShooterLog`, `MatchCompetitor`                                                    |
 
 All bidirectional `@OneToMany` relationships include `mappedBy` to avoid duplicate join table creation.
 

@@ -90,16 +90,16 @@ One row per competitor **per firearm-type entry** in a match:
 The `repositories/` package was empty (repositories for these six entities were deliberately removed in
 a prior commit pending this redesign). Eight `JpaRepository<Entity, Long>` interfaces were (re)created:
 
-| Repository                       | Finder methods                                                                                  |
-|-----------------------------------|---------------------------------------------------------------------------------------------------|
-| `ClubRepository`                  | `findByName`, `findByAbbreviation`, `findByIdentifier`                                            |
-| `CompetitorRepository`            | `findByClubNumber`                                                                                |
-| `IpscMatchRepository`             | `findAllByClubId`                                                                                 |
-| `IpscMatchStageRepository`        | `findAllByMatchIdOrderByStageNumber`                                                              |
-| `MatchCompetitorRepository`       | `findAllByCompetitorIdAndMatchId`, `findAllByMatchIdAndFirearmType`, `findAllByCompetitorIdAndFirearmTypeAndIsVisitorFalse` |
-| `MatchStageCompetitorRepository`  | `findAllByMatchCompetitorId`                                                                       |
-| `ShooterLogRepository`            | `findAllByCompetitorIdAndFirearmType`                                                             |
-| `ShooterLogEntryRepository`       | `findAllByShooterLogId`                                                                            |
+| Repository                       | Finder methods                                                                                                              |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `ClubRepository`                 | `findByName`, `findByAbbreviation`, `findByIdentifier`                                                                      |
+| `CompetitorRepository`           | `findByClubNumber`                                                                                                          |
+| `IpscMatchRepository`            | `findAllByClubId`                                                                                                           |
+| `IpscMatchStageRepository`       | `findAllByMatchIdOrderByStageNumber`                                                                                        |
+| `MatchCompetitorRepository`      | `findAllByCompetitorIdAndMatchId`, `findAllByMatchIdAndFirearmType`, `findAllByCompetitorIdAndFirearmTypeAndIsVisitorFalse` |
+| `MatchStageCompetitorRepository` | `findAllByMatchCompetitorId`                                                                                                |
+| `ShooterLogRepository`           | `findAllByCompetitorIdAndFirearmType`                                                                                       |
+| `ShooterLogEntryRepository`      | `findAllByShooterLogId`                                                                                                     |
 
 `findAllByCompetitorIdAndFirearmTypeAndIsVisitorFalse` on `MatchCompetitorRepository` is the intended
 basis for the future best-4 shooter-log calculation (results, excluding visitors, per firearm type).

@@ -189,15 +189,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 All `models/ipsc/` classes moved to `models/ipsc/common/`:
 
-| Old path                   | New path                          |
-|----------------------------|-----------------------------------|
-| `models/ipsc/data/`        | `models/ipsc/common/data/`        |
-| `models/ipsc/divisions/`   | `models/ipsc/common/divisions/`   |
-| `models/ipsc/dto/`         | `models/ipsc/common/dto/`         |
-| `models/ipsc/holders/`     | `models/ipsc/common/holders/`     |
-| `models/ipsc/records/`     | `models/ipsc/common/records/`     |
-| `models/ipsc/request/`     | `models/ipsc/common/request/`     |
-| `models/ipsc/response/`    | `models/ipsc/common/response/`    |
+| Old path                 | New path                        |
+|--------------------------|---------------------------------|
+| `models/ipsc/data/`      | `models/ipsc/common/data/`      |
+| `models/ipsc/divisions/` | `models/ipsc/common/divisions/` |
+| `models/ipsc/dto/`       | `models/ipsc/common/dto/`       |
+| `models/ipsc/holders/`   | `models/ipsc/common/holders/`   |
+| `models/ipsc/records/`   | `models/ipsc/common/records/`   |
+| `models/ipsc/request/`   | `models/ipsc/common/request/`   |
+| `models/ipsc/response/`  | `models/ipsc/common/response/`  |
 
 #### Updated Tests
 

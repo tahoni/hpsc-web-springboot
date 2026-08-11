@@ -158,23 +158,23 @@ A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md
 
 This project's documentation is spread across a few files, each with a distinct purpose:
 
-| File                          | Purpose                                                                             |
-|--------------------------------|--------------------------------------------------------------------------------------|
-| [`README.md`](README.md)             | Project overview, setup, and links to the rest of the documentation (this file)      |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Detailed architectural design, layered structure, and CI/CD quality gates            |
-| [`CLAUDE.md`](CLAUDE.md)             | Guidance for Claude Code (AI assistant) when working in this repository              |
-| [`CHANGELOG.md`](CHANGELOG.md)       | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
-| [`HISTORY.md`](HISTORY.md)           | Narrative history of the project's evolution across all versions                     |
-| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Detailed release notes for the current/latest version                              |
-| [`LICENSE.md`](LICENSE.md)           | MIT Licence                                                                           |
-| [`HELP.md`](HELP.md)                 | Spring Initializr reference links (Maven, Spring Boot docs, guides)                   |
+| File                                   | Purpose                                                                                         |
+|----------------------------------------|-------------------------------------------------------------------------------------------------|
+| [`README.md`](README.md)               | Project overview, setup, and links to the rest of the documentation (this file)                 |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure, and CI/CD quality gates                       |
+| [`CLAUDE.md`](CLAUDE.md)               | Guidance for Claude Code (AI assistant) when working in this repository                         |
+| [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
+| [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |
+| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Detailed release notes for the current/latest version                                           |
+| [`LICENSE.md`](LICENSE.md)             | MIT Licence                                                                                     |
+| [`HELP.md`](HELP.md)                   | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
 [`documentation/history/`](documentation/history) holds one `RELEASE_NOTES_vX.Y.Z.md` per released
 version — an archived snapshot of `RELEASE_NOTES.md` at release time — so past releases stay
 individually referenceable once `RELEASE_NOTES.md` moves on to the next version.
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release
-archive covering versions 1.x–4.x, from before the project adopted its current documentation
+archive covering versions 1.x – 4.x, from before the project adopted its current documentation
 structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only
 and isn't maintained going forward.
 
