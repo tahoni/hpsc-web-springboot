@@ -8,6 +8,45 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FirearmTypeTest {
 
+    // getByCode()
+    @Test
+    void testGetByCode_withMatch_thenReturnsCorrectFirearmType() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(7);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(FirearmType.PCC, result.get());
+    }
+
+    @Test
+    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(0);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withNoMatch_returnsEmptyOptional() {
+        // Act
+        Optional<FirearmType> result = FirearmType.getByCode(100);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+    
+    // getByName()
     @Test
     void testGetByName_withExactMatch_thenReturnsCorrectFirearmType() {
         // Arrange
@@ -91,42 +130,5 @@ class FirearmTypeTest {
 
         // Assert
         assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByCode_withMatch_thenReturnsCorrectFirearmType() {
-        // Act
-        Optional<FirearmType> result = FirearmType.getByCode(7);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(FirearmType.PCC, result.get());
-    }
-
-    @Test
-    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<FirearmType> result = FirearmType.getByCode(null);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<FirearmType> result = FirearmType.getByCode(0);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_withNoMatch_returnsEmptyOptional() {
-        // Act
-        Optional<FirearmType> result = FirearmType.getByCode(100);
-
-        // Assert
-        assertTrue(result.isEmpty());
     }
 }

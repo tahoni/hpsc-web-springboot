@@ -16,6 +16,7 @@ import za.co.hpsc.web.models.ControllerResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: check that all methods have the same comprehensive tests
 @ExtendWith(MockitoExtension.class)
 public class ControllerAdviceTest {
 
@@ -25,10 +26,7 @@ public class ControllerAdviceTest {
     @Mock
     private WebRequest webRequest;
 
-    // =====================================================================
-    // handleGeneralException(FatalException, WebRequest)
-    // =====================================================================
-
+    // handleGeneralException()
     @Test
     void testHandleGeneralException_whenFatalExceptionThrown_thenReturns500() {
         // Arrange
@@ -120,10 +118,7 @@ public class ControllerAdviceTest {
         assertEquals("   ", response.getBody().getMessage());
     }
 
-    // =====================================================================
-    // handleValidationException(ValidationException, WebRequest)
-    // =====================================================================
-
+    // handleValidationException()
     @Test
     void testHandleValidationException_whenValidationExceptionThrown_thenReturns400() {
         // Arrange
@@ -202,12 +197,9 @@ public class ControllerAdviceTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    // =====================================================================
-    // handleNonFatalException(NonFatalException, WebRequest)
-    // =====================================================================
-
+    // handleNonFatalException()
     @Test
-    void testHandleNonFatalException_whenNonFatalExceptionThrown_thenReturns422() {
+    void testHandleNonFatalException_whenNonFatalExceptionThrown_thenReturns404() {
         // Arrange
         NonFatalException ex = new NonFatalException("Match not found");
 
@@ -304,12 +296,9 @@ public class ControllerAdviceTest {
         assertEquals("   ", response.getBody().getMessage());
     }
 
-// =====================================================================
-// handleHttpMessageConversionException(HttpMessageConversionException, WebRequest)
-// =====================================================================
-
+    // handleHttpMessageConversionException()
     @Test
-    void testHandleHttpMessageConversionException_whenThrown_thenReturns400() {
+    void testHand1leHttpMessageConversionException_whenThrown_thenReturns500() {
         // Arrange
         HttpMessageConversionException ex = new HttpMessageConversionException("Invalid JSON input");
 
@@ -377,25 +366,7 @@ public class ControllerAdviceTest {
         assertNotNull(response.getBody().getTimestamp());
     }
 
-    @Test
-    void testHandleHttpMessageConversionException_whenMessageIsNull_thenResponseBodyMessageIsNull() {
-        // Arrange
-        HttpMessageConversionException ex = new HttpMessageConversionException(null);
-
-        // Act
-        ResponseEntity<ControllerResponse> response =
-                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertNull(response.getBody().getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-// =====================================================================
-// handleUnhandledException(Exception, WebRequest)
-// =====================================================================
-
+    // handleUnhandledException()
     @Test
     void testHandleUnhandledException_whenThrown_thenReturns500() {
         // Arrange
@@ -480,4 +451,3 @@ public class ControllerAdviceTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }
-

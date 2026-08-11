@@ -9,6 +9,48 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CompetitorCategoryTest {
 
+    // getByCode()
+    @Test
+    void testGetByCode_withMatch_thenReturnsCorrectCategory() {
+        // Act
+        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(7);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(CompetitorCategory.SENIOR_LADY, result.get());
+    }
+
+    @Test
+    void testGetByCode_withNullInput_thenReturnsNoneCategory() {
+        // Act
+        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(null);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(CompetitorCategory.NONE, result.get());
+    }
+
+    @Test
+    void testGetByCode_withZeroInput_thenReturnsNoneCategory() {
+        // Act
+        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(0);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(CompetitorCategory.NONE, result.get());
+    }
+
+    @Test
+    void testGetByCode_withNoMatch_returnsNoneCategory() {
+        // Act
+        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(10);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(CompetitorCategory.NONE, result.get());
+    }
+
+    // getByName()
     @Test
     void testGetByName_withExactMatch_thenReturnsCorrectCategory() {
         // Act
@@ -77,45 +119,5 @@ class CompetitorCategoryTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(CompetitorCategory.SENIOR_LADY, result.get());
-    }
-
-    @Test
-    void testGetByCode_withMatch_thenReturnsCorrectCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(7);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.SENIOR_LADY, result.get());
-    }
-
-    @Test
-    void testGetByCode_withNullInput_thenReturnsNoneCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(null);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
-    }
-
-    @Test
-    void testGetByCode_withZeroInput_thenReturnsNoneCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(0);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
-    }
-
-    @Test
-    void testGetByCode_withNoMatch_returnsNoneCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.getByCode(10);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
     }
 }

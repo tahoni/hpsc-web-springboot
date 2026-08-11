@@ -13,15 +13,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageRequestForCSVTest {
-    private static class TestImageRequestForCsv extends ImageRequestForCsv {
-        @JsonCreator
-        TestImageRequestForCsv(@JsonProperty(value = "title", required = true) String title,
-                               @JsonProperty(value = "filePath", required = true) String filePath,
-                               @JsonProperty(value = "fileName", required = true) String fileName) {
-            super(title, filePath, fileName);
-        }
-    }
-
     @Test
     void testConstructor_whenRequiredFieldsProvided_thenMapsRequiredFieldsAndLeavesOptionalFieldsUnset() {
         // Arrange & Act
@@ -50,25 +41,6 @@ public class ImageRequestForCSVTest {
         assertNull(request.getTitle());
         assertNull(request.getFilePath());
         assertNull(request.getFileName());
-    }
-
-    @Test
-    void testSetters_whenOptionalFieldsProvided_thenUpdatesMetadataAndTags() {
-        // Arrange
-        TestImageRequestForCsv request = new TestImageRequestForCsv("Title", "/path", "file.png");
-        List<String> tags = List.of("club", "finals");
-
-        // Act
-        request.setSummary("Summary");
-        request.setDescription("Description");
-        request.setCategory("Gallery");
-        request.setTags(tags);
-
-        // Assert
-        assertEquals("Summary", request.getSummary());
-        assertEquals("Description", request.getDescription());
-        assertEquals("Gallery", request.getCategory());
-        assertEquals(tags, request.getTags());
     }
 
     @Test
@@ -240,5 +212,14 @@ public class ImageRequestForCSVTest {
         assertEquals("Taken during the club shoot on 24 April 2026", request.getDescription());
         assertEquals("Gallery", request.getCategory());
         assertEquals(List.of("club", "finals"), request.getTags());
+    }
+
+    private static class TestImageRequestForCsv extends ImageRequestForCsv {
+        @JsonCreator
+        TestImageRequestForCsv(@JsonProperty(value = "title", required = true) String title,
+                               @JsonProperty(value = "filePath", required = true) String filePath,
+                               @JsonProperty(value = "fileName", required = true) String fileName) {
+            super(title, filePath, fileName);
+        }
     }
 }

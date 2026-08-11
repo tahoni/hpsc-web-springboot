@@ -86,7 +86,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withValidMimeType_thenSetMimeType() {
+    void testSetMimeType_whenMimeTypeValid_thenSetMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "", "");
@@ -100,7 +100,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withNullOrBlankValues_doesNotAlterExistingMimeType() {
+    void testSetMimeType_whenMimeTypeNullOrEmpty_thenDoesNotAlterExistingMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "example.jpg", "image/jpeg");
@@ -117,19 +117,19 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withBlankMimeType_thenInferMimeTypeFromFileName() {
+    void testSetMimeType_whenMimeTypeBlank_thenInferMimeTypeFromFileName() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image", "example.jpg", "");
 
         // Act
-        imageResponse.setMimeType("");
+        imageResponse.setMimeType("    ");
 
         // Assert
         assertEquals(MediaType.IMAGE_JPEG_VALUE, imageResponse.getMimeType());
     }
 
     @Test
-    void setMimeType_withNullMimeType_thenInferMimeTypeFromFileName() {
+    void testSetMimeType_whenMimeTypeNull_thenInferMimeTypeFromFileName() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "example.gif", "");
@@ -142,7 +142,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withNullOrBlankMimeTypeAndNoFileName_thenDoesNotSetMimeType() {
+    void testSetMimeType_whenMimeTypeNullOrBlankAndFileNameEmpty_thenDoesNotSetMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "", "");
@@ -155,7 +155,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withNoMimeTypeAndFileNameWithoutRecognizedExtension_thenDoesNotSetMimeType() {
+    void testSetMimeType_whenMimeTypeNullAndFileNameWithoutRecognizedExtension_thenDoesNotSetMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "example.unknown", "");
@@ -168,7 +168,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withoutFileNameAndMimeType_thenDoesNotSetMimeType() {
+    void testSetMimeType_whenMimeTypeEmptyAndFileNameEmpty_thenDoesNotSetMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "", "");
@@ -181,7 +181,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withNoMimeTypeAndFileNameWithoutRecognizedExtension_thenDoesNotModifyMimeType() {
+    void testSetMimeType_whenMimeTypeNullAndFileNameWithoutRecognizedExtension_thenDoesNotModifyMimeType() {
         // Arrange
         String existingMimeType = MediaType.IMAGE_JPEG_VALUE;
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
@@ -195,7 +195,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withoutFileNameAndMimeType_thenDoesNotModifyMimeType() {
+    void testSetMimeType_whenMimeTypeEmptyAndFileNameEmpty_thenDoesNotModifyMimeType() {
         // Arrange
         String existingMimeType = MediaType.IMAGE_JPEG_VALUE;
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
@@ -209,7 +209,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withUpperCaseFileExtension_thenInferMimeTypeCorrectly() {
+    void testSetMimeType_whenFileExtensionUppercase_thenInferMimeTypeCorrectly() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "IMAGE.PNG", "");
@@ -222,7 +222,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withNullFileNameAndMimeType_thenDoesNotSetMimeType() {
+    void testSetMimeType_whenMimeTypeNullAndFileNameNull_thenDoesNotSetMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 null, "");
@@ -235,7 +235,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withBlankFileNameAndMimeType_thenDoesNotSetMimeType() {
+    void testSetMimeType_whenMimeTypeNullAndFileNameBlank_thenDoesNotSetMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "   ", "");
@@ -248,7 +248,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withUncommonValidMimeType_thenRetainsMimeType() {
+    void testSetMimeType_whenUncommonValidMimeType_thenRetainsMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "example.custom", "");
@@ -262,7 +262,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withOverwriteExistingMimeType_thenUpdatesMimeType() {
+    void testSetMimeType_whenMimeTypeOverridden_thenUpdatesMimeType() {
         // Arrange
         String existingMimeType = MediaType.IMAGE_JPEG_VALUE;
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
@@ -277,7 +277,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withConflictingFileNameAndValidMimeType_thenUsesExplicitMimeType() {
+    void testSetMimeType_whenMimeTypeAndFileNameConflicts_thenUsesExplicitMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "example.jpg", "");
@@ -291,7 +291,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void setMimeType_withNoParameters_thenInferMimeTypeFromFileName() {
+    void testSetMimeType_whenNoMimeTypeAndFileNameWithExtension_thenInferMimeTypeFromFileName() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "example.gif", "");

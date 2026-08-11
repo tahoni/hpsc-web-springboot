@@ -10,6 +10,7 @@ class DivisionConverterTest {
 
     private final DivisionConverter converter = new DivisionConverter();
 
+    // convertToDatabaseColumn()
     @Test
     void testConvertToDatabaseColumn_whenDivisionIsValid_thenReturnsName() {
         // Act
@@ -28,6 +29,7 @@ class DivisionConverterTest {
         assertNull(databaseValue);
     }
 
+    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenNameIsKnown_thenReturnsDivision() {
         // Act

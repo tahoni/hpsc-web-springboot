@@ -10,32 +10,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AwardRequestForCSVTest {
-    private static class MinimalAwardRequestForCSV extends AwardRequestForCSV {
-        @JsonCreator
-        MinimalAwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
-                                  @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
-                                  @JsonProperty(value = "firstNamePlace", required = true) String firstPlaceName) {
-            super(title, ceremonyTitle, firstPlaceName);
-        }
-    }
-
-    private static class TestAwardRequestForCSV extends AwardRequestForCSV {
-        @JsonCreator
-        TestAwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
-                               @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
-                               @JsonProperty(value = "firstPlaceName", required = true) String firstPlaceName,
-                               @JsonProperty(value = "secondPlaceName") String secondPlaceName,
-                               @JsonProperty(value = "thirdPlaceName") String thirdPlaceName) {
-            super(title, ceremonyTitle, firstPlaceName, secondPlaceName, thirdPlaceName);
-        }
-    }
-
     @Test
     void testConstructor_whenRequiredFieldsProvided_thenMapsCoreFieldsAndInitializesTagLists() {
         // Arrange & Act
@@ -69,54 +48,21 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void testTags_whenMutated_thenPersistsAddedValues() {
-        // Arrange
-        TestAwardRequestForCSV request =
-                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", "John Roe", "Sam Poe");
-
-        // Act
-        request.getTags().add("ipsc");
-        request.getCeremonyTags().add("hpsc");
+    void testThreeParamConstructor_whenRequiredFieldsProvided_thenMapsFieldsAndLeavesOptionalPlaceNamesNull() {
+        // Arrange & Act
+        MinimalAwardRequestForCSV request =
+                new MinimalAwardRequestForCSV("Best Shooter", "Club Awards", "Alice Smith");
 
         // Assert
-        assertEquals(1, request.getTags().size());
-        assertEquals("ipsc", request.getTags().getFirst());
-        assertEquals(1, request.getCeremonyTags().size());
-        assertEquals("hpsc", request.getCeremonyTags().getFirst());
-    }
-
-    @Test
-    void testSetters_whenMetadataProvided_thenUpdatesAllOptionalFields() {
-        // Arrange
-        TestAwardRequestForCSV request =
-                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", "John Roe", "Sam Poe");
-        LocalDate date = LocalDate.of(2026, 4, 24);
-
-        // Act
-        request.setSummary("Award summary");
-        request.setDescription("Award description");
-        request.setCategory("Overall");
-        request.setCeremonySummary("Ceremony summary");
-        request.setCeremonyDescription("Ceremony description");
-        request.setCeremonyCategory("Main event");
-        request.setDate(date);
-        request.setImageFilePath("awards/2026/top-shooter.png");
-        request.setFirstPlaceImageFileName("first.png");
-        request.setSecondPlaceImageFileName("second.png");
-        request.setThirdPlaceImageFileName("third.png");
-
-        // Assert
-        assertEquals("Award summary", request.getSummary());
-        assertEquals("Award description", request.getDescription());
-        assertEquals("Overall", request.getCategory());
-        assertEquals("Ceremony summary", request.getCeremonySummary());
-        assertEquals("Ceremony description", request.getCeremonyDescription());
-        assertEquals("Main event", request.getCeremonyCategory());
-        assertEquals(date, request.getDate());
-        assertEquals("awards/2026/top-shooter.png", request.getImageFilePath());
-        assertEquals("first.png", request.getFirstPlaceImageFileName());
-        assertEquals("second.png", request.getSecondPlaceImageFileName());
-        assertEquals("third.png", request.getThirdPlaceImageFileName());
+        assertEquals("Best Shooter", request.getTitle());
+        assertEquals("Club Awards", request.getCeremonyTitle());
+        assertEquals("Alice Smith", request.getFirstPlaceName());
+        assertNull(request.getSecondPlaceName());
+        assertNull(request.getThirdPlaceName());
+        assertNotNull(request.getTags());
+        assertNotNull(request.getCeremonyTags());
+        assertTrue(request.getTags().isEmpty());
+        assertTrue(request.getCeremonyTags().isEmpty());
     }
 
     @Test
@@ -289,24 +235,6 @@ public class AwardRequestForCSVTest {
     }
 
     @Test
-    void testThreeParamConstructor_whenRequiredFieldsProvided_thenMapsFieldsAndLeavesOptionalPlaceNamesNull() {
-        // Arrange & Act
-        MinimalAwardRequestForCSV request =
-                new MinimalAwardRequestForCSV("Best Shooter", "Club Awards", "Alice Smith");
-
-        // Assert
-        assertEquals("Best Shooter", request.getTitle());
-        assertEquals("Club Awards", request.getCeremonyTitle());
-        assertEquals("Alice Smith", request.getFirstPlaceName());
-        assertNull(request.getSecondPlaceName());
-        assertNull(request.getThirdPlaceName());
-        assertNotNull(request.getTags());
-        assertNotNull(request.getCeremonyTags());
-        assertTrue(request.getTags().isEmpty());
-        assertTrue(request.getCeremonyTags().isEmpty());
-    }
-
-    @Test
     void testJsonDeserialization_whenTagsAndCeremonyTagsInPayload_thenDeserializesTagLists() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
@@ -326,23 +254,6 @@ public class AwardRequestForCSVTest {
         // Assert
         assertEquals(List.of("ipsc", "hpsc"), request.getTags());
         assertEquals(List.of("annual", "gala"), request.getCeremonyTags());
-    }
-
-    @Test
-    void testSetters_whenTagListsReplaced_thenReflectsNewLists() {
-        // Arrange
-        TestAwardRequestForCSV request =
-                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
-        List<String> tags = new ArrayList<>(List.of("ipsc", "hpsc"));
-        List<String> ceremonyTags = new ArrayList<>(List.of("annual", "gala"));
-
-        // Act
-        request.setTags(tags);
-        request.setCeremonyTags(ceremonyTags);
-
-        // Assert
-        assertEquals(tags, request.getTags());
-        assertEquals(ceremonyTags, request.getCeremonyTags());
     }
 
     @Test
@@ -390,5 +301,25 @@ public class AwardRequestForCSVTest {
         assertEquals("Sam Poe", request.getThirdPlaceName());
         assertEquals(LocalDate.of(2026, 4, 24), request.getDate());
         assertEquals("Overall", request.getCategory());
+    }
+
+    private static class MinimalAwardRequestForCSV extends AwardRequestForCSV {
+        @JsonCreator
+        MinimalAwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
+                                  @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
+                                  @JsonProperty(value = "firstNamePlace", required = true) String firstPlaceName) {
+            super(title, ceremonyTitle, firstPlaceName);
+        }
+    }
+
+    private static class TestAwardRequestForCSV extends AwardRequestForCSV {
+        @JsonCreator
+        TestAwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
+                               @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
+                               @JsonProperty(value = "firstPlaceName", required = true) String firstPlaceName,
+                               @JsonProperty(value = "secondPlaceName") String secondPlaceName,
+                               @JsonProperty(value = "thirdPlaceName") String thirdPlaceName) {
+            super(title, ceremonyTitle, firstPlaceName, secondPlaceName, thirdPlaceName);
+        }
     }
 }

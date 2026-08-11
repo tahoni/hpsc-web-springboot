@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ValueUtilTest {
 
@@ -401,7 +400,7 @@ class ValueUtilTest {
         // Assert
         assertNotNull(result1);
         assertNotNull(result2);
-        // Random UUIDs should be different (extremely unlikely to collide)
+        // Random UUIDs should be different (extremely unlikely to collide),
         // but we only assert they're not null rather than strict inequality
         // to avoid flaky tests from the extremely rare collision possibility
     }
@@ -515,14 +514,107 @@ class ValueUtilTest {
 
     @Test
     void testNullAsEmptyString_whenBoolean_thenReturnsStringValue() {
-        // Arrange
-        Object value = Boolean.TRUE;
-
         // Act
-        String result = ValueUtil.nullAsEmptyString(value);
+        String result = ValueUtil.nullAsEmptyString(true);
 
         // Assert
         assertEquals("true", result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNonNullString_thenReturnsSameString() {
+        // Arrange
+        String value = "Hello";
+
+        // Act
+        String result = ValueUtil.nullAsDefault(value, "Default");
+
+        // Assert
+        assertEquals("Hello", result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNullString_thenReturnsDefault() {
+        // Act
+        String result = ValueUtil.nullAsDefault(null, "Default");
+
+        // Assert
+        assertEquals("Default", result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNonNullInteger_thenReturnsSameValue() {
+        // Arrange
+        Integer value = 42;
+
+        // Act
+        Integer result = ValueUtil.nullAsDefault(value, 0);
+
+        // Assert
+        assertEquals(42, result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNullInteger_thenReturnsDefault() {
+        // Act
+        Integer result = ValueUtil.nullAsDefault(null, 0);
+
+        // Assert
+        assertEquals(0, result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNonNullUUID_thenReturnsSameValue() {
+        // Arrange
+        UUID value = UUID.randomUUID();
+
+        // Act
+        UUID result = ValueUtil.nullAsDefault(value, UUID.fromString("00000000-0000-0000-0000-000000000000"));
+
+        // Assert
+        assertEquals(value, result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNullUUID_thenReturnsDefault() {
+        // Act
+        UUID result = ValueUtil.nullAsDefault(null, UUID.fromString("00000000-0000-0000-0000-000000000000"));
+
+        // Assert
+        assertEquals(UUID.fromString("00000000-0000-0000-0000-000000000000"), result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNonNullCustomObject_thenReturnsSameObject() {
+        // Arrange
+        Object value = new Object();
+
+        // Act
+        Object result = ValueUtil.nullAsDefault(value, new Object());
+
+        // Assert
+        assertEquals(value, result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNullCustomObject_thenReturnsDefault() {
+        // Arrange
+        Object defaultValue = new Object();
+
+        // Act
+        Object result = ValueUtil.nullAsDefault(null, defaultValue);
+
+        // Assert
+        assertEquals(defaultValue, result);
+    }
+
+    @Test
+    void testNullAsDefault_whenNullDefaultValue_thenReturnsNull() {
+        // Act
+        Object result = ValueUtil.nullAsDefault(null, null);
+
+        // Assert
+        assertNull(result);
     }
 
     @Test
@@ -535,5 +627,167 @@ class ValueUtilTest {
 
         // Assert
         assertEquals("3.14159", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenValueIsNonNull_thenReturnsValue() {
+        // Arrange
+        String value = "Hello";
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("Hello", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenValueIsNull_thenReturnsDefaultValue() {
+        // Arrange
+        String value = null;
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("Default", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenDefaultValueIsNull_thenReturnsValue() {
+        // Arrange
+        String value = "NonNull";
+        String defaultValue = null;
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("NonNull", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenValueAndDefaultValueAreNull_thenReturnsNull() {
+        // Act
+        String result = ValueUtil.nullAsDefaultString(null, null);
+
+        // Assert
+        assertNull(result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenNonNullNumericValue_thenReturnsStringValue() {
+        // Arrange
+        Integer value = 42;
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("42", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenNullNumericValue_thenReturnsDefaultValue() {
+        // Arrange
+        Integer value = null;
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("Default", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenEmptyStringValue_thenReturnsEmptyString() {
+        // Arrange
+        String value = "";
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenSpecialCharacters_thenReturnsValue() {
+        // Arrange
+        String value = "@#$%^&*";
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("@#$%^&*", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenCustomObjectWithToString_thenReturnsStringRepresentation() {
+        // Arrange
+        Object value = new Object() {
+            @Override
+            public String toString() {
+                return "CustomObject";
+            }
+        };
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("CustomObject", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenCustomObjectWithNullToString_thenReturnsDefaultValue() {
+        // Arrange
+        Object value = new Object() {
+            @Override
+            public String toString() {
+                return null;
+            }
+        };
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("Default", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenValueIsTrueBoolean_thenReturnsTrueString() {
+        // Arrange
+        Boolean value = true;
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("true", result);
+    }
+
+    @Test
+    void testNullAsDefaultString_whenValueIsNullBoolean_thenReturnsDefaultValue() {
+        // Arrange
+        Boolean value = null;
+        String defaultValue = "Default";
+
+        // Act
+        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+
+        // Assert
+        assertEquals("Default", result);
     }
 }

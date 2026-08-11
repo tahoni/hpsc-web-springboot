@@ -103,7 +103,7 @@ service, DTOs, and utility.
 #### ⬆️ Build & Metadata
 
 - Spring Boot upgraded `4.0.5` → `4.0.6`
-- MIT License, developer profile, and SCM connection added to `pom.xml`
+- MIT Licence, developer profile, and SCM connection added to `pom.xml`
 
 #### 🧪 Test Coverage
 

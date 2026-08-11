@@ -33,10 +33,7 @@ public class AwardControllerTest {
             Award 1,Summary 1,Description 1,Category 1,tag1|tag2,2023-10-10,/path/to/image,Ceremony 1,Ceremony Summary,Ceremony Description,Ceremony Category,tags1,John Doe,Jane Smith,Bob Jones,w1.png,w2.png,w3.png
             """;
 
-    // =====================================================================
-    // processCsv
-    // =====================================================================
-
+    // processCsv()
     @Test
     void testProcessCsv_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
         // Arrange

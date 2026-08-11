@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PowerFactorTest {
 
+    // getByName()
     @Test
     void testGetByName_withExactMatch_thenReturnsCorrectPowerFactor() {
         // Arrange
@@ -79,6 +80,7 @@ class PowerFactorTest {
         assertFalse(result.isPresent());
     }
 
+    // getByAbbreviation()
     @Test
     void testGetByAbbreviation_withExactMatch_thenReturnsCorrectPowerFactor() {
         // Arrange

@@ -151,14 +151,30 @@ public final class ValueUtil {
         return nullAsDefault(value, new ArrayList<>());
     }
 
-    // TODO: Javadoc
-    // TODO: tests
+    /**
+     * Returns the given value if it is non-null; otherwise, returns the provided default value.
+     *
+     * @param <T>          the type of the value and default value
+     * @param value        the value to be checked; may be null
+     * @param defaultValue the default value to return if the input value is null; may be null
+     * @return the original value if it is non-null; otherwise the default value
+     */
     public static <T> T nullAsDefault(T value, T defaultValue) {
         return (value != null ? value : defaultValue);
     }
 
-    // TODO: Javadoc
-    // TODO: tests
+    /**
+     * Converts the given value to its string representation, or uses the string representation
+     * of a default value if the input value is {@code null}.
+     *
+     * @param <T>          the type of the input value and default value
+     * @param value        the value to be converted; may be {@code null}
+     * @param defaultValue the default value used if {@code value} is {@code null};
+     *                     may also be {@code null}
+     * @return the string representation of the input value if non-null,
+     * otherwise the string representation of the default value;
+     * if both are {@code null}, returns {@code null}
+     */
     public static <T> String nullAsDefaultString(T value, T defaultValue) {
         String defaultString = ((defaultValue != null) ? defaultValue.toString() : null);
         return ((value != null) ? value.toString() : defaultString);

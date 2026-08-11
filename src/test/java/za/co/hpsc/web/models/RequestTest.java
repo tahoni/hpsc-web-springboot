@@ -23,7 +23,7 @@ public class RequestTest {
     }
 
     @Test
-    void testConstructorWithTitle_whenTitleProvided_thenSetsTitleAndInitializesEmptyTags() {
+    void testShortConstructor_whenTitleProvided_thenSetsTitleAndInitializesEmptyTags() {
         // Arrange
         String title = "My Request";
 
@@ -85,7 +85,7 @@ public class RequestTest {
     }
 
     @Test
-    void testConstructors_whenTitleIsBlankOrNull_thenRetainProvidedValueWithoutRuntimeValidation() {
+    void testFullConstructor_whenTitleIsBlankOrNull_thenRetainProvidedValueWithoutRuntimeValidation() {
         // Arrange & Act
         Request blankTitleRequest = new Request(" ");
         Request nullTitleRequest = new Request(null);

@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: sync with ImageServiceIntegrationTest
 @Slf4j
 @ActiveProfiles("test")
 @SpringBootTest
@@ -27,7 +28,6 @@ public class AwardServiceIntegrationTest {
     private AwardService awardService;
 
     // Test Group: Null/Empty/Blank Input Handling
-
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> awardService.processCsv(null));
@@ -44,7 +44,6 @@ public class AwardServiceIntegrationTest {
     }
 
     // Test Group: Invalid CSV Format Handling
-
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
@@ -61,7 +60,6 @@ public class AwardServiceIntegrationTest {
     }
 
     // Test Group: Valid Single Ceremony Processing
-
     @Test
     public void testProcessCsv_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
         String csvData = CSV_HEADER +
@@ -136,7 +134,6 @@ public class AwardServiceIntegrationTest {
     }
 
     // Test Group: Valid Multiple Ceremonies Processing
-
     @Test
     public void testProcessCsv_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
         String csvData = """
@@ -217,7 +214,6 @@ public class AwardServiceIntegrationTest {
     }
 
     // Test Group: CSV Field Parsing
-
     @Test
     public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         String csvData = """
