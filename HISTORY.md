@@ -5,7 +5,7 @@ release, documenting the evolution of architecture, features, and design philoso
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [📅 Historical Timeline](#-historical-timeline)
 - [📖 Evolution Overview](#-evolution-overview)
@@ -160,7 +160,7 @@ release, documenting the evolution of architecture, features, and design philoso
 The HPSC Website Backend project has evolved through distinct phases, each addressing specific architectural
 and feature requirements:
 
-### 🏗️ Phase 1: Foundation (v1.0.0)
+### Phase 1: Foundation (v1.0.0)
 
 **Duration:** January 4, 2026 - January 4, 2026
 
@@ -191,7 +191,7 @@ functionality.
 
 ---
 
-### 📈 Phase 2: Feature Expansion (v1.1.0 – v1.1.3)
+### Phase 2: Feature Expansion (v1.1.0 – v1.1.3)
 
 **Duration:** January 14, 2026 – January 28, 2026
 
@@ -246,7 +246,7 @@ Rapid iteration adding award processing, improving code quality, and establishin
 
 ---
 
-### 🔄 Phase 3: Architectural Transformation (v2.0.0)
+### Phase 3: Architectural Transformation (v2.0.0)
 
 **Duration:** February 8, 2026
 
@@ -300,7 +300,7 @@ Major refactoring introducing service-oriented architecture and comprehensive DT
 
 ---
 
-### 🎯 Phase 4: Domain Specialisation (v3.0.0)
+### Phase 4: Domain Specialisation (v3.0.0)
 
 **Duration:** February 10, 2026
 
@@ -359,7 +359,7 @@ Comprehensive domain model restructuring for IPSC compliance and firearm-type cl
 
 ---
 
-### ✅ Phase 5: Quality Assurance & Simplification (v3.1.0)
+### Phase 5: Quality Assurance & Simplification (v3.1.0)
 
 **Duration:** February 10, 2026
 
@@ -408,7 +408,7 @@ Focus on exception handling consolidation and API documentation accuracy.
 
 ---
 
-### 🔍 Phase 6: Major IPSC Refactoring (v4.0.0)
+### Phase 6: Major IPSC Refactoring (v4.0.0)
 
 **Duration:** February 11, 2026
 
@@ -474,7 +474,7 @@ Significant domain entity refactoring with comprehensive testing and improved va
 
 ---
 
-### 📦 Phase 7: CRUD Enhancement & API Maturity (v4.1.0)
+### Phase 7: CRUD Enhancement & API Maturity (v4.1.0)
 
 **Duration:** February 13, 2026
 
@@ -532,7 +532,7 @@ Added complete CRUD capabilities for IPSC entities and supporting improvements.
 
 ---
 
-### 🎖️ Phase 8: Semantic Versioning Transition (v5.0.0)
+### Phase 8: Semantic Versioning Transition (v5.0.0)
 
 **Duration:** February 24, 2026
 
@@ -689,7 +689,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 ---
 
-### 🧪 Phase 9: Test Quality Enhancement (v5.1.0)
+### Phase 9: Test Quality Enhancement (v5.1.0)
 
 **Duration:** February 25, 2026
 
@@ -742,7 +742,7 @@ Strategic focus on test suite quality, organisation, and maintainability.
 
 ---
 
-### 🏗️ Phase 10: Architecture Refactoring (v5.2.0)
+### Phase 10: Architecture Refactoring (v5.2.0)
 
 **Duration:** February 27, 2026
 
@@ -834,7 +834,7 @@ test coverage.
 
 ---
 
-### 🆕 Phase 13: Dedicated Match CRUD API & Service Encapsulation (v6.0.0)
+### Phase 13: Dedicated Match CRUD API & Service Encapsulation (v6.0.0)
 
 **Duration:** May 1, 2026
 
@@ -940,7 +940,7 @@ encapsulation layer, and restructured all IPSC model packages for long-term grow
 
 ---
 
-### 👥 Phase 12: Competitor Enrolment & Service Transformation (v5.4.0)
+### Phase 12: Competitor Enrolment & Service Transformation (v5.4.0)
 
 **Duration:** April 26, 2026
 
@@ -1030,7 +1030,7 @@ support, a major service renaming, and CI/CD quality gate integration.
 
 ---
 
-### 🔌 Phase 11: Service Consolidation & Type Safety (v5.3.0)
+### Phase 11: Service Consolidation & Type Safety (v5.3.0)
 
 **Duration:** March 15, 2026
 
@@ -1121,128 +1121,128 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 
 ## 🎯 Major Milestones
 
-### 🏁 Milestone 1: Project Foundation (v1.0.0)
+### Milestone 1: Project Foundation (v1.0.0)
 
-- ✅ Initial Spring Boot application
-- ✅ Image gallery CSV processing
-- ✅ Basic API infrastructure
-- ✅ Custom exception hierarchy
+- Initial Spring Boot application
+- Image gallery CSV processing
+- Basic API infrastructure
+- Custom exception hierarchy
 
 **Achievement:** Established the foundation for the HPSC platform with core image processing capabilities.
 
 ---
 
-### 🚀 Milestone 2: Feature Expansion (v1.1.0 - v1.1.3)
+### Milestone 2: Feature Expansion (v1.1.0 - v1.1.3)
 
-- ✅ Award processing system
-- ✅ OpenAPI documentation
-- ✅ Comprehensive project documentation
-- ✅ Code quality standards
+- Award processing system
+- OpenAPI documentation
+- Comprehensive project documentation
+- Code quality standards
 
 **Achievement:** Expanded platform features and established professional documentation standards.
 
 ---
 
-### 🔄 Milestone 3: Architectural modernisation (v2.0.0)
+### Milestone 3: Architectural modernisation (v2.0.0)
 
-- ✅ Service-oriented architecture
-- ✅ Comprehensive DTO layer
-- ✅ Modular service design
-- ✅ Transaction management
+- Service-oriented architecture
+- Comprehensive DTO layer
+- Modular service design
+- Transaction management
 
 **Achievement:** Transformed from monolithic to modular architecture enabling better maintainability and
 testing.
 
 ---
 
-### 🎯 Milestone 4: Domain Specialisation (v3.0.0)
+### Milestone 4: Domain Specialisation (v3.0.0)
 
-- ✅ IPSC-specific domain modelling
-- ✅ Firearm-type classification
-- ✅ Club entity reintroduction
-- ✅ Comprehensive enum utilities
+- IPSC-specific domain modelling
+- Firearm-type classification
+- Club entity reintroduction
+- Comprehensive enum utilities
 
 **Achievement:** Aligned domain model with IPSC standards for specialised shooting competition management.
 
 ---
 
-### ✅ Milestone 5: Quality & Simplification (v3.1.0)
+### Milestone 5: Quality & Simplification (v3.1.0)
 
-- ✅ Exception handling consolidation
-- ✅ API documentation accuracy
-- ✅ Error handling consistency
-- ✅ Simplified architecture
+- Exception handling consolidation
+- API documentation accuracy
+- Error handling consistency
+- Simplified architecture
 
 **Achievement:** Improved code quality and simplified error handling while maintaining functionality.
 
 ---
 
-### 🔍 Milestone 6: Domain Clarity (v4.0.0)
+### Milestone 6: Domain Clarity (v4.0.0)
 
-- ✅ Entity naming clarification
-- ✅ Comprehensive test coverage
-- ✅ Enhanced validation layers
-- ✅ IPSC entity specialisation
+- Entity naming clarification
+- Comprehensive test coverage
+- Enhanced validation layers
+- IPSC entity specialisation
 
 **Achievement:** Clarified domain model through explicit entity naming (Match → IpscMatch) improving code
 clarity.
 
 ---
 
-### 📦 Milestone 7: Feature Completeness (v4.1.0)
+### Milestone 7: Feature Completeness (v4.1.0)
 
-- ✅ Full CRUD operations
-- ✅ Complete API maturity
-- ✅ Transactional consistency
-- ✅ Production readiness
+- Full CRUD operations
+- Complete API maturity
+- Transactional consistency
+- Production readiness
 
 **Achievement:** Completed CRUD lifecycle enabling full data management capabilities.
 
 ---
 
-### 🎖️ Milestone 8: Standards Adoption (v5.0.0)
+### Milestone 8: Standards Adoption (v5.0.0)
 
-- ✅ Semantic versioning adoption
-- ✅ Entity initialisation framework
-- ✅ Response generation pipeline
-- ✅ Infrastructure consolidation
+- Semantic versioning adoption
+- Entity initialisation framework
+- Response generation pipeline
+- Infrastructure consolidation
 
 **Achievement:** Adopted industry standards and consolidated infrastructure for long-term maintainability.
 
 ---
 
-### 🧪 Milestone 9: Test Quality Enhancement (v5.1.0)
+### Milestone 9: Test Quality Enhancement (v5.1.0)
 
-- ✅ Test suite reorganisation with 6 logical sections
-- ✅ Duplicate test elimination
-- ✅ Standardised test naming conventions
-- ✅ Enhanced test documentation and readability
+- Test suite reorganisation with 6 logical sections
+- Duplicate test elimination
+- Standardised test naming conventions
+- Enhanced test documentation and readability
 
 **Achievement:** Improved test infrastructure quality through comprehensive reorganisation and consolidation.
 
 ---
 
-### 🏗️ Milestone 10: Architecture Refactoring (v5.2.0)
+### Milestone 10: Architecture Refactoring (v5.2.0)
 
-- ✅ Three-tier mapping system (DtoMapping, EntityMapping, DtoToEntityMapping)
-- ✅ Enhanced match entity handling with MatchEntityService
-- ✅ Comprehensive test consolidation (2,000+ lines across multiple suites)
-- ✅ Enhanced null safety and code quality
-- ✅ Major service refactoring (61 files, +13,567 lines)
+- Three-tier mapping system (DtoMapping, EntityMapping, DtoToEntityMapping)
+- Enhanced match entity handling with MatchEntityService
+- Comprehensive test consolidation (2,000+ lines across multiple suites)
+- Enhanced null safety and code quality
+- Major service refactoring (61 files, +13,567 lines)
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null
 safety, and comprehensive test coverage across all services and utilities.
 
 ---
 
-### 🆕 Milestone 13: Dedicated Match CRUD API & Service Encapsulation (v6.0.0)
+### Milestone 13: Dedicated Match CRUD API & Service Encapsulation (v6.0.0)
 
-- ✅ `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
-- ✅ `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service
-- ✅ `DomainServiceImpl` fully decoupled from repositories — entity services used exclusively
-- ✅ All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
-- ✅ `IpscUtil` added for centralised club/match display-string formatting
-- ✅ Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata populated in `pom.xml`
+- `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
+- `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service
+- `DomainServiceImpl` fully decoupled from repositories — entity services used exclusively
+- All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
+- `IpscUtil` added for centralised club/match display-string formatting
+- Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata populated in `pom.xml`
 
 **Achievement:** Established a versioned, resource-oriented match management API and completed the
 entity service encapsulation layer, ensuring `DomainServiceImpl` respects the layered architecture
@@ -1251,13 +1251,13 @@ and match-specific models as the domain grows.
 
 ---
 
-### 👥 Milestone 12: Competitor Enrolment & Service Transformation (v5.4.0)
+### Milestone 12: Competitor Enrolment & Service Transformation (v5.4.0)
 
-- ✅ `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
-- ✅ `IpscMatchService` renamed to `TransformationService` for semantic clarity
-- ✅ SAPSA number validation and competitor deduplication in `CompetitorDto`
-- ✅ 20+ new test classes (~7,000 lines) — the largest single-release test expansion in project history
-- ✅ Qodana JVM linting and JaCoCo code coverage integrated into the CI/CD pipeline
+- `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
+- `IpscMatchService` renamed to `TransformationService` for semantic clarity
+- SAPSA number validation and competitor deduplication in `CompetitorDto`
+- 20+ new test classes (~7,000 lines) — the largest single-release test expansion in project history
+- Qodana JVM linting and JaCoCo code coverage integrated into the CI/CD pipeline
 
 **Achievement:** Delivered the project's most comprehensive test suite expansion, introduced competitor
 enrolment support and SAPSA validation, modernised the service naming for improved clarity, and
@@ -1265,13 +1265,13 @@ strengthened the CI/CD pipeline with static analysis and code coverage quality g
 
 ---
 
-### 🔌 Milestone 11: Service Consolidation & Type Safety (v5.3.0)
+### Milestone 11: Service Consolidation & Type Safety (v5.3.0)
 
-- ✅ Six custom JPA attribute converters for type-safe enum persistence
-- ✅ IpscMatchResultService and ScoreDto removed; functionality consolidated
-- ✅ DtoMapping converted to Java record for immutability
-- ✅ All bidirectional @OneToMany relationships corrected with mappedBy
-- ✅ Repository queries optimised with Set deduplication and scheduled date constraints
+- Six custom JPA attribute converters for type-safe enum persistence
+- IpscMatchResultService and ScoreDto removed; functionality consolidated
+- DtoMapping converted to Java record for immutability
+- All bidirectional @OneToMany relationships corrected with mappedBy
+- Repository queries optimised with Set deduplication and scheduled date constraints
 
 **Achievement:** Focused service consolidation and type-safety improvements simplifying the service
 architecture, correcting JPA entity relationships, and improving repository query accuracy.
@@ -1546,7 +1546,7 @@ AttributeConverters
 
 ## ✨ Feature Timeline
 
-### 📊 Data Processing Features
+### Data Processing Features
 
 - **v1.0.0:** Image CSV processing, MIME type inference
 - **v1.1.0:** Award CSV processing
@@ -1560,7 +1560,7 @@ AttributeConverters
 - **v6.0.0:** `IpscUtil` for club/match string formatting; `MatchOnlyDto` match pipeline; match search
   request models (`MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest`)
 
-### 🏛️ Domain Management Features
+### Domain Management Features
 
 - **v1.0.0:** Image entities
 - **v1.1.0:** Award entities
@@ -1577,7 +1577,7 @@ AttributeConverters
   `models/ipsc/match/` package split; entity service methods `findClubById`, `findCompetitorById`,
   `findMatchStageCompetitorById`; `DomainServiceImpl` fully decoupled from repositories
 
-### 🌐 API Capabilities
+### API Capabilities
 
 - **v1.0.0:** Image endpoints
 - **v1.1.0:** Award endpoints, OpenAPI documentation
@@ -1592,7 +1592,7 @@ AttributeConverters
 - **v6.0.0:** `/v2/ipsc/matches` CRUD API (POST, PUT, PATCH, GET) via `IpscMatchController`;
   structured logging in `ControllerAdvice`; `IpscMemberController` stub at `/ipsc/member`
 
-### 🧪 Testing Coverage
+### Testing Coverage
 
 - **v1.0.0:** Basic unit tests
 - **v1.1.0:** Service and model tests
@@ -1647,7 +1647,7 @@ AttributeConverters
     - Major suite updates: `TransformationServiceTest` (+747), `DomainServiceTest` (+247),
       `TransactionServiceTest` (+246), `ValueUtilTest` (+294)
 
-### 📚 Documentation Quality
+### Documentation Quality
 
 - **v1.0.0:** Inline Javadoc
 - **v1.1.0:** Standardised documentation, OpenAPI
@@ -1666,7 +1666,7 @@ AttributeConverters
 
 ## 💡 Project Philosophy Evolution
 
-### 🏗️ Initial Phase (v1.0.0)
+### Initial Phase (v1.0.0)
 
 **Focus:** Foundation & Basic Functionality
 
@@ -1675,7 +1675,7 @@ AttributeConverters
 - Create basic API endpoints
 - Error handling foundation
 
-### 📈 Growth Phase (v1.1.0 – v2.0.0)
+### Growth Phase (v1.1.0 – v2.0.0)
 
 **Focus:** Feature Expansion & Modularity
 
@@ -1684,7 +1684,7 @@ AttributeConverters
 - Establish documentation standards
 - Improve code quality
 
-### 🎯 Specialisation Phase (v3.0.0 – v4.0.0)
+### Specialisation Phase (v3.0.0 – v4.0.0)
 
 **Focus:** IPSC Domain Compliance & Quality
 
@@ -1693,7 +1693,7 @@ AttributeConverters
 - Comprehensive testing
 - Production readiness
 
-### 🚀 Maturity Phase (v4.1.0 – v5.0.0)
+### Maturity Phase (v4.1.0 – v5.0.0)
 
 **Focus:** Completeness, Standards & Infrastructure
 
@@ -1702,7 +1702,7 @@ AttributeConverters
 - Infrastructure consolidation
 - Entity initialisation framework
 
-### 🔬 Refinement Phase (v5.1.0 – v5.2.0)
+### Refinement Phase (v5.1.0 – v5.2.0)
 
 **Focus:** Quality, Architecture & Maintainability
 
@@ -1715,7 +1715,7 @@ AttributeConverters
 - Improved code maintainability
 - Long-term maintainability
 
-### 🔌 Consolidation Phase (v5.3.0)
+### Consolidation Phase (v5.3.0)
 
 **Focus:** Service Consolidation, Type Safety & Repository Efficiency
 
@@ -1726,7 +1726,7 @@ AttributeConverters
 - Repository query optimisation for performance and accuracy
 - Continued test suite refinement and integration test expansion
 
-### 👥 Enrolment Phase (v5.4.0)
+### Enrolment Phase (v5.4.0)
 
 **Focus:** Competitor Enrolment, Service Clarity & Comprehensive Test Coverage
 
@@ -1737,7 +1737,7 @@ AttributeConverters
 - Establish Qodana JVM linting and JaCoCo coverage as CI/CD quality gates
 - Package reorganisation (`domain` → `data`) and records restructuring for semantic clarity
 
-### 🆕 API Productisation Phase (v6.0.0)
+### API Productisation Phase (v6.0.0)
 
 **Focus:** Versioned Match API, Repository Decoupling & Package Structure
 
@@ -1754,7 +1754,7 @@ AttributeConverters
 
 ## 📚 Key Learnings
 
-### 🏗️ Architectural Insights
+### Architectural Insights
 
 1. **Service Modularity:** Breaking monolithic services (v2.0.0) dramatically improved testability and
    maintainability
@@ -1762,14 +1762,14 @@ AttributeConverters
 3. **Test-Driven Quality:** Comprehensive test suites enabled confident refactoring and bug fixes
 4. **Documentation Priority:** Early documentation (v1.1.2) established clear system understanding
 
-### 🎨 Design Decisions
+### Design Decisions
 
 1. **DTO Layer:** Introduction in v2.0.0 created crucial separation between API contracts and domain models
 2. **Firearm-Type Classification:** v3.0.0 restructuring improved IPSC compliance without major disruption
 3. **Entity Initialisation Framework:** v5.0.0 consolidation provides a unified pattern for complex entity
    setup4. **Semantic Versioning:** Late adoption (v5.0.0) aligns with industry standards for future releases
 
-### ⚙️ Technical Evolution
+### Technical Evolution
 
 1. **Exception Handling:** Simplified approach (v3.1.0) improved maintainability without sacrificing clarity
 2. **Validation Layers:** Multi-layered validation (v4.0.0) ensures data integrity across tiers
@@ -1837,47 +1837,47 @@ AttributeConverters
 
 Based on the evolution to v6.0.0, the following areas are identified for future enhancement:
 
-### ✅ Recently Completed (v6.0.0)
+### Recently Completed (v6.0.0)
 
-- ✅ `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
-- ✅ `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service
-- ✅ `MatchOnlyDto`, `MatchOnlyRequest`, `MatchOnlyResponse`, `MatchOnlyResultsDto` introduced
-- ✅ `DomainServiceImpl` fully decoupled from JPA repositories; delegates to entity services only
-- ✅ New entity service methods: `findClubById`, `findCompetitorById`, `findMatchStageCompetitorById`
-- ✅ `IpscUtil` added for centralised club/match display-string formatting
-- ✅ All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
-- ✅ Match search request models: `MatchSearchRequest`, `MatchSearchDateRequest`,
+- `IpscMatchController` introduced at `/v2/ipsc/matches` with full CRUD (POST, PUT, PATCH, GET)
+- `IpscMatchService` + `IpscMatchServiceImpl` added as dedicated match management service
+- `MatchOnlyDto`, `MatchOnlyRequest`, `MatchOnlyResponse`, `MatchOnlyResultsDto` introduced
+- `DomainServiceImpl` fully decoupled from JPA repositories; delegates to entity services only
+- New entity service methods: `findClubById`, `findCompetitorById`, `findMatchStageCompetitorById`
+- `IpscUtil` added for centralised club/match display-string formatting
+- All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
+- Match search request models: `MatchSearchRequest`, `MatchSearchDateRequest`,
   `MatchSearchIdRequest`
-- ✅ `IpscMemberController` stub registered at `/ipsc/member`
-- ✅ Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata added to `pom.xml`
-- ✅ 8 new test classes (~1,300 lines); `IpscControllerTest` removed
+- `IpscMemberController` stub registered at `/ipsc/member`
+- Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata added to `pom.xml`
+- 8 new test classes (~1,300 lines); `IpscControllerTest` removed
 
-### ✅ Previously Completed (v5.4.0)
+### Previously Completed (v5.4.0)
 
-- ✅ `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
-- ✅ `IpscMatchService` renamed to `TransformationService`; `TransformationServiceImpl` (1,098 lines)
-- ✅ `ClubIdentifier` abbreviation field added; `ClubIdentifierConverter` updated
-- ✅ SAPSA number validation and competitor deduplication in `CompetitorDto`
-- ✅ 20+ new test classes (~7,000 lines) — the largest single-release expansion
-- ✅ Qodana JVM linting (`jetbrains/qodana-jvm`) integrated into CI/CD
-- ✅ JaCoCo 0.8.14 code coverage profile added; reports to `/coverage`
-- ✅ Package restructure: `ipsc/domain` → `ipsc/data`; records and holders reorganised
-- ✅ PCC Optics division constant and ControllerAdvice error handling fixed
+- `EnrolledCompetitorDto` introduced for enrolled competitor tracking through the IPSC pipeline
+- `IpscMatchService` renamed to `TransformationService`; `TransformationServiceImpl` (1,098 lines)
+- `ClubIdentifier` abbreviation field added; `ClubIdentifierConverter` updated
+- SAPSA number validation and competitor deduplication in `CompetitorDto`
+- 20+ new test classes (~7,000 lines) — the largest single-release expansion
+- Qodana JVM linting (`jetbrains/qodana-jvm`) integrated into CI/CD
+- JaCoCo 0.8.14 code coverage profile added; reports to `/coverage`
+- Package restructure: `ipsc/domain` → `ipsc/data`; records and holders reorganised
+- PCC Optics division constant and ControllerAdvice error handling fixed
 
-### ✅ Previously Completed (v5.3.0 and earlier)
+### Previously Completed (v5.3.0 and earlier)
 
-- ✅ Six custom JPA attribute converters (ClubIdentifier, CompetitorCategory, Division, FirearmType,
+- Six custom JPA attribute converters (ClubIdentifier, CompetitorCategory, Division, FirearmType,
   MatchCategory, PowerFactor)
-- ✅ IpscMatchResultService and ScoreDto removed; match result processing consolidated
-- ✅ DtoMapping converted to Java record for immutability
-- ✅ All @OneToMany relationships corrected with mappedBy declarations
-- ✅ Repository query optimisation (Set deduplication, scheduled date, fetch join removal)
-- ✅ Three-tier mapping architecture (DtoMapping, EntityMapping, DtoToEntityMapping)
-- ✅ Enhanced match entity handling with MatchEntityService
-- ✅ Comprehensive test consolidation across all services and utilities
-- ✅ Test suite reorganisation and consolidation (from v5.1.0, v5.2.0)
+- IpscMatchResultService and ScoreDto removed; match result processing consolidated
+- DtoMapping converted to Java record for immutability
+- All @OneToMany relationships corrected with mappedBy declarations
+- Repository query optimisation (Set deduplication, scheduled date, fetch join removal)
+- Three-tier mapping architecture (DtoMapping, EntityMapping, DtoToEntityMapping)
+- Enhanced match entity handling with MatchEntityService
+- Comprehensive test consolidation across all services and utilities
+- Test suite reorganisation and consolidation (from v5.1.0, v5.2.0)
 
-### 🔄 Short-term (Minor Releases)
+### Short-term (Minor Releases)
 
 - Implement match search endpoints using `MatchSearchRequest`, `MatchSearchDateRequest`,
   `MatchSearchIdRequest`
@@ -1886,7 +1886,7 @@ Based on the evolution to v6.0.0, the following areas are identified for future 
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
 
-### 📦 Medium-term (v6.x+)
+### Medium-term (v6.x+)
 
 - REST API endpoints for enrolled competitor management
 - Additional IPSC data format support
@@ -1895,7 +1895,7 @@ Based on the evolution to v6.0.0, the following areas are identified for future 
 - Performance metrics and monitoring
 - Advanced query optimisation
 
-### 🎯 Long-term (v7.0+)
+### Long-term (v7.0+)
 
 - Potential domain model expansions
 - Real-time match result processing
