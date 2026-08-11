@@ -187,7 +187,8 @@ must be final before anything downstream references them:
 6. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming)
    to `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
 7. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull
-   request, structured as:
+   request. Keep it small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section,
+   high-level only, no line-by-line detail. Structure:
     - `## 🎯 Summary` — two to four bullets on what the release is and why
     - `## 📦 Key Changes` — condensed from the CHANGELOG entry's categories (Added/Changed/Fixed/
       Removed), high-level rather than exhaustive
