@@ -150,7 +150,7 @@ Two documentation-only folders supplement these:
 
 - **Commit in logical chunks.** One concern per commit — do not bundle unrelated changes (e.g. a
   dependency bump, a documentation update, and a bug fix) into a single commit.
-- **Track complex work with a todo list.** For multi-step or non-trivial tasks, maintain a
+- **Track complex work with a todo list.** For multistep or non-trivial tasks, maintain a
   tracked todo list and keep it updated as work progresses, so progress stays visible and the
   work stays on track.
 

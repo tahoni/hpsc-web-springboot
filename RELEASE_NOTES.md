@@ -19,7 +19,7 @@ shooter-log snapshots. No existing enums or converters were needed — `ClubIden
 `FirearmType` (with their existing `AttributeConverter`s) are reused throughout. Alongside the
 domain-model work, this release also lands Flyway-managed database migrations, a Spring Boot
 patch bump that closes several Dependabot security alerts, a `ValueUtil` bug fix, CI/tooling
-cleanup, and a documentation-conventions overhaul.
+clean-up, and a documentation-conventions overhaul.
 
 ---
 
@@ -137,7 +137,7 @@ basis for the future best-4 shooter-log calculation (results, excluding visitors
   returned `null` instead of the default's string form; now explicitly checked and covered by the
   existing test suite.
 
-### 🧹 CI & Tooling Cleanup
+### 🧹 CI & Tooling Clean-up
 
 - Qodana CI workflow (`.github/workflows/code_quality.yml`), `qodana.yaml`, and remaining references in
   `CLAUDE.md` / `ARCHITECTURE.md` removed. CodeQL remains the sole CI security-analysis gate; JaCoCo
@@ -246,8 +246,8 @@ basis for the future best-4 shooter-log calculation (results, excluding visitors
 
 - **Flyway is now a hard requirement for MySQL profiles.** The shipped migration
   (`V7_0_0__create_schema.sql`) is **create-only** — it assumes a genuinely empty database. A
-  pre-existing MySQL database that isn't already in the exact v7.0.0 shape will need manual
-  reconciliation (or an appropriate Flyway baseline) before this migration will apply cleanly; there is
+  pre-existing MySQL database not already in the exact v7.0.0 shape will need manual
+  reconciliation (or an appropriate Flyway baseline) before this, migration will apply cleanly; there is
   no longer a baseline-plus-evolve path for pre-v7.0.0 databases.
 - The H2 `test` profile is unaffected — it continues to use Hibernate `ddl-auto=create-drop` with
   Flyway disabled.
@@ -264,7 +264,7 @@ basis for the future best-4 shooter-log calculation (results, excluding visitors
 - **`MatchCompetitor.firearmType`** is now non-nullable; anything constructing a `MatchCompetitor`
   without a firearm type will fail at persistence time.
 - No service, controller, or import-pipeline code references these classes yet in this release, so
-  there are no call sites to update outside of tests exercising the domain layer directly.
+  there are no call sites to update outside tests exercising the domain layer directly.
 
 ---
 
