@@ -3,7 +3,7 @@
 The official repository for the Spring Boot backend of the Hartbeespoortdam Practical Shooting Club
 (HPSC) platform.
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [📖 Introduction](#-introduction)
 - [🔗 Repository](#-repository)
@@ -15,6 +15,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [📚 API Documentation](#-api-documentation)
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
+- [📚 Documentation](#-documentation)
 - [📜 Licence](#-licence)
 - [👤 Author](#-author)
 
@@ -44,14 +45,14 @@ Feature requests, suggestions for improvements, and bugs can be logged using the
 
 This is a Spring Boot application built with:
 
-- **Framework**: [Spring Boot 4.0.2](https://spring.io/projects/spring-boot)
-- **Language**: [Java 25](https://www.oracle.com/java/)
-- **Build Tool**: [Maven 3.9+](https://maven.apache.org/)
-- **Database**: MySQL with Spring Data JPA and Hibernate 7.2
+- **Framework**: [Spring Boot](https://spring.io/projects/spring-boot)
+- **Language**: [Java](https://www.oracle.com/java/)
+- **Build Tool**: [Maven](https://maven.apache.org/) (or the provided `./mvnw` wrapper)
+- **Database**: MySQL with Spring Data JPA and Hibernate
 - **Data Processing**: Jackson (JSON, CSV, XML), Apache Commons Lang3
-- **API Documentation**: SpringDoc OpenAPI 2.8.5 (Swagger UI)
+- **API Documentation**: SpringDoc OpenAPI (Swagger UI)
 - **Validation**: Hibernate Validator with Jakarta Validation
-- **Testing**: JUnit 5, Mockito, Spring Test, Spring REST Docs
+- **Testing**: JUnit, Mockito, Spring Test, Spring REST Docs
 
 Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
@@ -68,15 +69,15 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
 - **Data Integrity**: Multi-layered validation (controller, service, entity) with detailed error reporting.
 - **Comprehensive Testing**: Extensive unit and integration test coverage with Spring Test and Mockito.
-- **Modern Tech Stack**: Leveraging Java 25 features and Spring Boot 4 framework.
+- **Modern Tech Stack**: Leveraging current Java language features and the Spring Boot framework.
 
 ## 🚀 Instructions
 
 ### 📋 Prerequisites
 
-- **Java SDK**: Version 25 or higher
-- **Maven**: Version 3.9+ (or use the provided `./mvnw` wrapper)
-- **MySQL**: Version 8.0+ (or compatible database)
+- **Java SDK**: See `<java.version>` in `pom.xml` for the required version
+- **Maven**: Use the provided `./mvnw` wrapper (pins its own version automatically), or a compatible local install
+- **MySQL**: Any current version (or a compatible database)
 - **Database Configuration**: Configure connection details in `application.properties`
 
 ### 🔧 Installation and Execution
@@ -138,7 +139,7 @@ The application includes comprehensive test coverage with unit and integration t
 
 - **Unit Tests**: Domain entities, DTOs, enums, utilities, and service logic
 - **Integration Tests**: Service implementations and data access layers
-- **Test Frameworks**: JUnit 5, Mockito, Spring Test, AssertJ
+- **Test Frameworks**: JUnit, Mockito, Spring Test, AssertJ
 
 Test coverage includes:
 
@@ -152,6 +153,33 @@ Test coverage includes:
 ## 🏛️ Architecture
 
 A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md`](ARCHITECTURE.md) file.
+
+## 📚 Documentation
+
+This project's documentation is spread across a few files, each with a distinct purpose:
+
+| File                                   | Purpose                                                                                         |
+|----------------------------------------|-------------------------------------------------------------------------------------------------|
+| [`README.md`](README.md)               | Project overview, setup, and links to the rest of the documentation (this file)                 |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure, and CI/CD quality gates                       |
+| [`CLAUDE.md`](CLAUDE.md)               | Guidance for Claude Code (AI assistant) when working in this repository                         |
+| [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
+| [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |
+| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Detailed release notes for the current/latest version                                           |
+| [`LICENSE.md`](LICENSE.md)             | MIT Licence                                                                                     |
+| [`HELP.md`](HELP.md)                   | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
+
+[`documentation/history/`](documentation/history) holds one `RELEASE_NOTES_vX.Y.Z.md` per released
+version — an archived snapshot of `RELEASE_NOTES.md` at release time — so past releases stay
+individually referenceable once `RELEASE_NOTES.md` moves on to the next version.
+
+[`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release
+archive covering versions 1.x – 4.x, from before the project adopted its current documentation
+structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only
+and isn't maintained going forward.
+
+This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see
+[CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 
 ## 📜 Licence
 

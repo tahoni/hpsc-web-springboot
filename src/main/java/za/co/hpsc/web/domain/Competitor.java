@@ -37,6 +37,10 @@ public class Competitor {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "home_club_id")
+    private Club homeClub;
+
     @Column(name = "sapsa_number")
     private Integer sapsaNumber;
 

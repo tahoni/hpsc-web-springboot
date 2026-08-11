@@ -3,7 +3,7 @@
 This document describes the architectural design, directory structure, and core concepts
 of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [⚙️ Technology Stack](#-technology-stack)
 - [📁 Project Structure](#-project-structure)
@@ -28,22 +28,21 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## ⚙️ Technology Stack
 
-| Component         | Technology                                                                |
-|-------------------|---------------------------------------------------------------------------|
-| Framework         | Spring Boot 4.0.6                                                         |
-| Language          | Java 25                                                                   |
-| Build             | Maven 3.9+                                                                |
-| Database (prod)   | MySQL (env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                          |
-| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                              |
-| ORM               | Spring Data JPA, Hibernate 7.2                                            |
-| Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                              |
-| API documentation | SpringDoc OpenAPI 2.8.5 (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
-| Validation        | Hibernate Validator, Jakarta Validation                                   |
-| Testing           | JUnit 5, Mockito, Spring Test                                             |
-| Code coverage     | JaCoCo 0.8.14 (Maven `coverage` profile)                                  |
-| Static analysis   | Qodana JVM (`jetbrains/qodana-jvm`)                                       |
-| Code generation   | Lombok                                                                    |
-| Port / context    | `8081` / `/hpsc-web`                                                      |
+| Component         | Technology                                                          |
+|-------------------|---------------------------------------------------------------------|
+| Framework         | Spring Boot (see `pom.xml` for the pinned version)                  |
+| Language          | Java (see `<java.version>` in `pom.xml`)                            |
+| Build             | Maven, via the provided `./mvnw` wrapper                            |
+| Database (prod)   | MySQL (env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                    |
+| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
+| ORM               | Spring Data JPA, Hibernate                                          |
+| Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
+| API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
+| Validation        | Hibernate Validator, Jakarta Validation                             |
+| Testing           | JUnit, Mockito, Spring Test                                         |
+| Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
+| Code generation   | Lombok                                                              |
+| Port / context    | `8081` / `/hpsc-web`                                                |
 
 ---
 
@@ -51,11 +50,11 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ```text
 ├───.github/
-│   └───workflows/              # GitHub Actions — CI/CD, CodeQL, Qodana
+│   └───workflows/              # GitHub Actions — CI/CD, CodeQL
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
-│   ├───archive/                # Legacy release archive
-│   └───history/                # Per-version release notes, README, history
+│   ├───archive/                # Legacy release archive (see ARCHIVE.md)
+│   └───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
@@ -73,6 +72,7 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   ├───domain/             # JPA entities (database tables)
 │   │   │                           Club, Competitor, IpscMatch, IpscMatchStage
 │   │   │                           MatchCompetitor, MatchStageCompetitor
+│   │   │                           ShooterLog, ShooterLogEntry
 │   │   ├───enums/              # Domain enumerations
 │   │   │                           ClubIdentifier, CompetitorCategory, Division
 │   │   │                           FirearmType, MatchCategory, PowerFactor
@@ -208,16 +208,18 @@ All `@Transactional` boundaries live in the service layer.
 
 #### Domain Entities (`za.co.hpsc.web.domain`)
 
-Six JPA entities map to database tables:
+The JPA entities map to database tables:
 
-| Entity                 | Table                    | Key Relationships                                                       |
-|------------------------|--------------------------|-------------------------------------------------------------------------|
-| `Club`                 | `club`                   | One-to-many → `IpscMatch`                                               |
-| `Competitor`           | `competitor`             | One-to-many → `MatchCompetitor`                                         |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor` |
-| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`         |
-| `MatchCompetitor`      | `match_competitor`       | Many-to-one ← `IpscMatch`, `Competitor`                                 |
-| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                       |
+| Entity                 | Table                    | Key Relationships                                                                                |
+|------------------------|--------------------------|--------------------------------------------------------------------------------------------------|
+| `Club`                 | `club`                   | One-to-many → `IpscMatch`, `Competitor` (home club), `ShooterLog`                                |
+| `Competitor`           | `competitor`             | Many-to-one ← `Club` (home club, optional); One-to-many → `MatchCompetitor`, `ShooterLog`        |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor`                          |
+| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`                                  |
+| `MatchCompetitor`      | `match_competitor`       | Many-to-one ← `IpscMatch`, `Competitor`; One-to-many → `MatchStageCompetitor`, `ShooterLogEntry` |
+| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                                                |
+| `ShooterLog`           | `shooter_log`            | Many-to-one ← `Competitor`, `Club`; One-to-many → `ShooterLogEntry`                              |
+| `ShooterLogEntry`      | `shooter_log_entry`      | Many-to-one ← `ShooterLog`, `MatchCompetitor`                                                    |
 
 All bidirectional `@OneToMany` relationships include `mappedBy` to avoid duplicate join table creation.
 
@@ -419,9 +421,8 @@ Client → POST|PUT|PATCH|GET /v2/ipsc/matches[/{matchId}]
 
 | Gate                  | Tool                                | Trigger                                                             |
 |-----------------------|-------------------------------------|---------------------------------------------------------------------|
-| **Static Analysis**   | Qodana JVM (`jetbrains/qodana-jvm`) | Push / PR to `main`, `develop`, `feature/*`, `bugfix/*`, `hotfix/*` |
 | **Security Analysis** | CodeQL                              | Push / PR to `main` / `develop`; weekly schedule                    |
-| **Code Coverage**     | JaCoCo 0.8.14                       | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`       |
+| **Code Coverage**     | JaCoCo                              | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`       |
 | **Build & Tests**     | Maven (`./mvnw test`)               | All PRs; H2 in-memory — no external DB required                     |
 
 ---
@@ -429,7 +430,8 @@ Client → POST|PUT|PATCH|GET /v2/ipsc/matches[/{matchId}]
 ## 📚 Development Guidelines
 
 Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for
-local setup, build commands, database profiles, and coding standards.
+local setup, build commands, database profiles, and coding standards. See README.md's
+[📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 
