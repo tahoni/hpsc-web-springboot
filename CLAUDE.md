@@ -47,9 +47,8 @@ Tests activate the `test` profile automatically; no database setup is required t
 
 ## Code Quality & CI
 
-- **Qodana** (JetBrains): primary quality gate, runs on push/PR to `main`, `develop`, `feature/*`, `bugfix/*`, `hotfix/*`, `releases/*`. Config: `qodana.yaml`. Baseline: `baseline.sarif.json`.
 - **CodeQL**: security analysis, runs on push/PR to `main`/`develop` and weekly. Config: `.github/workflows/codeql.yml`.
-- **JaCoCo**: coverage integrated into the `coverage` Maven profile; reports are consumed by Qodana.
+- **JaCoCo**: coverage integrated into the `coverage` Maven profile; reports written to `target/site/jacoco/`.
 
 ## Architecture
 

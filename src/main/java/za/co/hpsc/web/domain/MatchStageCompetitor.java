@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import za.co.hpsc.web.converters.*;
-import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +12,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "match_stage_competitor")
+@Table(name = "match_stage_competitor",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"match_competitor_id", "match_stage_id"}))
 public class MatchStageCompetitor {
 
     @Id
@@ -22,31 +21,12 @@ public class MatchStageCompetitor {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "competitor_id", nullable = false)
-    private Competitor competitor;
+    @JoinColumn(name = "match_competitor_id", nullable = false)
+    private MatchCompetitor matchCompetitor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_stage_id", nullable = false)
     private IpscMatchStage matchStage;
-
-    @Convert(converter = ClubIdentifierConverter.class)
-    @Column(name = "match_club")
-    private ClubIdentifier matchClub;
-
-    @Convert(converter = CompetitorCategoryConverter.class)
-    @Column(name = "competitor_category")
-    private CompetitorCategory competitorCategory;
-
-    @Convert(converter = FirearmTypeConverter.class)
-    @Column(name = "firearm_type")
-    private FirearmType firearmType;
-
-    @Convert(converter = DivisionConverter.class)
-    private Division division;
-
-    @Convert(converter = PowerFactorConverter.class)
-    @Column(name = "power_factor")
-    private PowerFactor powerFactor;
 
     @Column(name = "score_a")
     private Integer scoreA;

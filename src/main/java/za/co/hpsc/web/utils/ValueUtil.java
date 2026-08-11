@@ -177,6 +177,7 @@ public final class ValueUtil {
      */
     public static <T> String nullAsDefaultString(T value, T defaultValue) {
         String defaultString = ((defaultValue != null) ? defaultValue.toString() : null);
-        return ((value != null) ? value.toString() : defaultString);
+        String valueString = ((value != null) ? value.toString() : null);
+        return ((valueString != null) ? valueString : defaultString);
     }
 }
