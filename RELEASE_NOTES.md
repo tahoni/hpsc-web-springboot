@@ -1,179 +1,104 @@
-# Release Notes – Version 6.0.0
+# Release Notes – Version 7.0.0
 
-**Release Date:** May 1, 2026  
-**Status:** ✨ Stable
+**Release Date:** TBD
+**Status:** 🚧 In Development (domain layer only — not yet wired into services/controllers, not yet committed)
 
 ---
 
 ## 🎯 Theme
 
-**Dedicated Match CRUD API, Service Encapsulation & Package Restructuring**
+**Match Results, Visitor Tracking & Shooter Log Data Model**
 
-Version 6.0.0 introduces a dedicated IPSC match management REST API at `/v2/ipsc/matches`, backed by the
-new `IpscMatchService` and a full set of match-specific request/response models. `DomainServiceImpl` is
-decoupled from JPA repositories and now delegates entirely to entity services, improving testability and
-layering. All IPSC model classes are reorganised under a `common` sub-package with a dedicated
-`match` sub-package for match-only models. Three new match search request types are introduced for
-future query endpoints, `IpscUtil` lands as a dedicated string-formatting utility, and Spring Boot is
-upgraded to 4.0.6. The release is supported by eight new test classes covering the new controller,
-service, DTOs, and utility.
+Version 7.0.0 (in progress) extends the IPSC domain model to support club-scoped results, match
+visitors, and a persisted "shooter log" — the best-4-matches ranking used by HPSC. The six entities
+that had been parked under `domain/old/` (pending a redesign) are promoted back into the live `domain`
+package, extended with the new fields and relations, and paired with a full set of Spring Data
+repositories (the `repositories/` package was previously emptied in preparation for this rework). Two
+new entities, `ShooterLog` and `ShooterLogEntry`, are introduced to persist shooter-log snapshots. No
+existing enums or converters were needed — `ClubIdentifier` and `FirearmType` (with their existing
+`AttributeConverter`s) are reused throughout.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 🆕 Dedicated Match CRUD API
+### 🏛️ Domain Package Promotion
 
-- **`IpscMatchController`** — new controller mapped to `/v2/ipsc/matches` (134 lines)
-    - `POST /v2/ipsc/matches` — create a new IPSC match
-    - `PUT /v2/ipsc/matches/{matchId}` — fully replace an existing match
-    - `PATCH /v2/ipsc/matches/{matchId}` — partially update an existing match
-    - `GET /v2/ipsc/matches/{matchId}` — retrieve a match by ID
-    - Full OpenAPI / Swagger annotations on all four operations
-    - Returns `ResponseEntity<MatchOnlyResponse>` with typed error responses
-- **`IpscMemberController`** — stub controller registered at `/ipsc/member` for upcoming member management
+- `domain/old/` (6 files: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`,
+  `MatchStageCompetitor`) removed entirely.
+- Their content is promoted into `za.co.hpsc.web.domain` (package `.old` dropped) and extended per the
+  changes below — this restores the entities to the location the (now-empty) `repositories/` package
+  and `CLAUDE.md`'s architecture table already expected.
 
-### 🏗️ IpscMatchService Layer
+### 🏢 Club — Formal Club Identity
 
-- **`IpscMatchService` interface** (22 lines) — dedicated service contract for match operations:
-    - `insertMatch(MatchOnlyRequest)` → `Optional<MatchOnlyResponse>`
-    - `updateMatch(Long matchId, MatchOnlyRequest)` → `Optional<MatchOnlyResponse>`
-    - `modifyMatch(Long matchId, MatchOnlyRequest)` → `Optional<MatchOnlyResponse>`
-    - `getMatch(Long matchId)` → `Optional<MatchOnlyResponse>`
-- **`IpscMatchServiceImpl`** (135 lines) — full implementation backed by `DomainService` and
-  `TransactionService`
+- New column **`identifier`** (`ClubIdentifier`, via the existing `ClubIdentifierConverter`, unique) —
+  ties a `Club` row to `HPSC` / `SOSC` / `PMPSC`. Only three rows are expected to exist; visitors are
+  **not** modelled as a fourth club row, they're derived relationally (see `MatchCompetitor` below).
 
-### 📦 Match-Specific Model Layer
+### 🧍 Competitor — Home Club Membership
 
-- **`MatchOnlyDto`** (82 lines) — lightweight match DTO without stages; initialised from
-  `MatchOnlyRequest` with automatic firearm-type resolution and timestamp stamping
-- **`MatchOnlyRequest`** (49 lines) — JSON request body for match create / update operations
-- **`MatchOnlyResponse`** (83 lines) — response envelope for match operations
-- **`MatchOnlyResultsDto`** (18 lines) — internal holder passed through the service chain
+- New relation **`homeClub`** (`@ManyToOne Club`, nullable `home_club_id`) — "member of club". Nullable
+  so an unaffiliated visitor can be recorded without forcing a home club.
 
-### 🔍 Match Search Request Models
+### 🏆 MatchCompetitor — Per-Entry Results, Visitors & Multi-Firearm Entries
 
-Three new request types for future query/search endpoints:
-- **`MatchSearchRequest`** — multi-criteria: match IDs array, name, date range
-- **`MatchSearchDateRequest`** — date-range search: `startDate`, `endDate`, `matchName`
-- **`MatchSearchIdRequest`** — ID-array-based lookup
+One row per competitor **per firearm-type entry** in a match:
 
-### 🔧 DomainServiceImpl — Repository Decoupling
+- **`overallRanking`** (renamed from `matchRanking`) — rank across all competitors in the match for
+  that firearm type.
+- **`clubRanking`** *(new)* — rank among only same-club (`matchClub`) competitors in the match for that
+  firearm type.
+- **`isVisitor`** *(new, `Boolean`)* — `true` when `matchClub` differs from the host match's club.
+- **New unique constraint** `(competitor_id, match_id, firearm_type)` — a competitor may only have
+  multiple entries in the same match if the firearm type differs.
 
-`DomainServiceImpl` no longer injects JPA repositories directly. All data access is now routed through
-entity services, completing the intended layering:
+### 🎯 MatchStageCompetitor — Restructured to Follow the Firearm-Type Entry
 
-```
-Before v6.0.0:
-DomainServiceImpl → ClubRepository
-                 → CompetitorRepository
-                 → IpscMatchRepository
-                 → IpscMatchStageRepository
-                 → MatchCompetitorRepository
-                 → MatchStageCompetitorRepository
+- **Replaced** the direct `competitor` FK (plus duplicated `matchClub` / `competitorCategory` /
+  `firearmType` / `division` / `powerFactor` fields) with a single **`matchCompetitor`** FK
+  (`@ManyToOne MatchCompetitor`). A stage score now correctly attaches to the specific firearm-type
+  entry it belongs to — required once a competitor can have more than one `MatchCompetitor` row per
+  match (see above). All category/division/firearm/power-factor/club data is inherited via the
+  relation instead of being duplicated.
+- **New unique constraint** `(match_competitor_id, match_stage_id)`.
+- All existing per-stage scoring fields (`scoreA`-`scoreD`, `points`, `misses`, `penalties`,
+  `procedurals`, `hasDeduction`, `deductionPercentage`, `time`, `hitFactor`, `stagePoints`,
+  `stagePercentage`, `stageRanking`, `isDisqualified`) are unchanged.
 
-After v6.0.0:
-DomainServiceImpl → ClubEntityService
-                 → CompetitorEntityService
-                 → MatchEntityService
-                 → MatchStageEntityService
-                 → MatchCompetitorEntityService
-                 → MatchStageCompetitorEntityService
-```
+### 📅 IpscMatchStage — Stage Numbering Constraint
 
-New entity service methods that were added to support the refactor:
+- **New unique constraint** `(match_id, stage_number)`.
 
-- `ClubEntityService.findClubById(Long)` / `ClubEntityServiceImpl` implementation
-- `CompetitorEntityService.findCompetitorById(Long)` / implementation
-- `MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)` / implementation
+### 📊 Shooter Log — New Persisted Snapshot
 
-### 📂 IPSC Model Package Restructuring
+- **`ShooterLog`** *(new entity)* — `competitor` FK, `club` FK (the qualifying club, e.g. HPSC),
+  `firearmType` (existing converter), `logValue` (`BigDecimal(19,6)`, the average of the best 4 match
+  scores), `calculatedDate`.
+- **`ShooterLogEntry`** *(new entity)* — links a `ShooterLog` snapshot to the specific
+  `MatchCompetitor` rows that contributed to it, with `rankInLog` (1–4) and a unique constraint
+  `(shooter_log_id, match_competitor_id)`.
+- No calculation job/service exists yet — this release only adds the persistence shape; a scheduled or
+  on-demand recalculation service is future work.
 
-All IPSC model classes previously at `models/ipsc/` are now grouped under `models/ipsc/common/`,
-with a new sibling sub-package `models/ipsc/match/` for match-only models:
+### 🗄️ Repositories — Rebuilt From Scratch
 
-```
-models/ipsc/
-├── common/
-│   ├── data/            (DtoMapping, DtoToEntityMapping, EntityMapping)
-│   ├── divisions/       (all firearm-type division classes)
-│   ├── dto/             (ClubDto, CompetitorDto, MatchDto, MatchStageDto, …)
-│   ├── holders/
-│   │   ├── data/        (MatchHolder)
-│   │   ├── dto/         (MatchResultsDto, MatchResultsDtoHolder)
-│   │   ├── records/     (IpscMatchRecordHolder)
-│   │   ├── request/     (IpscRequestHolder)
-│   │   └── response/    (IpscResponseHolder)
-│   ├── records/         (CompetitorRecord, CompetitorResultRecord, …)
-│   ├── request/         (IpscRequest, MatchRequest, MatchSearchRequest, …)
-│   └── response/        (ClubResponse, EnrolledResponse, IpscResponse, MatchResponse, …)
-└── match/
-    ├── dto/             (MatchOnlyDto)
-    ├── holders/dto/     (MatchOnlyResultsDto)
-    ├── request/         (MatchOnlyRequest)
-    └── response/        (MatchOnlyResponse)
-```
+The `repositories/` package was empty (repositories for these six entities were deliberately removed in
+a prior commit pending this redesign). Eight `JpaRepository<Entity, Long>` interfaces were (re)created:
 
-### 🛠️ IpscUtil — Match & Club String Formatting
+| Repository                       | Finder methods                                                                                  |
+|-----------------------------------|---------------------------------------------------------------------------------------------------|
+| `ClubRepository`                  | `findByName`, `findByAbbreviation`, `findByIdentifier`                                            |
+| `CompetitorRepository`            | `findByClubNumber`                                                                                |
+| `IpscMatchRepository`             | `findAllByClubId`                                                                                 |
+| `IpscMatchStageRepository`        | `findAllByMatchIdOrderByStageNumber`                                                              |
+| `MatchCompetitorRepository`       | `findAllByCompetitorIdAndMatchId`, `findAllByMatchIdAndFirearmType`, `findAllByCompetitorIdAndFirearmTypeAndIsVisitorFalse` |
+| `MatchStageCompetitorRepository`  | `findAllByMatchCompetitorId`                                                                       |
+| `ShooterLogRepository`            | `findAllByCompetitorIdAndFirearmType`                                                             |
+| `ShooterLogEntryRepository`       | `findAllByShooterLogId`                                                                            |
 
-New utility class `IpscUtil` (66 lines) centralises display-string construction:
-- `clubTostring(name, abbreviation)` — concatenates name + `(abbreviation)`, collapses duplicates
-- `matchToString(name, clubName, abbreviation)` — builds `"Match Name @ Club (ABBR)"` format
-- `matchToString(name, ClubDto)` — convenience overload for `ClubDto`-based callers
-
-### 🔄 TransformationService Updates
-
-- `mapMatchResults` no longer declares `throws ValidationException` — exception converted to a
-  runtime path internally
-- New `mapMatchOnly(MatchOnlyRequest)` method added to support the match CRUD pipeline
-
-### 🪵 Enhanced Logging & Error Handling
-
-- **`ControllerAdvice`** (119 lines changed) — structured logging added to all exception handlers;
-  `ValidationException` removed from method signatures
-- **`logback-spring.xml`** — additional appender/logger configuration added
-
-### ⬆️ Spring Boot 4.0.6 Upgrade
-
-- `spring-boot-dependencies` BOM bumped from `4.0.5` to `4.0.6`
-- Lombok exclusion plugin configuration reorganised under the Spring Boot plugin block
-
-### 📜 pom.xml Metadata
-
-- MIT Licence declaration added (`<license>`)
-- Developer profile populated (`<developer>: tahoni / Leoni Lubbinge`)
-- SCM connection and URL filled in for GitHub
-
-### 🧪 Test Coverage Expansion
-
-Eight new test classes were added; and one removed.
-
-#### New Test Classes
-
-| Class                      | Lines | Scope                                         |
-|----------------------------|-------|-----------------------------------------------|
-| `IpscMatchControllerTest`  | 49    | Unit — controller layer                       |
-| `IpscMatchServiceTest`     | 269   | Unit — service layer                          |
-| `IpscMatchIntegrationTest` | 237   | Integration — H2 in-memory                    |
-| `MatchOnlyDtoTest`         | 202   | Unit — DTO init and field mapping             |
-| `MatchOnlyRequestTest`     | 234   | Unit — request constructor and field mapping  |
-| `MatchOnlyResponseTest`    | 165   | Unit — response constructor and field mapping |
-| `MatchResponseTest`        | 46    | Unit — common response model                  |
-| `IpscUtilTest`             | 114   | Unit — string formatting utility              |
-
-#### Updated Test Classes
-
-- **`TransformationServiceTest`** — +747 lines covering `mapMatchOnly` and updated signatures
-- **`DomainServiceTest`** — +247 lines covering entity-service delegation
-- **`TransactionServiceTest`** — +246 lines covering `findMatchStageCompetitorById` path
-- **`ValueUtilTest`** — +294 lines covering null-handling improvements
-- **`IpscServiceIntegrationTest`** — +99 lines for expanded integration scenarios
-- Domain entity and DTO tests updated for `common` package path changes
-
-#### Removed Test Classes
-
-- **`IpscControllerTest`** (156 lines) — match operations moved to `IpscMatchController`; covered by
-  `IpscMatchControllerTest`
+`findAllByCompetitorIdAndFirearmTypeAndIsVisitorFalse` on `MatchCompetitorRepository` is the intended
+basis for the future best-4 shooter-log calculation (results, excluding visitors, per firearm type).
 
 ---
 
@@ -181,184 +106,94 @@ Eight new test classes were added; and one removed.
 
 ### Added
 
-#### Controllers
+#### Domain
 
-- `IpscMatchController` — `/v2/ipsc/matches` CRUD API (POST, PUT, PATCH, GET)
-- `IpscMemberController` — `/ipsc/member` stub (placeholder for member management)
+- `za.co.hpsc.web.domain.ShooterLog`
+- `za.co.hpsc.web.domain.ShooterLogEntry`
+- `Club.identifier` (`ClubIdentifier`)
+- `Competitor.homeClub` (`Club`)
+- `MatchCompetitor.clubRanking`, `MatchCompetitor.isVisitor`
+- `IpscMatchStage` unique constraint `(match_id, stage_number)`
+- `MatchCompetitor` unique constraint `(competitor_id, match_id, firearm_type)`
+- `MatchStageCompetitor` unique constraint `(match_competitor_id, match_stage_id)`
 
-#### Services
+#### Repositories
 
-- `IpscMatchService` interface — match CRUD contract
-- `IpscMatchServiceImpl` — match CRUD implementation
-
-#### Entity Service Methods
-
-- `ClubEntityService.findClubById(Long)`
-- `CompetitorEntityService.findCompetitorById(Long)`
-- `MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)`
-
-#### Models
-
-- `models/ipsc/match/dto/MatchOnlyDto`
-- `models/ipsc/match/request/MatchOnlyRequest`
-- `models/ipsc/match/response/MatchOnlyResponse`
-- `models/ipsc/match/holders/dto/MatchOnlyResultsDto`
-- `models/ipsc/common/request/MatchSearchRequest`
-- `models/ipsc/common/request/MatchSearchDateRequest`
-- `models/ipsc/common/request/MatchSearchIdRequest`
-
-#### Utilities
-
-- `IpscUtil` — club and match display-string formatting
+- `ClubRepository`, `CompetitorRepository`, `IpscMatchRepository`, `IpscMatchStageRepository`,
+  `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`,
+  `ShooterLogEntryRepository`
 
 ### Changed
 
-#### Package Paths (breaking for internal code only)
-
-- All `models/ipsc/` classes moved to `models/ipsc/common/` — update all import statements
-- `ClubResponse`, `MatchResponse`: `models/ipsc/response/` → `models/ipsc/common/response/`
-
-#### Services
-
-- `DomainServiceImpl` — replaced direct repository injection with entity service injection
-- `TransformationServiceImpl` — imports updated to `models/ipsc/common/*`; `mapMatchOnly` added
-- `TransformationService.mapMatchResults` — `throws ValidationException` removed from signature
-- `IpscController` — match-related endpoints extracted to `IpscMatchController` (78 lines removed)
-
-#### Config & Infrastructure
-
-- `ControllerAdvice` — logging added; `ValidationException` removed from handler signatures
-- `pom.xml` — Spring Boot 4.0.5 → 4.0.6; license, developer, SCM metadata populated
-- `logback-spring.xml` — additional logger configuration
+- `za.co.hpsc.web.domain.old.*` → promoted to `za.co.hpsc.web.domain.*` (package dropped)
+- `MatchCompetitor.matchRanking` renamed to `overallRanking`
+- `MatchStageCompetitor` — FK changed from `competitor` to `matchCompetitor`; duplicated
+  category/division/firearm-type/power-factor/club fields removed (now inherited via the relation)
 
 ### Removed
 
-#### Source
-
-- Direct repository injection from `DomainServiceImpl`
-- Old `models/ipsc/response/ClubResponse` (superseded by `common/response/ClubResponse`)
-- Old `models/ipsc/response/MatchResponse` (superseded by `common/response/MatchResponse`)
-
-#### Tests
-
-- `IpscControllerTest` — replaced by `IpscMatchControllerTest`
+- `za.co.hpsc.web.domain.old` package (all 6 files) — superseded by the promoted/extended entities above
 
 ---
 
-## 🔄 Migration Guide
+## 🧭 Design Notes
 
-### For Developers
-
-#### Import Path Changes
-
-All IPSC model imports must be updated from `models/ipsc.*` to `models/ipsc.common.*`:
-
-```java
-// Before
-import za.co.hpsc.web.models.ipsc.dto.*;
-import za.co.hpsc.web.models.ipsc.request.*;
-import za.co.hpsc.web.models.ipsc.response.*;
-import za.co.hpsc.web.models.ipsc.holders.data.MatchHolder;
-import za.co.hpsc.web.models.ipsc.records.*;
-
-// After
-import za.co.hpsc.web.models.ipsc.common.dto.*;
-import za.co.hpsc.web.models.ipsc.common.request.*;
-import za.co.hpsc.web.models.ipsc.common.response.*;
-import za.co.hpsc.web.models.ipsc.common.holders.data.MatchHolder;
-import za.co.hpsc.web.models.ipsc.common.records.*;
-```
-
-Match-specific models are under the new `match` sub-package:
-
-```java
-import za.co.hpsc.web.models.ipsc.match.dto.MatchOnlyDto;
-import za.co.hpsc.web.models.ipsc.match.request.MatchOnlyRequest;
-import za.co.hpsc.web.models.ipsc.match.response.MatchOnlyResponse;
-```
-
-#### DomainServiceImpl
-
-If you extend or test `DomainServiceImpl` directly, update constructor injection — the six repository
-parameters are replaced by the six entity service parameters in the same order.
-
-#### TransformationService
-
-Remove any `catch (ValidationException e)` blocks around `mapMatchResults` calls — the method no
-longer declares that checked exception.
-
-### For API Consumers
-
-No breaking changes to existing public API endpoints. All prior endpoints under `/v1/ipsc/` remain
-unchanged. The new match CRUD endpoints are additive at `/v2/ipsc/matches`.
-
----
-
-## 📊 Statistics
-
-- **Total Commits:** 40
-- **Files Changed:** 165
-- **Insertions:** 6,779 lines
-- **Deletions:** 3,501 lines
-- **Net Change:** +3,278 lines
-- **New Source Files:** 15
-- **New Test Files:** 8
-- **Deleted Test Files:** 1
+- **Visitors are relational, not a 4th club row.** A `MatchCompetitor` entry is a visitor when its
+  `matchClub` differs from the hosting match's `club`. `Club` only ever holds the three real clubs
+  (HPSC, SOSC, PMPSC).
+- **Overall vs. club results live on the same row.** Rather than a separate `MatchResult` table,
+  `overallRanking` and `clubRanking` are both columns on `MatchCompetitor`, since a result is always
+  1:1 with a competitor's firearm-type entry in a match.
+- **Per-stage results were already close to correct** — the only structural gap was that stage scores
+  pointed at `Competitor` instead of the specific `MatchCompetitor` entry, which breaks once a
+  competitor can have multiple firearm-type entries in one match (req: multi-entry support). Fixed by
+  repointing the FK.
+- **Shooter logs are persisted snapshots, not a live view** — chosen so historical shooter-log values
+  survive even after new matches are scored, at the cost of needing a (not-yet-built) recalculation
+  step.
 
 ---
 
 ## 🧪 Testing
 
-### Test Execution Summary
-
-- **Unit Tests:** All passing
-- **Integration Tests:** All passing
-- **Coverage Areas:**
-    - `IpscMatchController` endpoint routing and response mapping
-    - `IpscMatchService` insert / update / modify / get paths
-    - `IpscMatchIntegrationTest` end-to-end match persistence via H2
-    - `MatchOnlyDto` initialisation from request and entity
-    - `MatchOnlyRequest` / `MatchOnlyResponse` constructor and field coverage
-    - `IpscUtil` club and match string formatting edge cases
-    - `DomainService` entity-service delegation
-    - `TransactionService` `findMatchStageCompetitorById` path
-    - Null handling in `ValueUtil` expansions
-    - `TransformationService.mapMatchOnly` behaviour
+- `./mvnw clean compile` — all 8 entities and 8 repositories compile cleanly.
+- `./mvnw test -Dtest=HpscWebApplicationTests` — Spring context boots against H2
+  (`ddl-auto=create-drop`); Hibernate successfully builds the schema for all 8 entities, validating
+  every `@JoinColumn`, converter, and unique constraint. **Result:** 1/1 passing.
+- No dedicated unit/integration tests were added for the new/changed entities or repositories in this
+  pass — see Known Issues.
 
 ---
 
 ## 🐛 Known Issues
 
-None reported.
+- No repository-level or service-level test coverage yet for the new/changed domain model.
+- No service, controller, or CSV/XML import wiring for `homeClub`, `clubRanking`, `isVisitor`,
+  `ShooterLog`, or `ShooterLogEntry` — the entities exist but nothing populates them yet.
+- No shooter-log calculation job/service exists — `ShooterLog`/`ShooterLogEntry` are schema only.
+- Changes are uncommitted at time of writing.
 
 ---
 
 ## 🔮 Future Enhancements
 
-- Implement match search endpoints using `MatchSearchRequest` / `MatchSearchDateRequest` /
-  `MatchSearchIdRequest`
-- Full `IpscMemberController` implementation for member CRUD
-- Javadoc coverage for `IpscMatchController`, `IpscMatchService`, `IpscUtil`, and `MatchOnlyDto`
-- Performance optimisation for large match imports
-- Enhanced error messaging for failed match operations
-
----
-
-## 👥 Contributors
-
-Development Team
+- `ShooterLogService` — compute/persist best-4 `ShooterLog` snapshots per competitor/club/firearm type,
+  excluding visitors.
+- Populate `MatchCompetitor.overallRanking` / `clubRanking` / `isVisitor` during match-result import.
+- Populate `Competitor.homeClub` and `Club.identifier` seed data (HPSC, SOSC, PMPSC).
+- Entity, repository, and integration test coverage for all changes in this release.
+- Controller/service endpoints exposing overall, per-club, per-stage results and shooter logs.
 
 ---
 
 ## 📝 Notes
 
-Version 6.0.0 marks a significant milestone in the layering of the HPSC backend: `DomainServiceImpl`
-no longer reaches past the entity service boundary into JPA repositories, enforcing the architecture
-described in CLAUDE.md. The introduction of `IpscMatchController` at `/v2/ipsc/matches` establishes a
-versioned, resource-oriented match API separate from the bulk-import flow in `IpscController`. The IPSC
-model package restructuring (`ipsc/` → `ipsc/common/` + `ipsc/match/`) provides a clear home for both
-shared and match-specific models as the domain grows. Together, these changes prepare the codebase for
-upcoming member management and match search features.
+This release is domain-layer groundwork only, produced in a single working session: promoting
+`domain/old/` back into `domain/`, extending it to cover results-per-club, visitor tracking, multi-
+firearm-type match entries, and shooter logs, and rebuilding the `repositories/` package from scratch.
+It intentionally stops at the persistence boundary — no service, controller, or import-pipeline changes
+are included — so that the schema design could be validated (via a full Spring context boot against H2)
+before building the business logic on top of it.
 
 ---
 

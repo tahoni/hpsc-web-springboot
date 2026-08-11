@@ -186,8 +186,7 @@ Tests are now grouped by functionality rather than scattered throughout the file
 - **Architecture Guide:** See [ARCHITECTURE.md](/ARCHITECTURE.md) for detailed system design
 - **README:** See [README.md](/README.md) for setup and configuration instructions
 - **Changelog:** See [CHANGELOG.md](/CHANGELOG.md) for comprehensive change history
-- **Release Notes History:** See [RELEASE_NOTES_HISTORY.md](RELEASE_NOTES_HISTORY.md) for a complete
-  historical overview
+- **History:** See [HISTORY.md](/HISTORY.md) for a complete historical overview
 - **API Docs:** Available via Swagger UI at `/swagger-ui.html` when running the application
 
 ---
