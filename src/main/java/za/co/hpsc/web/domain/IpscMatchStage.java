@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "ipsc_match_stage")
+@Table(name = "ipsc_match_stage", uniqueConstraints = @UniqueConstraint(columnNames = {"match_id", "stage_number"}))
 public class IpscMatchStage {
 
     @Id

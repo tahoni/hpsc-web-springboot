@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "match_competitor")
+@Table(name = "match_competitor",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"competitor_id", "match_id", "firearm_type"}))
 public class MatchCompetitor {
 
     @Id
@@ -41,7 +42,7 @@ public class MatchCompetitor {
     private CompetitorCategory competitorCategory;
 
     @Convert(converter = FirearmTypeConverter.class)
-    @Column(name = "firearm_type")
+    @Column(name = "firearm_type", nullable = false)
     private FirearmType firearmType;
 
     private Division division;
@@ -53,8 +54,14 @@ public class MatchCompetitor {
     @Column(name = "match_points", precision = 19, scale = 6)
     private BigDecimal matchPoints;
 
-    @Column(name = "match_ranking", precision = 19, scale = 6)
-    private BigDecimal matchRanking;
+    @Column(name = "overall_ranking", precision = 19, scale = 6)
+    private BigDecimal overallRanking;
+
+    @Column(name = "club_ranking", precision = 19, scale = 6)
+    private BigDecimal clubRanking;
+
+    @Column(name = "is_visitor")
+    private Boolean isVisitor;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
