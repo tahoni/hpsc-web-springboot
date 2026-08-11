@@ -41,7 +41,6 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 | Validation        | Hibernate Validator, Jakarta Validation                                 |
 | Testing           | JUnit, Mockito, Spring Test                                             |
 | Code coverage     | JaCoCo (Maven `coverage` profile)                                       |
-| Static analysis   | Qodana JVM (`jetbrains/qodana-jvm`)                                     |
 | Code generation   | Lombok                                                                   |
 | Port / context    | `8081` / `/hpsc-web`                                                    |
 
@@ -51,7 +50,7 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ```text
 ├───.github/
-│   └───workflows/              # GitHub Actions — CI/CD, CodeQL, Qodana
+│   └───workflows/              # GitHub Actions — CI/CD, CodeQL
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive
@@ -422,7 +421,6 @@ Client → POST|PUT|PATCH|GET /v2/ipsc/matches[/{matchId}]
 
 | Gate                  | Tool                                | Trigger                                                             |
 |-----------------------|-------------------------------------|---------------------------------------------------------------------|
-| **Static Analysis**   | Qodana JVM (`jetbrains/qodana-jvm`) | Push / PR to `main`, `develop`, `feature/*`, `bugfix/*`, `hotfix/*` |
 | **Security Analysis** | CodeQL                              | Push / PR to `main` / `develop`; weekly schedule                    |
 | **Code Coverage**     | JaCoCo                              | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`       |
 | **Build & Tests**     | Maven (`./mvnw test`)               | All PRs; H2 in-memory — no external DB required                     |
