@@ -53,8 +53,8 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 │   └───workflows/              # GitHub Actions — CI/CD, CodeQL
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
-│   ├───archive/                # Legacy release archive
-│   └───history/                # Per-version release notes, README, history
+│   ├───archive/                # Legacy release archive (pre-v5.0.0, see ARCHIVE.md)
+│   └───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
@@ -430,7 +430,8 @@ Client → POST|PUT|PATCH|GET /v2/ipsc/matches[/{matchId}]
 ## 📚 Development Guidelines
 
 Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for
-local setup, build commands, database profiles, and coding standards.
+local setup, build commands, database profiles, and coding standards. See README.md's
+[📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 
