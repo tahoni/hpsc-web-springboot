@@ -178,8 +178,8 @@ archive covering versions 1.x–4.x, from before the project adopted its current
 structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only
 and isn't maintained going forward.
 
-This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) as of
-version 5.0.0.
+This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see
+[CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 
 ## 📜 Licence
 

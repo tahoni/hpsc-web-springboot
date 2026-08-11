@@ -53,7 +53,7 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 │   └───workflows/              # GitHub Actions — CI/CD, CodeQL
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
-│   ├───archive/                # Legacy release archive (pre-v5.0.0, see ARCHIVE.md)
+│   ├───archive/                # Legacy release archive (see ARCHIVE.md)
 │   └───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
@@ -208,7 +208,7 @@ All `@Transactional` boundaries live in the service layer.
 
 #### Domain Entities (`za.co.hpsc.web.domain`)
 
-Eight JPA entities map to database tables:
+The JPA entities map to database tables:
 
 | Entity                 | Table                    | Key Relationships                                                                    |
 |------------------------|--------------------------|----------------------------------------------------------------------------------------|
