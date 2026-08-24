@@ -20,6 +20,20 @@ A comprehensive historical overview of the HPSC Website Backend project from sta
 
 ## 📅 Historical Timeline
 
+### Version 7.1.0 (August 24, 2026)
+
+**Theme:** Shooter Log Refinement — Power Factor Scoping & Match Reference
+
+**Key Focus:**
+
+- `ShooterLogEntry` renamed to `ShooterLogCompetitor` (table `shooter_log_entry` → `shooter_log_competitor`), matching this entity's role as a per-competitor snapshot row rather than a generic log entry
+- `ShooterLog` gains a non-nullable `powerFactor` (`PowerFactor`, via the existing `PowerFactorConverter`) — snapshots are now scoped by power factor as well as firearm type
+- `ShooterLogCompetitor` gains a nullable `points` column (the points each contributing `MatchCompetitor` row contributed to the snapshot's `logValue`) and a non-nullable `match` (`@ManyToOne IpscMatch`) relation alongside the existing `matchCompetitor` link
+- `ShooterLogRepository.findAllByCompetitorIdAndFirearmType` renamed to `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`, now filtering by `PowerFactor` as well
+- New `ShooterLogCompetitorRepository` (`findAllByShooterLogId`) supersedes `ShooterLogEntryRepository`; new Flyway migration `V7_1_0__update_shooter_log_schema.sql` renames the table, its unique-index, and FK constraints, and adds the new columns — both tables remain empty in every environment (no calculation service populates them yet), so no backfill was required
+- Project version bumped to 7.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Alongside the schema work, this release migrates the repository's AI-agent prompt files from `.github/prompts/*.prompt.md` to `.claude/commands/*.md`, adopts GitFlow branching in `AGENTS.md`, and adds `CONTRIBUTING.md`
+
 ### Version 7.0.0 (August 11, 2026)
 
 **Theme:** Match Results, Visitor Tracking & Shooter Log Data Model
@@ -835,6 +849,51 @@ Major architectural improvement focused on match results processing, entity init
 
 ---
 
+### Phase 15: Shooter Log Refinement (v7.1.0)
+
+**Duration:** August 24, 2026
+
+A focused follow-up to the v7.0.0 shooter-log data model, correcting its scope (power factor) and its name (`ShooterLogEntry` → `ShooterLogCompetitor`) before any calculation service is built on top of it.
+
+**Key Accomplishments:**
+
+**Shooter Log Rename & Rescoping**
+
+- `ShooterLogEntry` renamed to `ShooterLogCompetitor` — the entity is a per-competitor snapshot row, not a generic log entry, and the new name says so
+- `ShooterLog.powerFactor` (`PowerFactor`, via the existing `PowerFactorConverter`, not nullable) — the best-4-match calculation is now scoped by power factor as well as firearm type
+- `ShooterLogCompetitor.points` (nullable) — records the points each contributing `MatchCompetitor` row contributed to the snapshot's `logValue`
+- `ShooterLogCompetitor.match` (`@ManyToOne IpscMatch`, not nullable) — a direct match reference alongside the existing `matchCompetitor` link
+- `ShooterLogRepository.findAllByCompetitorIdAndFirearmType` renamed to `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`
+
+**Repository & Migration**
+
+- New `ShooterLogCompetitorRepository` (`findAllByShooterLogId`) supersedes `ShooterLogEntryRepository`
+- `V7_1_0__update_shooter_log_schema.sql` renames the table (and its unique index/FKs) and adds the new columns — both `shooter_log` and `shooter_log_competitor` remain empty in every environment, so the migration needed no backfill
+
+**Tooling & Process**
+
+- AI agent prompt files migrated from `.github/prompts/*.prompt.md` to `.claude/commands/*.md`
+- `AGENTS.md` adopts the GitFlow branching model; `CONTRIBUTING.md` added for new-developer onboarding
+
+**Build & Metadata**
+
+- Project version bumped to 7.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Test Coverage**
+
+- No dedicated new unit/integration test coverage added for the renamed/extended entity in this release — consistent with v7.0.0, `shooter_log`/`shooter_log_competitor` remain schema-only pending a calculation service
+
+**Architecture Highlights:**
+
+- Confirms the v7.0.0 decision that shooter logs are persisted snapshots, not a live view, by scoping them correctly (power factor) before any consumer is built against the schema
+
+**Technical Focus:**
+
+- Naming accuracy and schema correctness ahead of the shooter-log calculation service
+- Continued domain-layer groundwork, deferring service/controller wiring to a future release
+
+---
+
 ### Phase 14: Match Results, Visitor Tracking & Shooter Log Data Model (v7.0.0)
 
 **Duration:** August 11, 2026
@@ -1290,6 +1349,18 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 
 ---
 
+### Milestone 15: Shooter Log Refinement (v7.1.0)
+
+- `ShooterLogEntry` renamed to `ShooterLogCompetitor` for naming accuracy
+- `ShooterLog.powerFactor` scopes best-4-match snapshots by power factor as well as firearm type
+- `ShooterLogCompetitor` gains `points` and a direct `match` reference alongside `matchCompetitor`
+- `ShooterLogCompetitorRepository` supersedes `ShooterLogEntryRepository`; `ShooterLogRepository` finder renamed to include `PowerFactor`
+- Repository AI-agent tooling migrated to `.claude/commands/*.md`; `AGENTS.md` adopts GitFlow; `CONTRIBUTING.md` added
+
+**Achievement:** Corrected the naming and scope of the v7.0.0 shooter-log data model before any calculation service is built against it, keeping the schema accurate ahead of the service/controller wiring still to come.
+
+---
+
 ### Milestone 14: Match Results, Visitor Tracking & Shooter Log Data Model (v7.0.0)
 
 - Six entities promoted from `domain/old/` back into the live `domain` package; `.old` package removed
@@ -1492,6 +1563,28 @@ Entity Layer
 
 ---
 
+### v7.1.0: Shooter Log Correction
+
+```
+                  Repository Layer
+                  ├── ShooterLogRepository (findAllBy...AndPowerFactor)
+                  └── ShooterLogCompetitorRepository (new — supersedes ShooterLogEntryRepository)
+                        ↓
+                  Entity Layer
+                  ├── ShooterLog (+ powerFactor)
+                  └── ShooterLogCompetitor (renamed from ShooterLogEntry; + points, + match)
+                        ↓
+                  AttributeConverters (PowerFactorConverter — reused, no new converters)
+```
+
+**Characteristics:**
+
+- Same domain/repository shape as v7.0.0 — this release corrects the shooter-log entity's name and scope rather than changing the architecture around it
+- `ShooterLog`/`ShooterLogCompetitor` remain schema-only; still no calculation service consumes them
+- Flyway migration `V7_1_0__update_shooter_log_schema.sql` renames the table and its constraints in place — no backfill needed since both tables are still empty everywhere
+
+---
+
 ### v7.0.0: Club-Scoped Results, Visitor Tracking & Shooter Log Model
 
 ```
@@ -1669,6 +1762,7 @@ AttributeConverters
 - **v5.4.0:** `EnrolledCompetitorDto`; `ClubIdentifier` abbreviation; records' restructuring; `domain` → `data` package; `MatchHolder`; `TransformationService`
 - **v6.0.0:** `MatchOnlyDto`/`Request`/`Response` for match CRUD; `models/ipsc/common/` + `models/ipsc/match/` package split; entity service methods `findClubById`, `findCompetitorById`, `findMatchStageCompetitorById`; `DomainServiceImpl` fully decoupled from repositories
 - **v7.0.0:** Six entities promoted from `domain/old/` back into `domain`; `Club.identifier`, `Competitor.homeClub`, `MatchCompetitor.overallRanking`/`clubRanking`/`isVisitor`; `MatchStageCompetitor` repointed to `matchCompetitor`; new `ShooterLog`/`ShooterLogEntry` entities; `repositories/` package rebuilt with 8 `JpaRepository` interfaces
+- **v7.1.0:** `ShooterLogEntry` renamed to `ShooterLogCompetitor`; `ShooterLog.powerFactor`; `ShooterLogCompetitor.points`/`match`; `ShooterLogRepository` finder renamed to include `PowerFactor`; new `ShooterLogCompetitorRepository`
 
 ### API Capabilities
 
@@ -1735,6 +1829,7 @@ AttributeConverters
     - `IpscControllerTest` removed; covered by `IpscMatchControllerTest`
     - Major suite updates: `TransformationServiceTest` (+747), `DomainServiceTest` (+247), `TransactionServiceTest` (+246), `ValueUtilTest` (+294)
 - **v7.0.0:** No new dedicated unit/integration test coverage for the promoted/extended entities or the 8 new repositories — verified instead via `./mvnw clean compile` and `HpscWebApplicationTests` (Spring context boot against H2, Hibernate schema build validating every `@JoinColumn`, converter, and unique constraint across all 8 entities)
+- **v7.1.0:** No new dedicated unit/integration test coverage for the renamed/rescoped `ShooterLogCompetitor` entity — same verification approach as v7.0.0 (compile + `HpscWebApplicationTests` H2 schema build)
 
 ### Documentation Quality
 
@@ -1748,6 +1843,7 @@ AttributeConverters
 - **v5.4.0:** v5.4.0 release notes, changelog entry, history update; Javadoc on `EnrolledCompetitorDto` and `TransformationService` interface
 - **v6.0.0:** v6.0.0 release notes, changelog entry, history update; CLAUDE.md added for AI assistant context
 - **v7.0.0:** v7.0.0 release notes, changelog entry, history update
+- **v7.1.0:** v7.1.0 release notes, changelog entry, history update; AI-agent prompt files migrated to `.claude/commands/*.md`; `AGENTS.md` adopts GitFlow; `CONTRIBUTING.md` added
 
 ---
 
@@ -1845,6 +1941,15 @@ AttributeConverters
 - Rebuild the `repositories/` package from scratch alongside the promoted domain model
 - Deliver domain-layer groundwork deliberately ahead of service, controller, and import-pipeline wiring
 
+### Refinement Phase (v7.1.0)
+
+**Focus:** Shooter Log Naming Accuracy & Scope Correction
+
+- Rename `ShooterLogEntry` to `ShooterLogCompetitor` to reflect its role as a per-competitor snapshot row
+- Scope shooter-log snapshots by `PowerFactor` as well as `FirearmType`
+- Add a direct `match` reference and a `points` field to `ShooterLogCompetitor`, ahead of the future calculation service that will populate them
+- Adopt GitFlow branching and add `CONTRIBUTING.md` for new-developer onboarding
+
 ---
 
 ## 📚 Key Learnings
@@ -1927,14 +2032,29 @@ AttributeConverters
     - `repositories/` package rebuilt from scratch with 8 new `JpaRepository` interfaces
     - No dedicated new unit/integration test coverage added for the new/changed entities in this release
     - Statistics: 1 commit, 15 files changed, +207 insertions, -30 deletions
+13. **Shooter Log Refinement (v7.1.0):** Naming accuracy and scope correction ahead of the calculation service
+    - `ShooterLogEntry` renamed to `ShooterLogCompetitor`; entity gains `points` and a direct `match` reference
+    - `ShooterLog.powerFactor` scopes snapshots by power factor as well as firearm type
+    - `ShooterLogRepository` finder renamed to include `PowerFactor`; new `ShooterLogCompetitorRepository` supersedes `ShooterLogEntryRepository`
+    - Migration renames the table/constraints in place — no backfill needed, both tables remain empty
+    - Repository tooling migrated from `.github/prompts/` to `.claude/commands/`; `AGENTS.md` adopts GitFlow; `CONTRIBUTING.md` added
 
 ---
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v7.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v7.1.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v7.0.0)
+### Recently Completed (v7.1.0)
+
+- `ShooterLogEntry` renamed to `ShooterLogCompetitor` (table `shooter_log_entry` → `shooter_log_competitor`)
+- `ShooterLog.powerFactor` (`PowerFactor`, not nullable) scopes snapshots by power factor as well as firearm type
+- `ShooterLogCompetitor.points` (nullable) and `ShooterLogCompetitor.match` (`@ManyToOne IpscMatch`, not nullable) added
+- `ShooterLogRepository.findAllByCompetitorIdAndFirearmType` renamed to `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`
+- New `ShooterLogCompetitorRepository` supersedes `ShooterLogEntryRepository`
+- Project version bumped to 7.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v7.0.0)
 
 - Six entities promoted from `domain/old/` back into `za.co.hpsc.web.domain`; `.old` package removed
 - `Club.identifier` (`ClubIdentifier`, unique) ties a club to HPSC/SOSC/PMPSC
@@ -2023,8 +2143,9 @@ The HPSC Website Backend has evolved from a simple image gallery application int
 - **Layer Enforcement:** `DomainServiceImpl` no longer reaches past entity services into repositories, fully realising the layered architecture (v6.0.0)
 - **Club-Scoped Results & Visitor Tracking:** `Club.identifier`, `Competitor.homeClub`, and `MatchCompetitor.clubRanking`/`isVisitor` model club results and visitors relationally (v7.0.0)
 - **Shooter Log Foundations:** `ShooterLog`/`ShooterLogEntry` persist best-4-match snapshots, laying the data model for a future ranking calculation service (v7.0.0)
+- **Shooter Log Correction:** `ShooterLogEntry` renamed to `ShooterLogCompetitor` and rescoped by `PowerFactor`, keeping the data model accurate before a calculation service is built against it (v7.1.0)
 
-The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with service transformation in v5.4.0, the dedicated match CRUD API with service encapsulation in v6.0.0, and the match results/visitor tracking/shooter log data model in v7.0.0 mark significant maturation points where the project demonstrates stable, predictable releases with clear separation of concerns. These releases serve as a solid foundation for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
+The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with service transformation in v5.4.0, the dedicated match CRUD API with service encapsulation in v6.0.0, the match results/visitor tracking/shooter log data model in v7.0.0, and the shooter-log naming/scope correction in v7.1.0 mark significant maturation points where the project demonstrates stable, predictable releases with clear separation of concerns. These releases serve as a solid foundation for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
 
 Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity relationships, optimised repositories, and a consolidated service architecture that reduces complexity without sacrificing capability.
 
@@ -2034,14 +2155,28 @@ Version 6.0.0 marks a decisive architectural milestone: `DomainServiceImpl` no l
 
 Version 7.0.0 extends the domain model with club-scoped results, visitor tracking, and a persisted shooter log: the six entities parked under `domain/old/` are promoted back into `domain`, `Club`, `Competitor`, and `MatchCompetitor` gain the fields needed to model home clubs, club rankings, and match visitors relationally, `MatchStageCompetitor` is repointed to `MatchCompetitor` to support multiple firearm-type entries per competitor, and the new `ShooterLog`/`ShooterLogEntry` entities persist best-4-match snapshots — all paired with a `repositories/` package rebuilt from scratch. This release is deliberately domain-layer groundwork; the service, controller, and import-pipeline wiring to make these fields load-bearing remains for a future release.
 
+Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model: `ShooterLogEntry` is renamed to `ShooterLogCompetitor` for naming accuracy, `ShooterLog` gains a `powerFactor` column so best-4-match snapshots are scoped correctly, and `ShooterLogCompetitor` gains `points` and a direct `match` reference. Both tables remain schema-only — still no calculation service consumes them — so this release is about getting the shape right before that service is built. Alongside the schema work, the release also migrates the repository's AI-agent prompt files to Claude Code commands, adopts GitFlow branching, and adds `CONTRIBUTING.md`.
+
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** August 11, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 7.0.0 (August 11, 2026)  
+**Last Updated:** August 24, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 7.1.0 (August 24, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for detailed technical information
 
-**Recent Updates (v7.0.0):**
+**Recent Updates (v7.1.0):**
+
+- `ShooterLogEntry` renamed to `ShooterLogCompetitor` (table `shooter_log_entry` → `shooter_log_competitor`)
+- `ShooterLog.powerFactor` (`PowerFactor`, via the existing `PowerFactorConverter`, not nullable) scopes snapshots by power factor as well as firearm type
+- `ShooterLogCompetitor.points` (nullable) and `ShooterLogCompetitor.match` (`@ManyToOne IpscMatch`, not nullable) added
+- `ShooterLogRepository.findAllByCompetitorIdAndFirearmType` renamed to `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`
+- New `ShooterLogCompetitorRepository` (`findAllByShooterLogId`) supersedes `ShooterLogEntryRepository`
+- `V7_1_0__update_shooter_log_schema.sql` Flyway migration renames the table/constraints and adds the new columns — no backfill needed, both tables remain empty
+- Project version bumped to 7.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+- No dedicated new unit/integration test coverage added for the renamed/rescoped entity in this release
+- Repository AI agent prompt files migrated from `.github/prompts/*.prompt.md` to `.claude/commands/*.md`; `AGENTS.md` adopts GitFlow; `CONTRIBUTING.md` added
+
+**Previous Update (v7.0.0):**
 
 - Six entities promoted from `domain/old/` back into `za.co.hpsc.web.domain`; `.old` package removed entirely
 - `Club.identifier` (`ClubIdentifier`, via `ClubIdentifierConverter`, unique) ties a club row to HPSC/SOSC/PMPSC
@@ -2118,4 +2253,3 @@ Version 7.0.0 extends the domain model with club-scoped results, visitor trackin
 - Section-based grouping: Null Input Handling, Null Collections & Fields, Match Name Field Handling, Club Fields Handling, Partial/Complete Data Scenarios, Edge Cases
 - All tests follow consistent `testMethod_whenCondition_thenExpectedBehavior` naming pattern
 - 100% test pass rate maintained (23 passing, 1 skipped as expected)
-

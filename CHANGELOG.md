@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 7.0.0](#-700---2026-08-11) ← Current
+- [🧾 Version 7.1.0](#-710---2026-08-24) ← Current
+- [🧾 Version 7.0.0](#-700---2026-08-11)
 - [🧾 Version 6.0.0](#-600---2026-05-01)
 - [🧾 Version 5.4.0](#-540---2026-04-26)
 - [🧾 Version 5.3.0](#-530---2026-03-15)
@@ -37,6 +38,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### ➕ Added
 
+### 🔄 Changed
+
+### 🐛 Fixed
+
+### ⚠️ Deprecated
+
+### 🗑️ Removed
+
+### 🔐 Security
+
+---
+
+## 🧾 [7.1.0] - 2026-08-24
+
+### ➕ Added
+
 #### Domain
 
 - **`ShooterLog.powerFactor`:** New `PowerFactor` column (via the existing `PowerFactorConverter`, not nullable) — snapshots are now scoped by power factor as well as firearm type
@@ -51,6 +68,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - **`V7_1_0__update_shooter_log_schema.sql`:** New Flyway migration — renames `shooter_log_entry` → `shooter_log_competitor`, adds `shooter_log.power_factor`, `shooter_log_competitor.points` and `shooter_log_competitor.match_id`
 
+#### Build & Metadata
+
+- Project version bumped to **7.1.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
 ### 🔄 Changed
 
 #### Domain
@@ -61,10 +82,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - **`ShooterLogRepository.findAllByCompetitorIdAndFirearmType`** renamed to **`findAllByCompetitorIdAndFirearmTypeAndPowerFactor`** — now filters by `PowerFactor` as well
 
-### 🐛 Fixed
-
-### ⚠️ Deprecated
-
 ### 🗑️ Removed
 
 #### Domain
@@ -74,8 +91,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Repositories
 
 - **`ShooterLogEntryRepository`** — superseded by `ShooterLogCompetitorRepository`
-
-### 🔐 Security
 
 ---
 
@@ -1169,4 +1184,4 @@ For issues, feature requests or questions:
 
 ---
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-08-24
