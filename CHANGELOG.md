@@ -2,8 +2,7 @@
 
 All notable changes to the HPSC Website Backend project are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
-to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.0.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.0.
 
 ---
 
@@ -38,13 +37,43 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### ➕ Added
 
+#### Domain
+
+- **`ShooterLog.powerFactor`:** New `PowerFactor` column (via the existing `PowerFactorConverter`, not nullable) — snapshots are now scoped by power factor as well as firearm type
+- **`ShooterLogCompetitor.points`:** New nullable column — records the points each contributing `MatchCompetitor` row contributed to the snapshot's `logValue`
+- **`ShooterLogCompetitor.match`:** New `@ManyToOne IpscMatch` relation (`match_id`, not nullable) — direct match reference alongside the existing `matchCompetitor` link
+
+#### Repositories
+
+- **`ShooterLogCompetitorRepository`:** New repository — `findAllByShooterLogId(Long)`
+
+#### Database
+
+- **`V7_1_0__update_shooter_log_schema.sql`:** New Flyway migration — renames `shooter_log_entry` → `shooter_log_competitor`, adds `shooter_log.power_factor`, `shooter_log_competitor.points` and `shooter_log_competitor.match_id`
+
 ### 🔄 Changed
+
+#### Domain
+
+- **`ShooterLogEntry` renamed to `ShooterLogCompetitor`** (table `shooter_log_entry` → `shooter_log_competitor`) — entity gains the `points` and `match` fields above
+
+#### Repositories
+
+- **`ShooterLogRepository.findAllByCompetitorIdAndFirearmType`** renamed to **`findAllByCompetitorIdAndFirearmTypeAndPowerFactor`** — now filters by `PowerFactor` as well
 
 ### 🐛 Fixed
 
 ### ⚠️ Deprecated
 
 ### 🗑️ Removed
+
+#### Domain
+
+- **`ShooterLogEntry`** — superseded by `ShooterLogCompetitor` (see Changed above)
+
+#### Repositories
+
+- **`ShooterLogEntryRepository`** — superseded by `ShooterLogCompetitorRepository`
 
 ### 🔐 Security
 
@@ -56,26 +85,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Domain
 
-- **`ShooterLog`:** New entity — persisted best-4-match shooter-log snapshot (`competitor`, `club`,
-  `firearmType`, `logValue`, `calculatedDate`)
-- **`ShooterLogEntry`:** New entity — links a `ShooterLog` snapshot to the `MatchCompetitor` rows that
-  contributed to it (`rankInLog`, unique constraint `(shooter_log_id, match_competitor_id)`)
-- **`Club.identifier`:** New column (`ClubIdentifier`, via the existing `ClubIdentifierConverter`,
-  unique) — ties a `Club` row to `HPSC` / `SOSC` / `PMPSC`
+- **`ShooterLog`:** New entity — persisted best-4-match shooter-log snapshot (`competitor`, `club`, `firearmType`, `logValue`, `calculatedDate`)
+- **`ShooterLogEntry`:** New entity — links a `ShooterLog` snapshot to the `MatchCompetitor` rows that contributed to it (`rankInLog`, unique constraint `(shooter_log_id, match_competitor_id)`)
+- **`Club.identifier`:** New column (`ClubIdentifier`, via the existing `ClubIdentifierConverter`, unique) — ties a `Club` row to `HPSC` / `SOSC` / `PMPSC`
 - **`Competitor.homeClub`:** New nullable `@ManyToOne Club` relation for home-club membership
 - **`MatchCompetitor.clubRanking`:** New column — rank among same-club competitors for a firearm type
-- **`MatchCompetitor.isVisitor`:** New `Boolean` column — `true` when `matchClub` differs from the host
-  match's club
+- **`MatchCompetitor.isVisitor`:** New `Boolean` column — `true` when `matchClub` differs from the host match's club
 - **`IpscMatchStage`:** New unique constraint `(match_id, stage_number)`
 - **`MatchCompetitor`:** New unique constraint `(competitor_id, match_id, firearm_type)`
 - **`MatchStageCompetitor`:** New unique constraint `(match_competitor_id, match_stage_id)`
 
 #### Repositories
 
-- **`ClubRepository`, `CompetitorRepository`, `IpscMatchRepository`, `IpscMatchStageRepository`,
-  `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`,
-  `ShooterLogEntryRepository`:** `repositories/` package rebuilt from scratch (previously emptied in
-  preparation for this redesign)
+- **`ClubRepository`, `CompetitorRepository`, `IpscMatchRepository`, `IpscMatchStageRepository`, `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`, `ShooterLogEntryRepository`:** `repositories/` package rebuilt from scratch (previously emptied in preparation for this redesign)
 
 #### Build & Metadata
 
@@ -87,9 +109,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - `za.co.hpsc.web.domain.old.*` promoted to `za.co.hpsc.web.domain.*` (the `.old` package is dropped)
 - **`MatchCompetitor.matchRanking`** renamed to **`overallRanking`**
-- **`MatchStageCompetitor`:** FK changed from `competitor` to `matchCompetitor`; duplicated
-  `competitorCategory` / `division` / `firearmType` / `powerFactor` / `matchClub` fields removed — now
-  inherited via the `matchCompetitor` relation
+- **`MatchStageCompetitor`:** FK changed from `competitor` to `matchCompetitor`; duplicated `competitorCategory` / `division` / `firearmType` / `powerFactor` / `matchClub` fields removed — now inherited via the `matchCompetitor` relation
 
 ### 🗑️ Removed
 
@@ -113,21 +133,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Services
 
-- **`IpscMatchService` interface:** Match CRUD contract — `insertMatch`, `updateMatch`, `modifyMatch`,
-  `getMatch`; all return `Optional<MatchOnlyResponse>`
+- **`IpscMatchService` interface:** Match CRUD contract — `insertMatch`, `updateMatch`, `modifyMatch`, `getMatch`; all return `Optional<MatchOnlyResponse>`
 - **`IpscMatchServiceImpl`:** Full implementation (135 lines)
-- **`ClubEntityService.findClubById(Long)`:** New entity service method; implemented in
-  `ClubEntityServiceImpl`
-- **`CompetitorEntityService.findCompetitorById(Long)`:** New entity service method; implemented in
-  `CompetitorEntityServiceImpl`
-- **`MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)`:** New entity service
-  method; implemented in `MatchStageCompetitorEntityServiceImpl`
+- **`ClubEntityService.findClubById(Long)`:** New entity service method; implemented in `ClubEntityServiceImpl`
+- **`CompetitorEntityService.findCompetitorById(Long)`:** New entity service method; implemented in `CompetitorEntityServiceImpl`
+- **`MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)`:** New entity service method; implemented in `MatchStageCompetitorEntityServiceImpl`
 - **`TransformationService.mapMatchOnly(MatchOnlyRequest)`:** New method for the match CRUD pipeline
 
 #### Models — `models/ipsc/match/`
 
-- **`MatchOnlyDto`:** Lightweight match DTO (no stages); initialised from `MatchOnlyRequest` with
-  automatic `FirearmType` resolution and `dateEdited` stamping
+- **`MatchOnlyDto`:** Lightweight match DTO (no stages); initialised from `MatchOnlyRequest` with automatic `FirearmType` resolution and `dateEdited` stamping
 - **`MatchOnlyRequest`:** JSON request body for match create / update operations
 - **`MatchOnlyResponse`:** Response envelope returned by `IpscMatchController`
 - **`MatchOnlyResultsDto`:** Internal results holder passed through the service chain
@@ -170,19 +185,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Services
 
-- **`DomainServiceImpl`:** Replaced direct JPA repository injection with entity service injection
-  (`ClubEntityService`, `CompetitorEntityService`, `MatchEntityService`, `MatchStageEntityService`,
-  `MatchCompetitorEntityService`, `MatchStageCompetitorEntityService`)
+- **`DomainServiceImpl`:** Replaced direct JPA repository injection with entity service injection (`ClubEntityService`, `CompetitorEntityService`, `MatchEntityService`, `MatchStageEntityService`, `MatchCompetitorEntityService`, `MatchStageCompetitorEntityService`)
 - **`TransformationService.mapMatchResults`:** Removed `throws ValidationException` from signature
-- **`TransformationServiceImpl`:** All imports updated to `models/ipsc/common/*`; `mapMatchOnly`
-  method added
+- **`TransformationServiceImpl`:** All imports updated to `models/ipsc/common/*`; `mapMatchOnly` method added
 
 #### Config & Infrastructure
 
-- **`ControllerAdvice`:** Structured logging added to all exception handlers; `ValidationException`
-  removed from handler method signatures (119 lines changed)
-- **`pom.xml`:** Spring Boot BOM upgraded `4.0.5` → `4.0.6`; Lombok exclusion plugin block
-  reorganised
+- **`ControllerAdvice`:** Structured logging added to all exception handlers; `ValidationException` removed from handler method signatures (119 lines changed)
+- **`pom.xml`:** Spring Boot BOM upgraded `4.0.5` → `4.0.6`; Lombok exclusion plugin block reorganised
 - **`logback-spring.xml`:** Additional appender/logger configuration added
 
 #### Package Paths — All IPSC Models
@@ -260,20 +270,12 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 
 #### Test Coverage (20+ new test classes, ~7,000 lines)
 
-- **Controller tests:** `AwardControllerTest` (163), `ImageControllerTest` (163),
-  `IpscControllerTest` (156), `ControllerAdviceTest` (299)
-- **Converter tests:** `ClubIdentifierConverterTest` (76), `CompetitorCategoryConverterTest` (85),
-  `DivisionConverterTest` (85), `FirearmTypeConverterTest` (103), `MatchCategoryConverterTest` (76),
-  `PowerFactorConverterTest` (85)
-- **Domain entity tests:** `ClubTest` (467), `CompetitorTest` (354), `IpscMatchTest` (367),
-  `IpscMatchStageTest` (333), `MatchCompetitorTest` (364), `MatchStageCompetitorTest` (645)
-- **Exception tests:** `FatalExceptionTest` (161), `NonFatalExceptionTest` (173),
-  `ValidationExceptionTest` (115)
-- **Model & utility tests:** `ControllerResponseTest` (89), `RequestTest` (100),
-  `AwardRequestForCSVTest` (394), `ImageRequestForCSVTest` (244), `EnrolledCompetitorDtoTest` (196),
-  `FirearmTypeToDivisionsTest` (40), `ValueUtilTest` (100)
-- **Integration tests:** `AwardServiceIntegrationTest` (295), `ImageServiceIntegrationTest` (348),
-  `DtoToEntityMappingIntegrationTest` (71)
+- **Controller tests:** `AwardControllerTest` (163), `ImageControllerTest` (163), `IpscControllerTest` (156), `ControllerAdviceTest` (299)
+- **Converter tests:** `ClubIdentifierConverterTest` (76), `CompetitorCategoryConverterTest` (85), `DivisionConverterTest` (85), `FirearmTypeConverterTest` (103), `MatchCategoryConverterTest` (76), `PowerFactorConverterTest` (85)
+- **Domain entity tests:** `ClubTest` (467), `CompetitorTest` (354), `IpscMatchTest` (367), `IpscMatchStageTest` (333), `MatchCompetitorTest` (364), `MatchStageCompetitorTest` (645)
+- **Exception tests:** `FatalExceptionTest` (161), `NonFatalExceptionTest` (173), `ValidationExceptionTest` (115)
+- **Model & utility tests:** `ControllerResponseTest` (89), `RequestTest` (100), `AwardRequestForCSVTest` (394), `ImageRequestForCSVTest` (244), `EnrolledCompetitorDtoTest` (196), `FirearmTypeToDivisionsTest` (40), `ValueUtilTest` (100)
+- **Integration tests:** `AwardServiceIntegrationTest` (295), `ImageServiceIntegrationTest` (348), `DtoToEntityMappingIntegrationTest` (71)
 - **Service tests:** `TransformationServiceTest` (1,026), `MatchCompetitorDtoTest` (253)
 
 #### CI/CD & Configuration
@@ -436,10 +438,8 @@ No security-related changes in this release.
 
 #### Test Coverage
 
-- **DomainServiceTest:** 787 lines added – comprehensive `initMatchEntities` test cases with
-  Javadoc documentation
-- **IpscServiceIntegrationTest:** Comprehensive integration tests for `importWinMssCabFile`
-  including validation and processing scenarios
+- **DomainServiceTest:** 787 lines added – comprehensive `initMatchEntities` test cases with Javadoc documentation
+- **IpscServiceIntegrationTest:** Comprehensive integration tests for `importWinMssCabFile` including validation and processing scenarios
 
 ### 🔄 Changed
 
@@ -473,8 +473,7 @@ No security-related changes in this release.
 #### Entity Models
 
 - **IpscMatch:** 14 lines changed – `mappedBy` added to `@OneToMany` annotations; cascade type updates
-- **IpscMatchStage:** 26 lines changed – `mappedBy` added; Javadoc for `init()` added; entity mapping
-  improvements
+- **IpscMatchStage:** 26 lines changed – `mappedBy` added; Javadoc for `init()` added; entity mapping improvements
 - **MatchCompetitor:** 20 lines changed – improved bidirectional `@OneToMany` relationship with `mappedBy`
 - **MatchStageCompetitor:** 24 lines changed – enhanced mapping with proper ownership side declaration
 - **Competitor:** 11 lines changed – minor relationship updates
@@ -499,12 +498,9 @@ No security-related changes in this release.
 
 #### Test Suites (Comprehensive Updates)
 
-- **IpscMatchServiceTest:** 3,156 lines changed – comprehensive consolidation including disabled tests,
-  helper method extraction, streamlined parameter handling and object creation
-- **TransactionServiceTest:** 1,031 lines changed – updated `getFirst()` assertions, enabled previously
-  disabled tests, streamlined transaction stubbing
-- **IpscServiceIntegrationTest:** 113 lines changed – integration tests added, previously disabled tests
-  enabled, bean definitions cleaned up
+- **IpscMatchServiceTest:** 3,156 lines changed – comprehensive consolidation including disabled tests, helper method extraction, streamlined parameter handling and object creation
+- **TransactionServiceTest:** 1,031 lines changed – updated `getFirst()` assertions, enabled previously disabled tests, streamlined transaction stubbing
+- **IpscServiceIntegrationTest:** 113 lines changed – integration tests added, previously disabled tests enabled, bean definitions cleaned up
 - **DtoToEntityMappingTest:** 171 lines changed – additional test cases and documentation
 - **MatchStageCompetitorDtoTest:** 243 lines changed – updated for DTO changes
 - **MatchStageDtoTest:** 50 lines changed – updated assertions
@@ -527,11 +523,9 @@ No security-related changes in this release.
 
 #### Entity Relationships
 
-- **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships
-  across `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, and `MatchStageCompetitor`
+- **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships across `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, and `MatchStageCompetitor`
 - **Cascade types:** Fixed cascade type configurations for correct entity lifecycle management
-- **Null handling:** Improved null handling in entity relationship resolution across match stage
-  competitor retrieval
+- **Null handling:** Improved null handling in entity relationship resolution across match stage competitor retrieval
 
 #### Repository Queries
 
@@ -553,10 +547,8 @@ None.
 
 #### Services & Classes
 
-- **`IpscMatchResultService` interface:** Fully removed (31 lines); functionality consolidated into
-  `DomainService` and `IpscMatchService`
-- **`IpscMatchResultServiceImpl` class:** Fully removed (379 lines); match result processing
-  consolidated into `DomainService`
+- **`IpscMatchResultService` interface:** Fully removed (31 lines); functionality consolidated into `DomainService` and `IpscMatchService`
+- **`IpscMatchResultServiceImpl` class:** Fully removed (379 lines); match result processing consolidated into `DomainService`
 - **`ScoreDto` class:** Fully removed (50 lines); score data now handled via `ScoreResponse` directly
 
 #### Entity Service Methods
@@ -585,8 +577,7 @@ No security-related changes in this release.
 
 - **DtoMapping class:** New comprehensive DTO mapping with map-based storage for improved data organisation
 - **EntityMapping class:** New entity-level mapping structure for clear separation of persistence concerns
-- **DtoToEntityMapping class:** Bridge layer between DTOs and entities with Optional-based accessors (91
-  lines)
+- **DtoToEntityMapping class:** Bridge layer between DTOs and entities with Optional-based accessors (91 lines)
 - **MatchEntityHolder class:** Dedicated holder for match entity initialisation workflows
 - **MatchEntityService interface:** Contract for match entity operations
 - **MatchEntityServiceImpl:** Implementation with comprehensive initialisation logic
@@ -607,8 +598,7 @@ No security-related changes in this release.
     - Null/empty/blank input tests
     - Partial and full input tests
     - Edge case handling
-- **Enhanced test coverage** across all consolidated test suites with generateIpscMatchRecordHolder output
-  verification
+- **Enhanced test coverage** across all consolidated test suites with generateIpscMatchRecordHolder output verification
 
 #### Service Enhancements
 
@@ -746,8 +736,7 @@ No security-related changes in this release.
 
 - **Test organisation improvements** in `IpscMatchResultServiceImplTest`
     - Section-based test grouping for improved navigation and understanding
-    - Six distinct test sections: Null Input Handling, Null Collections and Fields, Match Name Field Handling,
-      Club Fields Handling, Partial and Complete Data Scenarios, Edge Cases
+    - Six distinct test sections: Null Input Handling, Null Collections and Fields, Match Name Field Handling, Club Fields Handling, Partial and Complete Data Scenarios, Edge Cases
     - Clear separation of concerns between test categories
 
 #### Test Quality Improvements
@@ -768,8 +757,7 @@ No security-related changes in this release.
     - Partial and Complete Data Scenarios section (6 tests)
     - Edge Cases section (4 tests)
     - Database Interaction section (1 skipped test)
-- **Test naming:** Standardised naming conventions for consistency (
-  `testMethod_whenCondition_thenExpectedBehavior`)
+- **Test naming:** Standardised naming conventions for consistency ( `testMethod_whenCondition_thenExpectedBehavior`)
 - **Code style:** Improved spacing and formatting for better readability
 - **Documentation:** Enhanced test section comments with clear headers and visual separators
 
@@ -777,8 +765,7 @@ No security-related changes in this release.
 
 #### Test Quality
 
-- **Duplicate test elimination:** Removed duplicate
-  `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` test method
+- **Duplicate test elimination:** Removed duplicate `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` test method
 - **Code clean-up:** Removed TODO comment about adding sections (now complete)
 - **Test file consolidation:** Ensured no redundant test coverage
 
@@ -786,8 +773,7 @@ No security-related changes in this release.
 
 ### 🗑️ Removed
 
-- **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact
-  duplicate at the end of the file
+- **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact duplicate at the end of the file
 
 ### 🔐 Security
 
@@ -799,38 +785,25 @@ No security-related changes in this release.
 
 #### Domain Entity Initialisation Framework
 
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic
-  database lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
-  for predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
-  repository lookup, optional entity creation and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
-  with UUID generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
-  with proper relationship linking to parent match entities
-- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** -
-  Establish many-to-many relationships between matches and competitors
-- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex
-  initialisation of stage-specific competitor records with score and performance data
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database lookup and fallback to new entity creation
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for predefined club references
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository lookup, optional entity creation and club association
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID generation and optional database persistence
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper relationship linking to parent match entities
+- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish many-to-many relationships between matches and competitors
+- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation of stage-specific competitor records with score and performance data
 
 #### IPSC Match Record Generation
 
-- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
-  comprehensive match records for external representation
-- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete
-  IPSC match response records with embedded competitor data
-- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`
-  ** - Create detailed competitor match records with stage-wise performance data
-- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process
-  match-level competitor records from database entities
-- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate
-  stage-specific competitor records with individual stage scores
+- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to comprehensive match records for external representation
+- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match response records with embedded competitor data
+- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** - Create detailed competitor match records with stage-wise performance data
+- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level competitor records from database entities
+- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific competitor records with individual stage scores
 
 #### Service Layer
 
-- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match
-  results
+- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match results
     - Improved edge case handling
     - Better robustness in match result transformation
     - Additional null-safety checks
@@ -849,83 +822,59 @@ No security-related changes in this release.
 
 #### Domain Entity Initialisation Framework
 
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic
-  database lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values
-  for predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with
-  repository lookup, optional entity creation and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation
-  with UUID generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages
-  with proper relationship linking to parent match entities
-- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** -
-  Establish many-to-many relationships between matches and competitors
-- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex
-  initialisation of stage-specific competitor records with score and performance data
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database lookup and fallback to new entity creation
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for predefined club references
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository lookup, optional entity creation and club association
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID generation and optional database persistence
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper relationship linking to parent match entities
+- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish many-to-many relationships between matches and competitors
+- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation of stage-specific competitor records with score and performance data
 
 #### IPSC Match Record Generation
 
-- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
-  comprehensive match records for external representation
-- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete
-  IPSC match response records with embedded competitor data
-- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`
-  ** - Create detailed competitor match records with stage-wise performance data
-- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process
-  match-level competitor records from database entities
-- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate
-  stage-specific competitor records with individual stage scores
+- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to comprehensive match records for external representation
+- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match response records with embedded competitor data
+- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** - Create detailed competitor match records with stage-wise performance data
+- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level competitor records from database entities
+- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific competitor records with individual stage scores
 
 #### IPSC Response Processing Pipeline
 
-- **`IpscMatchServiceImpl.addClubToMatch(IpscResponse, IpscRequestHolder)`** - Intelligent club association
-  logic that matches clubs from request data to match response records with fallback mechanisms
-- **`IpscMatchServiceImpl.addMembersToMatch(IpscResponse, IpscRequestHolder)`** - Associate enrolled members
-  with match responses based on match ID filtering
+- **`IpscMatchServiceImpl.addClubToMatch(IpscResponse, IpscRequestHolder)`** - Intelligent club association logic that matches clubs from request data to match response records with fallback mechanisms
+- **`IpscMatchServiceImpl.addMembersToMatch(IpscResponse, IpscRequestHolder)`** - Associate enrolled members with match responses based on match ID filtering
 
 #### Enhanced IPSC Result Service
 
-- **`IpscMatchResultServiceImpl.initMatchResults(IpscResponse)`** - Complete IPSC response-to-DTO
-  transformation pipeline
-- **`IpscMatchResultServiceImpl.initClub(ClubResponse)`** - Convert IPSC club response objects to club DTOs
-  with database lookup and enrichment
-- **`IpscMatchResultServiceImpl.initMatch(IpscResponse, ClubDto)`** - Create or update match DTOs from IPSC
-  responses with optional database lookup and update avoidance
-- **`IpscMatchResultServiceImpl.initStages(MatchDto, List<StageResponse>)`** - Map IPSC stage responses to
-  match stage DTOs
-- **`IpscMatchResultServiceImpl.initScores(MatchResultsDto, IpscResponse)`** - Process and aggregate
-  competitor scores across match stages
+- **`IpscMatchResultServiceImpl.initMatchResults(IpscResponse)`** - Complete IPSC response-to-DTO transformation pipeline
+- **`IpscMatchResultServiceImpl.initClub(ClubResponse)`** - Convert IPSC club response objects to club DTOs with database lookup and enrichment
+- **`IpscMatchResultServiceImpl.initMatch(IpscResponse, ClubDto)`** - Create or update match DTOs from IPSC responses with optional database lookup and update avoidance
+- **`IpscMatchResultServiceImpl.initStages(MatchDto, List<StageResponse>)`** - Map IPSC stage responses to match stage DTOs
+- **`IpscMatchResultServiceImpl.initScores(MatchResultsDto, IpscResponse)`** - Process and aggregate competitor scores across match stages
 
 #### DTO Architecture Enhancements
 
 - **`ClubDto(Club)`** - Constructor for creating DTOs from club entities
 - **`ClubDto(ClubResponse)`** - Constructor for creating DTOs from IPSC response objects
 - **`ClubDto(ClubIdentifier)`** - Constructor for creating DTOs from enumerated club identifiers
-- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialisation from club identifier if
-  entity is null support
+- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialisation from club identifier if the entity is null
 
 ### 🔄 Changed
 
 #### Version Management
 
-- **Adopted Semantic Versioning (SemVer):** Project now follows [SemVer 2.0.0](https://semver.org/)
-  specification
+- **Adopted Semantic Versioning (SemVer):** Project now follows [SemVer 2.0.0](https://semver.org/) specification
 - **Version Format:** Changed from the legacy scheme (v1.x to v4.x) to `MAJOR.MINOR.PATCH` format
 - **Release Documentation:** Structured release notes following industry-standard conventions
 
 #### Entity Initialisation Strategy
 
-- **Repository Integration:** Entity initialisation methods now query the database to check for existing
-  entities before creating new ones
+- **Repository Integration:** Entity initialisation methods now query the database to check for existing entities before creating new ones
 - **Fallback Handling:** Robust fallback mechanisms when entities are not found in the database
-- **Transactional Consistency:** All entity creation and update operations maintain transactional integrity
-  through `TransactionService`
+- **Transactional Consistency:** All entity creation and update operations maintain transactional integrity through `TransactionService`
 
 #### Data Processing Pipelines
 
-- **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs,
-  matches, stages and competitors
+- **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs, matches, stages and competitors
 - **Error Handling:** Enhanced validation and error messages for data transformation failures
 - **Null Safety:** Comprehensive null checks throughout data processing pipelines
 
@@ -933,8 +882,7 @@ No security-related changes in this release.
 
 - **Test Organisation:** Restructured DTO test classes with clear section headers and logical grouping
 - **Naming Standards:** Standardised test naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
-- **Test Coverage Expansion:** Added 151+ new unit tests for DTO classes (MatchStageDtoTest: 48, ScoreDtoTest:
-  26, MatchStageCompetitorDtoTest: 77)
+- **Test Coverage Expansion:** Added 151+ new unit tests for DTO classes (MatchStageDtoTest: 48, ScoreDtoTest: 26, MatchStageCompetitorDtoTest: 77)
 - **AAA Pattern:** Consistent Arrange-Act-Assert structure implemented across all new tests
 - **Edge Case Coverage:** Extensive null/empty/blank field-testing, boundary value testing
 - **Documentation:** Comprehensive test documentation and inline comments
@@ -1048,8 +996,7 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 #### Breaking Changes
 
 - **Entity Renaming:** Consumers must update references from `Match` to `IpscMatch`
-- **Repository Interface Changes:** Update injection points to use `IpscMatchRepository` and
-  `IpscMatchStageRepository`
+- **Repository Interface Changes:** Update injection points to use `IpscMatchRepository` and `IpscMatchStageRepository`
 - **Service Method Names:** Some service method signatures updated for consistency
 
 #### Database
@@ -1161,8 +1108,7 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 
 ### Legacy Versioning (v1.x – v4.x)
 
-Earlier releases used a non-semantic versioning scheme. For historical documentation,
-see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
+Earlier releases used a non-semantic versioning scheme. For historical documentation, see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 
 ---
 
@@ -1218,11 +1164,9 @@ Contributions are welcome! Please follow these guidelines:
 
 For issues, feature requests or questions:
 
-- **GitHub Issues:**
-  [tahoni/hpsc-web-springboot/issues](https://github.com/tahoni/hpsc-web-springboot/issues)
+- **GitHub Issues:** [tahoni/hpsc-web-springboot/issues](https://github.com/tahoni/hpsc-web-springboot/issues)
 - **Repository:** [tahoni/hpsc-web-springboot](https://github.com/tahoni/hpsc-web-springboot)
 
 ---
 
 **Last Updated:** 2026-04-26
-
