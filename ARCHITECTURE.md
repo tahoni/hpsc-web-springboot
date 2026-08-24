@@ -1,7 +1,6 @@
 # HPSC Website Backend Architecture
 
-This document describes the architectural design, directory structure, and core concepts
-of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
+This document describes the architectural design, directory structure, and core concepts of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## Table of Contents
 
@@ -18,8 +17,7 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 - [🔄 Key Design Patterns](#-key-design-patterns)
 - [🔀 Data Flow](#-data-flow)
     - [📈 Typical Request-Response Flow](#-typical-request-response-flow)
-    - [📥 Data Import Flow (CSV/XML)](#-data-import-flow-csvxml-processing)
-    - [🆕 Match CRUD Flow](#-match-crud-flow)
+    - [📥 Award / Image CSV Processing Flow](#-award--image-csv-processing-flow)
 - [✅ Quality Attributes](#-quality-attributes)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [📚 Development Guidelines](#-development-guidelines)
@@ -59,12 +57,10 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
 │   │   ├───constants/          # Application-wide constants
-│   │   │                           HpscConstants, IpscConstants, MatchConstants, SystemConstants
+│   │   │                           HpscConstants, IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
 │   │   │                           AwardController, ImageController
-│   │   │                           IpscController          (/v1/ipsc/*)
-│   │   │                           IpscMatchController     (/v2/ipsc/matches)
-│   │   │                           IpscMemberController    (/ipsc/member — stub)
+│   │   │                           IpscController          (empty stub — no endpoints yet)
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
 │   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
 │   │   │                           DivisionConverter, FirearmTypeConverter
@@ -72,34 +68,21 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   ├───domain/             # JPA entities (database tables)
 │   │   │                           Club, Competitor, IpscMatch, IpscMatchStage
 │   │   │                           MatchCompetitor, MatchStageCompetitor
-│   │   │                           ShooterLog, ShooterLogEntry
+│   │   │                           ShooterLog, ShooterLogCompetitor
 │   │   ├───enums/              # Domain enumerations
 │   │   │                           ClubIdentifier, CompetitorCategory, Division
 │   │   │                           FirearmType, MatchCategory, PowerFactor
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
-│   │   ├───models/             # DTOs, request/response models, holders, records
+│   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response models
 │   │   │   ├───image/          # Image gallery request/response models
-│   │   │   ├───ipsc/
-│   │   │   │   ├───common/     # Shared IPSC models (all non-match-specific)
-│   │   │   │   │   ├───data/       DtoMapping, DtoToEntityMapping, EntityMapping
-│   │   │   │   │   ├───divisions/  FirearmType-to-division mapping classes
-│   │   │   │   │   ├───dto/        ClubDto, CompetitorDto, MatchDto, MatchStageDto, …
-│   │   │   │   │   ├───holders/    MatchHolder, MatchResultsDto, IpscRequestHolder, …
-│   │   │   │   │   ├───records/    CompetitorRecord, CompetitorResultRecord, …
-│   │   │   │   │   ├───request/    IpscRequest, MatchRequest, MatchSearchRequest, …
-│   │   │   │   │   └───response/   ClubResponse, EnrolledResponse, IpscResponse, …
-│   │   │   │   └───match/      # Match-only (CRUD) models
-│   │   │   │       ├───dto/        MatchOnlyDto
-│   │   │   │       ├───holders/dto/ MatchOnlyResultsDto
-│   │   │   │       ├───request/    MatchOnlyRequest
-│   │   │   │       └───response/   MatchOnlyResponse
-│   │   │   └───shared/         # Base Request / Response wrappers, ControllerResponse
-│   │   ├───repositories/       # Spring Data JPA interfaces
+│   │   │   ├───shared/         # Placing
+│   │   │   └───(root)          # Request, Response, ControllerResponse
+│   │   ├───repositories/       # Spring Data JPA interfaces (not yet wired to any service)
 │   │   ├───services/           # Service interfaces
 │   │   │   └───impl/           # Service implementations
 │   │   └───utils/              # Utility classes
-│   │                               DateUtil, IpscUtil, NumberUtil, StringUtil, ValueUtil
+│   │                               DateUtil, NumberUtil, StringUtil, ValueUtil
 │   └───main/resources/
 │       ├───logback-spring.xml  # Logging configuration
 │       └───application*.properties
@@ -118,16 +101,13 @@ of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## 🎯 System Overview
 
-The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting
-club operations. Core responsibilities:
+The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting club operations. Core responsibilities:
 
-| Domain                  | Description                                                                      |
-|-------------------------|----------------------------------------------------------------------------------|
-| **Match Management**    | Bulk import from WinMSS (CAB/XML) and IPSC formats; CRUD via versioned `/v2` API |
-| **Competitor Tracking** | Profiles, classifications, SAPSA number validation, enrolment                    |
-| **Award Ceremonies**    | Award data and ceremony grouping                                                 |
-| **Image Gallery**       | Image metadata processing from CSV                                               |
-| **IPSC Integration**    | IPSC data standards, division-to-firearm-type classification                     |
+| Domain                        | Description                                                                                                                                                    |
+|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Award Ceremonies**          | Award data and ceremony grouping, processed from CSV                                                                                                           |
+| **Image Gallery**             | Image metadata processing from CSV                                                                                                                             |
+| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs, and shooter logs, but the service/controller layer that operates on them is being rebuilt |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 
@@ -135,13 +115,9 @@ The application follows a strict **N-Tier Layered Architecture** with unidirecti
 HTTP Request
     → Controller
         → Service
-            → Entity Service  (gateway to the repository layer)
-                → Repository
-                    → Database
+            → Repository
+                → Database
 ```
-
-`DomainServiceImpl` and `TransactionService` operate exclusively through entity services and never
-inject JPA repositories directly, enforcing the layering boundary.
 
 ---
 
@@ -151,13 +127,11 @@ inject JPA repositories directly, enforcing the layering boundary.
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller             | Mapping                     | Responsibility                        |
-|------------------------|-----------------------------|---------------------------------------|
-| `AwardController`      | `/hpsc-web/awards`          | Award CSV processing                  |
-| `ImageController`      | `/hpsc-web/images`          | Image CSV processing                  |
-| `IpscController`       | `/hpsc-web/v1/ipsc`         | Bulk WinMSS CAB import                |
-| `IpscMatchController`  | `/hpsc-web/v2/ipsc/matches` | Match CRUD (POST / PUT / PATCH / GET) |
-| `IpscMemberController` | `/hpsc-web/ipsc/member`     | Member management (stub)              |
+| Controller        | Mapping                     | Responsibility                            |
+|-------------------|-----------------------------|-------------------------------------------|
+| `AwardController` | `/hpsc-web/v1/awards`       | Award CSV processing                      |
+| `ImageController` | `/hpsc-web/v1/images`       | Image CSV processing                      |
+| `IpscController`  | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet |
 
 All controllers:
 - Validate request bodies and path variables at the boundary
@@ -165,42 +139,20 @@ All controllers:
 - Return `ResponseEntity<T>` with typed response models
 - Are annotated with full OpenAPI (`@Tag`, `@Operation`, `@ApiResponse`) metadata
 
-`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException`, and
-`ValidationException` instances and maps them to standard JSON error responses with structured logging.
+`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException`, and `ValidationException` instances and maps them to standard JSON error responses with structured logging.
 
 ---
 
 ### ⚡ 2. Service Layer (`za.co.hpsc.web.services`)
 
-Contains all business logic. The service layer is divided into two tiers:
+Contains all business logic.
 
-#### Domain / Orchestrating Services
+| Interface      | Implementation     | Role                 |
+|----------------|--------------------|----------------------|
+| `AwardService` | `AwardServiceImpl` | Award CSV processing |
+| `ImageService` | `ImageServiceImpl` | Image CSV processing |
 
-| Interface               | Implementation              | Role                                                                |
-|-------------------------|-----------------------------|---------------------------------------------------------------------|
-| `IpscService`           | `IpscServiceImpl`           | Entry point for bulk WinMSS CAB import                              |
-| `TransformationService` | `TransformationServiceImpl` | Transforms parsed CSV/XML data into IPSC response structures        |
-| `DomainService`         | `DomainServiceImpl`         | Orchestrates entity initialisation (club, competitor, match, stage) |
-| `TransactionService`    | `TransactionServiceImpl`    | Coordinates persistence across multiple entity services             |
-| `IpscMatchService`      | `IpscMatchServiceImpl`      | Match CRUD operations (insert / update / modify / get)              |
-| `AwardService`          | `AwardServiceImpl`          | Award CSV processing                                                |
-| `ImageService`          | `ImageServiceImpl`          | Image CSV processing                                                |
-
-#### Entity Services (Repository Gateway)
-
-Entity services are the **only** layer that interacts with Spring Data JPA repositories. Higher-level
-services (including `DomainServiceImpl` and `TransactionServiceImpl`) always go through entity services.
-
-| Interface                           | Implementation                          | Managed Entity         |
-|-------------------------------------|-----------------------------------------|------------------------|
-| `ClubEntityService`                 | `ClubEntityServiceImpl`                 | `Club`                 |
-| `CompetitorEntityService`           | `CompetitorEntityServiceImpl`           | `Competitor`           |
-| `MatchEntityService`                | `MatchEntityServiceImpl`                | `IpscMatch`            |
-| `MatchStageEntityService`           | `MatchStageEntityServiceImpl`           | `IpscMatchStage`       |
-| `MatchCompetitorEntityService`      | `MatchCompetitorEntityServiceImpl`      | `MatchCompetitor`      |
-| `MatchStageCompetitorEntityService` | `MatchStageCompetitorEntityServiceImpl` | `MatchStageCompetitor` |
-
-All `@Transactional` boundaries live in the service layer.
+> The match/competitor domain's service layer (bulk import, CRUD, entity initialisation) is being rebuilt — only `AwardService`/`ImageService` currently exist. Neither of them calls into the repository layer directly; `repositories/` currently has no service-layer caller.
 
 ---
 
@@ -210,23 +162,22 @@ All `@Transactional` boundaries live in the service layer.
 
 The JPA entities map to database tables:
 
-| Entity                 | Table                    | Key Relationships                                                                                |
-|------------------------|--------------------------|--------------------------------------------------------------------------------------------------|
-| `Club`                 | `club`                   | One-to-many → `IpscMatch`, `Competitor` (home club), `ShooterLog`                                |
-| `Competitor`           | `competitor`             | Many-to-one ← `Club` (home club, optional); One-to-many → `MatchCompetitor`, `ShooterLog`        |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor`                          |
-| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`                                  |
-| `MatchCompetitor`      | `match_competitor`       | Many-to-one ← `IpscMatch`, `Competitor`; One-to-many → `MatchStageCompetitor`, `ShooterLogEntry` |
-| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                                                |
-| `ShooterLog`           | `shooter_log`            | Many-to-one ← `Competitor`, `Club`; One-to-many → `ShooterLogEntry`                              |
-| `ShooterLogEntry`      | `shooter_log_entry`      | Many-to-one ← `ShooterLog`, `MatchCompetitor`                                                    |
+| Entity                 | Table                    | Key Relationships                                                                                     |
+|------------------------|--------------------------|-------------------------------------------------------------------------------------------------------|
+| `Club`                 | `club`                   | One-to-many → `IpscMatch`, `Competitor` (home club), `ShooterLog`                                     |
+| `Competitor`           | `competitor`             | Many-to-one ← `Club` (home club, optional); One-to-many → `MatchCompetitor`, `ShooterLog`             |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor`, `ShooterLogCompetitor`       |
+| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`                                       |
+| `MatchCompetitor`      | `match_competitor`       | Many-to-one ← `IpscMatch`, `Competitor`; One-to-many → `MatchStageCompetitor`, `ShooterLogCompetitor` |
+| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                                                     |
+| `ShooterLog`           | `shooter_log`            | Many-to-one ← `Competitor`, `Club`; One-to-many → `ShooterLogCompetitor`                              |
+| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one ← `ShooterLog`, `MatchCompetitor`, `IpscMatch`                                            |
 
 All bidirectional `@OneToMany` relationships include `mappedBy` to avoid duplicate join table creation.
 
 #### Custom JPA Attribute Converters (`za.co.hpsc.web.converters`)
 
-All enum-typed entity fields use explicit `AttributeConverter` implementations rather than
-`@Enumerated(EnumType.STRING)`. This provides testable, type-safe conversion logic:
+All enum-typed entity fields use explicit `AttributeConverter` implementations rather than `@Enumerated(EnumType.STRING)`. This provides testable, type-safe conversion logic:
 
 | Converter                     | Enum                 | DB Column Value     |
 |-------------------------------|----------------------|---------------------|
@@ -239,8 +190,7 @@ All enum-typed entity fields use explicit `AttributeConverter` implementations r
 
 #### Repositories (`za.co.hpsc.web.repositories`)
 
-One Spring Data JPA interface per entity. Custom query methods supplement the standard CRUD
-operations (e.g., `findByNameAndScheduledDate`, `findByIdWithClubStages`).
+One Spring Data JPA interface per entity. Custom query methods supplement the standard CRUD operations (e.g., `IpscMatchRepository.findAllByClubId`, `ShooterLogRepository.findAllByCompetitorIdAndFirearmTypeAndPowerFactor`).
 
 ---
 
@@ -252,31 +202,12 @@ DTOs and request/response models, grouped by feature domain:
 Request/response models for the award and image CSV pipelines.
 
 #### `models/shared/`
-Base `Request` and `Response` wrappers providing common metadata fields. `ControllerResponse` is the
-standard JSON envelope.
+`Placing`, a shared result-placement model.
 
-#### `models/ipsc/common/`
-All shared IPSC models, divided into sub-packages by their roles:
+#### Package root (`za.co.hpsc.web.models`)
+`Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON envelope.
 
-| Sub-package  | Contents                                                                                                                               |
-|--------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| `data/`      | `DtoMapping` (Java record), `DtoToEntityMapping`, `EntityMapping` — three-tier mapping bridge                                          |
-| `divisions/` | `FirearmTypeToDivisions` and per-firearm-type division lists                                                                           |
-| `dto/`       | `ClubDto`, `CompetitorDto`, `MatchDto`, `MatchStageDto`, `MatchCompetitorDto`, `MatchStageCompetitorDto`, `EnrolledCompetitorDto`      |
-| `holders/`   | `MatchHolder`, `MatchResultsDto`, `IpscRequestHolder`, `IpscResponseHolder`, `IpscMatchRecordHolder`                                   |
-| `records/`   | `CompetitorRecord`, `CompetitorResultRecord`, `MatchCompetitorOverallResultsRecord`, `MatchCompetitorStageResultRecord`, `MatchRecord` |
-| `request/`   | `IpscRequest`, `MatchRequest`, `MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest`, and others                      |
-| `response/`  | `ClubResponse`, `EnrolledResponse`, `IpscResponse`, `MatchResponse`, `MemberResponse`, `ScoreResponse`, `StageResponse`, `TagResponse` |
-
-#### `models/ipsc/match/`
-Match-specific (CRUD) models, kept separate to avoid mixing bulk-import and resource-API concerns:
-
-| Sub-package    | Contents                                                         |
-|----------------|------------------------------------------------------------------|
-| `dto/`         | `MatchOnlyDto` — lightweight match representation without stages |
-| `holders/dto/` | `MatchOnlyResultsDto` — internal results holder                  |
-| `request/`     | `MatchOnlyRequest` — JSON body for create / update / patch       |
-| `response/`    | `MatchOnlyResponse` — typed response from `IpscMatchController`  |
+> No IPSC-specific DTOs currently exist — the `models/ipsc/` package described in earlier versions of this document has been removed pending the match/competitor service-layer rebuild.
 
 ---
 
@@ -290,6 +221,7 @@ Match-specific (CRUD) models, kept separate to avoid mixing bulk-import and reso
 | `CompetitorCategory` | IPSC competitor classification                     |
 | `Division`           | IPSC division (per firearm type)                   |
 | `FirearmType`        | Firearm classification (Handgun, PCC, Rifle, etc.) |
+| `Gender`             | Competitor gender classification                   |
 | `MatchCategory`      | Match classification                               |
 | `PowerFactor`        | Major / Minor power factor                         |
 
@@ -298,15 +230,13 @@ Match-specific (CRUD) models, kept separate to avoid mixing bulk-import and reso
 | Class        | Responsibility                                                                 |
 |--------------|--------------------------------------------------------------------------------|
 | `DateUtil`   | Date formatting and parsing helpers                                            |
-| `IpscUtil`   | Display-string construction for club and match names (`"Match @ Club (ABBR)"`) |
 | `NumberUtil` | Numeric parsing and formatting helpers                                         |
 | `StringUtil` | String normalisation helpers                                                   |
 | `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.)                    |
 
 #### Constants (`za.co.hpsc.web.constants`)
 
-`HpscConstants`, `IpscConstants`, `MatchConstants`, `SystemConstants` — application-wide constant
-definitions shared across services, converters, and DTOs.
+`HpscConstants`, `IpscConstants`, `SystemConstants` — application-wide constant definitions shared across services and converters.
 
 ---
 
@@ -320,28 +250,21 @@ Custom exception hierarchy enforces a consistent error-handling contract:
 | `NonFatalException`   | `400 Bad Request`           | Recoverable business-rule violations |
 | `ValidationException` | `400 Bad Request`           | Input validation failures            |
 
-`ControllerAdvice` (in `configs/`) intercepts all three exception types and translates them to a
-standardised JSON error response. Structured logging is applied in every handler — do not catch and
-re-throw as `RuntimeException`.
+`ControllerAdvice` (in `configs/`) intercepts all three exception types and translates them to a standardised JSON error response. Structured logging is applied in every handler — do not catch and re-throw as `RuntimeException`.
 
 ---
 
 ## 🔄 Key Design Patterns
 
-| Pattern                      | Where Used                                                                                               |
-|------------------------------|----------------------------------------------------------------------------------------------------------|
-| **Layered Architecture**     | Controller → Service → Entity Service → Repository → DB — no layer may skip the one below it             |
-| **Repository Pattern**       | Spring Data JPA repos abstract all DB access; entity services are the only callers                       |
-| **Entity Service Pattern**   | Entity services are the single access boundary between business logic and JPA repos                      |
-| **Service Layer Pattern**    | All business logic lives in service classes; controllers and repos are kept thin                         |
-| **DTO Pattern**              | `models/` DTOs decouple external API contracts from JPA entities                                         |
-| **Three-Tier Mapping**       | `DtoMapping` → `DtoToEntityMapping` → `EntityMapping` bridges request models to entities                 |
-| **Strategy Pattern**         | CSV/XML converters (`converters/` package) handle format variants behind a common interface              |
-| **Custom JPA Converters**    | `AttributeConverter` implementations replace `@Enumerated` for type-safe, testable enum persistence      |
-| **Builder / Init Pattern**   | `MatchOnlyDto.init(MatchOnlyRequest)` and entity `init()` methods centralise complex object construction |
-| **Optional Returns**         | Service methods return `Optional<T>` to communicate absent results without exceptions                    |
-| **Global Error Handling**    | `ControllerAdvice` translates domain exceptions to HTTP responses with structured logging                |
-| **Declarative Transactions** | `@Transactional` on service methods; `TransactionService` coordinates multi-entity writes                |
+| Pattern                   | Where Used                                                                                          |
+|---------------------------|-----------------------------------------------------------------------------------------------------|
+| **Layered Architecture**  | Controller → Service → Repository → DB — no layer may skip the one below it                         |
+| **Repository Pattern**    | Spring Data JPA repos abstract all DB access                                                        |
+| **Service Layer Pattern** | All business logic lives in service classes; controllers and repos are kept thin                    |
+| **DTO Pattern**           | `models/` DTOs decouple external API contracts from JPA entities                                    |
+| **Strategy Pattern**      | CSV/XML converters (`converters/` package) handle format variants behind a common interface         |
+| **Custom JPA Converters** | `AttributeConverter` implementations replace `@Enumerated` for type-safe, testable enum persistence |
+| **Global Error Handling** | `ControllerAdvice` translates domain exceptions to HTTP responses with structured logging           |
 
 ---
 
@@ -353,53 +276,29 @@ re-throw as `RuntimeException`.
 Client → HTTP Request
     → Controller (validate input, extract body/path vars)
         → Service (business logic)
-            → Entity Service (data access gateway)
-                → Repository (Spring Data JPA query)
-                    → Database
-                ← Entity
+            → Repository (Spring Data JPA query, where applicable)
+                → Database
             ← Domain model / DTO
         ← Service result
     ← Controller wraps in ResponseEntity<T>
 ← HTTP Response (JSON)
 ```
 
-### 📥 Data Import Flow (CSV/XML Processing)
+### 📥 Award / Image CSV Processing Flow
 
-Handles bulk WinMSS CAB file import via `IpscController`:
+The only data-processing pipeline currently implemented, handled by `AwardController` and `ImageController`:
 
 ```
-Client uploads CAB/CSV/XML
-    → IpscController
-        → IpscService.importWinMssCabFile()
-            → TransformationService.mapMatchResults()
-                (parses file, builds IpscRequestHolder via converters/)
-            → DomainService (initialises entities from DTOs)
-                → ClubEntityService / CompetitorEntityService / MatchEntityService / …
-                    → Repositories → DB
-            → TransactionService (persists MatchCompetitor, MatchStageCompetitor)
-                → MatchCompetitorEntityService / MatchStageCompetitorEntityService
-                    → Repositories → DB
-        ← IpscResponseHolder
-    ← IpscController returns ResponseEntity<IpscResponse>
+Client uploads CSV (Content-Type: text/csv)
+    → AwardController / ImageController
+        → AwardService.processCsv() / ImageService.processCsv()
+            (parses CSV via Jackson CsvMapper, maps to response records — no persistence)
+        ← AwardCeremonyResponseHolder / ImageResponseHolder
+    ← ResponseEntity<...>
 ← JSON response
 ```
 
-### 🆕 Match CRUD Flow
-
-Handles individual match create / update / patch / retrieve via `IpscMatchController`:
-
-```
-Client → POST|PUT|PATCH|GET /v2/ipsc/matches[/{matchId}]
-    → IpscMatchController (validate MatchOnlyRequest / path var)
-        → IpscMatchService.insertMatch() | updateMatch() | modifyMatch() | getMatch()
-            → TransformationService.mapMatchOnly()
-                (builds MatchOnlyDto from MatchOnlyRequest via IpscUtil)
-            → DomainService / TransactionService
-                → Entity Services → Repositories → DB
-        ← Optional<MatchOnlyResponse>
-    ← ResponseEntity<MatchOnlyResponse>  (or 404/500 on empty/error)
-← JSON response
-```
+> The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`, WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer.
 
 ---
 
@@ -408,10 +307,10 @@ Client → POST|PUT|PATCH|GET /v2/ipsc/matches[/{matchId}]
 | Attribute           | How It Is Achieved                                                                                                                    |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | **Scalability**     | Stateless REST design; database-backed persistence allows horizontal scaling                                                          |
-| **Maintainability** | Strict layering (no repo leakage past entity services), package-by-feature model structure, Javadoc and CLAUDE.md guidance            |
+| **Maintainability** | Strict layering, package-by-feature model structure, Javadoc and CLAUDE.md guidance                                                   |
 | **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
-| **Extensibility**   | Firearm-type enums + division mappings, strategy-pattern converters, dedicated `match/` sub-package for new CRUD resources            |
+| **Extensibility**   | Firearm-type enums + division mappings, strategy-pattern converters                                                                   |
 | **Data Integrity**  | JPA cascade rules, bidirectional `mappedBy` declarations, `@Transactional` service methods, custom attribute converters               |
 | **Type Safety**     | Custom `AttributeConverter` implementations for all enum-typed columns replace `@Enumerated(EnumType.STRING)`                         |
 
@@ -429,14 +328,11 @@ Client → POST|PUT|PATCH|GET /v2/ipsc/matches[/{matchId}]
 
 ## 📚 Development Guidelines
 
-Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for
-local setup, build commands, database profiles, and coding standards. See README.md's
-[📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
+Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build commands, database profiles, and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 
 - Controllers must not contain business logic — delegate to services only
-- Services must not inject repositories directly — use entity services
 - All exceptions must extend `FatalException`, `NonFatalException`, or `ValidationException`
 - Test class names: `<ClassName>Test`; test method names: `test<Scenario>_when<Condition>_then<Expectation>`
 - AssertJ for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests
