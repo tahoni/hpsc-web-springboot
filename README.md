@@ -1,7 +1,6 @@
 # HPSC Website Backend
 
-The official repository for the Spring Boot backend of the Hartbeespoortdam Practical Shooting Club
-(HPSC) platform.
+The official repository for the Spring Boot backend of the Hartbeespoortdam Practical Shooting Club (HPSC) platform.
 
 ## Table of Contents
 
@@ -16,13 +15,12 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
 - [📚 Documentation](#-documentation)
-- [📜 Licence](#-licence)
+- [📜 License](#-license)
 - [👤 Author](#-author)
 
 ## 📖 Introduction
 
-The HPSC Website backend is a high-performance Spring Boot application designed to manage and serve data for
-the Hartbeespoortdam Practical Shooting Club platform. It provides a comprehensive set of RESTful APIs for:
+The HPSC Website backend is a high-performance Spring Boot application designed to manage and serve data for the Hartbeespoortdam Practical Shooting Club platform. It provides a comprehensive set of RESTful APIs for:
 
 - **Match Management**: Processing and storing shooting match results from WinMSS and IPSC formats
 - **Competitor Tracking**: Managing competitor profiles, classifications, and performance history
@@ -31,15 +29,13 @@ the Hartbeespoortdam Practical Shooting Club platform. It provides a comprehensi
 - **Image Gallery**: Serving static image assets for the club website
 - **IPSC Integration**: Supporting IPSC (International Practical Shooting Confederation) data standards
 
-The application emphasises structured data processing, validation, and data integrity with MySQL database
-persistence.
+The application emphasises structured data processing, validation, and data integrity with MySQL database persistence.
 
 ## 🔗 Repository
 
 The repository for this project is located at [GitHub](https://github.com/tahoni/hpsc-web-springboot).
 
-Feature requests, suggestions for improvements, and bugs can be logged using the project's
-[Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
+Feature requests, suggestions for improvements, and bugs can be logged using the project's [Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
 
 ## ⚙️ Technology
 
@@ -58,13 +54,11 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
 ## ✨ Features
 
-- **Advanced Data Processing**: Specialised engines for parsing CSV and XML sources with support for MIME type
-  inference, multi-format parsing, and flexible schema mapping.
+- **Advanced Data Processing**: Specialised engines for parsing CSV and XML sources with support for MIME type inference, multi-format parsing, and flexible schema mapping.
 - **Database Persistence**: MySQL database with JPA/Hibernate for reliable data storage and retrieval.
 - **Transaction Management**: Centralised transaction handling ensuring data consistency across operations.
 - **Match Result Processing**: Support for WinMSS and IPSC match data formats with automatic entity mapping.
-- **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across
-  multiple firearm types.
+- **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm types.
 - **Competitor & Club Management**: Complete CRUD operations for competitors and shooting clubs.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
 - **Data Integrity**: Multi-layered validation (controller, service, entity) with detailed error reporting.
@@ -76,7 +70,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 ### 📋 Prerequisites
 
 - **Java SDK**: See `<java.version>` in `pom.xml` for the required version
-- **Maven**: Use the provided `./mvnw` wrapper (pins its own version automatically), or a compatible local install
+- **Maven**: Use the provided `./mvnw` wrapper (pins its own version automatically), or a compatible local installation
 - **MySQL**: Any current version (or a compatible database)
 - **Database Configuration**: Configure connection details in `application.properties`
 
@@ -87,7 +81,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
    git clone https://github.com/tahoni/hpsc-web-springboot.git
    cd hpsc-web-springboot
    ```
-
+   
 2. **Configure the database**:
     - Create a MySQL database for the application
     - Update `src/main/resources/application.properties` with your database credentials:
@@ -116,8 +110,7 @@ Interactive API documentation is automatically generated using SpringDoc OpenAPI
 - **Swagger UI**: `http://localhost:8081/hpsc-web/swagger-ui/index.html`
 - **OpenAPI JSON**: `http://localhost:8081/hpsc-web/v3/api-docs`
 
-The Swagger UI provides a comprehensive, interactive interface for exploring and testing all available REST
-endpoints.
+The Swagger UI provides a comprehensive, interactive interface for exploring and testing all available REST endpoints.
 
 ## 🧪 Testing
 
@@ -163,27 +156,28 @@ This project's documentation is spread across a few files, each with a distinct 
 | [`README.md`](README.md)               | Project overview, setup, and links to the rest of the documentation (this file)                 |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure, and CI/CD quality gates                       |
 | [`CLAUDE.md`](CLAUDE.md)               | Guidance for Claude Code (AI assistant) when working in this repository                         |
+| [`AGENTS.md`](AGENTS.md)               | Cross-tool conventions for AI coding agents working in this repository                          |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)   | New-developer onboarding: setup, database profiles, testing, workflow                           |
 | [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
 | [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |
 | [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Detailed release notes for the current/latest version                                           |
-| [`LICENSE.md`](LICENSE.md)             | MIT Licence                                                                                     |
+| [`LICENSE.md`](LICENSE.md)             | MIT License                                                                                     |
 | [`HELP.md`](HELP.md)                   | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
-[`documentation/history/`](documentation/history) holds one `RELEASE_NOTES_vX.Y.Z.md` per released
-version — an archived snapshot of `RELEASE_NOTES.md` at release time — so past releases stay
-individually referenceable once `RELEASE_NOTES.md` moves on to the next version.
+[`documentation/history/`](documentation/history) holds one of each of the following files per released version, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version:
 
-[`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release
-archive covering versions 1.x – 4.x, from before the project adopted its current documentation
-structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only
-and isn't maintained going forward.
+| File                       | Purpose                                                    |
+|----------------------------|------------------------------------------------------------|
+| `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time    |
+| `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 
-This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see
-[CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
+[`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering versions 1.x – 4.x, from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only and isn't maintained going forward.
 
-## 📜 Licence
+This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see [CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 
-The copyright licence can be found in the [`LICENSE.md`](LICENSE.md) file.
+## 📜 License
+
+The copyright license can be found in the [`LICENSE.md`](LICENSE.md) file.
 
 ## 👤 Author
 
