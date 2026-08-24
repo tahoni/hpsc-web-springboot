@@ -26,10 +26,10 @@ HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shootin
 ./mvnw test
 
 # Single test class
-./mvnw test -Dtest=IpscControllerTest
+./mvnw test -Dtest=AwardControllerTest
 
 # Single test method
-./mvnw test -Dtest=IpscControllerTest#testImportWinMssCabData_whenValidContent_thenReturns200
+./mvnw test -Dtest=AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200
 
 # Tests + JaCoCo coverage report (target/site/jacoco/)
 ./mvnw verify -Pcoverage
@@ -64,22 +64,20 @@ HTTP Request
 
 ### Key layers and packages (`src/main/java/za/co/hpsc/web/`)
 
-| Package         | Role                                                                                                                               |
-|-----------------|------------------------------------------------------------------------------------------------------------------------------------|
-| `controllers/`  | `AwardController`, `ImageController`, `IpscController`                                                                             |
-| `services/`     | `IpscService`, `AwardService`, `ImageService`, `TransformationService`, `TransactionService`, plus entity-level services           |
-| `repositories/` | Spring Data JPA repos for the 6 entities below                                                                                     |
-| `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`                       |
-| `models/`       | DTOs grouped by domain: `award/`, `image/`, `ipsc/`, `shared/`                                                                     |
-| `converters/`   | CSV/XML parsing with strategy pattern and MIME-type inference                                                                      |
-| `exceptions/`   | `FatalException`, `NonFatalException`, `ValidationException`; `ControllerAdvice` translates these to standard JSON error responses |
-| `enums/`        | `ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`                                  |
-| `constants/`    | `HpscConstants`, `IpscConstants`, `MatchConstants`, `SystemConstants`                                                              |
-| `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                |
+| Package         | Role                                                                                                                                               |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `controllers/`  | `AwardController`, `ImageController`, `IpscController` (stub — no endpoints yet)                                                                   |
+| `services/`     | `AwardService`, `ImageService`, plus implementations under `services/impl/`                                                                        |
+| `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                     |
+| `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor` |
+| `models/`       | DTOs grouped by domain: `award/`, `image/`, `shared/`, plus `Request`/`Response`/`ControllerResponse` at the package root                          |
+| `converters/`   | Custom JPA `AttributeConverter` implementations for enum-typed entity fields                                                                       |
+| `exceptions/`   | `FatalException`, `NonFatalException`, `ValidationException`; `ControllerAdvice` translates these to standard JSON error responses                 |
+| `enums/`        | `ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`, `MatchCategory`, `PowerFactor`                                        |
+| `constants/`    | `HpscConstants`, `IpscConstants`, `SystemConstants`                                                                                                |
+| `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                                |
 
-### Data flow for IPSC match import
-
-`IpscController` receives CSV/XML match data → `TransformationService` parses it (using `converters/`) → `IpscService` validates and processes → `TransactionService` coordinates persistence across multiple entity services → repositories persist to DB.
+> The IPSC match-import/CRUD service, model, and entity-service layers described in earlier versions of this document (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services, and the `models/ipsc/` DTOs) have been removed from the codebase pending a rebuild — `IpscController` is currently an empty stub. Don't reference those classes as if they exist until they're rebuilt.
 
 ### Exception handling
 
