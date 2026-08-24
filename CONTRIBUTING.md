@@ -139,6 +139,14 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
 - **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see [🚢 Cutting a Release](#-cutting-a-release) below) and are opened as a PR against `main`.
 - **`hotfix/<short-description>`** — urgent fixes for a defect already in production. Branch from, and PR directly into, `main`, bypassing `develop` and any in-progress `release/vX.Y.Z` branch so the fix ships immediately. Also, merge/PR the same fix into `develop` so it isn't lost when the next release is cut.
 
+**All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*` included — must never open a PR directly against `main`.
+
+### Merging
+
+- **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this repo's existing history — no squashing or rebasing) and delete the branch afterwards.
+- **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its description — only delete the branch once both merges have landed, so the fix isn't lost when the next `release/vX.Y.Z` branch is cut.
+- **`release/vX.Y.Z` → `main`:** merge once the Release Checklist is complete and all tests pass; tag the resulting commit `vX.Y.Z`, then merge `main` back into `develop` so it stays in sync.
+
 ### Conventions
 
 - **Commit in logical chunks.** One concern per commit — don't bundle a dependency bump, a documentation update, and a bug fix into a single commit.
