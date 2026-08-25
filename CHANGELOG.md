@@ -63,6 +63,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🐛 Fixed
 
+#### Documentation
+
+- **`README.md`:** Restored the missing `#` on the H1 heading — it was rendering as plain text instead of the page title
+
 ### ⚠️ Deprecated
 
 ### 🗑️ Removed

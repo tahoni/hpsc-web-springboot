@@ -1,4 +1,4 @@
-# HPSC Website Backend
+ HPSC Website Backend
 
 The official repository for the Spring Boot backend of the Hartbeespoortdam Practical Shooting Club (HPSC) platform.
 
