@@ -196,7 +196,7 @@ Commit these in logical chunks per the Git Workflow rule above — the version b
 
 `README.md` and `ARCHITECTURE.md` describe the durable structure and purpose of the project, not its current-version implementation details. They must:
 
-- **Never contain version numbers.** Defer to `pom.xml` for exact dependency versions and to `CHANGELOG.md` for release history.
+- **Never contain references to specific versions** — neither exact version numbers (e.g. `7.1.0`) nor version ranges (e.g. `1.x – 4.x`) of this project. Defer to `pom.xml` for exact dependency versions and to `CHANGELOG.md`/`HISTORY.md` for release history.
 - **Never contain counts that drift as the codebase grows** (e.g. "Eight JPA entities map to database tables"). List items by name in a table instead, without a leading count.
 - **Never carry narrative tightly coupled to the current version's implementation.** That belongs in `CHANGELOG.md`, `RELEASE_NOTES.md`, `HISTORY.md`, or the per-version files in `documentation/history/`.
 
