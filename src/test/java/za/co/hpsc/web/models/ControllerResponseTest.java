@@ -8,18 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ControllerResponseTest {
     @Test
-    void testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults() {
-        // Arrange & Act
-        ControllerResponse response = new ControllerResponse();
-
-        // Assert
-        assertNull(response.getTimestamp());
-        assertFalse(response.isSuccess());
-        assertNull(response.getMessage());
-        assertNull(response.getError());
-    }
-
-    @Test
     void testShortConstructor_whenValuesProvided_thenSetsFieldsAndSuccessFalse() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 15);
