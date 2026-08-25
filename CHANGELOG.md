@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Tooling
 
 - **`/scaffold-unit-tests`:** New Claude Code command, migrated from `.github/prompts/scaffold-unit-tests.prompt.md` — corrects the stale `za.co.signio.apexservices` package reference and the abstract "Layer 1/2/3" interface-test pattern to match this repo's actual conventions (interface contract tests via the interface type in `services/`, impl-only helper tests in `services/impl/`, no Lombok-only tests), per the `AwardServiceTest`/`ImageServiceTest` split above
+- **`/scaffold-integration-tests`:** New Claude Code command, copied from `/scaffold-unit-tests` and adapted for `@SpringBootTest`-based service integration tests (`@ActiveProfiles("test")`, `@Autowired` real Spring-wired bean, no Mockito) — follows the pattern in `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest`
 
 ### 🔄 Changed
 
@@ -62,6 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
 - **`.claude/commands/generate-pr-description.md`:** Closing instructions now direct the release PR at `develop`, with a reminder to open the follow-up `develop` → `main` promotion PR
+- **`/scaffold-unit-tests`:** Now accepts multiple space- or comma-separated class names/paths in a single invocation, scaffolding each target independently so one unresolved target doesn't block the rest
 
 ### 🐛 Fixed
 
