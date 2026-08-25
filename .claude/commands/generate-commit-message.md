@@ -8,7 +8,7 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git --no-pager diff:*)
 
 Optional scope narrowing: $ARGUMENTS (limit the message to specific files/areas; leave blank for all staged/unstaged changes)
 
-## Current state
+## 🔍 Current state
 
 Status:
 !`git status --short`
@@ -21,7 +21,7 @@ Full diff (staged and unstaged):
 
 Conventions to follow: @AGENTS.md
 
-## Instructions
+## 🚀 Instructions
 
 Read and strictly follow the **Git Workflow** section in AGENTS.md (loaded above). Treat AGENTS.md as the single source of truth; do not reinterpret or contradict its rules.
 
@@ -47,7 +47,7 @@ Read and strictly follow the **Git Workflow** section in AGENTS.md (loaded above
 5. **British English** spelling, grammar, and punctuation throughout (e.g. "licence", "colour", "initialise"), per AGENTS.md's Documentation Conventions.
 6. **Sanity-check against conventions**: no secrets or credentials referenced, no vague messages such as "fixed stuff" or "updates".
 
-## Output
+## 📤 Output
 
 Do **not** run `git add` or `git commit` yourself — this command only drafts, for the user to review and run.
 

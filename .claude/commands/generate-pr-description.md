@@ -8,7 +8,7 @@ allowed-tools: Bash(git log:*), Bash(git diff:*), Bash(git --no-pager diff:*), B
 
 Prepare a release for version: $1
 
-## Current state
+## 🔍 Current state
 
 Branch:
 !`git branch --show-current`
@@ -21,7 +21,7 @@ Commit log relative to main:
 
 Conventions to follow: @AGENTS.md
 
-## Instructions
+## 🚀 Instructions
 
 Read and strictly follow **all conventions defined in AGENTS.md** (loaded above) — in particular the **Release Checklist**, **Documentation Conventions**, **Git Workflow** (Branching Model), and **Evergreen Documentation** (reverse sync rule) sections. Treat AGENTS.md as the single source of truth; do not reinterpret or contradict its rules. Follow the Release Checklist steps **in order** — the version number and date must be final before anything downstream references them.
 
@@ -43,7 +43,7 @@ Steps:
 
 Commit these in logical chunks per AGENTS.md's Git Workflow — the version bump, the CHANGELOG/HISTORY/RELEASE_NOTES documentation, and the PR description are separate concerns. Do not run `git commit`, `git push`, or open the PR yourself — draft the files and stop for review.
 
-## Output
+## 📤 Output
 
 Once all files above are written, tell the user the release branch (`release/v$1`) is ready to open as a PR against `main` (per the GitFlow branching model in AGENTS.md), using `documentation/history/PR_DESCRIPTION_v$1.md` as the PR body.
 

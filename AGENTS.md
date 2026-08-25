@@ -75,6 +75,8 @@ Every heading listed in a Table of Contents is prefixed with an emoji, and its T
 | ⚙️   | Technology / configuration     |
 | ✨   | Features                       |
 | 🚀   | Instructions / getting started |
+| 🔍   | Current state / inspection     |
+| 📤   | Output                         |
 | 📋   | Prerequisites                  |
 | 🔧   | Installation / setup           |
 | 📚   | Documentation                  |
