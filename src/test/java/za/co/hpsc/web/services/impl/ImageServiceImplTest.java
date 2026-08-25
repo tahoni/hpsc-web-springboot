@@ -12,7 +12,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: sync with AwardServiceTest - similar test cases for processCsv and readAwards, but with image-specific data and assertions
+/**
+ * Unit tests for {@link ImageServiceImpl}'s impl-only helper methods ({@code readImages},
+ * {@code mapImages}) - not declared on {@link za.co.hpsc.web.services.ImageService}. The
+ * interface's {@code processCsv} contract is covered by
+ * {@link za.co.hpsc.web.services.ImageServiceTest}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceImplTest {
     @InjectMocks

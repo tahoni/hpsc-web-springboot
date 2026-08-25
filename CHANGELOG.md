@@ -38,7 +38,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### ➕ Added
 
+#### Testing
+
+- **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/`ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
+
 ### 🔄 Changed
+
+#### Testing
+
+- **`AwardServiceImplTest`, `ImageServiceImplTest`:** Stale "TODO: sync" comments replaced with Javadoc cross-referencing the new interface-level tests; these two files were already in sync (14 parallel test cases each) for the impl-only `readAwards`/`mapAwards` and `readImages`/`mapImages` methods
 
 #### Documentation
 
@@ -65,6 +73,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Testing
 
 - **`ControllerResponseTest.testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults`:** Removed — solely exercised the Lombok-generated `@NoArgsConstructor` and generated getters with no accompanying logic, per AGENTS.md's Test Conventions
+- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `processCsv` coverage, tested directly against the impl class, is superseded by the new interface-level `services/AwardServiceTest`/`services/ImageServiceTest`
 
 ### 🔐 Security
 
