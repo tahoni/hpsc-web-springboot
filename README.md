@@ -132,7 +132,7 @@ The application includes comprehensive test coverage with unit and integration t
 
 - **Unit Tests**: Domain entities, DTOs, enums, utilities, and service logic
 - **Integration Tests**: Service implementations and data access layers
-- **Test Frameworks**: JUnit, Mockito, Spring Test, AssertJ
+- **Test Frameworks**: JUnit, Mockito, Spring Test
 
 Test coverage includes:
 

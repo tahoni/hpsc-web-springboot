@@ -89,4 +89,4 @@ All exceptions should extend `FatalException`, `NonFatalException`, or `Validati
 - Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) to mock the service layer; they do not start a Spring context.
 - Service/repository integration tests use the `test` profile (H2).
 - Test class names follow `<ClassName>Test`; test method names follow `test<Scenario>_when<Condition>_then<Expectation>`.
-- AssertJ is used for assertions throughout.
+- JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.

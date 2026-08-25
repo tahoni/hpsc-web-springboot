@@ -26,7 +26,7 @@ Conventions for any AI coding agent working in this repository. [`CLAUDE.md`](CL
 - **Data processing:** Jackson (JSON/CSV/XML)
 - **API documentation:** SpringDoc OpenAPI (Swagger UI)
 - **Validation:** Hibernate Validator, Jakarta Validation
-- **Testing:** JUnit, Mockito, AssertJ, Spring Test
+- **Testing:** JUnit, Mockito, Spring Test
 - **Code coverage:** JaCoCo
 - **Code generation:** Lombok
 
@@ -131,7 +131,7 @@ Two documentation-only folders supplement these:
 - Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) to mock the service layer; they do not start a Spring context.
 - Service/repository integration tests use the `test` profile (H2 in-memory database).
 - Test class names follow `<ClassName>Test`; test method names follow `test<Scenario>_when<Condition>_then<Expectation>`.
-- AssertJ is used for assertions throughout.
+- JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.
 - Follow an Arrange-Act-Assert structure; avoid brittle assertions such as over-specified `verify(mock, times(N))` calls or assertions on private/internal state.
 - Don't write tests whose sole purpose is verifying Lombok-generated behaviour (a test that only sets a value via a generated setter and reads it back via a generated getter, or that only exercises a generated no-args/all-args constructor with no accompanying logic). Using getters/setters/builders incidentally to build fixtures or assert real business-logic outcomes is fine — only test constructors, `toString()`, `equals()`/`hashCode()`, etc. when they are handwritten or contain custom logic.
 

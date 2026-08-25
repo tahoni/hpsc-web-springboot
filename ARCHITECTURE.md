@@ -335,4 +335,4 @@ Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.
 - Controllers must not contain business logic — delegate to services only
 - All exceptions must extend `FatalException`, `NonFatalException`, or `ValidationException`
 - Test class names: `<ClassName>Test`; test method names: `test<Scenario>_when<Condition>_then<Expectation>`
-- AssertJ for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests
+- JUnit Jupiter's `Assertions` for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests
