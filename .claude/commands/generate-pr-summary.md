@@ -35,4 +35,4 @@ Condense the two documents above (both already finalised for v$ARGUMENTS, per AG
 
 ## 📤 Output
 
-Output the finished PR summary as a single fenced Markdown block, ready to paste directly into a Bitbucket pull request description. Don't write it to a file — this command only drafts, for the user to copy.
+Output the finished PR summary as a single fenced code block (language tag `markdown`) containing the raw Markdown source as literal text — headings as `##`, bold as `**text**`, bullets as `-`, left unrendered so the user can copy the exact source, not Claude's own rendered formatting. Ready to paste directly into a Bitbucket pull request description. Don't write it to a file — this command only drafts, for the user to copy.

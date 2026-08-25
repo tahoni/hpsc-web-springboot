@@ -45,6 +45,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🔄 Changed
 
+#### Tooling
+
+- **`/generate-pr-summary`:** Output instructions clarified to require the fenced block contain raw, unrendered Markdown source (literal `##`/`**`/`-`) rather than Claude's own rendered formatting, so pasted PR summaries preserve exact syntax
+
 ### 🐛 Fixed
 
 #### Documentation
