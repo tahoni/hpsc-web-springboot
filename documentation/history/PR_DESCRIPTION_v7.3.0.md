@@ -13,6 +13,9 @@
 **Added**
 - `/generate-pr-summary` Claude Code command
 
+**Changed**
+- `/generate-pr-summary` — Output instructions clarified to require raw, unrendered Markdown source in the fenced output block
+
 ## 🧪 Test Plan
 
 - [x] `./mvnw test` — full suite, unchanged, all passing (documentation-only change)
