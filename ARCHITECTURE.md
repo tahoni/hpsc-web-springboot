@@ -90,8 +90,9 @@ This document describes the architectural design, directory structure, and core 
 └───src/test/java/za/co/hpsc/web/
     ├───configs/                # ControllerAdvice tests
     ├───controllers/            # Controller unit tests (Mockito, no Spring context)
-    ├───domain/                 # Entity unit tests
+    ├───converters/             # AttributeConverter unit tests
     ├───enums/                  # Enum unit tests
+    ├───exceptions/             # Exception hierarchy unit tests
     ├───models/                 # DTO / model unit tests
     ├───services/               # Service integration tests (H2)
     │   └───impl/               # Service unit tests (Mockito)
@@ -319,11 +320,11 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                                | Trigger                                                             |
-|-----------------------|-------------------------------------|---------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                              | Push / PR to `main` / `develop`; weekly schedule                    |
-| **Code Coverage**     | JaCoCo                              | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`       |
-| **Build & Tests**     | Maven (`./mvnw test`)               | All PRs; H2 in-memory — no external DB required                     |
+| Gate                  | Tool                  | Trigger                                                                         |
+|-----------------------|-----------------------|---------------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                | Push / PR to `main` / `develop`; weekly schedule                                |
+| **Code Coverage**     | JaCoCo                | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                   |
+| **Build & Tests**     | Maven (`./mvnw test`) | Run locally / by reviewers before merge; H2 in-memory — no external DB required |
 
 ---
 
