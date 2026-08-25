@@ -12,13 +12,73 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: sync with AwardServiceTest - similar test cases for processCsv and readAwards, but with image-specific data and assertions
+/**
+ * Unit tests for {@link ImageServiceImpl}'s impl-only helper methods ({@code readImages},
+ * {@code mapImages}) - not declared on {@link za.co.hpsc.web.services.ImageService}. The
+ * interface's {@code processCsv} contract is covered by
+ * {@link za.co.hpsc.web.services.ImageServiceTest}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceImplTest {
     @InjectMocks
     private ImageServiceImpl imageService;
 
-    // Test Group: readImages - Valid Data Processing
+    // mapImages()
+    @Test
+    public void testMapImages_whenValidImageRequestList_thenReturnsImageResponseList() {
+        // Arrange
+        ImageRequest request1 = new ImageRequest("Image 1", "Summary 1", "Description 1",
+                "Category 1", List.of("Tag1", "Tag2"), "/path/to/image1", "image1.png");
+        ImageRequest request2 = new ImageRequest("Image 2", "Summary 2", "Description 2",
+                "Category 2", List.of("Tag3", "Tag4"), "/path/to/image2", "image2.png");
+        List<ImageRequest> imageRequestList = List.of(request1, request2);
+
+        // Act
+        List<ImageResponse> imageResponseList =
+                imageService.mapImages(imageRequestList);
+
+        // Assert - Verify list size
+        assertNotNull(imageResponseList);
+        assertEquals(2, imageResponseList.size());
+
+        // Assert - Verify first image
+        ImageResponse firstResponse = imageResponseList.getFirst();
+        assertEquals("Image 1", firstResponse.getTitle());
+        assertEquals("image1.png", firstResponse.getFileName());
+        assertNotNull(firstResponse.getUuid());
+        List<String> firstTags = firstResponse.getTags();
+        assertEquals(2, firstTags.size());
+        assertTrue(firstTags.containsAll(List.of("Tag1", "Tag2")));
+
+        // Assert - Verify second image
+        ImageResponse secondResponse = imageResponseList.get(1);
+        assertEquals("Image 2", secondResponse.getTitle());
+        assertEquals("image2.png", secondResponse.getFileName());
+        assertNotNull(secondResponse.getUuid());
+        List<String> secondTags = secondResponse.getTags();
+        assertEquals(2, secondTags.size());
+        assertTrue(secondTags.containsAll(List.of("Tag4", "Tag3")));
+    }
+
+    @Test
+    public void testMapImages_whenEmptyImageRequestList_thenReturnsEmptyList() {
+        // Act
+        List<ImageResponse> imageResponseList =
+                imageService.mapImages(List.of());
+
+        // Assert
+        assertNotNull(imageResponseList);
+        assertTrue(imageResponseList.isEmpty());
+    }
+
+    @Test
+    public void testMapImages_whenNullImageRequestList_thenThrowsValidationException() {
+        // Act / Assert
+        assertThrows(ValidationException.class, () ->
+                imageService.mapImages(null));
+    }
+
+    // readImages()
     @Test
     public void testReadImages_whenValidCsv_thenReturnsImageRequestList() {
         // Arrange
@@ -153,7 +213,6 @@ public class ImageServiceImplTest {
         assertTrue(imageRequests.isEmpty());
     }
 
-    // Test Group: readImages - Input Validation and Error Handling
     @Test
     public void testReadImages_whenMissingCsvColumns_thenThrowsValidationException() {
         // Arrange
@@ -225,61 +284,5 @@ public class ImageServiceImplTest {
         // Act / Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(null));
-    }
-
-    // Test Group: mapImages - Valid Data Processing
-    @Test
-    public void testMapImages_whenValidImageRequestList_thenReturnsImageResponseList() {
-        // Arrange
-        ImageRequest request1 = new ImageRequest("Image 1", "Summary 1", "Description 1",
-                "Category 1", List.of("Tag1", "Tag2"), "/path/to/image1", "image1.png");
-        ImageRequest request2 = new ImageRequest("Image 2", "Summary 2", "Description 2",
-                "Category 2", List.of("Tag3", "Tag4"), "/path/to/image2", "image2.png");
-        List<ImageRequest> imageRequestList = List.of(request1, request2);
-
-        // Act
-        List<ImageResponse> imageResponseList =
-                imageService.mapImages(imageRequestList);
-
-        // Assert - Verify list size
-        assertNotNull(imageResponseList);
-        assertEquals(2, imageResponseList.size());
-
-        // Assert - Verify first image
-        ImageResponse firstResponse = imageResponseList.getFirst();
-        assertEquals("Image 1", firstResponse.getTitle());
-        assertEquals("image1.png", firstResponse.getFileName());
-        assertNotNull(firstResponse.getUuid());
-        List<String> firstTags = firstResponse.getTags();
-        assertEquals(2, firstTags.size());
-        assertTrue(firstTags.containsAll(List.of("Tag1", "Tag2")));
-
-        // Assert - Verify second image
-        ImageResponse secondResponse = imageResponseList.get(1);
-        assertEquals("Image 2", secondResponse.getTitle());
-        assertEquals("image2.png", secondResponse.getFileName());
-        assertNotNull(secondResponse.getUuid());
-        List<String> secondTags = secondResponse.getTags();
-        assertEquals(2, secondTags.size());
-        assertTrue(secondTags.containsAll(List.of("Tag4", "Tag3")));
-    }
-
-    // Test Group: mapImages - Input Validation and Error Handling
-    @Test
-    public void testMapImages_whenEmptyImageRequestList_thenReturnsEmptyList() {
-        // Act
-        List<ImageResponse> imageResponseList =
-                imageService.mapImages(List.of());
-
-        // Assert
-        assertNotNull(imageResponseList);
-        assertTrue(imageResponseList.isEmpty());
-    }
-
-    @Test
-    public void testMapImages_whenNullImageRequestList_thenThrowsValidationException() {
-        // Act / Assert
-        assertThrows(ValidationException.class, () ->
-                imageService.mapImages(null));
     }
 }

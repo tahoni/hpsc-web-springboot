@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FatalExceptionTest {
 
-    // No-args constructor
+    // FatalException()
     @Test
     void testConstructor_whenNoArgumentsProvided_thenCreatesExceptionWithNullMessage() {
         // Act
@@ -20,7 +20,7 @@ public class FatalExceptionTest {
         assertNull(exception.getCause());
     }
 
-    // Constructor with message
+    // FatalException(String)
     @Test
     void testConstructor_whenMessageIsProvided_thenCreatesExceptionWithMessage() {
         // Arrange
@@ -44,7 +44,21 @@ public class FatalExceptionTest {
         assertNull(exception.getCause());
     }
 
-    // Constructor with message and cause
+    // FatalException(Throwable)
+    @Test
+    void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
+        // Arrange
+        Throwable cause = new IOException("File system error");
+
+        // Act
+        FatalException exception = new FatalException(cause);
+
+        // Assert
+        assertSame(cause, exception.getCause());
+        assertTrue(exception.getMessage().contains("File system error"));
+    }
+
+    // FatalException(String, Throwable)
     @Test
     void testConstructor_whenMessageAndCauseAreProvided_thenCreatesExceptionWithBoth() {
         // Arrange
@@ -69,21 +83,6 @@ public class FatalExceptionTest {
         assertNull(exception.getCause());
     }
 
-    // Constructor with cause only
-    @Test
-    void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
-        // Arrange
-        Throwable cause = new IOException("File system error");
-
-        // Act
-        FatalException exception = new FatalException(cause);
-
-        // Assert
-        assertSame(cause, exception.getCause());
-        assertTrue(exception.getMessage().contains("File system error"));
-    }
-
-    // Constructor with cause chain
     @Test
     void testConstructor_whenCauseChainIsProvided_thenPreservesCauseChain() {
         // Arrange
@@ -100,7 +99,7 @@ public class FatalExceptionTest {
         assertEquals(message, exception.getMessage());
     }
 
-    // All-args constructor
+    // FatalException(String, Throwable, boolean, boolean)
     @Test
     void testConstructor_whenAllParametersAreProvided_thenCreatesExceptionWithAllSettings() {
         // Arrange
@@ -130,7 +129,6 @@ public class FatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
-    // Constructor with suppression disabled
     @Test
     void testConstructor_whenSuppressionIsDisabled_thenCreatesExceptionWithSuppressionDisabled() {
         // Arrange
@@ -147,7 +145,7 @@ public class FatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
-    // Inheritance tests
+    // Inheritance checks
     @Test
     void testInheritance_whenInstantiated_thenIsInstanceOfException() {
         // Act

@@ -7,6 +7,89 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClubIdentifierTest {
+    // getByAbbreviation()
+    @Test
+    void testGetByAbbreviation_whenAbbreviationIsExact_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("HPSC");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.HPSC, result.get());
+    }
+
+    @Test
+    void testGetByAbbreviation_whenInputIsCaseInsensitive_thenReturnsMatchingClub() {
+        // Arrange
+        String searchName = "sosc";
+
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.SOSC, result.get());
+    }
+
+    @Test
+    void testGetByAbbreviation_whenInputIsNull_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(null);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByAbbreviation_whenInputIsBlank_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(" ");
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByAbbreviation_whenNoClubMatches_thenReturnsEmptyOptional() {
+        // Arrange
+        String searchName = "Nonexistent Club";
+
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByAbbreviation_whenInputIsEmpty_thenReturnsEmptyOptional() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("");
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByAbbreviation_whenAbbreviationIsPmpsc_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("PMPSC");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.PMPSC, result.get());
+    }
+
+    @Test
+    void testGetByAbbreviation_whenAbbreviationIsVisitor_thenReturnsMatchingClub() {
+        // Act
+        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("V");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ClubIdentifier.VISITOR, result.get());
+    }
+
     // getByCode()
     @Test
     void testGetByCode_whenCodeIsKnown_thenReturnsMatchingClub() {
@@ -94,60 +177,6 @@ public class ClubIdentifierTest {
         assertTrue(result.isEmpty());
     }
 
-    // getByAbbreviation()
-    @Test
-    void testGetByAbbreviation_whenAbbreviationIsExact_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("HPSC");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.HPSC, result.get());
-    }
-
-    @Test
-    void testGetByAbbreviation_whenInputIsCaseInsensitive_thenReturnsMatchingClub() {
-        // Arrange
-        String searchName = "sosc";
-
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.SOSC, result.get());
-    }
-
-    @Test
-    void testGetByAbbreviation_whenInputIsNull_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(null);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByAbbreviation_whenInputIsBlank_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(" ");
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByAbbreviation_whenNoClubMatches_thenReturnsEmptyOptional() {
-        // Arrange
-        String searchName = "Nonexistent Club";
-
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
     // getByName()
     @Test
     void testGetByName_whenClubNameIsExact_thenReturnsMatchingClub() {
@@ -232,36 +261,6 @@ public class ClubIdentifierTest {
 
         // Assert
         assertFalse(result.isPresent());
-    }
-
-    // getByAbbreviation()
-    @Test
-    void testGetByAbbreviation_whenInputIsEmpty_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("");
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByAbbreviation_whenAbbreviationIsPmpsc_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("PMPSC");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.PMPSC, result.get());
-    }
-
-    @Test
-    void testGetByAbbreviation_whenAbbreviationIsVisitor_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("V");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.VISITOR, result.get());
     }
 
     // toString()

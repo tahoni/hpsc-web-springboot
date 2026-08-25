@@ -34,6 +34,7 @@ This document describes the architectural design, directory structure, and core 
 | Database (prod)   | MySQL (env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                    |
 | Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
 | ORM               | Spring Data JPA, Hibernate                                          |
+| Schema migrations | Flyway (`src/main/resources/db/migration/`)                         |
 | Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
 | API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
 | Validation        | Hibernate Validator, Jakarta Validation                             |
@@ -335,4 +336,4 @@ Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.
 - Controllers must not contain business logic — delegate to services only
 - All exceptions must extend `FatalException`, `NonFatalException`, or `ValidationException`
 - Test class names: `<ClassName>Test`; test method names: `test<Scenario>_when<Condition>_then<Expectation>`
-- AssertJ for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests
+- JUnit Jupiter's `Assertions` for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests

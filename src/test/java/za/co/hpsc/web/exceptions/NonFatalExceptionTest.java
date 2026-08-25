@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NonFatalExceptionTest {
 
-    // No-args constructor
+    // NonFatalException()
     @Test
     void testConstructor_whenNoArgumentsProvided_thenCreatesExceptionWithNullMessage() {
         // Act
@@ -18,7 +18,7 @@ public class NonFatalExceptionTest {
         assertNull(exception.getCause());
     }
 
-    // Constructor with message
+    // NonFatalException(String)
     @Test
     void testConstructor_whenMessageIsProvided_thenCreatesExceptionWithMessage() {
         // Arrange
@@ -42,20 +42,21 @@ public class NonFatalExceptionTest {
         assertNull(exception.getCause());
     }
 
+    // NonFatalException(Throwable)
     @Test
-    void testConstructor_whenNullMessageWithAllParameters_thenCreatesExceptionWithNullMessage() {
+    void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
         // Arrange
-        Throwable cause = new Exception("Cause");
+        Throwable cause = new IllegalStateException("State error");
 
         // Act
-        NonFatalException exception = new NonFatalException(null, cause, true, true);
+        NonFatalException exception = new NonFatalException(cause);
 
         // Assert
-        assertNull(exception.getMessage());
         assertSame(cause, exception.getCause());
+        assertTrue(exception.getMessage().contains("State error"));
     }
 
-    // Constructor with message and cause
+    // NonFatalException(String, Throwable)
     @Test
     void testConstructor_whenMessageAndCauseAreProvided_thenCreatesExceptionWithBoth() {
         // Arrange
@@ -70,21 +71,6 @@ public class NonFatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
-    // Constructor with cause only
-    @Test
-    void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
-        // Arrange
-        Throwable cause = new IllegalStateException("State error");
-
-        // Act
-        NonFatalException exception = new NonFatalException(cause);
-
-        // Assert
-        assertSame(cause, exception.getCause());
-        assertTrue(exception.getMessage().contains("State error"));
-    }
-
-    // Constructor with cause chain
     @Test
     void testConstructor_whenCauseChainIsProvided_thenPreservesCauseChain() {
         // Arrange
@@ -101,7 +87,30 @@ public class NonFatalExceptionTest {
         assertEquals(message, exception.getMessage());
     }
 
-    // All-args constructor
+    @Test
+    void testConstructor_whenNullMessageAndNullCauseAreProvided_thenCreatesExceptionWithBothNull() {
+        // Act
+        NonFatalException exception = new NonFatalException(null, null);
+
+        // Assert
+        assertNull(exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    // NonFatalException(String, Throwable, boolean, boolean)
+    @Test
+    void testConstructor_whenNullMessageWithAllParameters_thenCreatesExceptionWithNullMessage() {
+        // Arrange
+        Throwable cause = new Exception("Cause");
+
+        // Act
+        NonFatalException exception = new NonFatalException(null, cause, true, true);
+
+        // Assert
+        assertNull(exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
     @Test
     void testConstructor_whenAllParametersAreProvided_thenCreatesExceptionWithAllSettings() {
         // Arrange
@@ -119,17 +128,6 @@ public class NonFatalExceptionTest {
     }
 
     @Test
-    void testConstructor_whenNullMessageAndNullCauseAreProvided_thenCreatesExceptionWithBothNull() {
-        // Act
-        NonFatalException exception = new NonFatalException(null, null);
-
-        // Assert
-        assertNull(exception.getMessage());
-        assertNull(exception.getCause());
-    }
-
-    // Constructor with suppression disabled
-    @Test
     void testConstructor_whenSuppressionIsDisabled_thenCreatesExceptionWithSuppressionDisabled() {
         // Arrange
         String message = "Warning message";
@@ -145,7 +143,6 @@ public class NonFatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
-    // Constructor with both suppression and stack trace disabled
     @Test
     void testConstructor_whenBothSuppressionAndStackTraceAreDisabled_thenCreatesExceptionWithBothDisabled() {
         // Arrange
@@ -160,7 +157,7 @@ public class NonFatalExceptionTest {
         assertSame(cause, exception.getCause());
     }
 
-    // Inheritance tests
+    // Inheritance checks
     @Test
     void testInheritance_whenInstantiated_thenIsInstanceOfRuntimeException() {
         // Act
@@ -179,4 +176,3 @@ public class NonFatalExceptionTest {
         assertInstanceOf(Exception.class, exception);
     }
 }
-

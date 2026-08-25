@@ -16,7 +16,6 @@ import za.co.hpsc.web.models.ControllerResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: check that all methods have the same comprehensive tests
 @ExtendWith(MockitoExtension.class)
 public class ControllerAdviceTest {
 
@@ -449,5 +448,31 @@ public class ControllerAdviceTest {
         assertNotNull(response.getBody());
         assertEquals("Unexpected error occurred", response.getBody().getMessage());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    // logError()
+    @Test
+    void testLogError_whenThrowableIsNull_thenDoesNotThrow() {
+        // Act & Assert
+        assertDoesNotThrow(() -> controllerAdvice.logError(null));
+    }
+
+    @Test
+    void testLogError_whenThrowableHasCause_thenDoesNotThrow() {
+        // Arrange
+        Exception cause = new IllegalStateException("Root cause");
+        Exception ex = new Exception("Wrapping exception", cause);
+
+        // Act & Assert
+        assertDoesNotThrow(() -> controllerAdvice.logError(ex));
+    }
+
+    @Test
+    void testLogError_whenRequestIsNull_thenDoesNotThrow() {
+        // Arrange
+        Exception ex = new Exception("No request context");
+
+        // Act & Assert
+        assertDoesNotThrow(() -> controllerAdvice.logError(ex, null));
     }
 }

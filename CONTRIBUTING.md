@@ -90,7 +90,8 @@ Tests activate the `test` profile automatically — no database setup is require
 
 - Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) and don't start a Spring context; service/repository integration tests use the `test` profile (H2).
 - Test class names follow `<ClassName>Test`; test method names follow `test<Scenario>_when<Condition>_then<Expectation>`.
-- AssertJ for assertions, Arrange-Act-Assert structure, no tests written solely to exercise Lombok-generated getters/setters/constructors.
+- JUnit Jupiter's `Assertions` for assertions, Arrange-Act-Assert structure, no tests written solely to exercise Lombok-generated getters/setters/constructors.
+- Group each method's tests under a one-line `// methodName()` comment, ordered constructors first, then public before protected, then alphabetically by name (overloads by parameter count then type), `toString()` last.
 
 ---
 
@@ -134,18 +135,19 @@ Full conventions live in [`AGENTS.md`](AGENTS.md) — read it before writing or 
 This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) branching model:
 
 - **`develop`** is the current development branch — all day-to-day work lands here first.
-- **`main`** is the production branch. It is only ever updated from `develop` (via a finished `release/vX.Y.Z` branch) or directly from a `hotfix/*` branch — never any other source.
+- **`main`** is the production branch. It is only ever updated by promoting `develop` after a `release/vX.Y.Z` branch has merged into it, or directly from a `hotfix/*` branch — never any other source.
 - **`feature/<short-description>`** — day-to-day feature and bug-fix work (e.g. `feature/shooter-log-power-factor`, `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
-- **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see [🚢 Cutting a Release](#-cutting-a-release) below) and are opened as a PR against `main`.
+- **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see [🚢 Cutting a Release](#-cutting-a-release) below) and are opened as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see Merging below).
 - **`hotfix/<short-description>`** — urgent fixes for a defect already in production. Branch from, and PR directly into, `main`, bypassing `develop` and any in-progress `release/vX.Y.Z` branch so the fix ships immediately. Also, merge/PR the same fix into `develop` so it isn't lost when the next release is cut.
 
-**All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*` included — must never open a PR directly against `main`.
+**All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*` and `release/*` included — must never open a PR directly against `main`.
 
 ### Merging
 
 - **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this repo's existing history — no squashing or rebasing) and delete the branch afterwards.
 - **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its description — only delete the branch once both merges have landed, so the fix isn't lost when the next `release/vX.Y.Z` branch is cut.
-- **`release/vX.Y.Z` → `main`:** merge once the Release Checklist is complete and all tests pass; tag the resulting commit `vX.Y.Z`, then merge `main` back into `develop` so it stays in sync.
+- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist is complete and all tests pass, with a standard merge commit, and delete the branch afterwards.
+- **`develop` → `main`:** immediately after, open a second PR promoting `develop` into `main` and merge it; tag the resulting commit on `main` as `vX.Y.Z`.
 
 ### Conventions
 

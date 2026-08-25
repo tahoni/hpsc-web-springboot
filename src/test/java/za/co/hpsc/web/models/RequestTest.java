@@ -8,6 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RequestTest {
+    // Request()
     @Test
     void testDefaultConstructor_whenInvoked_thenInitializesWithEmptyTagsAndNullTextFields() {
         // Arrange & Act
@@ -22,6 +23,7 @@ public class RequestTest {
         assertTrue(request.getTags().isEmpty());
     }
 
+    // Request(String)
     @Test
     void testShortConstructor_whenTitleProvided_thenSetsTitleAndInitializesEmptyTags() {
         // Arrange
@@ -39,6 +41,7 @@ public class RequestTest {
         assertTrue(request.getTags().isEmpty());
     }
 
+    // Request(String, String, String, String, List<String>)
     @Test
     void testFullConstructor_whenAllFieldsProvided_thenMapsAllValues() {
         // Arrange

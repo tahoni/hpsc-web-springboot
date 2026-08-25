@@ -26,7 +26,7 @@ Conventions for any AI coding agent working in this repository. [`CLAUDE.md`](CL
 - **Data processing:** Jackson (JSON/CSV/XML)
 - **API documentation:** SpringDoc OpenAPI (Swagger UI)
 - **Validation:** Hibernate Validator, Jakarta Validation
-- **Testing:** JUnit, Mockito, AssertJ, Spring Test
+- **Testing:** JUnit, Mockito, Spring Test
 - **Code coverage:** JaCoCo
 - **Code generation:** Lombok
 
@@ -75,6 +75,8 @@ Every heading listed in a Table of Contents is prefixed with an emoji, and its T
 | ⚙️   | Technology / configuration     |
 | ✨   | Features                       |
 | 🚀   | Instructions / getting started |
+| 🔍   | Current state / inspection     |
+| 📤   | Output                         |
 | 📋   | Prerequisites                  |
 | 🔧   | Installation / setup           |
 | 📚   | Documentation                  |
@@ -129,9 +131,10 @@ Two documentation-only folders supplement these:
 - Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) to mock the service layer; they do not start a Spring context.
 - Service/repository integration tests use the `test` profile (H2 in-memory database).
 - Test class names follow `<ClassName>Test`; test method names follow `test<Scenario>_when<Condition>_then<Expectation>`.
-- AssertJ is used for assertions throughout.
+- JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.
 - Follow an Arrange-Act-Assert structure; avoid brittle assertions such as over-specified `verify(mock, times(N))` calls or assertions on private/internal state.
 - Don't write tests whose sole purpose is verifying Lombok-generated behaviour (a test that only sets a value via a generated setter and reads it back via a generated getter, or that only exercises a generated no-args/all-args constructor with no accompanying logic). Using getters/setters/builders incidentally to build fixtures or assert real business-logic outcomes is fine — only test constructors, `toString()`, `equals()`/`hashCode()`, etc. when they are handwritten or contain custom logic.
+- **Group and order tests by the method under test.** Precede each group of tests for a given method with a one-line comment naming it (e.g. `// getByCode()`), matching the style already used in `FirearmTypeTest`/`ControllerAdviceTest`. Order the groups: constructors first; then public methods before protected methods; within each visibility, alphabetically by method name — for overloads of the same name, order by parameter count, then by parameter type; `toString()` always comes last, regardless of visibility.
 
 ---
 
@@ -149,18 +152,19 @@ Two documentation-only folders supplement these:
 This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) branching model:
 
 - **`develop`** is the current development branch — all day-to-day work lands here first.
-- **`main`** is the production branch. It is only ever updated from `develop` (via a finished `release/vX.Y.Z` branch) or directly from a `hotfix/*` branch — never any other source.
+- **`main`** is the production branch. It is only ever updated by promoting `develop` after a `release/vX.Y.Z` branch has merged into it, or directly from a `hotfix/*` branch — never any other source.
 - **`feature/<short-description>`** — day-to-day feature and bug-fix work (e.g. `feature/shooter-log-power-factor`, `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
-- **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see the Release Checklist below) and are opened as a PR against `main`.
+- **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see the Release Checklist below) and are opened as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see Merging below).
 - **`hotfix/<short-description>`** — urgent fixes for a defect already in production. Branch from, and PR directly into, `main`, bypassing `develop` and any in-progress `release/vX.Y.Z` branch so the fix ships immediately. Also, merge/PR the same fix into `develop` so it isn't lost when the next release is cut.
 
-**All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*` included — must never open a PR directly against `main`.
+**All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*` and `release/*` included — must never open a PR directly against `main`.
 
 ### Merging
 
 - **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this repo's existing history — no squashing or rebasing) and delete the branch afterwards.
 - **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its description — only delete the branch once both merges have landed, so the fix isn't lost when the next `release/vX.Y.Z` branch is cut.
-- **`release/vX.Y.Z` → `main`:** merge once the Release Checklist below is complete and all tests pass; tag the resulting commit `vX.Y.Z`, then merge `main` back into `develop` so it stays in sync (per the rule above).
+- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist below is complete and all tests pass, with a standard merge commit, and delete the branch afterwards.
+- **`develop` → `main`:** immediately after, open a second PR promoting `develop` into `main` and merge it; tag the resulting commit on `main` as `vX.Y.Z`.
 
 ### Conventions
 
@@ -194,7 +198,7 @@ Commit these in logical chunks per the Git Workflow rule above — the version b
 
 `README.md` and `ARCHITECTURE.md` describe the durable structure and purpose of the project, not its current-version implementation details. They must:
 
-- **Never contain version numbers.** Defer to `pom.xml` for exact dependency versions and to `CHANGELOG.md` for release history.
+- **Never contain references to specific versions** — neither exact version numbers (e.g. `7.1.0`) nor version ranges (e.g. `1.x – 4.x`) of this project. Defer to `pom.xml` for exact dependency versions and to `CHANGELOG.md`/`HISTORY.md` for release history.
 - **Never contain counts that drift as the codebase grows** (e.g. "Eight JPA entities map to database tables"). List items by name in a table instead, without a leading count.
 - **Never carry narrative tightly coupled to the current version's implementation.** That belongs in `CHANGELOG.md`, `RELEASE_NOTES.md`, `HISTORY.md`, or the per-version files in `documentation/history/`.
 

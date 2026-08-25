@@ -10,11 +10,12 @@ import org.springframework.test.context.ActiveProfiles;
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @ActiveProfiles("test")
 @SpringBootTest
-class HpscWebApplicationTests {
+class HpscWebApplicationTest {
 
+    // contextLoads()
     @SuppressWarnings("EmptyMethod")
     @Test
-    void contextLoads() {
+    void testContextLoads_whenSpringContextStarted_thenLoadsSuccessfully() {
     }
 
 }

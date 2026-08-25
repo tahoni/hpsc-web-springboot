@@ -13,6 +13,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageRequestForCSVTest {
+
+    // ImageRequestForCsv(String, String, String)
     @Test
     void testConstructor_whenRequiredFieldsProvided_thenMapsRequiredFieldsAndLeavesOptionalFieldsUnset() {
         // Arrange & Act
@@ -43,6 +45,7 @@ public class ImageRequestForCSVTest {
         assertNull(request.getFileName());
     }
 
+    // JSON serialization
     @Test
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
         // Arrange
@@ -88,6 +91,7 @@ public class ImageRequestForCSVTest {
         assertTrue(node.get("tags").isNull());
     }
 
+    // JSON deserialization
     @Test
     void testJsonDeserialization_whenTitleMissing_thenThrowsMismatchedInputException() {
         // Arrange

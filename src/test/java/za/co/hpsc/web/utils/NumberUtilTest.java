@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NumberUtilTest {
 
+    // calculatePercentage(BigDecimal, BigDecimal)
     @Test
     void testCalculatePercentage_whenValidInputs_thenReturnsCorrectPercentage() {
         // Arrange
@@ -101,6 +102,7 @@ public class NumberUtilTest {
         assertEquals(expected, result);
     }
 
+    // calculateSum(List)
     @Test
     void testCalculateSum_whenPositiveNumbers_thenReturnsCorrectSum() {
         // Arrange
@@ -162,6 +164,7 @@ public class NumberUtilTest {
         assertEquals(expected, result);
     }
 
+    // formatBigDecimal(BigDecimal, int)
     @Test
     void testFormatBigDecimal_whenNonNullValue_thenReturnsFormattedString() {
         // Arrange

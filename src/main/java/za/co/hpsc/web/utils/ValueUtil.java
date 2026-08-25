@@ -47,7 +47,7 @@ public final class ValueUtil {
     }
 
     /**
-     * Converts an object to its string representation, or returns an empty string if {@code null}.
+     * Converts an object to its string representation or returns an empty string if {@code null}.
      * <p>
      * If {@code value} is non-null, {@link Object#toString()} is invoked;
      * if {@code value} is {@code null}, an empty string is returned.

@@ -8,7 +8,7 @@ allowed-tools: Bash(git log:*), Bash(git diff:*), Bash(git --no-pager diff:*), B
 
 Prepare a release for version: $1
 
-## Current state
+## 🔍 Current state
 
 Branch:
 !`git branch --show-current`
@@ -19,11 +19,11 @@ Changes relative to main:
 Commit log relative to main:
 !`git log main..HEAD --oneline`
 
-Conventions to follow: @AGENTS.md
+Conventions to follow: @AGENTS.md @CLAUDE.md
 
-## Instructions
+## 🚀 Instructions
 
-Read and strictly follow **all conventions defined in AGENTS.md** (loaded above) — in particular the **Release Checklist**, **Documentation Conventions**, **Git Workflow** (Branching Model), and **Evergreen Documentation** (reverse sync rule) sections. Treat AGENTS.md as the single source of truth; do not reinterpret or contradict its rules. Follow the Release Checklist steps **in order** — the version number and date must be final before anything downstream references them.
+Read and strictly follow **all conventions defined in AGENTS.md and CLAUDE.md** (both loaded above) — in particular AGENTS.md's **Release Checklist**, **Documentation Conventions**, **Git Workflow** (Branching Model), and **Evergreen Documentation** (reverse sync rule) sections, and CLAUDE.md for accurate technical detail (build/test commands, package layout, database profiles) when writing `RELEASE_NOTES.md`/the PR description. Treat both as the single source of truth; do not reinterpret or contradict their rules. Follow the Release Checklist steps **in order** — the version number and date must be final before anything downstream references them.
 
 Steps:
 1. **Confirm the diff against `main`** (shown above) covers everything that changed for this release — re-run `git log main..HEAD` / `git diff --stat main...HEAD` yourself if the branch has moved on since this command started.
@@ -43,8 +43,8 @@ Steps:
 
 Commit these in logical chunks per AGENTS.md's Git Workflow — the version bump, the CHANGELOG/HISTORY/RELEASE_NOTES documentation, and the PR description are separate concerns. Do not run `git commit`, `git push`, or open the PR yourself — draft the files and stop for review.
 
-## Output
+## 📤 Output
 
-Once all files above are written, tell the user the release branch (`release/v$1`) is ready to open as a PR against `main` (per the GitFlow branching model in AGENTS.md), using `documentation/history/PR_DESCRIPTION_v$1.md` as the PR body.
+Once all files above are written, tell the user the release branch (`release/v$1`) is ready to open as a PR against `develop` (per the GitFlow branching model in AGENTS.md), using `documentation/history/PR_DESCRIPTION_v$1.md` as the PR body. Once that PR merges, remind them a second PR promoting `develop` into `main` is still needed to actually ship the release — tag the resulting commit on `main` as `v$1`.
 
-Remind the user to verify all tests still pass (`./mvnw test`) before finishing, and confirm no version-specific info leaked into `README.md`/`ARCHITECTURE.md`.
+Remind the user to verify all tests still pass (`./mvnw test`) before finishing and confirm no version-specific info leaked into `README.md`/`ARCHITECTURE.md`.

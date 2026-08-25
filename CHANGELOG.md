@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 7.1.0](#-710---2026-08-24) ← Current
+- [🧾 Version 7.2.0](#-720---2026-08-25) ← Current
+- [🧾 Version 7.1.0](#-710---2026-08-24)
 - [🧾 Version 7.0.0](#-700---2026-08-11)
 - [🧾 Version 6.0.0](#-600---2026-05-01)
 - [🧾 Version 5.4.0](#-540---2026-04-26)
@@ -45,6 +46,81 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### ⚠️ Deprecated
 
 ### 🗑️ Removed
+
+### 🔐 Security
+
+---
+
+## 🧾 [7.2.0] - 2026-08-25
+
+### ➕ Added
+
+#### Documentation
+
+- **`CLAUDE.md`:** New Git Workflow section stating the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, rather than deferring entirely to `AGENTS.md`
+
+#### Testing
+
+- **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/`ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
+- **`ControllerResponseTest`:** Covers the previously-untested `ControllerResponse(boolean, String)` constructor (message/error swap based on `success`), and the `(LocalDateTime, String, String)` constructor's derived-`success`-from-error-presence branch (non-null/non-blank error, and blank-but-non-null error)
+- **`FirearmTypeTest`:** Covers `toString()` for both the single-name and multi-name enum constructors (previously untested, despite the sibling `ClubIdentifier` enum having equivalent `toString()` tests)
+- **`ControllerAdviceTest`:** Covers `logError`'s three previously untested branches — a `null` throwable, a throwable with a wrapped cause, and a `null` `WebRequest`; JaCoCo branch coverage for this class went from 92% to 100%
+
+#### Tooling
+
+- **`/scaffold-unit-tests`:** New Claude Code command, migrated from `.github/prompts/scaffold-unit-tests.prompt.md` — corrects the stale `za.co.signio.apexservices` package reference and the abstract "Layer 1/2/3" interface-test pattern to match this repo's actual conventions (interface contract tests named `[Class]Test`, exercised via the interface type in `services/`, impl-only helper tests in `services/impl/`, no Lombok-only tests), per the `AwardServiceTest`/`ImageServiceTest` split above. Defers to its loaded `@AGENTS.md`/`@CLAUDE.md` for testing-pattern specifics (JUnit Assertions, method naming, exception hierarchy) rather than restating them inline, so it can't drift out of sync with the source. Never commits — it scaffolds and verifies (`./mvnw test`) only, leaving the result for the user to review and commit.
+- **`/scaffold-integration-tests`:** New Claude Code command, copied from `/scaffold-unit-tests` and adapted for `@SpringBootTest`-based service integration tests — follows the pattern in `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest`: named `[Class]IntegrationTest`, `@ActiveProfiles("test")` is mandatory (see CLAUDE.md's Database Profiles table, never `dev`/prod), `@EnableAutoConfiguration` excludes `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` to keep the context lightweight, a real `@Autowired` Spring-wired bean rather than Mockito, and only the target's public interface methods may be called — never an impl class's protected/private helpers, which stay the paired unit test's job. Same defer-to-loaded-docs treatment as `/scaffold-unit-tests`; also never commits.
+
+### 🔄 Changed
+
+#### Testing
+
+- **`AwardServiceImplTest`, `ImageServiceImplTest`:** Stale "TODO: sync" comments replaced with Javadoc cross-referencing the new interface-level tests; these two files were already in sync (14 parallel test cases each) for the impl-only `readAwards`/`mapAwards` and `readImages`/`mapImages` methods
+- **`AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Now exclude `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` via `@EnableAutoConfiguration` to keep the Spring context lightweight, since neither service touches the datasource, JPA, or messaging; also replaces their stale "TODO: sync" comments with Javadoc (they were already in sync)
+- **`HpscWebApplicationTests` renamed to `HpscWebApplicationTest`:** Matches AGENTS.md's `<ClassName>Test` naming convention (was the Spring Initializr default plural name); its `contextLoads()` method renamed to `testContextLoads_whenSpringContextStarted_thenLoadsSuccessfully` to match the method-naming convention too
+- **26 test files:** Retrofitted with AGENTS.md's method-comment/ordering rule (`// methodName()` headers; constructors first, public before protected, alphabetical by name, overloads by parameter count then type, `toString()` last) — `ClubIdentifierConverterTest`, `MatchCategoryConverterTest`, `ClubIdentifierTest`, `DivisionTest`, `PowerFactorTest`, `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`, `ControllerResponseTest`, `RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `AwardCeremonyResponseTest`, `AwardResponseTest`, `ImageRequestForCSVTest`, `ImageResponseTest`, `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `DateUtilTest`, `NumberUtilTest`, `StringUtilTest`, `ValueUtilTest`. No test bodies, assertions, or names changed — only comments and whole-method reordering; `ValueUtilTest` in particular had its `nullAsEmptyString` tests consolidated from 9 scattered locations into one contiguous group. Verified via `./mvnw test`: same 492 tests, all passing, before and after
+
+#### Build & Metadata
+
+- Project version bumped to **7.2.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+- **`pom.xml`:** Spring Boot parent bumped `4.0.7` → `4.1.0`. As part of this:
+  - Removed the `spring-framework.version`/`tomcat.version` property overrides — both now match Boot 4.1.0's own defaults (`7.0.8`/`11.0.22`) exactly, so they were dead weight
+  - Removed the `commons.lang3.version` property — a pre-existing typo (Boot's real property is `commons-lang3.version`, hyphenated) meant this override never actually took effect; Boot 4.1.0 bumps the real one for free (`3.19.0` → `3.20.0`)
+  - Removed the `maven-dependency-plugin` version override (`3.6.1`) — Boot 4.1.0 now manages this plugin itself, at `3.10.0`
+  - Kept the `jackson-databind` (`2.21.5`) and `jackson-bom` (`3.1.5`) overrides unchanged — Boot 4.1.0's own managed versions (`2.21.4`/`3.1.4`) are still one patch behind
+  - Bumped the flyway-maven-plugin's separately-pinned `flyway-mysql` dependency `11.14.1` → `12.4.0`, matching the `flyway.version` Boot 4.1.0 now manages (plugin-scoped dependencies don't inherit Boot's dependencyManagement, so this needs manual sync on every parent bump — now documented inline)
+  - Verified: full test suite (492 tests), `./mvnw verify -Pcoverage` (including the repackage step), and `./mvnw flyway:info` against a real local MySQL 9.5 dev database all pass clean
+
+#### Documentation
+
+- **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `README.md`/`ARCHITECTURE.md`
+- **`AGENTS.md`:** Icon registry extended with `🔍` (Current state / inspection) and `📤` (Output)
+- **`AGENTS.md`, `CONTRIBUTING.md`:** Branching Model's develop-first rule clarified to note it's "for testing before they ship"
+- **`AGENTS.md`:** Test Conventions gains a grouping/ordering rule — each method's tests get a one-line `// methodName()` comment; groups are ordered constructors first, then public before protected, then alphabetically by method name within each visibility (overloads by parameter count then type), `toString()` last regardless of visibility
+
+#### Tooling
+
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
+- **`.claude/commands/generate-pr-description.md`:** Closing instructions now remind the user to tag the merged release commit on `main` and merge `main` back into `develop` afterwards
+- **`/scaffold-unit-tests`:** Now accepts multiple space- or comma-separated class names/paths in a single invocation, scaffolding each target independently so one unresolved target doesn't block the rest
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Now also load `@CLAUDE.md` (previously `@AGENTS.md` only), for accurate technical detail — build/test commands, package layout, database profiles — when describing changes
+
+### 🐛 Fixed
+
+#### Documentation
+
+- **`CLAUDE.md`:** Now cross-links to `AGENTS.md` for tool-agnostic conventions (git workflow, release checklist, documentation conventions, todo-list tracking) — previously the only project doc missing this reference
+- **`CLAUDE.md`:** Package overview table corrected — `ControllerAdvice` lives in `configs/`, not `exceptions/`; adds the missing `configs/` row
+- **`AGENTS.md`, `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`:** Removed the false claim that AssertJ is used for assertions — `assertj-core` is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, and every test in the suite uses JUnit Jupiter's `Assertions` instead
+
+### ⚠️ Deprecated
+
+### 🗑️ Removed
+
+#### Testing
+
+- **`ControllerResponseTest.testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults`:** Removed — solely exercised the Lombok-generated `@NoArgsConstructor` and generated getters with no accompanying logic, per AGENTS.md's Test Conventions
+- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `processCsv` coverage, tested directly against the impl class, is superseded by the new interface-level `services/AwardServiceTest`/`services/ImageServiceTest`
 
 ### 🔐 Security
 
@@ -1184,4 +1260,4 @@ For issues, feature requests or questions:
 
 ---
 
-**Last Updated:** 2026-08-24
+**Last Updated:** 2026-08-25
