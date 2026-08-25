@@ -145,8 +145,8 @@ Tests are now grouped by functionality rather than scattered throughout the file
 
 #### Test Categories
 
-| Category                  | Count | Status    |
-|---------------------------|-------|-----------|
+| Category                  | Count | Status     |
+|---------------------------|-------|------------|
 | Null Input Handling       | 2     | ✅ Passing |
 | Null Collections & Fields | 5     | ✅ Passing |
 | Match Name Handling       | 3     | ✅ Passing |
@@ -155,7 +155,7 @@ Tests are now grouped by functionality rather than scattered throughout the file
 | Complete Data Scenarios   | 2     | ✅ Passing |
 | Complex Data Scenarios    | 1     | ✅ Passing |
 | Edge Cases                | 4     | ✅ Passing |
-| Database Interaction      | 1     | ⊘ Skipped |
+| Database Interaction      | 1     | ⊘ Skipped  |
 
 #### Test Scenarios Covered
 
@@ -304,4 +304,3 @@ project's [GitHub Issues](https://github.com/tahoni/hpsc-web-springboot/issues) 
 
 For more information, visit the [project repository](https://github.com/tahoni/hpsc-web-springboot) or refer
 to the [Architecture Guide](/ARCHITECTURE.md).
-

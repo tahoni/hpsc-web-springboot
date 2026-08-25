@@ -229,7 +229,7 @@ The `repositories/` package was empty (repositories for these six entities were 
 ## 🐛 Known Issues
 
 - No repository-level or service-level test coverage yet for the new/changed domain model.
-- No service, controller, or CSV/XML import wiring for `homeClub`, `clubRanking`, `isVisitor`, `ShooterLog`, or `ShooterLogEntry` — the entities exist but nothing populates them yet.
+- No service, controller, or CSV/XML import wiring for `homeClub`, `clubRanking`, `isVisitor`, `ShooterLog`, or `ShooterLogEntry` — the entities exist, but nothing populates them yet.
 - No shooter-log calculation job/service exists — `ShooterLog`/`ShooterLogEntry` are schema only.
 - The Flyway migration is create-only; deploying against a pre-existing, non-empty MySQL database requires manual reconciliation (see Migration Guide).
 
