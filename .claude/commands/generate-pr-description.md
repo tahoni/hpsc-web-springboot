@@ -45,6 +45,6 @@ Commit these in logical chunks per AGENTS.md's Git Workflow — the version bump
 
 ## 📤 Output
 
-Once all files above are written, tell the user the release branch (`release/v$1`) is ready to open as a PR against `main` (per the GitFlow branching model in AGENTS.md), using `documentation/history/PR_DESCRIPTION_v$1.md` as the PR body.
+Once all files above are written, tell the user the release branch (`release/v$1`) is ready to open as a PR against `develop` (per the GitFlow branching model in AGENTS.md), using `documentation/history/PR_DESCRIPTION_v$1.md` as the PR body. Once that PR merges, remind them a second PR promoting `develop` into `main` is still needed to actually ship the release — tag the resulting commit on `main` as `v$1`.
 
 Remind the user to verify all tests still pass (`./mvnw test`) before finishing, and confirm no version-specific info leaked into `README.md`/`ARCHITECTURE.md`.

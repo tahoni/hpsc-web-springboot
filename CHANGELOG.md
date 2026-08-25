@@ -44,10 +44,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `README.md`/`ARCHITECTURE.md`
 - **`AGENTS.md`:** Icon registry extended with `🔍` (Current state / inspection) and `📤` (Output)
+- **`AGENTS.md`, `CONTRIBUTING.md`:** GitFlow Branching Model/Merging sections updated — `release/vX.Y.Z` branches now PR into `develop` instead of `main`; `main` is updated via a separate `develop` → `main` promotion PR, tagged `vX.Y.Z`
 
 #### Tooling
 
 - **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
+- **`.claude/commands/generate-pr-description.md`:** Closing instructions now direct the release PR at `develop`, with a reminder to open the follow-up `develop` → `main` promotion PR
 
 ### 🐛 Fixed
 
