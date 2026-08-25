@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 7.2.0](#-720---2026-08-25) ← Current
+- [🧾 Version 7.3.0](#-730---2026-08-25) ← Current
+- [🧾 Version 7.2.0](#-720---2026-08-25)
 - [🧾 Version 7.1.0](#-710---2026-08-24)
 - [🧾 Version 7.0.0](#-700---2026-08-11)
 - [🧾 Version 6.0.0](#-600---2026-05-01)
@@ -39,15 +40,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### ➕ Added
 
-#### Tooling
-
-- **`/generate-pr-summary`:** New Claude Code command — condenses a version's `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary (a short paragraph plus a capped bullet list), for pasting into a PR description without this repo's own emoji-heavy documentation style
-
 ### 🔄 Changed
 
 #### Tooling
 
 - **`/generate-pr-summary`:** Output instructions clarified to require the fenced block contain raw, unrendered Markdown source (literal `##`/`**`/`-`) rather than Claude's own rendered formatting, so pasted PR summaries preserve exact syntax
+
+### 🐛 Fixed
+
+### ⚠️ Deprecated
+
+### 🗑️ Removed
+
+### 🔐 Security
+
+---
+
+## 🧾 [7.3.0] - 2026-08-25
+
+### ➕ Added
+
+#### Tooling
+
+- **`/generate-pr-summary`:** New Claude Code command — condenses a version's `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary (a short paragraph plus a capped bullet list), for pasting into a PR description without this repo's own emoji-heavy documentation style
+
+### 🔄 Changed
 
 ### 🐛 Fixed
 

@@ -20,6 +20,19 @@ A comprehensive historical overview of the HPSC Website Backend project from sta
 
 ## 📅 Historical Timeline
 
+### Version 7.3.0 (August 25, 2026)
+
+**Theme:** Documentation Accuracy Pass & PR Summary Tooling
+
+**Key Focus:**
+
+- New Claude Code command `/generate-pr-summary`, which condenses a version's archived `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary — a distillation rather than a restatement of this repo's own emoji-heavy documentation style
+- `README.md`'s Introduction and Features sections corrected to stop describing match management, competitor/club CRUD, WinMSS import, and XML/multi-format processing as existing capabilities; only `AwardController`/`ImageController` CSV processing is implemented today, with the match/competitor domain's service and controller layer still being rebuilt (as already noted in `CLAUDE.md`)
+- `README.md`'s coverage-report instructions corrected from the non-functional `./mvnw test jacoco:report` to `./mvnw verify -Pcoverage`; the stray `1.x – 4.x` version range in its documentation-map description removed, per AGENTS.md's evergreen-documentation rule
+- `ARCHITECTURE.md`'s test package tree corrected (removed the nonexistent `domain/` test package, added the missing `converters/`/`exceptions/` packages) and its CI/CD & Quality Gates table no longer overstates the `Build & Tests` gate as an "All PRs" GitHub Actions trigger — only `codeql.yml` runs automatically; `./mvnw test` is run locally/by reviewers
+- No domain entities, repositories, services, or API surface changed in this release — purely a documentation-accuracy and tooling pass
+- Project version bumped to 7.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 7.2.0 (August 25, 2026)
 
 **Theme:** Test Suite Conventions, AI-Agent Tooling, and Dependency Maintenance
