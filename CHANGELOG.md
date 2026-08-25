@@ -65,6 +65,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
 - **`.claude/commands/generate-pr-description.md`:** Closing instructions now direct the release PR at `develop`, with a reminder to open the follow-up `develop` → `main` promotion PR
 - **`/scaffold-unit-tests`:** Now accepts multiple space- or comma-separated class names/paths in a single invocation, scaffolding each target independently so one unresolved target doesn't block the rest
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Now also load `@CLAUDE.md` (previously `@AGENTS.md` only), for accurate technical detail — build/test commands, package layout, database profiles — when describing changes
 
 ### 🐛 Fixed
 
