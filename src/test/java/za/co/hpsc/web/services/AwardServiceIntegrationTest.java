@@ -37,7 +37,7 @@ public class AwardServiceIntegrationTest {
     @Autowired
     private AwardService awardService;
 
-    // Test Group: Null/Empty/Blank Input Handling
+    // processCsv()
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> awardService.processCsv(null));
@@ -53,7 +53,6 @@ public class AwardServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> awardService.processCsv("   \t\n  "));
     }
 
-    // Test Group: Invalid CSV Format Handling
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
@@ -69,7 +68,6 @@ public class AwardServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
-    // Test Group: Valid Single Ceremony Processing
     @Test
     public void testProcessCsv_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
         String csvData = CSV_HEADER +
@@ -143,7 +141,6 @@ public class AwardServiceIntegrationTest {
         assertTrue(responseHolder.getAwardCeremonies().isEmpty());
     }
 
-    // Test Group: Valid Multiple Ceremonies Processing
     @Test
     public void testProcessCsv_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
         String csvData = """
@@ -223,7 +220,6 @@ public class AwardServiceIntegrationTest {
         assertEquals("Award A2", ceremonies.get(2).getAwards().getFirst().getTitle());
     }
 
-    // Test Group: CSV Field Parsing
     @Test
     public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         String csvData = """

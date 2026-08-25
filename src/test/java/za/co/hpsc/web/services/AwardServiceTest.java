@@ -38,7 +38,7 @@ class AwardServiceTest {
         awardService = awardServiceImpl;
     }
 
-    // Test Group: processCsv - Input Validation
+    // processCsv()
     @Test
     void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> awardService.processCsv(null));
@@ -71,7 +71,6 @@ class AwardServiceTest {
         assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
-    // Test Group: processCsv - Valid Data Processing
     @Test
     void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
         // Act

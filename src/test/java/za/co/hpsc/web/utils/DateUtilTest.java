@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DateUtilTest {
 
+    // formatDate(LocalDate, String)
     @Test
     void testFormatDate_whenValidDateAndFormat_thenReturnsFormattedString() {
         // Arrange
@@ -47,6 +48,7 @@ class DateUtilTest {
         assertEquals("", result);
     }
 
+    // formatDateTime(LocalDateTime, String)
     @Test
     void testFormatDateTime_whenValidDateTimeAndFormat_thenReturnsFormattedString() {
         // Arrange

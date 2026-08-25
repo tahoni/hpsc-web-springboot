@@ -35,7 +35,7 @@ public class ImageServiceIntegrationTest {
     @Autowired
     private ImageService imageService;
 
-    // Test Group: Null/Empty/Blank Input Handling
+    // processCsv()
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> imageService.processCsv(null));
@@ -51,7 +51,6 @@ public class ImageServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> imageService.processCsv("   \t\n  "));
     }
 
-    // Test Group: Invalid CSV Format Handling
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
@@ -76,7 +75,6 @@ public class ImageServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> imageService.processCsv(csvData));
     }
 
-    // Test Group: Valid Single Image Processing
     @Test
     public void testProcessCsv_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
         String csvData = CSV_HEADER +
@@ -110,7 +108,6 @@ public class ImageServiceIntegrationTest {
         assertTrue(responseHolder.getImages().isEmpty());
     }
 
-    // Test Group: Valid Multiple Images Processing
     @Test
     public void testProcessCsv_whenMultipleImages_thenReturnsAllMappedResponses() {
         String csvData = CSV_HEADER +
@@ -154,7 +151,6 @@ public class ImageServiceIntegrationTest {
         assertEquals("image/png", image.getMimeType());
     }
 
-    // Test Group: CSV Field Parsing
     @Test
     public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         String csvData = """
@@ -246,7 +242,6 @@ public class ImageServiceIntegrationTest {
         assertEquals(List.of("wildlife"), responseHolder.getImages().getFirst().getTags());
     }
 
-    // Test Group: MIME Type Detection
     @Test
     public void testProcessCsv_whenFileNameIsPng_thenMimeTypeIsImagePng() {
         String csvData = CSV_HEADER + "PNG Image,,,,,/photos,image.png\n";
@@ -307,7 +302,6 @@ public class ImageServiceIntegrationTest {
         assertEquals("", image.getMimeType());
     }
 
-    // Test Group: UUID Generation
     @Test
     public void testProcessCsv_whenMultipleImages_thenEachResponseHasUniqueUuid() {
         String csvData = CSV_HEADER +
@@ -325,7 +319,6 @@ public class ImageServiceIntegrationTest {
         assertNotEquals(images.get(0).getUuid(), images.get(2).getUuid());
     }
 
-    // Test Group: Large Dataset Processing
     @Test
     public void testProcessCsv_whenLargeDataset_thenProcessesAllRowsCorrectly() {
         StringBuilder csvData = new StringBuilder(CSV_HEADER);

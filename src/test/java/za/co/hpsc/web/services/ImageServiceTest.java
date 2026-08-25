@@ -36,7 +36,7 @@ class ImageServiceTest {
         imageService = imageServiceImpl;
     }
 
-    // Test Group: processCsv - Input Validation
+    // processCsv()
     @Test
     void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> imageService.processCsv(null));
@@ -69,7 +69,6 @@ class ImageServiceTest {
         assertThrows(ValidationException.class, () -> imageService.processCsv(csvData));
     }
 
-    // Test Group: processCsv - Valid Data Processing
     @Test
     void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyImageList() {
         // Act

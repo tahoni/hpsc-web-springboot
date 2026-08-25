@@ -19,6 +19,7 @@ class AwardCeremonyResponseTest {
                     new AwardPlacing(3, "C", "c.png"))
     );
 
+    // AwardCeremonyResponse()
     @Test
     void testDefaultConstructor_thenInitialisesFieldsCorrectly() {
         // Act
@@ -34,115 +35,7 @@ class AwardCeremonyResponseTest {
         assertTrue(response.getAwards().isEmpty());
     }
 
-    @Test
-    void testConstructor_withBasicFields_thenInitialisesFieldsCorrectly() {
-        // Act
-        AwardCeremonyResponse response = new AwardCeremonyResponse(now, null, null);
-
-        // Assert basic data
-        assertNotNull(response.getUuid());
-        assertEquals(now, response.getDate());
-        assertTrue(response.getImageFilePath().isEmpty());
-        // Assert meta-data
-        assertNull(response.getTitle());
-        // Assert awards
-        assertTrue(response.getAwards().isEmpty());
-    }
-
-    @Test
-    void testConstructor_withUuidAndBasicFields_thenInitialisesFieldsCorrectly() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
-
-        // Act
-        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, now, "/path/to/img",
-                sampleAwards);
-
-        // Assert basic data
-        assertEquals(uuid, response.getUuid());
-        assertEquals(now, response.getDate());
-        assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta-data
-        assertNull(response.getTitle());
-        // Assert awards
-        assertEquals(1, response.getAwards().size());
-        assertTrue(response.getAwards().containsAll(sampleAwards));
-    }
-
-    @Test
-    void testFullConstructor_thenInitialisesAllFields() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
-        List<String> tags = List.of("tag1", "tag2");
-
-        // Act
-        AwardCeremonyResponse response = new AwardCeremonyResponse(
-                uuid, "Title", "Summary", "Desc", "Cat", tags, now, "/path/to/img",
-                sampleAwards
-        );
-
-        // Assert basic data
-        assertEquals(uuid, response.getUuid());
-        assertEquals(now, response.getDate());
-        assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta-data
-        assertEquals("Title", response.getTitle());
-        assertEquals("Summary", response.getSummary());
-        assertEquals("Desc", response.getDescription());
-        assertEquals("Cat", response.getCategory());
-        assertEquals(2, response.getTags().size());
-        assertTrue(response.getTags().containsAll(tags));
-
-        // Assert awards
-        assertEquals(1, response.getAwards().size());
-        assertTrue(response.getAwards().containsAll(sampleAwards));
-    }
-
-    @Test
-    void testConstructor_withUuidTitleAndDetails_thenInitialisesFieldsCorrectly() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
-
-        // Act
-        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, "Short Title", now, "/path/to/img",
-                sampleAwards);
-
-        // Assert basic data
-        assertEquals(uuid, response.getUuid());
-        assertEquals(now, response.getDate());
-        assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta-data
-        assertEquals("Short Title", response.getTitle());
-
-        // Assert awards
-        assertEquals(1, response.getAwards().size());
-        assertTrue(response.getAwards().containsAll(sampleAwards));
-    }
-
-    @Test
-    void testConstructorWithoutUuidButWithMetadata_thenInitialisesUuidAndMetadata() {
-        // Act
-        AwardCeremonyResponse response = new AwardCeremonyResponse(
-                "Title", "Sum", "Desc", "Cat", List.of("T"), now, "/path/to/img", sampleAwards
-        );
-
-        // Assert basic data
-        assertNotNull(response.getUuid());
-        assertEquals(now, response.getDate());
-        assertEquals("/path/to/img", response.getImageFilePath());
-        // Assert meta-data
-        assertEquals("Title", response.getTitle());
-        assertEquals("Sum", response.getSummary());
-        assertEquals("Desc", response.getDescription());
-        assertEquals("Cat", response.getCategory());
-        assertEquals(1, response.getTags().size());
-        assertTrue(response.getTags().contains("T"));
-
-        // Assert awards
-        assertEquals(1, response.getAwards().size());
-        assertTrue(response.getAwards().containsAll(sampleAwards));
-    }
-
+    // AwardCeremonyResponse(List<AwardRequest>)
     @Test
     void testConstructor_withValidAwardRequestList_thenInitialisesAllFieldsCorrectly() {
         // Arrange first award request
@@ -340,5 +233,119 @@ class AwardCeremonyResponseTest {
         assertNull(response.getTitle());
         // Assert awards
         assertTrue(response.getAwards().isEmpty());
+    }
+
+    // AwardCeremonyResponse(LocalDate, String, List<AwardResponse>)
+    @Test
+    void testConstructor_withBasicFields_thenInitialisesFieldsCorrectly() {
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse(now, null, null);
+
+        // Assert basic data
+        assertNotNull(response.getUuid());
+        assertEquals(now, response.getDate());
+        assertTrue(response.getImageFilePath().isEmpty());
+        // Assert meta-data
+        assertNull(response.getTitle());
+        // Assert awards
+        assertTrue(response.getAwards().isEmpty());
+    }
+
+    // AwardCeremonyResponse(UUID, LocalDate, String, List<AwardResponse>)
+    @Test
+    void testConstructor_withUuidAndBasicFields_thenInitialisesFieldsCorrectly() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, now, "/path/to/img",
+                sampleAwards);
+
+        // Assert basic data
+        assertEquals(uuid, response.getUuid());
+        assertEquals(now, response.getDate());
+        assertEquals("/path/to/img", response.getImageFilePath());
+        // Assert meta-data
+        assertNull(response.getTitle());
+        // Assert awards
+        assertEquals(1, response.getAwards().size());
+        assertTrue(response.getAwards().containsAll(sampleAwards));
+    }
+
+    // AwardCeremonyResponse(UUID, String, LocalDate, String, List<AwardResponse>)
+    @Test
+    void testConstructor_withUuidTitleAndDetails_thenInitialisesFieldsCorrectly() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, "Short Title", now, "/path/to/img",
+                sampleAwards);
+
+        // Assert basic data
+        assertEquals(uuid, response.getUuid());
+        assertEquals(now, response.getDate());
+        assertEquals("/path/to/img", response.getImageFilePath());
+        // Assert meta-data
+        assertEquals("Short Title", response.getTitle());
+
+        // Assert awards
+        assertEquals(1, response.getAwards().size());
+        assertTrue(response.getAwards().containsAll(sampleAwards));
+    }
+
+    // AwardCeremonyResponse(String, String, String, String, List<String>, LocalDate, String, List<AwardResponse>)
+    @Test
+    void testConstructorWithoutUuidButWithMetadata_thenInitialisesUuidAndMetadata() {
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse(
+                "Title", "Sum", "Desc", "Cat", List.of("T"), now, "/path/to/img", sampleAwards
+        );
+
+        // Assert basic data
+        assertNotNull(response.getUuid());
+        assertEquals(now, response.getDate());
+        assertEquals("/path/to/img", response.getImageFilePath());
+        // Assert meta-data
+        assertEquals("Title", response.getTitle());
+        assertEquals("Sum", response.getSummary());
+        assertEquals("Desc", response.getDescription());
+        assertEquals("Cat", response.getCategory());
+        assertEquals(1, response.getTags().size());
+        assertTrue(response.getTags().contains("T"));
+
+        // Assert awards
+        assertEquals(1, response.getAwards().size());
+        assertTrue(response.getAwards().containsAll(sampleAwards));
+    }
+
+    // AwardCeremonyResponse(UUID, String, String, String, String, List<String>, LocalDate, String, List<AwardResponse>)
+    @Test
+    void testFullConstructor_thenInitialisesAllFields() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+        List<String> tags = List.of("tag1", "tag2");
+
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse(
+                uuid, "Title", "Summary", "Desc", "Cat", tags, now, "/path/to/img",
+                sampleAwards
+        );
+
+        // Assert basic data
+        assertEquals(uuid, response.getUuid());
+        assertEquals(now, response.getDate());
+        assertEquals("/path/to/img", response.getImageFilePath());
+        // Assert meta-data
+        assertEquals("Title", response.getTitle());
+        assertEquals("Summary", response.getSummary());
+        assertEquals("Desc", response.getDescription());
+        assertEquals("Cat", response.getCategory());
+        assertEquals(2, response.getTags().size());
+        assertTrue(response.getTags().containsAll(tags));
+
+        // Assert awards
+        assertEquals(1, response.getAwards().size());
+        assertTrue(response.getAwards().containsAll(sampleAwards));
     }
 }

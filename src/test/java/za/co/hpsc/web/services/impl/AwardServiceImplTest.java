@@ -26,7 +26,79 @@ public class AwardServiceImplTest {
     @InjectMocks
     private AwardServiceImpl awardService;
 
-    // Test Group: readAwards - Valid Data Processing
+    // mapAwards()
+    @Test
+    public void testMapAwards_whenValidAwardRequests_thenReturnsAwardCeremonyResponseList() {
+        // Arrange
+        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony A", "Alice", "Bob", "Charlie");
+        request1.setImageFilePath("/path/to/images1");
+
+        AwardRequest request2 = new AwardRequest("Award 2", "Ceremony A", "Dan", "Eve", "Frank");
+        request2.setImageFilePath("/path/to/images2.png");
+
+        AwardRequest request3 = new AwardRequest("Award 3", "Ceremony B", "Grace", "Heidi", "Ivan");
+        request3.setImageFilePath("/path/to/images3");
+
+        List<AwardRequest> awardRequests = List.of(request1, request2, request3);
+
+        // Act
+        List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
+
+        // Assert - Verify ceremony count
+        assertEquals(2, responses.size());
+
+        // Assert - Verify first ceremony structure
+        AwardCeremonyResponse ceremonyA = responses.getFirst();
+        assertEquals("Ceremony A", ceremonyA.getTitle());
+        assertEquals("/path/to/images1", ceremonyA.getImageFilePath());
+        assertEquals(2, ceremonyA.getAwards().size());
+
+        // Assert - Verify first award of first ceremony
+        List<AwardResponse> awardsCeremonyA = ceremonyA.getAwards();
+        assertEquals("Award 1", awardsCeremonyA.getFirst().getTitle());
+        assertEquals("Alice", awardsCeremonyA.getFirst().getFirstPlace().getName());
+        assertEquals("Bob", awardsCeremonyA.getFirst().getSecondPlace().getName());
+        assertEquals("Charlie", awardsCeremonyA.getFirst().getThirdPlace().getName());
+
+        // Assert - Verify second award of first ceremony
+        assertEquals("Award 2", awardsCeremonyA.getLast().getTitle());
+        assertEquals("Dan", awardsCeremonyA.getLast().getFirstPlace().getName());
+        assertEquals("Eve", awardsCeremonyA.getLast().getSecondPlace().getName());
+        assertEquals("Frank", awardsCeremonyA.getLast().getThirdPlace().getName());
+
+        // Assert - Verify second ceremony structure
+        AwardCeremonyResponse ceremonyB = responses.getLast();
+        assertEquals("Ceremony B", ceremonyB.getTitle());
+        assertEquals("/path/to/images3", ceremonyB.getImageFilePath());
+        assertEquals(1, ceremonyB.getAwards().size());
+
+        // Assert - Verify award in second ceremony
+        List<AwardResponse> awardsCeremonyB = ceremonyB.getAwards();
+        assertEquals("Award 3", awardsCeremonyB.getFirst().getTitle());
+        assertEquals("Grace", awardsCeremonyB.getFirst().getFirstPlace().getName());
+        assertEquals("Heidi", awardsCeremonyB.getFirst().getSecondPlace().getName());
+        assertEquals("Ivan", awardsCeremonyB.getFirst().getThirdPlace().getName());
+    }
+
+    @Test
+    public void testMapAwards_whenEmptyAwardRequestList_thenReturnsEmptyList() {
+        // Arrange
+        List<AwardRequest> awardRequests = new ArrayList<>();
+
+        // Act
+        List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
+
+        // Assert
+        assertTrue(responses.isEmpty());
+    }
+
+    @Test
+    public void testMapAwards_whenNullAwardRequestList_thenThrowsValidationException() {
+        // Act / Assert
+        assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
+    }
+
+    // readAwards()
     @Test
     public void testReadAwards_whenValidCsv_thenReturnsAwardRequestList() {
         // Arrange
@@ -201,7 +273,6 @@ public class AwardServiceImplTest {
         assertEquals("imgC999.png", awardRequests.get(999).getThirdPlaceImageFileName());
     }
 
-    // Test Group: readAwards - Input Validation and Error Handling
     @Test
     public void testReadAwards_whenEmptyCsvData_thenReturnsEmptyList() {
         // Arrange
@@ -284,78 +355,5 @@ public class AwardServiceImplTest {
     public void testReadAwards_whenNullCsv_thenThrowsValidationException() {
         // Act / Assert
         assertThrows(ValidationException.class, () -> awardService.readAwards(null));
-    }
-
-    // Test Group: mapAwards - Valid Data Processing
-    @Test
-    public void testMapAwards_whenValidAwardRequests_thenReturnsAwardCeremonyResponseList() {
-        // Arrange
-        AwardRequest request1 = new AwardRequest("Award 1", "Ceremony A", "Alice", "Bob", "Charlie");
-        request1.setImageFilePath("/path/to/images1");
-
-        AwardRequest request2 = new AwardRequest("Award 2", "Ceremony A", "Dan", "Eve", "Frank");
-        request2.setImageFilePath("/path/to/images2.png");
-
-        AwardRequest request3 = new AwardRequest("Award 3", "Ceremony B", "Grace", "Heidi", "Ivan");
-        request3.setImageFilePath("/path/to/images3");
-
-        List<AwardRequest> awardRequests = List.of(request1, request2, request3);
-
-        // Act
-        List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
-
-        // Assert - Verify ceremony count
-        assertEquals(2, responses.size());
-
-        // Assert - Verify first ceremony structure
-        AwardCeremonyResponse ceremonyA = responses.getFirst();
-        assertEquals("Ceremony A", ceremonyA.getTitle());
-        assertEquals("/path/to/images1", ceremonyA.getImageFilePath());
-        assertEquals(2, ceremonyA.getAwards().size());
-
-        // Assert - Verify first award of first ceremony
-        List<AwardResponse> awardsCeremonyA = ceremonyA.getAwards();
-        assertEquals("Award 1", awardsCeremonyA.getFirst().getTitle());
-        assertEquals("Alice", awardsCeremonyA.getFirst().getFirstPlace().getName());
-        assertEquals("Bob", awardsCeremonyA.getFirst().getSecondPlace().getName());
-        assertEquals("Charlie", awardsCeremonyA.getFirst().getThirdPlace().getName());
-
-        // Assert - Verify second award of first ceremony
-        assertEquals("Award 2", awardsCeremonyA.getLast().getTitle());
-        assertEquals("Dan", awardsCeremonyA.getLast().getFirstPlace().getName());
-        assertEquals("Eve", awardsCeremonyA.getLast().getSecondPlace().getName());
-        assertEquals("Frank", awardsCeremonyA.getLast().getThirdPlace().getName());
-
-        // Assert - Verify second ceremony structure
-        AwardCeremonyResponse ceremonyB = responses.getLast();
-        assertEquals("Ceremony B", ceremonyB.getTitle());
-        assertEquals("/path/to/images3", ceremonyB.getImageFilePath());
-        assertEquals(1, ceremonyB.getAwards().size());
-
-        // Assert - Verify award in second ceremony
-        List<AwardResponse> awardsCeremonyB = ceremonyB.getAwards();
-        assertEquals("Award 3", awardsCeremonyB.getFirst().getTitle());
-        assertEquals("Grace", awardsCeremonyB.getFirst().getFirstPlace().getName());
-        assertEquals("Heidi", awardsCeremonyB.getFirst().getSecondPlace().getName());
-        assertEquals("Ivan", awardsCeremonyB.getFirst().getThirdPlace().getName());
-    }
-
-    // Test Group: mapAwards - Input Validation and Error Handling
-    @Test
-    public void testMapAwards_whenEmptyAwardRequestList_thenReturnsEmptyList() {
-        // Arrange
-        List<AwardRequest> awardRequests = new ArrayList<>();
-
-        // Act
-        List<AwardCeremonyResponse> responses = awardService.mapAwards(awardRequests);
-
-        // Assert
-        assertTrue(responses.isEmpty());
-    }
-
-    @Test
-    public void testMapAwards_whenNullAwardRequestList_thenThrowsValidationException() {
-        // Act / Assert
-        assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
     }
 }

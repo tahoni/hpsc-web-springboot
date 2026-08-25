@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StringUtilTest {
 
+    // formatStringWithNamedParameters(String, Map)
     @Test
     void testFormatStringWithNamedParameters_whenValidTemplateAndParameters_thenReplacesPlaceholders() {
         // Arrange
@@ -167,6 +168,7 @@ public class StringUtilTest {
                 StringUtil.formatStringWithNamedParameters(null, parameters));
     }
 
+    // toString(Object)
     @Test
     void testToString_whenValidObject_thenReturnsObjectStringRepresentation() {
         // Arrange
