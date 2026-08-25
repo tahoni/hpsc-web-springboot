@@ -40,6 +40,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### ➕ Added
 
+#### Documentation
+
+- **`IMPROVEMENT_PLAN.md`:** New root-level document synthesising the goals and constraints stated across this repository's documentation and configuration into a prioritised set of gaps and a roadmap; referenced from `README.md`'s and `AGENTS.md`'s documentation maps
+
 ### 🔄 Changed
 
 #### Documentation

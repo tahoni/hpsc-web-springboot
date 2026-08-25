@@ -101,18 +101,19 @@ Every heading listed in a Table of Contents is prefixed with an emoji, and its T
 
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation) section — README.md is the canonical version if the two ever drift):
 
-| File               | Purpose                                                                   |
-|--------------------|---------------------------------------------------------------------------|
-| `README.md`        | Project overview, setup, and links to the rest of the documentation       |
-| `ARCHITECTURE.md`  | Detailed architectural design, layered structure, and CI/CD quality gates |
-| `CLAUDE.md`        | Guidance for Claude Code specifically when working in this repository     |
-| `AGENTS.md`        | Cross-tool agent conventions (this file)                                  |
-| `CONTRIBUTING.md`  | New-developer onboarding: setup, database profiles, testing, workflow     |
-| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                   |
-| `HISTORY.md`       | Narrative history of the project's evolution across all versions          |
-| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                     |
-| `LICENSE.md`       | MIT License                                                               |
-| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)       |
+| File                  | Purpose                                                                                                          |
+|-----------------------|------------------------------------------------------------------------------------------------------------------|
+| `README.md`           | Project overview, setup, and links to the rest of the documentation                                              |
+| `ARCHITECTURE.md`     | Detailed architectural design, layered structure, and CI/CD quality gates                                        |
+| `IMPROVEMENT_PLAN.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| `CLAUDE.md`           | Guidance for Claude Code specifically when working in this repository                                            |
+| `AGENTS.md`           | Cross-tool agent conventions (this file)                                                                         |
+| `CONTRIBUTING.md`     | New-developer onboarding: setup, database profiles, testing, workflow                                            |
+| `CHANGELOG.md`        | Notable changes per release, in Keep a Changelog format                                                          |
+| `HISTORY.md`          | Narrative history of the project's evolution across all versions                                                 |
+| `RELEASE_NOTES.md`    | Detailed release notes for the current/latest version                                                            |
+| `LICENSE.md`          | MIT License                                                                                                      |
+| `HELP.md`             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                                              |
 
 Two documentation-only folders supplement these:
 

@@ -149,18 +149,19 @@ A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md
 
 This project's documentation is spread across a few files, each with a distinct purpose:
 
-| File                                   | Purpose                                                                                         |
-|----------------------------------------|-------------------------------------------------------------------------------------------------|
-| [`README.md`](README.md)               | Project overview, setup, and links to the rest of the documentation (this file)                 |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure, and CI/CD quality gates                       |
-| [`CLAUDE.md`](CLAUDE.md)               | Guidance for Claude Code (AI assistant) when working in this repository                         |
-| [`AGENTS.md`](AGENTS.md)               | Cross-tool conventions for AI coding agents working in this repository                          |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md)   | New-developer onboarding: setup, database profiles, testing, workflow                           |
-| [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
-| [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |
-| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Detailed release notes for the current/latest version                                           |
-| [`LICENSE.md`](LICENSE.md)             | MIT License                                                                                     |
-| [`HELP.md`](HELP.md)                   | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
+| File                                         | Purpose                                                                                                          |
+|----------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| [`README.md`](README.md)                     | Project overview, setup, and links to the rest of the documentation (this file)                                  |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)         | Detailed architectural design, layered structure, and CI/CD quality gates                                        |
+| [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| [`CLAUDE.md`](CLAUDE.md)                     | Guidance for Claude Code (AI assistant) when working in this repository                                          |
+| [`AGENTS.md`](AGENTS.md)                     | Cross-tool conventions for AI coding agents working in this repository                                           |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)         | New-developer onboarding: setup, database profiles, testing, workflow                                            |
+| [`CHANGELOG.md`](CHANGELOG.md)               | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format                  |
+| [`HISTORY.md`](HISTORY.md)                   | Narrative history of the project's evolution across all versions                                                 |
+| [`RELEASE_NOTES.md`](RELEASE_NOTES.md)       | Detailed release notes for the current/latest version                                                            |
+| [`LICENSE.md`](LICENSE.md)                   | MIT License                                                                                                      |
+| [`HELP.md`](HELP.md)                         | Spring Initializr reference links (Maven, Spring Boot docs, guides)                                              |
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version:
 
