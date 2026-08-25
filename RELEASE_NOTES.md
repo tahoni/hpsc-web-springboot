@@ -104,7 +104,7 @@ Version 7.3.0 is a small, documentation-focused release. `README.md` and `ARCHIT
 
 ## 👥 Contributors
 
-Development Team
+Leoni Lubbinge
 
 ---
 

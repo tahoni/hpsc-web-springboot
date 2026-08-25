@@ -42,6 +42,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🔄 Changed
 
+#### Documentation
+
+- **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist
+
 ### 🐛 Fixed
 
 ### ⚠️ Deprecated
