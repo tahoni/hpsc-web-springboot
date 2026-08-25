@@ -60,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Tooling
 
 - **`/generate-pr-description`:** Step 6's `RELEASE_NOTES.md` instructions updated to match AGENTS.md's new Contributors-sourcing rule above
+- **`/sync-unreleased-changes`:** New Claude Code command — diffs the current branch against its base (`develop`/`main`) plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section, and fills in any missing entries directly in the file
 
 ### 🐛 Fixed
 
