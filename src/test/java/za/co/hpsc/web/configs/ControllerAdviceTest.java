@@ -16,7 +16,6 @@ import za.co.hpsc.web.models.ControllerResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: check that all methods have the same comprehensive tests
 @ExtendWith(MockitoExtension.class)
 public class ControllerAdviceTest {
 
