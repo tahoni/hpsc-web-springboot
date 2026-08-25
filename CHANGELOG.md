@@ -40,7 +40,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🔄 Changed
 
+#### Documentation
+
+- **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `README.md`/`ARCHITECTURE.md`
+- **`AGENTS.md`:** Icon registry extended with `🔍` (Current state / inspection) and `📤` (Output)
+
+#### Tooling
+
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
+
 ### 🐛 Fixed
+
+#### Documentation
+
+- **`CLAUDE.md`:** Now cross-links to `AGENTS.md` for tool-agnostic conventions (git workflow, release checklist, documentation conventions, todo-list tracking) — previously the only project doc missing this reference
+- **`CLAUDE.md`:** Package overview table corrected — `ControllerAdvice` lives in `configs/`, not `exceptions/`; adds the missing `configs/` row
 
 ### ⚠️ Deprecated
 
