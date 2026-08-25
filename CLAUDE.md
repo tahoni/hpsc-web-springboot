@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. See [`AGENTS.md`](AGENTS.md) for the broader, tool-agnostic conventions that also apply here — documentation conventions, git workflow, the release checklist, and tracking complex tasks with a todo list.
 
 ## Project Overview
 
@@ -64,18 +64,19 @@ HTTP Request
 
 ### Key layers and packages (`src/main/java/za/co/hpsc/web/`)
 
-| Package         | Role                                                                                                                                               |
-|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `controllers/`  | `AwardController`, `ImageController`, `IpscController` (stub — no endpoints yet)                                                                   |
-| `services/`     | `AwardService`, `ImageService`, plus implementations under `services/impl/`                                                                        |
-| `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                     |
-| `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor` |
-| `models/`       | DTOs grouped by domain: `award/`, `image/`, `shared/`, plus `Request`/`Response`/`ControllerResponse` at the package root                          |
-| `converters/`   | Custom JPA `AttributeConverter` implementations for enum-typed entity fields                                                                       |
-| `exceptions/`   | `FatalException`, `NonFatalException`, `ValidationException`; `ControllerAdvice` translates these to standard JSON error responses                 |
-| `enums/`        | `ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`, `MatchCategory`, `PowerFactor`                                        |
-| `constants/`    | `HpscConstants`, `IpscConstants`, `SystemConstants`                                                                                                |
-| `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                                |
+| Package         | Role                                                                                                                                                                 |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `controllers/`  | `AwardController`, `ImageController`, `IpscController` (stub — no endpoints yet)                                                                                     |
+| `services/`     | `AwardService`, `ImageService`, plus implementations under `services/impl/`                                                                                          |
+| `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                                       |
+| `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor`                   |
+| `models/`       | DTOs grouped by domain: `award/`, `image/`, `shared/`, plus `Request`/`Response`/`ControllerResponse` at the package root                                            |
+| `converters/`   | Custom JPA `AttributeConverter` implementations for enum-typed entity fields                                                                                         |
+| `configs/`      | Spring configuration: `ControllerAdvice` (global exception mapping), OpenAPI config                                                                                  |
+| `exceptions/`   | `FatalException`, `NonFatalException`, `ValidationException` — the exception hierarchy mapped by `ControllerAdvice` (in `configs/`) to standard JSON error responses |
+| `enums/`        | `ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`, `MatchCategory`, `PowerFactor`                                                          |
+| `constants/`    | `HpscConstants`, `IpscConstants`, `SystemConstants`                                                                                                                  |
+| `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                                                  |
 
 > The IPSC match-import/CRUD service, model, and entity-service layers described in earlier versions of this document (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services, and the `models/ipsc/` DTOs) have been removed from the codebase pending a rebuild — `IpscController` is currently an empty stub. Don't reference those classes as if they exist until they're rebuilt.
 
