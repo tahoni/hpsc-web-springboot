@@ -15,6 +15,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
 - [📚 Documentation](#-documentation)
+    - [🗺️ Roadmap](#-roadmap)
 - [📜 License](#-license)
 - [👤 Author](#-author)
 
@@ -153,7 +154,6 @@ This project's documentation is spread across a few files, each with a distinct 
 |----------------------------------------------|------------------------------------------------------------------------------------------------------------------|
 | [`README.md`](README.md)                     | Project overview, setup, and links to the rest of the documentation (this file)                                  |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md)         | Detailed architectural design, layered structure, and CI/CD quality gates                                        |
-| [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | [`CLAUDE.md`](CLAUDE.md)                     | Guidance for Claude Code (AI assistant) when working in this repository                                          |
 | [`AGENTS.md`](AGENTS.md)                     | Cross-tool conventions for AI coding agents working in this repository                                           |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md)         | New-developer onboarding: setup, database profiles, testing, workflow                                            |
@@ -171,6 +171,15 @@ This project's documentation is spread across a few files, each with a distinct 
 | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only and isn't maintained going forward.
+
+### 🗺️ Roadmap
+
+[`documentation/roadmap/`](documentation/roadmap) holds in-progress planning documents — not part of the standard documentation set above, and not required reading to work in this repository:
+
+| File                  | Purpose                                                                                                          |
+|-----------------------|------------------------------------------------------------------------------------------------------------------|
+| `IMPROVEMENT_PLAN.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| `TASKS.md`            | Concrete, checkbox-level task list broken out from `IMPROVEMENT_PLAN.md`'s gaps                                  |
 
 This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see [CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 

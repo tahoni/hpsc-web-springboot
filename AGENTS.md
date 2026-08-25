@@ -105,7 +105,6 @@ Root-level documentation, and the goal of each file (see README.md's own [📚 D
 |-----------------------|------------------------------------------------------------------------------------------------------------------|
 | `README.md`           | Project overview, setup, and links to the rest of the documentation                                              |
 | `ARCHITECTURE.md`     | Detailed architectural design, layered structure, and CI/CD quality gates                                        |
-| `IMPROVEMENT_PLAN.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | `CLAUDE.md`           | Guidance for Claude Code specifically when working in this repository                                            |
 | `AGENTS.md`           | Cross-tool agent conventions (this file)                                                                         |
 | `CONTRIBUTING.md`     | New-developer onboarding: setup, database profiles, testing, workflow                                            |
@@ -115,7 +114,7 @@ Root-level documentation, and the goal of each file (see README.md's own [📚 D
 | `LICENSE.md`          | MIT License                                                                                                      |
 | `HELP.md`             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                                              |
 
-Two documentation-only folders supplement these:
+Three documentation-only folders supplement these:
 
 - **`documentation/history/`** holds one of each of the following files per released version:
 
@@ -124,6 +123,12 @@ Two documentation-only folders supplement these:
   | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time    |
   | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0, non-semantic-versioning era. It is a historical record only and is not maintained going forward.
+- **`documentation/roadmap/`** holds in-progress planning documents that sit outside the standard documentation set above:
+
+  | File                  | Purpose                                                                                                          |
+  |-----------------------|------------------------------------------------------------------------------------------------------------------|
+  | `IMPROVEMENT_PLAN.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+  | `TASKS.md`            | Concrete, checkbox-level task list broken out from `IMPROVEMENT_PLAN.md`'s gaps                                  |
 
 ---
 

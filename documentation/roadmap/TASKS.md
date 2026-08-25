@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](../../IMPROVEMENT_PLAN.md)'s five gaps, organised by that document's Now/Next/Later/Ongoing phasing. Each section names its originating gap number for traceability back to the evidence and reasoning there.
+A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md)'s five gaps, organised by that document's Now/Next/Later/Ongoing phasing. Each section names its originating gap number for traceability back to the evidence and reasoning there.
 
 ## Table of Contents
 
@@ -45,7 +45,7 @@ A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](../../IMPROVEMEN
 
 **CSV persistence clarification** *(IMPROVEMENT_PLAN.md → Gap #3)*
 
-- [ ] Decide whether `AwardService`/`ImageService` CSV processing is meant to stay stateless by design, or should gain persistence
+- [ ] Decide whether `AwardService`/`ImageService` CSV processing is meant to stay stateless by design or should gain persistence
 - [ ] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md`
 - [ ] If persistence is intended: scope it as its own roadmap item once the service layer from the Next phase exists
 

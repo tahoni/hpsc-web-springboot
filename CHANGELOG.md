@@ -42,8 +42,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Documentation
 
-- **`IMPROVEMENT_PLAN.md`:** New root-level document synthesising the goals and constraints stated across this repository's documentation and configuration into a prioritised set of gaps and a roadmap; referenced from `README.md`'s and `AGENTS.md`'s documentation maps
-- **`documentation/roadmap/TASKS.md`:** New concrete, checkbox-level task list broken out from `IMPROVEMENT_PLAN.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing; deliberately not linked from `README.md`
+- **`documentation/roadmap/IMPROVEMENT_PLAN.md`:** New document synthesising the goals and constraints stated across this repository's documentation and configuration into a prioritised set of gaps and a roadmap
+- **`documentation/roadmap/TASKS.md`:** New concrete, checkbox-level task list broken out from `documentation/roadmap/IMPROVEMENT_PLAN.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
+- **`README.md` / `AGENTS.md`:** Both now list `documentation/roadmap/`'s files in their own dedicated Roadmap section, separate from the standard documentation file map/table
 
 ### 🔄 Changed
 
