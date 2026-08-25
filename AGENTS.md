@@ -134,6 +134,7 @@ Two documentation-only folders supplement these:
 - JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.
 - Follow an Arrange-Act-Assert structure; avoid brittle assertions such as over-specified `verify(mock, times(N))` calls or assertions on private/internal state.
 - Don't write tests whose sole purpose is verifying Lombok-generated behaviour (a test that only sets a value via a generated setter and reads it back via a generated getter, or that only exercises a generated no-args/all-args constructor with no accompanying logic). Using getters/setters/builders incidentally to build fixtures or assert real business-logic outcomes is fine — only test constructors, `toString()`, `equals()`/`hashCode()`, etc. when they are handwritten or contain custom logic.
+- **Group and order tests by the method under test.** Precede each group of tests for a given method with a one-line comment naming it (e.g. `// getByCode()`), matching the style already used in `FirearmTypeTest`/`ControllerAdviceTest`. Order the groups: constructors first, then every other method alphabetically by name — for overloads of the same name, order by parameter count, then by parameter type; `toString()` always comes last.
 
 ---
 
