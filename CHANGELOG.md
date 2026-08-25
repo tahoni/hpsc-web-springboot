@@ -59,6 +59,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **`HpscWebApplicationTests` renamed to `HpscWebApplicationTest`:** Matches AGENTS.md's `<ClassName>Test` naming convention (was the Spring Initializr default plural name); its `contextLoads()` method renamed to `testContextLoads_whenSpringContextStarted_thenLoadsSuccessfully` to match the method-naming convention too
 - **26 test files:** Retrofitted with AGENTS.md's method-comment/ordering rule (`// methodName()` headers; constructors first, public before protected, alphabetical by name, overloads by parameter count then type, `toString()` last) — `ClubIdentifierConverterTest`, `MatchCategoryConverterTest`, `ClubIdentifierTest`, `DivisionTest`, `PowerFactorTest`, `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`, `ControllerResponseTest`, `RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `AwardCeremonyResponseTest`, `AwardResponseTest`, `ImageRequestForCSVTest`, `ImageResponseTest`, `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `DateUtilTest`, `NumberUtilTest`, `StringUtilTest`, `ValueUtilTest`. No test bodies, assertions, or names changed — only comments and whole-method reordering; `ValueUtilTest` in particular had its `nullAsEmptyString` tests consolidated from 9 scattered locations into one contiguous group. Verified via `./mvnw test`: same 492 tests, all passing, before and after
 
+#### Build & Metadata
+
+- **`pom.xml`:** Spring Boot parent bumped `4.0.7` → `4.1.0`. As part of this:
+  - Removed the `spring-framework.version`/`tomcat.version` property overrides — both now match Boot 4.1.0's own defaults (`7.0.8`/`11.0.22`) exactly, so they were dead weight
+  - Removed the `commons.lang3.version` property — a pre-existing typo (Boot's real property is `commons-lang3.version`, hyphenated) meant this override never actually took effect; Boot 4.1.0 bumps the real one for free (`3.19.0` → `3.20.0`)
+  - Removed the `maven-dependency-plugin` version override (`3.6.1`) — Boot 4.1.0 now manages this plugin itself, at `3.10.0`
+  - Kept the `jackson-databind` (`2.21.5`) and `jackson-bom` (`3.1.5`) overrides unchanged — Boot 4.1.0's own managed versions (`2.21.4`/`3.1.4`) are still one patch behind
+  - Bumped the flyway-maven-plugin's separately-pinned `flyway-mysql` dependency `11.14.1` → `12.4.0`, matching the `flyway.version` Boot 4.1.0 now manages (plugin-scoped dependencies don't inherit Boot's dependencyManagement, so this needs manual sync on every parent bump — now documented inline)
+  - Verified: full test suite (492 tests), `./mvnw verify -Pcoverage` (including the repackage step), and `./mvnw flyway:info` against a real local MySQL 9.5 dev database all pass clean
+
 #### Documentation
 
 - **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `README.md`/`ARCHITECTURE.md`

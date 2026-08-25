@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.7</version>
+        <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from the repository -->
     </parent>
 
@@ -41,15 +41,12 @@
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
-        <spring-framework.version>7.0.8</spring-framework.version>
-        <tomcat.version>11.0.22</tomcat.version>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.14</jacoco.version>
         <jackson-bom.version>3.1.5</jackson-bom.version>
-        <commons.lang3.version>3.19.0</commons.lang3.version>
     </properties>
 
-    <!-- Spring Boot 4.0.7 still manages jackson-databind (2.x) one patch behind its fix version;
+    <!-- Spring Boot 4.1.0 still manages jackson-databind (2.x) one patch behind its fix version;
          override it explicitly until a Spring Boot release picks up 2.21.5 by default. -->
     <dependencyManagement>
         <dependencies>
@@ -189,12 +186,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
-            </plugin>
-
-            <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <configuration>
@@ -208,11 +199,15 @@
                     <baselineVersion>7.0.0</baselineVersion>
                     <baselineDescription>v7.0.0 schema (built by hand via ddl-auto=update, pre-Flyway)</baselineDescription>
                 </configuration>
+                <!-- Plugin-scoped dependencies don't inherit Spring Boot's dependencyManagement,
+                     so this must be kept in sync by hand with the flyway.version Spring Boot
+                     manages (spring-boot-dependencies:4.1.0 -> flyway.version 12.4.0) whenever
+                     the parent is bumped. -->
                 <dependencies>
                     <dependency>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-mysql</artifactId>
-                        <version>11.14.1</version>
+                        <version>12.4.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
