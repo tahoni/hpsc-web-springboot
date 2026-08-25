@@ -298,3 +298,4 @@ target/
 tsdocs/
 .idea/
 .junie/
+.claude/*.local.json
