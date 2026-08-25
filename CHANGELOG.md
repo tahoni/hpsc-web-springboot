@@ -48,9 +48,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🔄 Changed
 
+#### Configuration
+
+- **`.gitignore`:** Added `.claude/*.local.json` so per-machine Claude Code local settings aren't tracked
+
 #### Documentation
 
 - **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist
+- **`ARCHITECTURE.md`:** Directory structure tree now lists the new `documentation/roadmap/` folder alongside `archive/` and `history/`
+
+#### Tooling
+
+- **`/generate-pr-description`:** Step 6's `RELEASE_NOTES.md` instructions updated to match AGENTS.md's new Contributors-sourcing rule above
 
 ### 🐛 Fixed
 
