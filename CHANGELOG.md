@@ -42,10 +42,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🔄 Changed
 
-#### Tooling
-
-- **`/generate-pr-summary`:** Output instructions clarified to require the fenced block contain raw, unrendered Markdown source (literal `##`/`**`/`-`) rather than Claude's own rendered formatting, so pasted PR summaries preserve exact syntax
-
 ### 🐛 Fixed
 
 ### ⚠️ Deprecated
@@ -65,6 +61,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **`/generate-pr-summary`:** New Claude Code command — condenses a version's `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary (a short paragraph plus a capped bullet list), for pasting into a PR description without this repo's own emoji-heavy documentation style
 
 ### 🔄 Changed
+
+#### Tooling
+
+- **`/generate-pr-summary`:** Output instructions clarified to require the fenced block contain raw, unrendered Markdown source (literal `##`/`**`/`-`) rather than Claude's own rendered formatting, so pasted PR summaries preserve exact syntax
 
 ### 🐛 Fixed
 

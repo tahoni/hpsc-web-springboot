@@ -27,6 +27,7 @@ Version 7.3.0 is a small, documentation-focused release. `README.md` and `ARCHIT
 
 - Condenses a version's archived `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short paragraph plus a capped bullet list, for pasting straight into a Bitbucket pull request description.
 - Deliberately doesn't reproduce this repo's own emoji-heavy documentation style or `RELEASE_NOTES.md`'s full section-by-section detail — a distillation for a reviewer who won't read the full release notes, not a second copy of them.
+- Its Output instructions were subsequently clarified to require the fenced block contain raw, unrendered Markdown source (literal `##`/`**`/`-`), not Claude's own rendered formatting, so a pasted-in preview shows the exact source.
 
 ---
 
@@ -44,6 +45,12 @@ Version 7.3.0 is a small, documentation-focused release. `README.md` and `ARCHIT
 #### Tooling
 
 - `.claude/commands/generate-pr-summary.md`
+
+### Changed
+
+#### Tooling
+
+- `.claude/commands/generate-pr-summary.md` — Output instructions clarified to require raw, unrendered Markdown source in the fenced output block
 
 ---
 
