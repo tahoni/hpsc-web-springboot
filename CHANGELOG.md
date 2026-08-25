@@ -54,7 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Documentation
 
-- **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist
+- **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist; the archived `documentation/history/RELEASE_NOTES_v7.3.0.md` snapshot updated to match, keeping it byte-for-byte identical per AGENTS.md's archiving rule
 - **`ARCHITECTURE.md`:** Directory structure tree now lists the new `documentation/roadmap/` folder alongside `archive/` and `history/`
 
 #### Tooling
