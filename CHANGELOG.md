@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 7.1.0](#-710---2026-08-24) ← Current
+- [🧾 Version 7.2.0](#-720---2026-08-25) ← Current
+- [🧾 Version 7.1.0](#-710---2026-08-24)
 - [🧾 Version 7.0.0](#-700---2026-08-11)
 - [🧾 Version 6.0.0](#-600---2026-05-01)
 - [🧾 Version 5.4.0](#-540---2026-04-26)
@@ -38,6 +39,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### ➕ Added
 
+### 🔄 Changed
+
+### 🐛 Fixed
+
+### ⚠️ Deprecated
+
+### 🗑️ Removed
+
+### 🔐 Security
+
+---
+
+## 🧾 [7.2.0] - 2026-08-25
+
+### ➕ Added
+
+#### Documentation
+
+- **`CLAUDE.md`:** New Git Workflow section stating the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, rather than deferring entirely to `AGENTS.md`
+
 #### Testing
 
 - **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/`ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
@@ -61,6 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Build & Metadata
 
+- Project version bumped to **7.2.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 - **`pom.xml`:** Spring Boot parent bumped `4.0.7` → `4.1.0`. As part of this:
   - Removed the `spring-framework.version`/`tomcat.version` property overrides — both now match Boot 4.1.0's own defaults (`7.0.8`/`11.0.22`) exactly, so they were dead weight
   - Removed the `commons.lang3.version` property — a pre-existing typo (Boot's real property is `commons-lang3.version`, hyphenated) meant this override never actually took effect; Boot 4.1.0 bumps the real one for free (`3.19.0` → `3.20.0`)
@@ -73,13 +95,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `README.md`/`ARCHITECTURE.md`
 - **`AGENTS.md`:** Icon registry extended with `🔍` (Current state / inspection) and `📤` (Output)
-- **`AGENTS.md`, `CONTRIBUTING.md`:** GitFlow Branching Model/Merging sections updated — `release/vX.Y.Z` branches now PR into `develop` instead of `main`; `main` is updated via a separate `develop` → `main` promotion PR, tagged `vX.Y.Z`
+- **`AGENTS.md`, `CONTRIBUTING.md`:** Branching Model's develop-first rule clarified to note it's "for testing before they ship"
 - **`AGENTS.md`:** Test Conventions gains a grouping/ordering rule — each method's tests get a one-line `// methodName()` comment; groups are ordered constructors first, then public before protected, then alphabetically by method name within each visibility (overloads by parameter count then type), `toString()` last regardless of visibility
 
 #### Tooling
 
 - **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
-- **`.claude/commands/generate-pr-description.md`:** Closing instructions now direct the release PR at `develop`, with a reminder to open the follow-up `develop` → `main` promotion PR
+- **`.claude/commands/generate-pr-description.md`:** Closing instructions now remind the user to tag the merged release commit on `main` and merge `main` back into `develop` afterwards
 - **`/scaffold-unit-tests`:** Now accepts multiple space- or comma-separated class names/paths in a single invocation, scaffolding each target independently so one unresolved target doesn't block the rest
 - **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Now also load `@CLAUDE.md` (previously `@AGENTS.md` only), for accurate technical detail — build/test commands, package layout, database profiles — when describing changes
 
@@ -1238,4 +1260,4 @@ For issues, feature requests or questions:
 
 ---
 
-**Last Updated:** 2026-08-24
+**Last Updated:** 2026-08-25

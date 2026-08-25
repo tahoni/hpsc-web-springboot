@@ -45,6 +45,7 @@ This is a Spring Boot application built with:
 - **Language**: [Java](https://www.oracle.com/java/)
 - **Build Tool**: [Maven](https://maven.apache.org/) (or the provided `./mvnw` wrapper)
 - **Database**: MySQL with Spring Data JPA and Hibernate
+- **Schema Migrations**: Flyway
 - **Data Processing**: Jackson (JSON, CSV, XML), Apache Commons Lang3
 - **API Documentation**: SpringDoc OpenAPI (Swagger UI)
 - **Validation**: Hibernate Validator with Jakarta Validation

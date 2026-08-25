@@ -91,6 +91,7 @@ Tests activate the `test` profile automatically — no database setup is require
 - Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) and don't start a Spring context; service/repository integration tests use the `test` profile (H2).
 - Test class names follow `<ClassName>Test`; test method names follow `test<Scenario>_when<Condition>_then<Expectation>`.
 - JUnit Jupiter's `Assertions` for assertions, Arrange-Act-Assert structure, no tests written solely to exercise Lombok-generated getters/setters/constructors.
+- Group each method's tests under a one-line `// methodName()` comment, ordered constructors first, then public before protected, then alphabetically by name (overloads by parameter count then type), `toString()` last.
 
 ---
 

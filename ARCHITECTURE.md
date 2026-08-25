@@ -34,6 +34,7 @@ This document describes the architectural design, directory structure, and core 
 | Database (prod)   | MySQL (env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                    |
 | Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
 | ORM               | Spring Data JPA, Hibernate                                          |
+| Schema migrations | Flyway (`src/main/resources/db/migration/`)                         |
 | Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
 | API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
 | Validation        | Hibernate Validator, Jakarta Validation                             |
