@@ -53,7 +53,8 @@ This document describes the architectural design, directory structure, and core 
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
-│   └───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
+│   ├───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
+│   └───roadmap/                # Concrete task-list breakdown of IMPROVEMENT_PLAN.md's gaps
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
