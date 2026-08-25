@@ -39,9 +39,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### ➕ Added
 
+#### Tooling
+
+- **`/generate-pr-summary`:** New Claude Code command — condenses a version's `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary (a short paragraph plus a capped bullet list), for pasting into a PR description without this repo's own emoji-heavy documentation style
+
 ### 🔄 Changed
 
 ### 🐛 Fixed
+
+#### Documentation
+
+- **`README.md`:** Introduction and Features sections no longer describe match management, competitor/club CRUD, WinMSS import, or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController` CSV processing is implemented today; the match/competitor domain's service and controller layer is still being rebuilt
+- **`README.md`:** Coverage-report command corrected from `./mvnw test jacoco:report` (non-functional — JaCoCo is only bound via the `coverage` Maven profile) to `./mvnw verify -Pcoverage`
+- **`README.md`:** Removed the `1.x – 4.x` version range from the `ARCHIVE.md` description, per AGENTS.md's rule that `README.md`/`ARCHITECTURE.md` must never reference specific version numbers or ranges
+- **`ARCHITECTURE.md`:** Test package tree corrected — removed the nonexistent `domain/` test package and added the missing `converters/`/`exceptions/` packages
+- **`ARCHITECTURE.md`:** CI/CD & Quality Gates table's `Build & Tests` row no longer claims an "All PRs" GitHub Actions trigger — only `codeql.yml` exists; reworded to reflect it's run locally/by reviewers
 
 ### ⚠️ Deprecated
 

@@ -20,16 +20,14 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 
 ## 📖 Introduction
 
-The HPSC Website backend is a high-performance Spring Boot application designed to manage and serve data for the Hartbeespoortdam Practical Shooting Club platform. It provides a comprehensive set of RESTful APIs for:
+The HPSC Website backend is a Spring Boot application designed to manage and serve data for the Hartbeespoortdam Practical Shooting Club platform. It currently provides RESTful APIs for:
 
-- **Match Management**: Processing and storing shooting match results from WinMSS and IPSC formats
-- **Competitor Tracking**: Managing competitor profiles, classifications, and performance history
-- **Club Operations**: Handling club data and organisational information
-- **Award Ceremonies**: Managing award data and ceremony information
-- **Image Gallery**: Serving static image assets for the club website
-- **IPSC Integration**: Supporting IPSC (International Practical Shooting Confederation) data standards
+- **Award Ceremonies**: Award data and ceremony grouping, processed from CSV
+- **Image Gallery**: Image metadata processing from CSV
 
-The application emphasises structured data processing, validation, and data integrity with MySQL database persistence.
+JPA entities and repositories also exist for clubs, competitors, matches, match stages, and shooter logs, laying the groundwork for match management, competitor tracking, and IPSC data integration — but the service and controller layer that will operate on that domain is still being rebuilt.
+
+The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA and Hibernate.
 
 ## 🔗 Repository
 
@@ -55,12 +53,9 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
 ## ✨ Features
 
-- **Advanced Data Processing**: Specialised engines for parsing CSV and XML sources with support for MIME type inference, multi-format parsing, and flexible schema mapping.
-- **Database Persistence**: MySQL database with JPA/Hibernate for reliable data storage and retrieval.
-- **Transaction Management**: Centralised transaction handling ensuring data consistency across operations.
-- **Match Result Processing**: Support for WinMSS and IPSC match data formats with automatic entity mapping.
+- **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data.
+- **Match & Competitor Domain Model**: JPA entities, repositories, and type-safe enum converters for clubs, competitors, matches, match stages, and shooter logs, ready for the upcoming service/controller layer.
 - **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm types.
-- **Competitor & Club Management**: Complete CRUD operations for competitors and shooting clubs.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
 - **Data Integrity**: Multi-layered validation (controller, service, entity) with detailed error reporting.
 - **Comprehensive Testing**: Extensive unit and integration test coverage with Spring Test and Mockito.
@@ -126,8 +121,10 @@ The application includes comprehensive test coverage with unit and integration t
 **Run tests with coverage report**:
 
 ```bash
-./mvnw test jacoco:report
+./mvnw verify -Pcoverage
 ```
+
+The report is written to `target/site/jacoco/`.
 
 **Test Categories**:
 
@@ -172,7 +169,7 @@ This project's documentation is spread across a few files, each with a distinct 
 | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time    |
 | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 
-[`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering versions 1.x – 4.x, from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only and isn't maintained going forward.
+[`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only and isn't maintained going forward.
 
 This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see [CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 
