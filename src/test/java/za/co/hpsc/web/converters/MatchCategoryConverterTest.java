@@ -29,7 +29,7 @@ class MatchCategoryConverterTest {
         assertNull(databaseValue);
     }
 
-    // testConvertToEntityAttribute()
+    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenNameIsKnown_thenReturnsCategory() {
         // Act

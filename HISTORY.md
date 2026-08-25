@@ -20,6 +20,20 @@ A comprehensive historical overview of the HPSC Website Backend project from sta
 
 ## 📅 Historical Timeline
 
+### Version 7.2.0 (August 25, 2026)
+
+**Theme:** Test Suite Conventions, AI-Agent Tooling, and Dependency Maintenance
+
+**Key Focus:**
+
+- New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest` (Mockito-based, testing `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing 4 JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest`, and `ControllerAdviceTest` — overall suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
+- New Claude Code commands `/scaffold-unit-tests` (migrated from a stale, wrong-project prompt file and corrected to this repo's real interface/impl test split) and `/scaffold-integration-tests` (new, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template)
+- `HpscWebApplicationTests` renamed to `HpscWebApplicationTest` to match the project's `<ClassName>Test` naming convention; 26 existing test files retrofitted with a new AGENTS.md test convention (a one-line `// methodName()` header per method group, ordered constructors → public → protected → alphabetical → `toString()` last) — no test behaviour changed, purely comments and reordering
+- **Dependency maintenance:** Spring Boot parent upgraded `4.0.7` → `4.1.0`, with now-redundant `pom.xml` version overrides cleaned up (`spring-framework.version`/`tomcat.version` now match Boot's own defaults; a long-standing `commons.lang3.version` typo — Boot's real property is hyphenated — removed; `maven-dependency-plugin` pin removed, now Boot-managed) and the flyway-maven-plugin's separately-pinned `flyway-mysql` bumped `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version`
+- Verified via the full test suite (492 tests, up from 483 at the start of this release), `./mvnw verify -Pcoverage`, and manual Flyway commands (`flyway:info`/`flyway:migrate`) against a real local MySQL 9.5 dev database — no domain entities, repositories, or API surface changed in this release
+- New CLAUDE.md Git Workflow section states the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`); CLAUDE.md now cross-links to AGENTS.md and corrects its package-overview table; a false claim that AssertJ is used for assertions (it is explicitly excluded from `pom.xml`) was removed from five project docs
+- Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 7.1.0 (August 24, 2026)
 
 **Theme:** Shooter Log Refinement — Power Factor Scoping & Match Reference
@@ -849,6 +863,59 @@ Major architectural improvement focused on match results processing, entity init
 
 ---
 
+### Phase 16: Test Suite Conventions, AI-Agent Tooling, and Dependency Maintenance (v7.2.0)
+
+**Duration:** August 25, 2026
+
+A process-and-tooling release with no domain-model or API surface changes: formalises test-file conventions, closes coverage gaps identified by JaCoCo, adds two new Claude Code scaffolding commands, and upgrades the Spring Boot parent.
+
+**Key Accomplishments:**
+
+**Test Coverage & Structure**
+
+- `services/AwardServiceTest`/`services/ImageServiceTest` — new Mockito-based interface-contract unit tests, exercising `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class
+- Four JaCoCo-identified coverage gaps closed: `ControllerResponse(boolean, String)` and the derived-success-from-error-presence branch of `ControllerResponse(LocalDateTime, String, String)`; `FirearmType.toString()` for both enum-constructor shapes; `ControllerAdvice.logError`'s null-throwable, wrapped-cause, and null-`WebRequest` branches (this class's branch coverage went 92% → 100%). Overall suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
+- `HpscWebApplicationTests` renamed to `HpscWebApplicationTest` to match the project's `<ClassName>Test` naming convention
+- 26 existing test files retrofitted with a new AGENTS.md test convention: a one-line `// methodName()` header before each method's test group, ordered constructors → public → protected → alphabetical by name → `toString()` last — no test behaviour changed, purely comments and reordering
+
+**AI-Agent Tooling**
+
+- `/scaffold-unit-tests` migrated from a stale `.github/prompts/scaffold-unit-tests.prompt.md` that referenced a different project's package and an invented "Layer 1/2/3" test pattern; corrected to this repo's real interface/impl test split
+- New `/scaffold-integration-tests`, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template
+- Both commands defer to their loaded `AGENTS.md`/`CLAUDE.md` rather than restating conventions inline, accept multiple targets per invocation, and never commit on their own
+- `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` now exclude datasource/JPA/messaging autoconfiguration, since neither service touches the database
+
+**Dependency Maintenance**
+
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; now-redundant `pom.xml` version overrides cleaned up (`spring-framework.version`/`tomcat.version` now match Boot's own defaults; a long-standing `commons.lang3.version` typo — Boot's real property is hyphenated — removed; `maven-dependency-plugin` pin removed, now Boot-managed)
+- flyway-maven-plugin's separately-pinned `flyway-mysql` bumped `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version` — plugin-scoped dependencies don't inherit Boot's dependency management, so this now needs manual sync on every future parent bump, documented inline in the POM
+
+**Documentation & Process**
+
+- New CLAUDE.md Git Workflow section states the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`); AGENTS.md/CONTRIBUTING.md's develop-first rule gains a "for testing before they ship" clarification
+- CLAUDE.md now cross-links to AGENTS.md and corrects its package-overview table (`ControllerAdvice` lives in `configs/`, not `exceptions/`)
+- A false claim that AssertJ is used for assertions (it is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`) removed from AGENTS.md, CLAUDE.md, README.md, ARCHITECTURE.md, and CONTRIBUTING.md
+
+**Build & Metadata**
+
+- Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Test Coverage**
+
+- No dedicated new domain/repository/controller test coverage was needed (none of those layers changed); verified via the full test suite (492 tests, up from 483 at the start of this release), `./mvnw verify -Pcoverage`, and manual Flyway commands (`flyway:info`/`flyway:migrate`) against a real local MySQL 9.5 dev database
+
+**Architecture Highlights:**
+
+- No architectural change — this release is entirely process, tooling, and dependency maintenance, keeping the test suite and AI-agent conventions consistent ahead of future feature work
+
+**Technical Focus:**
+
+- Test-suite consistency and coverage completeness
+- AI-agent tooling accuracy (correcting a migrated command that referenced the wrong project)
+- Dependency currency and Maven POM hygiene
+
+---
+
 ### Phase 15: Shooter Log Refinement (v7.1.0)
 
 **Duration:** August 24, 2026
@@ -1349,6 +1416,17 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 
 ---
 
+### Milestone 16: Test Suite Conventions, AI-Agent Tooling, and Dependency Maintenance (v7.2.0)
+
+- 26 test files retrofitted with a new `// methodName()` header-comment/ordering convention; 4 JaCoCo-identified coverage gaps closed; suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
+- New `/scaffold-unit-tests` (corrected from a stale, wrong-project prompt) and `/scaffold-integration-tests` Claude Code commands
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides cleaned up; `flyway-mysql` bumped to match Boot's newly managed Flyway version
+- Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage`, and manual Flyway commands against a real MySQL dev database
+
+**Achievement:** Brought the entire existing test suite into line with a newly formalised AGENTS.md convention, closed every coverage gap JaCoCo could find, and corrected/extended the AI-agent tooling — all without touching the domain model, keeping the codebase consistent ahead of future feature work.
+
+---
+
 ### Milestone 15: Shooter Log Refinement (v7.1.0)
 
 - `ShooterLogEntry` renamed to `ShooterLogCompetitor` for naming accuracy
@@ -1560,6 +1638,27 @@ Entity Layer
 - Enhanced null safety with Optional
 - Comprehensive test consolidation
 - Cleaner separation of concerns
+
+---
+
+### v7.2.0: Test Suite Conventions & Tooling
+
+```
+Test Class Structure
+├── // <ClassName>(ParamTypes) — constructors first
+├── // publicMethod()          — alphabetical, overloads by param count/type
+├── // protectedMethod()       — after all public methods
+└── // toString()              — always last
+        ↓
+Claude Code Commands
+├── /scaffold-unit-tests        (interface + impl-only test split)
+└── /scaffold-integration-tests (new — @SpringBootTest, public-interface-only calls)
+```
+
+**Characteristics:**
+
+- No domain/repository/architectural change — this release formalises and retrofits a test-file convention (26 files), closes 4 JaCoCo coverage gaps, and corrects/extends AI-agent tooling
+- Spring Boot parent `4.0.7` → `4.1.0`, with redundant `pom.xml` overrides removed and `flyway-mysql` kept in sync with Boot's managed `flyway.version`
 
 ---
 
@@ -1830,6 +1929,7 @@ AttributeConverters
     - Major suite updates: `TransformationServiceTest` (+747), `DomainServiceTest` (+247), `TransactionServiceTest` (+246), `ValueUtilTest` (+294)
 - **v7.0.0:** No new dedicated unit/integration test coverage for the promoted/extended entities or the 8 new repositories — verified instead via `./mvnw clean compile` and `HpscWebApplicationTests` (Spring context boot against H2, Hibernate schema build validating every `@JoinColumn`, converter, and unique constraint across all 8 entities)
 - **v7.1.0:** No new dedicated unit/integration test coverage for the renamed/rescoped `ShooterLogCompetitor` entity — same verification approach as v7.0.0 (compile + `HpscWebApplicationTests` H2 schema build)
+- **v7.2.0:** New interface-contract tests `AwardServiceTest`/`ImageServiceTest`; 4 JaCoCo-identified coverage gaps closed in `ControllerResponseTest`, `FirearmTypeTest`, `ControllerAdviceTest` (suite coverage 95.7%/91.7% → 97.3%/98.1%); `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with the new `// methodName()` header-comment/ordering convention (comments and reordering only — no behaviour change)
 
 ### Documentation Quality
 
@@ -1844,6 +1944,7 @@ AttributeConverters
 - **v6.0.0:** v6.0.0 release notes, changelog entry, history update; CLAUDE.md added for AI assistant context
 - **v7.0.0:** v7.0.0 release notes, changelog entry, history update
 - **v7.1.0:** v7.1.0 release notes, changelog entry, history update; AI-agent prompt files migrated to `.claude/commands/*.md`; `AGENTS.md` adopts GitFlow; `CONTRIBUTING.md` added
+- **v7.2.0:** v7.2.0 release notes, changelog entry, history update; new `// methodName()` test-comment/ordering convention added to AGENTS.md; new CLAUDE.md Git Workflow section with explicit PR-target guidance; `/scaffold-unit-tests`/`/scaffold-integration-tests` Claude Code commands added; false AssertJ claim removed from five docs; CLAUDE.md package-overview table corrected
 
 ---
 
@@ -2043,9 +2144,18 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v7.1.0, the following areas are identified for future enhancement:
+Based on the evolution to v7.2.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v7.1.0)
+### Recently Completed (v7.2.0)
+
+- New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `processCsv` through the interface type rather than the impl class
+- 4 JaCoCo-identified coverage gaps closed (`ControllerResponse`, `FirearmType.toString()`, `ControllerAdvice.logError`); suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
+- `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with a new `// methodName()` header-comment/ordering convention
+- New `/scaffold-unit-tests` (corrected from a stale, wrong-project prompt) and `/scaffold-integration-tests` Claude Code commands
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides removed; `flyway-mysql` bumped `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version`
+- Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v7.1.0)
 
 - `ShooterLogEntry` renamed to `ShooterLogCompetitor` (table `shooter_log_entry` → `shooter_log_competitor`)
 - `ShooterLog.powerFactor` (`PowerFactor`, not nullable) scopes snapshots by power factor as well as firearm type
@@ -2144,8 +2254,9 @@ The HPSC Website Backend has evolved from a simple image gallery application int
 - **Club-Scoped Results & Visitor Tracking:** `Club.identifier`, `Competitor.homeClub`, and `MatchCompetitor.clubRanking`/`isVisitor` model club results and visitors relationally (v7.0.0)
 - **Shooter Log Foundations:** `ShooterLog`/`ShooterLogEntry` persist best-4-match snapshots, laying the data model for a future ranking calculation service (v7.0.0)
 - **Shooter Log Correction:** `ShooterLogEntry` renamed to `ShooterLogCompetitor` and rescoped by `PowerFactor`, keeping the data model accurate before a calculation service is built against it (v7.1.0)
+- **Test Suite Consistency:** A formalised, repo-wide test-file convention (method-comment headers, group ordering) retrofitted across the existing suite, alongside four JaCoCo-identified coverage gaps closed (v7.2.0)
 
-The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with service transformation in v5.4.0, the dedicated match CRUD API with service encapsulation in v6.0.0, the match results/visitor tracking/shooter log data model in v7.0.0, and the shooter-log naming/scope correction in v7.1.0 mark significant maturation points where the project demonstrates stable, predictable releases with clear separation of concerns. These releases serve as a solid foundation for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
+The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with service transformation in v5.4.0, the dedicated match CRUD API with service encapsulation in v6.0.0, the match results/visitor tracking/shooter log data model in v7.0.0, the shooter-log naming/scope correction in v7.1.0, and the test-convention formalisation and dependency maintenance in v7.2.0 mark significant maturation points where the project demonstrates stable, predictable releases with clear separation of concerns. These releases serve as a solid foundation for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
 
 Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity relationships, optimised repositories, and a consolidated service architecture that reduces complexity without sacrificing capability.
 
@@ -2157,14 +2268,27 @@ Version 7.0.0 extends the domain model with club-scoped results, visitor trackin
 
 Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model: `ShooterLogEntry` is renamed to `ShooterLogCompetitor` for naming accuracy, `ShooterLog` gains a `powerFactor` column so best-4-match snapshots are scoped correctly, and `ShooterLogCompetitor` gains `points` and a direct `match` reference. Both tables remain schema-only — still no calculation service consumes them — so this release is about getting the shape right before that service is built. Alongside the schema work, the release also migrates the repository's AI-agent prompt files to Claude Code commands, adopts GitFlow branching, and adds `CONTRIBUTING.md`.
 
+Version 7.2.0 touches no domain model, repository, or API surface at all — it is entirely process, tooling, and dependency maintenance. A new AGENTS.md test convention (a one-line `// methodName()` header before each method's test group, ordered constructors → public → protected → alphabetical → `toString()` last) is retrofitted across 26 existing test files, four JaCoCo-identified coverage gaps are closed (raising suite coverage from 95.7%/91.7% to 97.3%/98.1%), and two new Claude Code commands (`/scaffold-unit-tests`, `/scaffold-integration-tests`) are added to keep future test scaffolding consistent with these conventions automatically. The release also upgrades the Spring Boot parent to 4.1.0, cleaning up several dependency-version overrides that had quietly become redundant or, in one case, never actually worked (a typo'd property name), and adds an explicit Git Workflow section to CLAUDE.md stating GitFlow's PR targets directly (`feature/*` → `develop`; `release/*`/`hotfix/*` → `main`) instead of deferring entirely to AGENTS.md.
+
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** August 24, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 7.1.0 (August 24, 2026)  
+**Last Updated:** August 25, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 7.2.0 (August 25, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for detailed technical information
 
-**Recent Updates (v7.1.0):**
+**Recent Updates (v7.2.0):**
+
+- New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest`, exercising `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class
+- Four JaCoCo-identified coverage gaps closed: `ControllerResponse(boolean, String)` and the derived-success branch of `ControllerResponse(LocalDateTime, String, String)`; `FirearmType.toString()`; `ControllerAdvice.logError`'s null-throwable/wrapped-cause/null-`WebRequest` branches — suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
+- New Claude Code commands `/scaffold-unit-tests` (corrected from a stale, wrong-project prompt file) and `/scaffold-integration-tests` (new)
+- `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with a new `// methodName()` header-comment/ordering convention — comments and reordering only, no behaviour change
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides removed (`spring-framework.version`, `tomcat.version`, a typo'd `commons.lang3.version`, `maven-dependency-plugin` pin); `flyway-mysql` bumped `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version`
+- Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+- Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage`, and manual Flyway commands against a real local MySQL 9.5 dev database
+- New CLAUDE.md Git Workflow section states PR targets directly (`feature/*` → `develop`; `release/*`/`hotfix/*` → `main`); a false claim that AssertJ is used for assertions removed from five project docs
+
+**Previous Update (v7.1.0):**
 
 - `ShooterLogEntry` renamed to `ShooterLogCompetitor` (table `shooter_log_entry` → `shooter_log_competitor`)
 - `ShooterLog.powerFactor` (`PowerFactor`, via the existing `PowerFactorConverter`, not nullable) scopes snapshots by power factor as well as firearm type

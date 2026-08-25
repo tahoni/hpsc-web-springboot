@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidationExceptionTest {
 
-    // No-args constructor
+    // ValidationException()
     @Test
     void testConstructor_whenNoArgumentsProvided_thenCreatesExceptionWithNullMessage() {
         // Act
@@ -18,7 +18,7 @@ public class ValidationExceptionTest {
         assertNull(exception.getCause());
     }
 
-    // Constructor with message
+    // ValidationException(String)
     @Test
     void testConstructor_whenMessageIsProvided_thenCreatesExceptionWithMessage() {
         // Arrange
@@ -42,7 +42,21 @@ public class ValidationExceptionTest {
         assertNull(exception.getCause());
     }
 
-    // Constructor with message and cause
+    // ValidationException(Throwable)
+    @Test
+    void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
+        // Arrange
+        Throwable cause = new NumberFormatException("Invalid number format");
+
+        // Act
+        ValidationException exception = new ValidationException(cause);
+
+        // Assert
+        assertSame(cause, exception.getCause());
+        assertTrue(exception.getMessage().contains("Invalid number format"));
+    }
+
+    // ValidationException(String, Throwable)
     @Test
     void testConstructor_whenMessageAndCauseAreProvided_thenCreatesExceptionWithBoth() {
         // Arrange
@@ -68,21 +82,6 @@ public class ValidationExceptionTest {
         assertNull(exception.getCause());
     }
 
-    // Constructor with cause only
-    @Test
-    void testConstructor_whenOnlyCauseIsProvided_thenCreatesExceptionWithCauseAsMessage() {
-        // Arrange
-        Throwable cause = new NumberFormatException("Invalid number format");
-
-        // Act
-        ValidationException exception = new ValidationException(cause);
-
-        // Assert
-        assertSame(cause, exception.getCause());
-        assertTrue(exception.getMessage().contains("Invalid number format"));
-    }
-
-    // Constructor with cause chain
     @Test
     void testConstructor_whenCauseChainIsProvided_thenPreservesCauseChain() {
         // Arrange
@@ -99,7 +98,7 @@ public class ValidationExceptionTest {
         assertEquals(message, exception.getMessage());
     }
 
-    // Inheritance tests
+    // Inheritance checks
     @Test
     void testInheritance_whenInstantiated_thenIsInstanceOfIllegalArgumentException() {
         // Act
@@ -118,4 +117,3 @@ public class ValidationExceptionTest {
         assertInstanceOf(Exception.class, exception);
     }
 }
-

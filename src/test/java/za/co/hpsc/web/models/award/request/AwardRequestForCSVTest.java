@@ -15,6 +15,27 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AwardRequestForCSVTest {
+
+    // AwardRequestForCSV(String, String, String)
+    @Test
+    void testThreeParamConstructor_whenRequiredFieldsProvided_thenMapsFieldsAndLeavesOptionalPlaceNamesNull() {
+        // Arrange & Act
+        MinimalAwardRequestForCSV request =
+                new MinimalAwardRequestForCSV("Best Shooter", "Club Awards", "Alice Smith");
+
+        // Assert
+        assertEquals("Best Shooter", request.getTitle());
+        assertEquals("Club Awards", request.getCeremonyTitle());
+        assertEquals("Alice Smith", request.getFirstPlaceName());
+        assertNull(request.getSecondPlaceName());
+        assertNull(request.getThirdPlaceName());
+        assertNotNull(request.getTags());
+        assertNotNull(request.getCeremonyTags());
+        assertTrue(request.getTags().isEmpty());
+        assertTrue(request.getCeremonyTags().isEmpty());
+    }
+
+    // AwardRequestForCSV(String, String, String, String, String)
     @Test
     void testConstructor_whenRequiredFieldsProvided_thenMapsCoreFieldsAndInitializesTagLists() {
         // Arrange & Act
@@ -47,24 +68,7 @@ public class AwardRequestForCSVTest {
         assertNull(request.getThirdPlaceName());
     }
 
-    @Test
-    void testThreeParamConstructor_whenRequiredFieldsProvided_thenMapsFieldsAndLeavesOptionalPlaceNamesNull() {
-        // Arrange & Act
-        MinimalAwardRequestForCSV request =
-                new MinimalAwardRequestForCSV("Best Shooter", "Club Awards", "Alice Smith");
-
-        // Assert
-        assertEquals("Best Shooter", request.getTitle());
-        assertEquals("Club Awards", request.getCeremonyTitle());
-        assertEquals("Alice Smith", request.getFirstPlaceName());
-        assertNull(request.getSecondPlaceName());
-        assertNull(request.getThirdPlaceName());
-        assertNotNull(request.getTags());
-        assertNotNull(request.getCeremonyTags());
-        assertTrue(request.getTags().isEmpty());
-        assertTrue(request.getCeremonyTags().isEmpty());
-    }
-
+    // JSON serialization
     @Test
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
         // Arrange
@@ -137,6 +141,24 @@ public class AwardRequestForCSVTest {
         assertEquals(0, node.get("ceremonyTags").size());
     }
 
+    @Test
+    void testJsonSerialization_whenDateSet_thenSerializesInIsoDateFormat() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        TestAwardRequestForCSV request =
+                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
+        request.setDate(LocalDate.of(2026, 4, 24));
+
+        // Act
+        String json = mapper.writeValueAsString(request);
+        JsonNode node = mapper.readTree(json);
+
+        // Assert
+        assertEquals("2026-04-24", node.get("date").asText());
+    }
+
+    // JSON deserialization
     @Test
     void testJsonDeserialization_whenTitleMissing_thenThrowsMismatchedInputException() {
         // Arrange
@@ -254,23 +276,6 @@ public class AwardRequestForCSVTest {
         // Assert
         assertEquals(List.of("ipsc", "hpsc"), request.getTags());
         assertEquals(List.of("annual", "gala"), request.getCeremonyTags());
-    }
-
-    @Test
-    void testJsonSerialization_whenDateSet_thenSerializesInIsoDateFormat() throws Exception {
-        // Arrange
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        TestAwardRequestForCSV request =
-                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
-        request.setDate(LocalDate.of(2026, 4, 24));
-
-        // Act
-        String json = mapper.writeValueAsString(request);
-        JsonNode node = mapper.readTree(json);
-
-        // Assert
-        assertEquals("2026-04-24", node.get("date").asText());
     }
 
     @Test

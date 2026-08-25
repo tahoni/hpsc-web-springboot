@@ -29,6 +29,7 @@ class ClubIdentifierConverterTest {
         assertNull(databaseValue);
     }
 
+    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenAbbreviationIsKnown_thenReturnsClubIdentifier() {
         // Act
@@ -38,7 +39,6 @@ class ClubIdentifierConverterTest {
         assertEquals(ClubIdentifier.SOSC, entityValue);
     }
 
-    // convertToEntityAttribute()
     @Test
     void testConvertToEntityAttribute_whenAbbreviationHasDifferentCase_thenReturnsClubIdentifier() {
         // Act
@@ -75,4 +75,3 @@ class ClubIdentifierConverterTest {
         assertNull(entityValue);
     }
 }
-

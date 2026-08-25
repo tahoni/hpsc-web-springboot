@@ -44,7 +44,7 @@ Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `Shoote
 - AI-agent prompt files migrated from `.github/prompts/*.prompt.md` (VS Code Copilot format) to `.claude/commands/*.md` (Claude Code slash commands), with live `git status`/`git diff`/`git log` context injection and `AGENTS.md` conventions loaded inline.
 - `AGENTS.md` adopts the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) branching model (`develop`/`main`/`feature`/`release`/`hotfix`), documenting branch naming, merge mechanics, and a develop-first rule.
 - New **`CONTRIBUTING.md`** for new-developer onboarding — setup, database profiles, testing conventions, and the Git workflow — cross-linked from `AGENTS.md` and `README.md`.
-- Stale references to classes no longer in the codebase (`IpscMatchController`, `TransformationService`, and others removed pending the IPSC-service rebuild) removed from `ARCHITECTURE.md`/`CLAUDE.md`; controller mapping paths corrected.
+- Stale references to classes no longer in the codebase (`IpscMatchController`, `TransformationService`, and others removed, pending the IPSC-service rebuild) removed from `ARCHITECTURE.md`/`CLAUDE.md`; controller mapping paths corrected.
 - Prose reflowed from hard wraps to soft wraps throughout the documentation set, including the archived v7.0.0 release docs.
 
 ---
@@ -131,7 +131,7 @@ Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `Shoote
 ## 🧭 Design Notes
 
 - **Correcting the schema before the consumer exists.** `ShooterLog`/`ShooterLogCompetitor` are still schema-only — no calculation service reads or writes them. Fixing the naming and scope now, while the tables are empty, avoids a much costlier migration once real data and a dependent service exist.
-- **Power factor joins firearm type as a scoping dimension.** IPSC results are scored per firearm type *and* power factor; the v7.0.0 schema only scoped by firearm type. `ShooterLog.powerFactor` closes that gap.
+- **Power factor joins the firearm type as a scoping dimension.** IPSC results are scored per firearm type *and* power factor; the v7.0.0 schema only scoped by firearm type. `ShooterLog.powerFactor` closes that gap.
 - **A direct `match` reference, not just `matchCompetitor`.** `ShooterLogCompetitor` could already reach its match via `matchCompetitor.match`, but a direct `match` FK avoids that indirection for the common "which matches contributed to this log" query.
 
 ---

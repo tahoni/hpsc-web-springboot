@@ -3,6 +3,9 @@ package za.co.hpsc.web.services;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -15,9 +18,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: sync with ImageServiceIntegrationTest
+/**
+ * Spring-context integration test for {@link AwardService} - exercised through the
+ * interface type, with a real Spring-wired {@code AwardServiceImpl} bean. {@code AwardService}
+ * doesn't touch the datasource, JPA, or messaging, so those auto-configurations are excluded
+ * to keep the context lightweight.
+ */
 @Slf4j
 @ActiveProfiles("test")
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class},
+        excludeName = "org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration")
 @SpringBootTest
 public class AwardServiceIntegrationTest {
 
@@ -27,7 +37,7 @@ public class AwardServiceIntegrationTest {
     @Autowired
     private AwardService awardService;
 
-    // Test Group: Null/Empty/Blank Input Handling
+    // processCsv()
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () -> awardService.processCsv(null));
@@ -43,7 +53,6 @@ public class AwardServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> awardService.processCsv("   \t\n  "));
     }
 
-    // Test Group: Invalid CSV Format Handling
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
@@ -59,7 +68,6 @@ public class AwardServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
     }
 
-    // Test Group: Valid Single Ceremony Processing
     @Test
     public void testProcessCsv_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
         String csvData = CSV_HEADER +
@@ -133,7 +141,6 @@ public class AwardServiceIntegrationTest {
         assertTrue(responseHolder.getAwardCeremonies().isEmpty());
     }
 
-    // Test Group: Valid Multiple Ceremonies Processing
     @Test
     public void testProcessCsv_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
         String csvData = """
@@ -213,7 +220,6 @@ public class AwardServiceIntegrationTest {
         assertEquals("Award A2", ceremonies.get(2).getAwards().getFirst().getTitle());
     }
 
-    // Test Group: CSV Field Parsing
     @Test
     public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         String csvData = """

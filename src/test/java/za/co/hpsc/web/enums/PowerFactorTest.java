@@ -8,6 +8,66 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PowerFactorTest {
 
+    // getByAbbreviation()
+    @Test
+    void testGetByAbbreviation_withExactMatch_thenReturnsCorrectPowerFactor() {
+        // Arrange
+        String validAbbreviation = "Min";
+
+        // Act
+        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(validAbbreviation);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(PowerFactor.MINOR, result.get());
+    }
+
+    @Test
+    void testGetByAbbreviation_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
+        // Arrange
+        String validAbbreviation = "mAJ";
+
+        // Act
+        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(validAbbreviation);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(PowerFactor.MAJOR, result.get());
+    }
+
+    @Test
+    void testGetByAbbreviation_withNoMatch_thenReturnsEmptyOptional() {
+        // Arrange
+        String invalidAbbreviation = "Xyz";
+
+        // Act
+        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(invalidAbbreviation);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByAbbreviation_withNullInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(null);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByAbbreviation_withBlankInput_thenReturnsEmptyOptional() {
+        // Arrange
+        String blankAbbreviation = "   ";
+
+        // Act
+        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(blankAbbreviation);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
     // getByName()
     @Test
     void testGetByName_withExactMatch_thenReturnsCorrectPowerFactor() {
@@ -75,66 +135,6 @@ class PowerFactorTest {
 
         // Act
         Optional<PowerFactor> result = PowerFactor.getByName(blankName);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    // getByAbbreviation()
-    @Test
-    void testGetByAbbreviation_withExactMatch_thenReturnsCorrectPowerFactor() {
-        // Arrange
-        String validAbbreviation = "Min";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(validAbbreviation);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(PowerFactor.MINOR, result.get());
-    }
-
-    @Test
-    void testGetByAbbreviation_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
-        // Arrange
-        String validAbbreviation = "mAJ";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(validAbbreviation);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(PowerFactor.MAJOR, result.get());
-    }
-
-    @Test
-    void testGetByAbbreviation_withNoMatch_thenReturnsEmptyOptional() {
-        // Arrange
-        String invalidAbbreviation = "Xyz";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(invalidAbbreviation);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByAbbreviation_withNullInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(null);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByAbbreviation_withBlankInput_thenReturnsEmptyOptional() {
-        // Arrange
-        String blankAbbreviation = "   ";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(blankAbbreviation);
 
         // Assert
         assertFalse(result.isPresent());

@@ -131,4 +131,23 @@ class FirearmTypeTest {
         // Assert
         assertFalse(result.isPresent());
     }
+
+    // toString()
+    @Test
+    void testToString_whenSingleNameConstructorUsed_thenReturnsThatName() {
+        // Act
+        String result = FirearmType.HANDGUN.toString();
+
+        // Assert
+        assertEquals("Handgun", result);
+    }
+
+    @Test
+    void testToString_whenMultiNameConstructorUsed_thenReturnsFirstName() {
+        // Act
+        String result = FirearmType.PCC.toString();
+
+        // Assert
+        assertEquals("PCC", result);
+    }
 }

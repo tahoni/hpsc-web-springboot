@@ -11,6 +11,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ImageResponseTest {
 
+    // ImageResponse(ImageRequest)
+    @Test
+    void testConstructor_withImageRequestMapsFields_thenInitializesAllFieldsAndInfersMimeType() {
+        // Arrange
+        ImageRequest request = new ImageRequest();
+        request.setTitle("Request Title");
+        request.setSummary("Summary");
+        request.setDescription("Desc");
+        request.setCategory("Cat");
+        request.setTags(List.of("t1"));
+        request.setFilePath("/path");
+        request.setFileName("file.png");
+
+        // Act
+        ImageResponse response = new ImageResponse(request);
+
+        // Assert
+        assertEquals("Request Title", response.getTitle());
+        assertEquals("file.png", response.getFileName());
+        assertEquals(MediaType.IMAGE_PNG_VALUE, response.getMimeType());
+        assertNotNull(response.getUuid());
+    }
+
+    // ImageResponse(UUID, String, String, String, String)
     @Test
     void testConstructor_withMimeType_thenUseProvidedMimeType() {
         // Act
@@ -37,6 +61,7 @@ class ImageResponseTest {
         assertEquals(MediaType.IMAGE_PNG_VALUE, pngResponse.getMimeType());
     }
 
+    // ImageResponse(UUID, String, String, String, String, List, String, String, String)
     @Test
     void testFullConstructor_thenInitializesAllFields() {
         // Arrange
@@ -63,28 +88,7 @@ class ImageResponseTest {
         assertTrue(response.getTags().containsAll(tags));
     }
 
-    @Test
-    void testConstructor_withImageRequestMapsFields_thenInitializesAllFieldsAndInfersMimeType() {
-        // Arrange
-        ImageRequest request = new ImageRequest();
-        request.setTitle("Request Title");
-        request.setSummary("Summary");
-        request.setDescription("Desc");
-        request.setCategory("Cat");
-        request.setTags(List.of("t1"));
-        request.setFilePath("/path");
-        request.setFileName("file.png");
-
-        // Act
-        ImageResponse response = new ImageResponse(request);
-
-        // Assert
-        assertEquals("Request Title", response.getTitle());
-        assertEquals("file.png", response.getFileName());
-        assertEquals(MediaType.IMAGE_PNG_VALUE, response.getMimeType());
-        assertNotNull(response.getUuid());
-    }
-
+    // setMimeType(String)
     @Test
     void testSetMimeType_whenMimeTypeValid_thenSetMimeType() {
         // Arrange
@@ -290,6 +294,7 @@ class ImageResponseTest {
         assertEquals(validMimeType, imageResponse.getMimeType());
     }
 
+    // setMimeType()
     @Test
     void testSetMimeType_whenNoMimeTypeAndFileNameWithExtension_thenInferMimeTypeFromFileName() {
         // Arrange

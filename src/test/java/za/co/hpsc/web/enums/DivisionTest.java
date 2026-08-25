@@ -8,111 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DivisionTest {
 
-    // getByCode()
-    @Test
-    void testGetByCode_withMatch_thenReturnsCorrectDivision() {
-        // Act
-        Optional<Division> result = Division.getByCode(29);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(Division.PCC_OPTICS, result.get());
-    }
-
-    @Test
-    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByCode(null);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByCode(0);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetByCode_withNoMatch_returnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByCode(100);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    // getByName()
-    @Test
-    void testGetByName_withExactName_thenReturnsCorrectDiscipline() {
-        // Arrange & Act
-        Optional<Division> result = Division.getByName("Open Division");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(Division.OPEN, result.get());
-    }
-
-    @Test
-    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectDivision() {
-        // Arrange
-        String searchName = "open division";
-
-        // Act
-        Optional<Division> result = Division.getByName(searchName);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(Division.OPEN, result.get());
-    }
-
-    @Test
-    void testGetByName_withPartialMatch_thenReturnsCorrectDivision() {
-        // Arrange
-        String searchName = "Open";
-
-        // Act
-        Optional<Division> result = Division.getByName(searchName);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(Division.OPEN, result.get());
-    }
-
-    @Test
-    void testGetByName_withNulInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByName(null);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<Division> result = Division.getByName(" ");
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testGetByName_withNoMatch_thenReturnsEmptyOptional() {
-        // Arrange
-        String searchName = "Nonexistent Division";
-
-        // Act
-        Optional<Division> result = Division.getByName(searchName);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
     // getByAbbreviation()
     @Test
     void testGetByAbbreviation_withExactMatch_thenReturnsCorrectDivision() {
@@ -236,6 +131,111 @@ class DivisionTest {
     void testGetByAbbreviationOrName_withBlankInput_thenReturnsEmptyOptional() {
         // Act
         Optional<Division> result = Division.getByAbbreviationOrName(" ");
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    // getByCode()
+    @Test
+    void testGetByCode_withMatch_thenReturnsCorrectDivision() {
+        // Act
+        Optional<Division> result = Division.getByCode(29);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(Division.PCC_OPTICS, result.get());
+    }
+
+    @Test
+    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByCode(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByCode(0);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetByCode_withNoMatch_returnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByCode(100);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    // getByName()
+    @Test
+    void testGetByName_withExactName_thenReturnsCorrectDiscipline() {
+        // Arrange & Act
+        Optional<Division> result = Division.getByName("Open Division");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(Division.OPEN, result.get());
+    }
+
+    @Test
+    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectDivision() {
+        // Arrange
+        String searchName = "open division";
+
+        // Act
+        Optional<Division> result = Division.getByName(searchName);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(Division.OPEN, result.get());
+    }
+
+    @Test
+    void testGetByName_withPartialMatch_thenReturnsCorrectDivision() {
+        // Arrange
+        String searchName = "Open";
+
+        // Act
+        Optional<Division> result = Division.getByName(searchName);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(Division.OPEN, result.get());
+    }
+
+    @Test
+    void testGetByName_withNulInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByName(null);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
+        // Act
+        Optional<Division> result = Division.getByName(" ");
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetByName_withNoMatch_thenReturnsEmptyOptional() {
+        // Arrange
+        String searchName = "Nonexistent Division";
+
+        // Act
+        Optional<Division> result = Division.getByName(searchName);
 
         // Assert
         assertFalse(result.isPresent());
