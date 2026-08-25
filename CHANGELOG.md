@@ -59,6 +59,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🔐 Security
 
+- **`log4j-api`:** Overridden `2.25.4` → `2.25.5` via a new `pom.xml` `dependencyManagement` pin, closing [CVE-2026-49844](https://nvd.nist.gov/vuln/detail/CVE-2026-49844) (GHSA-qv9r-c865-cp47) — a transitive dependency pulled in via `spring-boot-starter-logging` → `log4j-to-slf4j`; this project uses Logback, not Log4j2's `JsonTemplateLayout`, so the vulnerable code path was never actually reachable, but the pin removes the flagged advisory
+
 ---
 
 ## 🧾 [7.3.0] - 2026-08-25
