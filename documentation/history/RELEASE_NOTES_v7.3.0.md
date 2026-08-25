@@ -91,7 +91,7 @@ Version 7.3.0 is a small, documentation-focused release. `README.md` and `ARCHIT
 
 ## 🐛 Known Issues
 
-- Carried over from v7.0.0–v7.2.0: no calculation service exists yet for `ShooterLog`/`ShooterLogCompetitor`, which remain schema-only.
+- Carried over from v7.0.0–v7.2.0: no calculation service exists yet for `ShooterLog`/`ShooterLogCompetitor`, which remains schema-only.
 
 ---
 
@@ -110,7 +110,7 @@ Development Team
 
 ## 📝 Notes
 
-This release is entirely a documentation-accuracy and tooling pass — no domain model, repository, or API surface changed. It corrects `README.md`/`ARCHITECTURE.md` claims that had drifted from what the codebase actually implements, and adds a small Claude Code command for condensing release documentation into a PR summary.
+This release is entirely a documentation-accuracy and tooling pass — no domain model, repository, or API surface changed. It corrects `README.md`/`ARCHITECTURE.md` claims that had drifted from what the codebase actually implements and adds a small Claude Code command for condensing release documentation into a PR summary.
 
 ---
 
