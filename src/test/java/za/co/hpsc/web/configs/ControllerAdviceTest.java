@@ -450,4 +450,30 @@ public class ControllerAdviceTest {
         assertEquals("Unexpected error occurred", response.getBody().getMessage());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
+
+    // logError()
+    @Test
+    void testLogError_whenThrowableIsNull_thenDoesNotThrow() {
+        // Act & Assert
+        assertDoesNotThrow(() -> controllerAdvice.logError(null));
+    }
+
+    @Test
+    void testLogError_whenThrowableHasCause_thenDoesNotThrow() {
+        // Arrange
+        Exception cause = new IllegalStateException("Root cause");
+        Exception ex = new Exception("Wrapping exception", cause);
+
+        // Act & Assert
+        assertDoesNotThrow(() -> controllerAdvice.logError(ex));
+    }
+
+    @Test
+    void testLogError_whenRequestIsNull_thenDoesNotThrow() {
+        // Arrange
+        Exception ex = new Exception("No request context");
+
+        // Act & Assert
+        assertDoesNotThrow(() -> controllerAdvice.logError(ex, null));
+    }
 }

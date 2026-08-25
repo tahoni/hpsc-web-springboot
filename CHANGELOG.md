@@ -41,6 +41,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Testing
 
 - **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/`ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
+- **`ControllerResponseTest`:** Covers the previously-untested `ControllerResponse(boolean, String)` constructor (message/error swap based on `success`), and the `(LocalDateTime, String, String)` constructor's derived-`success`-from-error-presence branch (non-null/non-blank error, and blank-but-non-null error)
+- **`FirearmTypeTest`:** Covers `toString()` for both the single-name and multi-name enum constructors (previously untested, despite the sibling `ClubIdentifier` enum having equivalent `toString()` tests)
+- **`ControllerAdviceTest`:** Covers `logError`'s three previously-untested branches — a `null` throwable, a throwable with a wrapped cause, and a `null` `WebRequest`; JaCoCo branch coverage for this class went from 92% to 100%
 
 #### Tooling
 

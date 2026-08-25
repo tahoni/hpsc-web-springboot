@@ -24,6 +24,66 @@ public class ControllerResponseTest {
     }
 
     @Test
+    void testShortConstructor_whenNonNullNonBlankErrorProvided_thenDerivesSuccessTrue() {
+        // Arrange
+        LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 30);
+        String message = "Operation completed";
+        String error = "Some error text";
+
+        // Act
+        ControllerResponse response = new ControllerResponse(timestamp, message, error);
+
+        // Assert
+        assertEquals(timestamp, response.getTimestamp());
+        assertTrue(response.isSuccess());
+        assertEquals(message, response.getMessage());
+        assertEquals(error, response.getError());
+    }
+
+    @Test
+    void testShortConstructor_whenErrorIsBlank_thenDerivesSuccessFalse() {
+        // Arrange
+        LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 45);
+        String message = "Operation completed";
+
+        // Act
+        ControllerResponse response = new ControllerResponse(timestamp, message, "   ");
+
+        // Assert
+        assertFalse(response.isSuccess());
+    }
+
+    @Test
+    void testBooleanConstructor_whenSuccessTrue_thenMapsMessageAndClearsError() {
+        // Arrange
+        String message = "Saved successfully";
+
+        // Act
+        ControllerResponse response = new ControllerResponse(true, message);
+
+        // Assert
+        assertNotNull(response.getTimestamp());
+        assertTrue(response.isSuccess());
+        assertEquals(message, response.getMessage());
+        assertEquals("", response.getError());
+    }
+
+    @Test
+    void testBooleanConstructor_whenSuccessFalse_thenMapsErrorAndClearsMessage() {
+        // Arrange
+        String message = "Save failed";
+
+        // Act
+        ControllerResponse response = new ControllerResponse(false, message);
+
+        // Assert
+        assertNotNull(response.getTimestamp());
+        assertFalse(response.isSuccess());
+        assertEquals("", response.getMessage());
+        assertEquals(message, response.getError());
+    }
+
+    @Test
     void testFullConstructor_whenSuccessTrue_thenKeepsSuccessTrueAndMapsAllFields() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 11, 0);
