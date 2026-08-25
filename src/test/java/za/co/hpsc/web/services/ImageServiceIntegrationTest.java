@@ -3,6 +3,9 @@ package za.co.hpsc.web.services;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -13,9 +16,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: sync with AwardServiceIntegrationTest
+/**
+ * Spring-context integration test for {@link ImageService} - exercised through the
+ * interface type, with a real Spring-wired {@code ImageServiceImpl} bean. {@code ImageService}
+ * doesn't touch the datasource, JPA, or messaging, so those auto-configurations are excluded
+ * to keep the context lightweight.
+ */
 @Slf4j
 @ActiveProfiles("test")
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class},
+        excludeName = "org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration")
 @SpringBootTest
 public class ImageServiceIntegrationTest {
 
