@@ -883,7 +883,7 @@ A process-and-tooling release with no domain-model or API surface changes: forma
 - `/scaffold-unit-tests` migrated from a stale `.github/prompts/scaffold-unit-tests.prompt.md` that referenced a different project's package and an invented "Layer 1/2/3" test pattern; corrected to this repo's real interface/impl test split
 - New `/scaffold-integration-tests`, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template
 - Both commands defer to their loaded `AGENTS.md`/`CLAUDE.md` rather than restating conventions inline, accept multiple targets per invocation, and never commit on their own
-- `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` now exclude datasource/JPA/messaging auto-configuration, since neither service touches the database
+- `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` now exclude datasource/JPA/messaging autoconfiguration, since neither service touches the database
 
 **Dependency Maintenance**
 
@@ -1420,7 +1420,7 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 
 - 26 test files retrofitted with a new `// methodName()` header-comment/ordering convention; 4 JaCoCo-identified coverage gaps closed; suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - New `/scaffold-unit-tests` (corrected from a stale, wrong-project prompt) and `/scaffold-integration-tests` Claude Code commands
-- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides cleaned up; `flyway-mysql` bumped to match Boot's newly-managed Flyway version
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides cleaned up; `flyway-mysql` bumped to match Boot's newly managed Flyway version
 - Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage`, and manual Flyway commands against a real MySQL dev database
 
 **Achievement:** Brought the entire existing test suite into line with a newly formalised AGENTS.md convention, closed every coverage gap JaCoCo could find, and corrected/extended the AI-agent tooling — all without touching the domain model, keeping the codebase consistent ahead of future feature work.
