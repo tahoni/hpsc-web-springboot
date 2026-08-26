@@ -364,7 +364,6 @@ application-local.properties
 build/
 dist/
 target/
-tsdocs/
 logs/
 .idea/
 .run/
