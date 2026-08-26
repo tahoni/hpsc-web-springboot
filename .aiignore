@@ -367,6 +367,7 @@ target/
 tsdocs/
 logs/
 .idea/
-.junie/
 .run/
+
+# Not excluded in .gitignore
 .mvn/

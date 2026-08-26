@@ -379,6 +379,6 @@ target/
 tsdocs/
 logs/
 .idea/
-.junie/
 .run/
+
 .claude/*.local.*
