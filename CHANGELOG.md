@@ -50,7 +50,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Configuration
 
-- **`.gitignore`:** Added `.claude/*.local.json` so per-machine Claude Code local settings aren't tracked
+- **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse, and Node sections from the latest upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite, Sveltekit, vitepress, and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale "Editor-based Rest Client" comment, and adds new OS, Version Control, and Secrets & Credentials sections; the custom TAHONI block now also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to `.claude/*.local.*` (supersedes the `.claude/*.local.json` entry above)
+- **`.gitignore`:** Uncommented the `.project` ignore rule, so IntelliJ/Eclipse project description files are now excluded from version control going forward
+- **`.aiignore`:** Re-synced with `.gitignore`'s refreshed template sections; its entries stay plain excludes rather than mirroring `.gitignore`'s `!` allowlist patterns (e.g. `.vscode/settings.json`, `.env.example`, `.yarn/patches`), so AI tooling stays conservative even for files git tracks
 
 #### Documentation
 
@@ -71,6 +73,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### ⚠️ Deprecated
 
 ### 🗑️ Removed
+
+#### Configuration
+
+- **`.aiignore`:** Removed the dedicated `.claude/`/`.github/` AI-only exclusion block — those directories, including `.claude/commands`, are no longer hidden from AI context
 
 ### 🔐 Security
 
