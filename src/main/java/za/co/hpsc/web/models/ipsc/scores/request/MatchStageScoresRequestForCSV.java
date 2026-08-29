@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.request;
+package za.co.hpsc.web.models.ipsc.scores.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -11,7 +11,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * A single competitor's result on a single match stage, shaped for deserializing a
+ * All competitors' results on a single match stage, shaped for deserializing a
  * Practiscore "Stage" results CSV export directly: {@link JsonNaming} maps camelCase field
  * names to Practiscore's upper-camel-case headers, and each field carries the
  * {@link JsonProperty} override for headers that don't follow that convention (e.g.
@@ -32,7 +32,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public abstract class MatchStageResultRequestForCSV {
+public abstract class MatchStageScoresRequestForCSV {
     /** Internal identifier of the match this stage result belongs to; not part of the CSV export,
      * populated separately. */
     private Long matchId;

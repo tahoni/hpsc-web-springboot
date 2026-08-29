@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.request;
+package za.co.hpsc.web.models.ipsc.scores.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,8 +8,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * A single competitor's result on a single match stage — the plain, non-CSV counterpart of
- * {@link MatchStageResultRequestForCSV}, carrying the same data without the Practiscore
+ * All competitors' results on a single match stage — the plain, non-CSV counterpart of
+ * {@link MatchStageScoresRequestForCSV}, carrying the same data without the Practiscore
  * column-mapping annotations.
  *
  * <p>
@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MatchStageResultRequest {
+public class MatchStageScoresRequest {
     /** Internal identifier of the match this stage result belongs to. */
     private Long matchId;
     /** The stage's number/order within the match. */

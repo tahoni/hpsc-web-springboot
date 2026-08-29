@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.request;
+package za.co.hpsc.web.models.ipsc.match.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

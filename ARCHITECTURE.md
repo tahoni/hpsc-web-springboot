@@ -223,12 +223,12 @@ Request/response models for the award and image CSV pipelines.
 `Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON
 envelope.
 
-#### `models/ipsc/request/` and `models/ipsc/shared/`
+#### `models/ipsc/match/request/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
 Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage
-submission, `MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) for competitor result submission,
-and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`. Groundwork only —
-not yet consumed by `IpscController`.
+submission, `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores
+submission, and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
+Groundwork only — not yet consumed by `IpscController`.
 
 ---
 
