@@ -14,6 +14,7 @@ package za.co.hpsc.web.constants;
  */
 public class SystemConstants {
     private SystemConstants() {
+        // Prevent instantiation of this utility class
     }
 
     public static final int DEFAULT_SCALE = 5;

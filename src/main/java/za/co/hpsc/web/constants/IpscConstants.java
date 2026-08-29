@@ -17,6 +17,7 @@ import java.util.List;
  */
 public final class IpscConstants {
     private IpscConstants() {
+        // Prevent instantiation of this utility class
     }
 
     public static final String IPSC_INPUT_DATE_TIME_FORMAT =

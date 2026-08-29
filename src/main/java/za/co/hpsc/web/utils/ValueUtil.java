@@ -31,9 +31,6 @@ import java.util.UUID;
  */
 public final class ValueUtil {
 
-    /**
-     * Private constructor to prevent instantiation of this utility class.
-     */
     private ValueUtil() {
         // Utility class, not to be instantiated
     }

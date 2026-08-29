@@ -73,11 +73,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ValueUtil`:** Added `@since 1.1.0` class-level tag
 - **`NumberUtil`, `StringUtil`:** Added `@since 1.1.3` class-level tags
 - **`DateUtil`:** Added `@since 2.0.0` class-level tag
+- **`ValueUtil`:** Removed the private constructor's Javadoc block in favour of the plain `// Utility class, not to be instantiated` inline comment already beside it — the block only restated what the comment already says
 
 #### Constants
 
 - **`HpscConstants`:** Added `@since 1.1.0` class-level tag
 - **`IpscConstants`, `SystemConstants`:** Added `@since 1.1.3` class-level tags
+- **`HpscConstants`, `IpscConstants`, `SystemConstants`:** Private constructors now carry a `// Prevent instantiation of this utility class` comment, matching the convention used by `ValueUtil`
 
 #### Enums
 

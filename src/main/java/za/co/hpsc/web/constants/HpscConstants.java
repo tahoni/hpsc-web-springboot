@@ -12,6 +12,7 @@ package za.co.hpsc.web.constants;
  */
 public final class HpscConstants {
     private HpscConstants() {
+        // Prevent instantiation of this utility class
     }
 
     public static final String HPSC_INPUT_DATE_FORMAT = SystemConstants.ISO_DATE_FORMAT;
