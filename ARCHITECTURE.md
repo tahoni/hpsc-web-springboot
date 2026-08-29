@@ -137,14 +137,14 @@ HTTP Request
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                 | Mapping                     | Responsibility                                   |
-|----------------------------|------------------------------|--------------------------------------------------|
-| `AwardController`          | `/hpsc-web/awards`          | Award CSV processing                             |
-| `ImageController`          | `/hpsc-web/images`          | Image CSV processing                             |
-| `IpscCompetitorController` | —                           | Empty stub — reserved for the IPSC module split  |
-| `IpscMatchController`      | —                           | Empty stub — reserved for the IPSC module split  |
-| `IpscRankingsController`   | —                           | Empty stub — reserved for the IPSC module split  |
-| `IpscScoresController`     | —                           | Empty stub — reserved for the IPSC module split  |
+| Controller                 | Mapping            | Responsibility                                  |
+|----------------------------|--------------------|-------------------------------------------------|
+| `AwardController`          | `/hpsc-web/awards` | Award CSV processing                            |
+| `ImageController`          | `/hpsc-web/images` | Image CSV processing                            |
+| `IpscCompetitorController` | —                  | Empty stub — reserved for the IPSC module split |
+| `IpscMatchController`      | —                  | Empty stub — reserved for the IPSC module split |
+| `IpscRankingsController`   | —                  | Empty stub — reserved for the IPSC module split |
+| `IpscScoresController`     | —                  | Empty stub — reserved for the IPSC module split |
 
 All controllers:
 

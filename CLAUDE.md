@@ -68,19 +68,19 @@ HTTP Request
 
 ### Key layers and packages (`src/main/java/za/co/hpsc/web/`)
 
-| Package         | Role                                                                                                                                                                 |
-|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Package         | Role                                                                                                                                                                           |
+|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `controllers/`  | `AwardController`, `ImageController`, `IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController` (Ipsc* are stubs — no endpoints yet) |
-| `services/`     | `AwardService`, `ImageService`, plus implementations under `services/impl/`                                                                                          |
-| `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                                       |
-| `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor`                   |
-| `models/`       | DTOs grouped by domain: `award/`, `image/`, `shared/`, plus `Request`/`Response`/`ControllerResponse` at the package root                                            |
-| `converters/`   | Custom JPA `AttributeConverter` implementations for enum-typed entity fields                                                                                         |
-| `configs/`      | Spring configuration: `ControllerAdvice` (global exception mapping), OpenAPI config                                                                                  |
-| `exceptions/`   | `FatalException`, `NonFatalException`, `ValidationException` — the exception hierarchy mapped by `ControllerAdvice` (in `configs/`) to standard JSON error responses |
-| `enums/`        | `ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`, `MatchCategory`, `PowerFactor`                                                          |
-| `constants/`    | `HpscConstants`, `IpscConstants`, `SystemConstants`                                                                                                                  |
-| `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                                                  |
+| `services/`     | `AwardService`, `ImageService`, plus implementations under `services/impl/`                                                                                                    |
+| `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                                                 |
+| `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor`                             |
+| `models/`       | DTOs grouped by domain: `award/`, `image/`, `shared/`, plus `Request`/`Response`/`ControllerResponse` at the package root                                                      |
+| `converters/`   | Custom JPA `AttributeConverter` implementations for enum-typed entity fields                                                                                                   |
+| `configs/`      | Spring configuration: `ControllerAdvice` (global exception mapping), OpenAPI config                                                                                            |
+| `exceptions/`   | `FatalException`, `NonFatalException`, `ValidationException` — the exception hierarchy mapped by `ControllerAdvice` (in `configs/`) to standard JSON error responses           |
+| `enums/`        | `ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`, `MatchCategory`, `PowerFactor`                                                                    |
+| `constants/`    | `HpscConstants`, `IpscConstants`, `SystemConstants`                                                                                                                            |
+| `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                                                            |
 
 > The IPSC match-import/CRUD service, model and entity-service layers described in earlier versions of this document
 > (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services and the `models/ipsc/`
