@@ -2047,9 +2047,9 @@ AttributeConverters
 
 ### Major Version Goals
 
-- **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 6.x (v6.0.0):** Turn the v5.x foundation into an actual product surface — a dedicated, versioned match CRUD API, complete the layered-architecture discipline by fully decoupling `DomainServiceImpl` from repositories and restructure the IPSC model packages for long-term growth.
 - **Version 5.x (v5.0.0 – v5.4.0):** Mature the codebase into a stable, well-tested, standards-compliant foundation — formalise Semantic Versioning, consolidate and simplify the service layer and extend real domain capability (competitor enrolment) only once that foundation was solid.
+- **Version 6.x (v6.0.0):** Turn the v5.x foundation into an actual product surface — a dedicated, versioned match CRUD API, complete the layered-architecture discipline by fully decoupling `DomainServiceImpl` from repositories and restructure the IPSC model packages for long-term growth.
+- **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
 
 ### Initial Phase (v1.0.0)
 
