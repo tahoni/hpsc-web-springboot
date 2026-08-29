@@ -15,6 +15,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
 - [📚 Documentation](#-documentation)
+    - [🗺️ Roadmap](#-roadmap)
 - [📜 License](#-license)
 - [👤 Author](#-author)
 
@@ -25,7 +26,7 @@ The HPSC Website backend is a Spring Boot application designed to manage and ser
 - **Award Ceremonies**: Award data and ceremony grouping, processed from CSV
 - **Image Gallery**: Image metadata processing from CSV
 
-JPA entities and repositories also exist for clubs, competitors, matches, match stages, and shooter logs, laying the groundwork for match management, competitor tracking, and IPSC data integration — but the service and controller layer that will operate on that domain is still being rebuilt.
+JPA entities and repositories also exist for clubs, competitors, matches, match stages and shooter logs, and request DTOs exist for match/stage and result submission, laying the groundwork for match management, competitor tracking and IPSC data integration — but the service and controller layer that will operate on that domain is still being rebuilt.
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA and Hibernate.
 
@@ -33,7 +34,7 @@ The application emphasises structured data processing and validation, with MySQL
 
 The repository for this project is located at [GitHub](https://github.com/tahoni/hpsc-web-springboot).
 
-Feature requests, suggestions for improvements, and bugs can be logged using the project's [Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
+Feature requests, suggestions for improvements and bugs can be logged using the project's [Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
 
 ## ⚙️ Technology
 
@@ -54,7 +55,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 ## ✨ Features
 
 - **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data.
-- **Match & Competitor Domain Model**: JPA entities, repositories, and type-safe enum converters for clubs, competitors, matches, match stages, and shooter logs, ready for the upcoming service/controller layer.
+- **Match & Competitor Domain Model**: JPA entities, repositories, type-safe enum converters and request DTOs for clubs, competitors, matches, match stages and shooter logs, ready for the upcoming service/controller layer.
 - **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm types.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
 - **Data Integrity**: Multi-layered validation (controller, service, entity) with detailed error reporting.
@@ -128,7 +129,7 @@ The report is written to `target/site/jacoco/`.
 
 **Test Categories**:
 
-- **Unit Tests**: Domain entities, DTOs, enums, utilities, and service logic
+- **Unit Tests**: Domain entities, DTOs, enums, utilities and service logic
 - **Integration Tests**: Service implementations and data access layers
 - **Test Frameworks**: JUnit, Mockito, Spring Test
 
@@ -149,18 +150,18 @@ A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md
 
 This project's documentation is spread across a few files, each with a distinct purpose:
 
-| File                                   | Purpose                                                                                         |
-|----------------------------------------|-------------------------------------------------------------------------------------------------|
-| [`README.md`](README.md)               | Project overview, setup, and links to the rest of the documentation (this file)                 |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure, and CI/CD quality gates                       |
-| [`CLAUDE.md`](CLAUDE.md)               | Guidance for Claude Code (AI assistant) when working in this repository                         |
-| [`AGENTS.md`](AGENTS.md)               | Cross-tool conventions for AI coding agents working in this repository                          |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md)   | New-developer onboarding: setup, database profiles, testing, workflow                           |
-| [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
-| [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |
-| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Detailed release notes for the current/latest version                                           |
-| [`LICENSE.md`](LICENSE.md)             | MIT License                                                                                     |
-| [`HELP.md`](HELP.md)                   | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
+| File                                         | Purpose                                                                                                          |
+|----------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| [`README.md`](README.md)                     | Project overview, setup and links to the rest of the documentation (this file)                                   |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)         | Detailed architectural design, layered structure and CI/CD quality gates                                         |
+| [`CLAUDE.md`](CLAUDE.md)                     | Guidance for Claude Code (AI assistant) when working in this repository                                          |
+| [`AGENTS.md`](AGENTS.md)                     | Cross-tool conventions for AI coding agents working in this repository                                           |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)         | New-developer onboarding: setup, database profiles, testing, workflow                                            |
+| [`CHANGELOG.md`](CHANGELOG.md)               | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format                  |
+| [`HISTORY.md`](HISTORY.md)                   | Narrative history of the project's evolution across all versions                                                 |
+| [`RELEASE_NOTES.md`](RELEASE_NOTES.md)       | Detailed release notes for the current/latest version                                                            |
+| [`LICENSE.md`](LICENSE.md)                   | MIT License                                                                                                      |
+| [`HELP.md`](HELP.md)                         | Spring Initializr reference links (Maven, Spring Boot docs, guides)                                              |
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version:
 
@@ -170,6 +171,15 @@ This project's documentation is spread across a few files, each with a distinct 
 | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version history). It's a historical record only and isn't maintained going forward.
+
+### 🗺️ Roadmap
+
+[`documentation/roadmap/`](documentation/roadmap) holds in-progress planning documents — not part of the standard documentation set above, and not required reading to work in this repository:
+
+| File                  | Purpose                                                                                                          |
+|-----------------------|------------------------------------------------------------------------------------------------------------------|
+| `improvement-plan.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| `improvement-plan-tasks.md`            | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
 This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see [CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 

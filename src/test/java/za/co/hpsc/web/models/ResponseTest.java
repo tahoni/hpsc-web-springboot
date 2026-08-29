@@ -52,7 +52,7 @@ public class ResponseTest {
 
     // Response(UUID, String)
     @Test
-    void testShortConstructor_thenInitializesUuidAndTitle() {
+    void testShortConstructor_thenInitialisesUuidAndTitle() {
         // Arrange
         UUID expectedUuid = UUID.randomUUID();
         String title = "Brief Title";
@@ -67,7 +67,7 @@ public class ResponseTest {
 
     // Response(UUID, String, String, String, String, List<String>)
     @Test
-    void testFullConstructor_whenAllFieldsProvided_thenInitializesAllFields() {
+    void testFullConstructor_whenAllFieldsProvided_thenInitialisesAllFields() {
         // Arrange
         UUID expectedUuid = UUID.randomUUID();
         String title = "Test Title";

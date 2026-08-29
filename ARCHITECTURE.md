@@ -1,6 +1,6 @@
 # HPSC Website Backend Architecture
 
-This document describes the architectural design, directory structure, and core concepts of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
+This document describes the architectural design, directory structure and core concepts of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## Table of Contents
 
@@ -53,7 +53,8 @@ This document describes the architectural design, directory structure, and core 
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
-│   └───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
+│   ├───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
+│   └───roadmap/                # Concrete task-list breakdown of improvement-plan.md's gaps
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
@@ -77,6 +78,9 @@ This document describes the architectural design, directory structure, and core 
 │   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response models
 │   │   │   ├───image/          # Image gallery request/response models
+│   │   │   ├───ipsc/
+│   │   │   │   ├───request/    # IPSC match/stage/result request DTOs (groundwork)
+│   │   │   │   └───shared/     # Comstock-scoring shared fields (groundwork)
 │   │   │   ├───shared/         # Placing
 │   │   │   └───(root)          # Request, Response, ControllerResponse
 │   │   ├───repositories/       # Spring Data JPA interfaces (not yet wired to any service)
@@ -109,7 +113,7 @@ The HPSC Website Backend is a pure REST API server (no frontend) that manages pr
 |-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**          | Award data and ceremony grouping, processed from CSV                                                                                                           |
 | **Image Gallery**             | Image metadata processing from CSV                                                                                                                             |
-| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs, and shooter logs, but the service/controller layer that operates on them is being rebuilt |
+| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs and shooter logs, but the service/controller layer that operates on them is being rebuilt  |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 
@@ -131,8 +135,8 @@ Handles incoming HTTP requests. Does not contain business logic.
 
 | Controller        | Mapping                     | Responsibility                            |
 |-------------------|-----------------------------|-------------------------------------------|
-| `AwardController` | `/hpsc-web/v1/awards`       | Award CSV processing                      |
-| `ImageController` | `/hpsc-web/v1/images`       | Image CSV processing                      |
+| `AwardController` | `/hpsc-web/awards`          | Award CSV processing                      |
+| `ImageController` | `/hpsc-web/images`          | Image CSV processing                      |
 | `IpscController`  | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet |
 
 All controllers:
@@ -141,7 +145,7 @@ All controllers:
 - Return `ResponseEntity<T>` with typed response models
 - Are annotated with full OpenAPI (`@Tag`, `@Operation`, `@ApiResponse`) metadata
 
-`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException`, and `ValidationException` instances and maps them to standard JSON error responses with structured logging.
+`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException` and `ValidationException` instances and maps them to standard JSON error responses with structured logging.
 
 ---
 
@@ -209,7 +213,8 @@ Request/response models for the award and image CSV pipelines.
 #### Package root (`za.co.hpsc.web.models`)
 `Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON envelope.
 
-> No IPSC-specific DTOs currently exist — the `models/ipsc/` package described in earlier versions of this document has been removed pending the match/competitor service-layer rebuild.
+#### `models/ipsc/request/` and `models/ipsc/shared/`
+Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, `MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) for competitor result submission, and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`. Groundwork only — not yet consumed by `IpscController`.
 
 ---
 
@@ -330,11 +335,11 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 📚 Development Guidelines
 
-Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build commands, database profiles, and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
+Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 
 - Controllers must not contain business logic — delegate to services only
-- All exceptions must extend `FatalException`, `NonFatalException`, or `ValidationException`
+- All exceptions must extend `FatalException`, `NonFatalException` or `ValidationException`
 - Test class names: `<ClassName>Test`; test method names: `test<Scenario>_when<Condition>_then<Expectation>`
 - JUnit Jupiter's `Assertions` for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests

@@ -27,9 +27,9 @@ Condense the two documents above (both already finalised for v$ARGUMENTS, per AG
 1. **Read both source documents fully.** The release notes' Theme and Key Highlights sections are the best source for *why*; the PR description's Key Changes are the best source for *what*.
 2. **Write the summary in three parts, no more:**
    - **One short paragraph** (2–3 sentences) stating what this PR does and why, distilled from the Theme/Summary — not copied verbatim.
-   - **A "Key changes" bullet list** — at most 5–6 bullets, each a single line, high-level only (no class/file-level detail, no nested sub-bullets).
+   - **A "Key changes" bullet list** — at most 5–6 bullets, each as a single line, high-level only (no class/file-level detail, no nested sub-bullets).
    - **One line on verification**, only if it's notable (e.g. a real-database check, a coverage jump) — omit entirely if it's just "tests pass".
-3. **Keep it short overall.** The whole thing should read in under 30 seconds. If a part would only restate the paragraph above, drop it.
+3. **Keep it short overall.** The whole thing should take less than 30 seconds to read. If a part would only restate the paragraph above, drop it.
 4. **Use plain headings, not this repo's icon convention.** `## Summary` / `## Key changes` (or no headings at all if the content is short enough to stand alone) — never the emoji-prefixed headings used in `RELEASE_NOTES.md`/`CHANGELOG.md`.
 5. **British English** spelling and grammar throughout, per AGENTS.md's Documentation Conventions.
 

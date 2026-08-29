@@ -1,5 +1,5 @@
 ---
-description: Scaffold unit tests for a service, model, or exception class following this project's testing conventions.
+description: Scaffold unit tests for a service, model or exception class following this project's testing conventions.
 argument-hint: <class name(s) or file path(s) to scaffold tests for, space- or comma-separated>
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(./mvnw test:*)
 ---
@@ -21,8 +21,8 @@ Read and strictly follow **all conventions defined in AGENTS.md and CLAUDE.md** 
    - **Service interface** (`services/XService.java`): create or extend `services/[Class]Test.java` — name the class `[Class]Test`, where `[Class]` is the target interface's own name (e.g. `AwardService` → `AwardServiceTest`, `ImageService` → `ImageServiceTest`) — a Mockito unit test exercising *only* the methods the interface declares, through the interface type, not the impl class. Follow the pattern in `services/AwardServiceTest.java`/`services/ImageServiceTest.java`: `@InjectMocks private XServiceImpl xServiceImpl;` plus a `private XService xService;` field assigned from it in `@BeforeEach`.
    - **Service implementation** (`services/impl/XServiceImpl.java`): create or extend `services/impl/XServiceImplTest.java` — Mockito unit tests for the impl's own helper methods (protected/private methods not declared on the interface), kept separate from the interface-contract tests above. Follow the pattern in `services/impl/AwardServiceImplTest.java`/`services/impl/ImageServiceImplTest.java`.
    - **Any other class** (model/DTO, exception, enum, converter, controller, util): a single `<ClassName>Test.java` in the mirrored package.
-3. **Do not test Lombok-generated behaviour.** Skip constructors, getters, setters, `toString()`, `equals()`/`hashCode()`, or builders that Lombok generates with no accompanying custom logic — per AGENTS.md's Test Conventions. Only test these when they're handwritten or add real logic (default-value handling, validation, derived fields, etc.). Using generated getters/setters/builders incidentally to build fixtures or assert real business-logic outcomes is fine.
-4. **Cover real behaviour**: valid inputs, edge cases, and error paths (null/empty/blank input, malformed data, missing required fields) — asserting against the project's exception hierarchy where the target throws one, per CLAUDE.md's Exception handling section (loaded above).
+3. **Do not test Lombok-generated behaviour.** Skip constructors, getters, setters, `toString()`, `equals()`/`hashCode()` or builders that Lombok generates with no accompanying custom logic — per AGENTS.md's Test Conventions. Only test these when they're handwritten or add real logic (default-value handling, validation, derived fields, etc.). Using generated getters/setters/builders incidentally to build fixtures or assert real business-logic outcomes is fine.
+4. **Cover real behaviour**: valid inputs, edge cases and error paths (null/empty/blank input, malformed data, missing required fields) — asserting against the project's exception hierarchy where the target throws one, per CLAUDE.md's Exception handling section (loaded above).
 5. **Match the existing style exactly**, per AGENTS.md's Test Conventions and CLAUDE.md's Testing Patterns (both loaded above) — an Arrange-Act-Assert structure, and mirror the closest existing sibling test file in the same package rather than inventing a new style.
 6. **Run each new/extended test class as it's finished**, then run the full suite once at the end and confirm everything passes before finishing:
    ```bash
@@ -30,7 +30,7 @@ Read and strictly follow **all conventions defined in AGENTS.md and CLAUDE.md** 
    ./mvnw test
    ```
 7. **Update `CHANGELOG.md`** under `## 🧪 [Unreleased]` in the same change, per AGENTS.md's Git Workflow conventions — one entry per target if their scope differs, or a single combined entry if they're closely related — only if the change is notable enough to warrant an entry.
-8. **Do not run `git add`, `git commit`, or `git push` yourself** — this command only scaffolds and verifies; leave the new/changed files for the user to review and commit.
+8. **Do not run `git add`, `git commit` or `git push` yourself** — this command only scaffolds and verifies; leave the new/changed files for the user to review and commit.
 
 ## 📤 Output
 

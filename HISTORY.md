@@ -1,6 +1,6 @@
 # Project History
 
-A comprehensive historical overview of the HPSC Website Backend project from start to current release, documenting the evolution of architecture, features, and design philosophy across all versions.
+A comprehensive historical overview of the HPSC Website Backend project from start to current release, documenting the evolution of architecture, features and design philosophy across all versions.
 
 ---
 
@@ -20,6 +20,20 @@ A comprehensive historical overview of the HPSC Website Backend project from sta
 
 ## 📅 Historical Timeline
 
+### Version 7.4.0 (August 29, 2026)
+
+**Theme:** IPSC Request DTOs, Route Cleanup & Documentation Conventions
+
+**Key Focus:**
+
+- New `za.co.hpsc.web.models.ipsc.request` package — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission and `MatchOverallResultRequest`/`MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants) for competitor result submission, shaped to match Practiscore's export format; `MatchRequest` gains a `matchId` field for updating an existing match (previously creation-only); all carry field- and class-level Javadoc mirroring the new shared `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore` DTOs' Comstock-scoring documentation — groundwork for the IPSC module rebuild, not yet wired to any endpoint
+- `AwardController`/`ImageController` route prefixes dropped from `/v1/awards`/`/v1/images` to `/awards`/`/images` — the unused `/v1` API versioning segment removed
+- New AGENTS.md Serial commas rule (no comma before the final `and`/`or` in a list of three or more items) and a tightened British English rule that now covers code identifiers as well as prose — both applied retroactively across the existing documentation set, which surfaced and corrected two American-spelled test method names
+- `documentation/roadmap/`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/`improvement-plan-tasks.md` for kebab-case consistency with the rest of the tooling docs
+- New Claude Code command `/sync-unreleased-changes`, diffing the branch against its base plus any uncommitted changes to fill in missing `CHANGELOG.md` entries automatically; `RELEASE_NOTES.md`'s Contributors section now sourced from `git log`'s unique authors rather than a generic placeholder
+- Release hygiene: `log4j-api` overridden to `2.25.5` for CVE-2026-49844; `.gitignore`/`.aiignore` refreshed from upstream templates; `README.md`'s H1 heading restored
+- Project version bumped to 7.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 7.3.0 (August 25, 2026)
 
 **Theme:** Documentation Accuracy Pass & PR Summary Tooling
@@ -27,23 +41,23 @@ A comprehensive historical overview of the HPSC Website Backend project from sta
 **Key Focus:**
 
 - New Claude Code command `/generate-pr-summary`, which condenses a version's archived `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary — a distillation rather than a restatement of this repo's own emoji-heavy documentation style; its Output instructions were subsequently clarified to require raw, unrendered Markdown source in the fenced block
-- `README.md`'s Introduction and Features sections corrected to stop describing match management, competitor/club CRUD, WinMSS import, and XML/multi-format processing as existing capabilities; only `AwardController`/`ImageController` CSV processing is implemented today, with the match/competitor domain's service and controller layer still being rebuilt (as already noted in `CLAUDE.md`)
+- `README.md`'s Introduction and Features sections corrected to stop describing match management, competitor/club CRUD, WinMSS import and XML/multi-format processing as existing capabilities; only `AwardController`/`ImageController` CSV processing is implemented today, with the match/competitor domain's service and controller layer still being rebuilt (as already noted in `CLAUDE.md`)
 - `README.md`'s coverage-report instructions corrected from the non-functional `./mvnw test jacoco:report` to `./mvnw verify -Pcoverage`; the stray `1.x – 4.x` version range in its documentation-map description removed, per AGENTS.md's evergreen-documentation rule
 - `ARCHITECTURE.md`'s test package tree corrected (removed the nonexistent `domain/` test package, added the missing `converters/`/`exceptions/` packages) and its CI/CD & Quality Gates table no longer overstates the `Build & Tests` gate as an "All PRs" GitHub Actions trigger — only `codeql.yml` runs automatically; `./mvnw test` is run locally/by reviewers
-- No domain entities, repositories, services, or API surface changed in this release — purely a documentation-accuracy and tooling pass
+- No domain entities, repositories, services or API surface changed in this release — purely a documentation-accuracy and tooling pass
 - Project version bumped to 7.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 7.2.0 (August 25, 2026)
 
-**Theme:** Test Suite Conventions, AI-Agent Tooling, and Dependency Maintenance
+**Theme:** Test Suite Conventions, AI-Agent Tooling and Dependency Maintenance
 
 **Key Focus:**
 
-- New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest` (Mockito-based, testing `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing 4 JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest`, and `ControllerAdviceTest` — overall suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
+- New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest` (Mockito-based, testing `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing 4 JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest` and `ControllerAdviceTest` — overall suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - New Claude Code commands `/scaffold-unit-tests` (migrated from a stale, wrong-project prompt file and corrected to this repo's real interface/impl test split) and `/scaffold-integration-tests` (new, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template)
 - `HpscWebApplicationTests` renamed to `HpscWebApplicationTest` to match the project's `<ClassName>Test` naming convention; 26 existing test files retrofitted with a new AGENTS.md test convention (a one-line `// methodName()` header per method group, ordered constructors → public → protected → alphabetical → `toString()` last) — no test behaviour changed, purely comments and reordering
 - **Dependency maintenance:** Spring Boot parent upgraded `4.0.7` → `4.1.0`, with now-redundant `pom.xml` version overrides cleaned up (`spring-framework.version`/`tomcat.version` now match Boot's own defaults; a long-standing `commons.lang3.version` typo — Boot's real property is hyphenated — removed; `maven-dependency-plugin` pin removed, now Boot-managed) and the flyway-maven-plugin's separately-pinned `flyway-mysql` bumped `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version`
-- Verified via the full test suite (492 tests, up from 483 at the start of this release), `./mvnw verify -Pcoverage`, and manual Flyway commands (`flyway:info`/`flyway:migrate`) against a real local MySQL 9.5 dev database — no domain entities, repositories, or API surface changed in this release
+- Verified via the full test suite (492 tests, up from 483 at the start of this release), `./mvnw verify -Pcoverage` and manual Flyway commands (`flyway:info`/`flyway:migrate`) against a real local MySQL 9.5 dev database — no domain entities, repositories or API surface changed in this release
 - New CLAUDE.md Git Workflow section states the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`); CLAUDE.md now cross-links to AGENTS.md and corrects its package-overview table; a false claim that AssertJ is used for assertions (it is explicitly excluded from `pom.xml`) was removed from five project docs
 - Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
@@ -57,9 +71,9 @@ A comprehensive historical overview of the HPSC Website Backend project from sta
 - `ShooterLog` gains a non-nullable `powerFactor` (`PowerFactor`, via the existing `PowerFactorConverter`) — snapshots are now scoped by power factor as well as firearm type
 - `ShooterLogCompetitor` gains a nullable `points` column (the points each contributing `MatchCompetitor` row contributed to the snapshot's `logValue`) and a non-nullable `match` (`@ManyToOne IpscMatch`) relation alongside the existing `matchCompetitor` link
 - `ShooterLogRepository.findAllByCompetitorIdAndFirearmType` renamed to `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`, now filtering by `PowerFactor` as well
-- New `ShooterLogCompetitorRepository` (`findAllByShooterLogId`) supersedes `ShooterLogEntryRepository`; new Flyway migration `V7_1_0__update_shooter_log_schema.sql` renames the table, its unique-index, and FK constraints, and adds the new columns — both tables remain empty in every environment (no calculation service populates them yet), so no backfill was required
+- New `ShooterLogCompetitorRepository` (`findAllByShooterLogId`) supersedes `ShooterLogEntryRepository`; new Flyway migration `V7_1_0__update_shooter_log_schema.sql` renames the table, its unique-index and FK constraints, and adds the new columns — both tables remain empty in every environment (no calculation service populates them yet), so no backfill was required
 - Project version bumped to 7.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
-- Alongside the schema work, this release migrates the repository's AI-agent prompt files from `.github/prompts/*.prompt.md` to `.claude/commands/*.md`, adopts GitFlow branching in `AGENTS.md`, and adds `CONTRIBUTING.md`
+- Alongside the schema work, this release migrates the repository's AI-agent prompt files from `.github/prompts/*.prompt.md` to `.claude/commands/*.md`, adopts GitFlow branching in `AGENTS.md` and adds `CONTRIBUTING.md`
 
 ### Version 7.0.0 (August 11, 2026)
 
@@ -242,7 +256,7 @@ The inaugural release established the core infrastructure for the HPSC platform 
 
 **Duration:** January 14, 2026 – January 28, 2026
 
-Rapid iteration adding award processing, improving code quality, and establishing documentation standards.
+Rapid iteration adding award processing, improving code quality and establishing documentation standards.
 
 **Key Accomplishments:**
 
@@ -468,7 +482,7 @@ Significant domain entity refactoring with comprehensive testing and improved va
 - `MatchStage` → `IpscMatchStage` entity rename
 - `MatchRepository` → `IpscMatchRepository` repository rename
 - Removed `MatchStageRepository` (consolidated into `IpscMatchStageRepository`)
-- Updated all dependent classes across services, controllers, helpers, and tests
+- Updated all dependent classes across services, controllers, helpers and tests
 
 **Enhanced Validation & Robustness**
 
@@ -646,7 +660,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Comprehensive DTO Unit Testing (Post-Release Enhancement)**
 
-- **MatchStageDtoTest:** 48 tests covering constructors, init() methods, and toString() implementations
+- **MatchStageDtoTest:** 48 tests covering constructors, init() methods and toString() implementations
     - Single and dual-parameter constructor tests (11 tests)
     - init() method tests with null handling, partial/full population (19 tests)
     - toString() method tests with edge cases, club information, stage numbers (18 tests)
@@ -673,7 +687,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 - Clear naming: All tests follow `testMethod_whenCondition_thenExpectedBehavior` pattern
 - AAA structure: Arrange-Act-Assert pattern with clear comments throughout
 - Comprehensive assertions: Multiple assertions per test validating all aspects
-- Edge case coverage: Extensive null, empty, blank, and boundary value testing
+- Edge case coverage: Extensive null, empty, blank and boundary value testing
 - Organised sections: Tests grouped by functionality with clear section headers
 - Field-by-field validation: Every field tested in isolation and combination scenarios
 - Total DTO tests added: 151+ (48 + 26 + 77)
@@ -736,7 +750,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Duration:** February 25, 2026
 
-Strategic focus on test suite quality, organisation, and maintainability.
+Strategic focus on test suite quality, organisation and maintainability.
 
 **Key Accomplishments:**
 
@@ -789,7 +803,7 @@ Strategic focus on test suite quality, organisation, and maintainability.
 
 **Duration:** February 27, 2026
 
-Major architectural improvement focused on match results processing, entity initialisation, and comprehensive test coverage.
+Major architectural improvement focused on match results processing, entity initialisation and comprehensive test coverage.
 
 **Key Accomplishments:**
 
@@ -827,8 +841,8 @@ Major architectural improvement focused on match results processing, entity init
 **Comprehensive Test Consolidation**
 
 - **DtoToEntityMappingTest:** 716 lines of comprehensive tests
-    - Constructor, accessor, and setter tests
-    - Null, empty, partial, and full data coverage
+    - Constructor, accessor and setter tests
+    - Null, empty, partial and full data coverage
 - **TransactionServiceTest:** 2,000+ lines with extensive edge cases
 - Consolidated test suites across all services:
     - IpscMatchResultServiceImplTest, IpscServiceTest, IpscMatchServiceTest
@@ -876,18 +890,75 @@ Major architectural improvement focused on match results processing, entity init
 
 ---
 
-### Phase 16: Test Suite Conventions, AI-Agent Tooling, and Dependency Maintenance (v7.2.0)
+### Phase 17: IPSC Request DTOs, Route Cleanup & Documentation Conventions (v7.4.0)
+
+**Duration:** August 29, 2026
+
+A mixed release: new IPSC request DTOs laid as groundwork for the module rebuild, a small API cleanup and a round of documentation-convention tightening applied across the existing docs.
+
+**Key Accomplishments:**
+
+**IPSC Request DTOs**
+
+- New `za.co.hpsc.web.models.ipsc.request` package — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission and `MatchOverallResultRequest`/`MatchStageResultRequest` for competitor result submission, shaped to match Practiscore's export format
+- `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants of the result request DTOs; `MatchRequest` gains a `matchId` field for updating an existing match (previously creation-only)
+- New shared `za.co.hpsc.web.models.ipsc.shared` package — `IpscCommonScore` (fields shared by Comstock-scored, hit-factor IPSC results), `IpscMatchScore` (adds `percentageOfPossiblePoints`) and `IpscMatchStageScore` (adds `rawPoints`/`hitFactor`)
+- All new DTOs carry field- and class-level Javadoc documenting how Comstock scoring works; not yet wired to `IpscController`, which remains an empty stub
+
+**API Route Cleanup**
+
+- `AwardController`/`ImageController` route prefixes dropped from `/v1/awards`/`/v1/images` to `/awards`/`/images` — the unused `/v1` API versioning segment removed
+
+**Documentation Conventions**
+
+- New AGENTS.md Serial commas rule — lists of three or more items no longer take a comma before the final `and`/`or`
+- AGENTS.md's British English rule tightened to cover code identifiers (class/method/variable names) as well as prose, dropping the previous exception
+- Both rules applied retroactively across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files; the identifier-spelling sweep surfaced and corrected two American-spelled test method names (`Initializes`→`Initialises`, `Recognized`→`Recognised`) across `RequestTest`, `ResponseTest`, `AwardRequestForCSVTest` and `ImageResponseTest`
+- `documentation/roadmap/`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/`improvement-plan-tasks.md` for kebab-case consistency with the rest of the tooling docs
+
+**AI-Agent Tooling & Process**
+
+- New Claude Code command `/sync-unreleased-changes` — diffs the current branch against its base plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries directly in the file
+- `RELEASE_NOTES.md`'s Contributors section now sourced from `git log`'s unique commit authors (bots included) instead of a generic placeholder, per a new AGENTS.md Release Checklist rule
+
+**Release Hygiene**
+
+- `log4j-api` overridden `2.25.4` → `2.25.5`, closing CVE-2026-49844 — a transitive dependency via `spring-boot-starter-logging`, never actually reachable since this project uses Logback, but the pin removes the flagged advisory
+- `.gitignore`/`.aiignore` refreshed from the latest upstream templates; `README.md`'s H1 heading restored (lost in an earlier commit)
+
+**Build & Metadata**
+
+- Project version bumped to 7.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Test Coverage:**
+
+- No dedicated new unit test coverage was added for the new IPSC request DTOs in this pass — they're groundwork, not yet exercised by any controller/service; verified via `./mvnw clean compile` and the existing suite passing unchanged
+- The four renamed test methods keep their existing coverage — only the names changed, no behaviour or assertions touched
+
+**Architecture Highlights:**
+
+- No architectural change — the new DTOs extend the existing `models/ipsc/` package structure without altering the layered architecture; `IpscController` remains an empty stub
+
+**Technical Focus:**
+
+- IPSC domain-layer groundwork (request DTOs, Comstock-scoring shared fields)
+- API surface cleanup (route prefix)
+- Documentation-convention consistency (serial commas, identifier spelling, file naming)
+
+---
+
+### Phase 16: Test Suite Conventions, AI-Agent Tooling and Dependency Maintenance (v7.2.0)
 
 **Duration:** August 25, 2026
 
-A process-and-tooling release with no domain-model or API surface changes: formalises test-file conventions, closes coverage gaps identified by JaCoCo, adds two new Claude Code scaffolding commands, and upgrades the Spring Boot parent.
+A process-and-tooling release with no domain-model or API surface changes: formalises test-file conventions, closes coverage gaps identified by JaCoCo, adds two new Claude Code scaffolding commands and upgrades the Spring Boot parent.
 
 **Key Accomplishments:**
 
 **Test Coverage & Structure**
 
 - `services/AwardServiceTest`/`services/ImageServiceTest` — new Mockito-based interface-contract unit tests, exercising `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class
-- Four JaCoCo-identified coverage gaps closed: `ControllerResponse(boolean, String)` and the derived-success-from-error-presence branch of `ControllerResponse(LocalDateTime, String, String)`; `FirearmType.toString()` for both enum-constructor shapes; `ControllerAdvice.logError`'s null-throwable, wrapped-cause, and null-`WebRequest` branches (this class's branch coverage went 92% → 100%). Overall suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
+- Four JaCoCo-identified coverage gaps closed: `ControllerResponse(boolean, String)` and the derived-success-from-error-presence branch of `ControllerResponse(LocalDateTime, String, String)`; `FirearmType.toString()` for both enum-constructor shapes; `ControllerAdvice.logError`'s null-throwable, wrapped-cause and null-`WebRequest` branches (this class's branch coverage went 92% → 100%). Overall suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - `HpscWebApplicationTests` renamed to `HpscWebApplicationTest` to match the project's `<ClassName>Test` naming convention
 - 26 existing test files retrofitted with a new AGENTS.md test convention: a one-line `// methodName()` header before each method's test group, ordered constructors → public → protected → alphabetical by name → `toString()` last — no test behaviour changed, purely comments and reordering
 
@@ -895,7 +966,7 @@ A process-and-tooling release with no domain-model or API surface changes: forma
 
 - `/scaffold-unit-tests` migrated from a stale `.github/prompts/scaffold-unit-tests.prompt.md` that referenced a different project's package and an invented "Layer 1/2/3" test pattern; corrected to this repo's real interface/impl test split
 - New `/scaffold-integration-tests`, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template
-- Both commands defer to their loaded `AGENTS.md`/`CLAUDE.md` rather than restating conventions inline, accept multiple targets per invocation, and never commit on their own
+- Both commands defer to their loaded `AGENTS.md`/`CLAUDE.md` rather than restating conventions inline, accept multiple targets per invocation and never commit on their own
 - `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` now exclude datasource/JPA/messaging autoconfiguration, since neither service touches the database
 
 **Dependency Maintenance**
@@ -907,7 +978,7 @@ A process-and-tooling release with no domain-model or API surface changes: forma
 
 - New CLAUDE.md Git Workflow section states the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`); AGENTS.md/CONTRIBUTING.md's develop-first rule gains a "for testing before they ship" clarification
 - CLAUDE.md now cross-links to AGENTS.md and corrects its package-overview table (`ControllerAdvice` lives in `configs/`, not `exceptions/`)
-- A false claim that AssertJ is used for assertions (it is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`) removed from AGENTS.md, CLAUDE.md, README.md, ARCHITECTURE.md, and CONTRIBUTING.md
+- A false claim that AssertJ is used for assertions (it is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`) removed from AGENTS.md, CLAUDE.md, README.md, ARCHITECTURE.md and CONTRIBUTING.md
 
 **Build & Metadata**
 
@@ -915,11 +986,11 @@ A process-and-tooling release with no domain-model or API surface changes: forma
 
 **Test Coverage**
 
-- No dedicated new domain/repository/controller test coverage was needed (none of those layers changed); verified via the full test suite (492 tests, up from 483 at the start of this release), `./mvnw verify -Pcoverage`, and manual Flyway commands (`flyway:info`/`flyway:migrate`) against a real local MySQL 9.5 dev database
+- No dedicated new domain/repository/controller test coverage was needed (none of those layers changed); verified via the full test suite (492 tests, up from 483 at the start of this release), `./mvnw verify -Pcoverage` and manual Flyway commands (`flyway:info`/`flyway:migrate`) against a real local MySQL 9.5 dev database
 
 **Architecture Highlights:**
 
-- No architectural change — this release is entirely process, tooling, and dependency maintenance, keeping the test suite and AI-agent conventions consistent ahead of future feature work
+- No architectural change — this release is entirely process, tooling and dependency maintenance, keeping the test suite and AI-agent conventions consistent ahead of future feature work
 
 **Technical Focus:**
 
@@ -939,7 +1010,7 @@ A focused follow-up to the v7.0.0 shooter-log data model, correcting its scope (
 
 **Shooter Log Rename & Rescoping**
 
-- `ShooterLogEntry` renamed to `ShooterLogCompetitor` — the entity is a per-competitor snapshot row, not a generic log entry, and the new name says so
+- `ShooterLogEntry` renamed to `ShooterLogCompetitor` — the entity is a per-competitor snapshot row, not a generic log entry and the new name says so
 - `ShooterLog.powerFactor` (`PowerFactor`, via the existing `PowerFactorConverter`, not nullable) — the best-4-match calculation is now scoped by power factor as well as firearm type
 - `ShooterLogCompetitor.points` (nullable) — records the points each contributing `MatchCompetitor` row contributed to the snapshot's `logValue`
 - `ShooterLogCompetitor.match` (`@ManyToOne IpscMatch`, not nullable) — a direct match reference alongside the existing `matchCompetitor` link
@@ -978,7 +1049,7 @@ A focused follow-up to the v7.0.0 shooter-log data model, correcting its scope (
 
 **Duration:** August 11, 2026
 
-Extended the IPSC domain model to support club-scoped match results, match visitor tracking, and a persisted shooter-log ranking, promoting six entities parked under `domain/old/` back into the live domain package and pairing them with a fully rebuilt repository layer.
+Extended the IPSC domain model to support club-scoped match results, match visitor tracking and a persisted shooter-log ranking, promoting six entities parked under `domain/old/` back into the live domain package and pairing them with a fully rebuilt repository layer.
 
 **Key Accomplishments:**
 
@@ -1022,7 +1093,7 @@ Extended the IPSC domain model to support club-scoped match results, match visit
 **Test Coverage**
 
 - `./mvnw clean compile` succeeds for all 8 entities and 8 repositories
-- `HpscWebApplicationTests` — Spring context boots against H2 (`ddl-auto=create-drop`); Hibernate builds the schema for all 8 entities, validating every `@JoinColumn`, converter, and unique constraint (1/1 passing)
+- `HpscWebApplicationTests` — Spring context boots against H2 (`ddl-auto=create-drop`); Hibernate builds the schema for all 8 entities, validating every `@JoinColumn`, converter and unique constraint (1/1 passing)
 - No dedicated new unit/integration test coverage added for the new/changed domain model in this release
 
 **Statistics**
@@ -1052,7 +1123,7 @@ Extended the IPSC domain model to support club-scoped match results, match visit
 
 **Duration:** May 1, 2026
 
-Introduced a versioned, resource-oriented match management API, completed the entity service encapsulation layer, and restructured all IPSC model packages for long-term growth.
+Introduced a versioned, resource-oriented match management API, completed the entity service encapsulation layer and restructured all IPSC model packages for long-term growth.
 
 **Key Accomplishments:**
 
@@ -1111,7 +1182,7 @@ Introduced a versioned, resource-oriented match management API, completed the en
 **Build & Metadata**
 
 - Spring Boot upgraded 4.0.5 → 4.0.6
-- MIT Licence, developer profile, and SCM connection added to `pom.xml`
+- MIT Licence, developer profile and SCM connection added to `pom.xml`
 - `logback-spring.xml` updated with additional logger configuration
 
 **Test Coverage**
@@ -1148,7 +1219,7 @@ Introduced a versioned, resource-oriented match management API, completed the en
 
 **Duration:** April 26, 2026
 
-The most extensive single-release test expansion in the project's history, alongside competitor enrolment support, a major service renaming, and CI/CD quality gate integration.
+The most extensive single-release test expansion in the project's history, alongside competitor enrolment support, a major service renaming and CI/CD quality gate integration.
 
 **Key Accomplishments:**
 
@@ -1233,7 +1304,7 @@ The most extensive single-release test expansion in the project's history, along
 
 **Duration:** March 15, 2026
 
-Focused consolidation of services, introduction of custom JPA converters, and repository query optimisation.
+Focused consolidation of services, introduction of custom JPA converters and repository query optimisation.
 
 **Key Accomplishments:**
 
@@ -1425,18 +1496,29 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 - Enhanced null safety and code quality
 - Major service refactoring (61 files, +13,567 lines)
 
-**Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety, and comprehensive test coverage across all services and utilities.
+**Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and comprehensive test coverage across all services and utilities.
 
 ---
 
-### Milestone 16: Test Suite Conventions, AI-Agent Tooling, and Dependency Maintenance (v7.2.0)
+### Milestone 17: IPSC Request DTOs, Route Cleanup & Documentation Conventions (v7.4.0)
+
+- New `models/ipsc/request`/`models/ipsc/shared` packages — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest`/`MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) and `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`, groundwork for the IPSC module rebuild
+- `AwardController`/`ImageController` routes simplified from `/v1/awards`/`/v1/images` to `/awards`/`/images`
+- New AGENTS.md Serial commas rule and a British English rule tightened to cover code identifiers, both applied across the existing documentation set; `documentation/roadmap/` renamed to kebab-case
+- New `/sync-unreleased-changes` Claude Code command; `RELEASE_NOTES.md` Contributors now sourced from `git log`
+
+**Achievement:** Laid IPSC request-DTO groundwork for the module rebuild while cleaning up a stale API route and tightening the project's own documentation conventions — no domain/service/architecture changes.
+
+---
+
+### Milestone 16: Test Suite Conventions, AI-Agent Tooling and Dependency Maintenance (v7.2.0)
 
 - 26 test files retrofitted with a new `// methodName()` header-comment/ordering convention; 4 JaCoCo-identified coverage gaps closed; suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - New `/scaffold-unit-tests` (corrected from a stale, wrong-project prompt) and `/scaffold-integration-tests` Claude Code commands
 - Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides cleaned up; `flyway-mysql` bumped to match Boot's newly managed Flyway version
-- Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage`, and manual Flyway commands against a real MySQL dev database
+- Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage` and manual Flyway commands against a real MySQL dev database
 
-**Achievement:** Brought the entire existing test suite into line with a newly formalised AGENTS.md convention, closed every coverage gap JaCoCo could find, and corrected/extended the AI-agent tooling — all without touching the domain model, keeping the codebase consistent ahead of future feature work.
+**Achievement:** Brought the entire existing test suite into line with a newly formalised AGENTS.md convention, closed every coverage gap JaCoCo could find and corrected/extended the AI-agent tooling — all without touching the domain model, keeping the codebase consistent ahead of future feature work.
 
 ---
 
@@ -1460,7 +1542,7 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 - New `ShooterLog`/`ShooterLogEntry` entities persist best-4-match shooter-log snapshots
 - `repositories/` package rebuilt from scratch with 8 new `JpaRepository` interfaces
 
-**Achievement:** Extended the IPSC domain model with club-scoped results, visitor tracking, and a persisted shooter-log data model, restoring the six entities parked under `domain/old/` and pairing them with a complete repository layer — domain-layer groundwork ahead of the service/controller/import-pipeline wiring still to come.
+**Achievement:** Extended the IPSC domain model with club-scoped results, visitor tracking and a persisted shooter-log data model, restoring the six entities parked under `domain/old/` and pairing them with a complete repository layer — domain-layer groundwork ahead of the service/controller/import-pipeline wiring still to come.
 
 ---
 
@@ -1485,7 +1567,7 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 - 20+ new test classes (~7,000 lines) — the largest single-release test expansion in project history
 - Qodana JVM linting and JaCoCo code coverage integrated into the CI/CD pipeline
 
-**Achievement:** Delivered the project's most comprehensive test suite expansion, introduced competitor enrolment support and SAPSA validation, modernised the service naming for improved clarity, and strengthened the CI/CD pipeline with static analysis and code coverage quality gates.
+**Achievement:** Delivered the project's most comprehensive test suite expansion, introduced competitor enrolment support and SAPSA validation, modernised the service naming for improved clarity and strengthened the CI/CD pipeline with static analysis and code coverage quality gates.
 
 ---
 
@@ -1497,7 +1579,7 @@ Focused consolidation of services, introduction of custom JPA converters, and re
 - All bidirectional @OneToMany relationships corrected with mappedBy
 - Repository queries optimised with Set deduplication and scheduled date constraints
 
-**Achievement:** Focused service consolidation and type-safety improvements simplifying the service architecture, correcting JPA entity relationships, and improving repository query accuracy.
+**Achievement:** Focused service consolidation and type-safety improvements simplifying the service architecture, correcting JPA entity relationships and improving repository query accuracy.
 
 ---
 
@@ -1670,7 +1752,7 @@ Claude Code Commands
 
 **Characteristics:**
 
-- No domain/repository/architectural change — this release formalises and retrofits a test-file convention (26 files), closes 4 JaCoCo coverage gaps, and corrects/extends AI-agent tooling
+- No domain/repository/architectural change — this release formalises and retrofits a test-file convention (26 files), closes 4 JaCoCo coverage gaps and corrects/extends AI-agent tooling
 - Spring Boot parent `4.0.7` → `4.1.0`, with redundant `pom.xml` overrides removed and `flyway-mysql` kept in sync with Boot's managed `flyway.version`
 
 ---
@@ -1729,7 +1811,7 @@ TransformationService        ↓
 - Per-stage results attach to a `MatchCompetitor` (firearm-type entry), not directly to a `Competitor`
 - `ShooterLog`/`ShooterLogEntry` persist point-in-time best-4-match snapshots
 - `repositories/` package fully rebuilt (8 interfaces); no new enums or converters required
-- Domain-layer groundwork only — service, controller, and import-pipeline wiring still to come
+- Domain-layer groundwork only — service, controller and import-pipeline wiring still to come
 
 ---
 
@@ -1940,7 +2022,7 @@ AttributeConverters
     - `IpscUtilTest` (utility — string formatting edge cases)
     - `IpscControllerTest` removed; covered by `IpscMatchControllerTest`
     - Major suite updates: `TransformationServiceTest` (+747), `DomainServiceTest` (+247), `TransactionServiceTest` (+246), `ValueUtilTest` (+294)
-- **v7.0.0:** No new dedicated unit/integration test coverage for the promoted/extended entities or the 8 new repositories — verified instead via `./mvnw clean compile` and `HpscWebApplicationTests` (Spring context boot against H2, Hibernate schema build validating every `@JoinColumn`, converter, and unique constraint across all 8 entities)
+- **v7.0.0:** No new dedicated unit/integration test coverage for the promoted/extended entities or the 8 new repositories — verified instead via `./mvnw clean compile` and `HpscWebApplicationTests` (Spring context boot against H2, Hibernate schema build validating every `@JoinColumn`, converter and unique constraint across all 8 entities)
 - **v7.1.0:** No new dedicated unit/integration test coverage for the renamed/rescoped `ShooterLogCompetitor` entity — same verification approach as v7.0.0 (compile + `HpscWebApplicationTests` H2 schema build)
 - **v7.2.0:** New interface-contract tests `AwardServiceTest`/`ImageServiceTest`; 4 JaCoCo-identified coverage gaps closed in `ControllerResponseTest`, `FirearmTypeTest`, `ControllerAdviceTest` (suite coverage 95.7%/91.7% → 97.3%/98.1%); `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with the new `// methodName()` header-comment/ordering convention (comments and reordering only — no behaviour change)
 
@@ -2053,7 +2135,7 @@ AttributeConverters
 - Repoint per-stage results from `Competitor` to `MatchCompetitor` to support multiple firearm-type entries per competitor per match
 - Introduce `ShooterLog`/`ShooterLogEntry` as persisted best-4-match snapshots, deferring the recalculation job/service to a future release
 - Rebuild the `repositories/` package from scratch alongside the promoted domain model
-- Deliver domain-layer groundwork deliberately ahead of service, controller, and import-pipeline wiring
+- Deliver domain-layer groundwork deliberately ahead of service, controller and import-pipeline wiring
 
 ### Refinement Phase (v7.1.0)
 
@@ -2136,7 +2218,7 @@ AttributeConverters
     - `DomainServiceImpl` fully decoupled from repositories — completing the intended layered architecture
     - All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` added for match-specific classes
     - `IpscUtil` centralises display-string construction; `MatchOnlyDto/Request/Response` support match CRUD
-    - 8 new test classes (~1,300 lines) covering controller, service, integration, DTO, and utility layers
+    - 8 new test classes (~1,300 lines) covering controller, service, integration, DTO and utility layers
     - Statistics: 40 commits, 165 files changed, +6,779 insertions, -3,501 deletions
 12. **Match Results, Visitor Tracking & Shooter Log Data Model (v7.0.0):** Domain-layer groundwork ahead of the pipeline
     - Six entities promoted from `domain/old/` back into `domain`; `.old` package retired
@@ -2220,11 +2302,11 @@ Based on the evolution to v7.2.0, the following areas are identified for future 
 
 ### Short-term (Minor Releases)
 
-- Wire service/controller/import support for `homeClub`, `clubRanking`, `isVisitor`, `ShooterLog`, and `ShooterLogEntry` — currently schema-only
+- Wire service/controller/import support for `homeClub`, `clubRanking`, `isVisitor`, `ShooterLog` and `ShooterLogEntry` — currently schema-only
 - Build a `ShooterLogService` to calculate and persist best-4-match snapshots — no calculation job/service exists yet
-- Populate `overallRanking`, `clubRanking`, and `isVisitor` during match-result import
+- Populate `overallRanking`, `clubRanking` and `isVisitor` during match-result import
 - Seed `Club.identifier` (HPSC, SOSC, PMPSC) and backfill `Competitor.homeClub`
-- Add entity, repository, and integration test coverage for the promoted/extended domain model
+- Add entity, repository and integration test coverage for the promoted/extended domain model
 - Implement match search endpoints using `MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest`
 - Full `IpscMemberController` implementation for member CRUD
 - Complete Javadoc coverage for `IpscMatchController`, `IpscMatchService`, `IpscUtil`, `MatchOnlyDto`
@@ -2252,36 +2334,36 @@ Based on the evolution to v7.2.0, the following areas are identified for future 
 
 The HPSC Website Backend has evolved from a simple image gallery application into a sophisticated, specialised platform for managing practical shooting competition data. This evolution demonstrates a commitment to:
 
-- **Continuous Improvement:** Regular releases addressing quality, features, and standards
+- **Continuous Improvement:** Regular releases addressing quality, features and standards
 - **Domain Alignment:** Progressive refinement toward IPSC compliance and specialisation
 - **Architectural Excellence:** Evolution from monolithic to modular, testable architecture with three-tier mapping and consolidated service boundaries
 - **Standard Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
-- **Code Maintainability:** Systematic refinement of test organisation, consolidation, and architectural separation (v5.1.0, v5.2.0, v5.3.0, v5.4.0)
+- **Code Maintainability:** Systematic refinement of test organisation, consolidation and architectural separation (v5.1.0, v5.2.0, v5.3.0, v5.4.0)
 - **Type Safety:** Custom JPA converters ensuring explicit, testable enum persistence (v5.3.0)
 - **Service Simplicity:** Removal of unnecessary abstractions for cleaner, more cohesive architecture (v5.3.0, v5.4.0)
 - **Competitor Enrolment:** First-class tracking of competitor participation through dedicated DTOs and validation workflows (v5.4.0)
 - **CI/CD Quality Gates:** Qodana JVM static analysis and JaCoCo coverage enforcement raising the quality baseline across the entire codebase (v5.4.0)
 - **Versioned Match API:** Dedicated `/v2/ipsc/matches` controller providing resource-oriented CRUD separate from the bulk-import flow (v6.0.0)
 - **Layer Enforcement:** `DomainServiceImpl` no longer reaches past entity services into repositories, fully realising the layered architecture (v6.0.0)
-- **Club-Scoped Results & Visitor Tracking:** `Club.identifier`, `Competitor.homeClub`, and `MatchCompetitor.clubRanking`/`isVisitor` model club results and visitors relationally (v7.0.0)
+- **Club-Scoped Results & Visitor Tracking:** `Club.identifier`, `Competitor.homeClub` and `MatchCompetitor.clubRanking`/`isVisitor` model club results and visitors relationally (v7.0.0)
 - **Shooter Log Foundations:** `ShooterLog`/`ShooterLogEntry` persist best-4-match snapshots, laying the data model for a future ranking calculation service (v7.0.0)
 - **Shooter Log Correction:** `ShooterLogEntry` renamed to `ShooterLogCompetitor` and rescoped by `PowerFactor`, keeping the data model accurate before a calculation service is built against it (v7.1.0)
 - **Test Suite Consistency:** A formalised, repo-wide test-file convention (method-comment headers, group ordering) retrofitted across the existing suite, alongside four JaCoCo-identified coverage gaps closed (v7.2.0)
 
-The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with service transformation in v5.4.0, the dedicated match CRUD API with service encapsulation in v6.0.0, the match results/visitor tracking/shooter log data model in v7.0.0, the shooter-log naming/scope correction in v7.1.0, and the test-convention formalisation and dependency maintenance in v7.2.0 mark significant maturation points where the project demonstrates stable, predictable releases with clear separation of concerns. These releases serve as a solid foundation for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
+The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with service transformation in v5.4.0, the dedicated match CRUD API with service encapsulation in v6.0.0, the match results/visitor tracking/shooter log data model in v7.0.0, the shooter-log naming/scope correction in v7.1.0 and the test-convention formalisation and dependency maintenance in v7.2.0 mark significant maturation points where the project demonstrates stable, predictable releases with clear separation of concerns. These releases serve as a solid foundation for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
 
-Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity relationships, optimised repositories, and a consolidated service architecture that reduces complexity without sacrificing capability.
+Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity relationships, optimised repositories and a consolidated service architecture that reduces complexity without sacrificing capability.
 
-Version 5.4.0 extends that foundation with competitor enrolment tracking, SAPSA number validation, `TransformationService` replacing `IpscMatchService`, a comprehensive package restructure from `ipsc/domain` to `ipsc/data`, and a significant test expansion — all underpinned by Qodana JVM static analysis and JaCoCo code coverage enforcement that set a new quality baseline for the project.
+Version 5.4.0 extends that foundation with competitor enrolment tracking, SAPSA number validation, `TransformationService` replacing `IpscMatchService`, a comprehensive package restructure from `ipsc/domain` to `ipsc/data` and a significant test expansion — all underpinned by Qodana JVM static analysis and JaCoCo code coverage enforcement that set a new quality baseline for the project.
 
-Version 6.0.0 marks a decisive architectural milestone: `DomainServiceImpl` no longer bypasses the entity service boundary to reach JPA repositories, `IpscMatchController` establishes a versioned, resource-oriented match API at `/v2/ipsc/matches`, and the IPSC model packages are restructured under `models/ipsc/common/` and `models/ipsc/match/` — providing clear, scalable homes for shared and match-specific models as the domain continues to grow.
+Version 6.0.0 marks a decisive architectural milestone: `DomainServiceImpl` no longer bypasses the entity service boundary to reach JPA repositories, `IpscMatchController` establishes a versioned, resource-oriented match API at `/v2/ipsc/matches` and the IPSC model packages are restructured under `models/ipsc/common/` and `models/ipsc/match/` — providing clear, scalable homes for shared and match-specific models as the domain continues to grow.
 
-Version 7.0.0 extends the domain model with club-scoped results, visitor tracking, and a persisted shooter log: the six entities parked under `domain/old/` are promoted back into `domain`, `Club`, `Competitor`, and `MatchCompetitor` gain the fields needed to model home clubs, club rankings, and match visitors relationally, `MatchStageCompetitor` is repointed to `MatchCompetitor` to support multiple firearm-type entries per competitor, and the new `ShooterLog`/`ShooterLogEntry` entities persist best-4-match snapshots — all paired with a `repositories/` package rebuilt from scratch. This release is deliberately domain-layer groundwork; the service, controller, and import-pipeline wiring to make these fields load-bearing remains for a future release.
+Version 7.0.0 extends the domain model with club-scoped results, visitor tracking and a persisted shooter log: the six entities parked under `domain/old/` are promoted back into `domain`, `Club`, `Competitor` and `MatchCompetitor` gain the fields needed to model home clubs, club rankings and match visitors relationally, `MatchStageCompetitor` is repointed to `MatchCompetitor` to support multiple firearm-type entries per competitor and the new `ShooterLog`/`ShooterLogEntry` entities persist best-4-match snapshots — all paired with a `repositories/` package rebuilt from scratch. This release is deliberately domain-layer groundwork; the service, controller and import-pipeline wiring to make these fields load-bearing remains for a future release.
 
-Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model: `ShooterLogEntry` is renamed to `ShooterLogCompetitor` for naming accuracy, `ShooterLog` gains a `powerFactor` column so best-4-match snapshots are scoped correctly, and `ShooterLogCompetitor` gains `points` and a direct `match` reference. Both tables remain schema-only — still no calculation service consumes them — so this release is about getting the shape right before that service is built. Alongside the schema work, the release also migrates the repository's AI-agent prompt files to Claude Code commands, adopts GitFlow branching, and adds `CONTRIBUTING.md`.
+Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model: `ShooterLogEntry` is renamed to `ShooterLogCompetitor` for naming accuracy, `ShooterLog` gains a `powerFactor` column so best-4-match snapshots are scoped correctly and `ShooterLogCompetitor` gains `points` and a direct `match` reference. Both tables remain schema-only — still no calculation service consumes them — so this release is about getting the shape right before that service is built. Alongside the schema work, the release also migrates the repository's AI-agent prompt files to Claude Code commands, adopts GitFlow branching and adds `CONTRIBUTING.md`.
 
-Version 7.2.0 touches no domain model, repository, or API surface at all — it is entirely process, tooling, and dependency maintenance. A new AGENTS.md test convention (a one-line `// methodName()` header before each method's test group, ordered constructors → public → protected → alphabetical → `toString()` last) is retrofitted across 26 existing test files, four JaCoCo-identified coverage gaps are closed (raising suite coverage from 95.7%/91.7% to 97.3%/98.1%), and two new Claude Code commands (`/scaffold-unit-tests`, `/scaffold-integration-tests`) are added to keep future test scaffolding consistent with these conventions automatically. The release also upgrades the Spring Boot parent to 4.1.0, cleaning up several dependency-version overrides that had quietly become redundant or, in one case, never actually worked (a typo'd property name), and adds an explicit Git Workflow section to CLAUDE.md stating GitFlow's PR targets directly (`feature/*` → `develop`; `release/*`/`hotfix/*` → `main`) instead of deferring entirely to AGENTS.md.
+Version 7.2.0 touches no domain model, repository or API surface at all — it is entirely process, tooling and dependency maintenance. A new AGENTS.md test convention (a one-line `// methodName()` header before each method's test group, ordered constructors → public → protected → alphabetical → `toString()` last) is retrofitted across 26 existing test files, four JaCoCo-identified coverage gaps are closed (raising suite coverage from 95.7%/91.7% to 97.3%/98.1%) and two new Claude Code commands (`/scaffold-unit-tests`, `/scaffold-integration-tests`) are added to keep future test scaffolding consistent with these conventions automatically. The release also upgrades the Spring Boot parent to 4.1.0, cleaning up several dependency-version overrides that had quietly become redundant or, in one case, never actually worked (a typo'd property name) and adds an explicit Git Workflow section to CLAUDE.md stating GitFlow's PR targets directly (`feature/*` → `develop`; `release/*`/`hotfix/*` → `main`) instead of deferring entirely to AGENTS.md.
 
 ---
 
@@ -2298,7 +2380,7 @@ Version 7.2.0 touches no domain model, repository, or API surface at all — it 
 - `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with a new `// methodName()` header-comment/ordering convention — comments and reordering only, no behaviour change
 - Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides removed (`spring-framework.version`, `tomcat.version`, a typo'd `commons.lang3.version`, `maven-dependency-plugin` pin); `flyway-mysql` bumped `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version`
 - Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
-- Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage`, and manual Flyway commands against a real local MySQL 9.5 dev database
+- Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage` and manual Flyway commands against a real local MySQL 9.5 dev database
 - New CLAUDE.md Git Workflow section states PR targets directly (`feature/*` → `develop`; `release/*`/`hotfix/*` → `main`); a false claim that AssertJ is used for assertions removed from five project docs
 
 **Previous Update (v7.1.0):**
@@ -2348,8 +2430,8 @@ Version 7.2.0 touches no domain model, repository, or API surface at all — it 
 - `EnrolledCompetitorDto` introduced for first-class competitor enrolment tracking
 - SAPSA number validation and competitor deduplication logic was added
 - `IpscMatchService` renamed to `TransformationService` for clearer intent
-- Package restructure: `ipsc/domain` → `ipsc/data` across all entities, repositories, and services
-- `CompetitorMatchRecord` split into `CompetitorRecord`, `CompetitorResultRecord`, `MatchCompetitorOverallResultsRecord`, and `MatchCompetitorStageResultRecord`
+- Package restructure: `ipsc/domain` → `ipsc/data` across all entities, repositories and services
+- `CompetitorMatchRecord` split into `CompetitorRecord`, `CompetitorResultRecord`, `MatchCompetitorOverallResultsRecord` and `MatchCompetitorStageResultRecord`
 - `MatchHolder` data class introduced for match context management
 - `ClubIdentifier` enum extended with abbreviation field
 - Qodana JVM linter (`jetbrains/qodana-jvm:2025.3`) and JaCoCo 0.8.14 code coverage added

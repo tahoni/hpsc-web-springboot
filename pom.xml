@@ -12,7 +12,7 @@
     <!-- Application definition -->
     <groupId>za.co.hpsc</groupId>
     <artifactId>hpsc-web</artifactId>
-    <version>7.3.0</version>
+    <version>7.4.0</version>
     <name>hpsc-web</name>
     <description>HPSC website backend</description>
 
@@ -48,12 +48,20 @@
 
     <!-- Spring Boot 4.1.0 still manages jackson-databind (2.x) one patch behind its fix version;
          override it explicitly until a Spring Boot release picks up 2.21.5 by default. -->
+    <!-- Spring Boot 4.1.0 still manages log4j-api (pulled in transitively via log4j-to-slf4j)
+         one patch behind its fix version for CVE-2026-49844 (GHSA-qv9r-c865-cp47); override it
+         explicitly until a Spring Boot release picks up 2.25.5 by default. -->
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>2.21.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.25.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

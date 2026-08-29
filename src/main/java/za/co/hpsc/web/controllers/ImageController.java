@@ -29,7 +29,7 @@ import za.co.hpsc.web.services.ImageService;
  * </p>
  */
 @Controller
-@RequestMapping("/v1/images")
+@RequestMapping("/images")
 @Tag(name = "Images API", description = "API for image-related functionality.")
 public class ImageController {
     private final ImageService imageService;

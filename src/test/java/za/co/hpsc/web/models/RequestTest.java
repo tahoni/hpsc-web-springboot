@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RequestTest {
     // Request()
     @Test
-    void testDefaultConstructor_whenInvoked_thenInitializesWithEmptyTagsAndNullTextFields() {
+    void testDefaultConstructor_whenInvoked_thenInitialisesWithEmptyTagsAndNullTextFields() {
         // Arrange & Act
         Request request = new Request();
 
@@ -25,7 +25,7 @@ public class RequestTest {
 
     // Request(String)
     @Test
-    void testShortConstructor_whenTitleProvided_thenSetsTitleAndInitializesEmptyTags() {
+    void testShortConstructor_whenTitleProvided_thenSetsTitleAndInitialisesEmptyTags() {
         // Arrange
         String title = "My Request";
 
@@ -63,7 +63,7 @@ public class RequestTest {
     }
 
     @Test
-    void testFullConstructor_whenTagsNull_thenInitializesTagsAsEmptyList() {
+    void testFullConstructor_whenTagsNull_thenInitialisesTagsAsEmptyList() {
         // Arrange
         String title = "Title";
 
