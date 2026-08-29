@@ -33,7 +33,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public abstract class MatchStageResultRequestForCSV {
-    /** Internal identifier of the match this stage result belongs to; not part of the CSV export, populated separately. */
+    /** Internal identifier of the match this stage result belongs to; not part of the CSV export,
+     * populated separately. */
     private Long matchId;
     /** The stage's number/order within the match. */
     private Integer stageNumber;
@@ -42,13 +43,15 @@ public abstract class MatchStageResultRequestForCSV {
     /** This stage's score as a percentage of the stage winner's hit factor (winner = 100%). */
     @JsonProperty("%")
     private BigDecimal stagePercentage;
-    /** Weighted score points earned on this stage — the stage's raw {@link #points} scaled by {@link #stagePercentage}. */
+    /** Weighted score points earned on this stage — the stage's raw {@link #points}
+     * scaled by {@link #stagePercentage}. */
     @JsonProperty("Stg Pts")
     private BigDecimal stagePoints;
     /** Raw score points on this stage, before weighting against the stage winner. */
     @JsonProperty("Pts")
     private Integer points;
-    /** Hit factor for this stage — raw score divided by {@link #time}, the figure the stage is ranked on. */
+    /** Hit factor for this stage — raw score divided by {@link #time},
+     * the figure the stage is ranked on. */
     @JsonProperty("HF")
     private BigDecimal hitFactor;
     /** Time, in seconds, taken to complete this stage. */

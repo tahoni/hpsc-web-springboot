@@ -26,16 +26,20 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 public class IpscMatchStageScore extends IpscCommonScore {
-    /** Raw points scored on this stage (weighted alpha/charlie/delta hits minus penalties) before dividing by time. */
+    /** Raw points scored on this stage (weighted alpha/charlie/delta hits minus penalties)
+     * before dividing by time. */
     private Integer rawPoints;
-    /** {@code rawPoints / time} — the figure the stage is ranked on; the stage winner's hit factor is the 100% benchmark. */
+    /** {@code rawPoints / time} — the figure the stage is ranked on; the stage winner's hit factor
+     * is the 100% benchmark. */
     private BigDecimal hitFactor;
 
-    public IpscMatchStageScore(BigDecimal percentage, BigDecimal weightedPoints, BigDecimal time, PowerFactor powerFactor,
-                               Integer alpha, Integer charlie, Integer delta, Integer noShoots, Integer misses,
-                               Integer noPenaltyMisses, Integer proceduralErrors, Integer additionalPenalties,
-                               Integer rawPoints, BigDecimal hitFactor) {
-        super(percentage, weightedPoints, time, powerFactor, alpha, charlie, delta, noShoots, misses, noPenaltyMisses, proceduralErrors, additionalPenalties);
+    public IpscMatchStageScore(BigDecimal percentage, BigDecimal weightedPoints, BigDecimal time,
+                               PowerFactor powerFactor, Integer alpha, Integer charlie, Integer delta,
+                               Integer noShoots, Integer misses, Integer noPenaltyMisses,
+                               Integer proceduralErrors, Integer additionalPenalties, Integer rawPoints,
+                               BigDecimal hitFactor) {
+        super(percentage, weightedPoints, time, powerFactor, alpha, charlie, delta, noShoots,
+                misses, noPenaltyMisses, proceduralErrors, additionalPenalties);
         this.rawPoints = rawPoints;
         this.hitFactor = hitFactor;
     }

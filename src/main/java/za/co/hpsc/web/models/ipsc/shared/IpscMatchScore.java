@@ -24,14 +24,16 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 public class IpscMatchScore extends IpscCommonScore {
-    /** Total hits (weighted by the power factor less penalties) as a percentage of the maximum points available in the match — accuracy only, independent of time. */
+    /** Total hits (weighted by the power factor less penalties) as a percentage
+     * of the maximum points available in the match — accuracy only, independent of time. */
     private BigDecimal percentageOfPossiblePoints;
 
     public IpscMatchScore(BigDecimal percentage, BigDecimal weightedPoints, BigDecimal time, PowerFactor powerFactor,
                           Integer alpha, Integer charlie, Integer delta, Integer noShoots, Integer misses,
                           Integer noPenaltyMisses, Integer proceduralErrors, Integer additionalPenalties,
                           BigDecimal percentageOfPossiblePoints) {
-        super(percentage, weightedPoints, time, powerFactor, alpha, charlie, delta, noShoots, misses, noPenaltyMisses, proceduralErrors, additionalPenalties);
+        super(percentage, weightedPoints, time, powerFactor, alpha, charlie, delta, noShoots,
+                misses, noPenaltyMisses, proceduralErrors, additionalPenalties);
         this.percentageOfPossiblePoints = percentageOfPossiblePoints;
     }
 }

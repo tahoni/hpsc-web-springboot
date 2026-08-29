@@ -33,11 +33,13 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 public class IpscCommonScore {
-    /** This competitor's score expressed as a percentage of the stage/match winner's score (winner = 100%). */
+    /** This competitor's score expressed as a percentage of the stage/match winner's score
+     * (winner = 100%). */
     private BigDecimal percentage;
     /** The weighted score points awarded to this competitor for the stage/match. */
     private BigDecimal weightedPoints;
-    /** Time, in seconds, taken to complete the course of fire; divided into the raw score to produce the Comstock hit factor. */
+    /** Time, in seconds, taken to complete the course of fire; divided into the raw score
+     * to produce the Comstock hit factor. */
     private BigDecimal time;
     /** Major or Minor — determines how many raw points each alpha/charlie/delta hit is worth. */
     private PowerFactor powerFactor;
@@ -47,20 +49,25 @@ public class IpscCommonScore {
     private Integer charlie;
     /** Number of hits in the D-zone (lowest-value scoring zone). */
     private Integer delta;
-    /** Number of penalty hits scored on no-shoot targets; each deducts points from the raw score. */
+    /** Number of penalty hits scored on no-shoot targets; each deducts points from
+     * the raw score. */
     private Integer noShoots;
-    /** Number of required hits not scored on a target (misses); each deducts points from the raw score. */
+    /** Number of required hits not scored on a target (misses); each deducts points from
+     * the raw score. */
     private Integer misses;
     /** Misses that, under the applicable rules, did not attract the usual miss penalty. */
     private Integer noPenaltyMisses;
-    /** Count of procedural penalties (rule infractions) applied, each deducting a fixed number of points. */
+    /** Count of procedural penalties (rule infractions) applied, each deducting a fixed
+     * number of points. */
     private Integer proceduralErrors;
-    /** Count of other additional penalties (e.g. safety, range command) applied on top of scoring/procedurals. */
+    /** Count of other additional penalties (e.g. safety, range command) applied on top of
+     * scoring/procedurals. */
     private Integer additionalPenalties;
 
-    public IpscCommonScore(BigDecimal percentage, BigDecimal weightedPoints, BigDecimal time, PowerFactor powerFactor,
-                           Integer alpha, Integer charlie, Integer delta, Integer noShoots, Integer misses,
-                           Integer noPenaltyMisses, Integer proceduralErrors, Integer additionalPenalties) {
+    public IpscCommonScore(BigDecimal percentage, BigDecimal weightedPoints, BigDecimal time,
+                           PowerFactor powerFactor, Integer alpha, Integer charlie, Integer delta,
+                           Integer noShoots, Integer misses, Integer noPenaltyMisses,
+                           Integer proceduralErrors, Integer additionalPenalties) {
         this.percentage = percentage;
         this.weightedPoints = weightedPoints;
         this.time = time;

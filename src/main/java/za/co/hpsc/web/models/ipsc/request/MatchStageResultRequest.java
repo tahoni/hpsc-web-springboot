@@ -35,7 +35,8 @@ public class MatchStageResultRequest {
     private String name;
     /** This stage's score as a percentage of the stage winner's hit factor (winner = 100%). */
     private BigDecimal stagePercentage;
-    /** Weighted score points earned on this stage — the stage's raw {@link #points} scaled by {@link #stagePercentage}. */
+    /** Weighted score points earned on this stage — the stage's raw {@link #points}
+     * scaled by {@link #stagePercentage}. */
     private BigDecimal stagePoints;
     /** Raw score points on this stage, before weighting against the stage winner. */
     private Integer points;

@@ -34,23 +34,27 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public abstract class MatchOverallResultRequestForCSV {
-    /** Internal identifier of the match this result belongs to; not part of the CSV export, populated separately. */
+    /** Internal identifier of the match this result belongs to; not part of the CSV export,
+     * populated separately. */
     private Long matchId;
     /** The competitor's full name. */
     private String name;
     /** Overall match score as a percentage of the match winner's score (winner = 100%). */
     @JsonProperty("%")
     private BigDecimal percentage;
-    /** Total weighted points earned across the match — the sum of the competitor's per-stage points. */
+    /** Total weighted points earned across the match — the sum of the competitor's
+     * per-stage points. */
     @JsonProperty("Pts")
     private BigDecimal points;
     /** Total time, in seconds, taken across the match's stages. */
     @JsonProperty("Time")
     private BigDecimal time;
-    /** Total hits (weighted by the power factor less penalties) as a percentage of the maximum points available in the match — accuracy only, independent of time. */
+    /** Total hits (weighted by the power factor less penalties) as a percentage of the maximum
+     * points available in the match — accuracy only, independent of time. */
     @JsonProperty("%psbl")
     private BigDecimal percentageOfPossiblePoints;
-    /** Hit factor — raw score divided by time, reported for overall results as an aggregate across the match. */
+    /** Hit factor — raw score divided by time, reported for overall results as an aggregate
+     * across the match. */
     @JsonProperty("HF")
     private BigDecimal hitFactor;
     /** Division the competitor shot in, e.g. Open, Standard, Production. */
@@ -62,7 +66,8 @@ public abstract class MatchOverallResultRequestForCSV {
     /** Competitor categories entered, e.g. Lady, Junior, Senior — comma-separated when more than one applies. */
     @JsonProperty("Cats")
     private String categories;
-    /** Major or Minor power factor — determines how many raw points each alpha/charlie/delta hit is worth. */
+    /** Major or Minor power factor — determines how many raw points each alpha/charlie/delta
+     * hit is worth. */
     @JsonProperty("PF")
     private String powerFactor;
     /** The competitor's membership number. */
@@ -89,7 +94,8 @@ public abstract class MatchOverallResultRequestForCSV {
     /** Total procedural penalties (rule infractions) applied across the match. */
     @JsonProperty("Proc")
     private Integer proceduralErrors;
-    /** Total additional penalties (e.g. safety, range command) applied across the match, on top of scoring/procedurals. */
+    /** Total additional penalties (e.g. safety, range command) applied across the match,
+     * on top of scoring/procedurals. */
     @JsonProperty("Apen")
     private Integer additionalPenalties;
 }
