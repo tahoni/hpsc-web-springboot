@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md)'s five gaps, organised by that document's Now/Next/Later/Ongoing phasing. Each section names its originating gap number for traceability back to the evidence and reasoning there.
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s five gaps, organised by that document's Now/Next/Later/Ongoing phasing. Each section names its originating gap number for traceability back to the evidence and reasoning there.
 
 ## Table of Contents
 
@@ -13,7 +13,7 @@ A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN
 
 ## 🚀 Now
 
-**CI build/test gate** *(IMPROVEMENT_PLAN.md → Gap #2)*
+**CI build/test gate** *(improvement-plan.md → Gap #2)*
 
 - [ ] Add `.github/workflows/build.yml`, triggered on push/PR to `develop` and `main`, mirroring `codeql.yml`'s trigger branches
 - [ ] Run `./mvnw verify -Pcoverage` as the workflow's build step
@@ -24,7 +24,7 @@ A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN
 
 ## 🏗️ Next
 
-**Match/competitor service and controller layer** *(IMPROVEMENT_PLAN.md → Gap #1)*
+**Match/competitor service and controller layer** *(improvement-plan.md → Gap #1)*
 
 - [ ] Introduce `ClubService` / `ClubServiceImpl` (interface + `impl/` split, matching the existing `AwardService`/`ImageService` pattern)
 - [ ] Introduce `CompetitorService` / `CompetitorServiceImpl`
@@ -38,12 +38,12 @@ A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN
 
 ## 🔬 Later
 
-**Coverage enforcement** *(IMPROVEMENT_PLAN.md → Gap #4)*
+**Coverage enforcement** *(improvement-plan.md → Gap #4)*
 
 - [ ] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile
 - [ ] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build
 
-**CSV persistence clarification** *(IMPROVEMENT_PLAN.md → Gap #3)*
+**CSV persistence clarification** *(improvement-plan.md → Gap #3)*
 
 - [ ] Decide whether `AwardService`/`ImageService` CSV processing is meant to stay stateless by design or should gain persistence
 - [ ] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md`
@@ -53,11 +53,11 @@ A concrete, checkbox-level breakdown of [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN
 
 ## 🔄 Ongoing
 
-**Dependency currency check** *(IMPROVEMENT_PLAN.md → Gap #5)*
+**Dependency currency check** *(improvement-plan.md → Gap #5)*
 
 - [ ] At each release, confirm whether Spring Boot's managed `jackson-databind` version has caught up to the manual override in `pom.xml`
 - [ ] Drop the override in the same pass as the version bump once it's redundant
 
 ---
 
-Check items off in place as work lands; don't delete a task outright. Once every item under a gap is checked, fold a short summary into `HISTORY.md`'s next per-version Future Roadmap notes and mark the gap closed here (e.g. strike it through with a "✅ Closed in vX.Y.Z" note), per `IMPROVEMENT_PLAN.md`'s Success Criteria.
+Check items off in place as work lands; don't delete a task outright. Once every item under a gap is checked, fold a short summary into `HISTORY.md`'s next per-version Future Roadmap notes and mark the gap closed here (e.g. strike it through with a "✅ Closed in vX.Y.Z" note), per `improvement-plan.md`'s Success Criteria.

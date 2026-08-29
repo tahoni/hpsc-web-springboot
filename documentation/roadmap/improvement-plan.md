@@ -15,7 +15,7 @@ This document synthesises the goals and constraints stated across this repositor
 
 ## 🎯 Purpose & Scope
 
-This plan draws only on what the repository already states about itself — `README.md`, `ARCHITECTURE.md`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `HISTORY.md`'s Future Roadmap sections, `pom.xml`, `application*.properties`, and `.github/workflows` — rather than introducing new goals. Where the documentation and the configuration disagree, or where a stated goal has no corresponding work item yet, that gap is called out below as an improvement opportunity.
+This plan draws only on what the repository already states about itself — `README.md`, `ARCHITECTURE.md`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `HISTORY.md`'s Future Roadmap sections, `pom.xml`, `application*.properties` and `.github/workflows` — rather than introducing new goals. Where the documentation and the configuration disagree, or where a stated goal has no corresponding work item yet, that gap is called out below as an improvement opportunity.
 
 It complements, rather than duplicates, `HISTORY.md`'s per-release "🚀 Future Roadmap Implications" section: that section tracks what changed release-to-release, while this document tracks the standing, cross-release gaps between the project's stated intent and its current state.
 
@@ -27,9 +27,9 @@ It complements, rather than duplicates, `HISTORY.md`'s per-release "🚀 Future 
 |-----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — explicitly called out as in-progress, not aspirational                                                                                                   |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                     |
-| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException`, or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                           |
+| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                            |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and code coverage (JaCoCo) are established quality gates; `./mvnw test` is documented as reviewer/local-only, not an automatic gate                                                                                                                     |
-| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning, and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md`, and archived per-version docs |
+| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs   |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                   |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                      |
 | `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.0) — this currency itself creates a maintenance constraint (see [Gaps](#-gaps--improvement-opportunities))                                                                                             |
@@ -42,7 +42,7 @@ It complements, rather than duplicates, `HISTORY.md`'s per-release "🚀 Future 
 
 ### 1. Match/competitor service and controller layer is the single largest stated gap
 
-**Evidence:** `README.md`, `ARCHITECTURE.md`, and `CLAUDE.md` all independently flag that `IpscController` is an empty stub, that `repositories/` currently has no service-layer caller, and that the service/model/entity-service layers described in earlier project versions were removed pending a rebuild.
+**Evidence:** `README.md`, `ARCHITECTURE.md` and `CLAUDE.md` all independently flag that `IpscController` is an empty stub, that `repositories/` currently has no service-layer caller and that the service/model/entity-service layers described in earlier project versions were removed pending a rebuild.
 
 **Why it matters:** Every other goal in this document (layering discipline, test conventions, exception handling) exists to be applied to real code — right now the domain with the most entities (8 JPA entities, 6 converters) has no API surface exercising it at all.
 
@@ -81,7 +81,7 @@ It complements, rather than duplicates, `HISTORY.md`'s per-release "🚀 Future 
 
 **Why it matters:** This is a manually tracked, easy-to-forget override — nothing flags when the upstream Spring Boot BOM catches up and the override becomes redundant (the same category of clean-up the v7.2.0 release already did for `spring-framework.version`/`tomcat.version`/`commons.lang3.version`).
 
-**Proposed improvement:** No code change needed now — just note it as a recurring release-checklist check: each release, confirm whether the parent's managed `jackson-databind` version has caught up, and drop the override in the same pass the version bump happens.
+**Proposed improvement:** No code change needed now — only note it as a recurring release-checklist check: each release, confirm whether the parent's managed `jackson-databind` version has caught up, and drop the override in the same pass the version bump happens.
 
 ---
 
@@ -98,7 +98,7 @@ It complements, rather than duplicates, `HISTORY.md`'s per-release "🚀 Future 
 
 ## ✅ Success Criteria
 
-- `IpscController` exposes at least one real, tested endpoint backed by the existing entity/repository layer, closing the gap named identically in `README.md`, `ARCHITECTURE.md`, and `CLAUDE.md`.
+- `IpscController` exposes at least one real, tested endpoint backed by the existing entity/repository layer, closing the gap named identically in `README.md`, `ARCHITECTURE.md` and `CLAUDE.md`.
 - `./mvnw verify -Pcoverage` (or equivalent) runs automatically on PRs to `develop`/`main`, so `ARCHITECTURE.md`'s CI/CD & Quality Gates table can drop the "locally / by reviewers" caveat on the `Build & Tests` row.
 - Coverage regressions fail CI rather than being caught only when the next `HISTORY.md` entry is written.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s per-version Future Roadmap notes rather than being deleted silently from here.
