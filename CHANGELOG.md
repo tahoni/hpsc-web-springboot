@@ -48,7 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Models
 
-- **`za.co.hpsc.web.models.ipsc.request`:** New request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, and `MatchOverallResultRequest`/`MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants) for competitor result submission
+- **`za.co.hpsc.web.models.ipsc.request`:** New request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, and `MatchOverallResultRequest`/`MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants) for competitor result submission — all now carry field- and class-level Javadoc mirroring `IpscCommonScore`'s Comstock-scoring documentation below, and `MatchRequest` gains a `matchId` field for updating an existing match (previously creation-only)
 - **`IpscCommonScore`:** New base DTO for fields shared by Comstock-scored (hit-factor) IPSC results — percentage, weighted points, time, power factor, alpha/charlie/delta hit counts, and penalty counts — with Javadoc documenting how the Comstock scoring method works
 - **`IpscMatchScore`:** New DTO extending `IpscCommonScore` with `percentageOfPossiblePoints`, the match-level accuracy total independent of time
 - **`IpscMatchStageScore`:** New DTO extending `IpscCommonScore` with `rawPoints` and `hitFactor` (`rawPoints / time`), the figure a single Comstock stage is ranked on
