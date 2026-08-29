@@ -46,6 +46,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **`documentation/roadmap/TASKS.md`:** New concrete, checkbox-level task list broken out from `documentation/roadmap/IMPROVEMENT_PLAN.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
 - **`README.md` / `AGENTS.md`:** Both now list `documentation/roadmap/`'s files in their own dedicated Roadmap section, separate from the standard documentation file map/table
 
+#### Models
+
+- **`za.co.hpsc.web.models.ipsc.request`:** New request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, and `MatchOverallResultRequest`/`MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants) for competitor result submission
+- **`IpscCommonScore`:** New base DTO for fields shared by Comstock-scored (hit-factor) IPSC results — percentage, weighted points, time, power factor, alpha/charlie/delta hit counts, and penalty counts — with Javadoc documenting how the Comstock scoring method works
+- **`IpscMatchScore`:** New DTO extending `IpscCommonScore` with `percentageOfPossiblePoints`, the match-level accuracy total independent of time
+- **`IpscMatchStageScore`:** New DTO extending `IpscCommonScore` with `rawPoints` and `hitFactor` (`rawPoints / time`), the figure a single Comstock stage is ranked on
+
 ### 🔄 Changed
 
 #### Configuration
