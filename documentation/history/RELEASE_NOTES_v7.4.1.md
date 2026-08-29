@@ -28,7 +28,7 @@ No domain model, API surface or test behaviour changes.
 ### 📚 HISTORY.md Narrative Additions
 
 - New "Major Version Goals" subsection under Project Philosophy Evolution, summarising the driving goal behind each
-  major version line (5.x, 6.x, 7.x).
+  major version line (4.x, 5.x, 6.x, 7.x).
 - New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" entry, capturing the test-convention,
   documentation-accuracy and AI-agent-tooling work spanning those three releases.
 

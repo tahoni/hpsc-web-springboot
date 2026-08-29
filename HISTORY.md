@@ -32,7 +32,7 @@ evolution of architecture, features and design philosophy across all versions.
   CLAUDE.md's existing wrap width — prose, list items and table columns realigned, with a handful of incidental
   copyedits (AGENTS.md's own serial-comma rule example corrected to follow the rule it states) surfacing along the way
 - New "Major Version Goals" subsection under this file's Project Philosophy Evolution, summarising the driving goal
-  behind each major version line (5.x, 6.x, 7.x)
+  behind each major version line (4.x, 5.x, 6.x, 7.x)
 - New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" entry, capturing the test-convention,
   documentation-accuracy and AI-agent-tooling work spanning those three releases
 - Project version bumped to 7.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
@@ -1001,7 +1001,7 @@ documentation set to a consistent line width and extends `HISTORY.md`'s own narr
 **Historical Narrative Additions**
 
 - New "Major Version Goals" subsection under Project Philosophy Evolution, summarising the driving goal behind each
-  major version line (5.x, 6.x, 7.x)
+  major version line (4.x, 5.x, 6.x, 7.x)
 - New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" entry, capturing the test-convention,
   documentation-accuracy and AI-agent-tooling work spanning those three releases
 
@@ -2320,6 +2320,9 @@ AttributeConverters
 
 ### Major Version Goals
 
+- **Version 4.x (v4.0.0 – v4.1.0):** Establish explicit IPSC domain naming (`Match` → `IpscMatch`, `MatchStage` →
+  `IpscMatchStage`) backed by multi-layered validation, then complete the entity lifecycle with full CRUD support and
+  transactional consistency — turning the renamed domain model into a fully operable API surface.
 - **Version 5.x (v5.0.0 – v5.4.0):** Mature the codebase into a stable, well-tested, standards-compliant foundation —
   formalise Semantic Versioning, consolidate and simplify the service layer and extend real domain capability
   (competitor enrolment) only once that foundation was solid.
