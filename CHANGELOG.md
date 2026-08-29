@@ -72,6 +72,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`GenderConverter`:** `convertToEntityAttribute` now delegates to `Gender.fromName(...).orElse(null)` instead of a manual `Gender.valueOf()`/try-catch — lookups are now case-insensitive, matching the other enum converters
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `GenderConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Added class-level Javadoc describing what each converter stores on write and how it resolves values on read — none previously had any
 
+#### Exceptions
+
+- **`FatalException`, `NonFatalException`, `ValidationException`:** Trimmed constructor Javadoc that duplicated verbatim JDK prose (`initCause`, `getMessage()`/`getCause()` references) down to concise, project-specific wording; corrected `@since` tags that had been copied from `java.lang.Exception`/`IllegalArgumentException` (`1.4`/`1.5`/`1.7`) to this project's own version history (`1.0.0`), the version in which all these constructors were actually introduced
+
 ### 🗑️ Removed
 
 #### Controllers
