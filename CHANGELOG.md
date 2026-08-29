@@ -62,11 +62,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`ClubIdentifier`:** Added class-level Javadoc matching the convention already used by the other enums, and corrected its `fromName`/`fromAbbreviation`/`fromCode` Javadoc, which still referred to a stale `ClubReference` type name and an inaccurate "null or negative" description for the (`String`-typed) `code` parameter
 - **`ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`:** Renamed `getByName`/`getByAbbreviation`/`getByCode`/`getByAbbreviationOrName` factory methods to `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName` — a more idiomatic name for an `Optional`-returning static factory; behaviour unchanged
+- **`Gender`:** Gains `name`/`abbreviation` fields, a case-insensitive `fromName()` factory method and a `toString()` override, bringing it in line with the shape of the other enums
 
 #### Converters
 
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Parameter names aligned to `AttributeConverter`'s own convention (`attribute`/`dbData`), for consistency with the new `GenderConverter`
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Updated to call the renamed `fromX` factory methods
+- **`GenderConverter`:** `convertToEntityAttribute` now delegates to `Gender.fromName(...).orElse(null)` instead of a manual `Gender.valueOf()`/try-catch — lookups are now case-insensitive, matching the other enum converters
 
 ### 🗑️ Removed
 

@@ -58,12 +58,12 @@ class GenderConverterTest {
     }
 
     @Test
-    void testConvertToEntityAttribute_whenNameHasDifferentCase_thenReturnsNull() {
+    void testConvertToEntityAttribute_whenNameHasDifferentCase_thenReturnsGender() {
         // Act
         Gender entityValue = converter.convertToEntityAttribute("male");
 
         // Assert
-        assertNull(entityValue);
+        assertEquals(Gender.Male, entityValue);
     }
 
     @Test
