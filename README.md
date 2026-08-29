@@ -26,7 +26,7 @@ The HPSC Website backend is a Spring Boot application designed to manage and ser
 - **Award Ceremonies**: Award data and ceremony grouping, processed from CSV
 - **Image Gallery**: Image metadata processing from CSV
 
-JPA entities and repositories also exist for clubs, competitors, matches, match stages and shooter logs, laying the groundwork for match management, competitor tracking and IPSC data integration — but the service and controller layer that will operate on that domain is still being rebuilt.
+JPA entities and repositories also exist for clubs, competitors, matches, match stages and shooter logs, and request DTOs exist for match/stage and result submission, laying the groundwork for match management, competitor tracking and IPSC data integration — but the service and controller layer that will operate on that domain is still being rebuilt.
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA and Hibernate.
 
@@ -55,7 +55,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 ## ✨ Features
 
 - **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data.
-- **Match & Competitor Domain Model**: JPA entities, repositories and type-safe enum converters for clubs, competitors, matches, match stages and shooter logs, ready for the upcoming service/controller layer.
+- **Match & Competitor Domain Model**: JPA entities, repositories, type-safe enum converters and request DTOs for clubs, competitors, matches, match stages and shooter logs, ready for the upcoming service/controller layer.
 - **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm types.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
 - **Data Integrity**: Multi-layered validation (controller, service, entity) with detailed error reporting.

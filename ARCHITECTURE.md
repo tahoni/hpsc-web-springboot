@@ -78,6 +78,9 @@ This document describes the architectural design, directory structure and core c
 │   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response models
 │   │   │   ├───image/          # Image gallery request/response models
+│   │   │   ├───ipsc/
+│   │   │   │   ├───request/    # IPSC match/stage/result request DTOs (groundwork)
+│   │   │   │   └───shared/     # Comstock-scoring shared fields (groundwork)
 │   │   │   ├───shared/         # Placing
 │   │   │   └───(root)          # Request, Response, ControllerResponse
 │   │   ├───repositories/       # Spring Data JPA interfaces (not yet wired to any service)
@@ -132,8 +135,8 @@ Handles incoming HTTP requests. Does not contain business logic.
 
 | Controller        | Mapping                     | Responsibility                            |
 |-------------------|-----------------------------|-------------------------------------------|
-| `AwardController` | `/hpsc-web/v1/awards`       | Award CSV processing                      |
-| `ImageController` | `/hpsc-web/v1/images`       | Image CSV processing                      |
+| `AwardController` | `/hpsc-web/awards`          | Award CSV processing                      |
+| `ImageController` | `/hpsc-web/images`          | Image CSV processing                      |
 | `IpscController`  | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet |
 
 All controllers:
@@ -210,7 +213,8 @@ Request/response models for the award and image CSV pipelines.
 #### Package root (`za.co.hpsc.web.models`)
 `Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON envelope.
 
-> No IPSC-specific DTOs currently exist — the `models/ipsc/` package described in earlier versions of this document has been removed pending the match/competitor service-layer rebuild.
+#### `models/ipsc/request/` and `models/ipsc/shared/`
+Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, `MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) for competitor result submission, and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`. Groundwork only — not yet consumed by `IpscController`.
 
 ---
 
