@@ -42,14 +42,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Documentation
 
-- **`documentation/roadmap/IMPROVEMENT_PLAN.md`:** New document synthesising the goals and constraints stated across this repository's documentation and configuration into a prioritised set of gaps and a roadmap
-- **`documentation/roadmap/TASKS.md`:** New concrete, checkbox-level task list broken out from `documentation/roadmap/IMPROVEMENT_PLAN.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
+- **`documentation/roadmap/improvement-plan.md`:** New document synthesising the goals and constraints stated across this repository's documentation and configuration into a prioritised set of gaps and a roadmap
+- **`documentation/roadmap/improvement-plan-tasks.md`:** New concrete, checkbox-level task list broken out from `documentation/roadmap/improvement-plan.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
 - **`README.md` / `AGENTS.md`:** Both now list `documentation/roadmap/`'s files in their own dedicated Roadmap section, separate from the standard documentation file map/table
 
 #### Models
 
 - **`za.co.hpsc.web.models.ipsc.request`:** New request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, and `MatchOverallResultRequest`/`MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants) for competitor result submission — all now carry field- and class-level Javadoc mirroring `IpscCommonScore`'s Comstock-scoring documentation below, and `MatchRequest` gains a `matchId` field for updating an existing match (previously creation-only)
-- **`IpscCommonScore`:** New base DTO for fields shared by Comstock-scored (hit-factor) IPSC results — percentage, weighted points, time, power factor, alpha/charlie/delta hit counts, and penalty counts — with Javadoc documenting how the Comstock scoring method works
+- **`IpscCommonScore`:** New base DTO for fields shared by Comstock-scored (hit-factor) IPSC results — percentage, weighted points, time, power factor, alpha/charlie/delta hit counts and penalty counts — with Javadoc documenting how the Comstock scoring method works
 - **`IpscMatchScore`:** New DTO extending `IpscCommonScore` with `percentageOfPossiblePoints`, the match-level accuracy total independent of time
 - **`IpscMatchStageScore`:** New DTO extending `IpscCommonScore` with `rawPoints` and `hitFactor` (`rawPoints / time`), the figure a single Comstock stage is ranked on
 
@@ -57,21 +57,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Configuration
 
-- **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse, and Node sections from the latest upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite, Sveltekit, vitepress, and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale "Editor-based Rest Client" comment, and adds new OS, Version Control, and Secrets & Credentials sections; the custom TAHONI block now also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to `.claude/*.local.*` (supersedes the `.claude/*.local.json` entry above)
+- **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite, Sveltekit, vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale "Editor-based Rest Client" comment, and adds new OS, Version Control and Secrets & Credentials sections; the custom TAHONI block now also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to `.claude/*.local.*` (supersedes the `.claude/*.local.json` entry above)
 - **`.gitignore`:** Uncommented the `.project` ignore rule, so IntelliJ/Eclipse project description files are now excluded from version control going forward
 - **`.aiignore`:** Re-synced with `.gitignore`'s refreshed template sections; its entries stay plain excludes rather than mirroring `.gitignore`'s `!` allowlist patterns (e.g. `.vscode/settings.json`, `.env.example`, `.yarn/patches`), so AI tooling stays conservative even for files git tracks
 
 #### Documentation
 
+- **`AGENTS.md`:** New Serial commas rule — lists of three or more items no longer take a comma before the final `and`/`or`; retroactively applied across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files
+- **`AGENTS.md`:** Dropped the exception letting code identifiers ignore the British English spelling convention — class/method/variable names are now held to the same rule as prose
 - **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist; the archived `documentation/history/RELEASE_NOTES_v7.3.0.md` snapshot updated to match, keeping it byte-for-byte identical per AGENTS.md's archiving rule
 - **`ARCHITECTURE.md`:** Directory structure tree now lists the new `documentation/roadmap/` folder alongside `archive/` and `history/`
+
+#### Testing
+
+- **`RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `ImageResponseTest`:** Test method names corrected to British-English spelling (`Initializes`→`Initialises`, `Recognized`→`Recognised`), per AGENTS.md's tightened identifier rule
 
 #### Tooling
 
 - **`/generate-pr-description`:** Step 6's `RELEASE_NOTES.md` instructions updated to match AGENTS.md's new Contributors-sourcing rule above
-- **`/sync-unreleased-changes`:** New Claude Code command — diffs the current branch against its base (`develop`/`main`) plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section, and fills in any missing entries directly in the file
+- **`/sync-unreleased-changes`:** New Claude Code command — diffs the current branch against its base (`develop`/`main`) plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries directly in the file
 
 ### 🐛 Fixed
+
+#### Controllers
+
+- **`AwardController`:** Route prefix changed from `/v1/awards` to `/awards` — dropped the unused `/v1` API versioning segment
+- **`ImageController`:** Route prefix changed from `/v1/images` to `/images` — dropped the unused `/v1` API versioning segment
 
 #### Documentation
 
@@ -109,7 +120,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Documentation
 
-- **`README.md`:** Introduction and Features sections no longer describe match management, competitor/club CRUD, WinMSS import, or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController` CSV processing is implemented today; the match/competitor domain's service and controller layer is still being rebuilt
+- **`README.md`:** Introduction and Features sections no longer describe match management, competitor/club CRUD, WinMSS import or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController` CSV processing is implemented today; the match/competitor domain's service and controller layer is still being rebuilt
 - **`README.md`:** Coverage-report command corrected from `./mvnw test jacoco:report` (non-functional — JaCoCo is only bound via the `coverage` Maven profile) to `./mvnw verify -Pcoverage`
 - **`README.md`:** Removed the `1.x – 4.x` version range from the `ARCHIVE.md` description, per AGENTS.md's rule that `README.md`/`ARCHITECTURE.md` must never reference specific version numbers or ranges
 - **`ARCHITECTURE.md`:** Test package tree corrected — removed the nonexistent `domain/` test package and added the missing `converters/`/`exceptions/` packages
@@ -136,21 +147,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/`ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
 - **`ControllerResponseTest`:** Covers the previously-untested `ControllerResponse(boolean, String)` constructor (message/error swap based on `success`), and the `(LocalDateTime, String, String)` constructor's derived-`success`-from-error-presence branch (non-null/non-blank error, and blank-but-non-null error)
 - **`FirearmTypeTest`:** Covers `toString()` for both the single-name and multi-name enum constructors (previously untested, despite the sibling `ClubIdentifier` enum having equivalent `toString()` tests)
-- **`ControllerAdviceTest`:** Covers `logError`'s three previously untested branches — a `null` throwable, a throwable with a wrapped cause, and a `null` `WebRequest`; JaCoCo branch coverage for this class went from 92% to 100%
+- **`ControllerAdviceTest`:** Covers `logError`'s three previously untested branches — a `null` throwable, a throwable with a wrapped cause and a `null` `WebRequest`; JaCoCo branch coverage for this class went from 92% to 100%
 
 #### Tooling
 
 - **`/scaffold-unit-tests`:** New Claude Code command, migrated from `.github/prompts/scaffold-unit-tests.prompt.md` — corrects the stale `za.co.signio.apexservices` package reference and the abstract "Layer 1/2/3" interface-test pattern to match this repo's actual conventions (interface contract tests named `[Class]Test`, exercised via the interface type in `services/`, impl-only helper tests in `services/impl/`, no Lombok-only tests), per the `AwardServiceTest`/`ImageServiceTest` split above. Defers to its loaded `@AGENTS.md`/`@CLAUDE.md` for testing-pattern specifics (JUnit Assertions, method naming, exception hierarchy) rather than restating them inline, so it can't drift out of sync with the source. Never commits — it scaffolds and verifies (`./mvnw test`) only, leaving the result for the user to review and commit.
-- **`/scaffold-integration-tests`:** New Claude Code command, copied from `/scaffold-unit-tests` and adapted for `@SpringBootTest`-based service integration tests — follows the pattern in `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest`: named `[Class]IntegrationTest`, `@ActiveProfiles("test")` is mandatory (see CLAUDE.md's Database Profiles table, never `dev`/prod), `@EnableAutoConfiguration` excludes `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` to keep the context lightweight, a real `@Autowired` Spring-wired bean rather than Mockito, and only the target's public interface methods may be called — never an impl class's protected/private helpers, which stay the paired unit test's job. Same defer-to-loaded-docs treatment as `/scaffold-unit-tests`; also never commits.
+- **`/scaffold-integration-tests`:** New Claude Code command, copied from `/scaffold-unit-tests` and adapted for `@SpringBootTest`-based service integration tests — follows the pattern in `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest`: named `[Class]IntegrationTest`, `@ActiveProfiles("test")` is mandatory (see CLAUDE.md's Database Profiles table, never `dev`/prod), `@EnableAutoConfiguration` excludes `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` to keep the context lightweight, a real `@Autowired` Spring-wired bean rather than Mockito and only the target's public interface methods may be called — never an impl class's protected/private helpers, which stay the paired unit test's job. Same defer-to-loaded-docs treatment as `/scaffold-unit-tests`; also never commits.
 
 ### 🔄 Changed
 
 #### Testing
 
 - **`AwardServiceImplTest`, `ImageServiceImplTest`:** Stale "TODO: sync" comments replaced with Javadoc cross-referencing the new interface-level tests; these two files were already in sync (14 parallel test cases each) for the impl-only `readAwards`/`mapAwards` and `readImages`/`mapImages` methods
-- **`AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Now exclude `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` via `@EnableAutoConfiguration` to keep the Spring context lightweight, since neither service touches the datasource, JPA, or messaging; also replaces their stale "TODO: sync" comments with Javadoc (they were already in sync)
+- **`AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Now exclude `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` via `@EnableAutoConfiguration` to keep the Spring context lightweight, since neither service touches the datasource, JPA or messaging; also replaces their stale "TODO: sync" comments with Javadoc (they were already in sync)
 - **`HpscWebApplicationTests` renamed to `HpscWebApplicationTest`:** Matches AGENTS.md's `<ClassName>Test` naming convention (was the Spring Initializr default plural name); its `contextLoads()` method renamed to `testContextLoads_whenSpringContextStarted_thenLoadsSuccessfully` to match the method-naming convention too
-- **26 test files:** Retrofitted with AGENTS.md's method-comment/ordering rule (`// methodName()` headers; constructors first, public before protected, alphabetical by name, overloads by parameter count then type, `toString()` last) — `ClubIdentifierConverterTest`, `MatchCategoryConverterTest`, `ClubIdentifierTest`, `DivisionTest`, `PowerFactorTest`, `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`, `ControllerResponseTest`, `RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `AwardCeremonyResponseTest`, `AwardResponseTest`, `ImageRequestForCSVTest`, `ImageResponseTest`, `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `DateUtilTest`, `NumberUtilTest`, `StringUtilTest`, `ValueUtilTest`. No test bodies, assertions, or names changed — only comments and whole-method reordering; `ValueUtilTest` in particular had its `nullAsEmptyString` tests consolidated from 9 scattered locations into one contiguous group. Verified via `./mvnw test`: same 492 tests, all passing, before and after
+- **26 test files:** Retrofitted with AGENTS.md's method-comment/ordering rule (`// methodName()` headers; constructors first, public before protected, alphabetical by name, overloads by parameter count then type, `toString()` last) — `ClubIdentifierConverterTest`, `MatchCategoryConverterTest`, `ClubIdentifierTest`, `DivisionTest`, `PowerFactorTest`, `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`, `ControllerResponseTest`, `RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `AwardCeremonyResponseTest`, `AwardResponseTest`, `ImageRequestForCSVTest`, `ImageResponseTest`, `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `DateUtilTest`, `NumberUtilTest`, `StringUtilTest`, `ValueUtilTest`. No test bodies, assertions or names changed — only comments and whole-method reordering; `ValueUtilTest` in particular had its `nullAsEmptyString` tests consolidated from 9 scattered locations into one contiguous group. Verified via `./mvnw test`: same 492 tests, all passing, before and after
 
 #### Build & Metadata
 
@@ -161,7 +172,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Removed the `maven-dependency-plugin` version override (`3.6.1`) — Boot 4.1.0 now manages this plugin itself, at `3.10.0`
   - Kept the `jackson-databind` (`2.21.5`) and `jackson-bom` (`3.1.5`) overrides unchanged — Boot 4.1.0's own managed versions (`2.21.4`/`3.1.4`) are still one patch behind
   - Bumped the flyway-maven-plugin's separately-pinned `flyway-mysql` dependency `11.14.1` → `12.4.0`, matching the `flyway.version` Boot 4.1.0 now manages (plugin-scoped dependencies don't inherit Boot's dependencyManagement, so this needs manual sync on every parent bump — now documented inline)
-  - Verified: full test suite (492 tests), `./mvnw verify -Pcoverage` (including the repackage step), and `./mvnw flyway:info` against a real local MySQL 9.5 dev database all pass clean
+  - Verified: full test suite (492 tests), `./mvnw verify -Pcoverage` (including the repackage step) and `./mvnw flyway:info` against a real local MySQL 9.5 dev database all pass clean
 
 #### Documentation
 
@@ -686,7 +697,7 @@ No security-related changes in this release.
 
 #### Entity Relationships
 
-- **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships across `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, and `MatchStageCompetitor`
+- **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships across `IpscMatch`, `IpscMatchStage`, `MatchCompetitor` and `MatchStageCompetitor`
 - **Cascade types:** Fixed cascade type configurations for correct entity lifecycle management
 - **Null handling:** Improved null handling in entity relationship resolution across match stage competitor retrieval
 
