@@ -732,10 +732,10 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Comprehensive DTO Unit Testing (Post-Release Enhancement)**
 
-- **MatchStageDtoTest:** 48 tests covering constructors, init () methods and toString () implementations
+- **MatchStageDtoTest:** 48 tests covering constructors, init() methods and toString() implementations
     - Single and dual-parameter constructor tests (11 tests)
-    - init () method tests with null handling, partial/full population (19 tests)
-    - toString () method tests with edge cases, club information, stage numbers (18 tests)
+    - init() method tests with null handling, partial/full population (19 tests)
+    - toString() method tests with edge cases, club information, stage numbers (18 tests)
     - Edge cases: null fields, empty/blank strings, zero/negative/large stage numbers
 
 - **ScoreDtoTest:** 26 tests covering all constructor patterns
@@ -750,8 +750,8 @@ Strategic release consolidating infrastructure improvements and transitioning to
     - MatchStageCompetitor entity constructor tests with edge cases (10 tests)
     - CompetitorDto + MatchStageDto constructor tests (6 tests)
     - All-arguments' constructor tests with 28 parameters (3 tests)
-    - init () method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
-    - toString () method tests with comprehensive scenarios (29 tests)
+    - init() method tests covering ScoreResponse, EnrolledResponse, MatchStageDto combinations (24 tests)
+    - toString() method tests with comprehensive scenarios (29 tests)
     - Edge cases: null entities, partial/full population, zero/negative/max values, enum mapping (PowerFactor, Division,
       FirearmType, CompetitorCategory), stage percentage calculation, special characters, Unicode support, long strings
 
@@ -799,7 +799,7 @@ Strategic release consolidating infrastructure improvements and transitioning to
 
 **Consolidated Test Structure**
 
-- **ClubDtoTest:** Reorganised with section headers for constructors, init (), toString ()
+- **ClubDtoTest:** Reorganised with section headers for constructors, init(), toString()
 - **CompetitorDtoTest:** Consolidated structure with logical grouping
 - **MatchDtoTest:** Structured tests with clear subsections
 - All existing tests were updated to follow consistent patterns
@@ -2169,7 +2169,7 @@ AttributeConverters
 - **v4.0.0:** Integration tests (985+ lines)
 - **v5.0.0:** Advanced entity initialisation tests
 - **v5.0.0+:** Comprehensive DTO unit tests (151+ tests)
-    - MatchStageDtoTest (48 tests): Constructors, init (), toString ()
+    - MatchStageDtoTest (48 tests): Constructors, init(), toString()
     - ScoreDtoTest (26 tests): All constructor patterns, edge cases
     - MatchStageCompetitorDtoTest (77 tests): Complete lifecycle coverage
 - **v5.1.0:** Test quality enhancement (section-based organisation, duplicate elimination)
@@ -2408,8 +2408,8 @@ AttributeConverters
 4. **Test Coverage:** Growing investment from basic tests to comprehensive integration testing
 5. **DTO Testing Excellence:** Post-v5.0.0 comprehensive DTO unit testing (151+ tests) establishes quality standards
     - Systematic testing of all constructor patterns
-    - Complete init () method coverage with parameter combinations
-    - toString () validation across all scenarios
+    - Complete init() method coverage with parameter combinations
+    - toString() validation across all scenarios
     - Edge case mastery: null, empty, blank, boundary values
     - Enum mapping validation across all enums (PowerFactor, Division, FirearmType, CompetitorCategory)
     - Special character and Unicode support verification
