@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
  * It provides constructors for different initialisation scenarios, enabling flexible
  * response creation based on specific requirements.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @Setter

@@ -28,6 +28,8 @@ import java.math.BigDecimal;
  * is expressed as a {@link #percentage} of that benchmark, and match-level totals
  * ({@code IpscMatchScore}) sum the stage percentages/points across the whole match.
  * </p>
+ *
+ * @since 7.4.0
  */
 @Getter
 @Setter

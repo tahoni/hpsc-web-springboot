@@ -13,6 +13,8 @@ import za.co.hpsc.web.utils.ValueUtil;
  * On write, the match category's name is stored. On read, the name is looked up against
  * {@link MatchCategory#fromName(String)}; if no match is found, {@code null} is used.
  * </p>
+ *
+ * @since 5.3.0
  */
 @Converter(autoApply = true)
 public class MatchCategoryConverter implements AttributeConverter<MatchCategory, String> {

@@ -12,6 +12,8 @@ import za.co.hpsc.web.models.award.shared.Placing;
  * <p>
  * Extends the {@code Placing} class to include additional details specific to awards.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @Setter

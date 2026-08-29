@@ -13,6 +13,8 @@ import za.co.hpsc.web.enums.ClubIdentifier;
  * against {@link ClubIdentifier#fromAbbreviation(String)}; if no match is found,
  * {@code null} is used.
  * </p>
+ *
+ * @since 5.3.0
  */
 @Converter(autoApply = true)
 public class ClubIdentifierConverter implements AttributeConverter<ClubIdentifier, String> {

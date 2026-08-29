@@ -8,6 +8,8 @@ package za.co.hpsc.web.exceptions;
  * This class extends {@link Exception} and is typically used in scenarios where an
  * operation cannot proceed due to a critical failure.
  * </p>
+ *
+ * @since 1.0.0
  */
 public class FatalException extends Exception {
     /**
@@ -31,7 +33,6 @@ public class FatalException extends Exception {
      *
      * @param message the detail message.
      * @param cause   the cause. May be {@code null} if the cause is nonexistent or unknown.
-     * @since 1.0.0
      */
     public FatalException(String message, Throwable cause) {
         super(message, cause);
@@ -54,7 +55,6 @@ public class FatalException extends Exception {
      * @param cause              the cause. May be {@code null} if the cause is nonexistent or unknown.
      * @param enableSuppression  whether suppression is enabled.
      * @param writableStackTrace whether the stack trace should be writable.
-     * @since 1.0.0
      */
     public FatalException(String message, Throwable cause, boolean enableSuppression,
                           boolean writableStackTrace) {

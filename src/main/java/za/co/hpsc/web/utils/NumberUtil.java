@@ -13,6 +13,8 @@ import java.util.List;
  * The {@code NumberUtil} class offers static methods for common numerical tasks. These methods
  * are designed to handle various use cases where numerical computations are required.
  * </p>
+ *
+ * @since 1.1.3
  */
 public final class NumberUtil {
     private NumberUtil() {

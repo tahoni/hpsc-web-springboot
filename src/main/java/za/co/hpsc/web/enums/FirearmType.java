@@ -15,6 +15,8 @@ import java.util.stream.Stream;
  * Each division is associated with one or more names that can be used
  * to identify it. The names are normalised during comparison to ensure
  * case- and separator-insensitive matching.
+ *
+ * @since 1.1.3
  */
 @Getter
 public enum FirearmType {

@@ -12,6 +12,8 @@ import java.util.List;
  * This class provides a centralised location for settings and configurations
  * used within the IPSC domain.
  * </p>
+ *
+ * @since 1.1.3
  */
 public final class IpscConstants {
     private IpscConstants() {

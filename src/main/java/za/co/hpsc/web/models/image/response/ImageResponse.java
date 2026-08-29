@@ -23,6 +23,8 @@ import java.util.UUID;
  * The {@code ImageResponse} class provides multiple constructors for
  * creating instances with varying levels of details and integrates
  * MIME type detection based on file names when not explicitly provided.
+ *
+ * @since 1.0.0
  */
 @NoArgsConstructor
 public class ImageResponse extends Response {

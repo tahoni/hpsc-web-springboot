@@ -26,6 +26,8 @@ import java.util.UUID;
  *
  * @see java.util.UUID
  * @see java.math.BigDecimal
+ *
+ * @since 1.1.0
  */
 public final class ValueUtil {
 

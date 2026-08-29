@@ -19,6 +19,8 @@ import java.math.BigDecimal;
  * are instead the sum of the competitor's per-stage Comstock (hit-factor) percentages/points,
  * which is what match standings are actually ranked on — the match winner is the 100% benchmark.
  * </p>
+ *
+ * @since 7.4.0
  */
 @Getter
 @Setter

@@ -15,6 +15,8 @@ import java.util.List;
  * request targets an existing match via {@link #matchId} and carries only the
  * {@link MatchStageRequest}s to attach to it.
  * </p>
+ *
+ * @since 7.4.0
  */
 @Getter
 @Setter

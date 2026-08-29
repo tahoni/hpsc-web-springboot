@@ -9,6 +9,8 @@ import java.util.Map;
  * The {@code StringUtil} class offers static methods for common string-related tasks. These methods
  * are designed to handle various use cases where string manipulation is required.
  * </p>
+ *
+ * @since 1.1.3
  */
 public final class StringUtil {
     private StringUtil() {

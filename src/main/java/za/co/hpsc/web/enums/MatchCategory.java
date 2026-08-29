@@ -15,6 +15,8 @@ import java.util.stream.Stream;
  * Each category is associated with a display name, providing a readable
  * identifier for presentation purposes.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @AllArgsConstructor

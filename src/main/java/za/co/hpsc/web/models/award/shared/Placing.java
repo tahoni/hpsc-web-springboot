@@ -15,6 +15,8 @@ import lombok.Setter;
  * Typically, objects of this class can be used in contexts involving
  * rankings, leaderboard displays, or competition results.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @Setter

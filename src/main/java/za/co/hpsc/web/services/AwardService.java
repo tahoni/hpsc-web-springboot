@@ -8,6 +8,8 @@ import za.co.hpsc.web.models.award.response.AwardCeremonyResponseHolder;
  * and transforming it into structured response objects. Implementations of this
  * interface are responsible for handling and validating input data, as well as mapping
  * it to domain-specific models for further use.
+ *
+ * @since 1.1.0
  */
 public interface AwardService {
     /**

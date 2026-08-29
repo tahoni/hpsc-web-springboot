@@ -23,6 +23,8 @@ import java.util.UUID;
  * levels of detail, including options to set UUID, title, description, tags,
  * and other response metadata.
  * </p>
+ *
+ * @since 1.1.0
  */
 @Getter
 @Setter

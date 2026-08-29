@@ -12,6 +12,8 @@ import java.util.Optional;
  * Each gender is associated with a display name and an abbreviation for
  * easy reference and presentation.
  * </p>
+ *
+ * @since 7.0.0
  */
 @Getter
 public enum Gender {

@@ -14,6 +14,8 @@ import za.co.hpsc.web.utils.ValueUtil;
  * {@link CompetitorCategory#fromName(String)}; if no match is found,
  * {@link CompetitorCategory#NONE} is used.
  * </p>
+ *
+ * @since 5.3.0
  */
 @Converter(autoApply = true)
 public class CompetitorCategoryConverter implements AttributeConverter<CompetitorCategory, String> {

@@ -13,6 +13,8 @@ import za.co.hpsc.web.enums.FirearmType;
  * looked up against {@link FirearmType#fromName(String)}; if no match is found,
  * {@code null} is used.
  * </p>
+ *
+ * @since 5.3.0
  */
 @Converter(autoApply = true)
 public class FirearmTypeConverter implements AttributeConverter<FirearmType, String> {

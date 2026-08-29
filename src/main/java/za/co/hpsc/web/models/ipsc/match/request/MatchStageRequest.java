@@ -15,6 +15,8 @@ import lombok.Setter;
  * in {@link MatchStagesRequest} (adding or updating stages on an already-existing match,
  * where {@link #matchId} identifies that match).
  * </p>
+ *
+ * @since 7.4.0
  */
 @Getter
 @Setter

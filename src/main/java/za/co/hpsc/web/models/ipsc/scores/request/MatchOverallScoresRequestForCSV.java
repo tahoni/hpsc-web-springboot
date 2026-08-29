@@ -27,6 +27,8 @@ import java.math.BigDecimal;
  * total hits (weighted by {@link #powerFactor}) as a percentage of the maximum points
  * available in the match.
  * </p>
+ *
+ * @since 7.4.0
  */
 @Getter
 @Setter

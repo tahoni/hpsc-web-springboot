@@ -9,6 +9,8 @@ package za.co.hpsc.web.constants;
  * across the application. It ensures consistency in settings and reduces duplication of
  * constant definitions throughout the codebase.
  * </p>
+ *
+ * @since 1.1.3
  */
 public class SystemConstants {
     private SystemConstants() {

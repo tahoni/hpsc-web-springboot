@@ -19,6 +19,8 @@ import java.util.UUID;
  * It provides multiple constructors to support different initialisation scenarios, allowing
  * response data to be populated with varying levels of detail.
  * </p>
+ *
+ * @since 1.1.0
  */
 public class Response extends Request {
     @Getter

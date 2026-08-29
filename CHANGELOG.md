@@ -59,12 +59,35 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
 - **`Placing`:** Moved from `models/shared` to `models/award/shared`, since it's only used to back award placements; `AwardPlacing`'s import updated accordingly
 
+#### Controllers
+
+- **`ImageController`, `AwardController`:** Added class-level `@since` tags (`1.0.0`, `1.1.0` respectively)
+
+#### Services
+
+- **`ImageService`:** Added `@since 1.0.0` class-level tag
+- **`AwardService`:** Added `@since 1.1.0` class-level tag
+
+#### Utils
+
+- **`ValueUtil`:** Added `@since 1.1.0` class-level tag
+- **`NumberUtil`, `StringUtil`:** Added `@since 1.1.3` class-level tags
+- **`DateUtil`:** Added `@since 2.0.0` class-level tag
+
+#### Constants
+
+- **`HpscConstants`:** Added `@since 1.1.0` class-level tag
+- **`IpscConstants`, `SystemConstants`:** Added `@since 1.1.3` class-level tags
+
 #### Enums
 
 - **`ClubIdentifier`:** Added class-level Javadoc matching the convention already used by the other enums, and corrected its `fromName`/`fromAbbreviation`/`fromCode` Javadoc, which still referred to a stale `ClubReference` type name and an inaccurate "null or negative" description for the (`String`-typed) `code` parameter
 - **`ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`:** Renamed `getByName`/`getByAbbreviation`/`getByCode`/`getByAbbreviationOrName` factory methods to `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName` — a more idiomatic name for an `Optional`-returning static factory; behaviour unchanged
 - **`Gender`:** Gains `name`/`abbreviation` fields, a case-insensitive `fromName()` factory method and a `toString()` override, bringing it in line with the shape of the other enums
 - **`Gender`:** Added class-level Javadoc and `fromName()` method Javadoc, bringing it in line with the other enums, all of which were already documented
+- **`Gender`:** Added `@since 7.0.0` class-level tag
+- **`ClubIdentifier`:** Added `@since 5.0.0` class-level tag
+- **`CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`:** Added `@since 1.1.3` class-level tags
 
 #### Converters
 
@@ -72,10 +95,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Updated to call the renamed `fromX` factory methods
 - **`GenderConverter`:** `convertToEntityAttribute` now delegates to `Gender.fromName(...).orElse(null)` instead of a manual `Gender.valueOf()`/try-catch — lookups are now case-insensitive, matching the other enum converters
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `GenderConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Added class-level Javadoc describing what each converter stores on write and how it resolves values on read — none previously had any
+- **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Added `@since 5.3.0` class-level tags
+- **`GenderConverter`:** Added `@since 8.0.0` class-level tag, matching this in-progress, still-unreleased version
 
 #### Exceptions
 
 - **`FatalException`, `NonFatalException`, `ValidationException`:** Trimmed constructor Javadoc that duplicated verbatim JDK prose (`initCause`, `getMessage()`/`getCause()` references) down to concise, project-specific wording; corrected `@since` tags that had been copied from `java.lang.Exception`/`IllegalArgumentException` (`1.4`/`1.5`/`1.7`) to this project's own version history (`1.0.0`), the version in which all these constructors were actually introduced
+- **`FatalException`, `NonFatalException`, `ValidationException`:** Added class-level `@since 1.0.0` tags
+
+#### Models
+
+- **`Request`, `Response`, `AwardRequest`, `AwardRequestForCSV`, `AwardResponse`, `AwardCeremonyResponse`, `AwardCeremonyResponseHolder`:** Added `@since 1.1.0` class-level tags
+- **`ControllerResponse`, `AwardPlacing`, `Placing`:** Added `@since 1.1.3` class-level tags
+- **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level tags
+- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchStageRequest`, `MatchStagesRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
+- **`MatchRequest`:** Added `@since 1.1.3` class-level tag
 
 ### 🗑️ Removed
 

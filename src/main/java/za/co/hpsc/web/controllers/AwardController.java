@@ -27,6 +27,8 @@ import za.co.hpsc.web.services.AwardService;
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing award metadata.
  * </p>
+ *
+ * @since 1.1.0
  */
 @Controller
 @RequestMapping("/awards")

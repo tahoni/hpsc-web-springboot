@@ -14,6 +14,8 @@ import java.util.Optional;
  * recognised clubs, and {@code UNKNOWN} is the default constant used when a club could not
  * be matched.
  * </p>
+ *
+ * @since 5.0.0
  */
 @Getter
 public enum ClubIdentifier {

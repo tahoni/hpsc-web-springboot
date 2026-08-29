@@ -19,6 +19,8 @@ import java.util.List;
  * the file path and file name associated with the image. It provides constructors
  * for initialising an image request with basic or detailed metadata.
  * </p>
+ *
+ * @since 1.0.0
  */
 @Getter
 @Setter

@@ -8,6 +8,8 @@ package za.co.hpsc.web.exceptions;
  * This class extends {@link IllegalArgumentException}, allowing it to be used in scenarios
  * where invalid arguments are encountered.
  * </p>
+ *
+ * @since 1.0.0
  */
 public class ValidationException extends IllegalArgumentException {
     /**
@@ -31,7 +33,6 @@ public class ValidationException extends IllegalArgumentException {
      *
      * @param message the detail message.
      * @param cause   the cause. May be {@code null} if the cause is nonexistent or unknown.
-     * @since 1.0.0
      */
     public ValidationException(String message, Throwable cause) {
         super(message, cause);
@@ -41,7 +42,6 @@ public class ValidationException extends IllegalArgumentException {
      * Constructs a new {@code ValidationException} with the specified cause.
      *
      * @param cause the cause. May be {@code null} if the cause is nonexistent or unknown.
-     * @since 1.0.0
      */
     public ValidationException(Throwable cause) {
         super(cause);

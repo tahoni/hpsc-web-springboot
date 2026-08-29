@@ -15,6 +15,8 @@ import java.util.Optional;
  * Each power factor is associated with a name and an abbreviation for easy reference and
  * presentation.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @AllArgsConstructor

@@ -8,6 +8,8 @@ package za.co.hpsc.web.exceptions;
  * This class extends {@link RuntimeException} and is typically used in scenarios where
  * an issue needs to be handled but does not terminate the application.
  * </p>
+ *
+ * @since 1.0.0
  */
 public class NonFatalException extends RuntimeException {
     /**
@@ -31,7 +33,6 @@ public class NonFatalException extends RuntimeException {
      *
      * @param message the detail message.
      * @param cause   the cause. May be {@code null} if the cause is nonexistent or unknown.
-     * @since 1.0.0
      */
     public NonFatalException(String message, Throwable cause) {
         super(message, cause);
@@ -41,7 +42,6 @@ public class NonFatalException extends RuntimeException {
      * Constructs a new {@code NonFatalException} with the specified cause.
      *
      * @param cause the cause. May be {@code null} if the cause is nonexistent or unknown.
-     * @since 1.0.0
      */
     public NonFatalException(Throwable cause) {
         super(cause);
@@ -55,7 +55,6 @@ public class NonFatalException extends RuntimeException {
      * @param cause              the cause. May be {@code null} if the cause is nonexistent or unknown.
      * @param enableSuppression  whether suppression is enabled.
      * @param writableStackTrace whether the stack trace should be writable.
-     * @since 1.0.0
      */
     public NonFatalException(String message, Throwable cause, boolean enableSuppression,
                              boolean writableStackTrace) {

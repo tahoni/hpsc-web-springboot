@@ -26,6 +26,8 @@ import java.util.List;
  * The {@code @JsonCreator} constructor allows for creating instances with a subset of fields,
  * specifically focusing on the required fields for minimal valid initialisation.
  * </p>
+ *
+ * @since 1.0.0
  */
 @Getter
 @Setter

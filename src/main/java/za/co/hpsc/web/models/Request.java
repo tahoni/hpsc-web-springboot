@@ -21,6 +21,8 @@ import java.util.List;
  * It provides multiple constructors to support different initialisation scenarios, allowing
  * request data to be populated with varying levels of detail.
  * </p>
+ *
+ * @since 1.1.0
  */
 @Getter
 @Setter

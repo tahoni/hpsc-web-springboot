@@ -15,6 +15,8 @@ import java.util.List;
  * The {@link MatchStageRequest}s that make it up have their own {@code matchId}, which is
  * typically unset when nested here for a new match, since the match doesn't exist yet.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @Setter

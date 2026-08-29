@@ -26,6 +26,8 @@ import java.math.BigDecimal;
  * {@link #stagePercentage} are the resulting weighted points/percentage against the stage
  * winner's hit factor (100% benchmark); {@link #points} is the raw score before weighting.
  * </p>
+ *
+ * @since 7.4.0
  */
 @Getter
 @Setter

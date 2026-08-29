@@ -13,6 +13,8 @@ import za.co.hpsc.web.utils.ValueUtil;
  * On write, the gender's name is stored. On read, the name is looked up against
  * {@link Gender#fromName(String)}; if no match is found, {@code null} is used.
  * </p>
+ *
+ * @since 8.0.0
  */
 @Converter(autoApply = true)
 public class GenderConverter implements AttributeConverter<Gender, String> {

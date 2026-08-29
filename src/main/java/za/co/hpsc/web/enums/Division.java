@@ -14,6 +14,8 @@ import java.util.Optional;
  * Each division is associated with a name and may optionally include
  * an abbreviation for easier reference.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 public enum Division {

@@ -13,6 +13,8 @@ import za.co.hpsc.web.utils.ValueUtil;
  * On write, the power factor's name is stored. On read, the name is looked up against
  * {@link PowerFactor#fromName(String)}; if no match is found, {@code null} is used.
  * </p>
+ *
+ * @since 5.3.0
  */
 @Converter(autoApply = true)
 public class PowerFactorConverter implements AttributeConverter<PowerFactor, String> {

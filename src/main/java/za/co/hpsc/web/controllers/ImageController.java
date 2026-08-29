@@ -27,6 +27,8 @@ import za.co.hpsc.web.services.ImageService;
  * Provides endpoints for handling operations such as parsing and processing CSV
  * data containing image metadata.
  * </p>
+ *
+ * @since 1.0.0
  */
 @Controller
 @RequestMapping("/images")

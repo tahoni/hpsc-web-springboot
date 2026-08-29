@@ -13,6 +13,8 @@ import java.util.Optional;
  * The enum provides utility methods for retrieving a specific category by its name.
  * If no match is found, the default category is {@code NONE}.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 public enum CompetitorCategory {
