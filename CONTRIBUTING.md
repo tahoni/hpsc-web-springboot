@@ -112,7 +112,7 @@ HTTP Request
 **Rules enforced by convention, not the compiler — review for these:**
 
 - Controllers must not contain business logic — delegate to services only.
-- All exceptions must extend `FatalException`, `NonFatalException`, or `ValidationException`; `ControllerAdvice` maps them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException`.
+- All exceptions must extend `FatalException`, `NonFatalException` or `ValidationException`; `ControllerAdvice` maps them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException`.
 - Enum-typed entity fields use an explicit `AttributeConverter` (see `converters/`) rather than `@Enumerated(EnumType.STRING)`.
 
 ---
@@ -121,10 +121,11 @@ HTTP Request
 
 Full conventions live in [`AGENTS.md`](AGENTS.md) — read it before writing or editing any documentation in this repository. Highlights:
 
-- **British English** spelling throughout prose, comments, and Javadoc (e.g. "licence", "colour", "initialise") — see `AGENTS.md`'s exceptions list for legal boilerplate and third-party names.
+- **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see `AGENTS.md`'s exceptions list for legal boilerplate and third-party names.
+- **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not "prose, comments, and Javadoc") — see `AGENTS.md`'s Serial commas rule.
 - Every `##` heading gets a matching emoji, reused from the established icon registry in `AGENTS.md` rather than invented fresh.
 - Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents — don't batch changelog updates into a later PR.
-- `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When updating `RELEASE_NOTES.md`, `HISTORY.md`, or `CHANGELOG.md`, check whether `README.md`/`ARCHITECTURE.md` need the same update (the "reverse sync rule").
+- `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When updating `RELEASE_NOTES.md`, `HISTORY.md` or `CHANGELOG.md`, check whether `README.md`/`ARCHITECTURE.md` need the same update (the "reverse sync rule").
 
 ---
 
@@ -151,7 +152,7 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
 
 ### Conventions
 
-- **Commit in logical chunks.** One concern per commit — don't bundle a dependency bump, a documentation update, and a bug fix into a single commit.
+- **Commit in logical chunks.** One concern per commit — don't bundle a dependency bump, a documentation update and a bug fix into a single commit.
 - **Track complex work with a todo list** so progress on multistep tasks stays visible.
 - Directory changes must stay in sync with documentation: whenever a root-level directory is added or removed, update `ARCHITECTURE.md`'s Project Structure tree in the same change.
 

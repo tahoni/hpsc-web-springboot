@@ -38,19 +38,22 @@ Exact pinned versions are not listed here — they drift with every dependency b
 
 ### British English
 
-All documentation prose and code comments use British English spelling (e.g. "licence", "organisation", "colour", "initialise"), not American English.
+All documentation prose, code comments and code identifiers (class, method and variable names) use British English spelling (e.g. "licence", "organisation", "colour", "initialise"), not American English.
 
 **Exceptions:**
 
 - Standard legal or licence boilerplate. The `LICENSE.md` file itself (name and content) is a fixed legal term in American English and must not be altered; any other doc that names or links to it (headings, tables, ToC entries) also spells it "License" for consistency.
-- Third-party product, library, and API names (e.g. "Serialization" where it is part of an external class or annotation name).
-- Code identifiers (class, method, and variable names) — these follow the codebase's existing naming, not spelling conventions.
+- Third-party product, library and API names (e.g. "Serialization" where it is part of an external class or annotation name).
+
+### Serial commas
+
+Lists of three or more items don't take a comma before the final `and`/`or` (e.g. "clubs, competitors and matches", not "clubs, competitors, and matches") — consistent with the British English convention above. This doesn't apply to a comma joining two independent clauses (e.g. "the build passed, and the release was tagged"), only to the last item of a list.
 
 ### Javadoc
 
 - Use British English conventions (spelling, grammar, punctuation), consistent with the rest of this project's documentation — not American English.
-- Document `@param`, `@return`, and `@throws` for every public method; wrap prose sections after a blank line in `<p>…</p>` tags, matching the style already used throughout `exceptions/` and `utils/`.
-- Class-level Javadoc should carry `@see` references to closely related types, and `@since` where the codebase already tracks it.
+- Document `@param`, `@return` and `@throws` for every public method; wrap prose sections after a blank line in `<p>…</p>` tags, matching the style already used throughout `exceptions/` and `utils/`.
+- Class-level Javadoc should carry `@see` references to closely related types and `@since` where the codebase already tracks it.
 - Include a `<pre>{@code …}</pre>` usage example on utility classes and non-obvious constructors, matching the style in `ValueUtil`.
 - Don't duplicate an interface method's Javadoc on its implementation unless the implementation has behaviour the interface contract doesn't already describe.
 
@@ -101,18 +104,18 @@ Every heading listed in a Table of Contents is prefixed with an emoji, and its T
 
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation) section — README.md is the canonical version if the two ever drift):
 
-| File                  | Purpose                                                                                                          |
-|-----------------------|------------------------------------------------------------------------------------------------------------------|
-| `README.md`           | Project overview, setup, and links to the rest of the documentation                                              |
-| `ARCHITECTURE.md`     | Detailed architectural design, layered structure, and CI/CD quality gates                                        |
-| `CLAUDE.md`           | Guidance for Claude Code specifically when working in this repository                                            |
-| `AGENTS.md`           | Cross-tool agent conventions (this file)                                                                         |
-| `CONTRIBUTING.md`     | New-developer onboarding: setup, database profiles, testing, workflow                                            |
-| `CHANGELOG.md`        | Notable changes per release, in Keep a Changelog format                                                          |
-| `HISTORY.md`          | Narrative history of the project's evolution across all versions                                                 |
-| `RELEASE_NOTES.md`    | Detailed release notes for the current/latest version                                                            |
-| `LICENSE.md`          | MIT License                                                                                                      |
-| `HELP.md`             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                                              |
+| File               | Purpose                                                                  |
+|--------------------|--------------------------------------------------------------------------|
+| `README.md`        | Project overview, setup and links to the rest of the documentation       |
+| `ARCHITECTURE.md`  | Detailed architectural design, layered structure and CI/CD quality gates |
+| `CLAUDE.md`        | Guidance for Claude Code specifically when working in this repository    |
+| `AGENTS.md`        | Cross-tool agent conventions (this file)                                 |
+| `CONTRIBUTING.md`  | New-developer onboarding: setup, database profiles, testing, workflow    |
+| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                  |
+| `HISTORY.md`       | Narrative history of the project's evolution across all versions         |
+| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                    |
+| `LICENSE.md`       | MIT License                                                              |
+| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)      |
 
 Three documentation-only folders supplement these:
 
@@ -127,8 +130,8 @@ Three documentation-only folders supplement these:
 
   | File                  | Purpose                                                                                                          |
   |-----------------------|------------------------------------------------------------------------------------------------------------------|
-  | `IMPROVEMENT_PLAN.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
-  | `TASKS.md`            | Concrete, checkbox-level task list broken out from `IMPROVEMENT_PLAN.md`'s gaps                                  |
+  | `improvement-plan.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+  | `improvement-plan-tasks.md`            | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
 ---
 
@@ -174,7 +177,7 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
 
 ### Conventions
 
-- **Commit in logical chunks.** One concern per commit — do not bundle unrelated changes (e.g. a dependency bump, a documentation update, and a bug fix) into a single commit.
+- **Commit in logical chunks.** One concern per commit — do not bundle unrelated changes (e.g. a dependency bump, a documentation update and a bug fix) into a single commit.
 - **Track complex work with a todo list.** For multistep or non-trivial tasks, maintain a tracked todo list and keep it updated as work progresses, so progress stays visible and the work stays on track.
 - **Update `CHANGELOG.md` in the same change.** Every notable change gets an entry under `## 🧪 [Unreleased]` as part of the change that makes it — don't batch changelog updates into a later, separate change.
 
@@ -187,7 +190,7 @@ When cutting a new version, work through these steps **in order** — the versio
 1. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`.
 2. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to match.
 3. **Add a `CHANGELOG.md` entry.** New `## 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog categories that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit any that are empty). Update the Table of Contents and move the "← Current" marker to the new version.
-4. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase, and a Milestone for the new version, at the same narrative depth and in the same style as the existing entries. If the release is significant enough to have shifted the project's trajectory, also thread it through the other sections that already track version-by-version state (Architectural Evolution, Feature Timeline, Key Learnings, Future Roadmap, Conclusion/footer) — use how the immediately preceding version was woven into those sections as the template.
+4. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase and a Milestone for the new version, at the same narrative depth and in the same style as the existing entries. If the release is significant enough to have shifted the project's trajectory, also thread it through the other sections that already track version-by-version state (Architectural Evolution, Feature Timeline, Key Learnings, Future Roadmap, Conclusion/footer) — use how the immediately preceding version was woven into those sections as the template.
 5. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent commit — diff the release branch against `main` (`git log main..HEAD`, `git diff --stat main...HEAD`) to confirm full coverage before finalising. For the **Contributors** section, list every unique commit author on the release branch since it diverged from `main` — `git log main..HEAD --format='%an'` (or the equivalent GitHub "Contributors" view for the release's PRs), deduplicated — rather than a generic placeholder like "Development Team", and include every account found, bots (e.g. `dependabot[bot]`, `ImgBotApp`) included.
 6. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
 7. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only, no line-by-line detail. Structure:
@@ -196,7 +199,7 @@ When cutting a new version, work through these steps **in order** — the versio
     - `## 🧪 Test Plan` — checklist of what was verified (build, tests, manual checks)
     - `## 🔗 Related Documentation` — links to `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md`
 
-Commit these in logical chunks per the Git Workflow rule above — the version bump, the CHANGELOG/HISTORY/RELEASE_NOTES documentation, and the PR description are separate concerns.
+Commit these in logical chunks per the Git Workflow rule above — the version bump, the CHANGELOG/HISTORY/RELEASE_NOTES documentation and the PR description are separate concerns.
 
 ---
 
@@ -206,6 +209,6 @@ Commit these in logical chunks per the Git Workflow rule above — the version b
 
 - **Never contain references to specific versions** — neither exact version numbers (e.g. `7.1.0`) nor version ranges (e.g. `1.x – 4.x`) of this project. Defer to `pom.xml` for exact dependency versions and to `CHANGELOG.md`/`HISTORY.md` for release history.
 - **Never contain counts that drift as the codebase grows** (e.g. "Eight JPA entities map to database tables"). List items by name in a table instead, without a leading count.
-- **Never carry narrative tightly coupled to the current version's implementation.** That belongs in `CHANGELOG.md`, `RELEASE_NOTES.md`, `HISTORY.md`, or the per-version files in `documentation/history/`.
+- **Never carry narrative tightly coupled to the current version's implementation.** That belongs in `CHANGELOG.md`, `RELEASE_NOTES.md`, `HISTORY.md` or the per-version files in `documentation/history/`.
 
 **Reverse sync rule:** When generating or updating `RELEASE_NOTES.md`, `HISTORY.md`, or `CHANGELOG.md`, check whether any of the changes being documented are relevant to `README.md` (goal, tech stack, project structure, quick start) or `ARCHITECTURE.md` (system design, layering, data flows) and update those files too if so. Don't let them fall out of sync with what the release docs describe — while still keeping them release-agnostic per the rules above.
