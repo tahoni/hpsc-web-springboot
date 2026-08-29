@@ -41,6 +41,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Controllers
+
+- **`IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController`:** New empty stub classes in `controllers/` — reserve the class names for the upcoming IPSC module split, alongside the existing `IpscController` stub; no endpoints implemented yet
+
 ### 🔄 Changed
 
 #### Models

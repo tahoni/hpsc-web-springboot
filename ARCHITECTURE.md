@@ -63,7 +63,8 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │                           HpscConstants, IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
 │   │   │                           AwardController, ImageController
-│   │   │                           IpscController          (empty stub — no endpoints yet)
+│   │   │                           IpscController, IpscCompetitorController, IpscMatchController
+│   │   │                           IpscRankingsController, IpscScoresController (empty stubs — no endpoints yet)
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
 │   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
 │   │   │                           DivisionConverter, FirearmTypeConverter
@@ -80,8 +81,9 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   ├───award/          # Award request/response models
 │   │   │   ├───image/          # Image gallery request/response models
 │   │   │   ├───ipsc/
-│   │   │   │   ├───request/    # IPSC match/stage/result request DTOs (groundwork)
-│   │   │   │   └───shared/     # Comstock-scoring shared fields (groundwork)
+│   │   │   │   ├───match/request/  # IPSC match/stage request DTOs (groundwork)
+│   │   │   │   ├───scores/request/ # IPSC competitor scores request DTOs (groundwork)
+│   │   │   │   └───shared/         # Comstock-scoring shared fields (groundwork)
 │   │   │   ├───shared/         # Placing
 │   │   │   └───(root)          # Request, Response, ControllerResponse
 │   │   ├───repositories/       # Spring Data JPA interfaces (not yet wired to any service)
@@ -135,11 +137,15 @@ HTTP Request
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller        | Mapping                     | Responsibility                            |
-|-------------------|-----------------------------|-------------------------------------------|
-| `AwardController` | `/hpsc-web/awards`          | Award CSV processing                      |
-| `ImageController` | `/hpsc-web/images`          | Image CSV processing                      |
-| `IpscController`  | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet |
+| Controller                 | Mapping                     | Responsibility                                   |
+|----------------------------|------------------------------|--------------------------------------------------|
+| `AwardController`          | `/hpsc-web/awards`          | Award CSV processing                             |
+| `ImageController`          | `/hpsc-web/images`          | Image CSV processing                             |
+| `IpscController`           | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet        |
+| `IpscCompetitorController` | —                           | Empty stub — reserved for the IPSC module split  |
+| `IpscMatchController`      | —                           | Empty stub — reserved for the IPSC module split  |
+| `IpscRankingsController`   | —                           | Empty stub — reserved for the IPSC module split  |
+| `IpscScoresController`     | —                           | Empty stub — reserved for the IPSC module split  |
 
 All controllers:
 
