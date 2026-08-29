@@ -21,6 +21,22 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 7.4.1 (August 29, 2026)
+
+**Theme:** Documentation Reflow & Historical Narrative Additions
+
+**Key Focus:**
+
+- Every root-level documentation file (`AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`,
+  `HISTORY.md`, `README.md`, `RELEASE_NOTES.md`) rewrapped to a consistent ~120-character line width, matching
+  CLAUDE.md's existing wrap width — prose, list items and table columns realigned, with a handful of incidental
+  copyedits (AGENTS.md's own serial-comma rule example corrected to follow the rule it states) surfacing along the way
+- New "Major Version Goals" subsection under this file's Project Philosophy Evolution, summarising the driving goal
+  behind each major version line (5.x, 6.x, 7.x)
+- New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" entry, capturing the test-convention,
+  documentation-accuracy and AI-agent-tooling work spanning those three releases
+- Project version bumped to 7.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 7.4.0 (August 29, 2026)
 
 **Theme:** IPSC Request DTOs, Route Clean-up & Documentation Conventions
@@ -965,6 +981,49 @@ coverage.
 
 ---
 
+### Phase 18: Documentation Reflow & Historical Narrative Additions (v7.4.1)
+
+**Duration:** August 29, 2026
+
+A documentation-only patch release: no domain-model, API or test-behaviour change. Rewraps the entire root-level
+documentation set to a consistent line width and extends `HISTORY.md`'s own narrative sections.
+
+**Key Accomplishments:**
+
+**Documentation Reflow**
+
+- `AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md` and
+  `RELEASE_NOTES.md` rewrapped to a consistent ~120-character line width — prose, list items and table columns
+  realigned, matching `CLAUDE.md`'s pre-existing wrap width
+- A handful of incidental copyedits surfaced along the way, including a fix to AGENTS.md's own serial-comma rule
+  example, which had previously violated the rule it describes
+
+**Historical Narrative Additions**
+
+- New "Major Version Goals" subsection under Project Philosophy Evolution, summarising the driving goal behind each
+  major version line (5.x, 6.x, 7.x)
+- New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" entry, capturing the test-convention,
+  documentation-accuracy and AI-agent-tooling work spanning those three releases
+
+**Build & Metadata**
+
+- Project version bumped to 7.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Test Coverage:**
+
+- No test changes — this release touches only Markdown documentation and version metadata
+
+**Architecture Highlights:**
+
+- No architectural change
+
+**Technical Focus:**
+
+- Documentation consistency (line width, table alignment)
+- Historical-record completeness (major version goals, process-discipline narrative)
+
+---
+
 ### Phase 17: IPSC Request DTOs, Route Clean-up & Documentation Conventions (v7.4.0)
 
 **Duration:** August 29, 2026
@@ -1650,6 +1709,17 @@ Focused consolidation of services, introduction of custom JPA converters and rep
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and
 comprehensive test coverage across all services and utilities.
+
+---
+
+### Milestone 18: Documentation Reflow & Historical Narrative Additions (v7.4.1)
+
+- Entire root-level documentation set rewrapped to a consistent ~120-character line width
+- New "Major Version Goals" and "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" narrative sections added
+  to `HISTORY.md`
+
+**Achievement:** Brought every root documentation file to a consistent line width and filled in two gaps in the
+project's own historical narrative — no domain/service/architecture or test changes.
 
 ---
 
