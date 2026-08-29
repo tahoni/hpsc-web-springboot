@@ -44,7 +44,7 @@ Read and strictly follow the **Git Workflow** section in AGENTS.md (loaded above
    - Each bullet: bold the backticked class/method/entity name, followed by a colon and a concise em-dash-separated description of what changed and why — e.g. `` - **`ShooterLog.powerFactor`:** New `PowerFactor` column — snapshots are now scoped by power factor as well as firearm type ``.
    - Be specific: name the actual class/file/behaviour, not vague statements like "improved tests".
 4. **Group unrelated work**: if the diff contains clearly unrelated changes, propose separate commits with a message and separate CHANGELOG entries for each rather than forcing one message.
-5. **British English** spelling, grammar, and punctuation throughout (e.g. "licence", "colour", "initialise"), per AGENTS.md's Documentation Conventions.
+5. **British English** spelling, grammar and punctuation throughout (e.g. "licence", "colour", "initialise"), per AGENTS.md's Documentation Conventions.
 6. **Sanity-check against conventions**: no secrets or credentials referenced, no vague messages such as "fixed stuff" or "updates".
 
 ## 📤 Output

@@ -26,7 +26,7 @@ The HPSC Website backend is a Spring Boot application designed to manage and ser
 - **Award Ceremonies**: Award data and ceremony grouping, processed from CSV
 - **Image Gallery**: Image metadata processing from CSV
 
-JPA entities and repositories also exist for clubs, competitors, matches, match stages, and shooter logs, laying the groundwork for match management, competitor tracking, and IPSC data integration — but the service and controller layer that will operate on that domain is still being rebuilt.
+JPA entities and repositories also exist for clubs, competitors, matches, match stages and shooter logs, laying the groundwork for match management, competitor tracking and IPSC data integration — but the service and controller layer that will operate on that domain is still being rebuilt.
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA and Hibernate.
 
@@ -34,7 +34,7 @@ The application emphasises structured data processing and validation, with MySQL
 
 The repository for this project is located at [GitHub](https://github.com/tahoni/hpsc-web-springboot).
 
-Feature requests, suggestions for improvements, and bugs can be logged using the project's [Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
+Feature requests, suggestions for improvements and bugs can be logged using the project's [Issues](https://github.com/tahoni/hpsc-web-springboot/issues) page.
 
 ## ⚙️ Technology
 
@@ -55,7 +55,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 ## ✨ Features
 
 - **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data.
-- **Match & Competitor Domain Model**: JPA entities, repositories, and type-safe enum converters for clubs, competitors, matches, match stages, and shooter logs, ready for the upcoming service/controller layer.
+- **Match & Competitor Domain Model**: JPA entities, repositories and type-safe enum converters for clubs, competitors, matches, match stages and shooter logs, ready for the upcoming service/controller layer.
 - **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm types.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
 - **Data Integrity**: Multi-layered validation (controller, service, entity) with detailed error reporting.
@@ -129,7 +129,7 @@ The report is written to `target/site/jacoco/`.
 
 **Test Categories**:
 
-- **Unit Tests**: Domain entities, DTOs, enums, utilities, and service logic
+- **Unit Tests**: Domain entities, DTOs, enums, utilities and service logic
 - **Integration Tests**: Service implementations and data access layers
 - **Test Frameworks**: JUnit, Mockito, Spring Test
 
@@ -152,8 +152,8 @@ This project's documentation is spread across a few files, each with a distinct 
 
 | File                                         | Purpose                                                                                                          |
 |----------------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| [`README.md`](README.md)                     | Project overview, setup, and links to the rest of the documentation (this file)                                  |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md)         | Detailed architectural design, layered structure, and CI/CD quality gates                                        |
+| [`README.md`](README.md)                     | Project overview, setup and links to the rest of the documentation (this file)                                   |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)         | Detailed architectural design, layered structure and CI/CD quality gates                                         |
 | [`CLAUDE.md`](CLAUDE.md)                     | Guidance for Claude Code (AI assistant) when working in this repository                                          |
 | [`AGENTS.md`](AGENTS.md)                     | Cross-tool conventions for AI coding agents working in this repository                                           |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md)         | New-developer onboarding: setup, database profiles, testing, workflow                                            |
@@ -178,8 +178,8 @@ This project's documentation is spread across a few files, each with a distinct 
 
 | File                  | Purpose                                                                                                          |
 |-----------------------|------------------------------------------------------------------------------------------------------------------|
-| `IMPROVEMENT_PLAN.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
-| `TASKS.md`            | Concrete, checkbox-level task list broken out from `IMPROVEMENT_PLAN.md`'s gaps                                  |
+| `improvement-plan.md` | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| `improvement-plan-tasks.md`            | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
 This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) — see [CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 

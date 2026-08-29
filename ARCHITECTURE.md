@@ -1,6 +1,6 @@
 # HPSC Website Backend Architecture
 
-This document describes the architectural design, directory structure, and core concepts of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
+This document describes the architectural design, directory structure and core concepts of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## Table of Contents
 
@@ -54,7 +54,7 @@ This document describes the architectural design, directory structure, and core 
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
 │   ├───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
-│   └───roadmap/                # Concrete task-list breakdown of IMPROVEMENT_PLAN.md's gaps
+│   └───roadmap/                # Concrete task-list breakdown of improvement-plan.md's gaps
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
@@ -110,7 +110,7 @@ The HPSC Website Backend is a pure REST API server (no frontend) that manages pr
 |-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**          | Award data and ceremony grouping, processed from CSV                                                                                                           |
 | **Image Gallery**             | Image metadata processing from CSV                                                                                                                             |
-| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs, and shooter logs, but the service/controller layer that operates on them is being rebuilt |
+| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs and shooter logs, but the service/controller layer that operates on them is being rebuilt  |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 
@@ -142,7 +142,7 @@ All controllers:
 - Return `ResponseEntity<T>` with typed response models
 - Are annotated with full OpenAPI (`@Tag`, `@Operation`, `@ApiResponse`) metadata
 
-`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException`, and `ValidationException` instances and maps them to standard JSON error responses with structured logging.
+`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException` and `ValidationException` instances and maps them to standard JSON error responses with structured logging.
 
 ---
 
@@ -331,11 +331,11 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 📚 Development Guidelines
 
-Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build commands, database profiles, and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
+Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 
 - Controllers must not contain business logic — delegate to services only
-- All exceptions must extend `FatalException`, `NonFatalException`, or `ValidationException`
+- All exceptions must extend `FatalException`, `NonFatalException` or `ValidationException`
 - Test class names: `<ClassName>Test`; test method names: `test<Scenario>_when<Condition>_then<Expectation>`
 - JUnit Jupiter's `Assertions` for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests
