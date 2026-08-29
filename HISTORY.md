@@ -20,6 +20,20 @@ A comprehensive historical overview of the HPSC Website Backend project from sta
 
 ## 📅 Historical Timeline
 
+### Version 7.4.0 (August 29, 2026)
+
+**Theme:** IPSC Request DTOs, Route Cleanup & Documentation Conventions
+
+**Key Focus:**
+
+- New `za.co.hpsc.web.models.ipsc.request` package — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission and `MatchOverallResultRequest`/`MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants) for competitor result submission, shaped to match Practiscore's export format; `MatchRequest` gains a `matchId` field for updating an existing match (previously creation-only); all carry field- and class-level Javadoc mirroring the new shared `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore` DTOs' Comstock-scoring documentation — groundwork for the IPSC module rebuild, not yet wired to any endpoint
+- `AwardController`/`ImageController` route prefixes dropped from `/v1/awards`/`/v1/images` to `/awards`/`/images` — the unused `/v1` API versioning segment removed
+- New AGENTS.md Serial commas rule (no comma before the final `and`/`or` in a list of three or more items) and a tightened British English rule that now covers code identifiers as well as prose — both applied retroactively across the existing documentation set, which surfaced and corrected two American-spelled test method names
+- `documentation/roadmap/`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/`improvement-plan-tasks.md` for kebab-case consistency with the rest of the tooling docs
+- New Claude Code command `/sync-unreleased-changes`, diffing the branch against its base plus any uncommitted changes to fill in missing `CHANGELOG.md` entries automatically; `RELEASE_NOTES.md`'s Contributors section now sourced from `git log`'s unique authors rather than a generic placeholder
+- Release hygiene: `log4j-api` overridden to `2.25.5` for CVE-2026-49844; `.gitignore`/`.aiignore` refreshed from upstream templates; `README.md`'s H1 heading restored
+- Project version bumped to 7.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 7.3.0 (August 25, 2026)
 
 **Theme:** Documentation Accuracy Pass & PR Summary Tooling
@@ -876,6 +890,63 @@ Major architectural improvement focused on match results processing, entity init
 
 ---
 
+### Phase 17: IPSC Request DTOs, Route Cleanup & Documentation Conventions (v7.4.0)
+
+**Duration:** August 29, 2026
+
+A mixed release: new IPSC request DTOs laid as groundwork for the module rebuild, a small API cleanup and a round of documentation-convention tightening applied across the existing docs.
+
+**Key Accomplishments:**
+
+**IPSC Request DTOs**
+
+- New `za.co.hpsc.web.models.ipsc.request` package — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission and `MatchOverallResultRequest`/`MatchStageResultRequest` for competitor result submission, shaped to match Practiscore's export format
+- `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants of the result request DTOs; `MatchRequest` gains a `matchId` field for updating an existing match (previously creation-only)
+- New shared `za.co.hpsc.web.models.ipsc.shared` package — `IpscCommonScore` (fields shared by Comstock-scored, hit-factor IPSC results), `IpscMatchScore` (adds `percentageOfPossiblePoints`) and `IpscMatchStageScore` (adds `rawPoints`/`hitFactor`)
+- All new DTOs carry field- and class-level Javadoc documenting how Comstock scoring works; not yet wired to `IpscController`, which remains an empty stub
+
+**API Route Cleanup**
+
+- `AwardController`/`ImageController` route prefixes dropped from `/v1/awards`/`/v1/images` to `/awards`/`/images` — the unused `/v1` API versioning segment removed
+
+**Documentation Conventions**
+
+- New AGENTS.md Serial commas rule — lists of three or more items no longer take a comma before the final `and`/`or`
+- AGENTS.md's British English rule tightened to cover code identifiers (class/method/variable names) as well as prose, dropping the previous exception
+- Both rules applied retroactively across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files; the identifier-spelling sweep surfaced and corrected two American-spelled test method names (`Initializes`→`Initialises`, `Recognized`→`Recognised`) across `RequestTest`, `ResponseTest`, `AwardRequestForCSVTest` and `ImageResponseTest`
+- `documentation/roadmap/`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/`improvement-plan-tasks.md` for kebab-case consistency with the rest of the tooling docs
+
+**AI-Agent Tooling & Process**
+
+- New Claude Code command `/sync-unreleased-changes` — diffs the current branch against its base plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries directly in the file
+- `RELEASE_NOTES.md`'s Contributors section now sourced from `git log`'s unique commit authors (bots included) instead of a generic placeholder, per a new AGENTS.md Release Checklist rule
+
+**Release Hygiene**
+
+- `log4j-api` overridden `2.25.4` → `2.25.5`, closing CVE-2026-49844 — a transitive dependency via `spring-boot-starter-logging`, never actually reachable since this project uses Logback, but the pin removes the flagged advisory
+- `.gitignore`/`.aiignore` refreshed from the latest upstream templates; `README.md`'s H1 heading restored (lost in an earlier commit)
+
+**Build & Metadata**
+
+- Project version bumped to 7.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Test Coverage:**
+
+- No dedicated new unit test coverage was added for the new IPSC request DTOs in this pass — they're groundwork, not yet exercised by any controller/service; verified via `./mvnw clean compile` and the existing suite passing unchanged
+- The four renamed test methods keep their existing coverage — only the names changed, no behaviour or assertions touched
+
+**Architecture Highlights:**
+
+- No architectural change — the new DTOs extend the existing `models/ipsc/` package structure without altering the layered architecture; `IpscController` remains an empty stub
+
+**Technical Focus:**
+
+- IPSC domain-layer groundwork (request DTOs, Comstock-scoring shared fields)
+- API surface cleanup (route prefix)
+- Documentation-convention consistency (serial commas, identifier spelling, file naming)
+
+---
+
 ### Phase 16: Test Suite Conventions, AI-Agent Tooling and Dependency Maintenance (v7.2.0)
 
 **Duration:** August 25, 2026
@@ -1426,6 +1497,17 @@ Focused consolidation of services, introduction of custom JPA converters and rep
 - Major service refactoring (61 files, +13,567 lines)
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and comprehensive test coverage across all services and utilities.
+
+---
+
+### Milestone 17: IPSC Request DTOs, Route Cleanup & Documentation Conventions (v7.4.0)
+
+- New `models/ipsc/request`/`models/ipsc/shared` packages — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest`/`MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) and `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`, groundwork for the IPSC module rebuild
+- `AwardController`/`ImageController` routes simplified from `/v1/awards`/`/v1/images` to `/awards`/`/images`
+- New AGENTS.md Serial commas rule and a British English rule tightened to cover code identifiers, both applied across the existing documentation set; `documentation/roadmap/` renamed to kebab-case
+- New `/sync-unreleased-changes` Claude Code command; `RELEASE_NOTES.md` Contributors now sourced from `git log`
+
+**Achievement:** Laid IPSC request-DTO groundwork for the module rebuild while cleaning up a stale API route and tightening the project's own documentation conventions — no domain/service/architecture changes.
 
 ---
 

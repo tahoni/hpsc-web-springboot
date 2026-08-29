@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 7.3.0](#-730---2026-08-25) ← Current
+- [🧾 Version 7.4.0](#-740---2026-08-29) ← Current
+- [🧾 Version 7.3.0](#-730---2026-08-25)
 - [🧾 Version 7.2.0](#-720---2026-08-25)
 - [🧾 Version 7.1.0](#-710---2026-08-24)
 - [🧾 Version 7.0.0](#-700---2026-08-11)
@@ -37,6 +38,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ---
 
 ## 🧪 [Unreleased]
+
+---
+
+## 🧾 [7.4.0] - 2026-08-29
 
 ### ➕ Added
 
@@ -87,8 +92,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 #### Documentation
 
 - **`README.md`:** Restored the missing `#` on the H1 heading, lost in an earlier commit that inverted the intended fix — it was rendering as plain text instead of the page title
-
-### ⚠️ Deprecated
 
 ### 🗑️ Removed
 
