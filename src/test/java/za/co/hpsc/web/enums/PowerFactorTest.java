@@ -8,14 +8,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PowerFactorTest {
 
-    // getByAbbreviation()
+    // fromAbbreviation()
     @Test
-    void testGetByAbbreviation_withExactMatch_thenReturnsCorrectPowerFactor() {
+    void testFromAbbreviation_withExactMatch_thenReturnsCorrectPowerFactor() {
         // Arrange
         String validAbbreviation = "Min";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(validAbbreviation);
+        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(validAbbreviation);
 
         // Assert
         assertTrue(result.isPresent());
@@ -23,12 +23,12 @@ class PowerFactorTest {
     }
 
     @Test
-    void testGetByAbbreviation_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
+    void testFromAbbreviation_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
         // Arrange
         String validAbbreviation = "mAJ";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(validAbbreviation);
+        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(validAbbreviation);
 
         // Assert
         assertTrue(result.isPresent());
@@ -36,46 +36,46 @@ class PowerFactorTest {
     }
 
     @Test
-    void testGetByAbbreviation_withNoMatch_thenReturnsEmptyOptional() {
+    void testFromAbbreviation_withNoMatch_thenReturnsEmptyOptional() {
         // Arrange
         String invalidAbbreviation = "Xyz";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(invalidAbbreviation);
+        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(invalidAbbreviation);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviation_withNullInput_thenReturnsEmptyOptional() {
+    void testFromAbbreviation_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(null);
+        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(null);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviation_withBlankInput_thenReturnsEmptyOptional() {
+    void testFromAbbreviation_withBlankInput_thenReturnsEmptyOptional() {
         // Arrange
         String blankAbbreviation = "   ";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByAbbreviation(blankAbbreviation);
+        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(blankAbbreviation);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
-    // getByName()
+    // fromName()
     @Test
-    void testGetByName_withExactMatch_thenReturnsCorrectPowerFactor() {
+    void testFromName_withExactMatch_thenReturnsCorrectPowerFactor() {
         // Arrange
         String validName = "Minor";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByName(validName);
+        Optional<PowerFactor> result = PowerFactor.fromName(validName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -83,12 +83,12 @@ class PowerFactorTest {
     }
 
     @Test
-    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
+    void testFromName_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
         // Arrange
         String validName = "mAJor";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByName(validName);
+        Optional<PowerFactor> result = PowerFactor.fromName(validName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -96,45 +96,45 @@ class PowerFactorTest {
     }
 
     @Test
-    void testGetByName_withNoMatch_thenReturnsEmptyOptional() {
+    void testFromName_withNoMatch_thenReturnsEmptyOptional() {
         // Arrange
         String invalidName = "Invalid";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByName(invalidName);
+        Optional<PowerFactor> result = PowerFactor.fromName(invalidName);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withNullInput_thenReturnsEmptyOptional() {
+    void testFromName_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByName(null);
+        Optional<PowerFactor> result = PowerFactor.fromName(null);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withEmptyInput_thenReturnsEmptyOptional() {
+    void testFromName_withEmptyInput_thenReturnsEmptyOptional() {
         // Arrange
         String emptyName = "";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByName(emptyName);
+        Optional<PowerFactor> result = PowerFactor.fromName(emptyName);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
+    void testFromName_withBlankInput_thenReturnsEmptyOptional() {
         // Arrange
         String blankName = "   ";
 
         // Act
-        Optional<PowerFactor> result = PowerFactor.getByName(blankName);
+        Optional<PowerFactor> result = PowerFactor.fromName(blankName);
 
         // Assert
         assertFalse(result.isPresent());

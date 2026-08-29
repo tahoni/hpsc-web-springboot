@@ -13,6 +13,6 @@ public class ClubIdentifierConverter implements AttributeConverter<ClubIdentifie
 
     @Override
     public ClubIdentifier convertToEntityAttribute(String dbData) {
-        return ClubIdentifier.getByAbbreviation(dbData).orElse(null);
+        return ClubIdentifier.fromAbbreviation(dbData).orElse(null);
     }
 }

@@ -14,6 +14,6 @@ public class FirearmTypeConverter implements AttributeConverter<FirearmType, Str
 
     @Override
     public FirearmType convertToEntityAttribute(String dbData) {
-        return FirearmType.getByName(dbData).orElse(null);
+        return FirearmType.fromName(dbData).orElse(null);
     }
 }

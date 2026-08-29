@@ -39,7 +39,7 @@ public enum PowerFactor {
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
      */
-    public static Optional<PowerFactor> getByName(String name) {
+    public static Optional<PowerFactor> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
@@ -63,7 +63,7 @@ public enum PowerFactor {
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
      */
-    public static Optional<PowerFactor> getByAbbreviation(String abbreviation) {
+    public static Optional<PowerFactor> fromAbbreviation(String abbreviation) {
         if ((abbreviation == null) || (abbreviation.isBlank())) {
             return Optional.empty();
         }

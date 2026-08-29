@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FirearmTypeTest {
 
-    // getByCode()
+    // fromCode()
     @Test
-    void testGetByCode_withMatch_thenReturnsCorrectFirearmType() {
+    void testFromCode_withMatch_thenReturnsCorrectFirearmType() {
         // Act
-        Optional<FirearmType> result = FirearmType.getByCode(7);
+        Optional<FirearmType> result = FirearmType.fromCode(7);
 
         // Assert
         assertTrue(result.isPresent());
@@ -20,40 +20,40 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByCode_withNullInput_thenReturnsEmptyOptional() {
+    void testFromCode_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<FirearmType> result = FirearmType.getByCode(null);
+        Optional<FirearmType> result = FirearmType.fromCode(null);
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void testGetByCode_withZeroInput_thenReturnsEmptyOptional() {
+    void testFromCode_withZeroInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<FirearmType> result = FirearmType.getByCode(0);
+        Optional<FirearmType> result = FirearmType.fromCode(0);
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void testGetByCode_withNoMatch_returnsEmptyOptional() {
+    void testFromCode_withNoMatch_returnsEmptyOptional() {
         // Act
-        Optional<FirearmType> result = FirearmType.getByCode(100);
+        Optional<FirearmType> result = FirearmType.fromCode(100);
 
         // Assert
         assertTrue(result.isEmpty());
     }
     
-    // getByName()
+    // fromName()
     @Test
-    void testGetByName_withExactMatch_thenReturnsCorrectFirearmType() {
+    void testFromName_withExactMatch_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = "Handgun";
 
         // Act
-        Optional<FirearmType> result = FirearmType.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.fromName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -61,12 +61,12 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectFirearmType() {
+    void testFromName_withCaseInsensitiveMatch_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = "pcc";
 
         // Act
-        Optional<FirearmType> result = FirearmType.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.fromName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -74,12 +74,12 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByName_withAlternateSeparatorMatch_thenReturnsCorrectFirearmType() {
+    void testFromName_withAlternateSeparatorMatch_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = "Pistol-Caliber-Carbine";
 
         // Act
-        Optional<FirearmType> result = FirearmType.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.fromName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -87,12 +87,12 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByName_withDot22_thenReturnsCorrectFirearmType() {
+    void testFromName_withDot22_thenReturnsCorrectFirearmType() {
         // Arrange
         String inputName = ".22LR";
 
         // Act
-        Optional<FirearmType> result = FirearmType.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.fromName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -100,33 +100,33 @@ class FirearmTypeTest {
     }
 
     @Test
-    void testGetByName_withNullInput_thenReturnsEmptyOptional() {
+    void testFromName_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<FirearmType> result = FirearmType.getByName(null);
+        Optional<FirearmType> result = FirearmType.fromName(null);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
+    void testFromName_withBlankInput_thenReturnsEmptyOptional() {
         // Arrange
         String inputName = "   ";
 
         // Act
-        Optional<FirearmType> result = FirearmType.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.fromName(inputName);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withNoMatch_thenReturnsEmptyOptional() {
+    void testFromName_withNoMatch_thenReturnsEmptyOptional() {
         // Arrange
         String inputName = "NonExistentFirearmType";
 
         // Act
-        Optional<FirearmType> result = FirearmType.getByName(inputName);
+        Optional<FirearmType> result = FirearmType.fromName(inputName);
 
         // Assert
         assertFalse(result.isPresent());

@@ -173,7 +173,7 @@ Three documentation-only folders supplement these:
   business-logic outcomes is fine — only test constructors, `toString()`, `equals()`/`hashCode()`, etc. when they are
   handwritten or contain custom logic.
 - **Group and order tests by the method under test.** Precede each group of tests for a given method with a one-line
-  comment naming it (e.g. `// getByCode()`), matching the style already used in `FirearmTypeTest`/
+  comment naming it (e.g. `// fromCode()`), matching the style already used in `FirearmTypeTest`/
   `ControllerAdviceTest`. Order the groups: constructors first; then public methods before protected methods; within
   each visibility, alphabetically by method name — for overloads of the same name, order by parameter count, then by
   parameter type; `toString()` always comes last, regardless of visibility.

@@ -15,6 +15,6 @@ public class CompetitorCategoryConverter implements AttributeConverter<Competito
 
     @Override
     public CompetitorCategory convertToEntityAttribute(String dbData) {
-        return CompetitorCategory.getByName(dbData).orElse(CompetitorCategory.NONE);
+        return CompetitorCategory.fromName(dbData).orElse(CompetitorCategory.NONE);
     }
 }

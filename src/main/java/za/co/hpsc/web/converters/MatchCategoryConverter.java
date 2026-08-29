@@ -14,6 +14,6 @@ public class MatchCategoryConverter implements AttributeConverter<MatchCategory,
 
     @Override
     public MatchCategory convertToEntityAttribute(String dbData) {
-        return MatchCategory.getByName(dbData).orElse(null);
+        return MatchCategory.fromName(dbData).orElse(null);
     }
 }

@@ -54,13 +54,13 @@ public enum FirearmType {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
      */
-    public static Optional<FirearmType> getByName(String name) {
+    public static Optional<FirearmType> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
 
         return Stream.of(FirearmType.values())
-                .filter(division -> division.isNameMatch(name))
+                .filter(firearmType -> firearmType.isNameMatch(name))
                 .findFirst();
     }
 
@@ -78,13 +78,13 @@ public enum FirearmType {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
      */
-    public static Optional<FirearmType> getByCode(Integer code) {
+    public static Optional<FirearmType> fromCode(Integer code) {
         if ((code == null) || (code <= 0)) {
             return Optional.empty();
         }
 
         return Stream.of(FirearmType.values())
-                .filter(division -> code.equals(division.getCode()))
+                .filter(firearmType -> code.equals(firearmType.getCode()))
                 .findFirst();
     }
 
@@ -96,7 +96,7 @@ public enum FirearmType {
     private boolean isNameMatch(String name) {
         // Checks for a match without separators
         return this.names.stream()
-                .anyMatch(divisionName -> divisionName.equalsIgnoreCase(normaliseName(name)));
+                .anyMatch(firearmTypeName -> firearmTypeName.equalsIgnoreCase(normaliseName(name)));
     }
 
     private String normaliseName(String name) {

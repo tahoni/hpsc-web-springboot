@@ -60,11 +60,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Enums
 
-- **`ClubIdentifier`:** Added class-level Javadoc matching the convention already used by the other enums, and corrected its `getByName`/`getByAbbreviation`/`getByCode` Javadoc, which still referred to a stale `ClubReference` type name and an inaccurate "null or negative" description for the (`String`-typed) `code` parameter
+- **`ClubIdentifier`:** Added class-level Javadoc matching the convention already used by the other enums, and corrected its `fromName`/`fromAbbreviation`/`fromCode` Javadoc, which still referred to a stale `ClubReference` type name and an inaccurate "null or negative" description for the (`String`-typed) `code` parameter
+- **`ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`:** Renamed `getByName`/`getByAbbreviation`/`getByCode`/`getByAbbreviationOrName` factory methods to `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName` — a more idiomatic name for an `Optional`-returning static factory; behaviour unchanged
 
 #### Converters
 
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Parameter names aligned to `AttributeConverter`'s own convention (`attribute`/`dbData`), for consistency with the new `GenderConverter`
+- **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Updated to call the renamed `fromX` factory methods
 
 ### 🗑️ Removed
 

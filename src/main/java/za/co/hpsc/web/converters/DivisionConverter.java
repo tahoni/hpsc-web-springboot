@@ -14,6 +14,6 @@ public class DivisionConverter implements AttributeConverter<Division, String> {
 
     @Override
     public Division convertToEntityAttribute(String dbData) {
-        return Division.getByName(dbData).orElse(null);
+        return Division.fromName(dbData).orElse(null);
     }
 }

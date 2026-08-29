@@ -14,6 +14,6 @@ public class PowerFactorConverter implements AttributeConverter<PowerFactor, Str
 
     @Override
     public PowerFactor convertToEntityAttribute(String dbData) {
-        return PowerFactor.getByName(dbData).orElse(null);
+        return PowerFactor.fromName(dbData).orElse(null);
     }
 }

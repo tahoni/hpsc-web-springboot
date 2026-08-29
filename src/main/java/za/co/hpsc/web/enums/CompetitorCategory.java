@@ -51,13 +51,13 @@ public enum CompetitorCategory {
      * @return an {@code Optional} containing the matching {@code CompetitorCategory} if found,
      * or {@link CompetitorCategory#NONE} otherwise.
      */
-    public static Optional<CompetitorCategory> getByName(String name) {
+    public static Optional<CompetitorCategory> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.of(NONE);
         }
 
         Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
-                .filter(category -> category.isNameMatch(name))
+                .filter(competitorCategory -> competitorCategory.isNameMatch(name))
                 .findFirst();
         return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
     }
@@ -76,13 +76,13 @@ public enum CompetitorCategory {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or {@link CompetitorCategory#NONE} otherwise.
      */
-    public static Optional<CompetitorCategory> getByCode(Integer code) {
+    public static Optional<CompetitorCategory> fromCode(Integer code) {
         if ((code == null) || (code == 0)) {
             return Optional.of(NONE);
         }
 
         Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
-                .filter(category -> code.equals(category.getCode()))
+                .filter(competitorCategory -> code.equals(competitorCategory.getCode()))
                 .findFirst();
         return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
     }

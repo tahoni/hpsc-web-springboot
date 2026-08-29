@@ -52,7 +52,7 @@ public enum ClubIdentifier {
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
      */
-    public static Optional<ClubIdentifier> getByName(String name) {
+    public static Optional<ClubIdentifier> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
@@ -75,7 +75,7 @@ public enum ClubIdentifier {
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
      */
-    public static Optional<ClubIdentifier> getByAbbreviation(String abbreviation) {
+    public static Optional<ClubIdentifier> fromAbbreviation(String abbreviation) {
         if ((abbreviation == null) || (abbreviation.isBlank())) {
             return Optional.empty();
         }
@@ -98,13 +98,13 @@ public enum ClubIdentifier {
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
      */
-    public static Optional<ClubIdentifier> getByCode(String code) {
+    public static Optional<ClubIdentifier> fromCode(String code) {
         if ((code == null) || (code.isBlank())) {
             return Optional.empty();
         }
 
         return Arrays.stream(ClubIdentifier.values())
-                .filter(clubReference -> clubReference.code.equalsIgnoreCase(code))
+                .filter(clubIdentifier -> clubIdentifier.code.equalsIgnoreCase(code))
                 .findFirst();
     }
 

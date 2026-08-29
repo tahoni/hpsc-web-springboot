@@ -37,13 +37,13 @@ public enum MatchCategory {
      * @return an {@code Optional} containing the matching {@code MatchCategory} if found,
      * or empty otherwise.
      */
-    public static Optional<MatchCategory> getByName(String name) {
+    public static Optional<MatchCategory> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
 
         return Stream.of(MatchCategory.values())
-                .filter(category -> category.getName().equalsIgnoreCase(name))
+                .filter(matchCategory -> matchCategory.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
 
