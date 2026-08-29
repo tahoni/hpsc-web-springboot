@@ -40,6 +40,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Documentation
+
+- **`HISTORY.md`:** New "Major Version Goals" subsection under Project Philosophy Evolution — summarises the driving goal behind each major version line (5.x, 6.x, 7.x)
+- **`HISTORY.md`:** New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" phase entry — captures the test-convention, documentation-accuracy and AI-agent-tooling work spanning those three releases
+
 ### 🔄 Changed
 
 #### Documentation
