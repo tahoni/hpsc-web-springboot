@@ -2,14 +2,16 @@
 
 All notable changes to the HPSC Website Backend project are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.0.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
+to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.0.
 
 ---
 
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 7.4.0](#-740---2026-08-29) ← Current
+- [🧾 Version 7.4.1](#-741---2026-08-29) ← Current
+- [🧾 Version 7.4.0](#-740---2026-08-29)
 - [🧾 Version 7.3.0](#-730---2026-08-25)
 - [🧾 Version 7.2.0](#-720---2026-08-25)
 - [🧾 Version 7.1.0](#-710---2026-08-24)
@@ -41,67 +43,124 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## 🧾 [7.4.1] - 2026-08-29
+
+### ➕ Added
+
+#### Documentation
+
+- **`HISTORY.md`:** New "Major Version Goals" subsection under Project Philosophy Evolution — summarises the driving goal behind each major version line (4.x, 5.x, 6.x, 7.x)
+- **`HISTORY.md`:** New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" phase entry — captures the test-convention, documentation-accuracy and AI-agent-tooling work spanning those three releases
+
+### 🔄 Changed
+
+#### Documentation
+
+- **`AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md`, `RELEASE_NOTES.md`:** Rewrapped to a consistent ~120-character line width — prose, list items and table columns realigned; no content changes beyond a handful of incidental copyedits surfaced along the way
+
+---
+
 ## 🧾 [7.4.0] - 2026-08-29
 
 ### ➕ Added
 
 #### Documentation
 
-- **`documentation/roadmap/improvement-plan.md`:** New document synthesising the goals and constraints stated across this repository's documentation and configuration into a prioritised set of gaps and a roadmap
-- **`documentation/roadmap/improvement-plan-tasks.md`:** New concrete, checkbox-level task list broken out from `documentation/roadmap/improvement-plan.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
-- **`README.md` / `AGENTS.md`:** Both now list `documentation/roadmap/`'s files in their own dedicated Roadmap section, separate from the standard documentation file map/table
+- **`documentation/roadmap/improvement-plan.md`:** New document synthesising the goals and constraints stated across
+  this repository's documentation and configuration into a prioritised set of gaps and a roadmap
+- **`documentation/roadmap/improvement-plan-tasks.md`:** New concrete, checkbox-level task list broken out from
+  `documentation/roadmap/improvement-plan.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
+- **`README.md` / `AGENTS.md`:** Both now list `documentation/roadmap/`'s files in their own dedicated Roadmap section,
+  separate from the standard documentation file map/table
 
 #### Models
 
-- **`za.co.hpsc.web.models.ipsc.request`:** New request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, and `MatchOverallResultRequest`/`MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV variants) for competitor result submission — all now carry field- and class-level Javadoc mirroring `IpscCommonScore`'s Comstock-scoring documentation below, and `MatchRequest` gains a `matchId` field for updating an existing match (previously creation-only)
-- **`IpscCommonScore`:** New base DTO for fields shared by Comstock-scored (hit-factor) IPSC results — percentage, weighted points, time, power factor, alpha/charlie/delta hit counts and penalty counts — with Javadoc documenting how the Comstock scoring method works
-- **`IpscMatchScore`:** New DTO extending `IpscCommonScore` with `percentageOfPossiblePoints`, the match-level accuracy total independent of time
-- **`IpscMatchStageScore`:** New DTO extending `IpscCommonScore` with `rawPoints` and `hitFactor` (`rawPoints / time`), the figure a single Comstock stage is ranked on
+- **`za.co.hpsc.web.models.ipsc.request`:** New request DTOs for the IPSC module rebuild — `MatchRequest`/
+  `MatchStageRequest`/`MatchStagesRequest` for match/stage submission, and `MatchOverallResultRequest`/
+  `MatchStageResultRequest` (plus `MatchOverallResultRequestForCSV`/`MatchStageResultRequestForCSV` abstract CSV
+  variants) for competitor result submission — all now carry field- and class-level Javadoc mirroring `IpscCommonScore`
+  's Comstock-scoring documentation below, and `MatchRequest` gains a `matchId` field for updating an existing match
+  (previously creation-only)
+- **`IpscCommonScore`:** New base DTO for fields shared by Comstock-scored (hit-factor) IPSC results — percentage,
+  weighted points, time, power factor, alpha/charlie/delta hit counts and penalty counts — with Javadoc documenting how
+  the Comstock scoring method works
+- **`IpscMatchScore`:** New DTO extending `IpscCommonScore` with `percentageOfPossiblePoints`, the match-level accuracy
+  total independent of time
+- **`IpscMatchStageScore`:** New DTO extending `IpscCommonScore` with `rawPoints` and `hitFactor` (`rawPoints / time`),
+  the figure a single Comstock stage is ranked on
 
 ### 🔄 Changed
 
 #### Configuration
 
-- **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite, Sveltekit, vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale "Editor-based Rest Client" comment, and adds new OS, Version Control and Secrets & Credentials sections; the custom TAHONI block now also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to `.claude/*.local.*` (supersedes the `.claude/*.local.json` entry above)
-- **`.gitignore`:** Uncommented the `.project` ignore rule, so IntelliJ/Eclipse project description files are now excluded from version control going forward
-- **`.aiignore`:** Re-synced with `.gitignore`'s refreshed template sections; its entries stay plain excludes rather than mirroring `.gitignore`'s `!` allowlist patterns (e.g. `.vscode/settings.json`, `.env.example`, `.yarn/patches`), so AI tooling stays conservative even for files git tracks
+- **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest upstream
+  templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite, Sveltekit,
+  vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale "Editor-based
+  Rest Client" comment, and adds new OS, Version Control and Secrets & Credentials sections; the custom TAHONI block now
+  also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to `.claude/*.local.*` (supersedes the
+  `.claude/*.local.json` entry above)
+- **`.gitignore`:** Uncommented the `.project` ignore rule, so IntelliJ/Eclipse project description files are now
+  excluded from version control going forward
+- **`.aiignore`:** Re-synced with `.gitignore`'s refreshed template sections; its entries stay plain excludes rather
+  than mirroring `.gitignore`'s `!` allowlist patterns (e.g. `.vscode/settings.json`, `.env.example`, `.yarn/patches`),
+  so AI tooling stays conservative even for files git tracks
 
 #### Documentation
 
-- **`AGENTS.md`:** New Serial commas rule — lists of three or more items no longer take a comma before the final `and`/`or`; retroactively applied across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files
-- **`AGENTS.md`:** Dropped the exception letting code identifiers ignore the British English spelling convention — class/method/variable names are now held to the same rule as prose
-- **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist; the archived `documentation/history/RELEASE_NOTES_v7.3.0.md` snapshot updated to match, keeping it byte-for-byte identical per AGENTS.md's archiving rule
-- **`ARCHITECTURE.md`:** Directory structure tree now lists the new `documentation/roadmap/` folder alongside `archive/` and `history/`
+- **`AGENTS.md`:** New Serial commas rule — lists of three or more items no longer take a comma before the final `and`/
+  `or`; retroactively applied across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`,
+  `HISTORY.md` and the Claude Code command files
+- **`AGENTS.md`:** Dropped the exception letting code identifiers ignore the British English spelling convention —
+  class/method/variable names are now held to the same rule as prose
+- **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots
+  included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist; the
+  archived `documentation/history/RELEASE_NOTES_v7.3.0.md` snapshot updated to match, keeping it byte-for-byte identical
+  per AGENTS.md's archiving rule
+- **`ARCHITECTURE.md`:** Directory structure tree now lists the new `documentation/roadmap/` folder alongside `archive/`
+  and `history/`
 
 #### Testing
 
-- **`RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `ImageResponseTest`:** Test method names corrected to British-English spelling (`Initializes`→`Initialises`, `Recognized`→`Recognised`), per AGENTS.md's tightened identifier rule
+- **`RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `ImageResponseTest`:** Test method names corrected to
+  British-English spelling (`Initializes`→`Initialises`, `Recognized`→`Recognised`), per AGENTS.md's tightened
+  identifier rule
 
 #### Tooling
 
-- **`/generate-pr-description`:** Step 6's `RELEASE_NOTES.md` instructions updated to match AGENTS.md's new Contributors-sourcing rule above
-- **`/sync-unreleased-changes`:** New Claude Code command — diffs the current branch against its base (`develop`/`main`) plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries directly in the file
+- **`/generate-pr-description`:** Step 6's `RELEASE_NOTES.md` instructions updated to match AGENTS.md's new
+  Contributors-sourcing rule above
+- **`/sync-unreleased-changes`:** New Claude Code command — diffs the current branch against its base (`develop`/`main`)
+  plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and fills in any
+  missing entries directly in the file
 
 ### 🐛 Fixed
 
 #### Controllers
 
-- **`AwardController`:** Route prefix changed from `/v1/awards` to `/awards` — dropped the unused `/v1` API versioning segment
-- **`ImageController`:** Route prefix changed from `/v1/images` to `/images` — dropped the unused `/v1` API versioning segment
+- **`AwardController`:** Route prefix changed from `/v1/awards` to `/awards` — dropped the unused `/v1` API versioning
+  segment
+- **`ImageController`:** Route prefix changed from `/v1/images` to `/images` — dropped the unused `/v1` API versioning
+  segment
 
 #### Documentation
 
-- **`README.md`:** Restored the missing `#` on the H1 heading, lost in an earlier commit that inverted the intended fix — it was rendering as plain text instead of the page title
+- **`README.md`:** Restored the missing `#` on the H1 heading, lost in an earlier commit that inverted the intended
+  fix — it was rendering as plain text instead of the page title
 
 ### 🗑️ Removed
 
 #### Configuration
 
-- **`.aiignore`:** Removed the dedicated `.claude/`/`.github/` AI-only exclusion block — those directories, including `.claude/commands`, are no longer hidden from AI context
+- **`.aiignore`:** Removed the dedicated `.claude/`/`.github/` AI-only exclusion block — those directories, including
+  `.claude/commands`, are no longer hidden from AI context
 
 ### 🔐 Security
 
-- **`log4j-api`:** Overridden `2.25.4` → `2.25.5` via a new `pom.xml` `dependencyManagement` pin, closing [CVE-2026-49844](https://nvd.nist.gov/vuln/detail/CVE-2026-49844) (GHSA-qv9r-c865-cp47) — a transitive dependency pulled in via `spring-boot-starter-logging` → `log4j-to-slf4j`; this project uses Logback, not Log4j2's `JsonTemplateLayout`, so the vulnerable code path was never actually reachable, but the pin removes the flagged advisory
+- **`log4j-api`:** Overridden `2.25.4` → `2.25.5` via a new `pom.xml` `dependencyManagement` pin,
+  closing [CVE-2026-49844](https://nvd.nist.gov/vuln/detail/CVE-2026-49844) (GHSA-qv9r-c865-cp47) — a transitive
+  dependency pulled in via `spring-boot-starter-logging` → `log4j-to-slf4j`; this project uses Logback, not Log4j2's
+  `JsonTemplateLayout`, so the vulnerable code path was never actually reachable, but the pin removes the flagged
+  advisory
 
 ---
 
@@ -111,23 +170,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Tooling
 
-- **`/generate-pr-summary`:** New Claude Code command — condenses a version's `PR_DESCRIPTION_vX.Y.Z.md` and `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary (a short paragraph plus a capped bullet list), for pasting into a PR description without this repo's own emoji-heavy documentation style
+- **`/generate-pr-summary`:** New Claude Code command — condenses a version's `PR_DESCRIPTION_vX.Y.Z.md` and
+  `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary (a short paragraph plus a capped bullet
+  list), for pasting into a PR description without this repo's own emoji-heavy documentation style
 
 ### 🔄 Changed
 
 #### Tooling
 
-- **`/generate-pr-summary`:** Output instructions clarified to require the fenced block contain raw, unrendered Markdown source (literal `##`/`**`/`-`) rather than Claude's own rendered formatting, so pasted PR summaries preserve exact syntax
+- **`/generate-pr-summary`:** Output instructions clarified to require the fenced block contain raw, unrendered Markdown
+  source (literal `##`/`**`/`-`) rather than Claude's own rendered formatting, so pasted PR summaries preserve exact
+  syntax
 
 ### 🐛 Fixed
 
 #### Documentation
 
-- **`README.md`:** Introduction and Features sections no longer describe match management, competitor/club CRUD, WinMSS import or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController` CSV processing is implemented today; the match/competitor domain's service and controller layer is still being rebuilt
-- **`README.md`:** Coverage-report command corrected from `./mvnw test jacoco:report` (non-functional — JaCoCo is only bound via the `coverage` Maven profile) to `./mvnw verify -Pcoverage`
-- **`README.md`:** Removed the `1.x – 4.x` version range from the `ARCHIVE.md` description, per AGENTS.md's rule that `README.md`/`ARCHITECTURE.md` must never reference specific version numbers or ranges
-- **`ARCHITECTURE.md`:** Test package tree corrected — removed the nonexistent `domain/` test package and added the missing `converters/`/`exceptions/` packages
-- **`ARCHITECTURE.md`:** CI/CD & Quality Gates table's `Build & Tests` row no longer claims an "All PRs" GitHub Actions trigger — only `codeql.yml` exists; reworded to reflect it's run locally/by reviewers
+- **`README.md`:** Introduction and Features sections no longer describe match management, competitor/club CRUD, WinMSS
+  import or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController` CSV
+  processing is implemented today; the match/competitor domain's service and controller layer is still being rebuilt
+- **`README.md`:** Coverage-report command corrected from `./mvnw test jacoco:report` (non-functional — JaCoCo is only
+  bound via the `coverage` Maven profile) to `./mvnw verify -Pcoverage`
+- **`README.md`:** Removed the `1.x – 4.x` version range from the `ARCHIVE.md` description, per AGENTS.md's rule that
+  `README.md`/`ARCHITECTURE.md` must never reference specific version numbers or ranges
+- **`ARCHITECTURE.md`:** Test package tree corrected — removed the nonexistent `domain/` test package and added the
+  missing `converters/`/`exceptions/` packages
+- **`ARCHITECTURE.md`:** CI/CD & Quality Gates table's `Build & Tests` row no longer claims an "All PRs" GitHub Actions
+  trigger — only `codeql.yml` exists; reworded to reflect it is run locally/by reviewers
 
 ### ⚠️ Deprecated
 
@@ -143,61 +212,120 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Documentation
 
-- **`CLAUDE.md`:** New Git Workflow section stating the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, rather than deferring entirely to `AGENTS.md`
+- **`CLAUDE.md`:** New Git Workflow section stating the branching model's PR targets directly (`feature/*` → `develop`;
+  `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, rather than deferring entirely to
+  `AGENTS.md`
 
 #### Testing
 
-- **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/`ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
-- **`ControllerResponseTest`:** Covers the previously-untested `ControllerResponse(boolean, String)` constructor (message/error swap based on `success`), and the `(LocalDateTime, String, String)` constructor's derived-`success`-from-error-presence branch (non-null/non-blank error, and blank-but-non-null error)
-- **`FirearmTypeTest`:** Covers `toString()` for both the single-name and multi-name enum constructors (previously untested, despite the sibling `ClubIdentifier` enum having equivalent `toString()` tests)
-- **`ControllerAdviceTest`:** Covers `logError`'s three previously untested branches — a `null` throwable, a throwable with a wrapped cause and a `null` `WebRequest`; JaCoCo branch coverage for this class went from 92% to 100%
+- **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/
+  `ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
+- **`ControllerResponseTest`:** Covers the previously-untested `ControllerResponse(boolean, String)` constructor
+  (message/error swap based on `success`), and the `(LocalDateTime, String, String)` constructor's derived-`success`
+  -from-error-presence branch (non-null/non-blank error, and blank-but-non-null error)
+- **`FirearmTypeTest`:** Covers `toString()` for both the single-name and multi-name enum constructors (previously
+  untested, despite the sibling `ClubIdentifier` enum having equivalent `toString()` tests)
+- **`ControllerAdviceTest`:** Covers `logError`'s three previously untested branches — a `null` throwable, a throwable
+  with a wrapped cause and a `null` `WebRequest`; JaCoCo branch coverage for this class went from 92% to 100%
 
 #### Tooling
 
-- **`/scaffold-unit-tests`:** New Claude Code command, migrated from `.github/prompts/scaffold-unit-tests.prompt.md` — corrects the stale `za.co.signio.apexservices` package reference and the abstract "Layer 1/2/3" interface-test pattern to match this repo's actual conventions (interface contract tests named `[Class]Test`, exercised via the interface type in `services/`, impl-only helper tests in `services/impl/`, no Lombok-only tests), per the `AwardServiceTest`/`ImageServiceTest` split above. Defers to its loaded `@AGENTS.md`/`@CLAUDE.md` for testing-pattern specifics (JUnit Assertions, method naming, exception hierarchy) rather than restating them inline, so it can't drift out of sync with the source. Never commits — it scaffolds and verifies (`./mvnw test`) only, leaving the result for the user to review and commit.
-- **`/scaffold-integration-tests`:** New Claude Code command, copied from `/scaffold-unit-tests` and adapted for `@SpringBootTest`-based service integration tests — follows the pattern in `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest`: named `[Class]IntegrationTest`, `@ActiveProfiles("test")` is mandatory (see CLAUDE.md's Database Profiles table, never `dev`/prod), `@EnableAutoConfiguration` excludes `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` to keep the context lightweight, a real `@Autowired` Spring-wired bean rather than Mockito and only the target's public interface methods may be called — never an impl class's protected/private helpers, which stay the paired unit test's job. Same defer-to-loaded-docs treatment as `/scaffold-unit-tests`; also never commits.
+- **`/scaffold-unit-tests`:** New Claude Code command, migrated from `.github/prompts/scaffold-unit-tests.prompt.md` —
+  corrects the stale `za.co.signio.apexservices` package reference and the abstract "Layer 1/2/3" interface-test pattern
+  to match this repo's actual conventions (interface contract tests named `[Class]Test`, exercised via the interface
+  type in `services/`, impl-only helper tests in `services/impl/`, no Lombok-only tests), per the `AwardServiceTest`/
+  `ImageServiceTest` split above. Defers to its loaded `@AGENTS.md`/`@CLAUDE.md` for testing-pattern specifics (JUnit
+  Assertions, method naming, exception hierarchy) rather than restating them inline, so it can't drift out of sync with
+  the source. Never commits — it scaffolds and verifies (`./mvnw test`) only, leaving the result for the user to review
+  and commit.
+- **`/scaffold-integration-tests`:** New Claude Code command, copied from `/scaffold-unit-tests` and adapted for
+  `@SpringBootTest`-based service integration tests — follows the pattern in `AwardServiceIntegrationTest`/
+  `ImageServiceIntegrationTest`: named `[Class]IntegrationTest`, `@ActiveProfiles("test")` is mandatory (see CLAUDE.md's
+  Database Profiles table, never `dev`/prod), `@EnableAutoConfiguration` excludes `DataSourceAutoConfiguration`/
+  `HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` to keep the context lightweight, a real `@Autowired`
+  Spring-wired bean rather than Mockito and only the target's public interface methods may be called — never an impl
+  class's protected/private helpers, which stay the paired unit test's job. Same defer-to-loaded-docs treatment as
+  `/scaffold-unit-tests`; also never commits.
 
 ### 🔄 Changed
 
 #### Testing
 
-- **`AwardServiceImplTest`, `ImageServiceImplTest`:** Stale "TODO: sync" comments replaced with Javadoc cross-referencing the new interface-level tests; these two files were already in sync (14 parallel test cases each) for the impl-only `readAwards`/`mapAwards` and `readImages`/`mapImages` methods
-- **`AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Now exclude `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` via `@EnableAutoConfiguration` to keep the Spring context lightweight, since neither service touches the datasource, JPA or messaging; also replaces their stale "TODO: sync" comments with Javadoc (they were already in sync)
-- **`HpscWebApplicationTests` renamed to `HpscWebApplicationTest`:** Matches AGENTS.md's `<ClassName>Test` naming convention (was the Spring Initializr default plural name); its `contextLoads()` method renamed to `testContextLoads_whenSpringContextStarted_thenLoadsSuccessfully` to match the method-naming convention too
-- **26 test files:** Retrofitted with AGENTS.md's method-comment/ordering rule (`// methodName()` headers; constructors first, public before protected, alphabetical by name, overloads by parameter count then type, `toString()` last) — `ClubIdentifierConverterTest`, `MatchCategoryConverterTest`, `ClubIdentifierTest`, `DivisionTest`, `PowerFactorTest`, `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`, `ControllerResponseTest`, `RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `AwardCeremonyResponseTest`, `AwardResponseTest`, `ImageRequestForCSVTest`, `ImageResponseTest`, `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `DateUtilTest`, `NumberUtilTest`, `StringUtilTest`, `ValueUtilTest`. No test bodies, assertions or names changed — only comments and whole-method reordering; `ValueUtilTest` in particular had its `nullAsEmptyString` tests consolidated from 9 scattered locations into one contiguous group. Verified via `./mvnw test`: same 492 tests, all passing, before and after
+- **`AwardServiceImplTest`, `ImageServiceImplTest`:** Stale "TODO: sync" comments replaced with Javadoc
+  cross-referencing the new interface-level tests; these two files were already in sync (14 parallel test cases each)
+  for the impl-only `readAwards`/`mapAwards` and `readImages`/`mapImages` methods
+- **`AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Now exclude `DataSourceAutoConfiguration`/
+  `HibernateJpaAutoConfiguration`/`RabbitAutoConfiguration` via `@EnableAutoConfiguration` to keep the Spring context
+  lightweight, since neither service touches the datasource, JPA nor messaging; also replaces their stale "TODO: sync"
+  comments with Javadoc (they were already in sync)
+- **`HpscWebApplicationTests` renamed to `HpscWebApplicationTest`:** Matches AGENTS.md's `<ClassName>Test` naming
+  convention (was the Spring Initializr default plural name); its `contextLoads()` method renamed to
+  `testContextLoads_whenSpringContextStarted_thenLoadsSuccessfully` to match the method-naming convention too
+- **26 test files:** Retrofitted with AGENTS.md's method-comment/ordering rule (`// methodName()` headers; constructors
+  first, public before protected, alphabetical by name, overloads by parameter count then type, `toString()` last) —
+  `ClubIdentifierConverterTest`, `MatchCategoryConverterTest`, `ClubIdentifierTest`, `DivisionTest`, `PowerFactorTest`,
+  `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`, `ControllerResponseTest`, `RequestTest`,
+  `ResponseTest`, `AwardRequestForCSVTest`, `AwardCeremonyResponseTest`, `AwardResponseTest`, `ImageRequestForCSVTest`,
+  `ImageResponseTest`, `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`,
+  `ImageServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `DateUtilTest`, `NumberUtilTest`,
+  `StringUtilTest`, `ValueUtilTest`. No test bodies, assertions or names changed — only comments and whole-method
+  reordering; `ValueUtilTest` in particular had its `nullAsEmptyString` tests consolidated from 9 scattered locations
+  into one contiguous group. Verified via `./mvnw test`: same 492 tests, all passing, before and after
 
 #### Build & Metadata
 
 - Project version bumped to **7.2.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 - **`pom.xml`:** Spring Boot parent bumped `4.0.7` → `4.1.0`. As part of this:
-  - Removed the `spring-framework.version`/`tomcat.version` property overrides — both now match Boot 4.1.0's own defaults (`7.0.8`/`11.0.22`) exactly, so they were dead weight
-  - Removed the `commons.lang3.version` property — a pre-existing typo (Boot's real property is `commons-lang3.version`, hyphenated) meant this override never actually took effect; Boot 4.1.0 bumps the real one for free (`3.19.0` → `3.20.0`)
-  - Removed the `maven-dependency-plugin` version override (`3.6.1`) — Boot 4.1.0 now manages this plugin itself, at `3.10.0`
-  - Kept the `jackson-databind` (`2.21.5`) and `jackson-bom` (`3.1.5`) overrides unchanged — Boot 4.1.0's own managed versions (`2.21.4`/`3.1.4`) are still one patch behind
-  - Bumped the flyway-maven-plugin's separately-pinned `flyway-mysql` dependency `11.14.1` → `12.4.0`, matching the `flyway.version` Boot 4.1.0 now manages (plugin-scoped dependencies don't inherit Boot's dependencyManagement, so this needs manual sync on every parent bump — now documented inline)
-  - Verified: full test suite (492 tests), `./mvnw verify -Pcoverage` (including the repackage step) and `./mvnw flyway:info` against a real local MySQL 9.5 dev database all pass clean
+    - Removed the `spring-framework.version`/`tomcat.version` property overrides — both now match Boot 4.1.0's own
+      defaults (`7.0.8`/`11.0.22`) exactly, so they were dead weight
+    - Removed the `commons.lang3.version` property — a pre-existing typo (Boot's real property is
+      `commons-lang3.version`, hyphenated) meant this override never actually took effect; Boot 4.1.0 bumps the real one
+      for free (`3.19.0` → `3.20.0`)
+    - Removed the `maven-dependency-plugin` version override (`3.6.1`) — Boot 4.1.0 now manages this plugin itself, at
+      `3.10.0`
+    - Kept the `jackson-databind` (`2.21.5`) and `jackson-bom` (`3.1.5`) overrides unchanged — Boot 4.1.0's own managed
+      versions (`2.21.4`/`3.1.4`) are still one patch behind
+    - Bumped the flyway-maven-plugin's separately-pinned `flyway-mysql` dependency `11.14.1` → `12.4.0`, matching the
+      `flyway.version` Boot 4.1.0 now manages (plugin-scoped dependencies don't inherit Boot's dependencyManagement, so
+      this needs manual sync on every parent bump — now documented inline)
+    - Verified: full test suite (492 tests), `./mvnw verify -Pcoverage` (including the repackage step) and
+      `./mvnw flyway:info` against a real local MySQL 9.5 dev database all pass clean
 
 #### Documentation
 
-- **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `README.md`/`ARCHITECTURE.md`
+- **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just
+  exact version numbers, in `README.md`/`ARCHITECTURE.md`
 - **`AGENTS.md`:** Icon registry extended with `🔍` (Current state / inspection) and `📤` (Output)
-- **`AGENTS.md`, `CONTRIBUTING.md`:** Branching Model's develop-first rule clarified to note it's "for testing before they ship"
-- **`AGENTS.md`:** Test Conventions gains a grouping/ordering rule — each method's tests get a one-line `// methodName()` comment; groups are ordered constructors first, then public before protected, then alphabetically by method name within each visibility (overloads by parameter count then type), `toString()` last regardless of visibility
+- **`AGENTS.md`, `CONTRIBUTING.md`:** Branching Model's develop-first rule clarified to note it's "for testing before
+  they ship"
+- **`AGENTS.md`:** Test Conventions gains a grouping/ordering rule — each method's tests get a one-line
+  `// methodName()` comment; groups are ordered constructors first, then public before protected, then alphabetically by
+  method name within each visibility (overloads by parameter count then type), `toString()` last regardless of
+  visibility
 
 #### Tooling
 
-- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
-- **`.claude/commands/generate-pr-description.md`:** Closing instructions now remind the user to tag the merged release commit on `main` and merge `main` back into `develop` afterwards
-- **`/scaffold-unit-tests`:** Now accepts multiple space- or comma-separated class names/paths in a single invocation, scaffolding each target independently so one unresolved target doesn't block the rest
-- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Now also load `@CLAUDE.md` (previously `@AGENTS.md` only), for accurate technical detail — build/test commands, package layout, database profiles — when describing changes
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard
+  icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
+- **`.claude/commands/generate-pr-description.md`:** Closing instructions now remind the user to tag the merged release
+  commit on `main` and merge `main` back into `develop` afterwards
+- **`/scaffold-unit-tests`:** Now accepts multiple space- or comma-separated class names/paths in a single invocation,
+  scaffolding each target independently so one unresolved target doesn't block the rest
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Now also load `@CLAUDE.md`
+  (previously `@AGENTS.md` only), for accurate technical detail — build/test commands, package layout, database
+  profiles — when describing changes
 
 ### 🐛 Fixed
 
 #### Documentation
 
-- **`CLAUDE.md`:** Now cross-links to `AGENTS.md` for tool-agnostic conventions (git workflow, release checklist, documentation conventions, todo-list tracking) — previously the only project doc missing this reference
-- **`CLAUDE.md`:** Package overview table corrected — `ControllerAdvice` lives in `configs/`, not `exceptions/`; adds the missing `configs/` row
-- **`AGENTS.md`, `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`:** Removed the false claim that AssertJ is used for assertions — `assertj-core` is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, and every test in the suite uses JUnit Jupiter's `Assertions` instead
+- **`CLAUDE.md`:** Now cross-links to `AGENTS.md` for tool-agnostic conventions (git workflow, release checklist,
+  documentation conventions, todo-list tracking) — previously the only project doc missing this reference
+- **`CLAUDE.md`:** Package overview table corrected — `ControllerAdvice` lives in `configs/`, not `exceptions/`; adds
+  the missing `configs/` row
+- **`AGENTS.md`, `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`:** Removed the false claim that AssertJ
+  is used for assertions — `assertj-core` is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`,
+  and every test in the suite uses JUnit Jupiter's `Assertions` instead
 
 ### ⚠️ Deprecated
 
@@ -205,8 +333,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Testing
 
-- **`ControllerResponseTest.testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults`:** Removed — solely exercised the Lombok-generated `@NoArgsConstructor` and generated getters with no accompanying logic, per AGENTS.md's Test Conventions
-- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `processCsv` coverage, tested directly against the impl class, is superseded by the new interface-level `services/AwardServiceTest`/`services/ImageServiceTest`
+- **`ControllerResponseTest.testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults`:** Removed — solely exercised
+  the Lombok-generated `@NoArgsConstructor` and generated getters with no accompanying logic, per AGENTS.md's Test
+  Conventions
+- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `processCsv` coverage,
+  tested directly against the impl class, is superseded by the new interface-level `services/AwardServiceTest`/
+  `services/ImageServiceTest`
 
 ### 🔐 Security
 
@@ -218,9 +350,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Domain
 
-- **`ShooterLog.powerFactor`:** New `PowerFactor` column (via the existing `PowerFactorConverter`, not nullable) — snapshots are now scoped by power factor as well as firearm type
-- **`ShooterLogCompetitor.points`:** New nullable column — records the points each contributing `MatchCompetitor` row contributed to the snapshot's `logValue`
-- **`ShooterLogCompetitor.match`:** New `@ManyToOne IpscMatch` relation (`match_id`, not nullable) — direct match reference alongside the existing `matchCompetitor` link
+- **`ShooterLog.powerFactor`:** New `PowerFactor` column (via the existing `PowerFactorConverter`, not nullable) —
+  snapshots are now scoped by power factor as well as firearm type
+- **`ShooterLogCompetitor.points`:** New nullable column — records the points each contributing `MatchCompetitor` row
+  contributed to the snapshot's `logValue`
+- **`ShooterLogCompetitor.match`:** New `@ManyToOne IpscMatch` relation (`match_id`, not nullable) — direct match
+  reference alongside the existing `matchCompetitor` link
 
 #### Repositories
 
@@ -228,7 +363,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Database
 
-- **`V7_1_0__update_shooter_log_schema.sql`:** New Flyway migration — renames `shooter_log_entry` → `shooter_log_competitor`, adds `shooter_log.power_factor`, `shooter_log_competitor.points` and `shooter_log_competitor.match_id`
+- **`V7_1_0__update_shooter_log_schema.sql`:** New Flyway migration — renames `shooter_log_entry` →
+  `shooter_log_competitor`, adds `shooter_log.power_factor`, `shooter_log_competitor.points` and
+  `shooter_log_competitor.match_id`
 
 #### Build & Metadata
 
@@ -238,11 +375,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Domain
 
-- **`ShooterLogEntry` renamed to `ShooterLogCompetitor`** (table `shooter_log_entry` → `shooter_log_competitor`) — entity gains the `points` and `match` fields above
+- **`ShooterLogEntry` renamed to `ShooterLogCompetitor`** (table `shooter_log_entry` → `shooter_log_competitor`) —
+  entity gains the `points` and `match` fields above
 
 #### Repositories
 
-- **`ShooterLogRepository.findAllByCompetitorIdAndFirearmType`** renamed to **`findAllByCompetitorIdAndFirearmTypeAndPowerFactor`** — now filters by `PowerFactor` as well
+- **`ShooterLogRepository.findAllByCompetitorIdAndFirearmType`** renamed to **
+  `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`** — now filters by `PowerFactor` as well
 
 ### 🗑️ Removed
 
@@ -262,9 +401,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Domain
 
-- **`ShooterLog`:** New entity — persisted best-4-match shooter-log snapshot (`competitor`, `club`, `firearmType`, `logValue`, `calculatedDate`)
-- **`ShooterLogEntry`:** New entity — links a `ShooterLog` snapshot to the `MatchCompetitor` rows that contributed to it (`rankInLog`, unique constraint `(shooter_log_id, match_competitor_id)`)
-- **`Club.identifier`:** New column (`ClubIdentifier`, via the existing `ClubIdentifierConverter`, unique) — ties a `Club` row to `HPSC` / `SOSC` / `PMPSC`
+- **`ShooterLog`:** New entity — persisted best-4-match shooter-log snapshot (`competitor`, `club`, `firearmType`,
+  `logValue`, `calculatedDate`)
+- **`ShooterLogEntry`:** New entity — links a `ShooterLog` snapshot to the `MatchCompetitor` rows that contributed to it
+  (`rankInLog`, unique constraint `(shooter_log_id, match_competitor_id)`)
+- **`Club.identifier`:** New column (`ClubIdentifier`, via the existing `ClubIdentifierConverter`, unique) — ties a
+  `Club` row to `HPSC` / `SOSC` / `PMPSC`
 - **`Competitor.homeClub`:** New nullable `@ManyToOne Club` relation for home-club membership
 - **`MatchCompetitor.clubRanking`:** New column — rank among same-club competitors for a firearm type
 - **`MatchCompetitor.isVisitor`:** New `Boolean` column — `true` when `matchClub` differs from the host match's club
@@ -274,7 +416,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Repositories
 
-- **`ClubRepository`, `CompetitorRepository`, `IpscMatchRepository`, `IpscMatchStageRepository`, `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`, `ShooterLogEntryRepository`:** `repositories/` package rebuilt from scratch (previously emptied in preparation for this redesign)
+- **`ClubRepository`, `CompetitorRepository`, `IpscMatchRepository`, `IpscMatchStageRepository`,
+  `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`, `ShooterLogEntryRepository`:**
+  `repositories/` package rebuilt from scratch (previously emptied in preparation for this redesign)
 
 #### Build & Metadata
 
@@ -286,7 +430,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - `za.co.hpsc.web.domain.old.*` promoted to `za.co.hpsc.web.domain.*` (the `.old` package is dropped)
 - **`MatchCompetitor.matchRanking`** renamed to **`overallRanking`**
-- **`MatchStageCompetitor`:** FK changed from `competitor` to `matchCompetitor`; duplicated `competitorCategory` / `division` / `firearmType` / `powerFactor` / `matchClub` fields removed — now inherited via the `matchCompetitor` relation
+- **`MatchStageCompetitor`:** FK changed from `competitor` to `matchCompetitor`; duplicated `competitorCategory` /
+  `division` / `firearmType` / `powerFactor` / `matchClub` fields removed — now inherited via the `matchCompetitor`
+  relation
 
 ### 🗑️ Removed
 
@@ -310,16 +456,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Services
 
-- **`IpscMatchService` interface:** Match CRUD contract — `insertMatch`, `updateMatch`, `modifyMatch`, `getMatch`; all return `Optional<MatchOnlyResponse>`
+- **`IpscMatchService` interface:** Match CRUD contract — `insertMatch`, `updateMatch`, `modifyMatch`, `getMatch`; all
+  return `Optional<MatchOnlyResponse>`
 - **`IpscMatchServiceImpl`:** Full implementation (135 lines)
 - **`ClubEntityService.findClubById(Long)`:** New entity service method; implemented in `ClubEntityServiceImpl`
-- **`CompetitorEntityService.findCompetitorById(Long)`:** New entity service method; implemented in `CompetitorEntityServiceImpl`
-- **`MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)`:** New entity service method; implemented in `MatchStageCompetitorEntityServiceImpl`
+- **`CompetitorEntityService.findCompetitorById(Long)`:** New entity service method; implemented in
+  `CompetitorEntityServiceImpl`
+- **`MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)`:** New entity service method; implemented in
+  `MatchStageCompetitorEntityServiceImpl`
 - **`TransformationService.mapMatchOnly(MatchOnlyRequest)`:** New method for the match CRUD pipeline
 
 #### Models — `models/ipsc/match/`
 
-- **`MatchOnlyDto`:** Lightweight match DTO (no stages); initialised from `MatchOnlyRequest` with automatic `FirearmType` resolution and `dateEdited` stamping
+- **`MatchOnlyDto`:** Lightweight match DTO (no stages); initialised from `MatchOnlyRequest` with automatic
+  `FirearmType` resolution and `dateEdited` stamping
 - **`MatchOnlyRequest`:** JSON request body for match create / update operations
 - **`MatchOnlyResponse`:** Response envelope returned by `IpscMatchController`
 - **`MatchOnlyResultsDto`:** Internal results holder passed through the service chain
@@ -362,13 +512,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Services
 
-- **`DomainServiceImpl`:** Replaced direct JPA repository injection with entity service injection (`ClubEntityService`, `CompetitorEntityService`, `MatchEntityService`, `MatchStageEntityService`, `MatchCompetitorEntityService`, `MatchStageCompetitorEntityService`)
+- **`DomainServiceImpl`:** Replaced direct JPA repository injection with entity service injection (`ClubEntityService`,
+  `CompetitorEntityService`, `MatchEntityService`, `MatchStageEntityService`, `MatchCompetitorEntityService`,
+  `MatchStageCompetitorEntityService`)
 - **`TransformationService.mapMatchResults`:** Removed `throws ValidationException` from signature
 - **`TransformationServiceImpl`:** All imports updated to `models/ipsc/common/*`; `mapMatchOnly` method added
 
 #### Config & Infrastructure
 
-- **`ControllerAdvice`:** Structured logging added to all exception handlers; `ValidationException` removed from handler method signatures (119 lines changed)
+- **`ControllerAdvice`:** Structured logging added to all exception handlers; `ValidationException` removed from handler
+  method signatures (119 lines changed)
 - **`pom.xml`:** Spring Boot BOM upgraded `4.0.5` → `4.0.6`; Lombok exclusion plugin block reorganised
 - **`logback-spring.xml`:** Additional appender/logger configuration added
 
@@ -447,12 +600,19 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 
 #### Test Coverage (20+ new test classes, ~7,000 lines)
 
-- **Controller tests:** `AwardControllerTest` (163), `ImageControllerTest` (163), `IpscControllerTest` (156), `ControllerAdviceTest` (299)
-- **Converter tests:** `ClubIdentifierConverterTest` (76), `CompetitorCategoryConverterTest` (85), `DivisionConverterTest` (85), `FirearmTypeConverterTest` (103), `MatchCategoryConverterTest` (76), `PowerFactorConverterTest` (85)
-- **Domain entity tests:** `ClubTest` (467), `CompetitorTest` (354), `IpscMatchTest` (367), `IpscMatchStageTest` (333), `MatchCompetitorTest` (364), `MatchStageCompetitorTest` (645)
+- **Controller tests:** `AwardControllerTest` (163), `ImageControllerTest` (163), `IpscControllerTest` (156),
+  `ControllerAdviceTest` (299)
+- **Converter tests:** `ClubIdentifierConverterTest` (76), `CompetitorCategoryConverterTest` (85),
+  `DivisionConverterTest` (85), `FirearmTypeConverterTest` (103), `MatchCategoryConverterTest` (76),
+  `PowerFactorConverterTest` (85)
+- **Domain entity tests:** `ClubTest` (467), `CompetitorTest` (354), `IpscMatchTest` (367), `IpscMatchStageTest` (333),
+  `MatchCompetitorTest` (364), `MatchStageCompetitorTest` (645)
 - **Exception tests:** `FatalExceptionTest` (161), `NonFatalExceptionTest` (173), `ValidationExceptionTest` (115)
-- **Model & utility tests:** `ControllerResponseTest` (89), `RequestTest` (100), `AwardRequestForCSVTest` (394), `ImageRequestForCSVTest` (244), `EnrolledCompetitorDtoTest` (196), `FirearmTypeToDivisionsTest` (40), `ValueUtilTest` (100)
-- **Integration tests:** `AwardServiceIntegrationTest` (295), `ImageServiceIntegrationTest` (348), `DtoToEntityMappingIntegrationTest` (71)
+- **Model & utility tests:** `ControllerResponseTest` (89), `RequestTest` (100), `AwardRequestForCSVTest` (394),
+  `ImageRequestForCSVTest` (244), `EnrolledCompetitorDtoTest` (196), `FirearmTypeToDivisionsTest` (40), `ValueUtilTest`
+  (100)
+- **Integration tests:** `AwardServiceIntegrationTest` (295), `ImageServiceIntegrationTest` (348),
+  `DtoToEntityMappingIntegrationTest` (71)
 - **Service tests:** `TransformationServiceTest` (1,026), `MatchCompetitorDtoTest` (253)
 
 #### CI/CD & Configuration
@@ -616,7 +776,8 @@ No security-related changes in this release.
 #### Test Coverage
 
 - **DomainServiceTest:** 787 lines added – comprehensive `initMatchEntities` test cases with Javadoc documentation
-- **IpscServiceIntegrationTest:** Comprehensive integration tests for `importWinMssCabFile` including validation and processing scenarios
+- **IpscServiceIntegrationTest:** Comprehensive integration tests for `importWinMssCabFile` including validation and
+  processing scenarios
 
 ### 🔄 Changed
 
@@ -675,9 +836,12 @@ No security-related changes in this release.
 
 #### Test Suites (Comprehensive Updates)
 
-- **IpscMatchServiceTest:** 3,156 lines changed – comprehensive consolidation including disabled tests, helper method extraction, streamlined parameter handling and object creation
-- **TransactionServiceTest:** 1,031 lines changed – updated `getFirst()` assertions, enabled previously disabled tests, streamlined transaction stubbing
-- **IpscServiceIntegrationTest:** 113 lines changed – integration tests added, previously disabled tests enabled, bean definitions cleaned up
+- **IpscMatchServiceTest:** 3,156 lines changed – comprehensive consolidation including disabled tests, helper method
+  extraction, streamlined parameter handling and object creation
+- **TransactionServiceTest:** 1,031 lines changed – updated `getFirst()` assertions, enabled previously disabled tests,
+  streamlined transaction stubbing
+- **IpscServiceIntegrationTest:** 113 lines changed – integration tests added, previously disabled tests enabled, bean
+  definitions cleaned up
 - **DtoToEntityMappingTest:** 171 lines changed – additional test cases and documentation
 - **MatchStageCompetitorDtoTest:** 243 lines changed – updated for DTO changes
 - **MatchStageDtoTest:** 50 lines changed – updated assertions
@@ -700,7 +864,8 @@ No security-related changes in this release.
 
 #### Entity Relationships
 
-- **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships across `IpscMatch`, `IpscMatchStage`, `MatchCompetitor` and `MatchStageCompetitor`
+- **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships across
+  `IpscMatch`, `IpscMatchStage`, `MatchCompetitor` and `MatchStageCompetitor`
 - **Cascade types:** Fixed cascade type configurations for correct entity lifecycle management
 - **Null handling:** Improved null handling in entity relationship resolution across match stage competitor retrieval
 
@@ -724,8 +889,10 @@ None.
 
 #### Services & Classes
 
-- **`IpscMatchResultService` interface:** Fully removed (31 lines); functionality consolidated into `DomainService` and `IpscMatchService`
-- **`IpscMatchResultServiceImpl` class:** Fully removed (379 lines); match result processing consolidated into `DomainService`
+- **`IpscMatchResultService` interface:** Fully removed (31 lines); functionality consolidated into `DomainService` and
+  `IpscMatchService`
+- **`IpscMatchResultServiceImpl` class:** Fully removed (379 lines); match result processing consolidated into
+  `DomainService`
 - **`ScoreDto` class:** Fully removed (50 lines); score data now handled via `ScoreResponse` directly
 
 #### Entity Service Methods
@@ -913,7 +1080,8 @@ No security-related changes in this release.
 
 - **Test organisation improvements** in `IpscMatchResultServiceImplTest`
     - Section-based test grouping for improved navigation and understanding
-    - Six distinct test sections: Null Input Handling, Null Collections and Fields, Match Name Field Handling, Club Fields Handling, Partial and Complete Data Scenarios, Edge Cases
+    - Six distinct test sections: Null Input Handling, Null Collections and Fields, Match Name Field Handling, Club
+      Fields Handling, Partial and Complete Data Scenarios, Edge Cases
     - Clear separation of concerns between test categories
 
 #### Test Quality Improvements
@@ -942,7 +1110,8 @@ No security-related changes in this release.
 
 #### Test Quality
 
-- **Duplicate test elimination:** Removed duplicate `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` test method
+- **Duplicate test elimination:** Removed duplicate
+  `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` test method
 - **Code clean-up:** Removed TODO comment about adding sections (now complete)
 - **Test file consolidation:** Ensured no redundant test coverage
 
@@ -950,7 +1119,8 @@ No security-related changes in this release.
 
 ### 🗑️ Removed
 
-- **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact duplicate at the end of the file
+- **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact duplicate
+  at the end of the file
 
 ### 🔐 Security
 
@@ -962,21 +1132,33 @@ No security-related changes in this release.
 
 #### Domain Entity Initialisation Framework
 
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository lookup, optional entity creation and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper relationship linking to parent match entities
-- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish many-to-many relationships between matches and competitors
-- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation of stage-specific competitor records with score and performance data
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database
+  lookup and fallback to new entity creation
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for
+  predefined club references
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository
+  lookup, optional entity creation and club association
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID
+  generation and optional database persistence
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper
+  relationship linking to parent match entities
+- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish
+  many-to-many relationships between matches and competitors
+- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation
+  of stage-specific competitor records with score and performance data
 
 #### IPSC Match Record Generation
 
-- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to comprehensive match records for external representation
-- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match response records with embedded competitor data
-- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** - Create detailed competitor match records with stage-wise performance data
-- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level competitor records from database entities
-- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific competitor records with individual stage scores
+- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
+  comprehensive match records for external representation
+- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match
+  response records with embedded competitor data
+- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** -
+  Create detailed competitor match records with stage-wise performance data
+- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level
+  competitor records from database entities
+- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific
+  competitor records with individual stage scores
 
 #### Service Layer
 
@@ -999,41 +1181,61 @@ No security-related changes in this release.
 
 #### Domain Entity Initialisation Framework
 
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository lookup, optional entity creation and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper relationship linking to parent match entities
-- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish many-to-many relationships between matches and competitors
-- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation of stage-specific competitor records with score and performance data
+- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database
+  lookup and fallback to new entity creation
+- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for
+  predefined club references
+- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository
+  lookup, optional entity creation and club association
+- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID
+  generation and optional database persistence
+- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper
+  relationship linking to parent match entities
+- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish
+  many-to-many relationships between matches and competitors
+- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation
+  of stage-specific competitor records with score and performance data
 
 #### IPSC Match Record Generation
 
-- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to comprehensive match records for external representation
-- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match response records with embedded competitor data
-- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** - Create detailed competitor match records with stage-wise performance data
-- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level competitor records from database entities
-- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific competitor records with individual stage scores
+- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
+  comprehensive match records for external representation
+- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match
+  response records with embedded competitor data
+- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** -
+  Create detailed competitor match records with stage-wise performance data
+- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level
+  competitor records from database entities
+- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific
+  competitor records with individual stage scores
 
 #### IPSC Response Processing Pipeline
 
-- **`IpscMatchServiceImpl.addClubToMatch(IpscResponse, IpscRequestHolder)`** - Intelligent club association logic that matches clubs from request data to match response records with fallback mechanisms
-- **`IpscMatchServiceImpl.addMembersToMatch(IpscResponse, IpscRequestHolder)`** - Associate enrolled members with match responses based on match ID filtering
+- **`IpscMatchServiceImpl.addClubToMatch(IpscResponse, IpscRequestHolder)`** - Intelligent club association logic that
+  matches clubs from request data to match response records with fallback mechanisms
+- **`IpscMatchServiceImpl.addMembersToMatch(IpscResponse, IpscRequestHolder)`** - Associate enrolled members with match
+  responses based on match ID filtering
 
 #### Enhanced IPSC Result Service
 
-- **`IpscMatchResultServiceImpl.initMatchResults(IpscResponse)`** - Complete IPSC response-to-DTO transformation pipeline
-- **`IpscMatchResultServiceImpl.initClub(ClubResponse)`** - Convert IPSC club response objects to club DTOs with database lookup and enrichment
-- **`IpscMatchResultServiceImpl.initMatch(IpscResponse, ClubDto)`** - Create or update match DTOs from IPSC responses with optional database lookup and update avoidance
-- **`IpscMatchResultServiceImpl.initStages(MatchDto, List<StageResponse>)`** - Map IPSC stage responses to match stage DTOs
-- **`IpscMatchResultServiceImpl.initScores(MatchResultsDto, IpscResponse)`** - Process and aggregate competitor scores across match stages
+- **`IpscMatchResultServiceImpl.initMatchResults(IpscResponse)`** - Complete IPSC response-to-DTO transformation
+  pipeline
+- **`IpscMatchResultServiceImpl.initClub(ClubResponse)`** - Convert IPSC club response objects to club DTOs with
+  database lookup and enrichment
+- **`IpscMatchResultServiceImpl.initMatch(IpscResponse, ClubDto)`** - Create or update match DTOs from IPSC responses
+  with optional database lookup and update avoidance
+- **`IpscMatchResultServiceImpl.initStages(MatchDto, List<StageResponse>)`** - Map IPSC stage responses to match stage
+  DTOs
+- **`IpscMatchResultServiceImpl.initScores(MatchResultsDto, IpscResponse)`** - Process and aggregate competitor scores
+  across match stages
 
 #### DTO Architecture Enhancements
 
 - **`ClubDto(Club)`** - Constructor for creating DTOs from club entities
 - **`ClubDto(ClubResponse)`** - Constructor for creating DTOs from IPSC response objects
 - **`ClubDto(ClubIdentifier)`** - Constructor for creating DTOs from enumerated club identifiers
-- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialisation from club identifier if the entity is null
+- **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialisation from club identifier if the
+  entity is null
 
 ### 🔄 Changed
 
@@ -1045,13 +1247,16 @@ No security-related changes in this release.
 
 #### Entity Initialisation Strategy
 
-- **Repository Integration:** Entity initialisation methods now query the database to check for existing entities before creating new ones
+- **Repository Integration:** Entity initialisation methods now query the database to check for existing entities before
+  creating new ones
 - **Fallback Handling:** Robust fallback mechanisms when entities are not found in the database
-- **Transactional Consistency:** All entity creation and update operations maintain transactional integrity through `TransactionService`
+- **Transactional Consistency:** All entity creation and update operations maintain transactional integrity through
+  `TransactionService`
 
 #### Data Processing Pipelines
 
-- **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs, matches, stages and competitors
+- **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs, matches, stages
+  and competitors
 - **Error Handling:** Enhanced validation and error messages for data transformation failures
 - **Null Safety:** Comprehensive null checks throughout data processing pipelines
 
@@ -1059,7 +1264,8 @@ No security-related changes in this release.
 
 - **Test Organisation:** Restructured DTO test classes with clear section headers and logical grouping
 - **Naming Standards:** Standardised test naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
-- **Test Coverage Expansion:** Added 151+ new unit tests for DTO classes (MatchStageDtoTest: 48, ScoreDtoTest: 26, MatchStageCompetitorDtoTest: 77)
+- **Test Coverage Expansion:** Added 151+ new unit tests for DTO classes (MatchStageDtoTest: 48, ScoreDtoTest: 26,
+  MatchStageCompetitorDtoTest: 77)
 - **AAA Pattern:** Consistent Arrange-Act-Assert structure implemented across all new tests
 - **Edge Case Coverage:** Extensive null/empty/blank field-testing, boundary value testing
 - **Documentation:** Comprehensive test documentation and inline comments
@@ -1285,7 +1491,8 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 
 ### Legacy Versioning (v1.x – v4.x)
 
-Earlier releases used a non-semantic versioning scheme. For historical documentation, see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
+Earlier releases used a non-semantic versioning scheme. For historical documentation,
+see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 
 ---
 

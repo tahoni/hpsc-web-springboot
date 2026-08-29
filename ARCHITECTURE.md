@@ -1,6 +1,7 @@
 # HPSC Website Backend Architecture
 
-This document describes the architectural design, directory structure and core concepts of the Hartbeespoortdam Practical Shooting Club (HPSC) Spring Boot backend.
+This document describes the architectural design, directory structure and core concepts of the Hartbeespoortdam
+Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## Table of Contents
 
@@ -107,13 +108,14 @@ This document describes the architectural design, directory structure and core c
 
 ## 🎯 System Overview
 
-The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting club operations. Core responsibilities:
+The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting club operations. Core
+responsibilities:
 
-| Domain                        | Description                                                                                                                                                    |
-|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Award Ceremonies**          | Award data and ceremony grouping, processed from CSV                                                                                                           |
-| **Image Gallery**             | Image metadata processing from CSV                                                                                                                             |
-| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs and shooter logs, but the service/controller layer that operates on them is being rebuilt  |
+| Domain                        | Description                                                                                                                                                   |
+|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Award Ceremonies**          | Award data and ceremony grouping, processed from CSV                                                                                                          |
+| **Image Gallery**             | Image metadata processing from CSV                                                                                                                            |
+| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs and shooter logs, but the service/controller layer that operates on them is being rebuilt |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 
@@ -140,12 +142,14 @@ Handles incoming HTTP requests. Does not contain business logic.
 | `IpscController`  | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet |
 
 All controllers:
+
 - Validate request bodies and path variables at the boundary
 - Delegate all processing to the service layer
 - Return `ResponseEntity<T>` with typed response models
 - Are annotated with full OpenAPI (`@Tag`, `@Operation`, `@ApiResponse`) metadata
 
-`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException` and `ValidationException` instances and maps them to standard JSON error responses with structured logging.
+`ControllerAdvice` in `za.co.hpsc.web.configs` catches all `FatalException`, `NonFatalException` and
+`ValidationException` instances and maps them to standard JSON error responses with structured logging.
 
 ---
 
@@ -183,7 +187,8 @@ All bidirectional `@OneToMany` relationships include `mappedBy` to avoid duplica
 
 #### Custom JPA Attribute Converters (`za.co.hpsc.web.converters`)
 
-All enum-typed entity fields use explicit `AttributeConverter` implementations rather than `@Enumerated(EnumType.STRING)`. This provides testable, type-safe conversion logic:
+All enum-typed entity fields use explicit `AttributeConverter` implementations rather than
+`@Enumerated(EnumType.STRING)`. This provides testable, type-safe conversion logic:
 
 | Converter                     | Enum                 | DB Column Value     |
 |-------------------------------|----------------------|---------------------|
@@ -196,7 +201,8 @@ All enum-typed entity fields use explicit `AttributeConverter` implementations r
 
 #### Repositories (`za.co.hpsc.web.repositories`)
 
-One Spring Data JPA interface per entity. Custom query methods supplement the standard CRUD operations (e.g., `IpscMatchRepository.findAllByClubId`, `ShooterLogRepository.findAllByCompetitorIdAndFirearmTypeAndPowerFactor`).
+One Spring Data JPA interface per entity. Custom query methods supplement the standard CRUD operations (e.g.,
+`IpscMatchRepository.findAllByClubId`, `ShooterLogRepository.findAllByCompetitorIdAndFirearmTypeAndPowerFactor`).
 
 ---
 
@@ -205,16 +211,24 @@ One Spring Data JPA interface per entity. Custom query methods supplement the st
 DTOs and request/response models, grouped by feature domain:
 
 #### `models/award/` and `models/image/`
+
 Request/response models for the award and image CSV pipelines.
 
 #### `models/shared/`
+
 `Placing`, a shared result-placement model.
 
 #### Package root (`za.co.hpsc.web.models`)
-`Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON envelope.
+
+`Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON
+envelope.
 
 #### `models/ipsc/request/` and `models/ipsc/shared/`
-Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage submission, `MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) for competitor result submission, and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`. Groundwork only — not yet consumed by `IpscController`.
+
+Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage
+submission, `MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) for competitor result submission,
+and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`. Groundwork only —
+not yet consumed by `IpscController`.
 
 ---
 
@@ -234,16 +248,17 @@ Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/
 
 #### Utilities (`za.co.hpsc.web.utils`)
 
-| Class        | Responsibility                                                                 |
-|--------------|--------------------------------------------------------------------------------|
-| `DateUtil`   | Date formatting and parsing helpers                                            |
-| `NumberUtil` | Numeric parsing and formatting helpers                                         |
-| `StringUtil` | String normalisation helpers                                                   |
-| `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.)                    |
+| Class        | Responsibility                                              |
+|--------------|-------------------------------------------------------------|
+| `DateUtil`   | Date formatting and parsing helpers                         |
+| `NumberUtil` | Numeric parsing and formatting helpers                      |
+| `StringUtil` | String normalisation helpers                                |
+| `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
 
 #### Constants (`za.co.hpsc.web.constants`)
 
-`HpscConstants`, `IpscConstants`, `SystemConstants` — application-wide constant definitions shared across services and converters.
+`HpscConstants`, `IpscConstants`, `SystemConstants` — application-wide constant definitions shared across services and
+converters.
 
 ---
 
@@ -257,7 +272,8 @@ Custom exception hierarchy enforces a consistent error-handling contract:
 | `NonFatalException`   | `400 Bad Request`           | Recoverable business-rule violations |
 | `ValidationException` | `400 Bad Request`           | Input validation failures            |
 
-`ControllerAdvice` (in `configs/`) intercepts all three exception types and translates them to a standardised JSON error response. Structured logging is applied in every handler — do not catch and re-throw as `RuntimeException`.
+`ControllerAdvice` (in `configs/`) intercepts all three exception types and translates them to a standardised JSON error
+response. Structured logging is applied in every handler — do not catch and re-throw as `RuntimeException`.
 
 ---
 
@@ -305,7 +321,8 @@ Client uploads CSV (Content-Type: text/csv)
 ← JSON response
 ```
 
-> The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`, WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer.
+> The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`,
+> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer.
 
 ---
 
@@ -335,11 +352,14 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 📚 Development Guidelines
 
-Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
+Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
+commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section
+for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 
 - Controllers must not contain business logic — delegate to services only
 - All exceptions must extend `FatalException`, `NonFatalException` or `ValidationException`
 - Test class names: `<ClassName>Test`; test method names: `test<Scenario>_when<Condition>_then<Expectation>`
-- JUnit Jupiter's `Assertions` for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration tests
+- JUnit Jupiter's `Assertions` for assertions; Mockito for mocking in unit tests; H2 + `test` profile for integration
+  tests

@@ -1,10 +1,14 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. See [`AGENTS.md`](AGENTS.md) for the broader, tool-agnostic conventions that also apply here — documentation conventions, git workflow, the release checklist and tracking complex tasks with a todo list.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. See 
+[`AGENTS.md`](AGENTS.md) for the broader, tool-agnostic conventions that also apply here — documentation conventions, git
+workflow, the release checklist and tracking complex tasks with a todo list.
 
 ## Project Overview
 
-HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shooting Club (HPSC) platform. It manages IPSC match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this is a pure API server.
+HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shooting Club (HPSC) platform. It manages IPSC
+match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this is a pure API
+server.
 
 - **Runtime**: Java 25, Spring Boot 4.0.5, Spring Framework 7.0.7
 - **Port / context path**: `8081` / `/hpsc-web`
@@ -78,15 +82,23 @@ HTTP Request
 | `constants/`    | `HpscConstants`, `IpscConstants`, `SystemConstants`                                                                                                                  |
 | `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                                                  |
 
-> The IPSC match-import/CRUD service, model and entity-service layers described in earlier versions of this document (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services and the `models/ipsc/` DTOs) have been removed from the codebase pending a rebuild — `IpscController` is currently an empty stub. Don't reference those classes as if they exist until they're rebuilt.
+> The IPSC match-import/CRUD service, model and entity-service layers described in earlier versions of this document
+> (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services and the `models/ipsc/`
+> DTOs) have been removed from the codebase pending a rebuild — `IpscController` is currently an empty stub. Don't
+> reference those classes as if they exist until they're rebuilt.
 
 ### Exception handling
 
-All exceptions should extend `FatalException`, `NonFatalException` or `ValidationException`. The `ControllerAdvice` automatically maps these to the correct HTTP status and JSON response shape — do not catch and re-throw as generic `RuntimeException`.
+All exceptions should extend `FatalException`, `NonFatalException` or `ValidationException`. The `ControllerAdvice`
+automatically maps these to the correct HTTP status and JSON response shape — do not catch and re-throw as generic
+`RuntimeException`.
 
 ## Testing Patterns
 
-- Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) to mock the service layer; they do not start a Spring context.
+- Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) to mock the service layer; they do not start a
+  Spring context.
 - Service/repository integration tests use the `test` profile (H2).
-- Test class names follow `<ClassName>Test`; test method names follow `test<Scenario>_when<Condition>_then<Expectation>`.
-- JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.
+- Test class names follow `<ClassName>Test`; test method names follow
+  `test<Scenario>_when<Condition>_then<Expectation>`.
+- JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from
+  `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.
