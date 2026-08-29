@@ -37,7 +37,7 @@ public class AwardRequestForCSVTest {
 
     // AwardRequestForCSV(String, String, String, String, String)
     @Test
-    void testConstructor_whenRequiredFieldsProvided_thenMapsCoreFieldsAndInitializesTagLists() {
+    void testConstructor_whenRequiredFieldsProvided_thenMapsCoreFieldsAndInitialisesTagLists() {
         // Arrange & Act
         TestAwardRequestForCSV request =
                 new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", "John Roe", "Sam Poe");

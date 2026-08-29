@@ -13,7 +13,7 @@ class ImageResponseTest {
 
     // ImageResponse(ImageRequest)
     @Test
-    void testConstructor_withImageRequestMapsFields_thenInitializesAllFieldsAndInfersMimeType() {
+    void testConstructor_withImageRequestMapsFields_thenInitialisesAllFieldsAndInfersMimeType() {
         // Arrange
         ImageRequest request = new ImageRequest();
         request.setTitle("Request Title");
@@ -63,7 +63,7 @@ class ImageResponseTest {
 
     // ImageResponse(UUID, String, String, String, String, List, String, String, String)
     @Test
-    void testFullConstructor_thenInitializesAllFields() {
+    void testFullConstructor_thenInitialisesAllFields() {
         // Arrange
         UUID uuid = UUID.randomUUID();
         List<String> tags = List.of("nature", "forest");
@@ -159,7 +159,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void testSetMimeType_whenMimeTypeNullAndFileNameWithoutRecognizedExtension_thenDoesNotSetMimeType() {
+    void testSetMimeType_whenMimeTypeNullAndFileNameWithoutRecognisedExtension_thenDoesNotSetMimeType() {
         // Arrange
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
                 "example.unknown", "");
@@ -185,7 +185,7 @@ class ImageResponseTest {
     }
 
     @Test
-    void testSetMimeType_whenMimeTypeNullAndFileNameWithoutRecognizedExtension_thenDoesNotModifyMimeType() {
+    void testSetMimeType_whenMimeTypeNullAndFileNameWithoutRecognisedExtension_thenDoesNotModifyMimeType() {
         // Arrange
         String existingMimeType = MediaType.IMAGE_JPEG_VALUE;
         ImageResponse imageResponse = new ImageResponse(UUID.randomUUID(), "Title", "/path/to/image",
