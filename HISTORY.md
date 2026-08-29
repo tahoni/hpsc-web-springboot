@@ -2152,6 +2152,16 @@ AttributeConverters
 - Add a direct `match` reference and a `points` field to `ShooterLogCompetitor`, ahead of the future calculation service that will populate them
 - Adopt GitFlow branching and add `CONTRIBUTING.md` for new-developer onboarding
 
+### Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)
+
+**Focus:** Test Conventions, Documentation Accuracy & AI-Agent Tooling
+
+- Formalise a repo-wide test-file convention (method-comment headers, group ordering) retrofitted across 26 existing test files; close every JaCoCo-identified coverage gap (v7.2.0)
+- Correct README.md/ARCHITECTURE.md to describe only what the codebase actually implements, removing overstated capability claims (v7.3.0)
+- New AGENTS.md Serial commas rule and a British English rule tightened to cover code identifiers, both applied retroactively across the entire documentation set (v7.4.0)
+- Resume IPSC domain-layer groundwork with new request DTOs, deliberately ahead of the service/controller layer removed pending a rebuild (v7.4.0)
+- Add `/scaffold-unit-tests`, `/scaffold-integration-tests`, `/generate-pr-summary` and `/sync-unreleased-changes` Claude Code commands, keeping AI-agent tooling in step with the project's actual conventions (v7.2.0 – v7.4.0)
+
 ---
 
 ## 📚 Key Learnings
