@@ -58,6 +58,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/`MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
 
+#### Enums
+
+- **`ClubIdentifier`:** Added class-level Javadoc matching the convention already used by the other enums, and corrected its `getByName`/`getByAbbreviation`/`getByCode` Javadoc, which still referred to a stale `ClubReference` type name and an inaccurate "null or negative" description for the (`String`-typed) `code` parameter
+
 #### Converters
 
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Parameter names aligned to `AttributeConverter`'s own convention (`attribute`/`dbData`), for consistency with the new `GenderConverter`
