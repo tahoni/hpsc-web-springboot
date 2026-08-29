@@ -8,12 +8,12 @@ import za.co.hpsc.web.utils.ValueUtil;
 @Converter(autoApply = true)
 public class MatchCategoryConverter implements AttributeConverter<MatchCategory, String> {
     @Override
-    public String convertToDatabaseColumn(MatchCategory matchCategory) {
-        return ValueUtil.nullAsDefaultString(matchCategory, null);
+    public String convertToDatabaseColumn(MatchCategory attribute) {
+        return ValueUtil.nullAsDefaultString(attribute, null);
     }
 
     @Override
-    public MatchCategory convertToEntityAttribute(String s) {
-        return MatchCategory.getByName(s).orElse(null);
+    public MatchCategory convertToEntityAttribute(String dbData) {
+        return MatchCategory.getByName(dbData).orElse(null);
     }
 }

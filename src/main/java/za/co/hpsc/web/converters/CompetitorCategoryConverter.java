@@ -8,13 +8,13 @@ import za.co.hpsc.web.utils.ValueUtil;
 @Converter(autoApply = true)
 public class CompetitorCategoryConverter implements AttributeConverter<CompetitorCategory, String> {
     @Override
-    public String convertToDatabaseColumn(CompetitorCategory competitorCategory) {
-        return ValueUtil.nullAsDefaultString(competitorCategory, null);
+    public String convertToDatabaseColumn(CompetitorCategory attribute) {
+        return ValueUtil.nullAsDefaultString(attribute, null);
     }
 
 
     @Override
-    public CompetitorCategory convertToEntityAttribute(String s) {
-        return CompetitorCategory.getByName(s).orElse(CompetitorCategory.NONE);
+    public CompetitorCategory convertToEntityAttribute(String dbData) {
+        return CompetitorCategory.getByName(dbData).orElse(CompetitorCategory.NONE);
     }
 }

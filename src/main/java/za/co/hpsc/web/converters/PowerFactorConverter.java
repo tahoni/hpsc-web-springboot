@@ -8,12 +8,12 @@ import za.co.hpsc.web.utils.ValueUtil;
 @Converter(autoApply = true)
 public class PowerFactorConverter implements AttributeConverter<PowerFactor, String> {
     @Override
-    public String convertToDatabaseColumn(PowerFactor powerFactor) {
-        return ValueUtil.nullAsDefaultString(powerFactor, null);
+    public String convertToDatabaseColumn(PowerFactor attribute) {
+        return ValueUtil.nullAsDefaultString(attribute, null);
     }
 
     @Override
-    public PowerFactor convertToEntityAttribute(String s) {
-        return PowerFactor.getByName(s).orElse(null);
+    public PowerFactor convertToEntityAttribute(String dbData) {
+        return PowerFactor.getByName(dbData).orElse(null);
     }
 }

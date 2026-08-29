@@ -7,12 +7,12 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 @Converter(autoApply = true)
 public class ClubIdentifierConverter implements AttributeConverter<ClubIdentifier, String> {
     @Override
-    public String convertToDatabaseColumn(ClubIdentifier clubIdentifier) {
-        return ((clubIdentifier != null) ? clubIdentifier.getAbbreviation() : null);
+    public String convertToDatabaseColumn(ClubIdentifier attribute) {
+        return ((attribute != null) ? attribute.getAbbreviation() : null);
     }
 
     @Override
-    public ClubIdentifier convertToEntityAttribute(String s) {
-        return ClubIdentifier.getByAbbreviation(s).orElse(null);
+    public ClubIdentifier convertToEntityAttribute(String dbData) {
+        return ClubIdentifier.getByAbbreviation(dbData).orElse(null);
     }
 }

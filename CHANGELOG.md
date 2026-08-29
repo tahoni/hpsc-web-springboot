@@ -47,12 +47,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController`:** New empty stub classes in `controllers/` — reserve the class names for the upcoming IPSC module split; no endpoints implemented yet
 
+#### Converters
+
+- **`GenderConverter`:** New `AttributeConverter<Gender, String>`, wired onto `Competitor.gender` via `@Convert` — converts blank/invalid stored values to `null` instead of letting `@Enumerated(STRING)` throw, matching the null-safety already used by the other enum converters
+
 ### 🔄 Changed
 
 #### Models
 
 - **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/`MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
+
+#### Converters
+
+- **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Parameter names aligned to `AttributeConverter`'s own convention (`attribute`/`dbData`), for consistency with the new `GenderConverter`
 
 ### 🗑️ Removed
 

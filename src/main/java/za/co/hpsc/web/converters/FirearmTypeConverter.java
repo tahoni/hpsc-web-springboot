@@ -8,12 +8,12 @@ import za.co.hpsc.web.enums.FirearmType;
 public class FirearmTypeConverter implements AttributeConverter<FirearmType, String> {
 
     @Override
-    public String convertToDatabaseColumn(FirearmType firearmType) {
-        return ((firearmType != null) ? firearmType.getNames().stream().findFirst().orElse(null) : null);
+    public String convertToDatabaseColumn(FirearmType attribute) {
+        return ((attribute != null) ? attribute.getNames().stream().findFirst().orElse(null) : null);
     }
 
     @Override
-    public FirearmType convertToEntityAttribute(String s) {
-        return FirearmType.getByName(s).orElse(null);
+    public FirearmType convertToEntityAttribute(String dbData) {
+        return FirearmType.getByName(dbData).orElse(null);
     }
 }

@@ -8,12 +8,12 @@ import za.co.hpsc.web.utils.ValueUtil;
 @Converter(autoApply = true)
 public class DivisionConverter implements AttributeConverter<Division, String> {
     @Override
-    public String convertToDatabaseColumn(Division division) {
-        return ValueUtil.nullAsDefaultString(division, null);
+    public String convertToDatabaseColumn(Division attribute) {
+        return ValueUtil.nullAsDefaultString(attribute, null);
     }
 
     @Override
-    public Division convertToEntityAttribute(String s) {
-        return Division.getByName(s).orElse(null);
+    public Division convertToEntityAttribute(String dbData) {
+        return Division.getByName(dbData).orElse(null);
     }
 }
