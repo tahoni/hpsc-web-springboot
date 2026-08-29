@@ -45,7 +45,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Controllers
 
-- **`IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController`:** New empty stub classes in `controllers/` — reserve the class names for the upcoming IPSC module split, alongside the existing `IpscController` stub; no endpoints implemented yet
+- **`IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController`:** New empty stub classes in `controllers/` — reserve the class names for the upcoming IPSC module split; no endpoints implemented yet
 
 ### 🔄 Changed
 
@@ -53,6 +53,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/`MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
+
+### 🗑️ Removed
+
+#### Controllers
+
+- **`IpscController`:** Deleted — its `@RequestMapping("/ipsc/competitor")` role is superseded by the new `IpscCompetitorController` stub as part of the IPSC module split into per-concern controllers
 
 ---
 

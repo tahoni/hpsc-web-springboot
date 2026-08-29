@@ -70,7 +70,7 @@ HTTP Request
 
 | Package         | Role                                                                                                                                                                 |
 |-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `controllers/`  | `AwardController`, `ImageController`, `IpscController`, `IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController` (Ipsc* are stubs — no endpoints yet) |
+| `controllers/`  | `AwardController`, `ImageController`, `IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController` (Ipsc* are stubs — no endpoints yet) |
 | `services/`     | `AwardService`, `ImageService`, plus implementations under `services/impl/`                                                                                          |
 | `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                                       |
 | `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor`                   |
@@ -84,9 +84,9 @@ HTTP Request
 
 > The IPSC match-import/CRUD service, model and entity-service layers described in earlier versions of this document
 > (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services and the `models/ipsc/`
-> DTOs) have been removed from the codebase pending a rebuild — `IpscController`, `IpscCompetitorController`,
-> `IpscMatchController`, `IpscRankingsController` and `IpscScoresController` are currently empty stubs. Don't reference
-> those classes as if they exist until they're rebuilt.
+> DTOs) have been removed from the codebase pending a rebuild — `IpscCompetitorController`, `IpscMatchController`,
+> `IpscRankingsController` and `IpscScoresController` are currently empty stubs. Don't reference those classes as if
+> they exist until they're rebuilt.
 
 ### Exception handling
 

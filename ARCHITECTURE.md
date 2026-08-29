@@ -63,8 +63,8 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │                           HpscConstants, IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
 │   │   │                           AwardController, ImageController
-│   │   │                           IpscController, IpscCompetitorController, IpscMatchController
-│   │   │                           IpscRankingsController, IpscScoresController (empty stubs — no endpoints yet)
+│   │   │                           IpscCompetitorController, IpscMatchController, IpscRankingsController
+│   │   │                           IpscScoresController (empty stubs — no endpoints yet)
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
 │   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
 │   │   │                           DivisionConverter, FirearmTypeConverter
@@ -141,7 +141,6 @@ Handles incoming HTTP requests. Does not contain business logic.
 |----------------------------|------------------------------|--------------------------------------------------|
 | `AwardController`          | `/hpsc-web/awards`          | Award CSV processing                             |
 | `ImageController`          | `/hpsc-web/images`          | Image CSV processing                             |
-| `IpscController`           | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet        |
 | `IpscCompetitorController` | —                           | Empty stub — reserved for the IPSC module split  |
 | `IpscMatchController`      | —                           | Empty stub — reserved for the IPSC module split  |
 | `IpscRankingsController`   | —                           | Empty stub — reserved for the IPSC module split  |
@@ -234,7 +233,7 @@ envelope.
 Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage
 submission, `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores
 submission, and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
-Groundwork only — not yet consumed by `IpscController`.
+Groundwork only — not yet consumed by any of the `Ipsc*Controller` stubs.
 
 ---
 
