@@ -2,8 +2,9 @@
 
 - Documentation-only patch release: rewraps every root-level documentation file to a consistent ~120-character line
   width, matching `CLAUDE.md`'s pre-existing wrap width.
-- Adds two new narrative sections to `HISTORY.md` — a "Major Version Goals" summary and a "Process & Documentation
-  Discipline Phase (v7.2.0 – v7.4.0)" entry — filling gaps in the project's own historical record.
+- Adds two new narrative sections to `HISTORY.md` — a "Major Version Goals" summary (covering 4.x through 7.x) and a
+  "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" entry — filling gaps in the project's own historical
+  record.
 - Fixes a spacing regression the rewrap itself introduced (`init()`/`toString()` gained a stray space in nine
   `HISTORY.md` references) before it shipped.
 - No domain model, API surface or test behaviour changes.
@@ -12,8 +13,8 @@
 
 **Added**
 
-- `HISTORY.md` — "Major Version Goals" subsection and "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)"
-  phase entry
+- `HISTORY.md` — "Major Version Goals" subsection (4.x – 7.x) and "Process & Documentation Discipline Phase
+  (v7.2.0 – v7.4.0)" phase entry
 
 **Changed**
 
