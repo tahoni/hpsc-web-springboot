@@ -82,6 +82,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`AwardController.processCsv`, `ImageController.processCsv`:** Renamed to `createAwards`/`createImages`, following this project's action-named REST method convention
 
+#### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Rewrapped to a consistent ~120-character line width — no content changes
+
 #### Tests
 
 - **`HpscWebApplicationTest`, `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Stopped excluding `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration` — `@SpringBootTest` with no `classes=` boots the whole app via component scan, and now that `IpscMatchServiceImpl` genuinely depends on JPA, excluding it broke context loading for every test that boots the full context, not just tests of JPA-touching services
