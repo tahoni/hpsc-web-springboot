@@ -137,14 +137,14 @@ HTTP Request
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                 | Mapping            | Responsibility                                  |
-|----------------------------|--------------------|-------------------------------------------------|
-| `AwardController`          | `/hpsc-web/awards` | Award CSV processing                            |
-| `ImageController`          | `/hpsc-web/images` | Image CSV processing                            |
-| `IpscCompetitorController` | —                  | Empty stub — reserved for the IPSC module split |
-| `IpscMatchController`      | —                  | Empty stub — reserved for the IPSC module split |
-| `IpscRankingsController`   | —                  | Empty stub — reserved for the IPSC module split |
-| `IpscScoresController`     | —                  | Empty stub — reserved for the IPSC module split |
+| Controller                 | Mapping               | Responsibility                                  |
+|----------------------------|------------------------|-------------------------------------------------|
+| `AwardController`          | `/hpsc-web/awards`     | Award CSV processing                            |
+| `ImageController`          | `/hpsc-web/images`     | Image CSV processing                            |
+| `IpscCompetitorController` | `/ipsc/competitors`    | IPSC competitor CRUD                            |
+| `IpscMatchController`      | `/ipsc/matches`        | IPSC match CRUD, together with its stages       |
+| `IpscRankingController`    | —                      | Empty stub — reserved for the IPSC module split |
+| `IpscScoreController`      | —                      | Empty stub — reserved for the IPSC module split |
 
 All controllers:
 
@@ -162,12 +162,14 @@ All controllers:
 
 Contains all business logic.
 
-| Interface      | Implementation     | Role                 |
-|----------------|--------------------|----------------------|
-| `AwardService` | `AwardServiceImpl` | Award CSV processing |
-| `ImageService` | `ImageServiceImpl` | Image CSV processing |
+| Interface                | Implementation               | Role                                       |
+|--------------------------|-------------------------------|---------------------------------------------|
+| `AwardService`           | `AwardServiceImpl`           | Award CSV processing                       |
+| `ImageService`           | `ImageServiceImpl`           | Image CSV processing                       |
+| `IpscMatchService`       | `IpscMatchServiceImpl`       | IPSC match CRUD, together with its stages  |
+| `IpscCompetitorService`  | `IpscCompetitorServiceImpl`  | IPSC competitor CRUD                       |
 
-> The match/competitor domain's service layer (bulk import, CRUD, entity initialisation) is being rebuilt — only `AwardService`/`ImageService` currently exist. Neither of them calls into the repository layer directly; `repositories/` currently has no service-layer caller.
+> The wider match/competitor domain's bulk-import and entity-initialisation service layer remains removed pending a rebuild — only the CRUD services above currently exist.
 
 ---
 
@@ -228,12 +230,14 @@ Request/response models for the award and image CSV pipelines.
 `Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON
 envelope.
 
-#### `models/ipsc/match/request/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
+#### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
-Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage
-submission, `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores
-submission, and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
-Groundwork only — not yet consumed by any of the `Ipsc*Controller` stubs.
+DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest` and `MatchResponse`/`MatchStageResponse`
+(consumed by `IpscMatchController`), `CompetitorRequest` (consumed by `IpscCompetitorController` as both request and
+response, since a persisted competitor carries exactly the same fields as the request that created it), and, still
+groundwork only — not yet consumed by any controller — `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV
+variants) for competitor scores submission and the shared Comstock-scoring fields in
+`IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
 ---
 

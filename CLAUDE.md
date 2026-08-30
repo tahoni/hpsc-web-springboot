@@ -57,8 +57,8 @@ HTTP Request
 
 | Package         | Role                                                                                                                                                                           |
 |-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `controllers/`  | `AwardController`, `ImageController`, `IpscMatchController` (full CRUD), `IpscCompetitorController`, `IpscRankingsController`, `IpscScoresController` (these three remain empty stubs) |
-| `services/`     | `AwardService`, `ImageService`, `IpscMatchService`, plus implementations under `services/impl/`                                                                                |
+| `controllers/`  | `AwardController`, `ImageController`, `IpscMatchController` (full CRUD), `IpscCompetitorController` (full CRUD), `IpscRankingController`, `IpscScoreController` (these two remain empty stubs) |
+| `services/`     | `AwardService`, `ImageService`, `IpscMatchService`, `IpscCompetitorService`, plus implementations under `services/impl/`                                                       |
 | `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                                                 |
 | `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor`                             |
 | `models/`       | DTOs grouped by domain: `award/`, `image/`, `ipsc/`, plus `Request`/`Response`/`ControllerResponse` at the package root                                                        |
@@ -72,11 +72,13 @@ HTTP Request
 > The wider IPSC match-import service, model and entity-service layers described in earlier versions of this document
 > (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services) remain removed from
 > the codebase pending a rebuild. `IpscMatchController`/`IpscMatchService`/`models/ipsc/match/` have since been rebuilt
-> from scratch (full CRUD: create/update/patch/get on `/ipsc/matches`, backed directly by `IpscMatchRepository`,
-> `IpscMatchStageRepository` and `ClubRepository` — no `TransformationService`/`DomainService` layer). `models/ipsc/scores/`
-> and `models/ipsc/shared/` also exist (request/shared score DTOs), but nothing consumes them yet.
-> `IpscCompetitorController`, `IpscRankingsController` and `IpscScoresController` are still empty stubs — don't
-> reference those three, or the removed service classes above, as if they exist until they're rebuilt.
+> from scratch (full CRUD: create/update/patch/get/getAll on `/ipsc/matches`, backed directly by `IpscMatchRepository`,
+> `IpscMatchStageRepository` and `ClubRepository` — no `TransformationService`/`DomainService` layer).
+> `IpscCompetitorController`/`IpscCompetitorService`/`models/ipsc/competitor/` have likewise been rebuilt (full CRUD:
+> create/update/patch/get on `/ipsc/competitors`, backed directly by `CompetitorRepository` and `ClubRepository` for
+> resolving the competitor's home club). `models/ipsc/scores/` and `models/ipsc/shared/` also exist (request/shared
+> score DTOs), but nothing consumes them yet. `IpscRankingController` and `IpscScoreController` are still empty
+> stubs — don't reference those two, or the removed service classes above, as if they exist until they're rebuilt.
 
 ### Exception handling
 
