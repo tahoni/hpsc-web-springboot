@@ -62,12 +62,9 @@ its default), while `PATCH` applies only the fields the client actually sent, le
 - **`AwardController`** (`/awards`) and **`ImageController`** (`/images`): each exposes a single `POST` endpoint,
   `createAwards`/`createImages`, that bulk-imports CSV data rather than performing classic single-resource CRUD — the
   action-named convention above still applies even though the semantics differ from a typical `POST`.
-- **`IpscMatchController`** (`/ipsc/match`) is this codebase's clearest example of the full pattern: `createMatch`
+- **`IpscMatchController`** (`/ipsc/matches`) is this codebase's clearest example of the full pattern: `createMatch`
   (`POST`), `updateMatch` (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update) and
   `getMatch` (`GET /{matchId}`).
-- **Known inconsistency:** `/ipsc/match` is singular, not plural as recommended above. It predates this document and
-  hasn't been renamed to avoid an unnecessary breaking path change; new IPSC endpoints (competitor, rankings, scores)
-  should use plural paths (`/ipsc/competitors`, etc.) going forward rather than following `/ipsc/match`'s lead.
 
 ---
 

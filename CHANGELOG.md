@@ -46,7 +46,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Controllers
 
 - **`IpscCompetitorController`, `IpscRankingsController`, `IpscScoresController`:** New empty stub classes in `controllers/` — reserve the class names for the upcoming IPSC module split; no endpoints implemented yet
-- **`IpscMatchController`:** Rebuilt from an empty stub into a full CRUD controller on `/ipsc/match` — `createMatch` (`POST`), `updateMatch` (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update) and `getMatch` (`GET /{matchId}`), following this project's action-named REST method convention (`create`/`update`/`patch`/`get`, not `post`/`put`/`patch`/`get`)
+- **`IpscMatchController`:** Rebuilt from an empty stub into a full CRUD controller on `/ipsc/matches` — `createMatch` (`POST`), `updateMatch` (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update) and `getMatch` (`GET /{matchId}`), following this project's action-named REST method convention (`create`/`update`/`patch`/`get`, not `post`/`put`/`patch`/`get`)
 
 #### Services
 

@@ -36,7 +36,7 @@ import za.co.hpsc.web.services.IpscMatchService;
  * @since 8.0.0
  */
 @Controller
-@RequestMapping("/ipsc/match")
+@RequestMapping("/ipsc/matches")
 @Tag(name = "IPSC Match", description = "IPSC Match API")
 public class IpscMatchController {
     private final IpscMatchService ipscMatchService;

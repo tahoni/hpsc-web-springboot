@@ -85,7 +85,7 @@ HTTP Request
 > The wider IPSC match-import service, model and entity-service layers described in earlier versions of this document
 > (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services) remain removed from
 > the codebase pending a rebuild. `IpscMatchController`/`IpscMatchService`/`models/ipsc/match/` have since been rebuilt
-> from scratch (full CRUD: create/update/patch/get on `/ipsc/match`, backed directly by `IpscMatchRepository`,
+> from scratch (full CRUD: create/update/patch/get on `/ipsc/matches`, backed directly by `IpscMatchRepository`,
 > `IpscMatchStageRepository` and `ClubRepository` — no `TransformationService`/`DomainService` layer). `models/ipsc/scores/`
 > and `models/ipsc/shared/` also exist (request/shared score DTOs), but nothing consumes them yet.
 > `IpscCompetitorController`, `IpscRankingsController` and `IpscScoresController` are still empty stubs — don't
