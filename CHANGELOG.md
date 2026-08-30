@@ -45,17 +45,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Controllers
 
-- **`IpscCompetitorController`, `IpscRankingsController`, `IpscScoresController`:** New empty stub classes in `controllers/` — reserve the class names for the upcoming IPSC module split; no endpoints implemented yet
+- **`IpscRankingsController`, `IpscScoresController`:** New empty stub classes in `controllers/` — reserve the class names for the upcoming IPSC module split; no endpoints implemented yet
 - **`IpscMatchController`:** Rebuilt from an empty stub into a full CRUD controller on `/ipsc/matches` — `createMatch` (`POST`), `updateMatch` (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update) and `getMatch` (`GET /{matchId}`), following this project's action-named REST method convention (`create`/`update`/`patch`/`get`, not `post`/`put`/`patch`/`get`)
+- **`IpscCompetitorController`:** Rebuilt from an empty stub into a full CRUD controller on `/ipsc/competitors` — `createCompetitor` (`POST`), `updateCompetitor` (`PUT /{competitorId}`, full replace), `patchCompetitor` (`PATCH /{competitorId}`, partial update) and `getCompetitor` (`GET /{competitorId}`)
 
 #### Services
 
 - **`IpscMatchService`/`IpscMatchServiceImpl`:** New service backing `IpscMatchController` — resolves the request's club by name (404 via `NonFatalException` if not found), maps `MatchRequest` to/from the existing `IpscMatch`/`IpscMatchStage` entities, and persists via the existing `IpscMatchRepository`/`IpscMatchStageRepository`. `patchMatch` upserts stages by stage number (updating a matching stage in place, adding a new one otherwise) rather than replacing the whole stage list, unlike `updateMatch`'s full replace
+- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New service backing `IpscCompetitorController` — resolves the request's optional home club by name (404 via `NonFatalException` if named but not found), maps `CompetitorRequest` to/from the existing `Competitor` entity, and persists via the existing `CompetitorRepository`. Unlike `IpscMatchService`'s club, the home club is optional — a `null`/blank name simply leaves the competitor without one, and `updateCompetitor`'s full replace clears any previously set home club that the request omits
 
 #### Models
 
 - **`MatchRequest`:** Gains `matchFirearmType`/`matchCategory` fields, required by `IpscMatchService` to persist an `IpscMatch` (which has no other source for them)
 - **`MatchResponse`/`MatchStageResponse`:** New response DTOs (`models/ipsc/match/response/`) returned by `IpscMatchController`'s endpoints
+- **`CompetitorRequest`:** New request DTO (`models/ipsc/competitor/request/`) mirroring `Competitor`'s persisted fields, used by `IpscCompetitorController`'s endpoints both as the request body and, since a persisted competitor carries exactly the same fields, as the response shape too — no separate response DTO
 
 #### Converters
 
