@@ -170,6 +170,33 @@ class IpscMatchServiceIntegrationTest {
         assertEquals("Stage 1", fetched.getStages().getFirst().getStageName());
     }
 
+    // getAllMatches()
+    @Test
+    void testGetAllMatches_whenNoMatchesExist_thenReturnsEmptyList() {
+        List<MatchResponse> matches = ipscMatchService.getAllMatches();
+
+        assertTrue(matches.isEmpty());
+    }
+
+    @Test
+    void testGetAllMatches_whenMatchesExist_thenReturnsAllWithStages() {
+        createClub("Test Club", ClubIdentifier.HPSC);
+        MatchRequest firstRequest = validRequest("Test Club");
+        firstRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
+        MatchResponse first = ipscMatchService.createMatch(firstRequest);
+
+        MatchRequest secondRequest = validRequest("Test Club");
+        secondRequest.setMatchName("Second Match");
+        MatchResponse second = ipscMatchService.createMatch(secondRequest);
+
+        List<MatchResponse> matches = ipscMatchService.getAllMatches();
+
+        assertEquals(2, matches.size());
+        assertTrue(matches.stream().anyMatch(match ->
+                match.getMatchId().equals(first.getMatchId()) && (match.getStages().size() == 1)));
+        assertTrue(matches.stream().anyMatch(match -> match.getMatchId().equals(second.getMatchId())));
+    }
+
     // patchMatch()
     @Test
     void testPatchMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {

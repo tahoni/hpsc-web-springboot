@@ -99,6 +99,14 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return toResponse(match, stages);
     }
 
+    @Override
+    public List<MatchResponse> getAllMatches() {
+        return ipscMatchRepository.findAll().stream()
+                .map(match -> toResponse(match,
+                        ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId())))
+                .toList();
+    }
+
     /**
      * Copies the match-level fields of a {@link MatchRequest} onto an {@link IpscMatch},
      * resolving the named club in the process.

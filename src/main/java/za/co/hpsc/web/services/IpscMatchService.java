@@ -5,6 +5,8 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 
+import java.util.List;
+
 /**
  * The {@code IpscMatchService} interface provides methods for creating, updating and
  * retrieving IPSC matches and their stages. Implementations are responsible for validating
@@ -70,4 +72,11 @@ public interface IpscMatchService {
      * @throws NonFatalException if no match with {@code matchId} exists.
      */
     MatchResponse getMatch(Long matchId) throws NonFatalException;
+
+    /**
+     * Retrieves every IPSC match together with its stages.
+     *
+     * @return all persisted matches, including their stages.
+     */
+    List<MatchResponse> getAllMatches();
 }

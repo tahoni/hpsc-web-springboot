@@ -13,6 +13,8 @@ import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.services.IpscMatchService;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -123,6 +125,34 @@ class IpscMatchControllerTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchController.getMatch(99L));
+    }
+
+    // getAllMatches()
+    @Test
+    void testGetAllMatches_whenServiceSucceeds_thenReturns200() {
+        // Arrange
+        List<MatchResponse> response = List.of(new MatchResponse());
+        when(ipscMatchService.getAllMatches()).thenReturn(response);
+
+        // Act
+        ResponseEntity<List<MatchResponse>> result = ipscMatchController.getAllMatches();
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertSame(response, result.getBody());
+    }
+
+    @Test
+    void testGetAllMatches_whenServiceSucceeds_thenDelegatesToService() {
+        // Arrange
+        when(ipscMatchService.getAllMatches()).thenReturn(List.of());
+
+        // Act
+        ipscMatchController.getAllMatches();
+
+        // Assert
+        verify(ipscMatchService, times(1)).getAllMatches();
+        verifyNoMoreInteractions(ipscMatchService);
     }
 
     // patchMatch()

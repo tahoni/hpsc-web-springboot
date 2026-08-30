@@ -11,13 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
@@ -25,11 +19,13 @@ import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.services.IpscMatchService;
 
+import java.util.List;
+
 /**
  * Controller responsible for handling IPSC match CRUD API endpoints.
  *
  * <p>
- * Provides endpoints for creating, fully or partially updating, and retrieving IPSC matches
+ * Provides endpoints for creating, fully or partially updating and retrieving IPSC matches
  * together with their stages.
  * </p>
  *
@@ -153,5 +149,21 @@ public class IpscMatchController {
             @Parameter(description = "Identifier of the match to retrieve.") @PathVariable Long matchId)
             throws NonFatalException {
         return ResponseEntity.ok(ipscMatchService.getMatch(matchId));
+    }
+
+    /**
+     * Retrieves every IPSC match together with its stages.
+     *
+     * @return the list of {@link MatchResponse}, each including its persisted stages.
+     */
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get all matches", description = "Retrieve every IPSC match, together with its stages.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Matches retrieved.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MatchResponse.class)))
+    })
+    ResponseEntity<List<MatchResponse>> getAllMatches() {
+        return ResponseEntity.ok(ipscMatchService.getAllMatches());
     }
 }
