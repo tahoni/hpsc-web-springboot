@@ -74,6 +74,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
 - **`Placing`:** Moved from `models/shared` to `models/award/shared`, since it's only used to back award placements; `AwardPlacing`'s import updated accordingly
 
+#### Tests
+
+- **`HpscWebApplicationTest`, `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Stopped excluding `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration` — `@SpringBootTest` with no `classes=` boots the whole app via component scan, and now that `IpscMatchServiceImpl` genuinely depends on JPA, excluding it broke context loading for every test that boots the full context, not just tests of JPA-touching services
+
 #### Configs
 
 - **`ControllerAdvice`:** Added `@since` tags to individual handler/helper methods introduced later than the class itself — `handleValidationException`/`handleNonFatalException` at `5.4.0`; `handleHttpMessageConversionException`, `handleUnhandledException`, `buildErrorResponse` and both `logError` overloads at `7.0.0`
