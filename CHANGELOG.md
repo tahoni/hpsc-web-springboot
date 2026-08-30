@@ -164,6 +164,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Competitor.gender`:** Removed a stray `@Enumerated(EnumType.STRING)` left over from before `GenderConverter` existed — Hibernate 7 rejects a field carrying both `@Enumerated` and a custom `@Convert`, so any Spring context that actually initialises JPA (previously none did) failed to start. Only surfaced once `IpscMatchServiceIntegrationTest` became this project's first JPA-backed test
 
+#### Documentation
+
+- **`documentation/history/RELEASE_NOTES_v7.1.0.md`:** Corrected its `.claude/commands/generate-commit-message.md` reference to `../../.claude/commands/generate-commit-message.md` — the archived file lives two directories below the repository root, so the un-prefixed relative link was broken
+
 ### 🗑️ Removed
 
 #### Controllers
