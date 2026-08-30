@@ -54,8 +54,8 @@ class IpscMatchServiceIntegrationTest {
         request.setMatchName("Club Championship");
         request.setMatchDate(LocalDate.of(2026, 9, 12));
         request.setClub(club);
-        request.setMatchFirearmType(FirearmType.HANDGUN);
-        request.setMatchCategory(MatchCategory.CLUB_SHOOT);
+        request.setMatchFirearmType(FirearmType.HANDGUN.toString());
+        request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
         return request;
     }
 
@@ -109,6 +109,24 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
+    void testCreateMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
+        createClub("Test Club", ClubIdentifier.HPSC);
+        MatchRequest request = validRequest("Test Club");
+        request.setMatchFirearmType("Not A Firearm Type");
+
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+    }
+
+    @Test
+    void testCreateMatch_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
+        createClub("Test Club", ClubIdentifier.HPSC);
+        MatchRequest request = validRequest("Test Club");
+        request.setMatchCategory("Not A Category");
+
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+    }
+
+    @Test
     void testCreateMatch_whenClubDoesNotExist_thenThrowsNonFatalException() {
         MatchRequest request = validRequest("No Such Club");
 
@@ -125,7 +143,7 @@ class IpscMatchServiceIntegrationTest {
         assertNotNull(response.getMatchId());
         assertEquals("Club Championship", response.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), response.getMatchDate());
-        assertEquals("Test Club", response.getClub());
+        assertEquals(ClubIdentifier.HPSC, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
         assertTrue(response.getStages().isEmpty());
@@ -218,7 +236,7 @@ class IpscMatchServiceIntegrationTest {
 
         assertEquals("Renamed Championship", patched.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), patched.getMatchDate());
-        assertEquals("Test Club", patched.getClub());
+        assertEquals(ClubIdentifier.HPSC, patched.getClub());
         assertEquals(FirearmType.HANDGUN, patched.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, patched.getMatchCategory());
     }
@@ -232,6 +250,17 @@ class IpscMatchServiceIntegrationTest {
         patch.setClub("No Such Club");
 
         assertThrows(NonFatalException.class, () -> ipscMatchService.patchMatch(created.getMatchId(), patch));
+    }
+
+    @Test
+    void testPatchMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
+        createClub("Test Club", ClubIdentifier.HPSC);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+
+        MatchRequest patch = new MatchRequest();
+        patch.setMatchFirearmType("Not A Firearm Type");
+
+        assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(created.getMatchId(), patch));
     }
 
     @Test
@@ -323,15 +352,15 @@ class IpscMatchServiceIntegrationTest {
         replacement.setMatchName("Different Match");
         replacement.setMatchDate(LocalDate.of(2027, 1, 1));
         replacement.setClub("Other Club");
-        replacement.setMatchFirearmType(FirearmType.RIFLE);
-        replacement.setMatchCategory(MatchCategory.LEAGUE);
+        replacement.setMatchFirearmType(FirearmType.RIFLE.toString());
+        replacement.setMatchCategory(MatchCategory.LEAGUE.toString());
 
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
 
         assertEquals(created.getMatchId(), updated.getMatchId());
         assertEquals("Different Match", updated.getMatchName());
         assertEquals(LocalDate.of(2027, 1, 1), updated.getMatchDate());
-        assertEquals("Other Club", updated.getClub());
+        assertEquals(ClubIdentifier.SOSC, updated.getClub());
         assertEquals(FirearmType.RIFLE, updated.getMatchFirearmType());
         assertEquals(MatchCategory.LEAGUE, updated.getMatchCategory());
     }

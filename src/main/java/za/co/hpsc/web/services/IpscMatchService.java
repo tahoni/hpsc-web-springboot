@@ -21,7 +21,9 @@ public interface IpscMatchService {
      * @param request the match to create. Must not be null, and must carry a match name, date,
      *                club and firearm type/category.
      * @return the created match, including its generated ID and any persisted stages.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the firearm type/category
+     *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
+     *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if the named club cannot be found.
      */
     MatchResponse createMatch(MatchRequest request) throws ValidationException, NonFatalException;
@@ -38,7 +40,9 @@ public interface IpscMatchService {
      * @param request the match's replacement fields. Must not be null, and must carry a match
      *                name, date, club and firearm type/category.
      * @return the updated match, including its persisted stages.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the firearm type/category
+     *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
+     *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
      */
@@ -58,7 +62,9 @@ public interface IpscMatchService {
      * @param request the fields to change. Must not be null; any field left {@code null} is
      *                left unchanged.
      * @return the updated match, including its persisted stages.
-     * @throws ValidationException if the named club is blank.
+     * @throws ValidationException if the named club is blank, or the firearm type/category
+     *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
+     *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
      */

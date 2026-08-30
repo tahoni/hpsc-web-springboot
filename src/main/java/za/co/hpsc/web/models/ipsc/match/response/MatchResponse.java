@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 
@@ -27,8 +28,8 @@ public class MatchResponse {
     private String matchName;
     /** Date the match was/will be shot. */
     private LocalDate matchDate;
-    /** The name of the club hosting the match. */
-    private String club;
+    /** The identifier of the club hosting the match. */
+    private ClubIdentifier club;
     /** The firearm type this match is shot with. */
     private FirearmType matchFirearmType;
     /** The category/tier of this match. */

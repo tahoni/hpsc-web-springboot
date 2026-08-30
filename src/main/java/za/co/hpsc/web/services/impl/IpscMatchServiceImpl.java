@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
@@ -79,10 +81,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             match.setScheduledDate(request.getMatchDate().atStartOfDay());
         }
         if (request.getMatchFirearmType() != null) {
-            match.setMatchFirearmType(request.getMatchFirearmType());
+            match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
         }
         if (request.getMatchCategory() != null) {
-            match.setMatchCategory(request.getMatchCategory());
+            match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
         }
         match = ipscMatchRepository.save(match);
 
@@ -119,8 +121,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         match.setClub(resolveClub(request.getClub()));
         match.setName(request.getMatchName());
         match.setScheduledDate(request.getMatchDate().atStartOfDay());
-        match.setMatchFirearmType(request.getMatchFirearmType());
-        match.setMatchCategory(request.getMatchCategory());
+        match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
+        match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
     }
 
     /**
@@ -212,6 +214,30 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
+     * Resolves a firearm type by name.
+     *
+     * @param firearmType the firearm type name to look up.
+     * @return the matching {@link FirearmType}.
+     * @throws ValidationException if no firearm type matches {@code firearmType}.
+     */
+    protected FirearmType resolveFirearmType(String firearmType) {
+        return FirearmType.fromName(firearmType)
+                .orElseThrow(() -> new ValidationException("Unknown match firearm type: " + firearmType));
+    }
+
+    /**
+     * Resolves a match category by name.
+     *
+     * @param matchCategory the match category name to look up.
+     * @return the matching {@link MatchCategory}.
+     * @throws ValidationException if no match category matches {@code matchCategory}.
+     */
+    protected MatchCategory resolveMatchCategory(String matchCategory) {
+        return MatchCategory.fromName(matchCategory)
+                .orElseThrow(() -> new ValidationException("Unknown match category: " + matchCategory));
+    }
+
+    /**
      * Validates that a request carries every field required to create or fully replace a
      * match.
      *
@@ -231,10 +257,10 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if ((request.getClub() == null) || request.getClub().isBlank()) {
             throw new ValidationException("Club is required.");
         }
-        if (request.getMatchFirearmType() == null) {
+        if ((request.getMatchFirearmType() == null) || request.getMatchFirearmType().isBlank()) {
             throw new ValidationException("Match firearm type is required.");
         }
-        if (request.getMatchCategory() == null) {
+        if ((request.getMatchCategory() == null) || request.getMatchCategory().isBlank()) {
             throw new ValidationException("Match category is required.");
         }
     }
@@ -255,7 +281,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 match.getId(),
                 match.getName(),
                 match.getScheduledDate().toLocalDate(),
-                ((match.getClub() != null) ? match.getClub().getName() : null),
+                ((match.getClub() != null) ? match.getClub().getIdentifier() : null),
                 match.getMatchFirearmType(),
                 match.getMatchCategory(),
                 stageResponses);

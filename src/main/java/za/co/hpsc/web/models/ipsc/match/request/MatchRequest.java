@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,10 +31,10 @@ public class MatchRequest {
     private String matchName;
     /** The name of the club hosting the match; resolved against existing clubs by name. */
     private String club;
-    /** The firearm type this match is shot with. */
-    private FirearmType matchFirearmType;
-    /** The category/tier of this match. */
-    private MatchCategory matchCategory;
+    /** The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
+    private String matchFirearmType;
+    /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
+    private String matchCategory;
     /** The stages that make up this match. */
     private List<MatchStageRequest> stages;
 }

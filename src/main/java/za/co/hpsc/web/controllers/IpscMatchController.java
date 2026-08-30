@@ -46,7 +46,7 @@ public class IpscMatchController {
      *
      * @param request the match to create.
      * @return the created {@link MatchResponse}, including its generated ID and any persisted stages.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if the named club cannot be found.
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,7 +55,7 @@ public class IpscMatchController {
             @ApiResponse(responseCode = "201", description = "Match created.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = MatchResponse.class))),
-            @ApiResponse(responseCode = "400", description = "A required field is missing.",
+            @ApiResponse(responseCode = "400", description = "A required field is missing, or the firearm type/category is unrecognised.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "The named club could not be found.",
@@ -73,7 +73,7 @@ public class IpscMatchController {
      * @param matchId the identifier of the match to replace.
      * @param request the match's replacement fields.
      * @return the updated {@link MatchResponse}, including its persisted stages.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
      */
@@ -83,7 +83,7 @@ public class IpscMatchController {
             @ApiResponse(responseCode = "200", description = "Match replaced.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = MatchResponse.class))),
-            @ApiResponse(responseCode = "400", description = "A required field is missing.",
+            @ApiResponse(responseCode = "400", description = "A required field is missing, or the firearm type/category is unrecognised.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID, or the named club, could be found.",
@@ -104,7 +104,7 @@ public class IpscMatchController {
      * @param matchId the identifier of the match to update.
      * @param request the fields to change; any field left {@code null} is left unchanged.
      * @return the updated {@link MatchResponse}, including its persisted stages.
-     * @throws ValidationException if the named club is blank.
+     * @throws ValidationException if the named club is blank, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
      */
@@ -114,7 +114,7 @@ public class IpscMatchController {
             @ApiResponse(responseCode = "200", description = "Match updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = MatchResponse.class))),
-            @ApiResponse(responseCode = "400", description = "The named club is blank.",
+            @ApiResponse(responseCode = "400", description = "The named club is blank, or the firearm type/category is unrecognised.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID, or the named club, could be found.",
