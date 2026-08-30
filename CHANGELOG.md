@@ -85,6 +85,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Documentation
 
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Rewrapped to a consistent ~120-character line width — no content changes
+- **`CLAUDE.md`:** Removed a stale Runtime line (claimed Spring Boot `4.0.5`; `pom.xml`'s parent is `4.1.0`) and two generic Maven test-invocation examples; replaced the Database Profiles table (which had drifted out of sync with `CONTRIBUTING.md`'s — it said "manual migrations" where Flyway is actually used) and the Code Quality & CI section (duplicating `ARCHITECTURE.md`'s CI/CD & Quality Gates table) with pointers to those files
 
 #### Tests
 
