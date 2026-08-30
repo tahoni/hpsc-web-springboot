@@ -72,7 +72,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`ValueUtil`:** Added `@since 1.1.0` class-level tag
 - **`NumberUtil`, `StringUtil`:** Added `@since 1.1.3` class-level tags
-- **`DateUtil`:** Added `@since 2.0.0` class-level tag
+- **`DateUtil`:** `@since` corrected from `2.0.0` to `4.1.0` — the class was originally added in `2.0.0` but later deleted and reintroduced in `4.1.0`, which is when it actually became continuously available
 - **`ValueUtil`:** Removed the private constructor's Javadoc block in favour of the plain `// Utility class, not to be instantiated` inline comment already beside it — the block only restated what the comment already says
 
 #### Constants
