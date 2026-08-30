@@ -233,11 +233,10 @@ envelope.
 #### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
 DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest` and `MatchResponse`/`MatchStageResponse`
-(consumed by `IpscMatchController`), `CompetitorRequest` (consumed by `IpscCompetitorController` as both request and
-response, since a persisted competitor carries exactly the same fields as the request that created it), and, still
-groundwork only — not yet consumed by any controller — `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV
-variants) for competitor scores submission and the shared Comstock-scoring fields in
-`IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
+(consumed by `IpscMatchController`), `CompetitorRequest` and `CompetitorResponse` (consumed by
+`IpscCompetitorController`), and, still groundwork only — not yet consumed by any controller —
+`MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
+shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
 ---
 

@@ -84,10 +84,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Models
 
-- **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresResponse`/`MatchStageScoresResponse` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
+- **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/`MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
 - **`Placing`:** Moved from `models/shared` to `models/award/shared`, since it's only used to back award placements; `AwardPlacing`'s import updated accordingly
-- **`MatchOverallScoresResponse`/`MatchStageScoresResponse`** (and their CSV variants): `division`, `club` and `powerFactor` are now typed as `Division`, `ClubIdentifier` and `PowerFactor` respectively, and `categories` as `List<CompetitorCategory>` — previously all four were free-text `String` fields
+- **`MatchOverallScoresRequest`/`MatchStageScoresRequest`** (and their CSV variants): `division`, `club` and `powerFactor` are now typed as `Division`, `ClubIdentifier` and `PowerFactor` respectively, and `categories` as `List<CompetitorCategory>` — previously all four were free-text `String` fields
 
 #### Controllers
 
@@ -159,7 +159,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`Request`, `Response`, `AwardRequest`, `AwardRequestForCSV`, `AwardResponse`, `AwardCeremonyResponse`, `AwardCeremonyResponseHolder`:** Added `@since 1.1.0` class-level tags
 - **`ControllerResponse`, `AwardPlacing`, `Placing`:** Added `@since 1.1.3` class-level tags
 - **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level tags
-- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresResponse`, `MatchStageScoresResponse`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
+- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
 - **`MatchRequest`:** Added `@since 1.1.3` class-level tag
 - **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`, `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 
