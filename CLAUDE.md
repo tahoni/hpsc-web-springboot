@@ -57,7 +57,7 @@ HTTP Request
 
 | Package         | Role                                                                                                                                                                           |
 |-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `controllers/`  | `AwardController`, `ImageController`, `IpscMatchController` (full CRUD), `IpscCompetitorController` (full CRUD), `IpscRankingController`, `IpscScoreController` (these two remain empty stubs) |
+| `controllers/`  | `AwardController`, `ImageController`, `IpscMatchController` (full CRUD), `IpscCompetitorController` (full CRUD) |
 | `services/`     | `AwardService`, `ImageService`, `IpscMatchService`, `IpscCompetitorService`, plus implementations under `services/impl/`                                                       |
 | `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                                                 |
 | `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor`                             |
@@ -77,8 +77,9 @@ HTTP Request
 > `IpscCompetitorController`/`IpscCompetitorService`/`models/ipsc/competitor/` have likewise been rebuilt (full CRUD:
 > create/update/patch/get on `/ipsc/competitors`, backed directly by `CompetitorRepository` and `ClubRepository` for
 > resolving the competitor's home club). `models/ipsc/scores/` and `models/ipsc/shared/` also exist (request/shared
-> score DTOs), but nothing consumes them yet. `IpscRankingController` and `IpscScoreController` are still empty
-> stubs — don't reference those two, or the removed service classes above, as if they exist until they're rebuilt.
+> score DTOs), but nothing consumes them yet. `IpscRankingController` and `IpscScoreController` — the two remaining
+> empty stub controllers reserved for the IPSC module split — have been deleted as unused; don't reference them, or
+> the removed service classes above, as if they exist until they're rebuilt.
 
 ### Exception handling
 

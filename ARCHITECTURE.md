@@ -63,8 +63,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │                           HpscConstants, IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
 │   │   │                           AwardController, ImageController
-│   │   │                           IpscCompetitorController, IpscMatchController, IpscRankingsController
-│   │   │                           IpscScoresController (empty stubs — no endpoints yet)
+│   │   │                           IpscCompetitorController, IpscMatchController
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
 │   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
 │   │   │                           DivisionConverter, FirearmTypeConverter
@@ -137,14 +136,12 @@ HTTP Request
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                 | Mapping               | Responsibility                                  |
-|----------------------------|------------------------|-------------------------------------------------|
-| `AwardController`          | `/hpsc-web/awards`     | Award CSV processing                            |
-| `ImageController`          | `/hpsc-web/images`     | Image CSV processing                            |
-| `IpscCompetitorController` | `/ipsc/competitors`    | IPSC competitor CRUD                            |
-| `IpscMatchController`      | `/ipsc/matches`        | IPSC match CRUD, together with its stages       |
-| `IpscRankingController`    | —                      | Empty stub — reserved for the IPSC module split |
-| `IpscScoreController`      | —                      | Empty stub — reserved for the IPSC module split |
+| Controller                 | Mapping              | Responsibility                            |
+|-----------------------------|-----------------------|--------------------------------------------|
+| `AwardController`          | `/hpsc-web/awards`   | Award CSV processing                      |
+| `ImageController`          | `/hpsc-web/images`   | Image CSV processing                      |
+| `IpscCompetitorController` | `/ipsc/competitors`  | IPSC competitor CRUD                      |
+| `IpscMatchController`      | `/ipsc/matches`      | IPSC match CRUD, together with its stages |
 
 All controllers:
 
