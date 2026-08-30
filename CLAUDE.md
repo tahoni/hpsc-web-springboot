@@ -70,11 +70,11 @@ HTTP Request
 
 | Package         | Role                                                                                                                                                                           |
 |-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `controllers/`  | `AwardController`, `ImageController`, `IpscCompetitorController`, `IpscMatchController`, `IpscRankingsController`, `IpscScoresController` (Ipsc* are stubs — no endpoints yet) |
-| `services/`     | `AwardService`, `ImageService`, plus implementations under `services/impl/`                                                                                                    |
+| `controllers/`  | `AwardController`, `ImageController`, `IpscMatchController` (full CRUD), `IpscCompetitorController`, `IpscRankingsController`, `IpscScoresController` (these three remain empty stubs) |
+| `services/`     | `AwardService`, `ImageService`, `IpscMatchService`, plus implementations under `services/impl/`                                                                                |
 | `repositories/` | Spring Data JPA repos for the 8 entities below                                                                                                                                 |
 | `domain/`       | JPA entities: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`, `ShooterLogCompetitor`                             |
-| `models/`       | DTOs grouped by domain: `award/`, `image/`, `shared/`, plus `Request`/`Response`/`ControllerResponse` at the package root                                                      |
+| `models/`       | DTOs grouped by domain: `award/`, `image/`, `ipsc/`, plus `Request`/`Response`/`ControllerResponse` at the package root                                                        |
 | `converters/`   | Custom JPA `AttributeConverter` implementations for enum-typed entity fields                                                                                                   |
 | `configs/`      | Spring configuration: `ControllerAdvice` (global exception mapping), OpenAPI config                                                                                            |
 | `exceptions/`   | `FatalException`, `NonFatalException`, `ValidationException` — the exception hierarchy mapped by `ControllerAdvice` (in `configs/`) to standard JSON error responses           |
@@ -82,11 +82,14 @@ HTTP Request
 | `constants/`    | `HpscConstants`, `IpscConstants`, `SystemConstants`                                                                                                                            |
 | `utils/`        | `DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`                                                                                                                            |
 
-> The IPSC match-import/CRUD service, model and entity-service layers described in earlier versions of this document
-> (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services and the `models/ipsc/`
-> DTOs) have been removed from the codebase pending a rebuild — `IpscCompetitorController`, `IpscMatchController`,
-> `IpscRankingsController` and `IpscScoresController` are currently empty stubs. Don't reference those classes as if
-> they exist until they're rebuilt.
+> The wider IPSC match-import service, model and entity-service layers described in earlier versions of this document
+> (`IpscService`, `TransformationService`, `DomainService`, `TransactionService`, entity services) remain removed from
+> the codebase pending a rebuild. `IpscMatchController`/`IpscMatchService`/`models/ipsc/match/` have since been rebuilt
+> from scratch (full CRUD: create/update/patch/get on `/ipsc/match`, backed directly by `IpscMatchRepository`,
+> `IpscMatchStageRepository` and `ClubRepository` — no `TransformationService`/`DomainService` layer). `models/ipsc/scores/`
+> and `models/ipsc/shared/` also exist (request/shared score DTOs), but nothing consumes them yet.
+> `IpscCompetitorController`, `IpscRankingsController` and `IpscScoresController` are still empty stubs — don't
+> reference those three, or the removed service classes above, as if they exist until they're rebuilt.
 
 ### Exception handling
 
