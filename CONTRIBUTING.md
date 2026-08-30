@@ -143,6 +143,8 @@ repository. Highlights:
   `AGENTS.md`'s exceptions list for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
   "prose, comments and Javadoc") — see `AGENTS.md`'s Serial commas rule.
+- **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
+  `AGENTS.md`'s Line wrapping rule.
 - Every `##` heading gets a matching emoji, reused from the established icon registry in `AGENTS.md` rather than
   invented fresh.
 - Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents — don't

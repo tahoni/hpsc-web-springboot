@@ -75,6 +75,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`documentation/recommendations/standard-rest-conventions.md`:** New reference document covering REST endpoint (URL) and method naming conventions, grounded in this codebase's actual controllers (`AwardController`/`ImageController`'s `createAwards`/`createImages`, `IpscMatchController`'s full CRUD) — `AGENTS.md`'s Documentation File Map updated to list the new `documentation/recommendations/` folder
 
+#### Documentation
+
+- **`AGENTS.md`:** New Line wrapping rule under Documentation Conventions — wrap prose lines in every Markdown file between 100 and 120 characters, excluding GFM tables, fenced code blocks, directory trees and diagrams; `CONTRIBUTING.md`'s Documentation Conventions summary updated to reference it
+
 ### 🔄 Changed
 
 #### Models
