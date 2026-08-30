@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
@@ -70,7 +71,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             competitor.setDateOfBirth(request.getDateOfBirth());
         }
         if (request.getGender() != null) {
-            competitor.setGender(request.getGender());
+            competitor.setGender(resolveGender(request.getGender()));
         }
         if (request.getHomeClub() != null) {
             competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
@@ -108,11 +109,12 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
-     * named home club in the process.
+     * gender and named home club in the process.
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
-     * @throws NonFatalException if the request's home club name doesn't match an existing club.
+     * @throws ValidationException if the request's gender doesn't match a known {@link Gender}.
+     * @throws NonFatalException   if the request's home club name doesn't match an existing club.
      */
     protected void applyFields(@NotNull Competitor competitor, @NotNull CompetitorRequest request) {
         competitor.setFirstName(request.getFirstName());
@@ -120,7 +122,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setMiddleNames(request.getMiddleNames());
         competitor.setNickname(request.getNickname());
         competitor.setDateOfBirth(request.getDateOfBirth());
-        competitor.setGender(request.getGender());
+        competitor.setGender(resolveGender(request.getGender()));
         competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
         competitor.setSapsaNumber(request.getSapsaNumber());
         competitor.setCompetitorNumber(request.getCompetitorNumber());
@@ -140,6 +142,23 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     protected Competitor findCompetitorOrThrow(Long competitorId) {
         return competitorRepository.findById(competitorId)
                 .orElseThrow(() -> new NonFatalException("No competitor found with ID " + competitorId));
+    }
+
+    /**
+     * Resolves a competitor's gender by name.
+     *
+     * @param gender the gender name to look up; may be null or blank, in which case no gender
+     *               is set.
+     * @return the matching {@link Gender}, or {@code null} if {@code gender} wasn't supplied.
+     * @throws ValidationException if {@code gender} was supplied but doesn't match a known gender.
+     */
+    protected Gender resolveGender(String gender) {
+        if ((gender == null) || gender.isBlank()) {
+            return null;
+        }
+
+        return Gender.fromName(gender)
+                .orElseThrow(() -> new ValidationException("Unknown gender: " + gender));
     }
 
     /**

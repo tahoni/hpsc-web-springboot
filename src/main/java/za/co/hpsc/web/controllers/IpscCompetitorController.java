@@ -43,7 +43,7 @@ public class IpscCompetitorController {
      *
      * @param request the competitor to create.
      * @return the created {@link CompetitorResponse}, including its generated ID.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the gender is unrecognised.
      * @throws NonFatalException   if the named home club cannot be found.
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,7 +52,7 @@ public class IpscCompetitorController {
             @ApiResponse(responseCode = "201", description = "Competitor created.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CompetitorResponse.class))),
-            @ApiResponse(responseCode = "400", description = "A required field is missing.",
+            @ApiResponse(responseCode = "400", description = "A required field is missing, or the gender is unrecognised.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "The named home club could not be found.",
@@ -70,7 +70,7 @@ public class IpscCompetitorController {
      * @param competitorId the identifier of the competitor to replace.
      * @param request      the competitor's replacement fields.
      * @return the updated {@link CompetitorResponse}.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the gender is unrecognised.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
@@ -80,7 +80,7 @@ public class IpscCompetitorController {
             @ApiResponse(responseCode = "200", description = "Competitor replaced.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CompetitorResponse.class))),
-            @ApiResponse(responseCode = "400", description = "A required field is missing.",
+            @ApiResponse(responseCode = "400", description = "A required field is missing, or the gender is unrecognised.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No competitor with this ID, or the named home club, could be found.",
@@ -101,7 +101,7 @@ public class IpscCompetitorController {
      * @param competitorId the identifier of the competitor to update.
      * @param request      the fields to change; any field left {@code null} is left unchanged.
      * @return the updated {@link CompetitorResponse}.
-     * @throws ValidationException if the club number is blank.
+     * @throws ValidationException if the club number is blank, or the gender is unrecognised.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
@@ -111,7 +111,7 @@ public class IpscCompetitorController {
             @ApiResponse(responseCode = "200", description = "Competitor updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CompetitorResponse.class))),
-            @ApiResponse(responseCode = "400", description = "The club number is blank.",
+            @ApiResponse(responseCode = "400", description = "The club number is blank, or the gender is unrecognised.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No competitor with this ID, or the named home club, could be found.",

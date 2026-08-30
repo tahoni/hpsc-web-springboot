@@ -19,7 +19,8 @@ public interface IpscCompetitorService {
      * @param request the competitor to create. Must not be null, and must carry a first name,
      *                last name and club number.
      * @return the created competitor, including its generated ID.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}.
      * @throws NonFatalException   if the named home club cannot be found.
      */
     CompetitorResponse createCompetitor(CompetitorRequest request) throws ValidationException, NonFatalException;
@@ -31,7 +32,8 @@ public interface IpscCompetitorService {
      * @param request      the competitor's replacement fields. Must not be null, and must carry
      *                     a first name, last name and club number.
      * @return the updated competitor.
-     * @throws ValidationException if a required field is missing.
+     * @throws ValidationException if a required field is missing, or the gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
@@ -46,7 +48,8 @@ public interface IpscCompetitorService {
      * @param request      the fields to change. Must not be null; any field left {@code null}
      *                     is left unchanged.
      * @return the updated competitor.
-     * @throws ValidationException if the club number is blank.
+     * @throws ValidationException if the club number is blank, or the gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */

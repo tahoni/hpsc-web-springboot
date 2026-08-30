@@ -52,13 +52,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Services
 
 - **`IpscMatchService`/`IpscMatchServiceImpl`:** New service backing `IpscMatchController` — resolves the request's club by name (404 via `NonFatalException` if not found) and its firearm type/category by name (400 via `ValidationException` if unrecognised), maps `MatchRequest` to/from the existing `IpscMatch`/`IpscMatchStage` entities, and persists via the existing `IpscMatchRepository`/`IpscMatchStageRepository`. `patchMatch` upserts stages by stage number (updating a matching stage in place, adding a new one otherwise) rather than replacing the whole stage list, unlike `updateMatch`'s full replace; `getAllMatches` returns every persisted match together with its stages
-- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New service backing `IpscCompetitorController` — resolves the request's optional home club by name (404 via `NonFatalException` if named but not found), maps `CompetitorRequest` to/from the existing `Competitor` entity and back out to a `CompetitorResponse`, and persists via the existing `CompetitorRepository`. Unlike `IpscMatchService`'s club, the home club is optional — a `null`/blank name simply leaves the competitor without one, and `updateCompetitor`'s full replace clears any previously set home club that the request omits
+- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New service backing `IpscCompetitorController` — resolves the request's optional home club by name (404 via `NonFatalException` if named but not found) and its optional gender by name (400 via `ValidationException` if unrecognised), maps `CompetitorRequest` to/from the existing `Competitor` entity and back out to a `CompetitorResponse`, and persists via the existing `CompetitorRepository`. Unlike `IpscMatchService`'s club, the home club (and now gender) is optional — a `null`/blank name simply leaves the field unset, and `updateCompetitor`'s full replace clears any previously set home club/gender that the request omits
 
 #### Models
 
 - **`MatchRequest`:** Gains `matchFirearmType`/`matchCategory` fields, typed as free-text `String`s resolved by name against `FirearmType`/`MatchCategory` in the service layer (matching how `club` is already resolved against `Club`) — required by `IpscMatchService` to persist an `IpscMatch` (which has no other source for them)
 - **`MatchResponse`/`MatchStageResponse`:** New response DTOs (`models/ipsc/match/response/`) returned by `IpscMatchController`'s endpoints — unlike the request, `MatchResponse.club` is typed as `ClubIdentifier` rather than a plain `String`, since a persisted match's club is always resolvable
-- **`CompetitorRequest`:** New request DTO (`models/ipsc/competitor/request/`) mirroring `Competitor`'s persisted fields
+- **`CompetitorRequest`:** New request DTO (`models/ipsc/competitor/request/`) mirroring `Competitor`'s persisted fields — `gender` is a free-text `String` resolved by name against `Gender` in the service layer (matching how `homeClub` is already resolved against `Club`)
 - **`CompetitorResponse`:** New response DTO (`models/ipsc/competitor/response/`) returned by `IpscCompetitorController`'s endpoints — mirrors `CompetitorRequest`'s fields, except `homeClub` is typed as `ClubIdentifier` rather than a plain club-name `String`, since a persisted competitor's home club is always resolvable
 
 #### Converters
@@ -70,7 +70,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchControllerTest`:** New Mockito-only unit test covering `IpscMatchController`'s five endpoints
 - **`IpscMatchServiceIntegrationTest`:** New H2-backed integration test covering `IpscMatchService`'s full contract — validation, club/match not-found (404), create/replace/patch/get/get-all, and the patch-vs-replace stage semantics
 - **`IpscCompetitorControllerTest`:** New Mockito-only unit test covering `IpscCompetitorController`'s four endpoints
-- **`IpscCompetitorServiceIntegrationTest`:** New H2-backed integration test covering `IpscCompetitorService`'s full contract — validation, competitor/home-club not-found (404), create/replace/patch/get, and the optional-home-club semantics
+- **`IpscCompetitorServiceIntegrationTest`:** New H2-backed integration test covering `IpscCompetitorService`'s full contract — validation, competitor/home-club not-found (404), unrecognised gender (400), create/replace/patch/get, and the optional-home-club semantics
 
 #### Documentation
 
@@ -84,10 +84,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Models
 
-- **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/`MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
+- **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresResponse`/`MatchStageScoresResponse` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
 - **`Placing`:** Moved from `models/shared` to `models/award/shared`, since it's only used to back award placements; `AwardPlacing`'s import updated accordingly
-- **`MatchOverallScoresRequest`/`MatchStageScoresRequest`** (and their CSV variants): `division`, `club` and `powerFactor` are now typed as `Division`, `ClubIdentifier` and `PowerFactor` respectively, and `categories` as `List<CompetitorCategory>` — previously all four were free-text `String` fields
+- **`MatchOverallScoresResponse`/`MatchStageScoresResponse`** (and their CSV variants): `division`, `club` and `powerFactor` are now typed as `Division`, `ClubIdentifier` and `PowerFactor` respectively, and `categories` as `List<CompetitorCategory>` — previously all four were free-text `String` fields
 
 #### Controllers
 
@@ -159,7 +159,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`Request`, `Response`, `AwardRequest`, `AwardRequestForCSV`, `AwardResponse`, `AwardCeremonyResponse`, `AwardCeremonyResponseHolder`:** Added `@since 1.1.0` class-level tags
 - **`ControllerResponse`, `AwardPlacing`, `Placing`:** Added `@since 1.1.3` class-level tags
 - **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level tags
-- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
+- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresResponse`, `MatchStageScoresResponse`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
 - **`MatchRequest`:** Added `@since 1.1.3` class-level tag
 - **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`, `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 

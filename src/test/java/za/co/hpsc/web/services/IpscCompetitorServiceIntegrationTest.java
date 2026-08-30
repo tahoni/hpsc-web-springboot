@@ -83,6 +83,14 @@ class IpscCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testCreateCompetitor_whenGenderIsUnrecognised_thenThrowsValidationException() {
+        CompetitorRequest request = validRequest("HPSC-001");
+        request.setGender("Not A Gender");
+
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(request));
+    }
+
+    @Test
     void testCreateCompetitor_whenHomeClubDoesNotExist_thenThrowsNonFatalException() {
         CompetitorRequest request = validRequest("HPSC-001");
         request.setHomeClub("No Such Club");
@@ -108,7 +116,7 @@ class IpscCompetitorServiceIntegrationTest {
         request.setMiddleNames("Ann");
         request.setNickname("Janie");
         request.setDateOfBirth(LocalDate.of(1990, 1, 1));
-        request.setGender(Gender.Female);
+        request.setGender(Gender.Female.toString());
         request.setSapsaNumber(12345);
         request.setCompetitorNumber("C-1");
         request.setIdNumber("9001015800083");
@@ -191,6 +199,16 @@ class IpscCompetitorServiceIntegrationTest {
         patch.setHomeClub("No Such Club");
 
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.patchCompetitor(created.getCompetitorId(), patch));
+    }
+
+    @Test
+    void testPatchCompetitor_whenGenderIsUnrecognised_thenThrowsValidationException() {
+        CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
+
+        CompetitorRequest patch = new CompetitorRequest();
+        patch.setGender("Not A Gender");
+
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.patchCompetitor(created.getCompetitorId(), patch));
     }
 
     // updateCompetitor()

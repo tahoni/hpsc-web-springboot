@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.Gender;
 
 import java.time.LocalDate;
 
@@ -31,8 +30,8 @@ public class CompetitorRequest {
     private String nickname;
     /** The competitor's date of birth. */
     private LocalDate dateOfBirth;
-    /** The competitor's gender. */
-    private Gender gender;
+    /** The competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name. */
+    private String gender;
     /** The name of the competitor's home club; resolved against existing clubs by name. */
     private String homeClub;
     /** The competitor's SAPSA membership number. */
