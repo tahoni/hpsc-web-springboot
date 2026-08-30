@@ -61,6 +61,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`GenderConverter`:** New `AttributeConverter<Gender, String>`, wired onto `Competitor.gender` via `@Convert` — converts blank/invalid stored values to `null` instead of letting `@Enumerated(STRING)` throw, matching the null-safety already used by the other enum converters
 
+#### Tests
+
+- **`IpscMatchControllerTest`:** New Mockito-only unit test covering `IpscMatchController`'s four endpoints
+- **`IpscMatchServiceIntegrationTest`:** New H2-backed integration test covering `IpscMatchService`'s full contract — validation, club/match not-found (404), create/replace/patch/get, and the patch-vs-replace stage semantics
+
 ### 🔄 Changed
 
 #### Models
