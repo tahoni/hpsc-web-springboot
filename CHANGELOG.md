@@ -120,6 +120,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchRequest`:** Added `@since 1.1.3` class-level tag
 - **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`, `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 
+### 🐛 Fixed
+
+#### Domain
+
+- **`Competitor.gender`:** Removed a stray `@Enumerated(EnumType.STRING)` left over from before `GenderConverter` existed — Hibernate 7 rejects a field carrying both `@Enumerated` and a custom `@Convert`, so any Spring context that actually initialises JPA (previously none did) failed to start. Only surfaced once `IpscMatchServiceIntegrationTest` became this project's first JPA-backed test
+
 ### 🗑️ Removed
 
 #### Controllers

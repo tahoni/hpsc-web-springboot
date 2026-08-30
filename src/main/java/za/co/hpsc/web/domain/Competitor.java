@@ -36,7 +36,6 @@ public class Competitor {
     private LocalDate dateOfBirth;
 
     @Convert(converter = GenderConverter.class)
-    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @ManyToOne(fetch = FetchType.LAZY)
