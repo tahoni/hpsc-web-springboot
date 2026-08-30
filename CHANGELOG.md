@@ -82,6 +82,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/`MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage, not a single competitor's, so the singular "Result" naming was misleading
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
 - **`Placing`:** Moved from `models/shared` to `models/award/shared`, since it's only used to back award placements; `AwardPlacing`'s import updated accordingly
+- **`MatchOverallScoresRequest`/`MatchStageScoresRequest`** (and their CSV variants): `division`, `club` and `powerFactor` are now typed as `Division`, `ClubIdentifier` and `PowerFactor` respectively, and `categories` as `List<CompetitorCategory>` — previously all four were free-text `String` fields
 
 #### Controllers
 

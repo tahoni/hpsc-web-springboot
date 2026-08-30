@@ -7,8 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.ClubIdentifier;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * All competitors' results on a single match stage, shaped for deserializing a
@@ -60,16 +65,16 @@ public abstract class MatchStageScoresRequestForCSV {
     private BigDecimal time;
     /** Division the competitor shot in, e.g. Open, Standard, Production. */
     @JsonProperty("Div")
-    private String division;
+    private Division division;
     /** The competitor's club. */
     @JsonProperty("Class")
-    private String club;
-    /** Competitor categories entered, e.g. Lady, Junior, Senior — comma-separated when more than one applies. */
+    private ClubIdentifier club;
+    /** Competitor categories entered, e.g. Lady, Junior, Senior. */
     @JsonProperty("Cats")
-    private String categories;
+    private List<CompetitorCategory> categories;
     /** Major or Minor power factor — determines how many raw points each alpha/charlie/delta hit is worth. */
     @JsonProperty("PF")
-    private String powerFactor;
+    private PowerFactor powerFactor;
     /** The competitor's membership number. */
     @JsonProperty("Mem#")
     private String membershipNumber;

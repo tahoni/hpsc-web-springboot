@@ -4,8 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.ClubIdentifier;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * All competitors' overall match results — the plain, non-CSV counterpart of
@@ -49,15 +54,14 @@ public class MatchOverallScoresRequest {
      * across the match. */
     private BigDecimal hitFactor;
     /** Division the competitor shot in, e.g. Open, Standard, Production. */
-    private String division;
+    private Division division;
     /** The competitor's club. */
-    private String club;
-    /** Competitor categories entered, e.g. Lady, Junior, Senior — comma-separated when
-     * more than one applies. */
-    private String categories;
+    private ClubIdentifier club;
+    /** Competitor categories entered, e.g. Lady, Junior, Senior. */
+    private List<CompetitorCategory> categories;
     /** Major or Minor power factor — determines how many raw points each alpha/charlie/delta
      * hit is worth. */
-    private String powerFactor;
+    private PowerFactor powerFactor;
     /** The competitor's membership number. */
     private String membershipNumber;
     /** Total A-zone (alpha) hits across the match — the highest-value scoring zone. */
