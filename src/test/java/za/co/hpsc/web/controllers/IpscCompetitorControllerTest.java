@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,11 +30,11 @@ class IpscCompetitorControllerTest {
     void testCreateCompetitor_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
-        CompetitorRequest response = new CompetitorRequest();
+        CompetitorResponse response = new CompetitorResponse();
         when(ipscCompetitorService.createCompetitor(request)).thenReturn(response);
 
         // Act
-        ResponseEntity<CompetitorRequest> result = ipscCompetitorController.createCompetitor(request);
+        ResponseEntity<CompetitorResponse> result = ipscCompetitorController.createCompetitor(request);
 
         // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -43,11 +44,11 @@ class IpscCompetitorControllerTest {
     void testCreateCompetitor_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
-        CompetitorRequest response = new CompetitorRequest();
+        CompetitorResponse response = new CompetitorResponse();
         when(ipscCompetitorService.createCompetitor(request)).thenReturn(response);
 
         // Act
-        ResponseEntity<CompetitorRequest> result = ipscCompetitorController.createCompetitor(request);
+        ResponseEntity<CompetitorResponse> result = ipscCompetitorController.createCompetitor(request);
 
         // Assert
         assertSame(response, result.getBody());
@@ -57,7 +58,7 @@ class IpscCompetitorControllerTest {
     void testCreateCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.createCompetitor(request)).thenReturn(new CompetitorRequest());
+        when(ipscCompetitorService.createCompetitor(request)).thenReturn(new CompetitorResponse());
 
         // Act
         ipscCompetitorController.createCompetitor(request);
@@ -91,11 +92,11 @@ class IpscCompetitorControllerTest {
     @Test
     void testGetCompetitor_whenServiceSucceeds_thenReturns200() throws NonFatalException {
         // Arrange
-        CompetitorRequest response = new CompetitorRequest();
+        CompetitorResponse response = new CompetitorResponse();
         when(ipscCompetitorService.getCompetitor(1L)).thenReturn(response);
 
         // Act
-        ResponseEntity<CompetitorRequest> result = ipscCompetitorController.getCompetitor(1L);
+        ResponseEntity<CompetitorResponse> result = ipscCompetitorController.getCompetitor(1L);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -105,7 +106,7 @@ class IpscCompetitorControllerTest {
     @Test
     void testGetCompetitor_whenServiceSucceeds_thenDelegatesToService() throws NonFatalException {
         // Arrange
-        when(ipscCompetitorService.getCompetitor(1L)).thenReturn(new CompetitorRequest());
+        when(ipscCompetitorService.getCompetitor(1L)).thenReturn(new CompetitorResponse());
 
         // Act
         ipscCompetitorController.getCompetitor(1L);
@@ -129,11 +130,11 @@ class IpscCompetitorControllerTest {
     void testPatchCompetitor_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
-        CompetitorRequest response = new CompetitorRequest();
+        CompetitorResponse response = new CompetitorResponse();
         when(ipscCompetitorService.patchCompetitor(1L, request)).thenReturn(response);
 
         // Act
-        ResponseEntity<CompetitorRequest> result = ipscCompetitorController.patchCompetitor(1L, request);
+        ResponseEntity<CompetitorResponse> result = ipscCompetitorController.patchCompetitor(1L, request);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -144,7 +145,7 @@ class IpscCompetitorControllerTest {
     void testPatchCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.patchCompetitor(1L, request)).thenReturn(new CompetitorRequest());
+        when(ipscCompetitorService.patchCompetitor(1L, request)).thenReturn(new CompetitorResponse());
 
         // Act
         ipscCompetitorController.patchCompetitor(1L, request);
@@ -169,11 +170,11 @@ class IpscCompetitorControllerTest {
     void testUpdateCompetitor_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
-        CompetitorRequest response = new CompetitorRequest();
+        CompetitorResponse response = new CompetitorResponse();
         when(ipscCompetitorService.updateCompetitor(1L, request)).thenReturn(response);
 
         // Act
-        ResponseEntity<CompetitorRequest> result = ipscCompetitorController.updateCompetitor(1L, request);
+        ResponseEntity<CompetitorResponse> result = ipscCompetitorController.updateCompetitor(1L, request);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -184,7 +185,7 @@ class IpscCompetitorControllerTest {
     void testUpdateCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.updateCompetitor(1L, request)).thenReturn(new CompetitorRequest());
+        when(ipscCompetitorService.updateCompetitor(1L, request)).thenReturn(new CompetitorResponse());
 
         // Act
         ipscCompetitorController.updateCompetitor(1L, request);

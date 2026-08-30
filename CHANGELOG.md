@@ -52,13 +52,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Services
 
 - **`IpscMatchService`/`IpscMatchServiceImpl`:** New service backing `IpscMatchController` — resolves the request's club by name (404 via `NonFatalException` if not found) and its firearm type/category by name (400 via `ValidationException` if unrecognised), maps `MatchRequest` to/from the existing `IpscMatch`/`IpscMatchStage` entities, and persists via the existing `IpscMatchRepository`/`IpscMatchStageRepository`. `patchMatch` upserts stages by stage number (updating a matching stage in place, adding a new one otherwise) rather than replacing the whole stage list, unlike `updateMatch`'s full replace; `getAllMatches` returns every persisted match together with its stages
-- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New service backing `IpscCompetitorController` — resolves the request's optional home club by name (404 via `NonFatalException` if named but not found), maps `CompetitorRequest` to/from the existing `Competitor` entity, and persists via the existing `CompetitorRepository`. Unlike `IpscMatchService`'s club, the home club is optional — a `null`/blank name simply leaves the competitor without one, and `updateCompetitor`'s full replace clears any previously set home club that the request omits
+- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New service backing `IpscCompetitorController` — resolves the request's optional home club by name (404 via `NonFatalException` if named but not found), maps `CompetitorRequest` to/from the existing `Competitor` entity and back out to a `CompetitorResponse`, and persists via the existing `CompetitorRepository`. Unlike `IpscMatchService`'s club, the home club is optional — a `null`/blank name simply leaves the competitor without one, and `updateCompetitor`'s full replace clears any previously set home club that the request omits
 
 #### Models
 
 - **`MatchRequest`:** Gains `matchFirearmType`/`matchCategory` fields, typed as free-text `String`s resolved by name against `FirearmType`/`MatchCategory` in the service layer (matching how `club` is already resolved against `Club`) — required by `IpscMatchService` to persist an `IpscMatch` (which has no other source for them)
 - **`MatchResponse`/`MatchStageResponse`:** New response DTOs (`models/ipsc/match/response/`) returned by `IpscMatchController`'s endpoints — unlike the request, `MatchResponse.club` is typed as `ClubIdentifier` rather than a plain `String`, since a persisted match's club is always resolvable
-- **`CompetitorRequest`:** New request DTO (`models/ipsc/competitor/request/`) mirroring `Competitor`'s persisted fields, used by `IpscCompetitorController`'s endpoints both as the request body and, since a persisted competitor carries exactly the same fields, as the response shape too — no separate response DTO
+- **`CompetitorRequest`:** New request DTO (`models/ipsc/competitor/request/`) mirroring `Competitor`'s persisted fields
+- **`CompetitorResponse`:** New response DTO (`models/ipsc/competitor/response/`) returned by `IpscCompetitorController`'s endpoints — mirrors `CompetitorRequest`'s fields, except `homeClub` is typed as `ClubIdentifier` rather than a plain club-name `String`, since a persisted competitor's home club is always resolvable
 
 #### Converters
 

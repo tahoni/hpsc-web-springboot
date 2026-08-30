@@ -16,6 +16,7 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
 /**
@@ -41,7 +42,7 @@ public class IpscCompetitorController {
      * Creates a new IPSC competitor.
      *
      * @param request the competitor to create.
-     * @return the created {@link CompetitorRequest}, including its generated ID.
+     * @return the created {@link CompetitorResponse}, including its generated ID.
      * @throws ValidationException if a required field is missing.
      * @throws NonFatalException   if the named home club cannot be found.
      */
@@ -50,7 +51,7 @@ public class IpscCompetitorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Competitor created.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CompetitorRequest.class))),
+                            schema = @Schema(implementation = CompetitorResponse.class))),
             @ApiResponse(responseCode = "400", description = "A required field is missing.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
@@ -58,7 +59,7 @@ public class IpscCompetitorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<CompetitorRequest> createCompetitor(@RequestBody CompetitorRequest request)
+    ResponseEntity<CompetitorResponse> createCompetitor(@RequestBody CompetitorRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscCompetitorService.createCompetitor(request));
     }
@@ -68,7 +69,7 @@ public class IpscCompetitorController {
      *
      * @param competitorId the identifier of the competitor to replace.
      * @param request      the competitor's replacement fields.
-     * @return the updated {@link CompetitorRequest}.
+     * @return the updated {@link CompetitorResponse}.
      * @throws ValidationException if a required field is missing.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
@@ -78,7 +79,7 @@ public class IpscCompetitorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competitor replaced.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CompetitorRequest.class))),
+                            schema = @Schema(implementation = CompetitorResponse.class))),
             @ApiResponse(responseCode = "400", description = "A required field is missing.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
@@ -86,7 +87,7 @@ public class IpscCompetitorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<CompetitorRequest> updateCompetitor(
+    ResponseEntity<CompetitorResponse> updateCompetitor(
             @Parameter(description = "Identifier of the competitor to replace.") @PathVariable Long competitorId,
             @RequestBody CompetitorRequest request)
             throws ValidationException, NonFatalException {
@@ -99,7 +100,7 @@ public class IpscCompetitorController {
      *
      * @param competitorId the identifier of the competitor to update.
      * @param request      the fields to change; any field left {@code null} is left unchanged.
-     * @return the updated {@link CompetitorRequest}.
+     * @return the updated {@link CompetitorResponse}.
      * @throws ValidationException if the club number is blank.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
@@ -109,7 +110,7 @@ public class IpscCompetitorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competitor updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CompetitorRequest.class))),
+                            schema = @Schema(implementation = CompetitorResponse.class))),
             @ApiResponse(responseCode = "400", description = "The club number is blank.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
@@ -117,7 +118,7 @@ public class IpscCompetitorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<CompetitorRequest> patchCompetitor(
+    ResponseEntity<CompetitorResponse> patchCompetitor(
             @Parameter(description = "Identifier of the competitor to update.") @PathVariable Long competitorId,
             @RequestBody CompetitorRequest request)
             throws ValidationException, NonFatalException {
@@ -128,7 +129,7 @@ public class IpscCompetitorController {
      * Retrieves an existing IPSC competitor.
      *
      * @param competitorId the identifier of the competitor to retrieve.
-     * @return the {@link CompetitorRequest}.
+     * @return the {@link CompetitorResponse}.
      * @throws NonFatalException if no competitor with {@code competitorId} exists.
      */
     @GetMapping(value = "/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -136,12 +137,12 @@ public class IpscCompetitorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competitor found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CompetitorRequest.class))),
+                            schema = @Schema(implementation = CompetitorResponse.class))),
             @ApiResponse(responseCode = "404", description = "No competitor with this ID could be found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<CompetitorRequest> getCompetitor(
+    ResponseEntity<CompetitorResponse> getCompetitor(
             @Parameter(description = "Identifier of the competitor to retrieve.") @PathVariable Long competitorId)
             throws NonFatalException {
         return ResponseEntity.ok(ipscCompetitorService.getCompetitor(competitorId));

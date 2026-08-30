@@ -9,6 +9,7 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
@@ -26,7 +27,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     @Override
     @Transactional
-    public CompetitorRequest createCompetitor(CompetitorRequest request) {
+    public CompetitorResponse createCompetitor(CompetitorRequest request) {
         validateForCreate(request);
 
         Competitor competitor = new Competitor();
@@ -38,7 +39,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     @Override
     @Transactional
-    public CompetitorRequest updateCompetitor(Long competitorId, CompetitorRequest request) {
+    public CompetitorResponse updateCompetitor(Long competitorId, CompetitorRequest request) {
         validateForCreate(request);
         Competitor competitor = findCompetitorOrThrow(competitorId);
 
@@ -50,7 +51,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     @Override
     @Transactional
-    public CompetitorRequest patchCompetitor(Long competitorId, CompetitorRequest request) {
+    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
         Competitor competitor = findCompetitorOrThrow(competitorId);
 
         if (request.getFirstName() != null) {
@@ -101,7 +102,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     @Override
-    public CompetitorRequest getCompetitor(Long competitorId) {
+    public CompetitorResponse getCompetitor(Long competitorId) {
         return toResponse(findCompetitorOrThrow(competitorId));
     }
 
@@ -184,10 +185,10 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * Maps a persisted competitor to the response shape returned by the controller.
      *
      * @param competitor the competitor to map.
-     * @return the mapped {@link CompetitorRequest}.
+     * @return the mapped {@link CompetitorResponse}.
      */
-    protected CompetitorRequest toResponse(Competitor competitor) {
-        return new CompetitorRequest(
+    protected CompetitorResponse toResponse(Competitor competitor) {
+        return new CompetitorResponse(
                 competitor.getId(),
                 competitor.getFirstName(),
                 competitor.getLastName(),
@@ -195,7 +196,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getNickname(),
                 competitor.getDateOfBirth(),
                 competitor.getGender(),
-                ((competitor.getHomeClub() != null) ? competitor.getHomeClub().getName() : null),
+                ((competitor.getHomeClub() != null) ? competitor.getHomeClub().getIdentifier() : null),
                 competitor.getSapsaNumber(),
                 competitor.getCompetitorNumber(),
                 competitor.getClubNumber(),

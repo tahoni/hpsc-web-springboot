@@ -3,6 +3,7 @@ package za.co.hpsc.web.services;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 
 /**
  * The {@code IpscCompetitorService} interface provides methods for creating, updating and
@@ -21,7 +22,7 @@ public interface IpscCompetitorService {
      * @throws ValidationException if a required field is missing.
      * @throws NonFatalException   if the named home club cannot be found.
      */
-    CompetitorRequest createCompetitor(CompetitorRequest request) throws ValidationException, NonFatalException;
+    CompetitorResponse createCompetitor(CompetitorRequest request) throws ValidationException, NonFatalException;
 
     /**
      * Fully replaces an existing IPSC competitor's fields with those on the request.
@@ -34,7 +35,7 @@ public interface IpscCompetitorService {
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
-    CompetitorRequest updateCompetitor(Long competitorId, CompetitorRequest request)
+    CompetitorResponse updateCompetitor(Long competitorId, CompetitorRequest request)
             throws ValidationException, NonFatalException;
 
     /**
@@ -49,7 +50,7 @@ public interface IpscCompetitorService {
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
-    CompetitorRequest patchCompetitor(Long competitorId, CompetitorRequest request)
+    CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request)
             throws ValidationException, NonFatalException;
 
     /**
@@ -59,5 +60,5 @@ public interface IpscCompetitorService {
      * @return the competitor.
      * @throws NonFatalException if no competitor with {@code competitorId} exists.
      */
-    CompetitorRequest getCompetitor(Long competitorId) throws NonFatalException;
+    CompetitorResponse getCompetitor(Long competitorId) throws NonFatalException;
 }

@@ -1,25 +1,25 @@
-package za.co.hpsc.web.models.ipsc.competitor.request;
+package za.co.hpsc.web.models.ipsc.competitor.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
 
 import java.time.LocalDate;
 
 /**
- * Request to create or update an IPSC competitor.
+ * A persisted IPSC competitor, as returned by {@code IpscCompetitorController}'s CRUD endpoints.
  *
- * @see za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse
  * @since 8.0.0
  */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompetitorRequest {
-    /** Identifier of the competitor to update, or {@code null} when creating a new competitor. */
+public class CompetitorResponse {
+    /** The competitor's own identifier. */
     private Long competitorId;
     /** The competitor's first name. */
     private String firstName;
@@ -33,13 +33,13 @@ public class CompetitorRequest {
     private LocalDate dateOfBirth;
     /** The competitor's gender. */
     private Gender gender;
-    /** The name of the competitor's home club; resolved against existing clubs by name. */
-    private String homeClub;
+    /** The identifier of the competitor's home club, or {@code null} if none is set. */
+    private ClubIdentifier homeClub;
     /** The competitor's SAPSA membership number. */
     private Integer sapsaNumber;
     /** The competitor's number, as assigned for competition. */
     private String competitorNumber;
-    /** The competitor's home club membership number; must be unique across all competitors. */
+    /** The competitor's home club membership number. */
     private String clubNumber;
     /** The competitor's national identity number. */
     private String idNumber;
