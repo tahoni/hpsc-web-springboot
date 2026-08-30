@@ -67,7 +67,7 @@ public class AwardController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<AwardCeremonyResponseHolder> processCsv(
+    ResponseEntity<AwardCeremonyResponseHolder> createAwards(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/csv",
                             schema = @Schema(implementation = AwardRequest.class),

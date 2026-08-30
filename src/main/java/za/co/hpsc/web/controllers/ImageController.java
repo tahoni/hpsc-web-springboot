@@ -67,7 +67,7 @@ public class ImageController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<ImageResponseHolder> processCsv(
+    ResponseEntity<ImageResponseHolder> createImages(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/csv",
                             schema = @Schema(implementation = ImageRequest.class),

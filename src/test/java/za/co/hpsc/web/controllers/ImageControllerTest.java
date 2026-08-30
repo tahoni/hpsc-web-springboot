@@ -41,7 +41,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<ImageResponseHolder> response = imageController.processCsv(VALID_CSV);
+        ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -54,7 +54,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<ImageResponseHolder> response = imageController.processCsv(VALID_CSV);
+        ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
 
         // Assert
         assertNotNull(response.getBody());
@@ -68,7 +68,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
 
         // Act
-        imageController.processCsv(VALID_CSV);
+        imageController.createImages(VALID_CSV);
 
         // Assert
         verify(imageService, times(1)).processCsv(VALID_CSV);
@@ -82,7 +82,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<ImageResponseHolder> response = imageController.processCsv(VALID_CSV);
+        ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
 
         // Assert
         assertNotNull(response.getBody());
@@ -96,7 +96,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<ImageResponseHolder> response = imageController.processCsv(VALID_CSV);
+        ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -110,7 +110,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(anyString())).thenThrow(new ValidationException("Invalid CSV format"));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> imageController.processCsv("invalid,csv"));
+        assertThrows(ValidationException.class, () -> imageController.createImages("invalid,csv"));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(anyString())).thenThrow(new FatalException("Unexpected processing error"));
 
         // Act & Assert
-        assertThrows(FatalException.class, () -> imageController.processCsv(VALID_CSV));
+        assertThrows(FatalException.class, () -> imageController.createImages(VALID_CSV));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(null)).thenReturn(holder);
 
         // Act
-        ResponseEntity<ImageResponseHolder> response = imageController.processCsv(null);
+        ResponseEntity<ImageResponseHolder> response = imageController.createImages(null);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -142,7 +142,7 @@ public class ImageControllerTest {
         when(imageService.processCsv("")).thenThrow(new ValidationException("CSV data is empty"));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> imageController.processCsv(""));
+        assertThrows(ValidationException.class, () -> imageController.createImages(""));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class ImageControllerTest {
         when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
 
         // Act
-        imageController.processCsv(VALID_CSV);
+        imageController.createImages(VALID_CSV);
 
         // Assert
         verifyNoMoreInteractions(imageService);
