@@ -11,9 +11,9 @@ import lombok.Setter;
  *
  * <p>
  * Used both nested in {@link MatchRequest} (creating a match together with its stages, where
- * {@link #matchId} is typically unset until the match itself has been persisted) and nested
- * in {@link MatchStagesRequest} (adding or updating stages on an already-existing match,
- * where {@link #matchId} identifies that match).
+ * {@link #matchId} is typically unset until the match itself has been persisted) and, as
+ * elements of a plain {@code List<MatchStageRequest>}, for adding or updating stages on an
+ * already-existing match, where {@link #matchId} identifies that match.
  * </p>
  *
  * @since 7.4.0

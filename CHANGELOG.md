@@ -154,7 +154,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`Request`, `Response`, `AwardRequest`, `AwardRequestForCSV`, `AwardResponse`, `AwardCeremonyResponse`, `AwardCeremonyResponseHolder`:** Added `@since 1.1.0` class-level tags
 - **`ControllerResponse`, `AwardPlacing`, `Placing`:** Added `@since 1.1.3` class-level tags
 - **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level tags
-- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchStageRequest`, `MatchStagesRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
+- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
 - **`MatchRequest`:** Added `@since 1.1.3` class-level tag
 - **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`, `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 
@@ -169,6 +169,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Controllers
 
 - **`IpscController`:** Deleted — its `@RequestMapping("/ipsc/competitor")` role is superseded by the new `IpscCompetitorController` stub as part of the IPSC module split into per-concern controllers
+
+#### Models
+
+- **`MatchStagesRequest`:** Deleted — this unused wrapper around `matchId` plus a `List<MatchStageRequest>` was never consumed by any controller; callers adding or updating stages on an existing match now just pass a plain `List<MatchStageRequest>` directly
 
 ---
 
