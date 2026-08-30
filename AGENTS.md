@@ -135,7 +135,7 @@ section — README.md is the canonical version if the two ever drift):
 | `LICENSE.md`       | MIT License                                                              |
 | `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)      |
 
-Three documentation-only folders supplement these:
+Four documentation-only folders supplement these:
 
 - **`documentation/history/`** holds one of each of the following files per released version:
 
@@ -153,6 +153,9 @@ Three documentation-only folders supplement these:
   |-----------------------------|------------------------------------------------------------------------------------------------------------------|
   | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
   | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
+
+- **`documentation/recommendations/`** holds non-binding style guidance for topics `AGENTS.md`/`CLAUDE.md` don't
+  (yet) cover as a hard rule — e.g. `standard-rest-conventions.md`, REST endpoint/method naming.
 
 ---
 

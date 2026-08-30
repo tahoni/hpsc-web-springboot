@@ -66,6 +66,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchControllerTest`:** New Mockito-only unit test covering `IpscMatchController`'s four endpoints
 - **`IpscMatchServiceIntegrationTest`:** New H2-backed integration test covering `IpscMatchService`'s full contract — validation, club/match not-found (404), create/replace/patch/get, and the patch-vs-replace stage semantics
 
+#### Documentation
+
+- **`documentation/recommendations/standard-rest-conventions.md`:** New reference document covering REST endpoint (URL) and method naming conventions, grounded in this codebase's actual controllers (`AwardController`/`ImageController`'s `createAwards`/`createImages`, `IpscMatchController`'s full CRUD) — `AGENTS.md`'s Documentation File Map updated to list the new `documentation/recommendations/` folder
+
 ### 🔄 Changed
 
 #### Models
