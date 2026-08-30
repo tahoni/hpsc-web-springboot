@@ -46,6 +46,7 @@ public class ImageRequest extends Request {
      *                 If null, it will be replaced with an empty string.
      * @param fileName the name of the file containing the image.
      *                 If null, it will be replaced with an empty string.
+     * @since 1.1.0
      */
     public ImageRequest(@NotNull @NotBlank String title, String filePath, String fileName) {
         super(title);
@@ -76,6 +77,7 @@ public class ImageRequest extends Request {
      *                    If null, it will be replaced with an empty string.
      * @param fileName    the name of the file containing the image.
      *                    If null, it will be replaced with an empty string.
+     * @since 1.1.0
      */
     public ImageRequest(@NotNull @NotBlank String title, String summary, String description,
                         String category, List<String> tags, String filePath, String fileName) {

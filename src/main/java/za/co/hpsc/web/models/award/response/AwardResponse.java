@@ -48,6 +48,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @param thirdPlace  the award place representing the third position.
      *                    Can be null.
+     * @since 1.1.3
      */
     public AwardResponse(@NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
                          AwardPlacing thirdPlace) {
@@ -73,6 +74,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @param thirdPlace  the award place representing the third position.
      *                    Can be null.
+     * @since 1.1.3
      */
     public AwardResponse(UUID uuid, @NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
                          AwardPlacing thirdPlace) {
@@ -101,6 +103,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @param thirdPlace  the award place representing the third position.
      *                    Can be null.
+     * @since 1.1.3
      */
     public AwardResponse(UUID uuid, @NotNull @NotBlank String title, @NotNull AwardPlacing firstPlace,
                          AwardPlacing secondPlace, AwardPlacing thirdPlace) {
@@ -138,6 +141,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @param thirdPlace  the award place representing the third position.
      *                    Can be null.
+     * @since 1.1.1
      */
     public AwardResponse(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, AwardPlacing firstPlace,
@@ -172,6 +176,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @param thirdPlace  the award place representing the third position.
      *                    Can be null.
+     * @since 1.1.1
      */
     public AwardResponse(@NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, @NotNull AwardPlacing firstPlace,
@@ -216,6 +221,7 @@ public class AwardResponse extends Response {
      *                                 Can be null.
      * @param thirdPlaceImageFileName  the file name of the image associated with the third position.
      *                                 Can be null.
+     * @since 1.1.1
      */
     public AwardResponse(@NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, String firstPlaceName,
@@ -244,6 +250,7 @@ public class AwardResponse extends Response {
      *                     description, category, tags, and award place details for first,
      *                     second, and third positions.
      *                     Must not be null.
+     * @since 1.1.1
      */
     public AwardResponse(@NotNull AwardRequest awardRequest) {
         // Initialises response fields from request attributes

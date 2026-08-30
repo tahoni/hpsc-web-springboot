@@ -76,6 +76,7 @@ public enum ClubIdentifier {
      *                     Can be null or blank.
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
+     * @since 5.4.0
      */
     public static Optional<ClubIdentifier> fromAbbreviation(String abbreviation) {
         if ((abbreviation == null) || (abbreviation.isBlank())) {

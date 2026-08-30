@@ -40,6 +40,7 @@ public enum Gender {
      *             Can be null or blank.
      * @return an {@code Optional} containing the matching {@code Gender} if found,
      * or empty otherwise.
+     * @since 8.0.0
      */
     public static Optional<Gender> fromName(String name) {
         if ((name == null) || (name.isBlank())) {

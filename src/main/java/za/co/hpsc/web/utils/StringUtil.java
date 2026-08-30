@@ -52,6 +52,7 @@ public final class StringUtil {
      *
      * @param object the object to be converted to a string.
      * @return the string representation of the object, or null if the input object is null.
+     * @since 4.1.0
      */
     public static String toString(Object object) {
         if (object == null) {

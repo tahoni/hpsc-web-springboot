@@ -42,6 +42,8 @@ public class Request {
      * <p>
      * Ensures that the list of tags is not null by initialising it to an empty list.
      * </p>
+     *
+     * @since 1.1.3
      */
     public Request() {
         this.tags = new ArrayList<>();
@@ -52,6 +54,7 @@ public class Request {
      *
      * @param title the title of the request.
      *              Must not be null or blank.
+     * @since 1.1.1
      */
     public Request(@NotNull @NotBlank String title) {
         this();
@@ -76,6 +79,7 @@ public class Request {
      *                    Can be null.
      * @param tags        a list of tags associated with the request. If null,
      *                    an empty list is assigned.
+     * @since 1.1.1
      */
     public Request(@NotNull @NotBlank String title, String summary, String description,
                    String category, List<String> tags) {

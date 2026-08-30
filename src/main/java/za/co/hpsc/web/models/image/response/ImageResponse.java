@@ -63,6 +63,7 @@ public class ImageResponse extends Response {
      *                 If null, an empty string is assigned.
      * @param mimeType the MIME type of the image.
      *                 If null or blank, it will be inferred from the file name.
+     * @since 1.1.0
      */
     public ImageResponse(UUID uuid, @NotNull @NotBlank String title, String filePath, String fileName,
                          String mimeType) {
@@ -101,6 +102,7 @@ public class ImageResponse extends Response {
      *                    If null, an empty string is assigned.
      * @param mimeType    the MIME type of the image.
      *                    If null or blank, it will be inferred from the file name.
+     * @since 1.1.0
      */
     public ImageResponse(UUID uuid, @NotNull @NotBlank String title, String summary,
                          String description, String category, List<String> tags, String filePath,
@@ -135,6 +137,7 @@ public class ImageResponse extends Response {
      *                    If null, an empty string is assigned.
      * @param fileName    the name of the file containing the image.
      *                    If null, an empty string is assigned.
+     * @since 1.1.0
      */
     public ImageResponse(@NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, String filePath, String fileName) {
@@ -158,6 +161,7 @@ public class ImageResponse extends Response {
      *
      * @param imageRequest the {@link ImageRequest} object containing the image metadata;
      *                     Must not be null.
+     * @since 1.1.0
      */
     public ImageResponse(@NotNull ImageRequest imageRequest) {
         // Initialises response fields from request attributes

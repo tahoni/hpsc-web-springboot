@@ -157,6 +157,7 @@ public enum Division {
      *             an empty {@code Optional} is returned.
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
+     * @since 2.0.0
      */
     public static Optional<Division> fromCode(Integer code) {
         if ((code == null) || (code <= 0)) {

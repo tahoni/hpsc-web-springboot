@@ -69,6 +69,7 @@ public class ControllerResponse {
      *                  Can be null.
      * @param error     a description of any error associated with the response.
      *                  Can be null.
+     * @since 2.0.0
      */
     public ControllerResponse(@NotNull LocalDateTime timestamp, boolean success, String message,
                               String error) {

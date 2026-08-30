@@ -60,6 +60,7 @@ public class ControllerAdvice {
      * @param ex      the validation exception that was thrown.
      * @param request the current web request, used to log the request URL.
      * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     * @since 5.4.0
      */
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ControllerResponse> handleValidationException(ValidationException ex,
@@ -77,6 +78,7 @@ public class ControllerAdvice {
      * @param ex      the non-fatal exception that was thrown.
      * @param request the current web request, used to log the request URL.
      * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     * @since 5.4.0
      */
     @ExceptionHandler(NonFatalException.class)
     public ResponseEntity<ControllerResponse> handleNonFatalException(NonFatalException ex,
@@ -95,6 +97,7 @@ public class ControllerAdvice {
      * @param ex      the message conversion exception that was thrown.
      * @param request the current web request, used to log the request URL.
      * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     * @since 7.0.0
      */
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<ControllerResponse> handleHttpMessageConversionException(HttpMessageConversionException ex,
@@ -117,6 +120,7 @@ public class ControllerAdvice {
      * @param ex      the exception that was thrown.
      * @param request the current web request, used to log the request URL.
      * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     * @since 7.0.0
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ControllerResponse> handleUnhandledException(Exception ex,
@@ -136,6 +140,7 @@ public class ControllerAdvice {
      * @param status  the HTTP status the error corresponds to; its reason phrase is used as
      *                the response's status description.
      * @return a {@link ControllerResponse} describing the error.
+     * @since 7.0.0
      */
     protected ControllerResponse buildErrorResponse(String message, HttpStatus status) {
         return new ControllerResponse(LocalDateTime.now(), false, message, status.getReasonPhrase());
@@ -151,6 +156,7 @@ public class ControllerAdvice {
      * @param throwable the throwable to log.
      * @param request   the current web request; may be {@code null}, in which case only the
      *                  throwable is logged.
+     * @since 7.0.0
      */
     protected void logError(Throwable throwable, WebRequest request) {
         if (request != null) {
@@ -165,6 +171,7 @@ public class ControllerAdvice {
      *
      * @param throwable the throwable to log. If {@code null}, a generic "null throwable"
      *                  error is logged instead.
+     * @since 7.0.0
      */
     protected void logError(Throwable throwable) {
         if (throwable == null) {

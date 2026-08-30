@@ -59,6 +59,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
 - **`Placing`:** Moved from `models/shared` to `models/award/shared`, since it's only used to back award placements; `AwardPlacing`'s import updated accordingly
 
+#### Configs
+
+- **`ControllerAdvice`:** Added `@since` tags to individual handler/helper methods introduced later than the class itself — `handleValidationException`/`handleNonFatalException` at `5.4.0`; `handleHttpMessageConversionException`, `handleUnhandledException`, `buildErrorResponse` and both `logError` overloads at `7.0.0`
+
 #### Controllers
 
 - **`ImageController`, `AwardController`:** Added class-level `@since` tags (`1.0.0`, `1.1.0` respectively)
@@ -74,6 +78,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`NumberUtil`, `StringUtil`:** Added `@since 1.1.3` class-level tags
 - **`DateUtil`:** `@since` corrected from `2.0.0` to `4.1.0` — the class was originally added in `2.0.0` but later deleted and reintroduced in `4.1.0`, which is when it actually became continuously available
 - **`ValueUtil`:** Removed the private constructor's Javadoc block in favour of the plain `// Utility class, not to be instantiated` inline comment already beside it — the block only restated what the comment already says
+- **`NumberUtil`, `StringUtil`, `ValueUtil`:** Added `@since` tags to individual methods introduced later than the class itself — e.g. `ValueUtil.nullAsDefault`/`nullAsDefaultString` at `7.0.0`, added long after the class's own `1.1.0`
 
 #### Constants
 
@@ -90,6 +95,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`Gender`:** Added `@since 7.0.0` class-level tag
 - **`ClubIdentifier`:** Added `@since 5.0.0` class-level tag
 - **`CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`:** Added `@since 1.1.3` class-level tags
+- **`ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`:** Added `@since` tags to individual factory/lookup methods introduced later than the class itself
 
 #### Converters
 
@@ -112,6 +118,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level tags
 - **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchStageRequest`, `MatchStagesRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added `@since 7.4.0` class-level tags
 - **`MatchRequest`:** Added `@since 1.1.3` class-level tag
+- **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`, `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 
 ### 🗑️ Removed
 
