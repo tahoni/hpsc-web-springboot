@@ -68,6 +68,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscMatchControllerTest`:** New Mockito-only unit test covering `IpscMatchController`'s four endpoints
 - **`IpscMatchServiceIntegrationTest`:** New H2-backed integration test covering `IpscMatchService`'s full contract — validation, club/match not-found (404), create/replace/patch/get, and the patch-vs-replace stage semantics
+- **`IpscCompetitorControllerTest`:** New Mockito-only unit test covering `IpscCompetitorController`'s four endpoints
+- **`IpscCompetitorServiceIntegrationTest`:** New H2-backed integration test covering `IpscCompetitorService`'s full contract — validation, competitor/home-club not-found (404), create/replace/patch/get, and the optional-home-club semantics
 
 #### Documentation
 
