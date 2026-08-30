@@ -1,4 +1,4 @@
 package za.co.hpsc.web.controllers;
 
-public class IpscScoresController {
+public class IpscRankingController {
 }
