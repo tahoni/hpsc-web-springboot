@@ -30,6 +30,13 @@ instead: `createMatch`, not `post`.
 ## 🔗 Endpoint (URL) Naming
 
 - **Use plural nouns for collection resources** — `/awards`, `/images`, `/matches` — not verbs and not singular nouns.
+  - The base path names a collection, and `/matches` reads naturally as "the matches collection" whereas `/match`
+    implies there's only one.
+  - It stays consistent whether you're addressing the collection or a single item: `GET /matches` (list) and
+    `GET /matches/{matchId}` (one) both read correctly under the same plural noun — you'd have to awkwardly switch to
+    a different word for the collection endpoint if the base were singular.
+  - It's the de facto industry standard (GitHub, Stripe, Google APIs, etc. all use plural), so it's what any new
+    consumer will expect by default.
 - **Identify a single resource with a path variable**, not a query parameter — `/matches/{matchId}`, not
   `/matches?id={matchId}`.
 - **Nest sub-resources under their parent** when they can't meaningfully exist independently of it — e.g. a match's
