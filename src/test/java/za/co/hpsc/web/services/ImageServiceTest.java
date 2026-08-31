@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * {@link za.co.hpsc.web.services.impl.ImageServiceImplTest}.
  */
 @ExtendWith(MockitoExtension.class)
-class ImageServiceTest {
+public class ImageServiceTest {
 
     private static final String CSV_HEADER =
             "title,summary,description,category,tags,filePath,fileName\n";
