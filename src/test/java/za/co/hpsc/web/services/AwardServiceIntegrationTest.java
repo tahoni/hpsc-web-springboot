@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Spring-context integration test for {@link AwardService} - exercised through the
  * interface type, with a real Spring-wired {@code AwardServiceImpl} bean. {@code AwardService}
- * itself doesn't touch the datasource, JPA, or messaging, but this test still boots the full
+ * itself doesn't touch the datasource, JPA or messaging, but this test still boots the full
  * application context (via {@code @SpringBootTest}'s default component scan), which now
  * includes JPA-backed components such as {@code IpscMatchServiceImpl} — so only messaging is
  * excluded to keep the context as lightweight as it can be.
@@ -30,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class AwardServiceIntegrationTest {
 
-    private static final String CSV_HEADER =
-            "title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n";
-
     @Autowired
     private AwardService awardService;
+
+    private static final String CSV_HEADER =
+            "title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n";
 
     // createAwards()
     @Test

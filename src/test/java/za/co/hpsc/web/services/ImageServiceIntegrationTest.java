@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Spring-context integration test for {@link ImageService} - exercised through the
  * interface type, with a real Spring-wired {@code ImageServiceImpl} bean. {@code ImageService}
- * itself doesn't touch the datasource, JPA, or messaging, but this test still boots the full
+ * itself doesn't touch the datasource, JPA or messaging, but this test still boots the full
  * application context (via {@code @SpringBootTest}'s default component scan), which now
  * includes JPA-backed components such as {@code IpscMatchServiceImpl} — so only messaging is
  * excluded to keep the context as lightweight as it can be.
@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ImageServiceIntegrationTest {
 
-    private static final String CSV_HEADER =
-            "title,summary,description,category,tags,filePath,fileName\n";
-
     @Autowired
     private ImageService imageService;
+
+    private static final String CSV_HEADER =
+            "title,summary,description,category,tags,filePath,fileName\n";
 
     // createImages()
     @Test

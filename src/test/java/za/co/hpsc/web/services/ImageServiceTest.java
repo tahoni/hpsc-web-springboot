@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceTest {
 
-    private static final String CSV_HEADER =
-            "title,summary,description,category,tags,filePath,fileName\n";
-
     @InjectMocks
     private ImageServiceImpl imageServiceImpl;
 
     private ImageService imageService;
+
+    private static final String CSV_HEADER =
+            "title,summary,description,category,tags,filePath,fileName\n";
 
     @BeforeEach
     void setUp() {
