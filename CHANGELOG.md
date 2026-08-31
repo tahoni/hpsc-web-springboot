@@ -129,6 +129,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   against `develop`/`main`), so drafted messages and CHANGELOG entries stay consistent with — and don't duplicate —
   changes committed outside the current Claude session
 
+#### CI/CD & Configuration
+
+- **`qodana.yaml`:** Re-added — `jetbrains/qodana-jvm:2026.2` linter on the `qodana.starter` profile, targeting JDK
+  25; quality-gate thresholds left commented out. `ARCHITECTURE.md`'s Technology Stack and CI/CD & Quality Gates
+  tables, and `CONTRIBUTING.md`'s own Quality Gates table, reverse-synced to list it again as running locally/via IDE
+  only, since no CI workflow triggers it
+
 ### 🔄 Changed
 
 #### Models

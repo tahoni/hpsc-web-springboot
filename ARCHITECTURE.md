@@ -41,6 +41,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Validation        | Hibernate Validator, Jakarta Validation                             |
 | Testing           | JUnit, Mockito, Spring Test                                         |
 | Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
+| Static analysis   | Qodana JVM (`jetbrains/qodana-jvm`, config in `qodana.yaml`)        |
 | Code generation   | Lombok                                                              |
 | Port / context    | `8081` / `/hpsc-web`                                                |
 
@@ -347,11 +348,12 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                  | Trigger                                                                         |
-|-----------------------|-----------------------|---------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                | Push / PR to `main` / `develop`; weekly schedule                                |
-| **Code Coverage**     | JaCoCo                | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                   |
-| **Build & Tests**     | Maven (`./mvnw test`) | Run locally / by reviewers before merge; H2 in-memory — no external DB required |
+| Gate                  | Tool                                | Trigger                                                                         |
+|-----------------------|-------------------------------------|---------------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                              | Push / PR to `main` / `develop`; weekly schedule                                |
+| **Static Analysis**   | Qodana JVM (`jetbrains/qodana-jvm`) | Run locally / via IDE against `qodana.yaml` — no CI workflow wired up yet       |
+| **Code Coverage**     | JaCoCo                              | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                   |
+| **Build & Tests**     | Maven (`./mvnw test`)               | Run locally / by reviewers before merge; H2 in-memory — no external DB required |
 
 ---
 

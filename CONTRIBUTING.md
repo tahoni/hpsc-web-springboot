@@ -203,11 +203,12 @@ and `release/*` included — must never open a PR directly against `main`.
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                  | Trigger                                                                           |
-|-----------------------|-----------------------|-----------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`) |
-| **Code Coverage**     | JaCoCo                | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                     |
-| **Build & Tests**     | Maven (`./mvnw test`) | All PRs; H2 in-memory — no external DB required                                   |
+| Gate                  | Tool                                | Trigger                                                                           |
+|-----------------------|-------------------------------------|-----------------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                              | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`) |
+| **Static Analysis**   | Qodana JVM (`jetbrains/qodana-jvm`) | Run locally / via IDE against `qodana.yaml` — no CI workflow wired up yet         |
+| **Code Coverage**     | JaCoCo                              | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                     |
+| **Build & Tests**     | Maven (`./mvnw test`)               | All PRs; H2 in-memory — no external DB required                                   |
 
 ---
 
