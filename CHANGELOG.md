@@ -182,6 +182,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`MatchStagesRequest`:** Deleted — this unused wrapper around `matchId` plus a `List<MatchStageRequest>` was never consumed by any controller; callers adding or updating stages on an existing match now just pass a plain `List<MatchStageRequest>` directly
 
+#### Tests
+
+- **`FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`:** Deleted — every test in these files only exercised the JDK superclass constructor delegation (`Exception`/`RuntimeException`/`IllegalArgumentException` storing a message/cause), with no HPSC-specific logic of their own to protect against regression
+
 ---
 
 ## 🧾 [7.4.1] - 2026-08-29
