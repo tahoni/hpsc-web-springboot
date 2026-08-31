@@ -357,7 +357,7 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 📚 Development Guidelines
 
-Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
+Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
 commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section
 for a full map of this project's documentation.
 

@@ -1,13 +1,16 @@
 # AGENTS.md
 
-Conventions for any AI coding agent working in this repository. [`CLAUDE.md`](CLAUDE.md) remains the
-Claude-Code-specific quick reference (build/run commands, package overview, database profiles); this file holds the
-broader, tool-agnostic documentation and workflow conventions below. Some content (test conventions) is intentionally
-restated in both files, since not every agent tool reads `CLAUDE.md`.
+Conventions for any AI coding agent working in this repository — project overview, build/run commands, architecture,
+documentation and git workflow conventions, test conventions and the release checklist.
+[`CLAUDE.md`](CLAUDE.md) is a thin pointer to this file, kept only because Claude Code discovers that filename by
+convention; no Claude-Code-specific content is split out from it.
 
 ## Table of Contents
 
+- [📖 Project Overview](#-project-overview)
 - [⚙️ Tech Stack](#-tech-stack)
+- [🚀 Build & Run Commands](#-build--run-commands)
+- [🏛️ Architecture](#-architecture)
 - [📝 Documentation Conventions](#-documentation-conventions)
 - [🗺️ Documentation File Map](#-documentation-file-map)
 - [🧪 Test Conventions](#-test-conventions)
@@ -15,6 +18,17 @@ restated in both files, since not every agent tool reads `CLAUDE.md`.
 - [🔀 Git Workflow](#-git-workflow)
 - [🚢 Release Checklist](#-release-checklist)
 - [🌲 Evergreen Documentation](#-evergreen-documentation-readmemd--architecturemd)
+
+---
+
+## 📖 Project Overview
+
+HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shooting Club (HPSC) platform. It manages IPSC
+match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this is a pure API
+server.
+
+- **Port / context path:** `8081` / `/hpsc-web`
+- **API docs:** Swagger UI at `http://localhost:8081/hpsc-web/swagger-ui/index.html`
 
 ---
 
@@ -35,6 +49,54 @@ restated in both files, since not every agent tool reads `CLAUDE.md`.
 
 Exact pinned versions are not listed here — they drift with every dependency bump. Check `pom.xml` for the versions
 currently in use.
+
+---
+
+## 🚀 Build & Run Commands
+
+```bash
+# Build
+./mvnw clean install
+
+# Run (uses application.properties; requires MYSQL_USER and MYSQL_PASSWORD env vars)
+./mvnw spring-boot:run
+
+# Run with dev profile (local MySQL at localhost:3306/hpsc_dev)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+
+# All tests (uses H2 in-memory — no external DB needed)
+./mvnw test
+
+# Tests + JaCoCo coverage report (target/site/jacoco/)
+./mvnw verify -Pcoverage
+```
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles)'s Database Profiles section for the profile/DDL matrix —
+tests activate the `test` profile automatically, so no database setup is required to run them. See
+[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/JaCoCo triggers.
+
+---
+
+## 🏛️ Architecture
+
+The application follows a strict layered architecture with unidirectional dependencies:
+
+```
+HTTP Request
+    → Controller  (REST endpoint, DTO validation)
+    → Service     (business logic, @Transactional)
+    → Repository  (Spring Data JPA)
+    → MySQL / H2
+```
+
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full package-by-package breakdown, entity relationships and data-flow
+diagrams.
+
+### Exception handling
+
+All exceptions should extend `FatalException`, `NonFatalException` or `ValidationException`. The `ControllerAdvice`
+automatically maps these to the correct HTTP status and JSON response shape — do not catch and re-throw as generic
+`RuntimeException`.
 
 ---
 
@@ -128,18 +190,18 @@ genuinely new concept. Icons already established in this repository's documentat
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation)
 section — README.md is the canonical version if the two ever drift):
 
-| File               | Purpose                                                                  |
-|--------------------|--------------------------------------------------------------------------|
-| `README.md`        | Project overview, setup and links to the rest of the documentation       |
-| `ARCHITECTURE.md`  | Detailed architectural design, layered structure and CI/CD quality gates |
-| `CLAUDE.md`        | Guidance for Claude Code specifically when working in this repository    |
-| `AGENTS.md`        | Cross-tool agent conventions (this file)                                 |
-| `CONTRIBUTING.md`  | New-developer onboarding: setup, database profiles, testing, workflow    |
-| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                  |
-| `HISTORY.md`       | Narrative history of the project's evolution across all versions         |
-| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                    |
-| `LICENSE.md`       | MIT License                                                              |
-| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)      |
+| File               | Purpose                                                                                   |
+|--------------------|-------------------------------------------------------------------------------------------|
+| `README.md`        | Project overview, setup and links to the rest of the documentation                        |
+| `ARCHITECTURE.md`  | Detailed architectural design, layered structure and CI/CD quality gates                  |
+| `CLAUDE.md`        | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                    |
+| `AGENTS.md`        | Project overview, build/run commands, architecture and cross-tool conventions (this file) |
+| `CONTRIBUTING.md`  | New-developer onboarding: setup, database profiles, testing, workflow                     |
+| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                                   |
+| `HISTORY.md`       | Narrative history of the project's evolution across all versions                          |
+| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                                     |
+| `LICENSE.md`       | MIT License                                                                               |
+| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)                       |
 
 Four documentation-only folders supplement these:
 

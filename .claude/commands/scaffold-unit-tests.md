@@ -10,11 +10,11 @@ Scaffold unit tests for: $ARGUMENTS
 
 (one or more class names or file paths — space- or comma-separated)
 
-Conventions to follow: @AGENTS.md @CLAUDE.md
+Conventions to follow: @AGENTS.md
 
 ## 🚀 Instructions
 
-Read and strictly follow **all conventions defined in AGENTS.md and CLAUDE.md** (loaded above) — in particular AGENTS.md's **Test Conventions** section and CLAUDE.md's **Architecture** section (package layout, exception handling). Treat them as the single source of truth; do not reinterpret or contradict their rules.
+Read and strictly follow **all conventions defined in AGENTS.md** (loaded above) — in particular its **Test Conventions** section and **Architecture** section (package layout, exception handling). Treat it as the single source of truth; do not reinterpret or contradict its rules.
 
 1. **Resolve `$ARGUMENTS` to one or more targets.** Split on commas and/or whitespace; each token is a class/interface name or a file path under `src/main/java/za/co/hpsc/web/` (search by name with Glob/Grep if a bare class name was given rather than a path). If `$ARGUMENTS` is empty, ask the user which class(es) to scaffold rather than guessing. Repeat steps 2–6 independently for each resolved target — a failure or ambiguity on one target (class not found, name matches multiple classes) must not block scaffolding the others; report it and move on.
 2. **Determine where each target's test(s) belong**, mirroring the target's package under `src/test/java`:
@@ -22,8 +22,8 @@ Read and strictly follow **all conventions defined in AGENTS.md and CLAUDE.md** 
    - **Service implementation** (`services/impl/XServiceImpl.java`): create or extend `services/impl/XServiceImplTest.java` — Mockito unit tests for the impl's own helper methods (protected/private methods not declared on the interface), kept separate from the interface-contract tests above. Follow the pattern in `services/impl/AwardServiceImplTest.java`/`services/impl/ImageServiceImplTest.java`.
    - **Any other class** (model/DTO, exception, enum, converter, controller, util): a single `<ClassName>Test.java` in the mirrored package.
 3. **Do not test Lombok-generated behaviour.** Skip constructors, getters, setters, `toString()`, `equals()`/`hashCode()` or builders that Lombok generates with no accompanying custom logic — per AGENTS.md's Test Conventions. Only test these when they're handwritten or add real logic (default-value handling, validation, derived fields, etc.). Using generated getters/setters/builders incidentally to build fixtures or assert real business-logic outcomes is fine.
-4. **Cover real behaviour**: valid inputs, edge cases and error paths (null/empty/blank input, malformed data, missing required fields) — asserting against the project's exception hierarchy where the target throws one, per CLAUDE.md's Exception handling section (loaded above).
-5. **Match the existing style exactly**, per AGENTS.md's Test Conventions and CLAUDE.md's Testing Patterns (both loaded above) — an Arrange-Act-Assert structure, and mirror the closest existing sibling test file in the same package rather than inventing a new style.
+4. **Cover real behaviour**: valid inputs, edge cases and error paths (null/empty/blank input, malformed data, missing required fields) — asserting against the project's exception hierarchy where the target throws one, per AGENTS.md's Architecture → Exception handling section (loaded above).
+5. **Match the existing style exactly**, per AGENTS.md's Test Conventions (loaded above) — an Arrange-Act-Assert structure, and mirror the closest existing sibling test file in the same package rather than inventing a new style.
 6. **Run each new/extended test class as it's finished**, then run the full suite once at the end and confirm everything passes before finishing:
    ```bash
    ./mvnw test -Dtest=<NewTestClass1>,<NewTestClass2>

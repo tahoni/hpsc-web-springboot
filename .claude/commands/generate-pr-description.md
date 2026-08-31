@@ -19,11 +19,11 @@ Changes relative to main:
 Commit log relative to main:
 !`git log main..HEAD --oneline`
 
-Conventions to follow: @AGENTS.md @CLAUDE.md
+Conventions to follow: @AGENTS.md
 
 ## 🚀 Instructions
 
-Read and strictly follow **all conventions defined in AGENTS.md and CLAUDE.md** (both loaded above) — in particular AGENTS.md's **Release Checklist**, **Documentation Conventions**, **Git Workflow** (Branching Model) and **Evergreen Documentation** (reverse sync rule) sections, and CLAUDE.md for accurate technical detail (build/test commands, package layout, database profiles) when writing `RELEASE_NOTES.md`/the PR description. Treat both as the single source of truth; do not reinterpret or contradict their rules. Follow the Release Checklist steps **in order** — the version number and date must be final before anything downstream references them.
+Read and strictly follow **all conventions defined in AGENTS.md** (loaded above) — in particular its **Release Checklist**, **Documentation Conventions**, **Git Workflow** (Branching Model), **Evergreen Documentation** (reverse sync rule), **Build & Run Commands** and **Architecture** sections for accurate technical detail (build/test commands, package layout, database profiles) when writing `RELEASE_NOTES.md`/the PR description. Treat it as the single source of truth; do not reinterpret or contradict its rules. Follow the Release Checklist steps **in order** — the version number and date must be final before anything downstream references them.
 
 Steps:
 1. **Confirm the diff against `main`** (shown above) covers everything that changed for this release — re-run `git log main..HEAD` / `git diff --stat main...HEAD` yourself if the branch has moved on since this command started.

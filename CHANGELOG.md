@@ -96,6 +96,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Rewrapped to a consistent ~120-character line width — no content changes
 - **`CLAUDE.md`:** Removed a stale Runtime line (claimed Spring Boot `4.0.5`; `pom.xml`'s parent is `4.1.0`) and two generic Maven test-invocation examples; replaced the Database Profiles table (which had drifted out of sync with `CONTRIBUTING.md`'s — it said "manual migrations" where Flyway is actually used) and the Code Quality & CI section (duplicating `ARCHITECTURE.md`'s CI/CD & Quality Gates table) with pointers to those files
+- **`AGENTS.md`, `CLAUDE.md`:** `CLAUDE.md`'s Project Overview, Build & Run Commands, Architecture and Testing Patterns sections merged into `AGENTS.md` so any AI coding agent — not just Claude Code — gets the same guidance; `CLAUDE.md` reduced to a short pointer, since nothing in it was Claude-Code-specific. `README.md`'s and `AGENTS.md`'s own Documentation File Map, `ARCHITECTURE.md`'s Development Guidelines section, and the five `.claude/commands/*.md` skill files that cited `CLAUDE.md`'s removed sections updated to reference `AGENTS.md` (or `CONTRIBUTING.md` directly for the Database Profiles table) instead
 
 #### Tests
 

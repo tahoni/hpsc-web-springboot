@@ -161,8 +161,8 @@ This project's documentation is spread across a few files, each with a distinct 
 |----------------------------------------|-------------------------------------------------------------------------------------------------|
 | [`README.md`](README.md)               | Project overview, setup and links to the rest of the documentation (this file)                  |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure and CI/CD quality gates                        |
-| [`CLAUDE.md`](CLAUDE.md)               | Guidance for Claude Code (AI assistant) when working in this repository                         |
-| [`AGENTS.md`](AGENTS.md)               | Cross-tool conventions for AI coding agents working in this repository                          |
+| [`CLAUDE.md`](CLAUDE.md)               | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                          |
+| [`AGENTS.md`](AGENTS.md)               | Project overview, build/run commands, architecture and cross-tool conventions for AI agents     |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md)   | New-developer onboarding: setup, database profiles, testing, workflow                           |
 | [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
 | [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |

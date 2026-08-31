@@ -34,11 +34,11 @@ Uncommitted diff (staged and unstaged), if any:
 Current `[Unreleased]` section of CHANGELOG.md:
 @CHANGELOG.md
 
-Conventions to follow: @AGENTS.md @CLAUDE.md
+Conventions to follow: @AGENTS.md
 
 ## 🚀 Instructions
 
-Read and strictly follow the **Documentation Conventions** and **Git Workflow** sections in AGENTS.md (loaded above), plus CLAUDE.md for accurate technical detail when describing what changed. Treat both as the single source of truth.
+Read and strictly follow the **Documentation Conventions** and **Git Workflow** sections in AGENTS.md (loaded above), plus its **Build & Run Commands** and **Architecture** sections for accurate technical detail when describing what changed. Treat it as the single source of truth.
 
 1. **Determine the branch's full change set.** Combine the committed diff (branch vs. base) and any uncommitted working-tree diff above — together these are every change this branch introduces. Ignore merge commits' own diffs; look at the actual content changes.
 2. **Read the existing `## 🧪 [Unreleased]` section** of CHANGELOG.md (loaded above) and build a mental list of what it already documents.
