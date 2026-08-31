@@ -94,7 +94,7 @@ static analysis.
 - **AI-agent tooling** migrated from `.claude/commands/*.md` slash commands to `.claude/skills/*/SKILL.md` Skills;
   `generate-pr-description` now runs `sync-unreleased-changes` as a prerequisite step before drafting a release
 - New `AGENTS.md` conventions: line wrapping (100–120 characters), an extended Arrange-Act-Assert rule requiring an
-  explicit `// Arrange`/`// Act`/`// Assert` comment per phase, and a test-helper-placement rule (private
+  explicit `// Arrange`/`// Act`/`// Assert` comment per phase and a test-helper-placement rule (private
   fixture/setup helpers go after every `@Test` method)
 - **`qodana.yaml`** re-added — `jetbrains/qodana-jvm:2026.2` linter on the `qodana.starter` profile, targeting JDK 25
 
