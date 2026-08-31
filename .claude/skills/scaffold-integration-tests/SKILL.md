@@ -24,13 +24,13 @@ Read and strictly follow **all conventions defined in AGENTS.md** — in particu
 **Architecture** and **Build & Run Commands** sections. Treat it as the single source of truth; do not reinterpret or
 contradict its rules.
 
-1. **Resolve `args` to one or more targets.** Split on commas and/or whitespace; each token is a service interface (or,
-   once repository/domain code exists again, a repository) under `src/main/java/za/co/hpsc/web/` — search by name with
-   Glob/Grep if a bare class name was given rather than a path. Integration tests in this repo exercise the **service (
-   or repository) layer through a real, Spring-wired bean** — models, exceptions, enums and converters are unit-tested
-   only (see the `scaffold-unit-tests` skill), not integration-tested. If `args` is empty, ask the user which class(es)
-   to scaffold rather than guessing. Repeat steps 2–8 independently for each resolved target — a failure or ambiguity on
-   one target must not block scaffolding the others; report it and move on.
+1. **Resolve `args` to one or more targets.** Split on commas and/or whitespace; each token is a service interface
+   (or, once repository/domain code exists again, a repository) under `src/main/java/za/co/hpsc/web/` — search by name
+   with Glob/Grep if a bare class name was given rather than a path. Integration tests in this repo exercise the
+   **service (or repository) layer through a real, Spring-wired bean** — models, exceptions, enums and converters are
+   unit-tested only (see the `scaffold-unit-tests` skill), not integration-tested. If `args` is empty, ask the user
+   which class(es) to scaffold rather than guessing. Repeat steps 2–8 independently for each resolved target — a
+   failure or ambiguity on one target must not block scaffolding the others; report it and move on.
 2. **Create or extend `services/[Class]IntegrationTest.java`** (package `za.co.hpsc.web.services`, sibling to the
    interface, not `services.impl`) — name the class `[Class]IntegrationTest`, where `[Class]` is the target interface's
    own name (e.g. `AwardService` → `AwardServiceIntegrationTest`, `ImageService` → `ImageServiceIntegrationTest`).
