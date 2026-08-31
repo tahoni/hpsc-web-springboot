@@ -109,6 +109,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `replaceStages`/`upsertStages`) — not declared on the `IpscMatchService`/`IpscCompetitorService` interfaces, so not
   covered by `IpscMatchServiceTest`/`IpscCompetitorServiceTest`, matching the existing
   `AwardServiceImplTest`/`ImageServiceImplTest` split between interface-level and impl-only coverage
+- **`GenderTest`:** New unit test covering `Gender.fromName`'s exact/case-insensitive/no-match/null/blank lookup
+  behaviour and its new `toString()` override
+- **`GenderConverterTest`:** New unit test covering `GenderConverter`'s `convertToDatabaseColumn`/
+  `convertToEntityAttribute`, including the null/blank/unrecognised-name-to-`null` fallback behaviour
 
 #### Documentation
 
@@ -194,6 +198,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   each phase present in a test — a phase's comment is omitted only when that phase doesn't apply. Tests verifying a
   thrown exception (typically `assertThrows(...)`) mark that call with a single `// Act & Assert` comment instead,
   since the act and assert happen in one statement
+- **`ARCHITECTURE.md`:** Package layout, Controllers/Services tables and model documentation reverse-synced to the IPSC
+  module rebuild — `IpscController`'s empty-stub row replaced by `IpscCompetitorController`/`IpscMatchController`
+  (and their `IpscCompetitorService`/`IpscMatchService` counterparts), the package tree's `models/ipsc/request/` split
+  into `models/ipsc/match/request/`/`models/ipsc/scores/request/` to match, and the groundwork note on the service
+  layer narrowed to reflect that only the CRUD services above currently exist
 
 #### Tests
 
@@ -216,12 +225,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   service methods and assert `201 Created` instead of `200 OK`
 - **`AwardServiceTest`, `AwardServiceIntegrationTest`, `ImageServiceTest`, `ImageServiceIntegrationTest`:** Updated to
   call the renamed `createAwards`/`createImages` methods
+- **`ClubIdentifierTest`, `CompetitorCategoryTest`, `DivisionTest`, `FirearmTypeTest`, `MatchCategoryTest`,
+  `PowerFactorTest`:** Updated to call the renamed `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName`
+  factory methods, including their test method names (e.g. `testGetByAbbreviation_*` → `testFromAbbreviation_*`)
 
 #### Configs
 
-- **`ControllerAdvice`:** Added `@since` tags to individual handler/helper methods introduced later than the class
-  itself — `handleValidationException`/`handleNonFatalException` at `5.4.0`; `handleHttpMessageConversionException`,
-  `handleUnhandledException`, `buildErrorResponse` and both `logError` overloads at `7.0.0`
+- **`ControllerAdvice`:** Gains a class-level `@since 1.0.0` tag and full `@param`/`@return` Javadoc on every exception
+  handler and helper method — none of it was previously documented; `@since` tags also added to the individual
+  handler/helper methods introduced later than the class itself — `handleValidationException`/`handleNonFatalException`
+  at `5.4.0`; `handleHttpMessageConversionException`, `handleUnhandledException`, `buildErrorResponse` and both
+  `logError` overloads at `7.0.0`
 
 #### Services
 
@@ -324,6 +338,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`documentation/history/RELEASE_NOTES_v7.1.0.md`:** Corrected its `.claude/commands/generate-commit-message.md`
   reference to `../../.claude/commands/generate-commit-message.md` — the archived file lives two directories below the
   repository root, so the unprefixed relative link was broken
+- **`documentation/history/RELEASE_NOTES_v7.2.0.md`, `PR_DESCRIPTION_v7.2.0.md`:** Corrected stale `processCsv`
+  references to `createAwards`, matching `AwardService.processCsv`'s/`ImageService.processCsv`'s rename above
 
 ### 🗑️ Removed
 
