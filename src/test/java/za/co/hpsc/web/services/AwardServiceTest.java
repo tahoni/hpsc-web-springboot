@@ -41,22 +41,22 @@ class AwardServiceTest {
     // processCsv()
     @Test
     void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> awardService.processCsv(null));
+        assertThrows(ValidationException.class, () -> awardService.createAwards(null));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> awardService.processCsv(""));
+        assertThrows(ValidationException.class, () -> awardService.createAwards(""));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> awardService.processCsv("   \t\n  "));
+        assertThrows(ValidationException.class, () -> awardService.createAwards("   \t\n  "));
     }
 
     @Test
     void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> awardService.processCsv("Invalid CSV Format"));
+        assertThrows(ValidationException.class, () -> awardService.createAwards("Invalid CSV Format"));
     }
 
     @Test
@@ -68,13 +68,13 @@ class AwardServiceTest {
                 """;
 
         // Act / Assert
-        assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
+        assertThrows(ValidationException.class, () -> awardService.createAwards(csvData));
     }
 
     @Test
     void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
         // Act
-        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.processCsv(CSV_HEADER));
+        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.createAwards(CSV_HEADER));
 
         // Assert
         assertNotNull(responseHolder);
@@ -88,7 +88,7 @@ class AwardServiceTest {
                 "Top Shooter,Best shooter award,Annual top shooter description,Overall,ipsc|hpsc,2026-04-10,awards/top-shooter,IPSC Gala 2026,Annual gala summary,Gala description,Gala Category,gala|annual,Jane Doe,John Roe,Sam Poe,jane.png,john.png,sam.png\n";
 
         // Act
-        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.processCsv(csvData));
+        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.createAwards(csvData));
 
         // Assert - Verify ceremony data
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -120,7 +120,7 @@ class AwardServiceTest {
                 "Award B1,,,,,,,Ceremony Beta,,,,,Eve,Frank,,,,\n";
 
         // Act
-        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.processCsv(csvData));
+        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.createAwards(csvData));
 
         // Assert
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -140,7 +140,7 @@ class AwardServiceTest {
                 """;
 
         // Act
-        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.processCsv(csvData));
+        AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.createAwards(csvData));
 
         // Assert
         AwardCeremonyResponse ceremony = responseHolder.getAwardCeremonies().getFirst();

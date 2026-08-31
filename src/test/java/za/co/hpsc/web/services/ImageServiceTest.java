@@ -39,22 +39,22 @@ class ImageServiceTest {
     // processCsv()
     @Test
     void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> imageService.processCsv(null));
+        assertThrows(ValidationException.class, () -> imageService.createImages(null));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> imageService.processCsv(""));
+        assertThrows(ValidationException.class, () -> imageService.createImages(""));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> imageService.processCsv("   \t\n  "));
+        assertThrows(ValidationException.class, () -> imageService.createImages("   \t\n  "));
     }
 
     @Test
     void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> imageService.processCsv("Invalid CSV Format"));
+        assertThrows(ValidationException.class, () -> imageService.createImages("Invalid CSV Format"));
     }
 
     @Test
@@ -66,13 +66,13 @@ class ImageServiceTest {
                 """;
 
         // Act / Assert
-        assertThrows(ValidationException.class, () -> imageService.processCsv(csvData));
+        assertThrows(ValidationException.class, () -> imageService.createImages(csvData));
     }
 
     @Test
     void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyImageList() {
         // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.processCsv(CSV_HEADER));
+        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.createImages(CSV_HEADER));
 
         // Assert
         assertNotNull(responseHolder);
@@ -86,7 +86,7 @@ class ImageServiceTest {
                 "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains|plains,/photos/nature,landscape.jpg\n";
 
         // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.processCsv(csvData));
+        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.createImages(csvData));
 
         // Assert
         List<ImageResponse> images = responseHolder.getImages();
@@ -109,7 +109,7 @@ class ImageServiceTest {
                 "Photo B,Summary B,Desc B,Portraits,Tag3,/photos/b,b.jpg\n";
 
         // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.processCsv(csvData));
+        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.createImages(csvData));
 
         // Assert
         List<ImageResponse> images = responseHolder.getImages();
@@ -127,7 +127,7 @@ class ImageServiceTest {
                 """;
 
         // Act
-        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.processCsv(csvData));
+        ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.createImages(csvData));
 
         // Assert
         ImageResponse image = responseHolder.getImages().getFirst();

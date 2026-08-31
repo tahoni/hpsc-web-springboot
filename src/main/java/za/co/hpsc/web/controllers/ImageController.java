@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -41,8 +42,8 @@ public class ImageController {
     }
 
     /**
-     * Handles the processing of CSV data containing image-related details and returns a
-     * structured response encapsulated in an {@link ImageResponseHolder}.
+     * Handles bulk creation of images from CSV data, returning a structured response
+     * encapsulated in an {@link ImageResponseHolder}.
      *
      * @param csvData The CSV content as a string containing details about images,
      *                formatted according to the expected schema. This parameter
@@ -54,10 +55,10 @@ public class ImageController {
      * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
-    @PostMapping(value = "", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Process image CSV", description = "Convert CSV data about images to JSON.")
+    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create images", description = "Create images in bulk from CSV data.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully converted the CSV data to JSON.",
+            @ApiResponse(responseCode = "201", description = "Images created.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ImageResponseHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
@@ -77,6 +78,6 @@ public class ImageController {
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, FatalException {
-        return ResponseEntity.ok(imageService.processCsv(csvData));
+        return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImages(csvData));
     }
 }

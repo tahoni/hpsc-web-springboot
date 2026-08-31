@@ -100,6 +100,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Tests
 
 - **`HpscWebApplicationTest`, `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Stopped excluding `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration` — `@SpringBootTest` with no `classes=` boots the whole app via component scan, and now that `IpscMatchServiceImpl` genuinely depends on JPA, excluding it broke context loading for every test that boots the full context, not just tests of JPA-touching services
+- **`AwardControllerTest`, `ImageControllerTest`:** Updated to mock/verify the renamed `createAwards`/`createImages` service methods and assert `201 Created` instead of `200 OK`
+- **`AwardServiceTest`, `AwardServiceIntegrationTest`, `ImageServiceTest`, `ImageServiceIntegrationTest`:** Updated to call the renamed `createAwards`/`createImages` methods
 
 #### Configs
 
@@ -108,11 +110,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Controllers
 
 - **`ImageController`, `AwardController`:** Added class-level `@since` tags (`1.0.0`, `1.1.0` respectively)
+- **`AwardController`, `ImageController`:** Bulk CSV endpoints moved from `POST /awards`/`POST /images` to `POST /awards/bulk`/`POST /images/bulk` and now return `201 Created` (previously `200 OK`), matching `IpscCompetitorController.createCompetitor`'s create-endpoint convention; `@Operation` summary/description reworded from generic CSV processing to bulk creation
 
 #### Services
 
 - **`ImageService`:** Added `@since 1.0.0` class-level tag
 - **`AwardService`:** Added `@since 1.1.0` class-level tag
+- **`AwardService.processCsv`, `ImageService.processCsv`:** Renamed to `createAwards`/`createImages`, matching the already-named `AwardController.createAwards`/`ImageController.createImages`; Javadoc reworded to describe the CSV-to-response transform (no persistence) and now documents the previously-undeclared `ValidationException` thrown for null/blank/unparseable CSV
 
 #### Utils
 

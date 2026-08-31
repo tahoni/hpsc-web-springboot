@@ -38,20 +38,20 @@ public class AwardControllerTest {
     void testProcessCsv_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
-        when(awardService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<AwardCeremonyResponseHolder> response = awardController.createAwards(VALID_CSV);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     void testProcessCsv_whenValidCsvData_thenResponseBodyIsReturnedFromService() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
-        when(awardService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<AwardCeremonyResponseHolder> response = awardController.createAwards(VALID_CSV);
@@ -65,13 +65,13 @@ public class AwardControllerTest {
     void testProcessCsv_whenValidCsvData_thenDelegatesProcessingToService() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
-        when(awardService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
 
         // Act
         awardController.createAwards(VALID_CSV);
 
         // Assert
-        verify(awardService, times(1)).processCsv(VALID_CSV);
+        verify(awardService, times(1)).createAwards(VALID_CSV);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class AwardControllerTest {
         // Arrange
         AwardCeremonyResponse ceremony = new AwardCeremonyResponse();
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of(ceremony));
-        when(awardService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<AwardCeremonyResponseHolder> response = awardController.createAwards(VALID_CSV);
@@ -93,13 +93,13 @@ public class AwardControllerTest {
     void testProcessCsv_whenServiceReturnsEmptyHolder_thenResponseBodyHasEmptyList() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(Collections.emptyList());
-        when(awardService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<AwardCeremonyResponseHolder> response = awardController.createAwards(VALID_CSV);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getAwardCeremonies().isEmpty());
     }
@@ -107,7 +107,7 @@ public class AwardControllerTest {
     @Test
     void testProcessCsv_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, FatalException {
         // Arrange
-        when(awardService.processCsv(anyString())).thenThrow(new ValidationException("Invalid CSV format"));
+        when(awardService.createAwards(anyString())).thenThrow(new ValidationException("Invalid CSV format"));
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardController.createAwards("invalid,csv"));
@@ -116,7 +116,7 @@ public class AwardControllerTest {
     @Test
     void testProcessCsv_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, FatalException {
         // Arrange
-        when(awardService.processCsv(anyString())).thenThrow(new FatalException("Unexpected processing error"));
+        when(awardService.createAwards(anyString())).thenThrow(new FatalException("Unexpected processing error"));
 
         // Act & Assert
         assertThrows(FatalException.class, () -> awardController.createAwards(VALID_CSV));
@@ -126,20 +126,20 @@ public class AwardControllerTest {
     void testProcessCsv_whenCsvDataIsNull_thenDelegatesToService() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
-        when(awardService.processCsv(null)).thenReturn(holder);
+        when(awardService.createAwards(null)).thenReturn(holder);
 
         // Act
         ResponseEntity<AwardCeremonyResponseHolder> response = awardController.createAwards(null);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(awardService, times(1)).processCsv(null);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        verify(awardService, times(1)).createAwards(null);
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsEmpty_thenDelegatesToService() throws ValidationException, FatalException {
         // Arrange
-        when(awardService.processCsv("")).thenThrow(new ValidationException("CSV data is empty"));
+        when(awardService.createAwards("")).thenThrow(new ValidationException("CSV data is empty"));
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardController.createAwards(""));
@@ -149,7 +149,7 @@ public class AwardControllerTest {
     void testProcessCsv_whenServiceInvokedOnce_thenNoAdditionalInteractions() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
-        when(awardService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
 
         // Act
         awardController.createAwards(VALID_CSV);

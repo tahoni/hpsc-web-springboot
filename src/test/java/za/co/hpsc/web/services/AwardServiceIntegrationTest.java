@@ -39,23 +39,23 @@ public class AwardServiceIntegrationTest {
     // processCsv()
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> awardService.processCsv(null));
+        assertThrows(ValidationException.class, () -> awardService.createAwards(null));
     }
 
     @Test
     public void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> awardService.processCsv(""));
+        assertThrows(ValidationException.class, () -> awardService.createAwards(""));
     }
 
     @Test
     public void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> awardService.processCsv("   \t\n  "));
+        assertThrows(ValidationException.class, () -> awardService.createAwards("   \t\n  "));
     }
 
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
         assertThrows(ValidationException.class, () ->
-                awardService.processCsv("This is not valid CSV data"));
+                awardService.createAwards("This is not valid CSV data"));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class AwardServiceIntegrationTest {
                 title,imageFilePath,ceremonyTitle
                 Award 1,/path/to/image,Ceremony 1
                 """;
-        assertThrows(ValidationException.class, () -> awardService.processCsv(csvData));
+        assertThrows(ValidationException.class, () -> awardService.createAwards(csvData));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class AwardServiceIntegrationTest {
                 "Top Shooter,Best shooter award,Annual top shooter description,Overall,ipsc|hpsc,2026-04-10,awards/top-shooter,IPSC Gala 2026,Annual gala summary,Gala description,Gala Category,gala|annual,Jane Doe,John Roe,Sam Poe,jane.png,john.png,sam.png\n";
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -113,7 +113,7 @@ public class AwardServiceIntegrationTest {
                 "Junior Award,,,Junior,,2026-04-10,awards/,Club Gala 2026,,,,,Tom Young,,,,,\n";
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -134,7 +134,7 @@ public class AwardServiceIntegrationTest {
     @Test
     public void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(CSV_HEADER));
+                awardService.createAwards(CSV_HEADER));
 
         assertNotNull(responseHolder);
         assertTrue(responseHolder.getAwardCeremonies().isEmpty());
@@ -150,7 +150,7 @@ public class AwardServiceIntegrationTest {
                 """;
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -180,7 +180,7 @@ public class AwardServiceIntegrationTest {
                 """;
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -200,7 +200,7 @@ public class AwardServiceIntegrationTest {
                 """;
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -227,7 +227,7 @@ public class AwardServiceIntegrationTest {
                 """;
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -262,7 +262,7 @@ public class AwardServiceIntegrationTest {
                 "Podium Award,,,,ipsc|hpsc|production,,,Club Awards 2026,,,,gala|annual,Jane Doe,,,,,\n";
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
@@ -283,7 +283,7 @@ public class AwardServiceIntegrationTest {
                 "Annual Trophy,,,,,2026-11-20,,Trophy Ceremony,,,,,Best Shooter,,,,,\n";
 
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
-                awardService.processCsv(csvData));
+                awardService.createAwards(csvData));
 
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();

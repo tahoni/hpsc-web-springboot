@@ -38,20 +38,20 @@ public class ImageControllerTest {
     void testProcessCsv_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
         // Arrange
         ImageResponseHolder holder = new ImageResponseHolder(List.of());
-        when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(imageService.createImages(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     void testProcessCsv_whenValidCsvData_thenResponseBodyIsReturnedFromService() throws ValidationException, FatalException {
         // Arrange
         ImageResponseHolder holder = new ImageResponseHolder(List.of());
-        when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(imageService.createImages(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
@@ -65,13 +65,13 @@ public class ImageControllerTest {
     void testProcessCsv_whenValidCsvData_thenDelegatesProcessingToService() throws ValidationException, FatalException {
         // Arrange
         ImageResponseHolder holder = new ImageResponseHolder(List.of());
-        when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(imageService.createImages(VALID_CSV)).thenReturn(holder);
 
         // Act
         imageController.createImages(VALID_CSV);
 
         // Assert
-        verify(imageService, times(1)).processCsv(VALID_CSV);
+        verify(imageService, times(1)).createImages(VALID_CSV);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ImageControllerTest {
         // Arrange
         ImageResponse image = new ImageResponse();
         ImageResponseHolder holder = new ImageResponseHolder(List.of(image));
-        when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(imageService.createImages(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
@@ -93,13 +93,13 @@ public class ImageControllerTest {
     void testProcessCsv_whenServiceReturnsEmptyHolder_thenResponseBodyHasEmptyList() throws ValidationException, FatalException {
         // Arrange
         ImageResponseHolder holder = new ImageResponseHolder(Collections.emptyList());
-        when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(imageService.createImages(VALID_CSV)).thenReturn(holder);
 
         // Act
         ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getImages().isEmpty());
     }
@@ -107,7 +107,7 @@ public class ImageControllerTest {
     @Test
     void testProcessCsv_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, FatalException {
         // Arrange
-        when(imageService.processCsv(anyString())).thenThrow(new ValidationException("Invalid CSV format"));
+        when(imageService.createImages(anyString())).thenThrow(new ValidationException("Invalid CSV format"));
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageController.createImages("invalid,csv"));
@@ -116,7 +116,7 @@ public class ImageControllerTest {
     @Test
     void testProcessCsv_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, FatalException {
         // Arrange
-        when(imageService.processCsv(anyString())).thenThrow(new FatalException("Unexpected processing error"));
+        when(imageService.createImages(anyString())).thenThrow(new FatalException("Unexpected processing error"));
 
         // Act & Assert
         assertThrows(FatalException.class, () -> imageController.createImages(VALID_CSV));
@@ -126,20 +126,20 @@ public class ImageControllerTest {
     void testProcessCsv_whenCsvDataIsNull_thenDelegatesToService() throws ValidationException, FatalException {
         // Arrange
         ImageResponseHolder holder = new ImageResponseHolder(List.of());
-        when(imageService.processCsv(null)).thenReturn(holder);
+        when(imageService.createImages(null)).thenReturn(holder);
 
         // Act
         ResponseEntity<ImageResponseHolder> response = imageController.createImages(null);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(imageService, times(1)).processCsv(null);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        verify(imageService, times(1)).createImages(null);
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsEmpty_thenDelegatesToService() throws ValidationException, FatalException {
         // Arrange
-        when(imageService.processCsv("")).thenThrow(new ValidationException("CSV data is empty"));
+        when(imageService.createImages("")).thenThrow(new ValidationException("CSV data is empty"));
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageController.createImages(""));
@@ -149,7 +149,7 @@ public class ImageControllerTest {
     void testProcessCsv_whenServiceInvokedOnce_thenNoAdditionalInteractions() throws ValidationException, FatalException {
         // Arrange
         ImageResponseHolder holder = new ImageResponseHolder(List.of());
-        when(imageService.processCsv(VALID_CSV)).thenReturn(holder);
+        when(imageService.createImages(VALID_CSV)).thenReturn(holder);
 
         // Act
         imageController.createImages(VALID_CSV);
