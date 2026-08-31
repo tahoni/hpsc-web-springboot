@@ -147,6 +147,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   own Documentation File Map, `ARCHITECTURE.md`'s Development Guidelines section, and the five `.claude/commands/*.md`
   skill files that cited `CLAUDE.md`'s removed sections updated to reference `AGENTS.md` (or `CONTRIBUTING.md` directly
   for the Database Profiles table) instead
+- **`AGENTS.md`:** Test Conventions gains a helper-placement rule — private fixture/setup helpers go after every
+  `@Test` method, under a `// Helpers` comment, so the `@Test` methods stay together at the top, uninterrupted by
+  fixture code; `IpscCompetitorServiceIntegrationTest`/`IpscMatchServiceIntegrationTest` updated to match
 
 #### Tests
 

@@ -248,6 +248,10 @@ Four documentation-only folders supplement these:
   `ControllerAdviceTest`. Order the groups: constructors first; then public methods before protected methods; within
   each visibility, alphabetically by method name — for overloads of the same name, order by parameter count, then by
   parameter type; `toString()` always comes last, regardless of visibility.
+- **Move private helper methods to the end of the test class.** Fixture/setup helpers (e.g. `createClub`,
+  `validRequest`) go after every `@Test` method, under a `// Helpers` comment, matching the style already used in
+  `IpscCompetitorServiceIntegrationTest`/`IpscMatchServiceIntegrationTest` — keeps the `@Test` methods themselves at
+  the top, in method-under-test order, uninterrupted by fixture code.
 
 ---
 

@@ -42,23 +42,6 @@ class IpscMatchServiceIntegrationTest {
     @Autowired
     private ClubRepository clubRepository;
 
-    private Club createClub(String name, ClubIdentifier identifier) {
-        Club club = new Club();
-        club.setName(name);
-        club.setIdentifier(identifier);
-        return clubRepository.save(club);
-    }
-
-    private MatchRequest validRequest(String club) {
-        MatchRequest request = new MatchRequest();
-        request.setMatchName("Club Championship");
-        request.setMatchDate(LocalDate.of(2026, 9, 12));
-        request.setClub(club);
-        request.setMatchFirearmType(FirearmType.HANDGUN.toString());
-        request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
-        return request;
-    }
-
     // createMatch()
     @Test
     void testCreateMatch_whenRequestIsNull_thenThrowsValidationException() {
@@ -395,5 +378,23 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(1, updated.getStages().size());
         assertNotEquals(originalStageId, updated.getStages().getFirst().getStageId());
         assertEquals("Replacement Stage", updated.getStages().getFirst().getStageName());
+    }
+
+    // Helpers
+    private void createClub(String name, ClubIdentifier identifier) {
+        Club club = new Club();
+        club.setName(name);
+        club.setIdentifier(identifier);
+        clubRepository.save(club);
+    }
+
+    private MatchRequest validRequest(String club) {
+        MatchRequest request = new MatchRequest();
+        request.setMatchName("Club Championship");
+        request.setMatchDate(LocalDate.of(2026, 9, 12));
+        request.setClub(club);
+        request.setMatchFirearmType(FirearmType.HANDGUN.toString());
+        request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
+        return request;
     }
 }

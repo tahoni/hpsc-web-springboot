@@ -38,21 +38,6 @@ class IpscCompetitorServiceIntegrationTest {
     @Autowired
     private ClubRepository clubRepository;
 
-    private Club createClub(String name, ClubIdentifier identifier) {
-        Club club = new Club();
-        club.setName(name);
-        club.setIdentifier(identifier);
-        return clubRepository.save(club);
-    }
-
-    private CompetitorRequest validRequest(String clubNumber) {
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setClubNumber(clubNumber);
-        return request;
-    }
-
     // createCompetitor()
     @Test
     void testCreateCompetitor_whenRequestIsNull_thenThrowsValidationException() {
@@ -270,5 +255,21 @@ class IpscCompetitorServiceIntegrationTest {
         CompetitorResponse updated = assertDoesNotThrow(() -> ipscCompetitorService.updateCompetitor(created.getCompetitorId(), replacement));
 
         assertNull(updated.getHomeClub());
+    }
+
+    // Helpers
+    private Club createClub(String name, ClubIdentifier identifier) {
+        Club club = new Club();
+        club.setName(name);
+        club.setIdentifier(identifier);
+        return clubRepository.save(club);
+    }
+
+    private CompetitorRequest validRequest(String clubNumber) {
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setClubNumber(clubNumber);
+        return request;
     }
 }
