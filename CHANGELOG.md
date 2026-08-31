@@ -98,6 +98,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorServiceIntegrationTest`:** New H2-backed integration test covering `IpscCompetitorService`'s full
   contract — validation, competitor/home-club not-found (404), unrecognised gender (400), create/replace/patch/get and
   the optional-home-club semantics
+- **`IpscMatchServiceTest`, `IpscCompetitorServiceTest`:** New Mockito-based unit tests for the `IpscMatchService`/
+  `IpscCompetitorService` interface contracts, exercised through the interface type with their repository dependencies
+  mocked — the same contract as `IpscMatchServiceIntegrationTest`/`IpscCompetitorServiceIntegrationTest`, but isolated
+  from the H2-backed Spring context for faster, focused coverage
+- **`IpscMatchServiceImplTest`, `IpscCompetitorServiceImplTest`:** New Mockito-based unit tests for
+  `IpscMatchServiceImpl`'s/`IpscCompetitorServiceImpl`'s impl-only protected helper methods (`applyFields`,
+  `resolveClub`/`resolveHomeClub`, `resolveFirearmType`/`resolveGender`, `resolveMatchCategory`, `toResponse`,
+  `validateForCreate`, plus `findMatchOrThrow`/`findCompetitorOrThrow` and, for matches,
+  `replaceStages`/`upsertStages`) — not declared on the `IpscMatchService`/`IpscCompetitorService` interfaces, so not
+  covered by `IpscMatchServiceTest`/`IpscCompetitorServiceTest`, matching the existing
+  `AwardServiceImplTest`/`ImageServiceImplTest` split between interface-level and impl-only coverage
 
 #### Documentation
 
