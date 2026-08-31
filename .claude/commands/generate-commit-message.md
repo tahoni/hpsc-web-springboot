@@ -1,7 +1,7 @@
 ---
 description: Generate a commit message (and matching CHANGELOG.md entry) for the current working tree changes, following AGENTS.md's Git Workflow conventions.
 argument-hint: [optional scope to narrow the message to]
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git --no-pager diff:*), Bash(git log:*), Read, Edit
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git --no-pager diff:*), Bash(git log:*), Bash(git --no-pager log:*), Bash(git merge-base:*), Bash(git branch:*), Read, Edit
 ---
 
 # Generate Commit Message
@@ -19,11 +19,19 @@ Diff stat:
 Full diff (staged and unstaged):
 !`git --no-pager diff HEAD`
 
+Commits already made on this branch (since it diverged from `develop`, falling back to `main`) — context only, may include commits made outside this session by anyone:
+!`base=$(git merge-base develop HEAD 2>/dev/null || git merge-base main HEAD 2>/dev/null); git --no-pager log --oneline "$base"..HEAD 2>/dev/null`
+
+Diff stat for those already-committed changes:
+!`base=$(git merge-base develop HEAD 2>/dev/null || git merge-base main HEAD 2>/dev/null); git --no-pager diff --stat "$base"..HEAD 2>/dev/null`
+
 Conventions to follow: @AGENTS.md
 
 ## 🚀 Instructions
 
 Read and strictly follow the **Git Workflow** section in AGENTS.md (loaded above), plus its **Build & Run Commands** and **Architecture** sections for accurate technical detail (build/test commands, package names, architecture) when describing what changed. Treat it as the single source of truth; do not reinterpret or contradict its rules.
+
+This command drafts a message for **whatever is currently staged/unstaged** — it is not limited to changes made in the current Claude session. Use the "commits already made on this branch" context above purely to stay consistent (matching scope naming, avoiding duplicate CHANGELOG entries for work already committed by anyone) — never fold already-committed work into the new message or CHANGELOG block. If that context reveals an already-committed change with no matching CHANGELOG entry, flag it to the user and point them at `/sync-unreleased-changes` rather than drafting it here.
 
 1. **Inspect the changes above**, do not guess — review the actual diff hunks so the message describes real behaviour, not assumptions. If `$ARGUMENTS` narrows the scope, only consider matching files.
 2. **Compose the message** in this exact shape:

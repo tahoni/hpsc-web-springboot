@@ -123,6 +123,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   between 100 and 120 characters, excluding GFM tables, fenced code blocks, directory trees and diagrams;
   `CONTRIBUTING.md`'s Documentation Conventions summary updated to reference it
 
+#### Tooling
+
+- **`/generate-commit-message`:** Now also surfaces commits already made on the current branch (via `git merge-base`
+  against `develop`/`main`), so drafted messages and CHANGELOG entries stay consistent with — and don't duplicate —
+  changes committed outside the current Claude session
+
 ### 🔄 Changed
 
 #### Models
