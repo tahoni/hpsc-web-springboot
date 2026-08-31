@@ -81,12 +81,13 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   ├───award/          # Award request/response models
 │   │   │   ├───image/          # Image gallery request/response models
 │   │   │   ├───ipsc/
-│   │   │   │   ├───match/request/  # IPSC match/stage request DTOs (groundwork)
+│   │   │   │   ├───match/request/  # IPSC match/stage request DTOs, consumed by IpscMatchController
 │   │   │   │   ├───scores/request/ # IPSC competitor scores request DTOs (groundwork)
 │   │   │   │   └───shared/         # Comstock-scoring shared fields (groundwork)
 │   │   │   ├───shared/         # Placing
 │   │   │   └───(root)          # Request, Response, ControllerResponse
-│   │   ├───repositories/       # Spring Data JPA interfaces (not yet wired to any service)
+│   │   ├───repositories/       # Spring Data JPA interfaces — Club/Competitor/IpscMatch/IpscMatchStage wired to the
+│   │   │                           IPSC services; MatchCompetitor/MatchStageCompetitor/ShooterLog* not yet wired
 │   │   ├───services/           # Service interfaces
 │   │   │   └───impl/           # Service implementations
 │   │   └───utils/              # Utility classes
@@ -113,11 +114,12 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting club operations. Core
 responsibilities:
 
-| Domain                        | Description                                                                                                                                                   |
-|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Award Ceremonies**          | Award data and ceremony grouping, processed from CSV                                                                                                          |
-| **Image Gallery**             | Image metadata processing from CSV                                                                                                                            |
-| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs and shooter logs, but the service/controller layer that operates on them is being rebuilt |
+| Domain                           | Description                                                                                                                                                    |
+|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
+| **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
+| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, via `IpscCompetitorController`/`IpscMatchController`                                                 |
+| **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 

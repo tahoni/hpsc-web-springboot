@@ -206,6 +206,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (and their `IpscCompetitorService`/`IpscMatchService` counterparts), the package tree's `models/ipsc/request/` split
   into `models/ipsc/match/request/`/`models/ipsc/scores/request/` to match, and the groundwork note on the service
   layer narrowed to reflect that only the CRUD services above currently exist
+- **`ARCHITECTURE.md`:** System Overview table's single "Match & Competitor Domain" row split into "IPSC Competitors &
+  Matches" (now full CRUD) and "Match Scoring & Shooter Logs" (still groundwork); the `models/ipsc/match/request/`
+  package-tree comment no longer says "(groundwork)" now that `IpscMatchController` consumes it; the `repositories/`
+  comment now names which repositories are wired to the new IPSC services versus still unwired
+- **`README.md`:** Introduction and Features sections updated to describe the new IPSC competitor/match CRUD as
+  implemented, narrowing the "still being rebuilt" language to the match-scoring/shooter-log domain that remains
+  groundwork
+- **`CONTRIBUTING.md`:** Layered-architecture note narrowed from "the match/competitor domain's service layer" to "the
+  match/competitor scoring domain's service layer", since the competitor/match CRUD service layer now exists
 
 #### Tests
 

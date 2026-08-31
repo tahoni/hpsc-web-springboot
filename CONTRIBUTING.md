@@ -121,8 +121,8 @@ HTTP Request
                 → MySQL / H2
 ```
 
-> The match/competitor domain's service layer is currently being rebuilt — see [`ARCHITECTURE.md`](ARCHITECTURE.md) for
-> what's actually implemented today versus planned.
+> The match/competitor scoring domain's service layer is still being built — see [`ARCHITECTURE.md`](ARCHITECTURE.md)
+> for what's actually implemented today versus planned.
 
 **Rules enforced by convention, not the compiler — review for these:**
 
