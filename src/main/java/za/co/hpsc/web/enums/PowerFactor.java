@@ -32,7 +32,7 @@ public enum PowerFactor {
      *
      * <p>
      * The method performs a case-insensitive search to find a matching power factor
-     * by its name. If the input is null, empty, or no match is found, an empty
+     * by its name. If the input is null, empty or no match is found, an empty
      * {@code Optional} is returned.
      * </p>
      *
@@ -56,7 +56,7 @@ public enum PowerFactor {
      *
      * <p>
      * The method performs a case-insensitive search to find a matching power factor
-     * by its abbreviation. If the input is null, empty, or no match is found, an
+     * by its abbreviation. If the input is null, empty or no match is found, an
      * empty {@code Optional} is returned.
      * </p>
      *

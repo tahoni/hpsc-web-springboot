@@ -136,12 +136,12 @@ HTTP Request
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                 | Mapping              | Responsibility                            |
-|-----------------------------|-----------------------|--------------------------------------------|
-| `AwardController`          | `/hpsc-web/awards`   | Award CSV processing                      |
-| `ImageController`          | `/hpsc-web/images`   | Image CSV processing                      |
-| `IpscCompetitorController` | `/ipsc/competitors`  | IPSC competitor CRUD                      |
-| `IpscMatchController`      | `/ipsc/matches`      | IPSC match CRUD, together with its stages |
+| Controller                 | Mapping             | Responsibility                            |
+|----------------------------|---------------------|-------------------------------------------|
+| `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                      |
+| `ImageController`          | `/hpsc-web/images`  | Image CSV processing                      |
+| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD                      |
+| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages |
 
 All controllers:
 
@@ -159,12 +159,12 @@ All controllers:
 
 Contains all business logic.
 
-| Interface                | Implementation               | Role                                       |
-|--------------------------|-------------------------------|---------------------------------------------|
-| `AwardService`           | `AwardServiceImpl`           | Award CSV processing                       |
-| `ImageService`           | `ImageServiceImpl`           | Image CSV processing                       |
-| `IpscMatchService`       | `IpscMatchServiceImpl`       | IPSC match CRUD, together with its stages  |
-| `IpscCompetitorService`  | `IpscCompetitorServiceImpl`  | IPSC competitor CRUD                       |
+| Interface               | Implementation              | Role                                      |
+|-------------------------|-----------------------------|-------------------------------------------|
+| `AwardService`          | `AwardServiceImpl`          | Award CSV processing                      |
+| `ImageService`          | `ImageServiceImpl`          | Image CSV processing                      |
+| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages |
+| `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD                      |
 
 > The wider match/competitor domain's bulk-import and entity-initialisation service layer remains removed pending a rebuild — only the CRUD services above currently exist.
 

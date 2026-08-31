@@ -133,7 +133,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Retrieves an existing competitor, or throws if none exists with the given ID.
+     * Retrieves an existing competitor or throws if none exists with the given ID.
      *
      * @param competitorId the identifier to look up.
      * @return the matching {@link Competitor}.

@@ -8,7 +8,7 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 /**
  * The {@code IpscCompetitorService} interface provides methods for creating, updating and
  * retrieving IPSC competitors. Implementations are responsible for validating input data,
- * resolving the competitor's home club, and mapping to and from the persisted domain model.
+ * resolving the competitor's home club and mapping to and from the persisted domain model.
  *
  * @since 8.0.0
  */
@@ -16,7 +16,7 @@ public interface IpscCompetitorService {
     /**
      * Creates a new IPSC competitor.
      *
-     * @param request the competitor to create. Must not be null, and must carry a first name,
+     * @param request the competitor to create. Must not be null and must carry a first name,
      *                last name and club number.
      * @return the created competitor, including its generated ID.
      * @throws ValidationException if a required field is missing, or the gender doesn't match a
@@ -29,7 +29,7 @@ public interface IpscCompetitorService {
      * Fully replaces an existing IPSC competitor's fields with those on the request.
      *
      * @param competitorId the identifier of the competitor to replace.
-     * @param request      the competitor's replacement fields. Must not be null, and must carry
+     * @param request      the competitor's replacement fields. Must not be null and must carry
      *                     a first name, last name and club number.
      * @return the updated competitor.
      * @throws ValidationException if a required field is missing, or the gender doesn't match a

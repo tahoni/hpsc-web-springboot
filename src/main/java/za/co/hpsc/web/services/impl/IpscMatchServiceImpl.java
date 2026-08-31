@@ -169,7 +169,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param match         the match the stages belong to; must not be null and must already
      *                      be persisted.
      * @param stageRequests the stages to upsert; must not be null.
-     * @return all of the match's stages after the upsert, ordered by stage number.
+     * @return all the match's stages after the upsert, ordered by stage number.
      */
     protected List<IpscMatchStage> upsertStages(@NotNull IpscMatch match, @NotNull List<MatchStageRequest> stageRequests) {
         Map<Integer, IpscMatchStage> existingByNumber =
@@ -190,7 +190,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Retrieves an existing match, or throws if none exists with the given ID.
+     * Retrieves an existing match or throws if none exists with the given ID.
      *
      * @param matchId the identifier to look up.
      * @return the matching {@link IpscMatch}.

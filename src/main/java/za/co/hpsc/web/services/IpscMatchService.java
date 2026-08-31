@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * The {@code IpscMatchService} interface provides methods for creating, updating and
  * retrieving IPSC matches and their stages. Implementations are responsible for validating
- * input data, resolving the hosting club, and mapping to and from the persisted domain model.
+ * input data, resolving the hosting club and mapping to and from the persisted domain model.
  *
  * @since 8.0.0
  */
@@ -18,7 +18,7 @@ public interface IpscMatchService {
     /**
      * Creates a new IPSC match together with any stages supplied on the request.
      *
-     * @param request the match to create. Must not be null, and must carry a match name, date,
+     * @param request the match to create. Must not be null and must carry a match name, date,
      *                club and firearm type/category.
      * @return the created match, including its generated ID and any persisted stages.
      * @throws ValidationException if a required field is missing, or the firearm type/category
@@ -37,7 +37,7 @@ public interface IpscMatchService {
      * </p>
      *
      * @param matchId the identifier of the match to replace.
-     * @param request the match's replacement fields. Must not be null, and must carry a match
+     * @param request the match's replacement fields. Must not be null and must carry a match
      *                name, date, club and firearm type/category.
      * @return the updated match, including its persisted stages.
      * @throws ValidationException if a required field is missing, or the firearm type/category
@@ -54,7 +54,7 @@ public interface IpscMatchService {
      *
      * <p>
      * If stages are supplied, each is matched to an existing stage by its stage number —
-     * updating it if found, or adding it if not. Stages already on the match that aren't
+     * updating it if found or adding it if not. Stages already on the match that aren't
      * mentioned in the request are left untouched.
      * </p>
      *
