@@ -1,5 +1,5 @@
 ---
-description: Ensure every notable change on the current branch is reflected in CHANGELOG.md's [Unreleased] section, filling in anything missing.
+description: Ensure every notable change on the current branch is reflected in CHANGELOG.md's [Unreleased] section, filling in anything missing, and consolidate duplicate sub-headers so related entries stay grouped together.
 argument-hint: [optional base branch to diff against, defaults to develop]
 allowed-tools: Bash(git status:*), Bash(git branch:*), Bash(git merge-base:*), Bash(git log:*), Bash(git --no-pager log:*), Bash(git diff:*), Bash(git --no-pager diff:*), Read, Edit
 ---
@@ -50,7 +50,8 @@ Read and strictly follow the **Documentation Conventions** and **Git Workflow** 
    - British English spelling and grammar throughout.
 5. **For each change already covered**, verify the existing entry is still accurate against the actual diff (right file/class named, description still matches what the code does) — flag any that have drifted, but don't rewrite entries that are still correct just to change their wording.
 6. **Do not remove or alter entries** for changes unrelated to this branch's diff — this command only adds/corrects coverage for what this branch actually introduced.
-7. **Apply the edits directly to `CHANGELOG.md`** using Edit, inserting each new bullet under its correct subheading/area (creating empty category headings only if genuinely needed, matching the file's existing heading order) — do not leave the fix as a suggestion. Do not touch the Table of Contents or any released version section.
+7. **Consolidate duplicate sub-headers across the whole `[Unreleased]` section**, not just newly added entries — this catches drift left by earlier runs or by commits that each added their own `#### <Area>` block. Within each `### <Category>` section (`Added`/`Changed`/`Fixed`/`Deprecated`/`Removed`/`Security`), if the same `#### <Area>` heading appears more than once, merge every occurrence into a single block at the position of its first occurrence — concatenate the bullets in their original relative order, then delete the now-empty duplicate heading(s). Don't reorder, reword or deduplicate the surviving bullets themselves, and don't merge headings that are only similarly named (e.g. `Models` and `DTOs` stay separate unless the file already treats them as the same area).
+8. **Apply the edits directly to `CHANGELOG.md`** using Edit — new bullets under their correct subheading/area (creating empty category headings only if genuinely needed, matching the file's existing heading order), plus the sub-header consolidation from step 7 — do not leave the fix as a suggestion. Do not touch the Table of Contents or any released version section.
 
 ## 📤 Output
 
@@ -59,3 +60,4 @@ After editing CHANGELOG.md, report concisely:
 1. **Coverage check summary** — how many notable changes were found on the branch, how many were already documented, how many were newly added.
 2. **What was added**, as a fenced `markdown` diff-style list of the new bullets (or "Nothing to add — `[Unreleased]` already covers every notable change on this branch.").
 3. **Any entries flagged as drifted** (inaccurate against the current diff) that need manual review, with a one-line reason each — do not silently rewrite these; call them out for the user to confirm.
+4. **Any sub-headers consolidated**, e.g. "Merged two `#### Controllers` blocks under `### 🔄 Changed` into one" (or "No duplicate sub-headers found.").

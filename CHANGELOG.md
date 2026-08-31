@@ -125,6 +125,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`/generate-commit-message`:** Now also surfaces commits already made on the current branch (via `git merge-base`
   against `develop`/`main`), so drafted messages and CHANGELOG entries stay consistent with — and don't duplicate —
   changes committed outside the current Claude session
+- **`/sync-unreleased-changes`:** Now also sweeps the whole `[Unreleased]` section for `#### <Area>` sub-headers
+  repeated within the same `### <Category>` block and merges them into one, concatenating their bullets in original
+  order — catches drift left by earlier runs or by commits that each added their own block for the same area
 
 #### CI/CD & Configuration
 
