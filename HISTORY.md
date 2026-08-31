@@ -21,6 +21,32 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.0.0 (August 31, 2026)
+
+**Theme:** IPSC Module Rebuild Complete — Competitor & Match CRUD
+
+**Key Focus:**
+
+- `IpscController`'s empty stub replaced by `IpscCompetitorController`/`IpscMatchController`, full CRUD
+  (`create`/`update`/`patch`/`get`, plus `getAllMatches`) backed by new `IpscCompetitorService`/`IpscMatchService` +
+  impls — resolves club/gender/firearm-type/match-category by name, and `patchMatch` upserts stages by stage number
+  rather than replacing the whole list
+- New `Gender` enum capabilities (`name`/`abbreviation` fields, case-insensitive `fromName()`, `toString()`) and new
+  `GenderConverter`, wired onto `Competitor.gender`
+- New `CompetitorRequest`/`CompetitorResponse` and `MatchResponse`/`MatchStageResponse` DTOs; `models/ipsc/request`
+  split into `models/ipsc/match/request`/`models/ipsc/scores/request` to match the module's per-concern shape
+- `AwardService`/`ImageService.processCsv` renamed to `createAwards`/`createImages`; bulk CSV endpoints moved to
+  `/awards/bulk`/`/images/bulk` and now return `201 Created`; enum `getByX` factory methods renamed to `fromX` across
+  all six enums
+- Comprehensive Javadoc/`@since` pass across models, converters, exceptions, utils, constants and `ControllerAdvice`
+- Qodana JVM static analysis re-added (`qodana.yaml`); the project's AI-agent tooling migrated from
+  `.claude/commands/*.md` slash commands to `.claude/skills/*/SKILL.md` Skills
+- `AGENTS.md`/`CLAUDE.md` merged into a single tool-agnostic reference; new line-wrapping, extended Arrange-Act-Assert
+  and test-helper-placement conventions
+- Extensive new test coverage: `IpscCompetitorController`/`Service`/`ServiceImpl` and
+  `IpscMatchController`/`Service`/`ServiceImpl` unit + integration tests, `GenderTest`, `GenderConverterTest`
+- Project version bumped to 8.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 7.4.1 (August 29, 2026)
 
 **Theme:** Documentation Reflow & Historical Narrative Additions
@@ -981,6 +1007,70 @@ coverage.
 
 ---
 
+### Phase 19: IPSC Module Completion — Competitor & Match CRUD (v8.0.0)
+
+**Duration:** August 31, 2026
+
+Completes the IPSC module rebuild that v6.0.0 through v7.4.0 laid groundwork for: `IpscController`'s empty stub is
+replaced by two full CRUD controllers backed by new services and DTOs, alongside a comprehensive Javadoc/`@since`
+documentation pass and a migration of the project's AI-agent tooling from slash commands to Skills.
+
+**Key Accomplishments:**
+
+**IPSC Competitor & Match CRUD**
+
+- `IpscCompetitorController`/`IpscMatchController` — full CRUD (`create`/`update`/`patch`/`get`, plus `getAllMatches`)
+  on `/ipsc/competitors`/`/ipsc/matches`, following the project's action-named REST method convention
+- `IpscCompetitorService`/`IpscMatchService` + impls resolve club/gender/firearm-type/match-category by name (404/400
+  via the existing exception hierarchy), map requests to/from the existing `Competitor`/`IpscMatch`/`IpscMatchStage`
+  entities and persist via the existing repositories; `patchMatch` upserts stages by stage number rather than
+  replacing the whole list
+- New `CompetitorRequest`/`CompetitorResponse` and `MatchResponse`/`MatchStageResponse` DTOs
+
+**Gender Enum & Persistence**
+
+- `Gender` gains `name`/`abbreviation` fields, a case-insensitive `fromName()` factory and a `toString()` override,
+  bringing it in line with the project's other enums
+- New `GenderConverter` (`AttributeConverter<Gender, String>`), wired onto `Competitor.gender` via `@Convert`
+
+**Rename & Consistency Sweep**
+
+- `AwardService`/`ImageService.processCsv` renamed to `createAwards`/`createImages`; their bulk CSV endpoints moved to
+  `/awards/bulk`/`/images/bulk` and now return `201 Created`
+- `getByName`/`getByAbbreviation`/`getByCode`/`getByAbbreviationOrName` factory methods renamed to `fromX` across
+  `ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory` and `PowerFactor`
+
+**Documentation & Tooling**
+
+- Comprehensive Javadoc/`@since` pass across models, converters, exceptions, utils, constants and `ControllerAdvice`
+- `AGENTS.md`/`CLAUDE.md` merged into a single tool-agnostic reference; new line-wrapping, extended Arrange-Act-Assert
+  and test-helper-placement conventions
+- The project's AI-agent tooling migrated from `.claude/commands/*.md` slash commands to `.claude/skills/*/SKILL.md`
+  Skills; `generate-pr-description` now runs `sync-unreleased-changes` as a prerequisite step
+- Qodana JVM static analysis re-added (`qodana.yaml`)
+
+**Architecture Highlights:**
+
+- `IpscController`'s empty stub retired — the IPSC module now has real, resource-oriented competitor and match CRUD
+  endpoints, completing work begun as groundwork back in v6.0.0
+- `models/ipsc/request` split into `models/ipsc/match/request`/`models/ipsc/scores/request`, matching the module's
+  per-concern shape; competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains
+  groundwork, not yet consumed by any controller
+
+**Technical Focus:**
+
+- IPSC domain-layer completion (competitor/match CRUD)
+- Consistency (naming, Javadoc coverage, AI-agent tooling)
+- Static analysis integration (Qodana)
+
+**Test Coverage:**
+
+- New unit and integration test coverage for `IpscCompetitorController`/`Service`/`ServiceImpl` and
+  `IpscMatchController`/`Service`/`ServiceImpl`, plus `GenderTest`/`GenderConverterTest` — the largest single-release
+  test expansion since v5.4.0
+
+---
+
 ### Phase 18: Documentation Reflow & Historical Narrative Additions (v7.4.1)
 
 **Duration:** August 29, 2026
@@ -1712,6 +1802,18 @@ comprehensive test coverage across all services and utilities.
 
 ---
 
+### Milestone 19: IPSC Module Completion (v8.0.0)
+
+- `IpscCompetitorController`/`IpscMatchController` full CRUD, replacing the long-standing empty `IpscController` stub
+- New `IpscCompetitorService`/`IpscMatchService` + impls; new `Gender` enum capabilities and `GenderConverter`
+- Comprehensive Javadoc/`@since` documentation pass; AI-agent tooling migrated from slash commands to Skills
+- Largest test expansion since v5.4.0: full unit + integration coverage for both new controllers/services
+
+**Achievement:** Completed the IPSC module rebuild begun as groundwork in v6.0.0 — the platform now has real,
+resource-oriented competitor and match management, not just an empty stub.
+
+---
+
 ### Milestone 18: Documentation Reflow & Historical Narrative Additions (v7.4.1)
 
 - Entire root-level documentation set rewrapped to a consistent ~120-character line width
@@ -1980,6 +2082,31 @@ Entity Layer
 
 ---
 
+### v8.0.0: IPSC Competitor & Match CRUD
+
+```
+IpscCompetitorController        IpscMatchController
+        ↓                              ↓
+IpscCompetitorService          IpscMatchService
+        ↓                              ↓
+  CompetitorRepository    IpscMatchRepository / IpscMatchStageRepository
+        ↓                              ↓
+     Competitor                IpscMatch / IpscMatchStage
+        ↓                              ↓
+  GenderConverter          ClubIdentifierConverter / FirearmTypeConverter / MatchCategoryConverter
+```
+
+**Characteristics:**
+
+- `IpscController`'s empty stub retired — the module now has real, layered CRUD endpoints matching the
+  `Controller → Service → Repository → Entity` pattern established since v1.0.0
+- Competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains groundwork only, not
+  yet consumed by any controller — the next stage of the rebuild
+- No changes to the Award/Image CSV pipeline's own architecture beyond the `processCsv` → `createAwards`/`createImages`
+  rename
+
+---
+
 ### v7.2.0: Test Suite Conventions & Tooling
 
 ```
@@ -2214,6 +2341,9 @@ AttributeConverters
 - **v7.1.0:** `ShooterLogEntry` renamed to `ShooterLogCompetitor`; `ShooterLog.powerFactor`;
   `ShooterLogCompetitor.points`/`match`; `ShooterLogRepository` finder renamed to include `PowerFactor`; new
   `ShooterLogCompetitorRepository`
+- **v8.0.0:** `Gender` gains `name`/`abbreviation`/`fromName()`/`toString()`; new `GenderConverter`;
+  `CompetitorRequest`/`CompetitorResponse`, `MatchResponse`/`MatchStageResponse` DTOs; `models/ipsc/request` split into
+  `models/ipsc/match/request`/`models/ipsc/scores/request`
 
 ### API Capabilities
 
@@ -2229,6 +2359,9 @@ AttributeConverters
 - **v5.4.0:** Improved error handling in ControllerAdvice; IpscController updates
 - **v6.0.0:** `/v2/ipsc/matches` CRUD API (POST, PUT, PATCH, GET) via `IpscMatchController`; structured logging in
   `ControllerAdvice`; `IpscMemberController` stub at `/ipsc/member`
+- **v8.0.0:** `IpscCompetitorController`/`IpscMatchController` full CRUD (`create`/`update`/`patch`/`get`, plus
+  `getAllMatches`) on `/ipsc/competitors`/`/ipsc/matches`, replacing the empty `IpscController` stub;
+  `AwardController`/`ImageController` bulk endpoints moved to `/awards/bulk`/`/images/bulk`, returning `201 Created`
 
 ### Testing Coverage
 
@@ -2292,6 +2425,9 @@ AttributeConverters
   closed in `ControllerResponseTest`, `FirearmTypeTest`, `ControllerAdviceTest` (suite coverage 95.7%/91.7% →
   97.3%/98.1%); `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with
   the new `// methodName()` header-comment/ordering convention (comments and reordering only — no behaviour change)
+- **v8.0.0:** New unit + integration test coverage for `IpscCompetitorController`/`Service`/`ServiceImpl` and
+  `IpscMatchController`/`Service`/`ServiceImpl`; new `GenderTest`/`GenderConverterTest`; mechanical test updates for the
+  `fromX` enum-factory rename — the largest single-release test expansion since v5.4.0
 
 ### Documentation Quality
 
@@ -2313,6 +2449,9 @@ AttributeConverters
   convention added to AGENTS.md; new CLAUDE.md Git Workflow section with explicit PR-target guidance;
   `/scaffold-unit-tests`/`/scaffold-integration-tests` Claude Code commands added; false AssertJ claim removed from five
   docs; CLAUDE.md package-overview table corrected
+- **v8.0.0:** v8.0.0 release notes, changelog entry, history update; comprehensive Javadoc/`@since` pass across models,
+  converters, exceptions, utils, constants and `ControllerAdvice`; `AGENTS.md`/`CLAUDE.md` merged into a single
+  tool-agnostic reference; AI-agent tooling migrated from slash commands to Skills
 
 ---
 
@@ -2332,6 +2471,9 @@ AttributeConverters
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
+- **Version 8.x (v8.0.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real competitor and
+  match CRUD replacing the empty controller stub — while consolidating the project's own documentation
+  (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
 
 ### Initial Phase (v1.0.0)
 
@@ -2455,6 +2597,18 @@ AttributeConverters
 - Add `/scaffold-unit-tests`, `/scaffold-integration-tests`, `/generate-pr-summary` and `/sync-unreleased-changes`
   Claude Code commands, keeping AI-agent tooling in sync with the project's actual conventions (v7.2.0 – v7.4.0)
 
+### Module Completion Phase (v8.0.0)
+
+**Focus:** IPSC Competitor & Match CRUD, Documentation Consolidation & AI-Agent Tooling
+
+- Replace `IpscController`'s empty stub with full competitor and match CRUD, backed by new services and DTOs
+- Extend `Gender` to match the shape of the project's other enums, paired with a new `GenderConverter`
+- Rename `processCsv` to `createAwards`/`createImages` and enum `getByX` factories to `fromX`, removing naming
+  inconsistencies accumulated across earlier releases
+- Merge `CLAUDE.md`'s guidance into `AGENTS.md` as a single tool-agnostic reference; migrate AI-agent tooling from
+  slash commands to Skills
+- Invest in a comprehensive Javadoc/`@since` documentation pass and re-add Qodana JVM static analysis
+
 ---
 
 ## 📚 Key Learnings
@@ -2550,14 +2704,34 @@ AttributeConverters
     - Migration renames the table/constraints in place — no backfill needed, both tables remain empty
     - Repository tooling migrated from `.github/prompts/` to `.claude/commands/`; `AGENTS.md` adopts GitFlow;
       `CONTRIBUTING.md` added
+14. **IPSC Module Completion (v8.0.0):** Full competitor and match CRUD, six releases after v6.0.0 first laid the
+    groundwork
+    - `IpscCompetitorController`/`IpscMatchController` replace the empty `IpscController` stub with real, layered CRUD
+    - New `IpscCompetitorService`/`IpscMatchService` + impls, `Gender` enum enhancements and `GenderConverter`
+    - Naming consistency sweep: `processCsv` → `createAwards`/`createImages`, enum `getByX` → `fromX` factories
+    - Comprehensive Javadoc/`@since` pass; AI-agent tooling migrated from slash commands to Skills
+    - Largest single-release test expansion since v5.4.0 — full unit + integration coverage for both new
+      controllers/services
 
 ---
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v7.2.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.0.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v7.2.0)
+### Recently Completed (v8.0.0)
+
+- `IpscCompetitorController`/`IpscMatchController` full CRUD, replacing the empty `IpscController` stub
+- New `IpscCompetitorService`/`IpscMatchService` + impls; new `CompetitorRequest`/`CompetitorResponse`,
+  `MatchResponse`/`MatchStageResponse` DTOs
+- `Gender` enum gains `name`/`abbreviation`/`fromName()`/`toString()`; new `GenderConverter`
+- `processCsv` renamed to `createAwards`/`createImages`; bulk endpoints moved to `/awards/bulk`/`/images/bulk`,
+  returning `201 Created`; enum `getByX` factories renamed to `fromX`
+- Comprehensive Javadoc/`@since` pass; `AGENTS.md`/`CLAUDE.md` merged; AI-agent tooling migrated from slash commands to
+  Skills; Qodana JVM static analysis re-added
+- Project version bumped to 8.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v7.2.0)
 
 - New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `createAwards` through the interface
   type rather than the impl class
@@ -2627,15 +2801,14 @@ Based on the evolution to v7.2.0, the following areas are identified for future 
 
 ### Short-term (Minor Releases)
 
-- Wire service/controller/import support for `homeClub`, `clubRanking`, `isVisitor`, `ShooterLog` and
-  `ShooterLogEntry` — currently schema-only
+- Wire service/controller/import support for `clubRanking`, `isVisitor`, `ShooterLog` and `ShooterLogEntry` —
+  currently schema-only (`homeClub` now wired via `IpscCompetitorService`)
 - Build a `ShooterLogService` to calculate and persist best-4-match snapshots — no calculation job/service exists yet
 - Populate `overallRanking`, `clubRanking` and `isVisitor` during match-result import
 - Seed `Club.identifier` (HPSC, SOSC, PMPSC) and backfill `Competitor.homeClub`
+- Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) to an endpoint — still
+  groundwork, not yet consumed by any controller
 - Add entity, repository and integration test coverage for the promoted/extended domain model
-- Implement match search endpoints using `MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest`
-- Full `IpscMemberController` implementation for member CRUD
-- Complete Javadoc coverage for `IpscMatchController`, `IpscMatchService`, `IpscUtil`, `MatchOnlyDto`
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
 
@@ -2648,7 +2821,7 @@ Based on the evolution to v7.2.0, the following areas are identified for future 
 - Performance metrics and monitoring
 - Advanced query optimisation
 
-### Long-term (v8.0+)
+### Long-term (Future Major Versions)
 
 - Real-time match result processing
 - Enhanced integrations with external systems
@@ -2687,14 +2860,17 @@ for managing practical shooting competition data. This evolution demonstrates a 
   the data model accurate before a calculation service is built against it (v7.1.0)
 - **Test Suite Consistency:** A formalised, repo-wide test-file convention (method-comment headers, group ordering)
   retrofitted across the existing suite, alongside four JaCoCo-identified coverage gaps closed (v7.2.0)
+- **IPSC Module Completion:** `IpscCompetitorController`/`IpscMatchController` replace the empty `IpscController` stub
+  with full, layered competitor and match CRUD — completing work begun as groundwork in v6.0.0 (v8.0.0)
 
 The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural
 refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with
 service transformation in v5.4.0, the dedicated match CRUD API with service encapsulation in v6.0.0, the match
-results/visitor tracking/shooter log data model in v7.0.0, the shooter-log naming/scope correction in v7.1.0 and the
-test-convention formalisation and dependency maintenance in v7.2.0 mark significant maturation points where the project
-demonstrates stable, predictable releases with clear separation of concerns. These releases serve as a solid foundation
-for the shooting club's digital operations, with a clear commitment to long-term maintainability and quality.
+results/visitor tracking/shooter log data model in v7.0.0, the shooter-log naming/scope correction in v7.1.0, the
+test-convention formalisation and dependency maintenance in v7.2.0 and the IPSC module's completion with full
+competitor/match CRUD in v8.0.0 mark significant maturation points where the project demonstrates stable, predictable
+releases with clear separation of concerns. These releases serve as a solid foundation for the shooting club's digital
+operations, with a clear commitment to long-term maintainability and quality.
 
 Version 5.3.0 delivers focused, high-value improvements: type-safe JPA converters, correct entity relationships,
 optimised repositories and a consolidated service architecture that reduces complexity without sacrificing capability.
@@ -2734,15 +2910,39 @@ cleaning up several dependency-version overrides that had quietly become redunda
 worked (a typo'd property name) and adds an explicit Git Workflow section to CLAUDE.md stating GitFlow's PR targets
 directly (`feature/*` → `develop`; `release/*`/`hotfix/*` → `main`) instead of deferring entirely to AGENTS.md.
 
+Version 8.0.0 completes the IPSC module rebuild that v6.0.0 first began: `IpscController`'s long-standing empty stub is
+replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new `IpscCompetitorService`/`IpscMatchService`
+implementations, real competitor and match CRUD with club/gender/firearm-type/match-category resolution and the
+largest test expansion since v5.4.0. Alongside the domain work, the release also merges `CLAUDE.md`'s guidance into a
+single `AGENTS.md` reference, migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana
+JVM static analysis — marking the transition from a project with substantial architectural groundwork to one with a
+genuinely complete, if still growing, IPSC feature set.
+
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** August 25, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 7.2.0 (August 25, 2026)  
+**Last Updated:** August 31, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 8.0.0 (August 31, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for detailed
 technical information
 
-**Recent Updates (v7.2.0):**
+**Recent Updates (v8.0.0):**
+
+- `IpscCompetitorController`/`IpscMatchController` full CRUD, replacing the empty `IpscController` stub; new
+  `IpscCompetitorService`/`IpscMatchService` + impls
+- New `CompetitorRequest`/`CompetitorResponse`, `MatchResponse`/`MatchStageResponse` DTOs; `models/ipsc/request` split
+  into `models/ipsc/match/request`/`models/ipsc/scores/request`
+- `Gender` enum gains `name`/`abbreviation`/`fromName()`/`toString()`; new `GenderConverter`
+- `AwardService`/`ImageService.processCsv` renamed to `createAwards`/`createImages`; bulk endpoints moved to
+  `/awards/bulk`/`/images/bulk`, returning `201 Created`; enum `getByX` factories renamed to `fromX`
+- Comprehensive Javadoc/`@since` pass across models, converters, exceptions, utils, constants and `ControllerAdvice`
+- `AGENTS.md`/`CLAUDE.md` merged into a single tool-agnostic reference; AI-agent tooling migrated from
+  `.claude/commands/*.md` slash commands to `.claude/skills/*/SKILL.md` Skills; Qodana JVM static analysis re-added
+- Project version bumped to 8.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+- Largest single-release test expansion since v5.4.0: full unit + integration coverage for both new
+  controllers/services, plus `GenderTest`/`GenderConverterTest`
+
+**Previous Update (v7.2.0):**
 
 - New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest`, exercising `createAwards`
   through the `AwardService`/`ImageService` interface type rather than the impl class
