@@ -116,9 +116,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   and method naming conventions, grounded in this codebase's actual controllers (`AwardController`/`ImageController`'s
   `createAwards`/`createImages`, `IpscMatchController`'s full CRUD) — `AGENTS.md`'s Documentation File Map updated to
   list the new `documentation/recommendations/` folder
-
-#### Documentation
-
 - **`AGENTS.md`:** New Line wrapping rule under Documentation Conventions — wrap prose lines in every Markdown file
   between 100 and 120 characters, excluding GFM tables, fenced code blocks, directory trees and diagrams;
   `CONTRIBUTING.md`'s Documentation Conventions summary updated to reference it
@@ -150,12 +147,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchOverallScoresRequest`/`MatchStageScoresRequest`** (and their CSV variants): `division`, `club` and
   `powerFactor` are now typed as `Division`, `ClubIdentifier` and `PowerFactor` respectively, and `categories` as
   `List<CompetitorCategory>` — previously all four were free-text `String` fields
+- **`Request`, `Response`, `AwardRequest`, `AwardRequestForCSV`, `AwardResponse`, `AwardCeremonyResponse`,
+  `AwardCeremonyResponseHolder`:** Added `@since 1.1.0` class-level tags
+- **`ControllerResponse`, `AwardPlacing`, `Placing`:** Added `@since 1.1.3` class-level tags
+- **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level
+  tags
+- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`,
+  `MatchStageScoresRequest`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added
+  `@since 7.4.0` class-level tags
+- **`MatchRequest`:** Added `@since 1.1.3` class-level tag
+- **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`,
+  `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 
 #### Controllers
 
 - **`AwardController`, `ImageController`:** Their `createAwards`/`createImages` methods already followed this project's
   action-named REST method convention; the underlying `AwardService.processCsv`/`ImageService.processCsv` calls they
   delegate to have now been renamed to match — see the `Services` entry below
+- **`ImageController`, `AwardController`:** Added class-level `@since` tags (`1.0.0`, `1.1.0` respectively)
+- **`AwardController`, `ImageController`:** Bulk CSV endpoints moved from `POST /awards`/`POST /images` to
+  `POST /awards/bulk`/`POST /images/bulk` and now return `201 Created` (previously `200 OK`), matching
+  `IpscCompetitorController.createCompetitor`'s create-endpoint convention; `@Operation` summary/description reworded
+  from generic CSV processing to bulk creation
 
 #### Documentation
 
@@ -206,14 +219,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ControllerAdvice`:** Added `@since` tags to individual handler/helper methods introduced later than the class
   itself — `handleValidationException`/`handleNonFatalException` at `5.4.0`; `handleHttpMessageConversionException`,
   `handleUnhandledException`, `buildErrorResponse` and both `logError` overloads at `7.0.0`
-
-#### Controllers
-
-- **`ImageController`, `AwardController`:** Added class-level `@since` tags (`1.0.0`, `1.1.0` respectively)
-- **`AwardController`, `ImageController`:** Bulk CSV endpoints moved from `POST /awards`/`POST /images` to
-  `POST /awards/bulk`/`POST /images/bulk` and now return `201 Created` (previously `200 OK`), matching
-  `IpscCompetitorController.createCompetitor`'s create-endpoint convention; `@Operation` summary/description reworded
-  from generic CSV processing to bulk creation
 
 #### Services
 
@@ -290,20 +295,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `@since` tags that had been copied from `java.lang.Exception`/`IllegalArgumentException` (`1.4`/`1.5`/`1.7`) to this
   project's own version history (`1.0.0`), the version in which all these constructors were actually introduced
 - **`FatalException`, `NonFatalException`, `ValidationException`:** Added class-level `@since 1.0.0` tags
-
-#### Models
-
-- **`Request`, `Response`, `AwardRequest`, `AwardRequestForCSV`, `AwardResponse`, `AwardCeremonyResponse`,
-  `AwardCeremonyResponseHolder`:** Added `@since 1.1.0` class-level tags
-- **`ControllerResponse`, `AwardPlacing`, `Placing`:** Added `@since 1.1.3` class-level tags
-- **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level
-  tags
-- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`,
-  `MatchStageScoresRequest`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added
-  `@since 7.4.0` class-level tags
-- **`MatchRequest`:** Added `@since 1.1.3` class-level tag
-- **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`,
-  `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 
 ### 🐛 Fixed
 
