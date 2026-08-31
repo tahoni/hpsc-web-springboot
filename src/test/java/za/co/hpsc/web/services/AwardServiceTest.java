@@ -41,21 +41,25 @@ public class AwardServiceTest {
     // processCsv()
     @Test
     void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(null));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(""));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards("   \t\n  "));
     }
 
     @Test
     void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards("Invalid CSV Format"));
     }
 
@@ -67,7 +71,7 @@ public class AwardServiceTest {
                 Ceremony 1,path/to/image1.png
                 """;
 
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(csvData));
     }
 

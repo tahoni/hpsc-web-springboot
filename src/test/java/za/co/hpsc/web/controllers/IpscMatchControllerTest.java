@@ -66,7 +66,7 @@ class IpscMatchControllerTest {
         ipscMatchController.createMatch(request);
 
         // Assert
-        verify(ipscMatchService, times(1)).createMatch(request);
+        verify(ipscMatchService).createMatch(request);
         verifyNoMoreInteractions(ipscMatchService);
     }
 
@@ -114,7 +114,7 @@ class IpscMatchControllerTest {
         ipscMatchController.getMatch(1L);
 
         // Assert
-        verify(ipscMatchService, times(1)).getMatch(1L);
+        verify(ipscMatchService).getMatch(1L);
         verifyNoMoreInteractions(ipscMatchService);
     }
 
@@ -151,7 +151,7 @@ class IpscMatchControllerTest {
         ipscMatchController.getAllMatches();
 
         // Assert
-        verify(ipscMatchService, times(1)).getAllMatches();
+        verify(ipscMatchService).getAllMatches();
         verifyNoMoreInteractions(ipscMatchService);
     }
 
@@ -181,7 +181,7 @@ class IpscMatchControllerTest {
         ipscMatchController.patchMatch(1L, request);
 
         // Assert
-        verify(ipscMatchService, times(1)).patchMatch(1L, request);
+        verify(ipscMatchService).patchMatch(1L, request);
         verifyNoMoreInteractions(ipscMatchService);
     }
 
@@ -221,7 +221,7 @@ class IpscMatchControllerTest {
         ipscMatchController.updateMatch(1L, request);
 
         // Assert
-        verify(ipscMatchService, times(1)).updateMatch(1L, request);
+        verify(ipscMatchService).updateMatch(1L, request);
         verifyNoMoreInteractions(ipscMatchService);
     }
 

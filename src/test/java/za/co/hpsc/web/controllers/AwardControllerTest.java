@@ -71,7 +71,7 @@ public class AwardControllerTest {
         awardController.createAwards(VALID_CSV);
 
         // Assert
-        verify(awardService, times(1)).createAwards(VALID_CSV);
+        verify(awardService).createAwards(VALID_CSV);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class AwardControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        verify(awardService, times(1)).createAwards(null);
+        verify(awardService).createAwards(null);
     }
 
     @Test

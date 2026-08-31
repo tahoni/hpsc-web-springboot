@@ -107,12 +107,14 @@ class IpscCompetitorServiceImplTest {
 
     @Test
     void testApplyFields_whenGenderIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
         request.setClubNumber("HPSC-001");
         request.setGender("Not A Gender");
 
+        // Act & Assert
         assertThrows(ValidationException.class,
                 () -> ipscCompetitorServiceImpl.applyFields(new Competitor(), request));
     }
@@ -120,8 +122,10 @@ class IpscCompetitorServiceImplTest {
     // findCompetitorOrThrow()
     @Test
     void testFindCompetitorOrThrow_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorServiceImpl.findCompetitorOrThrow(999L));
     }
 
@@ -152,6 +156,7 @@ class IpscCompetitorServiceImplTest {
 
     @Test
     void testResolveGender_whenGenderIsUnrecognised_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.resolveGender("Not A Gender"));
     }
 
@@ -175,8 +180,10 @@ class IpscCompetitorServiceImplTest {
 
     @Test
     void testResolveHomeClub_whenClubNameDoesNotMatchExistingClub_thenThrowsNonFatalException() {
+        // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorServiceImpl.resolveHomeClub("No Such Club"));
     }
 
@@ -260,46 +267,55 @@ class IpscCompetitorServiceImplTest {
     // validateForCreate()
     @Test
     void testValidateForCreate_whenRequestIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.validateForCreate(null));
     }
 
     @Test
     void testValidateForCreate_whenFirstNameIsBlank_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("  ");
         request.setLastName("Doe");
         request.setClubNumber("HPSC-001");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.validateForCreate(request));
     }
 
     @Test
     void testValidateForCreate_whenLastNameIsBlank_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("  ");
         request.setClubNumber("HPSC-001");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.validateForCreate(request));
     }
 
     @Test
     void testValidateForCreate_whenClubNumberIsBlank_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
         request.setClubNumber("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.validateForCreate(request));
     }
 
     @Test
     void testValidateForCreate_whenRequestIsValid_thenDoesNotThrow() {
+        // Arrange
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
         request.setClubNumber("HPSC-001");
 
+        // Act & Assert
         assertDoesNotThrow(() -> ipscCompetitorServiceImpl.validateForCreate(request));
     }
 }

@@ -161,9 +161,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`:** Test Conventions gains a helper-placement rule — private fixture/setup helpers go after every
   `@Test` method, under a `// Helpers` comment, so the `@Test` methods stay together at the top, uninterrupted by
   fixture code; `IpscCompetitorServiceIntegrationTest`/`IpscMatchServiceIntegrationTest` updated to match
+- **`AGENTS.md`:** Arrange-Act-Assert rule extended to require a `// Arrange`, `// Act` or `// Assert` comment marking
+  each phase present in a test — a phase's comment is omitted only when that phase doesn't apply. Tests verifying a
+  thrown exception (typically `assertThrows(...)`) mark that call with a single `// Act & Assert` comment instead,
+  since the act and assert happen in one statement
 
 #### Tests
 
+- **`AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`,
+  `IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceIntegrationTest`,
+  `IpscMatchServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `IpscCompetitorServiceImplTest`,
+  `IpscMatchServiceImplTest`:** Missing `// Arrange`/`// Act`/`// Assert`/`// Act & Assert` comments added throughout,
+  per `AGENTS.md`'s extended Arrange-Act-Assert rule above
+- **`AwardControllerTest`, `ImageControllerTest`, `IpscCompetitorControllerTest`, `IpscMatchControllerTest`,
+  `IpscCompetitorServiceTest`, `IpscMatchServiceImplTest`:** Removed redundant `verify(mock, times(1))` calls —
+  simplified to bare `verify(mock)`, since `times(1)` is Mockito's default and asserted nothing extra, per
+  `AGENTS.md`'s existing brittle-assertion rule. `verify(mock, times(2))` in
+  `IpscMatchServiceImplTest.testReplaceStages_whenStageRequestsProvided_thenPersistsEachAndReturnsInOrder` left as
+  is — that count is the actual behaviour under test
 - **`HpscWebApplicationTest`, `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Stopped excluding
   `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration` — `@SpringBootTest` with no `classes=` boots the whole
   app via component scan, and now that `IpscMatchServiceImpl` genuinely depends on JPA, excluding it broke context

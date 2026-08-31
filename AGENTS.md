@@ -236,8 +236,12 @@ Four documentation-only folders supplement these:
   `test<Scenario>_when<Condition>_then<Expectation>`.
 - JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from
   `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.
-- Follow an Arrange-Act-Assert structure; avoid brittle assertions such as over-specified `verify(mock, times(N))` calls
-  or assertions on private/internal state.
+- Follow an Arrange-Act-Assert structure, marking each phase present with a `// Arrange`, `// Act` or `// Assert`
+  comment — omit a phase's comment only when that phase doesn't apply to the test. Tests that verify a thrown
+  exception (typically via `assertThrows(...)`) mark that call with a single `// Act & Assert` comment instead,
+  since invoking the method under test and asserting it throws happen in one statement; precede it with `// Arrange`
+  too if the test builds fixtures first. Avoid brittle assertions such as over-specified `verify(mock, times(N))`
+  calls or assertions on private/internal state.
 - Don't write tests whose sole purpose is verifying Lombok-generated behaviour. Such as a test that only sets a value via a
   generated setter and reads it back via a generated getter, or that only exercises a generated no-args/all-args
   constructor with no accompanying logic. Using getters/setters/builders incidentally to build fixtures or assert real

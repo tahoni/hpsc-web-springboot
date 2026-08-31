@@ -45,84 +45,104 @@ class IpscMatchServiceIntegrationTest {
     // createMatch()
     @Test
     void testCreateMatch_whenRequestIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(null));
     }
 
     @Test
     void testCreateMatch_whenMatchNameIsMissing_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchName(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchDateIsMissing_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchDate(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenClubIsBlank_thenThrowsValidationException() {
+        // Arrange
         MatchRequest request = validRequest("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchFirearmTypeIsMissing_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchFirearmType(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchCategoryIsMissing_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchCategory(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchFirearmType("Not A Firearm Type");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchCategory("Not A Category");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         MatchRequest request = validRequest("No Such Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenRequestIsValidWithNoStages_thenPersistsMatchWithEmptyStageList() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
 
+        // Act
         MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
 
+        // Assert
         assertNotNull(response.getMatchId());
         assertEquals("Club Championship", response.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), response.getMatchDate());
@@ -134,14 +154,17 @@ class IpscMatchServiceIntegrationTest {
 
     @Test
     void testCreateMatch_whenRequestIncludesStages_thenPersistsStagesInOrder() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setStages(List.of(
                 new MatchStageRequest(null, 1, "Stage 1 - The Bank Job"),
                 new MatchStageRequest(null, 2, "Stage 2 - The Getaway")));
 
+        // Act
         MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
 
+        // Assert
         assertEquals(2, response.getStages().size());
         assertNotNull(response.getStages().getFirst().getStageId());
         assertEquals(1, response.getStages().getFirst().getStageNumber());
@@ -153,18 +176,22 @@ class IpscMatchServiceIntegrationTest {
     // getMatch()
     @Test
     void testGetMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.getMatch(999L));
     }
 
     @Test
     void testGetMatch_whenMatchExists_thenReturnsMatchWithStages() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
         MatchResponse created = ipscMatchService.createMatch(request);
 
+        // Act
         MatchResponse fetched = assertDoesNotThrow(() -> ipscMatchService.getMatch(created.getMatchId()));
 
+        // Assert
         assertEquals(created.getMatchId(), fetched.getMatchId());
         assertEquals("Club Championship", fetched.getMatchName());
         assertEquals(1, fetched.getStages().size());
@@ -174,13 +201,16 @@ class IpscMatchServiceIntegrationTest {
     // getAllMatches()
     @Test
     void testGetAllMatches_whenNoMatchesExist_thenReturnsEmptyList() {
+        // Act
         List<MatchResponse> matches = ipscMatchService.getAllMatches();
 
+        // Assert
         assertTrue(matches.isEmpty());
     }
 
     @Test
     void testGetAllMatches_whenMatchesExist_thenReturnsAllWithStages() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest firstRequest = validRequest("Test Club");
         firstRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
@@ -190,8 +220,10 @@ class IpscMatchServiceIntegrationTest {
         secondRequest.setMatchName("Second Match");
         MatchResponse second = ipscMatchService.createMatch(secondRequest);
 
+        // Act
         List<MatchResponse> matches = ipscMatchService.getAllMatches();
 
+        // Assert
         assertEquals(2, matches.size());
         assertTrue(matches.stream().anyMatch(match ->
                 match.getMatchId().equals(first.getMatchId()) && (match.getStages().size() == 1)));
@@ -201,22 +233,27 @@ class IpscMatchServiceIntegrationTest {
     // patchMatch()
     @Test
     void testPatchMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         MatchRequest request = new MatchRequest();
         request.setMatchName("Renamed");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.patchMatch(999L, request));
     }
 
     @Test
     void testPatchMatch_whenOnlyMatchNameIsProvided_thenOnlyMatchNameChanges() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
         MatchRequest patch = new MatchRequest();
         patch.setMatchName("Renamed Championship");
 
+        // Act
         MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
 
+        // Assert
         assertEquals("Renamed Championship", patched.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), patched.getMatchDate());
         assertEquals(ClubIdentifier.HPSC, patched.getClub());
@@ -226,28 +263,33 @@ class IpscMatchServiceIntegrationTest {
 
     @Test
     void testPatchMatch_whenClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
         MatchRequest patch = new MatchRequest();
         patch.setClub("No Such Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.patchMatch(created.getMatchId(), patch));
     }
 
     @Test
     void testPatchMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
         MatchRequest patch = new MatchRequest();
         patch.setMatchFirearmType("Not A Firearm Type");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(created.getMatchId(), patch));
     }
 
     @Test
     void testPatchMatch_whenStagesAreOmitted_thenExistingStagesAreUnchanged() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest createRequest = validRequest("Test Club");
         createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
@@ -256,14 +298,17 @@ class IpscMatchServiceIntegrationTest {
         MatchRequest patch = new MatchRequest();
         patch.setMatchName("Renamed Championship");
 
+        // Act
         MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
 
+        // Assert
         assertEquals(1, patched.getStages().size());
         assertEquals("Stage 1", patched.getStages().getFirst().getStageName());
     }
 
     @Test
     void testPatchMatch_whenStageNumberMatchesExisting_thenUpdatesThatStageInPlace() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest createRequest = validRequest("Test Club");
         createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Original Name")));
@@ -273,8 +318,10 @@ class IpscMatchServiceIntegrationTest {
         MatchRequest patch = new MatchRequest();
         patch.setStages(List.of(new MatchStageRequest(null, 1, "Updated Name")));
 
+        // Act
         MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
 
+        // Assert
         assertEquals(1, patched.getStages().size());
         assertEquals(originalStageId, patched.getStages().getFirst().getStageId());
         assertEquals("Updated Name", patched.getStages().getFirst().getStageName());
@@ -282,6 +329,7 @@ class IpscMatchServiceIntegrationTest {
 
     @Test
     void testPatchMatch_whenStageNumberIsNew_thenAddsStageWithoutRemovingExisting() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest createRequest = validRequest("Test Club");
         createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
@@ -290,8 +338,10 @@ class IpscMatchServiceIntegrationTest {
         MatchRequest patch = new MatchRequest();
         patch.setStages(List.of(new MatchStageRequest(null, 2, "Stage 2")));
 
+        // Act
         MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
 
+        // Assert
         assertEquals(2, patched.getStages().size());
         assertEquals("Stage 1", patched.getStages().get(0).getStageName());
         assertEquals("Stage 2", patched.getStages().get(1).getStageName());
@@ -300,33 +350,40 @@ class IpscMatchServiceIntegrationTest {
     // updateMatch()
     @Test
     void testUpdateMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.updateMatch(999L, request));
     }
 
     @Test
     void testUpdateMatch_whenMatchNameIsMissing_thenThrowsValidationException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
         MatchRequest request = validRequest("Test Club");
         request.setMatchName(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.updateMatch(created.getMatchId(), request));
     }
 
     @Test
     void testUpdateMatch_whenClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
         MatchRequest request = validRequest("No Such Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.updateMatch(created.getMatchId(), request));
     }
 
     @Test
     void testUpdateMatch_whenRequestIsValid_thenReplacesAllFields() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         createClub("Other Club", ClubIdentifier.SOSC);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -338,8 +395,10 @@ class IpscMatchServiceIntegrationTest {
         replacement.setMatchFirearmType(FirearmType.RIFLE.toString());
         replacement.setMatchCategory(MatchCategory.LEAGUE.toString());
 
+        // Act
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
 
+        // Assert
         assertEquals(created.getMatchId(), updated.getMatchId());
         assertEquals("Different Match", updated.getMatchName());
         assertEquals(LocalDate.of(2027, 1, 1), updated.getMatchDate());
@@ -350,6 +409,7 @@ class IpscMatchServiceIntegrationTest {
 
     @Test
     void testUpdateMatch_whenRequestOmitsPreviouslyPersistedStages_thenOldStagesAreRemoved() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest createRequest = validRequest("Test Club");
         createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
@@ -357,13 +417,16 @@ class IpscMatchServiceIntegrationTest {
 
         MatchRequest replacement = validRequest("Test Club");
 
+        // Act
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
 
+        // Assert
         assertTrue(updated.getStages().isEmpty());
     }
 
     @Test
     void testUpdateMatch_whenRequestIncludesNewStages_thenOldStagesAreReplaced() {
+        // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest createRequest = validRequest("Test Club");
         createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Original Stage")));
@@ -373,8 +436,10 @@ class IpscMatchServiceIntegrationTest {
         MatchRequest replacement = validRequest("Test Club");
         replacement.setStages(List.of(new MatchStageRequest(null, 1, "Replacement Stage")));
 
+        // Act
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
 
+        // Assert
         assertEquals(1, updated.getStages().size());
         assertNotEquals(originalStageId, updated.getStages().getFirst().getStageId());
         assertEquals("Replacement Stage", updated.getStages().getFirst().getStageName());

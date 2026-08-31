@@ -39,42 +39,52 @@ public class AwardServiceIntegrationTest {
     // processCsv()
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(null));
     }
 
     @Test
     public void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(""));
     }
 
     @Test
     public void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards("   \t\n  "));
     }
 
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 awardService.createAwards("This is not valid CSV data"));
     }
 
     @Test
     public void testProcessCsv_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
+        // Arrange
         String csvData = """
                 title,imageFilePath,ceremonyTitle
                 Award 1,/path/to/image,Ceremony 1
                 """;
+
+        // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(csvData));
     }
 
     @Test
     public void testProcessCsv_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Top Shooter,Best shooter award,Annual top shooter description,Overall,ipsc|hpsc,2026-04-10,awards/top-shooter,IPSC Gala 2026,Annual gala summary,Gala description,Gala Category,gala|annual,Jane Doe,John Roe,Sam Poe,jane.png,john.png,sam.png\n";
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, ceremonies.size());
@@ -107,14 +117,17 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenSingleCeremonyWithMultipleAwards_thenGroupsAllAwardsUnderOneCeremony() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Top Shooter,,,Overall,,2026-04-10,awards/,Club Gala 2026,,,,,Jane Doe,John Roe,Sam Poe,,,\n" +
                 "Best Lady,,,Ladies,,2026-04-10,awards/,Club Gala 2026,,,,,Alice Brown,Carol White,Dana Green,,,\n" +
                 "Junior Award,,,Junior,,2026-04-10,awards/,Club Gala 2026,,,,,Tom Young,,,,,\n";
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, ceremonies.size());
@@ -133,15 +146,18 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(CSV_HEADER));
 
+        // Assert
         assertNotNull(responseHolder);
         assertTrue(responseHolder.getAwardCeremonies().isEmpty());
     }
 
     @Test
     public void testProcessCsv_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
+        // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Award A1,,,,,,,Ceremony Alpha,,,,,Alice,Bob,,,,
@@ -149,9 +165,11 @@ public class AwardServiceIntegrationTest {
                 Award B1,,,,,,,Ceremony Beta,,,,,Eve,Frank,,,,
                 """;
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(2, ceremonies.size());
@@ -173,15 +191,18 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenSameCeremonyTitleDiffersByCaseButIsConsecutive_thenGroupedAsSameCeremony() {
+        // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Award 1,,,,,,,Club Gala,,,,,Jane,,,,,
                 Award 2,,,,,,,CLUB GALA,,,,,John,,,,,
                 """;
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, ceremonies.size());
@@ -192,6 +213,7 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenSameCeremonyTitleRepeatsNonConsecutively_thenCreatesSeparateGroups() {
+        // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Award A1,,,,,,,Ceremony A,,,,,Alice,,,,,
@@ -199,9 +221,11 @@ public class AwardServiceIntegrationTest {
                 Award A2,,,,,,,Ceremony A,,,,,Carol,,,,,
                 """;
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(3, ceremonies.size());
@@ -221,14 +245,17 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
+        // Arrange
         String csvData = """
                 ceremonyTitle,firstPlaceName,secondPlaceName,thirdPlaceName,title,imageFilePath,date,summary,description,category,tags,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
                 Annual Gala,Gold Winner,Silver Winner,Bronze Winner,Best Shot,awards/best,2026-06-15,Shot summary,Shot description,Precision,precision|accuracy,Gala summary,Gala description,Elite,elite|prestige,gold.png,silver.png,bronze.png
                 """;
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, ceremonies.size());
@@ -258,12 +285,15 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenTagsUsePipeSeparator_thenParsesEachTagAsListEntry() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Podium Award,,,,ipsc|hpsc|production,,,Club Awards 2026,,,,gala|annual,Jane Doe,,,,,\n";
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, ceremonies.size());
@@ -279,12 +309,15 @@ public class AwardServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenDateFieldIsProvided_thenParsesDateAsLocalDate() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Annual Trophy,,,,,2026-11-20,,Trophy Ceremony,,,,,Best Shooter,,,,,\n";
 
+        // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<AwardCeremonyResponse> ceremonies = responseHolder.getAwardCeremonies();
         assertEquals(1, ceremonies.size());

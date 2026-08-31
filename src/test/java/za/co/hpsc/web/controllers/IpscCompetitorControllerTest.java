@@ -64,7 +64,7 @@ class IpscCompetitorControllerTest {
         ipscCompetitorController.createCompetitor(request);
 
         // Assert
-        verify(ipscCompetitorService, times(1)).createCompetitor(request);
+        verify(ipscCompetitorService).createCompetitor(request);
         verifyNoMoreInteractions(ipscCompetitorService);
     }
 
@@ -112,7 +112,7 @@ class IpscCompetitorControllerTest {
         ipscCompetitorController.getCompetitor(1L);
 
         // Assert
-        verify(ipscCompetitorService, times(1)).getCompetitor(1L);
+        verify(ipscCompetitorService).getCompetitor(1L);
         verifyNoMoreInteractions(ipscCompetitorService);
     }
 
@@ -151,7 +151,7 @@ class IpscCompetitorControllerTest {
         ipscCompetitorController.patchCompetitor(1L, request);
 
         // Assert
-        verify(ipscCompetitorService, times(1)).patchCompetitor(1L, request);
+        verify(ipscCompetitorService).patchCompetitor(1L, request);
         verifyNoMoreInteractions(ipscCompetitorService);
     }
 
@@ -191,7 +191,7 @@ class IpscCompetitorControllerTest {
         ipscCompetitorController.updateCompetitor(1L, request);
 
         // Assert
-        verify(ipscCompetitorService, times(1)).updateCompetitor(1L, request);
+        verify(ipscCompetitorService).updateCompetitor(1L, request);
         verifyNoMoreInteractions(ipscCompetitorService);
     }
 

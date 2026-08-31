@@ -37,51 +37,64 @@ public class ImageServiceIntegrationTest {
     // processCsv()
     @Test
     public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(null));
     }
 
     @Test
     public void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(""));
     }
 
     @Test
     public void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages("   \t\n  "));
     }
 
     @Test
     public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.createImages("This is not valid CSV data"));
     }
 
     @Test
     public void testProcessCsv_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
+        // Arrange
         String csvData = """
                 summary,description,tags
                 A summary,A description,Tag1
                 """;
+
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(csvData));
     }
 
     @Test
     public void testProcessCsv_whenRowHasTooFewValues_thenThrowsValidationException() {
+        // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
                 Incomplete Row
                 """;
+
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(csvData));
     }
 
     @Test
     public void testProcessCsv_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains|plains,/photos/nature,landscape.jpg\n";
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(1, images.size());
@@ -100,23 +113,28 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyImageList() {
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(CSV_HEADER));
 
+        // Assert
         assertNotNull(responseHolder);
         assertTrue(responseHolder.getImages().isEmpty());
     }
 
     @Test
     public void testProcessCsv_whenMultipleImages_thenReturnsAllMappedResponses() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Photo A,Summary A,Desc A,Events,Tag1|Tag2,/photos/a,a.png\n" +
                 "Photo B,Summary B,Desc B,Portraits,Tag3,/photos/b,b.jpg\n" +
                 "Photo C,,,,,/photos/c,c.gif\n";
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(3, images.size());
@@ -128,12 +146,15 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenOptionalFieldsAreEmpty_thenReturnsEmptyStringsAndEmptyTagList() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Minimal Image,,,,,/photos/minimal,minimal.png\n";
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(1, images.size());
@@ -152,14 +173,17 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
+        // Arrange
         String csvData = """
                 fileName,filePath,tags,category,description,summary,title
                 portrait.png,/photos/portrait,outdoor|sunlight,Portraits,Golden hour portrait,Warm tones,Golden Hour
                 """;
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(1, images.size());
@@ -176,12 +200,15 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenQuotedFieldsContainCommas_thenPreservesCompleteFieldValues() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "\"Prize, Giving\",\"Summary, with comma\",\"Description, with comma\",\"Events, Outdoor\",\"gold|silver\",/photos/quoted,quoted.jpg\n";
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(1, images.size());
@@ -198,15 +225,18 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenCsvUsesWindowsLineEndings_thenProcessesAllRows() {
+        // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName\r
                 Windows A,Summary A,Description A,Category A,tag1|tag2,/windows/a,a.png\r
                 Windows B,Summary B,Description B,Category B,tag3,/windows/b,b.gif\r
                 """;
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData));
 
+        // Assert
         assertNotNull(responseHolder);
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(2, images.size());
@@ -218,12 +248,15 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenTagsUsePipeSeparator_thenParsesEachTagAsListEntry() {
+        // Arrange
         String csvDataWithTags = CSV_HEADER +
                 "Wildlife,,,Nature,lion|tiger|cheetah,/photos/wild,animal.png\n";
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvDataWithTags));
 
+        // Assert
         assertNotNull(responseHolder);
         ImageResponse image = responseHolder.getImages().getFirst();
         assertEquals(List.of("lion", "tiger", "cheetah"), image.getTags());
@@ -231,86 +264,110 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenSingleTag_thenReturnsOneElementTagList() {
+        // Arrange
         String csvDataWithTag = CSV_HEADER +
                 "Solo Tag Image,,,Nature,wildlife,/photos/solo,solo.png\n";
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvDataWithTag));
 
+        // Assert
         assertNotNull(responseHolder);
         assertEquals(List.of("wildlife"), responseHolder.getImages().getFirst().getTags());
     }
 
     @Test
     public void testProcessCsv_whenFileNameIsPng_thenMimeTypeIsImagePng() {
+        // Arrange
         String csvData = CSV_HEADER + "PNG Image,,,,,/photos,image.png\n";
 
+        // Act
         ImageResponse image = assertDoesNotThrow(() ->
                 imageService.createImages(csvData)).getImages().getFirst();
 
+        // Assert
         assertEquals("image/png", image.getMimeType());
     }
 
     @Test
     public void testProcessCsv_whenFileNameIsJpeg_thenMimeTypeIsImageJpeg() {
+        // Arrange
         String csvData = CSV_HEADER + "JPEG Image,,,,,/photos,image.jpeg\n";
 
+        // Act
         ImageResponse image = assertDoesNotThrow(() ->
                 imageService.createImages(csvData)).getImages().getFirst();
 
+        // Assert
         assertEquals("image/jpeg", image.getMimeType());
     }
 
     @Test
     public void testProcessCsv_whenFileNameIsJpg_thenMimeTypeIsImageJpeg() {
+        // Arrange
         String csvData = CSV_HEADER + "JPG Image,,,,,/photos,image.jpg\n";
 
+        // Act
         ImageResponse image = assertDoesNotThrow(() ->
                 imageService.createImages(csvData)).getImages().getFirst();
 
+        // Assert
         assertEquals("image/jpeg", image.getMimeType());
     }
 
     @Test
     public void testProcessCsv_whenFileNameIsGif_thenMimeTypeIsImageGif() {
+        // Arrange
         String csvData = CSV_HEADER + "GIF Image,,,,,/photos,image.gif\n";
 
+        // Act
         ImageResponse image = assertDoesNotThrow(() ->
                 imageService.createImages(csvData)).getImages().getFirst();
 
+        // Assert
         assertEquals("image/gif", image.getMimeType());
     }
 
     @Test
     public void testProcessCsv_whenFileNameHasUnknownExtension_thenMimeTypeIsEmpty() {
+        // Arrange
         String csvData = CSV_HEADER + "Unknown Image,,,,,/photos,image.unknownext\n";
 
+        // Act
         ImageResponse image = assertDoesNotThrow(() ->
                 imageService.createImages(csvData)).getImages().getFirst();
 
+        // Assert
         assertEquals("", image.getMimeType());
     }
 
     @Test
     public void testProcessCsv_whenFileNameIsEmpty_thenMimeTypeIsEmpty() {
+        // Arrange
         String csvData = CSV_HEADER + "No File Name,,,,,/photos,\n";
 
+        // Act
         ImageResponse image = assertDoesNotThrow(() ->
                 imageService.createImages(csvData)).getImages().getFirst();
 
+        // Assert
         assertEquals("", image.getMimeType());
     }
 
     @Test
     public void testProcessCsv_whenMultipleImages_thenEachResponseHasUniqueUuid() {
+        // Arrange
         String csvData = CSV_HEADER +
                 "Image A,,,,,/photos/a,a.png\n" +
                 "Image B,,,,,/photos/b,b.png\n" +
                 "Image C,,,,,/photos/c,c.png\n";
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData));
 
+        // Assert
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(3, images.size());
         assertNotEquals(images.get(0).getUuid(), images.get(1).getUuid());
@@ -320,6 +377,7 @@ public class ImageServiceIntegrationTest {
 
     @Test
     public void testProcessCsv_whenLargeDataset_thenProcessesAllRowsCorrectly() {
+        // Arrange
         StringBuilder csvData = new StringBuilder(CSV_HEADER);
         for (int i = 0; i < 1000; i++) {
             csvData.append("Title ").append(i).append(",Summary ").append(i)
@@ -328,9 +386,11 @@ public class ImageServiceIntegrationTest {
                     .append(",image").append(i).append(".png\n");
         }
 
+        // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(csvData.toString()));
 
+        // Assert
         assertNotNull(responseHolder);
         List<ImageResponse> images = responseHolder.getImages();
         assertEquals(1000, images.size());

@@ -61,71 +61,88 @@ public class IpscMatchServiceTest {
     // createMatch()
     @Test
     void testCreateMatch_whenRequestIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(null));
     }
 
     @Test
     void testCreateMatch_whenMatchNameIsBlank_thenThrowsValidationException() {
+        // Arrange
         MatchRequest request = validRequest("Test Club");
         request.setMatchName("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchDateIsMissing_thenThrowsValidationException() {
+        // Arrange
         MatchRequest request = validRequest("Test Club");
         request.setMatchDate(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenClubIsBlank_thenThrowsValidationException() {
+        // Arrange
         MatchRequest request = validRequest("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchFirearmTypeIsMissing_thenThrowsValidationException() {
+        // Arrange
         MatchRequest request = validRequest("Test Club");
         request.setMatchFirearmType(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchCategoryIsMissing_thenThrowsValidationException() {
+        // Arrange
         MatchRequest request = validRequest("Test Club");
         request.setMatchCategory(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         MatchRequest request = validRequest("No Such Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         stubExistingClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchFirearmType("Not A Firearm Type");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
     void testCreateMatch_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         stubExistingClub("Test Club", ClubIdentifier.HPSC);
         MatchRequest request = validRequest("Test Club");
         request.setMatchCategory("Not A Category");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
     }
 
@@ -225,8 +242,10 @@ public class IpscMatchServiceTest {
     // getMatch()
     @Test
     void testGetMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         when(ipscMatchRepository.findById(999L)).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.getMatch(999L));
     }
 
@@ -262,15 +281,18 @@ public class IpscMatchServiceTest {
     // patchMatch()
     @Test
     void testPatchMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         when(ipscMatchRepository.findById(999L)).thenReturn(Optional.empty());
         MatchRequest request = new MatchRequest();
         request.setMatchName("Renamed");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.patchMatch(999L, request));
     }
 
     @Test
     void testPatchMatch_whenClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
         when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -279,11 +301,13 @@ public class IpscMatchServiceTest {
         MatchRequest patch = new MatchRequest();
         patch.setClub("No Such Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.patchMatch(1L, patch));
     }
 
     @Test
     void testPatchMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
         when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -291,6 +315,7 @@ public class IpscMatchServiceTest {
         MatchRequest patch = new MatchRequest();
         patch.setMatchFirearmType("Not A Firearm Type");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(1L, patch));
     }
 
@@ -406,25 +431,30 @@ public class IpscMatchServiceTest {
     // updateMatch()
     @Test
     void testUpdateMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Act & Assert
         assertThrows(NonFatalException.class,
                 () -> ipscMatchService.updateMatch(999L, validRequest("Test Club")));
     }
 
     @Test
     void testUpdateMatch_whenMatchNameIsMissing_thenThrowsValidationException() {
+        // Arrange
         MatchRequest request = validRequest("Test Club");
         request.setMatchName(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.updateMatch(1L, request));
     }
 
     @Test
     void testUpdateMatch_whenClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
         when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(NonFatalException.class,
                 () -> ipscMatchService.updateMatch(1L, validRequest("No Such Club")));
     }

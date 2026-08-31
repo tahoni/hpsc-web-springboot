@@ -71,7 +71,7 @@ public class ImageControllerTest {
         imageController.createImages(VALID_CSV);
 
         // Assert
-        verify(imageService, times(1)).createImages(VALID_CSV);
+        verify(imageService).createImages(VALID_CSV);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class ImageControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        verify(imageService, times(1)).createImages(null);
+        verify(imageService).createImages(null);
     }
 
     @Test

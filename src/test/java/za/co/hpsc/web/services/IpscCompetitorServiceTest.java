@@ -51,46 +51,57 @@ public class IpscCompetitorServiceTest {
     // createCompetitor()
     @Test
     void testCreateCompetitor_whenRequestIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(null));
     }
 
     @Test
     void testCreateCompetitor_whenFirstNameIsBlank_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = validRequest("HPSC-001");
         request.setFirstName("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(request));
     }
 
     @Test
     void testCreateCompetitor_whenLastNameIsBlank_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = validRequest("HPSC-001");
         request.setLastName("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(request));
     }
 
     @Test
     void testCreateCompetitor_whenClubNumberIsBlank_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = validRequest("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(request));
     }
 
     @Test
     void testCreateCompetitor_whenGenderIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = validRequest("HPSC-001");
         request.setGender("Not A Gender");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(request));
     }
 
     @Test
     void testCreateCompetitor_whenHomeClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         CompetitorRequest request = validRequest("HPSC-001");
         request.setHomeClub("No Such Club");
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.createCompetitor(request));
     }
 
@@ -159,15 +170,17 @@ public class IpscCompetitorServiceTest {
         ipscCompetitorService.createCompetitor(request);
 
         // Assert
-        verify(competitorRepository, times(1)).save(any(Competitor.class));
+        verify(competitorRepository).save(any(Competitor.class));
         verifyNoMoreInteractions(competitorRepository);
     }
 
     // getCompetitor()
     @Test
     void testGetCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.getCompetitor(999L));
     }
 
@@ -193,15 +206,18 @@ public class IpscCompetitorServiceTest {
     // patchCompetitor()
     @Test
     void testPatchCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Renamed");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.patchCompetitor(999L, request));
     }
 
     @Test
     void testPatchCompetitor_whenClubNumberIsBlank_thenThrowsValidationException() {
+        // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -209,11 +225,13 @@ public class IpscCompetitorServiceTest {
         CompetitorRequest patch = new CompetitorRequest();
         patch.setClubNumber("  ");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.patchCompetitor(1L, patch));
     }
 
     @Test
     void testPatchCompetitor_whenGenderIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -221,11 +239,13 @@ public class IpscCompetitorServiceTest {
         CompetitorRequest patch = new CompetitorRequest();
         patch.setGender("Not A Gender");
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.patchCompetitor(1L, patch));
     }
 
     @Test
     void testPatchCompetitor_whenHomeClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -234,6 +254,7 @@ public class IpscCompetitorServiceTest {
         CompetitorRequest patch = new CompetitorRequest();
         patch.setHomeClub("No Such Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.patchCompetitor(1L, patch));
     }
 
@@ -287,22 +308,27 @@ public class IpscCompetitorServiceTest {
     // updateCompetitor()
     @Test
     void testUpdateCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(NonFatalException.class,
                 () -> ipscCompetitorService.updateCompetitor(999L, validRequest("HPSC-001")));
     }
 
     @Test
     void testUpdateCompetitor_whenFirstNameIsMissing_thenThrowsValidationException() {
+        // Arrange
         CompetitorRequest request = validRequest("HPSC-001");
         request.setFirstName(null);
 
+        // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.updateCompetitor(1L, request));
     }
 
     @Test
     void testUpdateCompetitor_whenHomeClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -311,6 +337,7 @@ public class IpscCompetitorServiceTest {
         CompetitorRequest request = validRequest("HPSC-001");
         request.setHomeClub("No Such Club");
 
+        // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.updateCompetitor(1L, request));
     }
 

@@ -39,21 +39,25 @@ public class ImageServiceTest {
     // processCsv()
     @Test
     void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(null));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(""));
     }
 
     @Test
     void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages("   \t\n  "));
     }
 
     @Test
     void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages("Invalid CSV Format"));
     }
 
@@ -65,7 +69,7 @@ public class ImageServiceTest {
                 A summary,A description,Tag1
                 """;
 
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(csvData));
     }
 
