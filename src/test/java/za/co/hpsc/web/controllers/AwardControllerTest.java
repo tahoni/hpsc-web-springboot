@@ -35,7 +35,7 @@ public class AwardControllerTest {
 
     // processCsv()
     @Test
-    void testProcessCsv_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
+    void testCreateAwards_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
         when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
@@ -48,7 +48,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenValidCsvData_thenResponseBodyIsReturnedFromService() throws ValidationException, FatalException {
+    void testCreateAwards_whenValidCsvData_thenResponseBodyIsReturnedFromService() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
         when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
@@ -62,7 +62,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenValidCsvData_thenDelegatesProcessingToService() throws ValidationException, FatalException {
+    void testCreateAwards_whenValidCsvData_thenDelegatesProcessingToService() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
         when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
@@ -75,7 +75,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenServiceReturnsHolderWithCeremonies_thenResponseBodyContainsCeremonies() throws ValidationException, FatalException {
+    void testCreateAwards_whenServiceReturnsHolderWithCeremonies_thenResponseBodyContainsCeremonies() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponse ceremony = new AwardCeremonyResponse();
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of(ceremony));
@@ -90,7 +90,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenServiceReturnsEmptyHolder_thenResponseBodyHasEmptyList() throws ValidationException, FatalException {
+    void testCreateAwards_whenServiceReturnsEmptyHolder_thenResponseBodyHasEmptyList() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(Collections.emptyList());
         when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
@@ -105,7 +105,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, FatalException {
+    void testCreateAwards_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, FatalException {
         // Arrange
         when(awardService.createAwards(anyString())).thenThrow(new ValidationException("Invalid CSV format"));
 
@@ -114,7 +114,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, FatalException {
+    void testCreateAwards_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, FatalException {
         // Arrange
         when(awardService.createAwards(anyString())).thenThrow(new FatalException("Unexpected processing error"));
 
@@ -123,7 +123,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenCsvDataIsNull_thenDelegatesToService() throws ValidationException, FatalException {
+    void testCreateAwards_whenCsvDataIsNull_thenDelegatesToService() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
         when(awardService.createAwards(null)).thenReturn(holder);
@@ -137,7 +137,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenCsvDataIsEmpty_thenDelegatesToService() throws ValidationException, FatalException {
+    void testCreateAwards_whenCsvDataIsEmpty_thenDelegatesToService() throws ValidationException, FatalException {
         // Arrange
         when(awardService.createAwards("")).thenThrow(new ValidationException("CSV data is empty"));
 
@@ -146,7 +146,7 @@ public class AwardControllerTest {
     }
 
     @Test
-    void testProcessCsv_whenServiceInvokedOnce_thenNoAdditionalInteractions() throws ValidationException, FatalException {
+    void testCreateAwards_whenServiceInvokedOnce_thenNoAdditionalInteractions() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
         when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
@@ -155,6 +155,7 @@ public class AwardControllerTest {
         awardController.createAwards(VALID_CSV);
 
         // Assert
+        verify(awardService).createAwards(VALID_CSV);
         verifyNoMoreInteractions(awardService);
     }
 }

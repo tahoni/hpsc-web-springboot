@@ -34,34 +34,34 @@ public class ImageServiceIntegrationTest {
     @Autowired
     private ImageService imageService;
 
-    // processCsv()
+    // createImages()
     @Test
-    public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+    public void testCreateImages_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(null));
     }
 
     @Test
-    public void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+    public void testCreateImages_whenCsvDataIsEmpty_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(""));
     }
 
     @Test
-    public void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+    public void testCreateImages_whenCsvDataIsBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages("   \t\n  "));
     }
 
     @Test
-    public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+    public void testCreateImages_whenCsvIsPlainText_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.createImages("This is not valid CSV data"));
     }
 
     @Test
-    public void testProcessCsv_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
+    public void testCreateImages_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
         // Arrange
         String csvData = """
                 summary,description,tags
@@ -73,7 +73,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenRowHasTooFewValues_thenThrowsValidationException() {
+    public void testCreateImages_whenRowHasTooFewValues_thenThrowsValidationException() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
@@ -85,7 +85,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
+    public void testCreateImages_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains|plains,/photos/nature,landscape.jpg\n";
@@ -112,7 +112,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyImageList() {
+    public void testCreateImages_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyImageList() {
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
                 imageService.createImages(CSV_HEADER));
@@ -123,7 +123,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenMultipleImages_thenReturnsAllMappedResponses() {
+    public void testCreateImages_whenMultipleImages_thenReturnsAllMappedResponses() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Photo A,Summary A,Desc A,Events,Tag1|Tag2,/photos/a,a.png\n" +
@@ -145,7 +145,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenOptionalFieldsAreEmpty_thenReturnsEmptyStringsAndEmptyTagList() {
+    public void testCreateImages_whenOptionalFieldsAreEmpty_thenReturnsEmptyStringsAndEmptyTagList() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Minimal Image,,,,,/photos/minimal,minimal.png\n";
@@ -172,7 +172,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
+    public void testCreateImages_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
                 fileName,filePath,tags,category,description,summary,title
@@ -199,7 +199,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenQuotedFieldsContainCommas_thenPreservesCompleteFieldValues() {
+    public void testCreateImages_whenQuotedFieldsContainCommas_thenPreservesCompleteFieldValues() {
         // Arrange
         String csvData = CSV_HEADER +
                 "\"Prize, Giving\",\"Summary, with comma\",\"Description, with comma\",\"Events, Outdoor\",\"gold|silver\",/photos/quoted,quoted.jpg\n";
@@ -224,7 +224,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenCsvUsesWindowsLineEndings_thenProcessesAllRows() {
+    public void testCreateImages_whenCsvUsesWindowsLineEndings_thenProcessesAllRows() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName\r
@@ -247,7 +247,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenTagsUsePipeSeparator_thenParsesEachTagAsListEntry() {
+    public void testCreateImages_whenTagsUsePipeSeparator_thenParsesEachTagAsListEntry() {
         // Arrange
         String csvDataWithTags = CSV_HEADER +
                 "Wildlife,,,Nature,lion|tiger|cheetah,/photos/wild,animal.png\n";
@@ -263,7 +263,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenSingleTag_thenReturnsOneElementTagList() {
+    public void testCreateImages_whenSingleTag_thenReturnsOneElementTagList() {
         // Arrange
         String csvDataWithTag = CSV_HEADER +
                 "Solo Tag Image,,,Nature,wildlife,/photos/solo,solo.png\n";
@@ -278,7 +278,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenFileNameIsPng_thenMimeTypeIsImagePng() {
+    public void testCreateImages_whenFileNameIsPng_thenMimeTypeIsImagePng() {
         // Arrange
         String csvData = CSV_HEADER + "PNG Image,,,,,/photos,image.png\n";
 
@@ -291,7 +291,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenFileNameIsJpeg_thenMimeTypeIsImageJpeg() {
+    public void testCreateImages_whenFileNameIsJpeg_thenMimeTypeIsImageJpeg() {
         // Arrange
         String csvData = CSV_HEADER + "JPEG Image,,,,,/photos,image.jpeg\n";
 
@@ -304,7 +304,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenFileNameIsJpg_thenMimeTypeIsImageJpeg() {
+    public void testCreateImages_whenFileNameIsJpg_thenMimeTypeIsImageJpeg() {
         // Arrange
         String csvData = CSV_HEADER + "JPG Image,,,,,/photos,image.jpg\n";
 
@@ -317,7 +317,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenFileNameIsGif_thenMimeTypeIsImageGif() {
+    public void testCreateImages_whenFileNameIsGif_thenMimeTypeIsImageGif() {
         // Arrange
         String csvData = CSV_HEADER + "GIF Image,,,,,/photos,image.gif\n";
 
@@ -330,7 +330,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenFileNameHasUnknownExtension_thenMimeTypeIsEmpty() {
+    public void testCreateImages_whenFileNameHasUnknownExtension_thenMimeTypeIsEmpty() {
         // Arrange
         String csvData = CSV_HEADER + "Unknown Image,,,,,/photos,image.unknownext\n";
 
@@ -343,7 +343,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenFileNameIsEmpty_thenMimeTypeIsEmpty() {
+    public void testCreateImages_whenFileNameIsEmpty_thenMimeTypeIsEmpty() {
         // Arrange
         String csvData = CSV_HEADER + "No File Name,,,,,/photos,\n";
 
@@ -356,7 +356,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenMultipleImages_thenEachResponseHasUniqueUuid() {
+    public void testCreateImages_whenMultipleImages_thenEachResponseHasUniqueUuid() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Image A,,,,,/photos/a,a.png\n" +
@@ -376,7 +376,7 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenLargeDataset_thenProcessesAllRowsCorrectly() {
+    public void testCreateImages_whenLargeDataset_thenProcessesAllRowsCorrectly() {
         // Arrange
         StringBuilder csvData = new StringBuilder(CSV_HEADER);
         for (int i = 0; i < 1000; i++) {

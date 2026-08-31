@@ -36,34 +36,34 @@ public class AwardServiceIntegrationTest {
     @Autowired
     private AwardService awardService;
 
-    // processCsv()
+    // createAwards()
     @Test
-    public void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+    public void testCreateAwards_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(null));
     }
 
     @Test
-    public void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+    public void testCreateAwards_whenCsvDataIsEmpty_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(""));
     }
 
     @Test
-    public void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+    public void testCreateAwards_whenCsvDataIsBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards("   \t\n  "));
     }
 
     @Test
-    public void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+    public void testCreateAwards_whenCsvIsPlainText_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () ->
                 awardService.createAwards("This is not valid CSV data"));
     }
 
     @Test
-    public void testProcessCsv_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
+    public void testCreateAwards_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
         // Arrange
         String csvData = """
                 title,imageFilePath,ceremonyTitle
@@ -75,7 +75,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
+    public void testCreateAwards_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Top Shooter,Best shooter award,Annual top shooter description,Overall,ipsc|hpsc,2026-04-10,awards/top-shooter,IPSC Gala 2026,Annual gala summary,Gala description,Gala Category,gala|annual,Jane Doe,John Roe,Sam Poe,jane.png,john.png,sam.png\n";
@@ -116,7 +116,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenSingleCeremonyWithMultipleAwards_thenGroupsAllAwardsUnderOneCeremony() {
+    public void testCreateAwards_whenSingleCeremonyWithMultipleAwards_thenGroupsAllAwardsUnderOneCeremony() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Top Shooter,,,Overall,,2026-04-10,awards/,Club Gala 2026,,,,,Jane Doe,John Roe,Sam Poe,,,\n" +
@@ -145,7 +145,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
+    public void testCreateAwards_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
         // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() ->
                 awardService.createAwards(CSV_HEADER));
@@ -156,7 +156,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
+    public void testCreateAwards_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
@@ -190,7 +190,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenSameCeremonyTitleDiffersByCaseButIsConsecutive_thenGroupedAsSameCeremony() {
+    public void testCreateAwards_whenSameCeremonyTitleDiffersByCaseButIsConsecutive_thenGroupedAsSameCeremony() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
@@ -212,7 +212,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenSameCeremonyTitleRepeatsNonConsecutively_thenCreatesSeparateGroups() {
+    public void testCreateAwards_whenSameCeremonyTitleRepeatsNonConsecutively_thenCreatesSeparateGroups() {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
@@ -244,7 +244,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
+    public void testCreateAwards_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
                 ceremonyTitle,firstPlaceName,secondPlaceName,thirdPlaceName,title,imageFilePath,date,summary,description,category,tags,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
@@ -284,7 +284,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenTagsUsePipeSeparator_thenParsesEachTagAsListEntry() {
+    public void testCreateAwards_whenTagsUsePipeSeparator_thenParsesEachTagAsListEntry() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Podium Award,,,,ipsc|hpsc|production,,,Club Awards 2026,,,,gala|annual,Jane Doe,,,,,\n";
@@ -308,7 +308,7 @@ public class AwardServiceIntegrationTest {
     }
 
     @Test
-    public void testProcessCsv_whenDateFieldIsProvided_thenParsesDateAsLocalDate() {
+    public void testCreateAwards_whenDateFieldIsProvided_thenParsesDateAsLocalDate() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Annual Trophy,,,,,2026-11-20,,Trophy Ceremony,,,,,Best Shooter,,,,,\n";

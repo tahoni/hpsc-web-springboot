@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link ImageService} contract, exercised entirely through the
- * interface type. Covers {@code processCsv} - the interface's only declared method.
+ * interface type. Covers {@code createImages} - the interface's only declared method.
  * Impl-specific helper methods ({@code readImages}, {@code mapImages}) are covered by
  * {@link za.co.hpsc.web.services.impl.ImageServiceImplTest}.
  */
@@ -36,33 +36,33 @@ public class ImageServiceTest {
         imageService = imageServiceImpl;
     }
 
-    // processCsv()
+    // createImages()
     @Test
-    void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+    void testCreateImages_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(null));
     }
 
     @Test
-    void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+    void testCreateImages_whenCsvDataIsEmpty_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages(""));
     }
 
     @Test
-    void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+    void testCreateImages_whenCsvDataIsBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages("   \t\n  "));
     }
 
     @Test
-    void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+    void testCreateImages_whenCsvIsPlainText_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> imageService.createImages("Invalid CSV Format"));
     }
 
     @Test
-    void testProcessCsv_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
+    void testCreateImages_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
         // Arrange
         String csvData = """
                 summary,description,tags
@@ -74,7 +74,7 @@ public class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyImageList() {
+    void testCreateImages_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyImageList() {
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.createImages(CSV_HEADER));
 
@@ -84,7 +84,7 @@ public class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
+    void testCreateImages_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains|plains,/photos/nature,landscape.jpg\n";
@@ -106,7 +106,7 @@ public class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenMultipleImages_thenReturnsAllMappedResponses() {
+    void testCreateImages_whenMultipleImages_thenReturnsAllMappedResponses() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Photo A,Summary A,Desc A,Events,Tag1|Tag2,/photos/a,a.png\n" +
@@ -123,7 +123,7 @@ public class ImageServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
+    void testCreateImages_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
                 fileName,filePath,tags,category,description,summary,title

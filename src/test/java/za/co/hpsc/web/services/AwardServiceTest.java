@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link AwardService} contract, exercised entirely through the
- * interface type. Covers {@code processCsv} - the interface's only declared method.
+ * interface type. Covers {@code createAwards} - the interface's only declared method.
  * Impl-specific helper methods ({@code readAwards}, {@code mapAwards}) are covered by
  * {@link za.co.hpsc.web.services.impl.AwardServiceImplTest}.
  */
@@ -38,33 +38,33 @@ public class AwardServiceTest {
         awardService = awardServiceImpl;
     }
 
-    // processCsv()
+    // createAwards()
     @Test
-    void testProcessCsv_whenCsvDataIsNull_thenThrowsValidationException() {
+    void testCreateAwards_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(null));
     }
 
     @Test
-    void testProcessCsv_whenCsvDataIsEmpty_thenThrowsValidationException() {
+    void testCreateAwards_whenCsvDataIsEmpty_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards(""));
     }
 
     @Test
-    void testProcessCsv_whenCsvDataIsBlank_thenThrowsValidationException() {
+    void testCreateAwards_whenCsvDataIsBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards("   \t\n  "));
     }
 
     @Test
-    void testProcessCsv_whenCsvIsPlainText_thenThrowsValidationException() {
+    void testCreateAwards_whenCsvIsPlainText_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> awardService.createAwards("Invalid CSV Format"));
     }
 
     @Test
-    void testProcessCsv_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
+    void testCreateAwards_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
         // Arrange
         String csvData = """
                 ceremonyTitle,imageFilePath,title,firstPlace,secondPlace,thirdPlace
@@ -76,7 +76,7 @@ public class AwardServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
+    void testCreateAwards_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyCeremonyList() {
         // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.createAwards(CSV_HEADER));
 
@@ -86,7 +86,7 @@ public class AwardServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
+    void testCreateAwards_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Top Shooter,Best shooter award,Annual top shooter description,Overall,ipsc|hpsc,2026-04-10,awards/top-shooter,IPSC Gala 2026,Annual gala summary,Gala description,Gala Category,gala|annual,Jane Doe,John Roe,Sam Poe,jane.png,john.png,sam.png\n";
@@ -116,7 +116,7 @@ public class AwardServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
+    void testCreateAwards_whenMultipleCeremoniesProvided_thenGroupsAwardsByCeremonyTitle() {
         // Arrange
         String csvData = CSV_HEADER +
                 "Award A1,,,,,,,Ceremony Alpha,,,,,Alice,Bob,,,,\n" +
@@ -136,7 +136,7 @@ public class AwardServiceTest {
     }
 
     @Test
-    void testProcessCsv_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
+    void testCreateAwards_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
                 ceremonyTitle,firstPlaceName,secondPlaceName,thirdPlaceName,title,imageFilePath,date,summary,description,category,tags,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName

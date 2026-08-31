@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link AwardServiceImpl}'s impl-only helper methods ({@code readAwards},
  * {@code mapAwards}) - not declared on {@link za.co.hpsc.web.services.AwardService}. The
- * interface's {@code processCsv} contract is covered by
+ * interface's {@code createAwards} contract is covered by
  * {@link za.co.hpsc.web.services.AwardServiceTest}.
  */
 @ExtendWith(MockitoExtension.class)

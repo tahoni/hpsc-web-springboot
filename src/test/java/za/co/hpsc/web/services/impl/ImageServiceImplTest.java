@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link ImageServiceImpl}'s impl-only helper methods ({@code readImages},
  * {@code mapImages}) - not declared on {@link za.co.hpsc.web.services.ImageService}. The
- * interface's {@code processCsv} contract is covered by
+ * interface's {@code createImages} contract is covered by
  * {@link za.co.hpsc.web.services.ImageServiceTest}.
  */
 @ExtendWith(MockitoExtension.class)
