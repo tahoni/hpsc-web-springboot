@@ -9,16 +9,18 @@ package za.co.hpsc.web.constants;
  * across the application. It ensures consistency in settings and reduces duplication of
  * constant definitions throughout the codebase.
  * </p>
+ *
+ * @since 1.1.3
  */
 public class SystemConstants {
     private SystemConstants() {
+        // Prevent instantiation of this utility class
     }
 
     public static final int DEFAULT_SCALE = 5;
 
     public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";
     public static final String ISO_DATE_TIME_FORMAT = ISO_DATE_FORMAT + " HH:mm";
-    public static final String T_SEPARATED_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String LONG_DATE_FORMAT = "dd MMMM yyyy";
     public static final String LONG_DATE_TIME_FORMAT = LONG_DATE_FORMAT + " HH:mm";
 }

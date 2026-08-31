@@ -9,6 +9,8 @@ import java.util.Map;
  * The {@code StringUtil} class offers static methods for common string-related tasks. These methods
  * are designed to handle various use cases where string manipulation is required.
  * </p>
+ *
+ * @since 1.1.3
  */
 public final class StringUtil {
     private StringUtil() {
@@ -50,6 +52,7 @@ public final class StringUtil {
      *
      * @param object the object to be converted to a string.
      * @return the string representation of the object, or null if the input object is null.
+     * @since 4.1.0
      */
     public static String toString(Object object) {
         if (object == null) {

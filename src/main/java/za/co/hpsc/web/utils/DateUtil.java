@@ -14,6 +14,8 @@ import java.time.format.DateTimeFormatter;
  * formatting operations and handles null values gracefully by returning
  * an empty string.
  * </p>
+ *
+ * @since 4.1.0
  */
 public final class DateUtil {
     private DateUtil() {

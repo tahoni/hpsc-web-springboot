@@ -3,7 +3,7 @@ package za.co.hpsc.web.models.award.response;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.models.shared.Placing;
+import za.co.hpsc.web.models.award.shared.Placing;
 
 /**
  * Represents an award placement in a competition or event,
@@ -12,6 +12,8 @@ import za.co.hpsc.web.models.shared.Placing;
  * <p>
  * Extends the {@code Placing} class to include additional details specific to awards.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @Setter

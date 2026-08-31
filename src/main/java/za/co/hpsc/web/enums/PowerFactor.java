@@ -15,6 +15,8 @@ import java.util.Optional;
  * Each power factor is associated with a name and an abbreviation for easy reference and
  * presentation.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @AllArgsConstructor
@@ -30,7 +32,7 @@ public enum PowerFactor {
      *
      * <p>
      * The method performs a case-insensitive search to find a matching power factor
-     * by its name. If the input is null, empty, or no match is found, an empty
+     * by its name. If the input is null, empty or no match is found, an empty
      * {@code Optional} is returned.
      * </p>
      *
@@ -39,7 +41,7 @@ public enum PowerFactor {
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
      */
-    public static Optional<PowerFactor> getByName(String name) {
+    public static Optional<PowerFactor> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
@@ -54,7 +56,7 @@ public enum PowerFactor {
      *
      * <p>
      * The method performs a case-insensitive search to find a matching power factor
-     * by its abbreviation. If the input is null, empty, or no match is found, an
+     * by its abbreviation. If the input is null, empty or no match is found, an
      * empty {@code Optional} is returned.
      * </p>
      *
@@ -63,7 +65,7 @@ public enum PowerFactor {
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
      */
-    public static Optional<PowerFactor> getByAbbreviation(String abbreviation) {
+    public static Optional<PowerFactor> fromAbbreviation(String abbreviation) {
         if ((abbreviation == null) || (abbreviation.isBlank())) {
             return Optional.empty();
         }

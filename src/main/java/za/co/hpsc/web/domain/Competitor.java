@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import za.co.hpsc.web.converters.GenderConverter;
 import za.co.hpsc.web.enums.Gender;
 
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class Competitor {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GenderConverter.class)
     private Gender gender;
 
     @ManyToOne(fetch = FetchType.LAZY)

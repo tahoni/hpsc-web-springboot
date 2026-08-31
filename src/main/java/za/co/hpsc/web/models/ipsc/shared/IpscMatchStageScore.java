@@ -21,6 +21,8 @@ import java.math.BigDecimal;
  * {@link IpscCommonScore#getWeightedPoints() weighted points} for the stage are calculated
  * against.
  * </p>
+ *
+ * @since 7.4.0
  */
 @Getter
 @Setter

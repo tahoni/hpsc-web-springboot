@@ -19,6 +19,8 @@ import java.util.UUID;
  * It provides multiple constructors to support different initialisation scenarios, allowing
  * response data to be populated with varying levels of detail.
  * </p>
+ *
+ * @since 1.1.0
  */
 public class Response extends Request {
     @Getter
@@ -61,6 +63,7 @@ public class Response extends Request {
      * @param uuid  the unique identifier for the response. If null, a random UUID is generated.
      * @param title the title of the response.
      *              Must not be null or blank.
+     * @since 1.1.1
      */
     public Response(UUID uuid, @NotNull @NotBlank String title) {
         super(title);
@@ -88,6 +91,7 @@ public class Response extends Request {
      *                    Can be null.
      * @param tags        a list of tags associated with the response.
      *                    Can be null.
+     * @since 1.1.1
      */
     public Response(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {
@@ -114,6 +118,7 @@ public class Response extends Request {
      *                    Can be null.
      * @param tags        a list of tags associated with the response.
      *                    Can be null.
+     * @since 1.1.1
      */
     public Response(@NotNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {

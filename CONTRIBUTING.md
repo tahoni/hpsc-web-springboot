@@ -121,8 +121,8 @@ HTTP Request
                 → MySQL / H2
 ```
 
-> The match/competitor domain's service layer is currently being rebuilt — see [`ARCHITECTURE.md`](ARCHITECTURE.md) for
-> what's actually implemented today versus planned.
+> The match/competitor scoring domain's service layer is still being built — see [`ARCHITECTURE.md`](ARCHITECTURE.md)
+> for what's actually implemented today versus planned.
 
 **Rules enforced by convention, not the compiler — review for these:**
 
@@ -143,6 +143,8 @@ repository. Highlights:
   `AGENTS.md`'s exceptions list for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
   "prose, comments and Javadoc") — see `AGENTS.md`'s Serial commas rule.
+- **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
+  `AGENTS.md`'s Line wrapping rule.
 - Every `##` heading gets a matching emoji, reused from the established icon registry in `AGENTS.md` rather than
   invented fresh.
 - Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents — don't
@@ -201,11 +203,12 @@ and `release/*` included — must never open a PR directly against `main`.
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                  | Trigger                                                                           |
-|-----------------------|-----------------------|-----------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`) |
-| **Code Coverage**     | JaCoCo                | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                     |
-| **Build & Tests**     | Maven (`./mvnw test`) | All PRs; H2 in-memory — no external DB required                                   |
+| Gate                  | Tool                                | Trigger                                                                           |
+|-----------------------|-------------------------------------|-----------------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                              | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`) |
+| **Static Analysis**   | Qodana JVM (`jetbrains/qodana-jvm`) | Run locally / via IDE against `qodana.yaml` — no CI workflow wired up yet         |
+| **Code Coverage**     | JaCoCo                              | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                     |
+| **Build & Tests**     | Maven (`./mvnw test`)               | All PRs; H2 in-memory — no external DB required                                   |
 
 ---
 

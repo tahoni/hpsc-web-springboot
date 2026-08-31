@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class AwardServiceImpl implements AwardService {
     @Override
-    public AwardCeremonyResponseHolder processCsv(String csvData)
+    public AwardCeremonyResponseHolder createAwards(String csvData)
             throws FatalException {
 
         if (csvData == null || csvData.isBlank()) {
@@ -46,13 +46,13 @@ public class AwardServiceImpl implements AwardService {
      * <p>
      * <p>
      * The method uses a {@link CsvMapper} and a custom {@link CsvSchema} configuration
-     * to read, map, and convert the input CSV data into instances of {@link AwardRequest}.
+     * to read, map and convert the input CSV data into instances of {@link AwardRequest}.
      * It ensures that CSV headers are correctly processed and supports reordering of columns.
      * </p>
      *
      * @param csvData the CSV data containing information about award requests.
      *                Each row in the CSV should represent an award request with fields
-     *                such as title, file path, file name, and optional metadata.
+     *                such as title, file path, file name and optional metadata.
      *                Must not be null or blank.
      * @return a list of {@link AwardRequest} objects parsed from the provided CSV data.
      * @throws FatalException if an I/O error occurs while processing the CSV data.

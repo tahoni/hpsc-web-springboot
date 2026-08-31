@@ -13,6 +13,8 @@ import java.util.List;
  * The {@code NumberUtil} class offers static methods for common numerical tasks. These methods
  * are designed to handle various use cases where numerical computations are required.
  * </p>
+ *
+ * @since 1.1.3
  */
 public final class NumberUtil {
     private NumberUtil() {
@@ -58,6 +60,7 @@ public final class NumberUtil {
      * @param values the list of {@code BigDecimal} values to sum.
      *               Can be null.
      * @return the sum of the list's values, scaled to the default scale.
+     * @since 5.0.0
      */
     public static BigDecimal calculateSum(List<BigDecimal> values) {
         BigDecimal sum = BigDecimal.ZERO;
@@ -80,6 +83,7 @@ public final class NumberUtil {
      *              Can be null.
      * @param scale the scale to which the value should be formatted.
      * @return the formatted {@code BigDecimal} value as a String, scaled to the specified scale.
+     * @since 4.1.0
      */
     public static String formatBigDecimal(BigDecimal value, int scale) {
         BigDecimal result = ValueUtil.nullAsDefault(value, BigDecimal.ZERO);

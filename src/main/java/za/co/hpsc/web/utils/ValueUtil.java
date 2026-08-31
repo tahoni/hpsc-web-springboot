@@ -26,12 +26,11 @@ import java.util.UUID;
  *
  * @see java.util.UUID
  * @see java.math.BigDecimal
+ *
+ * @since 1.1.0
  */
 public final class ValueUtil {
 
-    /**
-     * Private constructor to prevent instantiation of this utility class.
-     */
     private ValueUtil() {
         // Utility class, not to be instantiated
     }
@@ -55,6 +54,7 @@ public final class ValueUtil {
      *
      * @param value the object to be converted; may be {@code null}
      * @return the string representation of the object if non-null; otherwise {@code ""}
+     * @since 4.1.0
      */
     public static String nullAsEmptyString(Object value) {
         return nullAsDefaultString(value, "");
@@ -65,6 +65,7 @@ public final class ValueUtil {
      *
      * @param value the integer value to be checked; may be {@code null}
      * @return the original integer if non-null; otherwise {@code 0}
+     * @since 1.1.3
      */
     public static int nullAsZero(Integer value) {
         return nullAsDefault(value, 0);
@@ -75,6 +76,7 @@ public final class ValueUtil {
      *
      * @param value the long value to be checked; may be {@code null}
      * @return the original long if non-null; otherwise {@code 0L}
+     * @since 1.1.3
      */
     public static long nullAsZero(Long value) {
         return nullAsDefault(value, 0L);
@@ -89,6 +91,7 @@ public final class ValueUtil {
      *
      * @param value the string representation of a number; may be {@code null}
      * @return the parsed long value if parsing succeeds; otherwise {@code 0L}
+     * @since 6.0.0
      */
     public static long nullAsZero(String value) {
         try {
@@ -109,6 +112,7 @@ public final class ValueUtil {
      * @param value the string representation of a decimal number; may be {@code null}
      * @return a {@code BigDecimal} representing the parsed value, or {@code BigDecimal.ZERO}
      * if the input is null or cannot be parsed
+     * @since 2.0.0
      */
     public static BigDecimal nullAsZeroBigDecimal(String value) {
         if (value == null) {
@@ -158,6 +162,7 @@ public final class ValueUtil {
      * @param value        the value to be checked; may be null
      * @param defaultValue the default value to return if the input value is null; may be null
      * @return the original value if it is non-null; otherwise the default value
+     * @since 7.0.0
      */
     public static <T> T nullAsDefault(T value, T defaultValue) {
         return (value != null ? value : defaultValue);
@@ -174,6 +179,7 @@ public final class ValueUtil {
      * @return the string representation of the input value if non-null,
      * otherwise the string representation of the default value;
      * if both are {@code null}, returns {@code null}
+     * @since 7.0.0
      */
     public static <T> String nullAsDefaultString(T value, T defaultValue) {
         String defaultString = ((defaultValue != null) ? defaultValue.toString() : null);

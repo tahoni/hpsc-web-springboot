@@ -11,6 +11,8 @@ import java.util.List;
  * A container class designed to hold a collection of {@link AwardCeremonyResponse} objects.
  * This class provides basic functionality for managing and storing a list of award ceremony
  * responses, which encapsulate metadata and details about individual award ceremonies.
+ *
+ * @since 1.1.0
  */
 @Getter
 @Setter

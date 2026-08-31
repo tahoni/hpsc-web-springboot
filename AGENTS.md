@@ -1,13 +1,16 @@
 # AGENTS.md
 
-Conventions for any AI coding agent working in this repository. [`CLAUDE.md`](CLAUDE.md) remains the
-Claude-Code-specific quick reference (build/run commands, package overview, database profiles); this file holds the
-broader, tool-agnostic documentation and workflow conventions below. Some content (test conventions) is intentionally
-restated in both files, since not every agent tool reads `CLAUDE.md`.
+Conventions for any AI coding agent working in this repository — project overview, build/run commands, architecture,
+documentation and git workflow conventions, test conventions and the release checklist.
+[`CLAUDE.md`](CLAUDE.md) is a thin pointer to this file, kept only because Claude Code discovers that filename by
+convention; no Claude-Code-specific content is split out from it.
 
 ## Table of Contents
 
+- [📖 Project Overview](#-project-overview)
 - [⚙️ Tech Stack](#-tech-stack)
+- [🚀 Build & Run Commands](#-build--run-commands)
+- [🏛️ Architecture](#-architecture)
 - [📝 Documentation Conventions](#-documentation-conventions)
 - [🗺️ Documentation File Map](#-documentation-file-map)
 - [🧪 Test Conventions](#-test-conventions)
@@ -15,6 +18,17 @@ restated in both files, since not every agent tool reads `CLAUDE.md`.
 - [🔀 Git Workflow](#-git-workflow)
 - [🚢 Release Checklist](#-release-checklist)
 - [🌲 Evergreen Documentation](#-evergreen-documentation-readmemd--architecturemd)
+
+---
+
+## 📖 Project Overview
+
+HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shooting Club (HPSC) platform. It manages IPSC
+match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this is a pure API
+server.
+
+- **Port / context path:** `8081` / `/hpsc-web`
+- **API docs:** Swagger UI at `http://localhost:8081/hpsc-web/swagger-ui/index.html`
 
 ---
 
@@ -38,6 +52,54 @@ currently in use.
 
 ---
 
+## 🚀 Build & Run Commands
+
+```bash
+# Build
+./mvnw clean install
+
+# Run (uses application.properties; requires MYSQL_USER and MYSQL_PASSWORD env vars)
+./mvnw spring-boot:run
+
+# Run with dev profile (local MySQL at localhost:3306/hpsc_dev)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+
+# All tests (uses H2 in-memory — no external DB needed)
+./mvnw test
+
+# Tests + JaCoCo coverage report (target/site/jacoco/)
+./mvnw verify -Pcoverage
+```
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles)'s Database Profiles section for the profile/DDL matrix —
+tests activate the `test` profile automatically, so no database setup is required to run them. See
+[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/JaCoCo triggers.
+
+---
+
+## 🏛️ Architecture
+
+The application follows a strict layered architecture with unidirectional dependencies:
+
+```
+HTTP Request
+    → Controller  (REST endpoint, DTO validation)
+    → Service     (business logic, @Transactional)
+    → Repository  (Spring Data JPA)
+    → MySQL / H2
+```
+
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full package-by-package breakdown, entity relationships and data-flow
+diagrams.
+
+### Exception handling
+
+All exceptions should extend `FatalException`, `NonFatalException` or `ValidationException`. The `ControllerAdvice`
+automatically maps these to the correct HTTP status and JSON response shape — do not catch and re-throw as generic
+`RuntimeException`.
+
+---
+
 ## 📝 Documentation Conventions
 
 ### British English
@@ -58,6 +120,12 @@ spelling (e.g. "licence", "organisation", "colour", "initialise"), not American 
 Lists of three or more items don't take a comma before the final `and`/`or` (e.g. "clubs, competitors and matches", not
 "clubs, competitors and matches") — consistent with the British English convention above. This doesn't apply to a comma
 joining two independent clauses (e.g. "the build passed, and the release was tagged"), only to the last item of a list.
+
+### Line wrapping
+
+Wrap prose lines in every Markdown file between 100 and 120 characters. This doesn't apply to GFM tables, which may
+run longer to keep columns aligned, or to fenced code blocks, directory trees and diagrams, which keep their own
+natural line lengths.
 
 ### Javadoc
 
@@ -122,20 +190,20 @@ genuinely new concept. Icons already established in this repository's documentat
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation)
 section — README.md is the canonical version if the two ever drift):
 
-| File               | Purpose                                                                  |
-|--------------------|--------------------------------------------------------------------------|
-| `README.md`        | Project overview, setup and links to the rest of the documentation       |
-| `ARCHITECTURE.md`  | Detailed architectural design, layered structure and CI/CD quality gates |
-| `CLAUDE.md`        | Guidance for Claude Code specifically when working in this repository    |
-| `AGENTS.md`        | Cross-tool agent conventions (this file)                                 |
-| `CONTRIBUTING.md`  | New-developer onboarding: setup, database profiles, testing, workflow    |
-| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                  |
-| `HISTORY.md`       | Narrative history of the project's evolution across all versions         |
-| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                    |
-| `LICENSE.md`       | MIT License                                                              |
-| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)      |
+| File               | Purpose                                                                                   |
+|--------------------|-------------------------------------------------------------------------------------------|
+| `README.md`        | Project overview, setup and links to the rest of the documentation                        |
+| `ARCHITECTURE.md`  | Detailed architectural design, layered structure and CI/CD quality gates                  |
+| `CLAUDE.md`        | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                    |
+| `AGENTS.md`        | Project overview, build/run commands, architecture and cross-tool conventions (this file) |
+| `CONTRIBUTING.md`  | New-developer onboarding: setup, database profiles, testing, workflow                     |
+| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                                   |
+| `HISTORY.md`       | Narrative history of the project's evolution across all versions                          |
+| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                                     |
+| `LICENSE.md`       | MIT License                                                                               |
+| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)                       |
 
-Three documentation-only folders supplement these:
+Four documentation-only folders supplement these:
 
 - **`documentation/history/`** holds one of each of the following files per released version:
 
@@ -154,6 +222,9 @@ Three documentation-only folders supplement these:
   | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
   | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
+- **`documentation/recommendations/`** holds non-binding style guidance for topics `AGENTS.md`/`CLAUDE.md` don't
+  (yet) cover as a hard rule — e.g. `standard-rest-conventions.md`, REST endpoint/method naming.
+
 ---
 
 ## 🧪 Test Conventions
@@ -165,18 +236,26 @@ Three documentation-only folders supplement these:
   `test<Scenario>_when<Condition>_then<Expectation>`.
 - JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from
   `spring-boot-starter-webmvc-test` in `pom.xml`, so it is not available.
-- Follow an Arrange-Act-Assert structure; avoid brittle assertions such as over-specified `verify(mock, times(N))` calls
-  or assertions on private/internal state.
+- Follow an Arrange-Act-Assert structure, marking each phase present with a `// Arrange`, `// Act` or `// Assert`
+  comment — omit a phase's comment only when that phase doesn't apply to the test. Tests that verify a thrown
+  exception (typically via `assertThrows(...)`) mark that call with a single `// Act & Assert` comment instead,
+  since invoking the method under test and asserting it throws happen in one statement; precede it with `// Arrange`
+  too if the test builds fixtures first. Avoid brittle assertions such as over-specified `verify(mock, times(N))`
+  calls or assertions on private/internal state.
 - Don't write tests whose sole purpose is verifying Lombok-generated behaviour. Such as a test that only sets a value via a
   generated setter and reads it back via a generated getter, or that only exercises a generated no-args/all-args
   constructor with no accompanying logic. Using getters/setters/builders incidentally to build fixtures or assert real
   business-logic outcomes is fine — only test constructors, `toString()`, `equals()`/`hashCode()`, etc. when they are
   handwritten or contain custom logic.
 - **Group and order tests by the method under test.** Precede each group of tests for a given method with a one-line
-  comment naming it (e.g. `// getByCode()`), matching the style already used in `FirearmTypeTest`/
+  comment naming it (e.g. `// fromCode()`), matching the style already used in `FirearmTypeTest`/
   `ControllerAdviceTest`. Order the groups: constructors first; then public methods before protected methods; within
   each visibility, alphabetically by method name — for overloads of the same name, order by parameter count, then by
   parameter type; `toString()` always comes last, regardless of visibility.
+- **Move private helper methods to the end of the test class.** Fixture/setup helpers (e.g. `createClub`,
+  `validRequest`) go after every `@Test` method, under a `// Helpers` comment, matching the style already used in
+  `IpscCompetitorServiceIntegrationTest`/`IpscMatchServiceIntegrationTest` — keeps the `@Test` methods themselves at
+  the top, in method-under-test order, uninterrupted by fixture code.
 
 ---
 

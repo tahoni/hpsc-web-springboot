@@ -8,14 +8,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MatchCategoryTest {
 
-    // getByName()
+    // fromName()
     @Test
-    void testGetByName_withExactMatch_thenReturnsCorrectCategory() {
+    void testFromName_withExactMatch_thenReturnsCorrectCategory() {
         // Arrange
         String inputName = "Club Shoot";
 
         // Act
-        Optional<MatchCategory> result = MatchCategory.getByName(inputName);
+        Optional<MatchCategory> result = MatchCategory.fromName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -23,12 +23,12 @@ class MatchCategoryTest {
     }
 
     @Test
-    void testGetByName_withCaseInsensitiveMatch_thenReturnsCorrectCategory() {
+    void testFromName_withCaseInsensitiveMatch_thenReturnsCorrectCategory() {
         // Arrange
         String inputName = "league";
 
         // Act
-        Optional<MatchCategory> result = MatchCategory.getByName(inputName);
+        Optional<MatchCategory> result = MatchCategory.fromName(inputName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -36,33 +36,33 @@ class MatchCategoryTest {
     }
 
     @Test
-    void testGetByName_withNullInput_thenReturnsEmptyOptional() {
+    void testFromName_withNullInput_thenReturnsEmptyOptional() {
         // Act
-        Optional<MatchCategory> result = MatchCategory.getByName(null);
+        Optional<MatchCategory> result = MatchCategory.fromName(null);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withBlankInput_thenReturnsEmptyOptional() {
+    void testFromName_withBlankInput_thenReturnsEmptyOptional() {
         // Arrange
         String inputName = "   ";
 
         // Act
-        Optional<MatchCategory> result = MatchCategory.getByName(inputName);
+        Optional<MatchCategory> result = MatchCategory.fromName(inputName);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_withNoMatch_thenReturnsEmptyOptional() {
+    void testFromName_withNoMatch_thenReturnsEmptyOptional() {
         // Arrange
         String inputName = "NonExistentCategory";
 
         // Act
-        Optional<MatchCategory> result = MatchCategory.getByName(inputName);
+        Optional<MatchCategory> result = MatchCategory.fromName(inputName);
 
         // Assert
         assertFalse(result.isPresent());

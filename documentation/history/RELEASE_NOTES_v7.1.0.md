@@ -69,7 +69,7 @@ Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `Shoote
 
 #### Tooling & Documentation
 
-- `.claude/commands/generate-commit-message.md`, `.claude/commands/generate-pr-description.md`
+- `../../.claude/commands/generate-commit-message.md`, `.claude/commands/generate-pr-description.md`
 - `CONTRIBUTING.md`
 
 ### Changed

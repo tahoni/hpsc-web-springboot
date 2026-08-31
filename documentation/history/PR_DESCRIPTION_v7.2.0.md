@@ -23,7 +23,7 @@
 - False "AssertJ is used" claim removed from five docs — the suite uses JUnit Jupiter `Assertions` only
 
 **Removed**
-- One Lombok-only test; the two old impl-level `processCsv` tests superseded by the new interface-level ones
+- One Lombok-only test; the two old impl-level `createAwards` tests superseded by the new interface-level ones
 
 ## 🧪 Test Plan
 
