@@ -96,7 +96,7 @@ evolution of architecture, features and design philosophy across all versions.
 **Key Focus:**
 
 - New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest` (Mockito-based, testing
-  `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing 4
+  `createAwards` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing 4
   JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest` and `ControllerAdviceTest` — overall
   suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - New Claude Code commands `/scaffold-unit-tests` (migrated from a stale, wrong-project prompt file and corrected to
@@ -1115,7 +1115,7 @@ coverage gaps identified by JaCoCo, adds two new Claude Code scaffolding command
 **Test Coverage & Structure**
 
 - `services/AwardServiceTest`/`services/ImageServiceTest` — new Mockito-based interface-contract unit tests, exercising
-  `processCsv` through the `AwardService`/`ImageService` interface type rather than the impl class
+  `createAwards` through the `AwardService`/`ImageService` interface type rather than the impl class
 - Four JaCoCo-identified coverage gaps closed: `ControllerResponse(boolean, String)` and the
   derived-success-from-error-presence branch of `ControllerResponse(LocalDateTime, String, String)`;
   `FirearmType.toString()` for both enum-constructor shapes; `ControllerAdvice.logError`'s null-throwable, wrapped-cause
@@ -2559,7 +2559,7 @@ Based on the evolution to v7.2.0, the following areas are identified for future 
 
 ### Recently Completed (v7.2.0)
 
-- New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `processCsv` through the interface
+- New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `createAwards` through the interface
   type rather than the impl class
 - 4 JaCoCo-identified coverage gaps closed (`ControllerResponse`, `FirearmType.toString()`,
   `ControllerAdvice.logError`); suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
@@ -2744,7 +2744,7 @@ technical information
 
 **Recent Updates (v7.2.0):**
 
-- New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest`, exercising `processCsv`
+- New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest`, exercising `createAwards`
   through the `AwardService`/`ImageService` interface type rather than the impl class
 - Four JaCoCo-identified coverage gaps closed: `ControllerResponse(boolean, String)` and the derived-success branch of
   `ControllerResponse(LocalDateTime, String, String)`; `FirearmType.toString()`; `ControllerAdvice.logError`'s

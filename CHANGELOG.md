@@ -90,7 +90,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Controllers
 
-- **`AwardController.processCsv`, `ImageController.processCsv`:** Renamed to `createAwards`/`createImages`, following this project's action-named REST method convention
+- **`AwardController`, `ImageController`:** Their `createAwards`/`createImages` methods already followed this project's action-named REST method convention; the underlying `AwardService.processCsv`/`ImageService.processCsv` calls they delegate to have now been renamed to match — see the `Services` entry below
 
 #### Documentation
 
@@ -368,7 +368,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Testing
 
 - **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/
-  `ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
+  `ImageService` interface contract (`createAwards`), exercised through the interface type rather than the impl class
 - **`ControllerResponseTest`:** Covers the previously-untested `ControllerResponse(boolean, String)` constructor
   (message/error swap based on `success`), and the `(LocalDateTime, String, String)` constructor's derived-`success`
   -from-error-presence branch (non-null/non-blank error, and blank-but-non-null error)
@@ -485,7 +485,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ControllerResponseTest.testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults`:** Removed — solely exercised
   the Lombok-generated `@NoArgsConstructor` and generated getters with no accompanying logic, per AGENTS.md's Test
   Conventions
-- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `processCsv` coverage,
+- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `createAwards` coverage,
   tested directly against the impl class, is superseded by the new interface-level `services/AwardServiceTest`/
   `services/ImageServiceTest`
 
