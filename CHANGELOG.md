@@ -132,6 +132,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`HpscConstants`:** Added `@since 1.1.0` class-level tag
 - **`IpscConstants`, `SystemConstants`:** Added `@since 1.1.3` class-level tags
 - **`HpscConstants`, `IpscConstants`, `SystemConstants`:** Private constructors now carry a `// Prevent instantiation of this utility class` comment, matching the convention used by `ValueUtil`
+- **`IpscConstants`:** Gains `IPSC_INPUT_DATE_FORMAT` (`SystemConstants.ISO_DATE_FORMAT`); `IPSC_INPUT_DATE_TIME_FORMAT` now sources `SystemConstants.ISO_DATE_TIME_FORMAT` instead of the removed `T_SEPARATED_DATE_TIME_FORMAT`, so all four `IPSC_*` format constants are consistent with the plain ISO formats used elsewhere in the project
+- **`SystemConstants`:** Removed `T_SEPARATED_DATE_TIME_FORMAT` — its only consumer, `IpscConstants`, no longer uses it
 
 #### Enums
 
