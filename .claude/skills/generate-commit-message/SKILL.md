@@ -1,39 +1,45 @@
 ---
-description: Generate a commit message (and matching CHANGELOG.md entry) for the current working tree changes, following AGENTS.md's Git Workflow conventions.
-argument-hint: [optional scope to narrow the message to]
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git --no-pager diff:*), Bash(git log:*), Bash(git --no-pager log:*), Bash(git merge-base:*), Bash(git branch:*), Read, Edit
+name: generate-commit-message
+description: Generate a commit message (and matching CHANGELOG.md entry) for the current working tree changes, following AGENTS.md's Git Workflow conventions. Use whenever the user is about to commit, asks for a commit message/summary, or asks how to describe the current changes.
+user-invocable: true
+allowed-tools:
+  - Bash(git status:*)
+  - Bash(git diff:*)
+  - Bash(git --no-pager diff:*)
+  - Bash(git log:*)
+  - Bash(git --no-pager log:*)
+  - Bash(git merge-base:*)
+  - Bash(git branch:*)
+  - Read
+  - Edit
 ---
 
 # Generate Commit Message
 
-Optional scope narrowing: $ARGUMENTS (limit the message to specific files/areas; leave blank for all staged/unstaged changes)
+Optional scope narrowing may be passed as `args` when this skill is invoked (limit the message to specific files/areas; leave blank for all staged/unstaged changes).
 
-## 🔍 Current state
+## 🔍 Gather current state
 
-Status:
-!`git status --short`
+Before drafting, run these yourself and read their output:
 
-Diff stat:
-!`git --no-pager diff --stat`
-
-Full diff (staged and unstaged):
-!`git --no-pager diff HEAD`
-
-Commits already made on this branch (since it diverged from `develop`, falling back to `main`) — context only, may include commits made outside this session by anyone:
-!`base=$(git merge-base develop HEAD 2>/dev/null || git merge-base main HEAD 2>/dev/null); git --no-pager log --oneline "$base"..HEAD 2>/dev/null`
-
-Diff stat for those already-committed changes:
-!`base=$(git merge-base develop HEAD 2>/dev/null || git merge-base main HEAD 2>/dev/null); git --no-pager diff --stat "$base"..HEAD 2>/dev/null`
-
-Conventions to follow: @AGENTS.md
+1. `git status --short`
+2. `git --no-pager diff --stat`
+3. `git --no-pager diff HEAD` (full diff, staged and unstaged)
+4. Commits already made on this branch — context only, may include commits made outside this session by anyone:
+   ```
+   base=$(git merge-base develop HEAD 2>/dev/null || git merge-base main HEAD 2>/dev/null)
+   git --no-pager log --oneline "$base"..HEAD 2>/dev/null
+   git --no-pager diff --stat "$base"..HEAD 2>/dev/null
+   ```
+5. Read `AGENTS.md` in full for conventions.
 
 ## 🚀 Instructions
 
-Read and strictly follow the **Git Workflow** section in AGENTS.md (loaded above), plus its **Build & Run Commands** and **Architecture** sections for accurate technical detail (build/test commands, package names, architecture) when describing what changed. Treat it as the single source of truth; do not reinterpret or contradict its rules.
+Read and strictly follow the **Git Workflow** section in AGENTS.md, plus its **Build & Run Commands** and **Architecture** sections for accurate technical detail (build/test commands, package names, architecture) when describing what changed. Treat it as the single source of truth; do not reinterpret or contradict its rules.
 
-This command drafts a message for **whatever is currently staged/unstaged** — it is not limited to changes made in the current Claude session. Use the "commits already made on this branch" context above purely to stay consistent (matching scope naming, avoiding duplicate CHANGELOG entries for work already committed by anyone) — never fold already-committed work into the new message or CHANGELOG block. If that context reveals an already-committed change with no matching CHANGELOG entry, flag it to the user and point them at `/sync-unreleased-changes` rather than drafting it here.
+This skill drafts a message for **whatever is currently staged/unstaged** — it is not limited to changes made in the current Claude session. Use the "commits already made on this branch" context above purely to stay consistent (matching scope naming, avoiding duplicate CHANGELOG entries for work already committed by anyone) — never fold already-committed work into the new message or CHANGELOG block. If that context reveals an already-committed change with no matching CHANGELOG entry, flag it to the user and point them at the `sync-unreleased-changes` skill rather than drafting it here.
 
-1. **Inspect the changes above**, do not guess — review the actual diff hunks so the message describes real behaviour, not assumptions. If `$ARGUMENTS` narrows the scope, only consider matching files.
+1. **Inspect the changes above**, do not guess — review the actual diff hunks so the message describes real behaviour, not assumptions. If scope narrowing was passed in `args`, only consider matching files.
 2. **Compose the message** in this exact shape:
 
    ```
@@ -57,7 +63,7 @@ This command drafts a message for **whatever is currently staged/unstaged** — 
 
 ## 📤 Output
 
-Do **not** run `git add` or `git commit` yourself — this command only drafts, for the user to review and run.
+Do **not** run `git add` or `git commit` yourself — this skill only drafts, for the user to review and run.
 
 1. The final commit message(s) as fenced code blocks, each followed by a ready-to-run `git commit` command
 2. Any **CHANGELOG.md additions** in a separate fenced code block under the `## 🧪 [Unreleased]` section (the exact text to add, so the user can copy it directly into CHANGELOG.md — per AGENTS.md's rule, this update belongs in the same commit as the change it documents)
@@ -67,12 +73,12 @@ Example output structure:
 
 **Commit 1:**
 ```
-docs: add commit message command
+docs: add commit message skill
 ...
 ```
 
 ```bash
-git commit -m "docs: add commit message command" ...
+git commit -m "docs: add commit message skill" ...
 ```
 
 **CHANGELOG.md entries:**
@@ -81,5 +87,5 @@ git commit -m "docs: add commit message command" ...
 
 #### Tooling
 
-- **`/generate-commit-message`:** New Claude Code command — drafts commit messages and matching CHANGELOG.md entries from the working tree diff
+- **`generate-commit-message` skill:** Drafts commit messages and matching CHANGELOG.md entries from the working tree diff
 ```

@@ -299,6 +299,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   project's own version history (`1.0.0`), the version in which all these constructors were actually introduced
 - **`FatalException`, `NonFatalException`, `ValidationException`:** Added class-level `@since 1.0.0` tags
 
+#### Tooling
+
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`, `sync-unreleased-changes.md`,
+  `generate-pr-summary.md`, `scaffold-unit-tests.md`, `scaffold-integration-tests.md`:** Converted from Claude Code
+  slash commands to Skills, moved to `.claude/skills/<name>/SKILL.md` — rewritten so Claude runs the previous
+  `` !`cmd` `` bash blocks and `@file` includes itself (skills don't get a slash command's auto-expansion), with
+  `$ARGUMENTS`/`$1` replaced by the skill's `args`; cross-references between them updated to the new skill names
+- **`generate-pr-description`:** Gains a new step that runs the `sync-unreleased-changes` skill (base `develop`, since
+  release branches are cut from it) before renaming `[Unreleased]` into the new version's section, so the CHANGELOG is
+  fully accurate before being folded into the release
+
 ### 🐛 Fixed
 
 #### Domain
