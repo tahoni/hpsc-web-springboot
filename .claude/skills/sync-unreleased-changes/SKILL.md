@@ -16,7 +16,8 @@ allowed-tools:
 
 # Sync Unreleased Changes
 
-An optional base branch override may be passed as `args` (defaults to `develop`; use `main` instead when the current branch is a `hotfix/*` branch, per AGENTS.md's Git Workflow).
+An optional base branch override may be passed as `args` (defaults to `develop`; use `main` instead when the current
+branch is a `hotfix/*` branch, per AGENTS.md's Git Workflow).
 
 ## 🔍 Gather current state
 
@@ -24,7 +25,8 @@ Before drafting, run these yourself and read their output:
 
 1. `git branch --show-current`
 2. `git branch --list develop main` (base branch candidates)
-3. Determine the merge base: `git merge-base HEAD <base>` where `<base>` is `args` if supplied, falling back to `develop`, then `main`
+3. Determine the merge base: `git merge-base HEAD <base>` where `<base>` is `args` if supplied, falling back to
+   `develop`, then `main`
 4. `git --no-pager log --oneline <merge-base>..HEAD` (commits on this branch not yet on the base branch)
 5. `git --no-pager diff <merge-base>..HEAD` (full diff of this branch against its base)
 6. `git status --short` (working tree status — uncommitted changes, if any)
@@ -34,26 +36,55 @@ Before drafting, run these yourself and read their output:
 
 ## 🚀 Instructions
 
-Read and strictly follow the **Documentation Conventions** and **Git Workflow** sections in AGENTS.md (loaded above), plus its **Build & Run Commands** and **Architecture** sections for accurate technical detail when describing what changed. Treat it as the single source of truth.
+Read and strictly follow the **Documentation Conventions** and **Git Workflow** sections in AGENTS.md (loaded above),
+plus its **Build & Run Commands** and **Architecture** sections for accurate technical detail when describing what
+changed. Treat it as the single source of truth.
 
-1. **Determine the branch's full change set.** Combine the committed diff (branch vs. base) and any uncommitted working-tree diff above — together these are every change this branch introduces. Ignore merge commits' own diffs; look at the actual content changes.
-2. **Read the existing `## 🧪 [Unreleased]` section** of CHANGELOG.md (loaded above) and build a mental list of what it already documents.
-3. **Cross-check every notable change against that list.** A change is "notable" per Keep a Changelog norms — new/changed/fixed/deprecated/removed behaviour, public API, schema, config or documentation structure. Skip purely mechanical noise (formatting-only diffs, generated file churn) unless AGENTS.md calls it out specifically (e.g. dependency security overrides *are* notable).
+1. **Determine the branch's full change set.** Combine the committed diff (branch vs. base) and any uncommitted
+   working-tree diff above — together these are every change this branch introduces. Ignore merge commits' own diffs;
+   look at the actual content changes.
+2. **Read the existing `## 🧪 [Unreleased]` section** of CHANGELOG.md (loaded above) and build a mental list of what it
+   already documents.
+3. **Cross-check every notable change against that list.** A change is "notable" per Keep a Changelog norms —
+   new/changed/fixed/deprecated/removed behaviour, public API, schema, config or documentation structure. Skip purely
+   mechanical noise (formatting-only diffs, generated file churn) unless AGENTS.md calls it out specifically (e.g.
+   dependency security overrides *are* notable).
 4. **For each notable change not already covered**, draft a CHANGELOG entry:
-   - Place it under the matching standard subheading (`### ➕ Added`, `### 🔄 Changed`, `### 🐛 Fixed`, `### ⚠️ Deprecated`, `### 🗑️ Removed`, `### 🔐 Security`) — create the subheading if the file's `[Unreleased]` section is missing it, in that category order.
-   - Group it under the right `#### <Area>` sub-header (matching existing area names already used in the file where one fits, e.g. `Domain`, `Repositories`, `Documentation`, `Tooling`, `Configuration`; introduce a new one only if nothing existing fits).
-   - Follow the established bullet style: bold the backticked class/method/file/entity name, a colon, then a concise em-dash-separated description of what changed and why.
-   - British English spelling and grammar throughout.
-5. **For each change already covered**, verify the existing entry is still accurate against the actual diff (right file/class named, description still matches what the code does) — flag any that have drifted, but don't rewrite entries that are still correct just to change their wording.
-6. **Do not remove or alter entries** for changes unrelated to this branch's diff — this skill only adds/corrects coverage for what this branch actually introduced.
-7. **Consolidate duplicate sub-headers across the whole `[Unreleased]` section**, not just newly added entries — this catches drift left by earlier runs or by commits that each added their own `#### <Area>` block. Within each `### <Category>` section (`Added`/`Changed`/`Fixed`/`Deprecated`/`Removed`/`Security`), if the same `#### <Area>` heading appears more than once, merge every occurrence into a single block at the position of its first occurrence — concatenate the bullets in their original relative order, then delete the now-empty duplicate heading(s). Don't reorder, reword or deduplicate the surviving bullets themselves, and don't merge headings that are only similarly named (e.g. `Models` and `DTOs` stay separate unless the file already treats them as the same area).
-8. **Apply the edits directly to `CHANGELOG.md`** using Edit — new bullets under their correct subheading/area (creating empty category headings only if genuinely needed, matching the file's existing heading order), plus the sub-header consolidation from step 7 — do not leave the fix as a suggestion. Do not touch the Table of Contents or any released version section.
+    - Place it under the matching standard subheading (`### ➕ Added`, `### 🔄 Changed`, `### 🐛 Fixed`,
+      `### ⚠️ Deprecated`, `### 🗑️ Removed`, `### 🔐 Security`) — create the subheading if the file's `[Unreleased]`
+      section is missing it, in that category order.
+    - Group it under the right `#### <Area>` sub-header (matching existing area names already used in the file where one
+      fits, e.g. `Domain`, `Repositories`, `Documentation`, `Tooling`, `Configuration`; introduce a new one only if
+      nothing existing fits).
+    - Follow the established bullet style: bold the backticked class/method/file/entity name, a colon, then a concise
+      em-dash-separated description of what changed and why.
+    - British English spelling and grammar throughout.
+5. **For each change already covered**, verify the existing entry is still accurate against the actual diff (right
+   file/class named, description still matches what the code does) — flag any that have drifted, but don't rewrite
+   entries that are still correct just to change their wording.
+6. **Do not remove or alter entries** for changes unrelated to this branch's diff — this skill only adds/corrects
+   coverage for what this branch actually introduced.
+7. **Consolidate duplicate sub-headers across the whole `[Unreleased]` section**, not just newly added entries — this
+   catches drift left by earlier runs or by commits that each added their own `#### <Area>` block. Within each
+   `### <Category>` section (`Added`/`Changed`/`Fixed`/`Deprecated`/`Removed`/`Security`), if the same `#### <Area>`
+   heading appears more than once, merge every occurrence into a single block at the position of its first occurrence —
+   concatenate the bullets in their original relative order, then delete the now-empty duplicate heading(s). Don't
+   reorder, reword or deduplicate the surviving bullets themselves, and don't merge headings that are only similarly
+   named (e.g. `Models` and `DTOs` stay separate unless the file already treats them as the same area).
+8. **Apply the edits directly to `CHANGELOG.md`** using Edit — new bullets under their correct subheading/area (creating
+   empty category headings only if genuinely needed, matching the file's existing heading order), plus the sub-header
+   consolidation from step 7 — do not leave the fix as a suggestion. Do not touch the Table of Contents or any released
+   version section.
 
 ## 📤 Output
 
 After editing CHANGELOG.md, report concisely:
 
-1. **Coverage check summary** — how many notable changes were found on the branch, how many were already documented, how many were newly added.
-2. **What was added**, as a fenced `markdown` diff-style list of the new bullets (or "Nothing to add — `[Unreleased]` already covers every notable change on this branch.").
-3. **Any entries flagged as drifted** (inaccurate against the current diff) that need manual review, with a one-line reason each — do not silently rewrite these; call them out for the user to confirm.
-4. **Any sub-headers consolidated**, e.g. "Merged two `#### Controllers` blocks under `### 🔄 Changed` into one" (or "No duplicate sub-headers found.").
+1. **Coverage check summary** — how many notable changes were found on the branch, how many were already documented, how
+   many were newly added.
+2. **What was added**, as a fenced `markdown` diff-style list of the new bullets (or "Nothing to add — `[Unreleased]`
+   already covers every notable change on this branch.").
+3. **Any entries flagged as drifted** (inaccurate against the current diff) that need manual review, with a one-line
+   reason each — do not silently rewrite these; call them out for the user to confirm.
+4. **Any sub-headers consolidated**, e.g. "Merged two `#### Controllers` blocks under `### 🔄 Changed` into one" (or "No
+   duplicate sub-headers found.").
