@@ -7,11 +7,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClubIdentifierTest {
-    // getByAbbreviation()
+    // fromAbbreviation()
     @Test
-    void testGetByAbbreviation_whenAbbreviationIsExact_thenReturnsMatchingClub() {
+    void testFromAbbreviation_whenAbbreviationIsExact_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("HPSC");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation("HPSC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -19,12 +19,12 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByAbbreviation_whenInputIsCaseInsensitive_thenReturnsMatchingClub() {
+    void testFromAbbreviation_whenInputIsCaseInsensitive_thenReturnsMatchingClub() {
         // Arrange
         String searchName = "sosc";
 
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation(searchName);
 
         // Assert
         assertTrue(result.isPresent());
@@ -32,48 +32,48 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByAbbreviation_whenInputIsNull_thenReturnsEmptyOptional() {
+    void testFromAbbreviation_whenInputIsNull_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(null);
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation(null);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviation_whenInputIsBlank_thenReturnsEmptyOptional() {
+    void testFromAbbreviation_whenInputIsBlank_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(" ");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation(" ");
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviation_whenNoClubMatches_thenReturnsEmptyOptional() {
+    void testFromAbbreviation_whenNoClubMatches_thenReturnsEmptyOptional() {
         // Arrange
         String searchName = "Nonexistent Club";
 
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation(searchName);
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation(searchName);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviation_whenInputIsEmpty_thenReturnsEmptyOptional() {
+    void testFromAbbreviation_whenInputIsEmpty_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation("");
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByAbbreviation_whenAbbreviationIsPmpsc_thenReturnsMatchingClub() {
+    void testFromAbbreviation_whenAbbreviationIsPmpsc_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("PMPSC");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation("PMPSC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -81,20 +81,20 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByAbbreviation_whenAbbreviationIsVisitor_thenReturnsMatchingClub() {
+    void testFromAbbreviation_whenAbbreviationIsVisitor_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByAbbreviation("V");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation("V");
 
         // Assert
         assertTrue(result.isPresent());
         assertEquals(ClubIdentifier.VISITOR, result.get());
     }
 
-    // getByCode()
+    // fromCode()
     @Test
-    void testGetByCode_whenCodeIsKnown_thenReturnsMatchingClub() {
+    void testFromCode_whenCodeIsKnown_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("CCC");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("CCC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -102,36 +102,36 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_whenInputIsNull_thenReturnsEmptyOptional() {
+    void testFromCode_whenInputIsNull_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode(null);
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode(null);
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void testGetByCode_whenInputIsBlank_thenReturnsEmptyOptional() {
+    void testFromCode_whenInputIsBlank_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("   ");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("   ");
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void testGetByCode_whenNoClubMatches_thenReturnsEmptyOptional() {
+    void testFromCode_whenNoClubMatches_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ZZZ");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("ZZZ");
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void testGetByCode_whenCodeIsSosc_thenReturnsMatchingClub() {
+    void testFromCode_whenCodeIsSosc_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("AAA");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("AAA");
 
         // Assert
         assertTrue(result.isPresent());
@@ -139,9 +139,9 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_whenCodeIsHpsc_thenReturnsMatchingClub() {
+    void testFromCode_whenCodeIsHpsc_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("BBB");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("BBB");
 
         // Assert
         assertTrue(result.isPresent());
@@ -149,9 +149,9 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_whenCodeIsVisitor_thenReturnsMatchingClub() {
+    void testFromCode_whenCodeIsVisitor_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("UUU");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("UUU");
 
         // Assert
         assertTrue(result.isPresent());
@@ -159,9 +159,9 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_whenCodeIsCaseInsensitive_thenReturnsMatchingClub() {
+    void testFromCode_whenCodeIsCaseInsensitive_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("ccc");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("ccc");
 
         // Assert
         assertTrue(result.isPresent());
@@ -169,19 +169,19 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByCode_whenInputIsEmpty_thenReturnsEmptyOptional() {
+    void testFromCode_whenInputIsEmpty_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByCode("");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("");
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
-    // getByName()
+    // fromName()
     @Test
-    void testGetByName_whenClubNameIsExact_thenReturnsMatchingClub() {
+    void testFromName_whenClubNameIsExact_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("Hartbeespoortdam Practical Shooting Club");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("Hartbeespoortdam Practical Shooting Club");
 
         // Assert
         assertTrue(result.isPresent());
@@ -189,9 +189,9 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByName_whenNameIsCaseInsensitive_thenReturnsMatchingClub() {
+    void testFromName_whenNameIsCaseInsensitive_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("safari outdoor shooting club");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("safari outdoor shooting club");
 
         // Assert
         assertTrue(result.isPresent());
@@ -199,45 +199,45 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByName_whenInputIsNull_thenReturnsEmptyOptional() {
+    void testFromName_whenInputIsNull_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName(null);
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName(null);
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_whenInputIsBlank_thenReturnsEmptyOptional() {
+    void testFromName_whenInputIsBlank_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("   ");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("   ");
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_whenInputIsEmpty_thenReturnsEmptyOptional() {
+    void testFromName_whenInputIsEmpty_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("");
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_whenNoClubMatches_thenReturnsEmptyOptional() {
+    void testFromName_whenNoClubMatches_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("Nonexistent Club");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("Nonexistent Club");
 
         // Assert
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetByName_whenNameIsPmpsc_thenReturnsMatchingClub() {
+    void testFromName_whenNameIsPmpsc_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("Pretoria Military Practical Shooting Club");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("Pretoria Military Practical Shooting Club");
 
         // Assert
         assertTrue(result.isPresent());
@@ -245,9 +245,9 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByName_whenNameIsVisitor_thenReturnsMatchingClub() {
+    void testFromName_whenNameIsVisitor_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("Visitor");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("Visitor");
 
         // Assert
         assertTrue(result.isPresent());
@@ -255,9 +255,9 @@ public class ClubIdentifierTest {
     }
 
     @Test
-    void testGetByName_whenNameIsUnknown_thenReturnsEmptyOptional() {
+    void testFromName_whenNameIsUnknown_thenReturnsEmptyOptional() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.getByName("UNKNOWN");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromName("UNKNOWN");
 
         // Assert
         assertFalse(result.isPresent());

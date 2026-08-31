@@ -4,15 +4,27 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import za.co.hpsc.web.enums.ClubIdentifier;
 
+/**
+ * JPA {@link AttributeConverter} that maps a {@link ClubIdentifier} to and from its
+ * abbreviation for persistence.
+ *
+ * <p>
+ * On write, the club's abbreviation is stored. On read, the abbreviation is looked up
+ * against {@link ClubIdentifier#fromAbbreviation(String)}; if no match is found,
+ * {@code null} is used.
+ * </p>
+ *
+ * @since 5.3.0
+ */
 @Converter(autoApply = true)
 public class ClubIdentifierConverter implements AttributeConverter<ClubIdentifier, String> {
     @Override
-    public String convertToDatabaseColumn(ClubIdentifier clubIdentifier) {
-        return ((clubIdentifier != null) ? clubIdentifier.getAbbreviation() : null);
+    public String convertToDatabaseColumn(ClubIdentifier attribute) {
+        return ((attribute != null) ? attribute.getAbbreviation() : null);
     }
 
     @Override
-    public ClubIdentifier convertToEntityAttribute(String s) {
-        return ClubIdentifier.getByAbbreviation(s).orElse(null);
+    public ClubIdentifier convertToEntityAttribute(String dbData) {
+        return ClubIdentifier.fromAbbreviation(dbData).orElse(null);
     }
 }

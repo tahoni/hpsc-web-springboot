@@ -26,10 +26,12 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 
 - **Award Ceremonies**: Award data and ceremony grouping, processed from CSV
 - **Image Gallery**: Image metadata processing from CSV
+- **IPSC Competitors**: Competitor record CRUD, including optional home club and gender
+- **IPSC Matches**: Match and match-stage CRUD, including firearm type and match category resolution
 
-JPA entities and repositories also exist for clubs, competitors, matches, match stages and shooter logs. Request
-DTOs exist for match/stage and result submission, laying the groundwork for match management, competitor tracking and
-IPSC data integration. The service and controller layer that will operate on that domain is still being rebuilt.
+JPA entities and repositories also exist for match/competitor scoring and shooter logs. Request DTOs exist for
+competitor scores submission, laying the groundwork for match result processing and ranking calculations — the
+service and controller layer that will operate on that remaining domain is still being built.
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA
 and Hibernate.
@@ -60,8 +62,10 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 ## ✨ Features
 
 - **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data.
-- **Match & Competitor Domain Model**: JPA entities, repositories, type-safe enum converters and request DTOs for clubs,
-  competitors, matches, match stages and shooter logs, ready for the upcoming service/controller layer.
+- **IPSC Competitor & Match Management**: Full CRUD for competitors and matches (with stages), including club,
+  gender, firearm-type and match-category resolution by name.
+- **Match Scoring Domain Model**: JPA entities, repositories, type-safe enum converters and request DTOs for
+  match/competitor scoring and shooter logs, ready for the upcoming result-processing service/controller layer.
 - **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm
   types.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
@@ -161,8 +165,8 @@ This project's documentation is spread across a few files, each with a distinct 
 |----------------------------------------|-------------------------------------------------------------------------------------------------|
 | [`README.md`](README.md)               | Project overview, setup and links to the rest of the documentation (this file)                  |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure and CI/CD quality gates                        |
-| [`CLAUDE.md`](CLAUDE.md)               | Guidance for Claude Code (AI assistant) when working in this repository                         |
-| [`AGENTS.md`](AGENTS.md)               | Cross-tool conventions for AI coding agents working in this repository                          |
+| [`CLAUDE.md`](CLAUDE.md)               | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                          |
+| [`AGENTS.md`](AGENTS.md)               | Project overview, build/run commands, architecture and cross-tool conventions for AI agents     |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md)   | New-developer onboarding: setup, database profiles, testing, workflow                           |
 | [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
 | [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |

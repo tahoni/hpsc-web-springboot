@@ -25,7 +25,7 @@ import java.util.Objects;
 @Service
 public class ImageServiceImpl implements ImageService {
     @Override
-    public ImageResponseHolder processCsv(String csvData)
+    public ImageResponseHolder createImages(String csvData)
             throws FatalException {
 
         if (csvData == null || csvData.isBlank()) {
@@ -45,7 +45,7 @@ public class ImageServiceImpl implements ImageService {
      *
      * <p>
      * The method uses a {@link CsvMapper} and a custom {@link CsvSchema} configuration
-     * to read, map, and convert the input CSV data into instances of {@link ImageRequest}.
+     * to read, map and convert the input CSV data into instances of {@link ImageRequest}.
      * It ensures that CSV headers are correctly processed and supports reordering of columns.
      * </p>
      *

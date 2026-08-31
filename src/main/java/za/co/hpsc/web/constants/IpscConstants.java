@@ -12,22 +12,21 @@ import java.util.List;
  * This class provides a centralised location for settings and configurations
  * used within the IPSC domain.
  * </p>
+ *
+ * @since 1.1.3
  */
 public final class IpscConstants {
     private IpscConstants() {
+        // Prevent instantiation of this utility class
     }
 
-    public static final String IPSC_INPUT_DATE_TIME_FORMAT =
-            SystemConstants.T_SEPARATED_DATE_TIME_FORMAT;
-    public static final String IPSC_OUTPUT_DATE_FORMAT =
-            SystemConstants.ISO_DATE_FORMAT;
-    public static final String IPSC_OUTPUT_DATE_TIME_FORMAT =
-            SystemConstants.ISO_DATE_TIME_FORMAT;
+    public static final String IPSC_INPUT_DATE_FORMAT = SystemConstants.ISO_DATE_FORMAT;
+    public static final String IPSC_INPUT_DATE_TIME_FORMAT = SystemConstants.ISO_DATE_TIME_FORMAT;
+    public static final String IPSC_OUTPUT_DATE_FORMAT = SystemConstants.ISO_DATE_FORMAT;
+    public static final String IPSC_OUTPUT_DATE_TIME_FORMAT = SystemConstants.ISO_DATE_TIME_FORMAT;
 
-    public static final List<String> EXCLUDE_ICS_ALIAS =
-            List.of("15000", "16000");
-    public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS =
-            List.of(ClubIdentifier.UNKNOWN);
+    public static final List<String> EXCLUDE_ICS_ALIAS = List.of("15000", "16000");
+    public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS = List.of(ClubIdentifier.UNKNOWN);
     public static final Integer MAX_SAPSA_NUMBER = 99_999;
 
     public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|RO)$";

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link ImageServiceImpl}'s impl-only helper methods ({@code readImages},
  * {@code mapImages}) - not declared on {@link za.co.hpsc.web.services.ImageService}. The
- * interface's {@code processCsv} contract is covered by
+ * interface's {@code createImages} contract is covered by
  * {@link za.co.hpsc.web.services.ImageServiceTest}.
  */
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +73,7 @@ public class ImageServiceImplTest {
 
     @Test
     public void testMapImages_whenNullImageRequestList_thenThrowsValidationException() {
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.mapImages(null));
     }
@@ -222,7 +222,7 @@ public class ImageServiceImplTest {
                 Image 2,/path/to/image2,image2.png
                 """;
 
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(csvData));
     }
@@ -235,7 +235,7 @@ public class ImageServiceImplTest {
                 Invalid Row Without Correct Columns
                 """;
 
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(invalidCsvData));
     }
@@ -248,7 +248,7 @@ public class ImageServiceImplTest {
                 value1,value2
                 """;
 
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(invalidCsvStructure));
     }
@@ -260,28 +260,28 @@ public class ImageServiceImplTest {
                 Invalid CSV With One Column and no Header
                 """;
 
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(invalidCsv));
     }
 
     @Test
     public void testReadImages_whenBlankCsv_thenThrowsValidationException() {
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages("    "));
     }
 
     @Test
     public void testReadImages_whenEmptyStringCsv_thenThrowsValidationException() {
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(""));
     }
 
     @Test
     public void testReadImages_whenNullCsv_thenThrowsValidationException() {
-        // Act / Assert
+        // Act & Assert
         assertThrows(ValidationException.class, () ->
                 imageService.readImages(null));
     }

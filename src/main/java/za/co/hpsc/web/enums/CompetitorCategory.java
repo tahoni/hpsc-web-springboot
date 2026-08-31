@@ -13,6 +13,8 @@ import java.util.Optional;
  * The enum provides utility methods for retrieving a specific category by its name.
  * If no match is found, the default category is {@code NONE}.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 public enum CompetitorCategory {
@@ -51,13 +53,13 @@ public enum CompetitorCategory {
      * @return an {@code Optional} containing the matching {@code CompetitorCategory} if found,
      * or {@link CompetitorCategory#NONE} otherwise.
      */
-    public static Optional<CompetitorCategory> getByName(String name) {
+    public static Optional<CompetitorCategory> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.of(NONE);
         }
 
         Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
-                .filter(category -> category.isNameMatch(name))
+                .filter(competitorCategory -> competitorCategory.isNameMatch(name))
                 .findFirst();
         return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
     }
@@ -75,14 +77,15 @@ public enum CompetitorCategory {
      *             a {@link CompetitorCategory#NONE}} is returned.
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or {@link CompetitorCategory#NONE} otherwise.
+     * @since 2.0.0
      */
-    public static Optional<CompetitorCategory> getByCode(Integer code) {
+    public static Optional<CompetitorCategory> fromCode(Integer code) {
         if ((code == null) || (code == 0)) {
             return Optional.of(NONE);
         }
 
         Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
-                .filter(category -> code.equals(category.getCode()))
+                .filter(competitorCategory -> code.equals(competitorCategory.getCode()))
                 .findFirst();
         return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
     }

@@ -20,6 +20,8 @@ import java.util.List;
  * and third places. It provides constructors for initialising an award request with basic
  * or detailed metadata.
  * </p>
+ *
+ * @since 1.1.0
  */
 @Getter
 @Setter

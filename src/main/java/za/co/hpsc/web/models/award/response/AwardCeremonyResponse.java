@@ -24,6 +24,8 @@ import java.util.UUID;
  * with varying levels of detail, including options to set UUID, title, description,
  * tags, and other response metadata.
  * </p>
+ *
+ * @since 1.1.0
  */
 @Getter
 @Setter
@@ -54,6 +56,7 @@ public class AwardCeremonyResponse extends Response {
      *                      If null, it defaults to an empty string.
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards. If null, it defaults to an empty list.
+     * @since 1.1.3
      */
     public AwardCeremonyResponse(LocalDate date, String imageFilePath, List<AwardResponse> awards) {
         this.date = date;
@@ -83,6 +86,7 @@ public class AwardCeremonyResponse extends Response {
      *                      If null, it defaults to an empty string.
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards. If null, it defaults to an empty list.
+     * @since 1.1.3
      */
     public AwardCeremonyResponse(UUID uuid, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {
@@ -117,6 +121,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards.
      *                      If null, it defaults to an empty list.
+     * @since 1.1.3
      */
     public AwardCeremonyResponse(UUID uuid, String title, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {

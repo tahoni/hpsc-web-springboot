@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 7.4.1](#-741---2026-08-29) ← Current
+- [🧾 Version 8.0.0](#-800---2026-08-31) ← Current
+- [🧾 Version 7.4.1](#-741---2026-08-29)
 - [🧾 Version 7.4.0](#-740---2026-08-29)
 - [🧾 Version 7.3.0](#-730---2026-08-25)
 - [🧾 Version 7.2.0](#-720---2026-08-25)
@@ -41,6 +42,336 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+## 🧾 [8.0.0] - 2026-08-31
+
+### ➕ Added
+
+#### Controllers
+
+- **`IpscMatchController`:** Rebuilt from an empty stub into a full CRUD controller on `/ipsc/matches` — `createMatch`
+  (`POST`), `updateMatch` (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update),
+  `getMatch` (`GET /{matchId}`) and `getAllMatches` (`GET`, returns every match), following this project's action-named
+  REST method convention (`create`/`update`/`patch`/`get`, not `post`/`put`/`patch`/`get`)
+- **`IpscCompetitorController`:** Rebuilt from an empty stub into a full CRUD controller on `/ipsc/competitors` —
+  `createCompetitor` (`POST`), `updateCompetitor` (`PUT /{competitorId}`, full replace), `patchCompetitor`
+  (`PATCH /{competitorId}`, partial update) and `getCompetitor` (`GET /{competitorId}`)
+
+#### Services
+
+- **`IpscMatchService`/`IpscMatchServiceImpl`:** New service backing `IpscMatchController` — resolves the request's club
+  by name (404 via `NonFatalException` if not found) and its firearm type/category by name (400 via
+  `ValidationException` if unrecognised), maps `MatchRequest` to/from the existing `IpscMatch`/`IpscMatchStage`
+  entities, and persists via the existing `IpscMatchRepository`/`IpscMatchStageRepository`. `patchMatch` upserts stages
+  by stage number (updating a matching stage in place, adding a new one otherwise) rather than replacing the whole stage
+  list, unlike `updateMatch`'s full replace; `getAllMatches` returns every persisted match together with its stages
+- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New service backing `IpscCompetitorController` — resolves the
+  request's optional home club by name (404 via `NonFatalException` if named but not found) and its optional gender by
+  name (400 via `ValidationException` if unrecognised), maps `CompetitorRequest` to/from the existing `Competitor`
+  entity and back out to a `CompetitorResponse`, and persists via the existing `CompetitorRepository`. Unlike
+  `IpscMatchService`'s club, the home club (and now gender) is optional — a `null`/blank name simply leaves the field
+  unset, and `updateCompetitor`'s full replace clears any previously set home club/gender that the request omits
+
+#### Models
+
+- **`MatchRequest`:** Gains `matchFirearmType`/`matchCategory` fields, typed as free-text `String`s resolved by name
+  against `FirearmType`/`MatchCategory` in the service layer (matching how `club` is already resolved against `Club`) —
+  required by `IpscMatchService` to persist an `IpscMatch` (which has no other source for them)
+- **`MatchResponse`/`MatchStageResponse`:** New response DTOs (`models/ipsc/match/response/`) returned by
+  `IpscMatchController`'s endpoints — unlike the request, `MatchResponse.club` is typed as `ClubIdentifier` rather than
+  a plain `String`, since a persisted match's club is always resolvable
+- **`CompetitorRequest`:** New request DTO (`models/ipsc/competitor/request/`) mirroring `Competitor`'s persisted
+  fields — `gender` is a free-text `String` resolved by name against `Gender` in the service layer (matching how
+  `homeClub` is already resolved against `Club`)
+- **`CompetitorResponse`:** New response DTO (`models/ipsc/competitor/response/`) returned by `IpscCompetitorController`
+  's endpoints — mirrors `CompetitorRequest`'s fields, except `homeClub` is typed as `ClubIdentifier` rather than a
+  plain club-name `String`, since a persisted competitor's home club is always resolvable
+
+#### Converters
+
+- **`GenderConverter`:** New `AttributeConverter<Gender, String>`, wired onto `Competitor.gender` via `@Convert` —
+  converts blank/invalid stored values to `null` instead of letting `@Enumerated(STRING)` throw, matching the
+  null-safety already used by the other enum converters
+
+#### Tests
+
+- **`IpscMatchControllerTest`:** New Mockito-only unit test covering `IpscMatchController`'s five endpoints
+- **`IpscMatchServiceIntegrationTest`:** New H2-backed integration test covering `IpscMatchService`'s full contract —
+  validation, club/match not-found (404), create/replace/patch/get/get-all and the patch-vs-replace stage semantics
+- **`IpscCompetitorControllerTest`:** New Mockito-only unit test covering `IpscCompetitorController`'s four endpoints
+- **`IpscCompetitorServiceIntegrationTest`:** New H2-backed integration test covering `IpscCompetitorService`'s full
+  contract — validation, competitor/home-club not-found (404), unrecognised gender (400), create/replace/patch/get and
+  the optional-home-club semantics
+- **`IpscMatchServiceTest`, `IpscCompetitorServiceTest`:** New Mockito-based unit tests for the `IpscMatchService`/
+  `IpscCompetitorService` interface contracts, exercised through the interface type with their repository dependencies
+  mocked — the same contract as `IpscMatchServiceIntegrationTest`/`IpscCompetitorServiceIntegrationTest`, but isolated
+  from the H2-backed Spring context for faster, focused coverage
+- **`IpscMatchServiceImplTest`, `IpscCompetitorServiceImplTest`:** New Mockito-based unit tests for
+  `IpscMatchServiceImpl`'s/`IpscCompetitorServiceImpl`'s impl-only protected helper methods (`applyFields`,
+  `resolveClub`/`resolveHomeClub`, `resolveFirearmType`/`resolveGender`, `resolveMatchCategory`, `toResponse`,
+  `validateForCreate`, plus `findMatchOrThrow`/`findCompetitorOrThrow` and, for matches,
+  `replaceStages`/`upsertStages`) — not declared on the `IpscMatchService`/`IpscCompetitorService` interfaces, so not
+  covered by `IpscMatchServiceTest`/`IpscCompetitorServiceTest`, matching the existing
+  `AwardServiceImplTest`/`ImageServiceImplTest` split between interface-level and impl-only coverage
+- **`GenderTest`:** New unit test covering `Gender.fromName`'s exact/case-insensitive/no-match/null/blank lookup
+  behaviour and its new `toString()` override
+- **`GenderConverterTest`:** New unit test covering `GenderConverter`'s `convertToDatabaseColumn`/
+  `convertToEntityAttribute`, including the null/blank/unrecognised-name-to-`null` fallback behaviour
+
+#### Documentation
+
+- **`documentation/recommendations/standard-rest-conventions.md`:** New reference document covering REST endpoint (URL)
+  and method naming conventions, grounded in this codebase's actual controllers (`AwardController`/`ImageController`'s
+  `createAwards`/`createImages`, `IpscMatchController`'s full CRUD) — `AGENTS.md`'s Documentation File Map updated to
+  list the new `documentation/recommendations/` folder
+- **`AGENTS.md`:** New Line wrapping rule under Documentation Conventions — wrap prose lines in every Markdown file
+  between 100 and 120 characters, excluding GFM tables, fenced code blocks, directory trees and diagrams;
+  `CONTRIBUTING.md`'s Documentation Conventions summary updated to reference it
+
+#### Tooling
+
+- **`/generate-commit-message`:** Now also surfaces commits already made on the current branch (via `git merge-base`
+  against `develop`/`main`), so drafted messages and CHANGELOG entries stay consistent with — and don't duplicate —
+  changes committed outside the current Claude session
+- **`/sync-unreleased-changes`:** Now also sweeps the whole `[Unreleased]` section for `#### <Area>` sub-headers
+  repeated within the same `### <Category>` block and merges them into one, concatenating their bullets in original
+  order — catches drift left by earlier runs or by commits that each added their own block for the same area
+
+#### CI/CD & Configuration
+
+- **`qodana.yaml`:** Re-added — `jetbrains/qodana-jvm:2026.2` linter on the `qodana.starter` profile, targeting JDK
+  25; quality-gate thresholds left commented out. `ARCHITECTURE.md`'s Technology Stack and CI/CD & Quality Gates
+  tables, and `CONTRIBUTING.md`'s own Quality Gates table, reverse-synced to list it again as running locally/via IDE
+  only, since no CI workflow triggers it
+
+### 🔄 Changed
+
+#### Models
+
+- **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/
+  `MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage,
+  not a single competitor's, so the singular "Result" naming was misleading
+- **`za.co.hpsc.web.models.ipsc.request`:** Split into `za.co.hpsc.web.models.ipsc.match.request` (match/stage
+  submission DTOs) and `za.co.hpsc.web.models.ipsc.scores.request` (competitor scores submission DTOs)
+- **`Placing`:** Moved from `models/shared` to `models/award/shared`, since it's only used to back award placements;
+  `AwardPlacing`'s import updated accordingly
+- **`MatchOverallScoresRequest`/`MatchStageScoresRequest`** (and their CSV variants): `division`, `club` and
+  `powerFactor` are now typed as `Division`, `ClubIdentifier` and `PowerFactor` respectively, and `categories` as
+  `List<CompetitorCategory>` — previously all four were free-text `String` fields
+- **`Request`, `Response`, `AwardRequest`, `AwardRequestForCSV`, `AwardResponse`, `AwardCeremonyResponse`,
+  `AwardCeremonyResponseHolder`:** Added `@since 1.1.0` class-level tags
+- **`ControllerResponse`, `AwardPlacing`, `Placing`:** Added `@since 1.1.3` class-level tags
+- **`ImageRequest`, `ImageRequestForCsv`, `ImageResponse`, `ImageResponseHolder`:** Added `@since 1.0.0` class-level
+  tags
+- **`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequestForCSV`, `MatchOverallScoresRequest`,
+  `MatchStageScoresRequest`, `MatchStageRequest`, `IpscMatchStageScore`, `IpscMatchScore`, `IpscCommonScore`:** Added
+  `@since 7.4.0` class-level tags
+- **`MatchRequest`:** Added `@since 1.1.3` class-level tag
+- **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`,
+  `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
+
+#### Controllers
+
+- **`AwardController`, `ImageController`:** Their `createAwards`/`createImages` methods already followed this project's
+  action-named REST method convention; the underlying `AwardService.processCsv`/`ImageService.processCsv` calls they
+  delegate to have now been renamed to match — see the `Services` entry below
+- **`ImageController`, `AwardController`:** Added class-level `@since` tags (`1.0.0`, `1.1.0` respectively)
+- **`AwardController`, `ImageController`:** Bulk CSV endpoints moved from `POST /awards`/`POST /images` to
+  `POST /awards/bulk`/`POST /images/bulk` and now return `201 Created` (previously `200 OK`), matching
+  `IpscCompetitorController.createCompetitor`'s create-endpoint convention; `@Operation` summary/description reworded
+  from generic CSV processing to bulk creation
+
+#### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Rewrapped to a consistent ~120-character line width — no
+  content changes
+- **`CLAUDE.md`:** Removed a stale Runtime line (claimed Spring Boot `4.0.5`; `pom.xml`'s parent is `4.1.0`) and two
+  generic Maven test-invocation examples; replaced the Database Profiles table (which had drifted out of sync with
+  `CONTRIBUTING.md`'s — it said "manual migrations" where Flyway is actually used) and the Code Quality & CI section
+  (duplicating `ARCHITECTURE.md`'s CI/CD & Quality Gates table) with pointers to those files
+- **`AGENTS.md`, `CLAUDE.md`:** `CLAUDE.md`'s Project Overview, Build & Run Commands, Architecture and Testing
+  Patterns sections merged into `AGENTS.md` so any AI coding agent — not just Claude Code — gets the same guidance;
+  `CLAUDE.md` reduced to a short pointer, since nothing in it was Claude-Code-specific. `README.md`'s and `AGENTS.md`'s
+  own Documentation File Map, `ARCHITECTURE.md`'s Development Guidelines section, and the five `.claude/commands/*.md`
+  skill files that cited `CLAUDE.md`'s removed sections updated to reference `AGENTS.md` (or `CONTRIBUTING.md` directly
+  for the Database Profiles table) instead
+- **`AGENTS.md`:** Test Conventions gains a helper-placement rule — private fixture/setup helpers go after every
+  `@Test` method, under a `// Helpers` comment, so the `@Test` methods stay together at the top, uninterrupted by
+  fixture code; `IpscCompetitorServiceIntegrationTest`/`IpscMatchServiceIntegrationTest` updated to match
+- **`AGENTS.md`:** Arrange-Act-Assert rule extended to require a `// Arrange`, `// Act` or `// Assert` comment marking
+  each phase present in a test — a phase's comment is omitted only when that phase doesn't apply. Tests verifying a
+  thrown exception (typically `assertThrows(...)`) mark that call with a single `// Act & Assert` comment instead,
+  since the act and assert happen in one statement
+- **`ARCHITECTURE.md`:** Package layout, Controllers/Services tables and model documentation reverse-synced to the IPSC
+  module rebuild — `IpscController`'s empty-stub row replaced by `IpscCompetitorController`/`IpscMatchController`
+  (and their `IpscCompetitorService`/`IpscMatchService` counterparts), the package tree's `models/ipsc/request/` split
+  into `models/ipsc/match/request/`/`models/ipsc/scores/request/` to match, and the groundwork note on the service
+  layer narrowed to reflect that only the CRUD services above currently exist
+- **`ARCHITECTURE.md`:** System Overview table's single "Match & Competitor Domain" row split into "IPSC Competitors &
+  Matches" (now full CRUD) and "Match Scoring & Shooter Logs" (still groundwork); the `models/ipsc/match/request/`
+  package-tree comment no longer says "(groundwork)" now that `IpscMatchController` consumes it; the `repositories/`
+  comment now names which repositories are wired to the new IPSC services versus still unwired
+- **`README.md`:** Introduction and Features sections updated to describe the new IPSC competitor/match CRUD as
+  implemented, narrowing the "still being rebuilt" language to the match-scoring/shooter-log domain that remains
+  groundwork
+- **`CONTRIBUTING.md`:** Layered-architecture note narrowed from "the match/competitor domain's service layer" to "the
+  match/competitor scoring domain's service layer", since the competitor/match CRUD service layer now exists
+
+#### Tests
+
+- **`AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`,
+  `IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceIntegrationTest`,
+  `IpscMatchServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`, `IpscCompetitorServiceImplTest`,
+  `IpscMatchServiceImplTest`:** Missing `// Arrange`/`// Act`/`// Assert`/`// Act & Assert` comments added throughout,
+  per `AGENTS.md`'s extended Arrange-Act-Assert rule above
+- **`AwardControllerTest`, `ImageControllerTest`, `IpscCompetitorControllerTest`, `IpscMatchControllerTest`,
+  `IpscCompetitorServiceTest`, `IpscMatchServiceImplTest`:** Removed redundant `verify(mock, times(1))` calls —
+  simplified to bare `verify(mock)`, since `times(1)` is Mockito's default and asserted nothing extra, per
+  `AGENTS.md`'s existing brittle-assertion rule. `verify(mock, times(2))` in
+  `IpscMatchServiceImplTest.testReplaceStages_whenStageRequestsProvided_thenPersistsEachAndReturnsInOrder` left as
+  is — that count is the actual behaviour under test
+- **`HpscWebApplicationTest`, `AwardServiceIntegrationTest`, `ImageServiceIntegrationTest`:** Stopped excluding
+  `DataSourceAutoConfiguration`/`HibernateJpaAutoConfiguration` — `@SpringBootTest` with no `classes=` boots the whole
+  app via component scan, and now that `IpscMatchServiceImpl` genuinely depends on JPA, excluding it broke context
+  loading for every test that boots the full context, not just tests of JPA-touching services
+- **`AwardControllerTest`, `ImageControllerTest`:** Updated to mock/verify the renamed `createAwards`/`createImages`
+  service methods and assert `201 Created` instead of `200 OK`
+- **`AwardServiceTest`, `AwardServiceIntegrationTest`, `ImageServiceTest`, `ImageServiceIntegrationTest`:** Updated to
+  call the renamed `createAwards`/`createImages` methods
+- **`ClubIdentifierTest`, `CompetitorCategoryTest`, `DivisionTest`, `FirearmTypeTest`, `MatchCategoryTest`,
+  `PowerFactorTest`:** Updated to call the renamed `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName`
+  factory methods, including their test method names (e.g. `testGetByAbbreviation_*` → `testFromAbbreviation_*`)
+
+#### Configs
+
+- **`ControllerAdvice`:** Gains a class-level `@since 1.0.0` tag and full `@param`/`@return` Javadoc on every exception
+  handler and helper method — none of it was previously documented; `@since` tags also added to the individual
+  handler/helper methods introduced later than the class itself — `handleValidationException`/`handleNonFatalException`
+  at `5.4.0`; `handleHttpMessageConversionException`, `handleUnhandledException`, `buildErrorResponse` and both
+  `logError` overloads at `7.0.0`
+
+#### Services
+
+- **`ImageService`:** Added `@since 1.0.0` class-level tag
+- **`AwardService`:** Added `@since 1.1.0` class-level tag
+- **`AwardService.processCsv`, `ImageService.processCsv`:** Renamed to `createAwards`/`createImages`, matching the
+  already-named `AwardController.createAwards`/`ImageController.createImages`; Javadoc reworded to describe the
+  CSV-to-response transform (no persistence) and now documents the previously-undeclared `ValidationException` thrown
+  for null/blank/unparseable CSV
+
+#### Utils
+
+- **`ValueUtil`:** Added `@since 1.1.0` class-level tag
+- **`NumberUtil`, `StringUtil`:** Added `@since 1.1.3` class-level tags
+- **`DateUtil`:** `@since` corrected from `2.0.0` to `4.1.0` — the class was originally added in `2.0.0` but later
+  deleted and reintroduced in `4.1.0`, which is when it actually became continuously available
+- **`ValueUtil`:** Removed the private constructor's Javadoc block in favour of the plain
+  `// Utility class, not to be instantiated` inline comment already beside it — the block only restated what the comment
+  already says
+- **`NumberUtil`, `StringUtil`, `ValueUtil`:** Added `@since` tags to individual methods introduced later than the class
+  itself — e.g. `ValueUtil.nullAsDefault`/`nullAsDefaultString` at `7.0.0`, added long after the class's own `1.1.0`
+
+#### Constants
+
+- **`HpscConstants`:** Added `@since 1.1.0` class-level tag
+- **`IpscConstants`, `SystemConstants`:** Added `@since 1.1.3` class-level tags
+- **`HpscConstants`, `IpscConstants`, `SystemConstants`:** Private constructors now carry a
+  `// Prevent instantiation of this utility class` comment, matching the convention used by `ValueUtil`
+- **`IpscConstants`:** Gains `IPSC_INPUT_DATE_FORMAT` (`SystemConstants.ISO_DATE_FORMAT`); `IPSC_INPUT_DATE_TIME_FORMAT`
+  now sources `SystemConstants.ISO_DATE_TIME_FORMAT` instead of the removed `T_SEPARATED_DATE_TIME_FORMAT`, so all four
+  `IPSC_*` format constants are consistent with the plain ISO formats used elsewhere in the project
+- **`SystemConstants`:** Removed `T_SEPARATED_DATE_TIME_FORMAT` — its only consumer, `IpscConstants`, no longer uses it
+
+#### Enums
+
+- **`ClubIdentifier`:** Added class-level Javadoc matching the convention already used by the other enums, and corrected
+  its `fromName`/`fromAbbreviation`/`fromCode` Javadoc, which still referred to a stale `ClubReference` type name and an
+  inaccurate "null or negative" description for the (`String`-typed) `code` parameter
+- **`ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`:** Renamed
+  `getByName`/`getByAbbreviation`/`getByCode`/`getByAbbreviationOrName` factory methods to `fromName`/
+  `fromAbbreviation`/`fromCode`/`fromAbbreviationOrName` — a more idiomatic name for an `Optional`-returning static
+  factory; behaviour unchanged
+- **`Gender`:** Gains `name`/`abbreviation` fields, a case-insensitive `fromName()` factory method and a `toString()`
+  override, bringing it in line with the shape of the other enums
+- **`Gender`:** Added class-level Javadoc and `fromName()` method Javadoc, bringing it in line with the other enums, all
+  of which were already documented
+- **`Gender`:** Added `@since 7.0.0` class-level tag
+- **`ClubIdentifier`:** Added `@since 5.0.0` class-level tag
+- **`CompetitorCategory`, `Division`, `FirearmType`, `MatchCategory`, `PowerFactor`:** Added `@since 1.1.3` class-level
+  tags
+- **`ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`:** Added `@since` tags to individual
+  factory/lookup methods introduced later than the class itself
+
+#### Converters
+
+- **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`,
+  `MatchCategoryConverter`, `PowerFactorConverter`:** Parameter names aligned to `AttributeConverter`'s own convention
+  (`attribute`/`dbData`), for consistency with the new `GenderConverter`
+- **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`,
+  `MatchCategoryConverter`, `PowerFactorConverter`:** Updated to call the renamed `fromX` factory methods
+- **`GenderConverter`:** `convertToEntityAttribute` now delegates to `Gender.fromName(...).orElse(null)` instead of a
+  manual `Gender.valueOf()`/try-catch — lookups are now case-insensitive, matching the other enum converters
+- **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`,
+  `GenderConverter`, `MatchCategoryConverter`, `PowerFactorConverter`:** Added class-level Javadoc describing what each
+  converter stores on write and how it resolves values on read — none previously had any
+- **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`,
+  `MatchCategoryConverter`, `PowerFactorConverter`:** Added `@since 5.3.0` class-level tags
+- **`GenderConverter`:** Added `@since 8.0.0` class-level tag, matching this in-progress, still-unreleased version
+
+#### Exceptions
+
+- **`FatalException`, `NonFatalException`, `ValidationException`:** Trimmed constructor Javadoc that duplicated verbatim
+  JDK prose (`initCause`, `getMessage()`/`getCause()` references) down to concise, project-specific wording; corrected
+  `@since` tags that had been copied from `java.lang.Exception`/`IllegalArgumentException` (`1.4`/`1.5`/`1.7`) to this
+  project's own version history (`1.0.0`), the version in which all these constructors were actually introduced
+- **`FatalException`, `NonFatalException`, `ValidationException`:** Added class-level `@since 1.0.0` tags
+
+#### Tooling
+
+- **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`, `sync-unreleased-changes.md`,
+  `generate-pr-summary.md`, `scaffold-unit-tests.md`, `scaffold-integration-tests.md`:** Converted from Claude Code
+  slash commands to Skills, moved to `.claude/skills/<name>/SKILL.md` — rewritten so Claude runs the previous
+  `` !`cmd` `` bash blocks and `@file` includes itself (skills don't get a slash command's auto-expansion), with
+  `$ARGUMENTS`/`$1` replaced by the skill's `args`; cross-references between them updated to the new skill names
+- **`generate-pr-description`:** Gains a new step that runs the `sync-unreleased-changes` skill (base `develop`, since
+  release branches are cut from it) before renaming `[Unreleased]` into the new version's section, so the CHANGELOG is
+  fully accurate before being folded into the release
+
+### 🐛 Fixed
+
+#### Domain
+
+- **`Competitor.gender`:** Removed a stray `@Enumerated(EnumType.STRING)` left over from before `GenderConverter`
+  existed — Hibernate 7 rejects a field carrying both `@Enumerated` and a custom `@Convert`, so any Spring context that
+  actually initialises JPA (previously none did) failed to start. Only surfaced once `IpscMatchServiceIntegrationTest`
+  became this project's first JPA-backed test
+
+#### Documentation
+
+- **`documentation/history/RELEASE_NOTES_v7.1.0.md`:** Corrected its `.claude/commands/generate-commit-message.md`
+  reference to `../../.claude/commands/generate-commit-message.md` — the archived file lives two directories below the
+  repository root, so the unprefixed relative link was broken
+- **`documentation/history/RELEASE_NOTES_v7.2.0.md`, `PR_DESCRIPTION_v7.2.0.md`:** Corrected stale `processCsv`
+  references to `createAwards`, matching `AwardService.processCsv`'s/`ImageService.processCsv`'s rename above
+
+### 🗑️ Removed
+
+#### Controllers
+
+- **`IpscController`:** Deleted — its `@RequestMapping("/ipsc/competitor")` role is superseded by the new
+  `IpscCompetitorController` stub as part of the IPSC module split into per-concern controllers
+
+#### Models
+
+- **`MatchStagesRequest`:** Deleted — this unused wrapper around `matchId` plus a `List<MatchStageRequest>` was never
+  consumed by any controller; callers adding or updating stages on an existing match now just pass a plain
+  `List<MatchStageRequest>` directly
+
+#### Tests
+
+- **`FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`:** Deleted — every test in these files only
+  exercised the JDK superclass constructor delegation (`Exception`/`RuntimeException`/`IllegalArgumentException` storing
+  a message/cause), with no HPSC-specific logic of their own to protect against regression
+
 ---
 
 ## 🧾 [7.4.1] - 2026-08-29
@@ -49,14 +380,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Documentation
 
-- **`HISTORY.md`:** New "Major Version Goals" subsection under Project Philosophy Evolution — summarises the driving goal behind each major version line (4.x, 5.x, 6.x, 7.x)
-- **`HISTORY.md`:** New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" phase entry — captures the test-convention, documentation-accuracy and AI-agent-tooling work spanning those three releases
+- **`HISTORY.md`:** New "Major Version Goals" subsection under Project Philosophy Evolution — summarises the driving
+  goal behind each major version line (4.x, 5.x, 6.x, 7.x)
+- **`HISTORY.md`:** New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" phase entry — captures the
+  test-convention, documentation-accuracy and AI-agent-tooling work spanning those three releases
 
 ### 🔄 Changed
 
 #### Documentation
 
-- **`AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md`, `RELEASE_NOTES.md`:** Rewrapped to a consistent ~120-character line width — prose, list items and table columns realigned; no content changes beyond a handful of incidental copyedits surfaced along the way
+- **`AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md`,
+  `RELEASE_NOTES.md`:** Rewrapped to a consistent ~120-character line width — prose, list items and table columns
+  realigned; no content changes beyond a handful of incidental copyedits surfaced along the way, including matching
+  Oxford-comma removals in `PowerFactor`'s, `IpscCompetitorService`'s and `IpscMatchService`'s (and their impls')
+  Javadoc, per `AGENTS.md`'s Serial commas rule
 
 ---
 
@@ -219,7 +556,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Testing
 
 - **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/
-  `ImageService` interface contract (`processCsv`), exercised through the interface type rather than the impl class
+  `ImageService` interface contract (`createAwards`), exercised through the interface type rather than the impl class
 - **`ControllerResponseTest`:** Covers the previously-untested `ControllerResponse(boolean, String)` constructor
   (message/error swap based on `success`), and the `(LocalDateTime, String, String)` constructor's derived-`success`
   -from-error-presence branch (non-null/non-blank error, and blank-but-non-null error)
@@ -336,7 +673,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ControllerResponseTest.testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults`:** Removed — solely exercised
   the Lombok-generated `@NoArgsConstructor` and generated getters with no accompanying logic, per AGENTS.md's Test
   Conventions
-- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `processCsv` coverage,
+- **`services/impl/AwardServiceTest`, `services/impl/ImageServiceTest`:** Removed — their thin `createAwards` coverage,
   tested directly against the impl class, is superseded by the new interface-level `services/AwardServiceTest`/
   `services/ImageServiceTest`
 

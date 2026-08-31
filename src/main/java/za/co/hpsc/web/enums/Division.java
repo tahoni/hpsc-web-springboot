@@ -14,6 +14,8 @@ import java.util.Optional;
  * Each division is associated with a name and may optionally include
  * an abbreviation for easier reference.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 public enum Division {
@@ -83,7 +85,7 @@ public enum Division {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
      */
-    public static Optional<Division> getByName(String name) {
+    public static Optional<Division> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
             return Optional.empty();
         }
@@ -107,7 +109,7 @@ public enum Division {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
      */
-    public static Optional<Division> getByAbbreviation(String abbreviation) {
+    public static Optional<Division> fromAbbreviation(String abbreviation) {
         if ((abbreviation == null) || (abbreviation.isBlank())) {
             return Optional.empty();
         }
@@ -131,7 +133,7 @@ public enum Division {
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty if no match is found.
      */
-    public static Optional<Division> getByAbbreviationOrName(String value) {
+    public static Optional<Division> fromAbbreviationOrName(String value) {
         if ((value == null) || (value.isBlank())) {
             return Optional.empty();
         }
@@ -155,8 +157,9 @@ public enum Division {
      *             an empty {@code Optional} is returned.
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
+     * @since 2.0.0
      */
-    public static Optional<Division> getByCode(Integer code) {
+    public static Optional<Division> fromCode(Integer code) {
         if ((code == null) || (code <= 0)) {
             return Optional.empty();
         }

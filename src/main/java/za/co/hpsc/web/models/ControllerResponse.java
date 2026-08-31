@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
  * It provides constructors for different initialisation scenarios, enabling flexible
  * response creation based on specific requirements.
  * </p>
+ *
+ * @since 1.1.3
  */
 @Getter
 @Setter
@@ -67,6 +69,7 @@ public class ControllerResponse {
      *                  Can be null.
      * @param error     a description of any error associated with the response.
      *                  Can be null.
+     * @since 2.0.0
      */
     public ControllerResponse(@NotNull LocalDateTime timestamp, boolean success, String message,
                               String error) {

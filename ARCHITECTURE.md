@@ -41,6 +41,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Validation        | Hibernate Validator, Jakarta Validation                             |
 | Testing           | JUnit, Mockito, Spring Test                                         |
 | Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
+| Static analysis   | Qodana JVM (`jetbrains/qodana-jvm`, config in `qodana.yaml`)        |
 | Code generation   | Lombok                                                              |
 | Port / context    | `8081` / `/hpsc-web`                                                |
 
@@ -63,7 +64,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │                           HpscConstants, IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
 │   │   │                           AwardController, ImageController
-│   │   │                           IpscController          (empty stub — no endpoints yet)
+│   │   │                           IpscCompetitorController, IpscMatchController
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
 │   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
 │   │   │                           DivisionConverter, FirearmTypeConverter
@@ -80,11 +81,13 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   ├───award/          # Award request/response models
 │   │   │   ├───image/          # Image gallery request/response models
 │   │   │   ├───ipsc/
-│   │   │   │   ├───request/    # IPSC match/stage/result request DTOs (groundwork)
-│   │   │   │   └───shared/     # Comstock-scoring shared fields (groundwork)
+│   │   │   │   ├───match/request/  # IPSC match/stage request DTOs, consumed by IpscMatchController
+│   │   │   │   ├───scores/request/ # IPSC competitor scores request DTOs (groundwork)
+│   │   │   │   └───shared/         # Comstock-scoring shared fields (groundwork)
 │   │   │   ├───shared/         # Placing
 │   │   │   └───(root)          # Request, Response, ControllerResponse
-│   │   ├───repositories/       # Spring Data JPA interfaces (not yet wired to any service)
+│   │   ├───repositories/       # Spring Data JPA interfaces — Club/Competitor/IpscMatch/IpscMatchStage wired to the
+│   │   │                           IPSC services; MatchCompetitor/MatchStageCompetitor/ShooterLog* not yet wired
 │   │   ├───services/           # Service interfaces
 │   │   │   └───impl/           # Service implementations
 │   │   └───utils/              # Utility classes
@@ -111,11 +114,12 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting club operations. Core
 responsibilities:
 
-| Domain                        | Description                                                                                                                                                   |
-|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Award Ceremonies**          | Award data and ceremony grouping, processed from CSV                                                                                                          |
-| **Image Gallery**             | Image metadata processing from CSV                                                                                                                            |
-| **Match & Competitor Domain** | JPA entities and repositories exist for matches, competitors, clubs and shooter logs, but the service/controller layer that operates on them is being rebuilt |
+| Domain                           | Description                                                                                                                                                    |
+|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
+| **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
+| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, via `IpscCompetitorController`/`IpscMatchController`                                                 |
+| **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 
@@ -135,11 +139,12 @@ HTTP Request
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller        | Mapping                     | Responsibility                            |
-|-------------------|-----------------------------|-------------------------------------------|
-| `AwardController` | `/hpsc-web/awards`          | Award CSV processing                      |
-| `ImageController` | `/hpsc-web/images`          | Image CSV processing                      |
-| `IpscController`  | `/hpsc-web/ipsc/competitor` | Empty stub — no endpoints implemented yet |
+| Controller                 | Mapping             | Responsibility                            |
+|----------------------------|---------------------|-------------------------------------------|
+| `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                      |
+| `ImageController`          | `/hpsc-web/images`  | Image CSV processing                      |
+| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD                      |
+| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages |
 
 All controllers:
 
@@ -157,12 +162,14 @@ All controllers:
 
 Contains all business logic.
 
-| Interface      | Implementation     | Role                 |
-|----------------|--------------------|----------------------|
-| `AwardService` | `AwardServiceImpl` | Award CSV processing |
-| `ImageService` | `ImageServiceImpl` | Image CSV processing |
+| Interface               | Implementation              | Role                                      |
+|-------------------------|-----------------------------|-------------------------------------------|
+| `AwardService`          | `AwardServiceImpl`          | Award CSV processing                      |
+| `ImageService`          | `ImageServiceImpl`          | Image CSV processing                      |
+| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages |
+| `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD                      |
 
-> The match/competitor domain's service layer (bulk import, CRUD, entity initialisation) is being rebuilt — only `AwardService`/`ImageService` currently exist. Neither of them calls into the repository layer directly; `repositories/` currently has no service-layer caller.
+> The wider match/competitor domain's bulk-import and entity-initialisation service layer remains removed pending a rebuild — only the CRUD services above currently exist.
 
 ---
 
@@ -223,12 +230,13 @@ Request/response models for the award and image CSV pipelines.
 `Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON
 envelope.
 
-#### `models/ipsc/request/` and `models/ipsc/shared/`
+#### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
-Request DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest`/`MatchStagesRequest` for match/stage
-submission, `MatchOverallResultRequest`/`MatchStageResultRequest` (plus CSV variants) for competitor result submission,
-and the shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`. Groundwork only —
-not yet consumed by `IpscController`.
+DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest` and `MatchResponse`/`MatchStageResponse`
+(consumed by `IpscMatchController`), `CompetitorRequest` and `CompetitorResponse` (consumed by
+`IpscCompetitorController`), and, still groundwork only — not yet consumed by any controller —
+`MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
+shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
 ---
 
@@ -342,17 +350,18 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                  | Trigger                                                                         |
-|-----------------------|-----------------------|---------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                | Push / PR to `main` / `develop`; weekly schedule                                |
-| **Code Coverage**     | JaCoCo                | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                   |
-| **Build & Tests**     | Maven (`./mvnw test`) | Run locally / by reviewers before merge; H2 in-memory — no external DB required |
+| Gate                  | Tool                                | Trigger                                                                         |
+|-----------------------|-------------------------------------|---------------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                              | Push / PR to `main` / `develop`; weekly schedule                                |
+| **Static Analysis**   | Qodana JVM (`jetbrains/qodana-jvm`) | Run locally / via IDE against `qodana.yaml` — no CI workflow wired up yet       |
+| **Code Coverage**     | JaCoCo                              | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                   |
+| **Build & Tests**     | Maven (`./mvnw test`)               | Run locally / by reviewers before merge; H2 in-memory — no external DB required |
 
 ---
 
 ## 📚 Development Guidelines
 
-Refer to [CLAUDE.md](CLAUDE.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
+Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
 commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section
 for a full map of this project's documentation.
 

@@ -17,8 +17,8 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 
 ### 🧪 Interface-Contract Unit Tests for `AwardService`/`ImageService`
 
-- New `services/AwardServiceTest`/`services/ImageServiceTest` — Mockito-based unit tests exercising `processCsv`, the only method each interface declares, through the interface type rather than the impl class.
-- Superseded the old `services/impl/AwardServiceTest`/`services/impl/ImageServiceTest`, whose thin `processCsv` coverage was tested directly against the impl class. Impl-only helper methods (`readAwards`/`mapAwards`, `readImages`/`mapImages`) remain covered by the existing `services/impl/*ImplTest` classes.
+- New `services/AwardServiceTest`/`services/ImageServiceTest` — Mockito-based unit tests exercising `createAwards`, the only method each interface declares, through the interface type rather than the impl class.
+- Superseded the old `services/impl/AwardServiceTest`/`services/impl/ImageServiceTest`, whose thin `createAwards` coverage was tested directly against the impl class. Impl-only helper methods (`readAwards`/`mapAwards`, `readImages`/`mapImages`) remain covered by the existing `services/impl/*ImplTest` classes.
 
 ### 📈 Four JaCoCo Coverage Gaps Closed
 

@@ -29,6 +29,8 @@ import java.util.List;
  * The {@code @JsonCreator} constructor allows for creating instances with a subset of fields,
  * specifically focusing on the required fields for minimal valid initialisation.
  * </p>
+ *
+ * @since 1.1.0
  */
 @Getter
 @Setter
@@ -96,6 +98,7 @@ public abstract class AwardRequestForCSV {
      * @param firstPlaceName  the name of the first-place winner. Must not be null or blank.
      * @param secondPlaceName the name of the second-place winner. Can be null.
      * @param thirdPlaceName  the name of the third-place winner. Can be null.
+     * @since 1.1.1
      */
     public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,
                               @JsonProperty(value = "ceremonyTitle", required = true) String ceremonyTitle,
