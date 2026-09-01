@@ -86,30 +86,4 @@ public class CompetitorRequestForCSV {
      * The competitor's email address.
      */
     private String emailAddress;
-
-    /**
-     * Constructs a {@code CompetitorRequestForCSV} with a subset of fields, leaving
-     * {@code dateOfBirth}, {@code gender}, {@code homeClub} and {@code clubNumber} unset.
-     *
-     * @param firstName        the competitor's first name.
-     * @param lastName         the competitor's last name.
-     * @param middleNames      the competitor's middle name(s), if any.
-     * @param nickname         the competitor's nickname, if any.
-     * @param sapsaNumber      the competitor's SAPSA membership number.
-     * @param competitorNumber the competitor's number, as assigned for competition.
-     * @param cellphoneNumber  the competitor's cellphone number.
-     * @param emailAddress     the competitor's email address.
-     */
-    public CompetitorRequestForCSV(String firstName, String lastName, String middleNames, String nickname,
-                                   Integer sapsaNumber, String competitorNumber,
-                                   String cellphoneNumber, String emailAddress) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleNames = middleNames;
-        this.nickname = nickname;
-        this.sapsaNumber = sapsaNumber;
-        this.competitorNumber = competitorNumber;
-        this.cellphoneNumber = cellphoneNumber;
-        this.emailAddress = emailAddress;
-    }
 }
