@@ -33,7 +33,7 @@ project's stated intent and its current state.
 
 | Source                                              | Goal / constraint                                                                                                                                                                                                                                                                |
 |-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — explicitly called out as in-progress, not aspirational                                                                                                 |
+| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                            |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                   |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                          |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and code coverage (JaCoCo) are established quality gates; `./mvnw test` is documented as reviewer/local-only, not an automatic gate                                                                                                                   |
@@ -48,7 +48,7 @@ project's stated intent and its current state.
 
 ## 🔍 Gaps & Improvement Opportunities
 
-### 1. Match/competitor service and controller layer is the single largest stated gap
+### 1. Match/competitor service and controller layer is the single largest stated gap — ✅ Closed in v8.0.0
 
 **Evidence:** `README.md`, `ARCHITECTURE.md` and `CLAUDE.md` all independently flag that `IpscController` is an empty
 stub, that `repositories/` currently has no service-layer caller and that the service/model/entity-service layers
@@ -69,6 +69,14 @@ surface exercising it at all.
    removed `TransformationService`/`DomainService` abstraction until a concrete need reappears; the earlier version's
    complexity is exactly what was removed.
 
+**Outcome:** Delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` (interface + `impl/` split) with full
+CRUD controllers superseding the empty `IpscController` stub, each backed by Mockito controller tests and
+`@SpringBootTest` integration tests. Club resolution stayed inline (`resolveHomeClub`/`resolveClub` against
+`ClubRepository`) rather than via a dedicated `ClubService` — a simpler equivalent, not a gap. Cross-entity
+orchestration was deliberately held off per step 3 above, until v8.1.0's competitor bulk CSV import reused the
+existing single-`createCompetitor` logic per row instead of introducing new orchestration. See
+[`improvement-plan-tasks.md`](improvement-plan-tasks.md#-next) for the full checklist.
+
 ### 2. No automatic build/test gate on pull requests
 
 **Evidence:** `ARCHITECTURE.md`'s own CI/CD & Quality Gates table states the `Build & Tests` gate runs "locally / by
@@ -82,7 +90,7 @@ on tests being genuinely green at each merge; today that depends entirely on rev
 on push/PR to `develop` and `main`, mirroring CodeQL's existing trigger branches. This closes a gap the project's own
 architecture document already names.
 
-### 3. Award/Image CSV pipelines never persist
+### 3. Award/Image CSV pipelines never persist — 🟡 Partially narrowed in v8.1.0
 
 **Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.processCsv()`/
 `ImageService.processCsv()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
@@ -95,6 +103,12 @@ oversight.
 **Proposed improvement:** Not a code change by itself — clarify intent first. If CSV processing is meant to stay
 stateless (e.g. a client-side preview step before a separate import), say so explicitly in `README.md`/
 `ARCHITECTURE.md`. If persistence is intended, scope it as its own roadmap item once repository wiring exists (see #1).
+
+**Progress:** With #1 closed, v8.1.0 delivered `IpscCompetitorController.createCompetitors` — a deliberately scoped,
+persisting CSV import for the competitor domain — and `ARCHITECTURE.md` now contrasts it directly against the
+Award/Image flow ("without persisting anything") in an adjacent data-flow section. That narrows the ambiguity for
+readers, but the underlying question for `AwardService`/`ImageService` themselves — deliberate design or oversight —
+is still unresolved and not yet stated explicitly in `README.md`/`ARCHITECTURE.md`.
 
 ### 4. Coverage is measured but not enforced
 
@@ -130,16 +144,17 @@ the version bump happens.
 | Phase       | Focus                                                                                                                                                                         |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Add the CI build/test gate (#2) — lowest effort, closes a gap the project's own docs already flag                                                                             |
-| **Next**    | Begin the match/competitor service layer (#1), starting with single-entity services and their integration tests                                                               |
-| **Later**   | Coverage enforcement (#4) once the new service layer's tests establish a fresh baseline; clarify the CSV persistence question (#3) as part of scoping the next domain feature |
+| **Next**    | Coverage enforcement (#4) — the match/competitor service layer's tests (#1, closed in v8.0.0) now establish the fresh baseline this depended on                               |
+| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                              |
 | **Ongoing** | Re-check the `jackson-databind` override (#5) at each release per the Release Checklist                                                                                       |
 
 ---
 
 ## ✅ Success Criteria
 
-- `IpscController` exposes at least one real, tested endpoint backed by the existing entity/repository layer, closing
-  the gap named identically in `README.md`, `ARCHITECTURE.md` and `CLAUDE.md`.
+- ✅ Met in v8.0.0: `IpscCompetitorController`/`IpscMatchController` expose real, tested endpoints backed by the
+  existing entity/repository layer, closing the gap named identically in `README.md`, `ARCHITECTURE.md` and
+  `CLAUDE.md`.
 - `./mvnw verify -Pcoverage` (or equivalent) runs automatically on PRs to `develop`/`main`, so `ARCHITECTURE.md`'s
   CI/CD & Quality Gates table can drop the "locally / by reviewers" caveat on the `Build & Tests` row.
 - Coverage regressions fail CI rather than being caught only when the next `HISTORY.md` entry is written.

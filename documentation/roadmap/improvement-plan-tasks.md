@@ -28,17 +28,26 @@ evidence and reasoning there.
 
 ## 🏗️ Next
 
-**Match/competitor service and controller layer** *(improvement-plan.md → Gap #1)*
+**Match/competitor service and controller layer** *(improvement-plan.md → Gap #1)* — ✅ Closed in v8.0.0
 
-- [ ] Introduce `ClubService` / `ClubServiceImpl` (interface + `impl/` split, matching the existing `AwardService`/
-  `ImageService` pattern)
-- [ ] Introduce `CompetitorService` / `CompetitorServiceImpl`
-- [ ] Introduce `IpscMatchService` / `IpscMatchServiceImpl`
-- [ ] Add `@SpringBootTest` integration tests for each new service, per the `scaffold-integration-tests` conventions
-- [ ] Add the first real `IpscController` endpoint (s), backed by the new service (s)
-- [ ] Add Mockito-based controller unit tests for the new endpoint (s), per the `scaffold-unit-tests` conventions
-- [ ] Hold off on cross-entity orchestration (match import, bulk competitor operations) until a concrete need
-  reappears — don't rebuild the removed `TransformationService`/`DomainService` abstraction pre-emptively
+- [x] Introduce `ClubService` / `ClubServiceImpl` (interface + `impl/` split, matching the existing `AwardService`/
+  `ImageService` pattern) — implemented differently: club resolution stayed inline (`resolveHomeClub`/`resolveClub`
+  calling `ClubRepository` directly from `IpscCompetitorServiceImpl`/`IpscMatchServiceImpl`) rather than via a
+  dedicated `ClubService`; a simpler equivalent, not a gap
+- [x] Introduce `CompetitorService` / `CompetitorServiceImpl` — shipped as `IpscCompetitorService`/
+  `IpscCompetitorServiceImpl`
+- [x] Introduce `IpscMatchService` / `IpscMatchServiceImpl`
+- [x] Add `@SpringBootTest` integration tests for each new service, per the `scaffold-integration-tests` conventions —
+  `IpscCompetitorServiceIntegrationTest`/`IpscMatchServiceIntegrationTest`
+- [x] Add the first real `IpscController` endpoint (s), backed by the new service (s) — shipped as
+  `IpscCompetitorController`/`IpscMatchController` (full CRUD), superseding the empty `IpscController` stub, which
+  was deleted
+- [x] Add Mockito-based controller unit tests for the new endpoint (s), per the `scaffold-unit-tests` conventions —
+  `IpscCompetitorControllerTest`/`IpscMatchControllerTest`
+- [x] Hold off on cross-entity orchestration (match import, bulk competitor operations) until a concrete need
+  reappears — don't rebuild the removed `TransformationService`/`DomainService` abstraction pre-emptively —
+  honoured; v8.1.0's competitor bulk CSV import reuses the existing single-`createCompetitor` logic per row
+  instead of introducing new cross-entity orchestration
 
 ---
 
@@ -49,12 +58,16 @@ evidence and reasoning there.
 - [ ] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile
 - [ ] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build
 
-**CSV persistence clarification** *(improvement-plan.md → Gap #3)*
+**CSV persistence clarification** *(improvement-plan.md → Gap #3)* — 🟡 Partially narrowed in v8.1.0
 
-- [ ] Decide whether `AwardService`/`ImageService` CSV processing is meant to stay stateless by design or should gain
-  persistence
-- [ ] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md`
-- [ ] If persistence is intended: scope it as its own roadmap item once the service layer from the Next phase exists
+- [x] If persistence is intended: scope it as its own roadmap item once the service layer from the Next phase
+  exists — done for the competitor domain specifically: `IpscCompetitorController.createCompetitors` (v8.1.0) is a
+  scoped, deliberate persisting-CSV-import feature, and `ARCHITECTURE.md` now contrasts it directly against the
+  Award/Image flow ("without persisting anything") in an adjacent data-flow section
+- [ ] Decide whether `AwardService`/`ImageService` CSV processing itself is meant to stay stateless by design or
+  should gain persistence — still undecided; the v8.1.0 contrast narrows the ambiguity but doesn't resolve it
+- [ ] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md` for `AwardService`/
+  `ImageService` themselves, not just by implication via the new competitor flow
 
 ---
 
