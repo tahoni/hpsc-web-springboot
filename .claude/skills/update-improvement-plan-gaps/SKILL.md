@@ -29,7 +29,7 @@ Read these fully before drafting anything — you cannot tell what's *new* witho
 1. `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md`, in full. Note every gap's number,
    title, and current status (open / ✅ Closed in vX.Y.Z / 🟡 partially progressed) — this is the baseline you're
    diffing against, and gap numbers are never reused or renumbered.
-2. `git branch --show-current` — if it's a `release/vX.Y.Z` branch, that's the version any newly-closed gap should be
+2. `git branch --show-current` — if it's a `release/vX.Y.Z` branch, that's the version any newly closed gap should be
    annotated with; don't guess or reuse an already-shipped version number (a gap closed by work on this branch was
    **not** closed in whatever version `HISTORY.md`'s most recent entry already covers).
 3. `AGENTS.md`, `README.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md` — the same sources
@@ -43,17 +43,17 @@ Read these fully before drafting anything — you cannot tell what's *new* witho
 Look specifically for the same four things the plan's existing gaps were built from:
 
 1. **A stated-but-unbuilt goal.** Any place a doc uses language like "not yet implemented", "still being built",
-   "in progress", "groundwork only", "TODO", or "future enhancement" to describe real work — and that specific gap
-   isn't already one of the tracked numbers from step 1 above.
+   "in progress", "groundwork only", "TODO" or "future enhancement" to describe real work — and that specific gap
+   isn't yet one of the tracked numbers from step 1 above.
 2. **Doc-vs-doc or doc-vs-code disagreement.** The same category of drift the existing gaps were built from — e.g.
    two docs contradicting each other, or a doc's claim not matching what `Glob`/`Grep`/`Read` show in the actual
-   source tree (an unused class, a workflow file that doesn't exist, a config flag nobody reads).
-3. **A stale number.** A percentage, count, or version reference stated in a doc that a quick check (e.g.
+   source tree; e,g, an unused class, a workflow file that doesn't exist, a config flag nobody reads.
+3. **A stale number.** A percentage, count or version reference stated in a doc that a quick check (e.g.
    `./mvnw verify -Pcoverage` for a coverage figure, or `git log --oneline | wc -l` for a commit count) shows is no
    longer accurate. Don't run expensive checks speculatively — only when a doc actually states a checkable number.
-4. **A newly-met precondition on an existing gap.** Re-read each *open* gap's own text for phrases like "once X
+4. **A newly met precondition on an existing gap.** Re-read each *open* gap's own text for phrases like "once X
    exists" or "once the service layer lands" — if recent work (check `git log` since the gap was last touched) has
-   now satisfied that precondition, that gap's phase (Now/Next/Later) or status should move, even if it isn't fully
+   now satisfied that precondition, that gap's phase (Now/Next/Later) or status should move; even if it isn't fully
    closed yet.
 
 For anything you find, follow `improvement-plan.md`'s own established template exactly — read a couple of its
@@ -80,7 +80,7 @@ Then mirror every change into `improvement-plan-tasks.md`, under the same Now/Ne
 - If a gap's phase changes (e.g. promoted from Later to Next because a precondition landed), move its whole block to
   the new phase section rather than leaving a stale copy behind.
 
-Before finishing, run a line-wrap check on both files' diffs (100-120 characters; tables, code blocks and diagrams
+Before finishing, run a line-wrap check on both files' diffs (100–120 characters; tables, code blocks and diagrams
 are exempt, per `AGENTS.md`'s Documentation Conventions):
 
 ```
