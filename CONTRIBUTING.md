@@ -106,6 +106,8 @@ Tests activate the `test` profile automatically — no database setup is require
   Lombok-generated getters/setters/constructors.
 - Group each method's tests under a one-line `// methodName()` comment, ordered constructors first, then public before
   protected, then alphabetically by name (overloads by parameter count then type), `toString()` last.
+- Private fixture/setup helpers go after every `@Test` method, under a `// Helpers` comment — keeps the test methods
+  themselves at the top, uninterrupted by fixture code.
 
 ---
 
@@ -116,7 +118,7 @@ The application follows a strict layered architecture — see [`ARCHITECTURE.md`
 ```
 HTTP Request
     → Controller  (REST endpoint, DTO validation)
-        → Service     (business logic)
+        → Service     (business logic, `@Transactional`)
             → Repository     (Spring Data JPA)
                 → MySQL / H2
 ```
@@ -147,6 +149,9 @@ repository. Highlights:
   `AGENTS.md`'s Line wrapping rule.
 - Every `##` heading gets a matching emoji, reused from the established icon registry in `AGENTS.md` rather than
   invented fresh.
+- **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't
+  duplicate an interface method's Javadoc on its implementation unless the implementation adds behaviour the
+  interface doesn't already describe — see `AGENTS.md`'s Javadoc rule for the full requirements.
 - Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents — don't
   batch changelog updates into a later PR.
 - `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When

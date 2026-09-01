@@ -17,12 +17,12 @@ import java.util.List;
  * <p>
  * The {@code AwardRequestForCSV} abstract class encapsulates metadata about an award event,
  * including both the award ceremony and individual award details, as well as winner
- * information for first, second, and third places.
+ * information for first, second and third places.
  * This class is specifically designed to handle structured data points required for
  * generating or managing CSV representations of awards.
- * The class mandates the presence of certain required fields. The title, ceremony title,
- * and details about the first, second, and third places define the basic attributes of an award.
- * Additional optional fields such as summary, description, category, and tags provide
+ * The class mandates the presence of certain required fields. The title, ceremony title
+ * and details about the first, second and third places define the basic attributes of an award.
+ * Additional optional fields such as summary, description, category and tags provide
  * further descriptive information about the award.
  * This class uses the {@code @JsonProperty} annotation to specify mandatory fields
  * for JSON deserialization and ensures that they are populated when an instance is created.
@@ -66,7 +66,7 @@ public abstract class AwardRequestForCSV {
      *
      * <p>
      * Use this constructor when only the core identifying fields are available. Optional fields
-     * such as {@code secondPlaceName}, {@code thirdPlaceName}, summary, description, and tags
+     * such as {@code secondPlaceName}, {@code thirdPlaceName}, summary, description and tags
      * remain unset and may be populated via their respective setters.
      * </p>
      *
@@ -85,11 +85,11 @@ public abstract class AwardRequestForCSV {
 
     /**
      * Constructs an instance of {@code AwardRequestForCSV} with the specified title,
-     * ceremony title, and award details for first, second, and third places.
+     * ceremony title and award details for first, second and third places.
      *
      * <p>
      * This constructor is annotated with {@code @JsonCreator} to enable deserialization
-     * from JSON, specifically requiring the title, ceremony title, and details for
+     * from JSON, specifically requiring the title, ceremony title and details for
      * first place.
      * </p>
      *

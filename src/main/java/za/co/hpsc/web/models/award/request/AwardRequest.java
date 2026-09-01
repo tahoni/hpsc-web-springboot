@@ -16,7 +16,7 @@ import java.util.List;
  * <p>
  * The {@code AwardRequest} class extends the functionality of the {@link Request} base class
  * by introducing additional fields specific to awards. These include information about
- * the award ceremony, associated media files, and the names of winners for first, second,
+ * the award ceremony, associated media files and the names of winners for first, second
  * and third places. It provides constructors for initialising an award request with basic
  * or detailed metadata.
  * </p>
@@ -50,7 +50,7 @@ public class AwardRequest extends Request {
      *
      * <p>
      * This constructor initialises fields specific to an award, such as the title of the award,
-     * the ceremony title, and the names of recipients for first, second, and third places.
+     * the ceremony title and the names of recipients for first, second and third places.
      * </p>
      *
      * @param title           the title of the award. Must not be null or blank.
