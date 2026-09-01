@@ -76,6 +76,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorRequestForCSVTest`:** New tests covering `CompetitorRequestForCSV`'s `UpperCamelCase` JSON
   (de)serialization and `@JsonFormat`-patterned `dateOfBirth`, its CSV deserialization via `CsvMapper`/`CsvSchema`,
   and the `@JsonCreator` constructor's enforcement of `firstName`/`lastName` as required creator properties
+- **`CompetitorRequestTest`:** New tests covering `CompetitorRequest`'s `@JsonCreator` constructor — JSON
+  (de)serialization, `competitorNumber` no longer being required, and `firstName`/`lastName`/`clubNumber` each
+  throwing `MismatchedInputException` when missing
 
 ### 🔄 Changed
 
