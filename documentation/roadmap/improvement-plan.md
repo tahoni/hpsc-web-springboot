@@ -33,7 +33,7 @@ project's stated intent and its current state.
 
 | Source                                              | Goal / constraint                                                                                                                                                                                                                                                                |
 |-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                            |
+| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                             |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                   |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                          |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and code coverage (JaCoCo) are established quality gates; `./mvnw test` is documented as reviewer/local-only, not an automatic gate                                                                                                                   |
@@ -148,12 +148,12 @@ even though the specific overrides it named are gone).
 
 ## 🚀 Roadmap
 
-| Phase       | Focus                                                                                                                                                                         |
-|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Add the CI build/test gate (#2) — lowest effort, closes a gap the project's own docs already flag                                                                             |
-| **Next**    | Coverage enforcement (#4) — the match/competitor service layer's tests (#1, closed in v8.0.0) now establish the fresh baseline this depended on                               |
-| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                              |
-| **Ongoing** | #5's overrides are gone as of v8.1.0; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist              |
+| Phase       | Focus                                                                                                                                                           |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | Add the CI build/test gate (#2) — lowest effort, closes a gap the project's own docs already flag                                                               |
+| **Next**    | Coverage enforcement (#4) — the match/competitor service layer's tests (#1, closed in v8.0.0) now establish the fresh baseline this depended on                 |
+| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                |
+| **Ongoing** | #5's overrides are gone as of v8.1.0; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
 ---
 
