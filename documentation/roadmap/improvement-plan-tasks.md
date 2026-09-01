@@ -26,9 +26,10 @@ evidence and reasoning there.
 
 **Qodana CI wiring** *(improvement-plan.md → Gap #7)*
 
-- [ ] Add `.github/workflows/qodana.yml` using JetBrains' `qodana-action`, triggered on push/PR to `develop` and
+- [x] Add `.github/workflows/qodana.yml` using JetBrains' `qodana-action`, triggered on push/PR to `develop` and
   `main`, mirroring `codeql.yml`'s trigger branches
-- [ ] Confirm the workflow runs against the existing `qodana.yaml` config without further changes
+- [ ] Confirm the workflow runs against the existing `qodana.yaml` config without further changes — pending: verify
+  in the Actions tab once this is pushed
 - [ ] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "no CI workflow wired up yet"
   caveat on the `Static Analysis` row
 
