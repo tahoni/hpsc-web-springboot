@@ -40,7 +40,7 @@ project's stated intent and its current state.
 | `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                 |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                    |
-| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.0) — this currency itself creates a maintenance constraint (see [Gaps](#-gaps--improvement-opportunities))                                                                                           |
+| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint (see [Gaps](#-gaps--improvement-opportunities))                                                                                           |
 | `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                            |
 | `CONTRIBUTING.md`, `application.properties`         | Three distinct runtime profiles (none/prod, `dev`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors                                                                                               |
 
@@ -123,7 +123,7 @@ version-coupled narrative in `README.md`).
 baseline) to the `coverage` profile, and wire it into the CI gate proposed in #2, so a regression fails the build rather
 than only showing up in the next `HISTORY.md` entry.
 
-### 5. `jackson-databind` version override is a standing manual constraint
+### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.0
 
 **Evidence:** `pom.xml` explicitly pins `jackson-databind` to `2.21.5` with the comment: "Spring Boot 4.1.0 still
 manages jackson-databind (2.x) one patch behind its fix version; override it explicitly until a Spring Boot release
@@ -137,6 +137,13 @@ BOM catches up and the override becomes redundant (the same category of clean-up
 confirm whether the parent's managed `jackson-databind` version has caught up, and drop the override in the same pass
 the version bump happens.
 
+**Outcome:** Bumping the `spring-boot-starter-parent` to `4.1.1` picked up `jackson-databind` `2.21.5` by default, so
+the manual override was dropped from `pom.xml`'s `dependencyManagement` in the same pass, exactly as this gap
+proposed. A second manual override added later for `log4j-api` (CVE-2026-49844) was resolved by the parent bump the
+same way and dropped alongside it. This category of clean-up recurs — re-check remaining manual overrides at each
+future release per the Release Checklist (this gap's Ongoing counterpart, #5's own recurring check, stays in force
+even though the specific overrides it named are gone).
+
 ---
 
 ## 🚀 Roadmap
@@ -146,7 +153,7 @@ the version bump happens.
 | **Now**     | Add the CI build/test gate (#2) — lowest effort, closes a gap the project's own docs already flag                                                                             |
 | **Next**    | Coverage enforcement (#4) — the match/competitor service layer's tests (#1, closed in v8.0.0) now establish the fresh baseline this depended on                               |
 | **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                              |
-| **Ongoing** | Re-check the `jackson-databind` override (#5) at each release per the Release Checklist                                                                                       |
+| **Ongoing** | #5's overrides are gone as of v8.1.0; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist              |
 
 ---
 
