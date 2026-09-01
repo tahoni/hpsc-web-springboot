@@ -21,6 +21,29 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.2.0 (September 1, 2026)
+
+**Theme:** Competitor Multi-Email Support & Bulk CSV Separator Standardisation
+
+**Key Focus:**
+
+- `Competitor.emailAddress` (a single, optional `String`) replaced with `emailAddresses` (`List<String>`), mapped
+  via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email` child table — a competitor can now have
+  zero or more email addresses; `V7_2_0__add_competitor_emails.sql` backfills the new table from any existing
+  non-blank `email_address` values before dropping that column
+- `CompetitorRequest`/`CompetitorResponse` renamed `emailAddress` to `emailAddresses`; `CompetitorRequestForCSV`
+  keeps a single `String` CSV cell but now holds zero or more semicolon-separated addresses (e.g. `"a@x.com;b@x.com"`),
+  split into a list via `IpscCompetitorServiceImpl`'s new `splitEmailAddresses` helper
+- New shared `SystemConstants.ARRAY_SEPARATOR` (`";"`) constant; `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV
+  parsing switched from `"|"` to it, so every bulk CSV endpoint's multi-value cells (competitor email addresses,
+  image/award tags) now share one separator convention, with the `AwardController`/`ImageController`/
+  `IpscCompetitorController` Swagger examples updated to match
+- `documentation/roadmap/improvement-plan.md`'s Gap #7 (Qodana CI wiring) updated with a real finding from this
+  release's own audit: `.github/workflows/qodana.yml` isn't merely unverified, it has failed on every run since
+  v8.1.1 added it — release-line Qodana linters require a `QODANA_TOKEN` secret that isn't configured, and the
+  SARIF-upload step isn't conditioned on the scan step succeeding
+- Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.1.1 (September 1, 2026)
 
 **Theme:** CI Static Analysis, Release-Process Self-Maintenance & Coverage Regression Fixes
@@ -1062,6 +1085,56 @@ coverage.
 
 ---
 
+### Phase 22: Competitor Multi-Email Support & Bulk CSV Separator Standardisation (v8.2.0)
+
+**Duration:** September 1, 2026
+
+A domain feature release: competitors gain multiple email addresses, and every bulk CSV endpoint's multi-value cell
+format is unified onto one separator convention.
+
+**Key Accomplishments:**
+
+**Competitor Multi-Email Support**
+
+- `Competitor.emailAddress` (a single, optional `String`) replaced with `emailAddresses` (`List<String>`), mapped
+  via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email` child table
+- `V7_2_0__add_competitor_emails.sql` backfills the new table from any existing non-blank `email_address` values,
+  then drops that column
+- `CompetitorRequest`/`CompetitorResponse` renamed `emailAddress` to `emailAddresses`; `CompetitorRequestForCSV`
+  keeps a single CSV cell but now holds zero or more semicolon-separated addresses, split via
+  `IpscCompetitorServiceImpl`'s new `splitEmailAddresses` helper
+
+**Bulk CSV Separator Standardisation**
+
+- New shared `SystemConstants.ARRAY_SEPARATOR` (`";"`); `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing
+  switched from `"|"` to it, so competitor email addresses and image/award tags now share one multi-value cell
+  convention, with the `AwardController`/`ImageController`/`IpscCompetitorController` Swagger examples updated to
+  match
+
+**Documentation & Roadmap**
+
+- `documentation/roadmap/improvement-plan.md`'s Gap #7 (Qodana CI wiring) updated with a real finding from this
+  release's own audit: `.github/workflows/qodana.yml` has failed on every run since v8.1.1 added it — a missing
+  `QODANA_TOKEN` secret and an unconditional SARIF-upload step, not merely an unverified workflow as previously
+  recorded
+
+**Architecture Highlights:**
+
+- No layering change — a domain-model extension (`@ElementCollection` child table) and a cross-cutting constant,
+  both within the existing service/controller structure
+
+**Technical Focus:**
+
+- Domain-model evolution (single value → collection, backed by a new child table)
+- Cross-endpoint consistency (shared constant replacing two independently hardcoded separators)
+
+**Test Coverage:**
+
+- Existing CSV parsing, request/response model and bulk-import tests updated for the new `emailAddresses` shape and
+  separator
+
+---
+
 ### Phase 21: CI Static Analysis, Release-Process Self-Maintenance & Coverage Regression Fixes (v8.1.1)
 
 **Duration:** September 1, 2026
@@ -1972,6 +2045,20 @@ Focused consolidation of services, introduction of custom JPA converters and rep
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and
 comprehensive test coverage across all services and utilities.
+
+---
+
+### Milestone 22: Competitor Multi-Email Support & Bulk CSV Separator Standardisation (v8.2.0)
+
+- `Competitor.emailAddress` (`String`) replaced with `emailAddresses` (`List<String>`), backed by a new
+  `competitor_email` child table and a backfilling Flyway migration
+- New `SystemConstants.ARRAY_SEPARATOR` unifies `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing with the
+  competitor domain's semicolon-separated multi-value convention
+- Roadmap audit found `.github/workflows/qodana.yml` has been failing on every run since v8.1.1 (missing
+  `QODANA_TOKEN`, unconditional SARIF upload) — `improvement-plan.md`'s Gap #7 updated accordingly
+
+**Achievement:** Extended the competitor domain to support more than one email address, and closed a lingering
+inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats.
 
 ---
 
@@ -2937,9 +3024,20 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.1.1, the following areas are identified for future enhancement:
+Based on the evolution to v8.2.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.1.1)
+### Recently Completed (v8.2.0)
+
+- `Competitor.emailAddress` (`String`) replaced with `emailAddresses` (`List<String>`), backed by a new
+  `competitor_email` child table and a backfilling Flyway migration
+- New `SystemConstants.ARRAY_SEPARATOR` unifies `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing with the
+  competitor domain's semicolon-separated multi-value convention
+- `documentation/roadmap/improvement-plan.md`'s Gap #7 updated: `.github/workflows/qodana.yml` confirmed actually
+  failing on every run since v8.1.1 (missing `QODANA_TOKEN` secret, unconditional SARIF upload), not merely
+  unverified as previously recorded
+- Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.1.1)
 
 - New `.github/workflows/qodana.yml` completes the Qodana static-analysis CI gate, configured but unwired since
   v8.0.0
