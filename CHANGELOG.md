@@ -97,6 +97,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `@JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)` to their `LocalDate` fields (`dateOfBirth`/
   `matchDate`), making the accepted `yyyy-MM-dd` input format explicit rather than relying on Jackson's default
   `LocalDate` parsing — matching `AwardRequestForCSV`'s existing use of the same pattern on its `date` field
+- **`CompetitorRequest`:** Added a `@JsonCreator` constructor with each of its 14 parameters bound via
+  `@JsonProperty`, replacing the Lombok `@AllArgsConstructor` (same signature, so `IpscCompetitorServiceImpl
+  .toRequest`'s positional call is unaffected) — `firstName`/`lastName` remain `required = true`, and
+  `@JsonProperty(required = true)` moves from `competitorNumber` to `clubNumber`, correcting a mismatch between
+  the JSON-level requirement and `IpscCompetitorServiceImpl.validateForCreate`'s actual required fields
+  (`firstName`, `lastName`, `clubNumber`)
 
 ## 🧾 [8.0.0] - 2026-08-31
 
