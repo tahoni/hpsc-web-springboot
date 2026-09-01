@@ -18,9 +18,9 @@ import java.time.LocalDate;
  * <p>
  * Mirrors {@link MatchRequest}'s fields, other than {@code matchId} — CSV bulk import only ever
  * creates new matches, so no identifier is accepted. {@link MatchRequest}'s nested
- * {@code stages} list is instead represented here as {@link #numberOfStages} (a plain count) and
- * {@link #stages} (a single semicolon-separated CSV cell of {@code <stageNumber>-<stageName>}
- * entries, e.g. {@code "1-Stage 1;2-Stage 2"}). Column headers are matched using
+ * {@code stages} list is instead represented here as {@link #stages}, a single
+ * semicolon-separated CSV cell of {@code <stageNumber>-<stageName>} entries (e.g.
+ * {@code "1-Stage 1;2-Stage 2"}). Column headers are matched using
  * {@link PropertyNamingStrategies.UpperCamelCaseStrategy}, so a CSV header of {@code MatchName}
  * maps onto the {@code matchName} field, and so on.
  * </p>
@@ -46,8 +46,6 @@ public class MatchRequestForCSV {
     private String matchFirearmType;
     /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
     private String matchCategory;
-    /** The number of stages that make up this match. */
-    private int numberOfStages;
     /** The stages that make up this match, as a single semicolon-separated CSV cell of
      * {@code <stageNumber>-<stageName>} entries (e.g. {@code "1-Stage 1;2-Stage 2"}). */
     private String stages;

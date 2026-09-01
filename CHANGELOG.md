@@ -50,10 +50,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Models
 
 - **`MatchRequestForCSV`:** New class-level Javadoc and `@JsonCreator` constructor, binding `MatchDate`/
-  `MatchName`/`Club`/`MatchFirearmType`/`MatchCategory`/`NumberOfStages`/`Stages` to their
-  `UpperCamelCase` column/property names for CSV/JSON deserialization — matching
-  `CompetitorRequestForCSV`'s pattern. The new `stages` field is a single semicolon-separated CSV
-  cell of `<stageNumber>-<stageName>` entries (e.g. `"1-Stage One;2-Stage Two"`)
+  `MatchName`/`Club`/`MatchFirearmType`/`MatchCategory`/`Stages` to their `UpperCamelCase`
+  column/property names for CSV/JSON deserialization — matching `CompetitorRequestForCSV`'s
+  pattern. The `stages` field is a single semicolon-separated CSV cell of
+  `<stageNumber>-<stageName>` entries (e.g. `"1-Stage One;2-Stage Two"`)
 - **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON
   (de)serialization, its CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
   constructor's enforcement of `matchDate`/`matchName` as required creator properties
