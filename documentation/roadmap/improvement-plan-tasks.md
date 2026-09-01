@@ -28,8 +28,11 @@ evidence and reasoning there.
 
 - [x] Add `.github/workflows/qodana.yml` using JetBrains' `qodana-action`, triggered on push/PR to `develop` and
   `main`, mirroring `codeql.yml`'s trigger branches
-- [ ] Confirm the workflow runs against the existing `qodana.yaml` config without further changes — still pending:
-  this branch hasn't been pushed since the workflow was added, so no real Actions run has been observed yet
+- [ ] Confirm the workflow runs against the existing `qodana.yaml` config without further changes — checked via
+  `gh run list --workflow=qodana.yml`: every run so far has failed, not merely gone unverified. Two fixes are needed:
+  add a `QODANA_TOKEN` repository secret (release-line Qodana linters require one since 2023.2), and make the
+  `github/codeql-action/upload-sarif@v4` step conditional so it doesn't also fail with
+  `Input required and not supplied: sarif_file` when the scan step produced nothing to upload
 - [ ] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "no CI workflow wired up yet"
   caveat on the `Static Analysis` row
 
