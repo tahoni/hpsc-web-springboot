@@ -44,6 +44,39 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### 🔄 Changed
+
+#### Domain
+
+- **`Competitor`:** `emailAddress` (a single, optional `String`) replaced with `emailAddresses`
+  (`List<String>`), mapped via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email`
+  child table — a competitor can now have zero or more email addresses
+
+#### Models
+
+- **`CompetitorRequest`, `CompetitorResponse`:** `emailAddress` (`String`) renamed to `emailAddresses`
+  (`List<String>`)
+- **`CompetitorRequestForCSV`:** `emailAddress` renamed to `emailAddresses`; still a single `String`
+  CSV cell, but now holding zero or more semicolon-separated email addresses (e.g.
+  `"a@x.com;b@x.com"`), split into a list when mapped onto `CompetitorRequest`
+
+#### Services
+
+- **`IpscCompetitorServiceImpl`:** `applyFields`, `patchCompetitor`, `toRequest` and `toResponse`
+  updated for `emailAddresses`; new `splitEmailAddresses` helper parses a CSV row's
+  semicolon-separated email cell into a `List<String>`, trimming entries and dropping blanks
+
+#### Controllers
+
+- **`IpscCompetitorController`:** Bulk CSV endpoint's Swagger example header updated from
+  `EmailAddress` to `EmailAddresses`
+
+#### Database
+
+- **`V7_2_0__add_competitor_emails.sql`:** New Flyway migration adding the `competitor_email` table
+  (`competitor_id` FK, `email_address`), backfilling it from any existing non-blank
+  `competitor.email_address` values, then dropping that column
+
 ## 🧾 [8.1.1] - 2026-09-01
 
 ### ➕ Added

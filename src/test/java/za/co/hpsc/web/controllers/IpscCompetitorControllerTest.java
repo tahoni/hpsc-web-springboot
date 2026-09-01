@@ -94,7 +94,7 @@ class IpscCompetitorControllerTest {
 
     // createCompetitors()
     private static final String VALID_CSV = """
-            FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
+            FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
             John,Doe,,,,,,,,CLUB001,,,
             """;
 

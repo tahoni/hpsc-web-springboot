@@ -23,7 +23,7 @@ class CompetitorRequestForCSVTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequestForCSV request = new CompetitorRequestForCSV(
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com");
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com;jane2.doe@example.com");
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -42,7 +42,7 @@ class CompetitorRequestForCSVTest {
         assertEquals("HPSC-001", node.get("ClubNumber").asText());
         assertEquals("9001015800083", node.get("IdNumber").asText());
         assertEquals("0821234567", node.get("CellphoneNumber").asText());
-        assertEquals("jane.doe@example.com", node.get("EmailAddress").asText());
+        assertEquals("jane.doe@example.com;jane2.doe@example.com", node.get("EmailAddresses").asText());
     }
 
     @Test
@@ -83,7 +83,7 @@ class CompetitorRequestForCSVTest {
                   "ClubNumber": "HPSC-001",
                   "IdNumber": "9001015800083",
                   "CellphoneNumber": "0821234567",
-                  "EmailAddress": "jane.doe@example.com"
+                  "EmailAddresses": "jane.doe@example.com;jane2.doe@example.com"
                 }
                 """;
 
@@ -103,7 +103,7 @@ class CompetitorRequestForCSVTest {
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", request.getEmailAddress());
+        assertEquals("jane.doe@example.com;jane2.doe@example.com", request.getEmailAddresses());
     }
 
     @Test
@@ -176,8 +176,8 @@ class CompetitorRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
-                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com
                 """;
 
         // Act
@@ -194,6 +194,7 @@ class CompetitorRequestForCSVTest {
         assertEquals("Doe", row.getLastName());
         assertEquals(LocalDate.of(1990, 1, 1), row.getDateOfBirth());
         assertEquals("HPSC-001", row.getClubNumber());
+        assertEquals("jane.doe@example.com;jane2.doe@example.com", row.getEmailAddresses());
     }
 
     @Test
@@ -205,7 +206,7 @@ class CompetitorRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
                 Jane,Doe
                 """;
 
@@ -221,7 +222,7 @@ class CompetitorRequestForCSVTest {
         assertEquals("Jane", rows.getFirst().getFirstName());
         assertEquals("Doe", rows.getFirst().getLastName());
         assertNull(rows.getFirst().getMiddleNames());
-        assertNull(rows.getFirst().getEmailAddress());
+        assertNull(rows.getFirst().getEmailAddresses());
     }
 
     @Test
@@ -233,7 +234,7 @@ class CompetitorRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
                 Jane
                 """;
 

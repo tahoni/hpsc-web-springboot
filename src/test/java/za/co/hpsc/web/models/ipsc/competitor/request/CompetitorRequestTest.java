@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com");
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com"));
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -39,7 +40,8 @@ class CompetitorRequestTest {
         assertEquals("HPSC-001", node.get("clubNumber").asText());
         assertEquals("9001015800083", node.get("idNumber").asText());
         assertEquals("0821234567", node.get("cellphoneNumber").asText());
-        assertEquals("jane.doe@example.com", node.get("emailAddress").asText());
+        assertEquals(1, node.get("emailAddresses").size());
+        assertEquals("jane.doe@example.com", node.get("emailAddresses").get(0).asText());
     }
 
     @Test
@@ -83,7 +85,7 @@ class CompetitorRequestTest {
                   "clubNumber": "HPSC-001",
                   "idNumber": "9001015800083",
                   "cellphoneNumber": "0821234567",
-                  "emailAddress": "jane.doe@example.com"
+                  "emailAddresses": ["jane.doe@example.com"]
                 }
                 """;
 
@@ -104,7 +106,7 @@ class CompetitorRequestTest {
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", request.getEmailAddress());
+        assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
     }
 
     @Test

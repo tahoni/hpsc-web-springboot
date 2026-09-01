@@ -123,7 +123,7 @@ class IpscCompetitorServiceIntegrationTest {
         request.setCompetitorNumber("C-1");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
-        request.setEmailAddress("jane.doe@example.com");
+        request.setEmailAddresses(List.of("jane.doe@example.com"));
 
         // Act
         CompetitorResponse response = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitor(request));
@@ -142,12 +142,12 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", response.getEmailAddress());
+        assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
     }
 
     // createCompetitors()
     private static final String CSV_HEADER =
-            "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress\n";
+            "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses\n";
 
     @Test
     void testCreateCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
@@ -223,7 +223,7 @@ class IpscCompetitorServiceIntegrationTest {
         // Arrange
         createClub("Test Club", ClubIdentifier.HPSC);
         String csvData = CSV_HEADER +
-                "Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com\n";
+                "Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com\n";
 
         // Act
         CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
@@ -244,7 +244,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", response.getEmailAddress());
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), response.getEmailAddresses());
 
         // The competitor is actually persisted, not just mapped into a response
         CompetitorResponse fetched =

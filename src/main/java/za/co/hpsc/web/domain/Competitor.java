@@ -10,6 +10,8 @@ import za.co.hpsc.web.enums.Gender;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -57,8 +59,10 @@ public class Competitor {
     @Column(name = "cellphone_number")
     private String cellphoneNumber;
 
-    @Column(name = "email_address")
-    private String emailAddress;
+    @ElementCollection
+    @CollectionTable(name = "competitor_email", joinColumns = @JoinColumn(name = "competitor_id"))
+    @Column(name = "email_address", nullable = false)
+    private List<String> emailAddresses = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
