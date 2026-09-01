@@ -58,6 +58,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   non-trivial tasks, matching `AGENTS.md`'s existing "Track complex work with a todo list" Git Workflow convention
   and the sibling `hpsc-web-vite` project's `CLAUDE.md`
 
+#### Testing
+
+- **`NonFatalExceptionTest`, `FatalExceptionTest`, `ValidationExceptionTest`:** New test classes covering all
+  constructor overloads of the three exception hierarchy base classes, closing a real regression — these existed as
+  of v7.2.0 but were dropped somewhere between then and now with no replacement, leaving the classes at 20% line
+  coverage (only the single-`message` constructor got incidental exercise via other tests)
+- **`IpscCommonScoreTest`, `IpscMatchScoreTest`, `IpscMatchStageScoreTest`:** New test classes for the
+  `models/ipsc/shared` scoring groundwork classes (0% coverage previously, as nothing references them outside
+  Javadoc yet), each covering the one handwritten all-args constructor per `AGENTS.md`'s rule against testing
+  Lombok-generated behaviour in isolation
+- **`IpscCompetitorServiceTest`, `IpscMatchServiceTest`:** Added success-path coverage for every `patchCompetitor`/
+  `patchMatch` field that was previously only exercised via its validation-failure branch (e.g. `clubNumber`,
+  `homeClub`/`club`, `gender`/`matchFirearmType`/`matchCategory` resolution, `matchDate` and the remaining simple
+  string/date/numeric fields) — patching a single field's happy path had never actually been asserted for most
+  fields since the endpoints were introduced in v8.0.0. Also adds the missing "field is `null`" counterpart to each
+  existing "field is blank" validation test (`clubNumber`, match `club`) to close a branch JaCoCo flagged as
+  unreached
+- Full-suite line/branch coverage rose from 92.9%/93.4% to 98.34%/98.84% as a result (746 → 775 tests); see
+  `documentation/roadmap/improvement-plan.md`'s Gap #4 for the remaining, deliberately-untested gaps (three
+  structurally-unreachable `IOException` catch blocks in the CSV `read*()` methods, `ImageResponse`'s dead
+  null-fallback branch, the unused `IpscConstants` class, and `HpscWebApplication.main()`)
+
 ### 🔄 Changed
 
 #### Build & Metadata

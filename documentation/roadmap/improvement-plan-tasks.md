@@ -60,8 +60,12 @@ evidence and reasoning there.
 
 **Coverage enforcement** *(improvement-plan.md → Gap #4)*
 
-- [ ] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile — note
-  the baseline is the current 92.9%/93.4% (line/branch), not the stale 97.3%/98.1% still recorded in `HISTORY.md`
+- [x] ~~Baseline the real coverage figure before setting a rule~~ — done: targeted tests for the exception
+  hierarchy, the `models/ipsc/shared` scoring classes and every untested `patchCompetitor`/`patchMatch` field
+  success-path brought the suite from 92.9%/93.4% to 98.34%/98.84% (line/branch), 746 → 775 tests
+- [ ] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile — the
+  baseline is now the refreshed 98.34%/98.84% (line/branch), not the earlier 92.9%/93.4% figure or the stale
+  97.3%/98.1% still recorded in `HISTORY.md`
 - [ ] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build
 - [ ] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number
 

@@ -127,6 +127,17 @@ version-coupled narrative in `README.md`).
 baseline) to the `coverage` profile, and wire it into the CI gate proposed in #2, so a regression fails the build rather
 than only showing up in the next `HISTORY.md` entry.
 
+**Progress:** The regression identified above is fixed — targeted tests for the exception hierarchy (previously 20%
+covered, a real regression from a since-deleted test suite), the `models/ipsc/shared` scoring groundwork classes
+(previously 0%) and every untested `patchCompetitor`/`patchMatch` field success-path brought the suite from
+92.9%/93.4% to **98.34%/98.84%** (line/branch), 746 → 775 tests. The remaining ~1.6% is deliberately left uncovered:
+three structurally-unreachable `IOException` catch blocks in the CSV `read*()` methods (`AwardServiceImpl`,
+`ImageServiceImpl`, `IpscCompetitorServiceImpl` — reachable only by a real I/O failure, not a malformed `String`),
+`ImageResponse.setMimeType`'s null-fallback branch (dead code — `mimeType` is field-initialised to `""` and can
+never be null when checked), the still-unused `IpscConstants` class (no test-a-constants-class convention exists in
+this codebase), and `HpscWebApplication.main()` (excluded as impractical/low-value — testing it would start a real
+embedded server). `HISTORY.md`'s coverage figure still needs refreshing to this new baseline once #2's CI gate lands.
+
 ### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
 **Evidence:** `pom.xml` explicitly pins `jackson-databind` to `2.21.5` with the comment: "Spring Boot 4.1.0 still
