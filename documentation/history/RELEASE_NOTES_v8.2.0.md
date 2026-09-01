@@ -181,7 +181,7 @@ it, Qodana static analysis is removed from the project entirely in this release.
   `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`,
   `IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`,
   `IpscCompetitorServiceImplTest` — all updated for the `emailAddresses` shape and the `;` separator.
-- New genuinely-multiple-address tests added to `CompetitorRequestTest`, `IpscCompetitorServiceImplTest`,
+- New genuinely multiple-address tests added to `CompetitorRequestTest`, `IpscCompetitorServiceImplTest`,
   `IpscCompetitorServiceTest` and `IpscCompetitorServiceIntegrationTest`, closing the gap where every existing
   `emailAddresses` test used only a single-element list (or null/empty).
 
