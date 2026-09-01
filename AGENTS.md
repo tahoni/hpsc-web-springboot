@@ -73,8 +73,7 @@ currently in use.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles)'s Database Profiles section for the profile/DDL matrix —
 tests activate the `test` profile automatically, so no database setup is required to run them. See
-[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/Qodana/JaCoCo
-triggers.
+[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/JaCoCo triggers.
 
 ---
 
