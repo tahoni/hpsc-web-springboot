@@ -65,7 +65,10 @@ Steps:
    narrative depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
    reverse chronological order. If the release is significant enough to have shifted the project's trajectory, also
    thread it through the other version-by-version sections (Architectural Evolution, Feature Timeline, Key Learnings,
-   Future Roadmap, Conclusion/footer), using the immediately preceding version's treatment as the template.
+   Future Roadmap, Conclusion/footer), using the immediately preceding version's treatment as the template. Then
+   check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching
+   update — it's synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can
+   leave that table stale.
 8. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent

@@ -27,6 +27,11 @@ It complements, rather than duplicates, `HISTORY.md`'s per-release "🚀 Future 
 tracks what changed release-to-release, while this document tracks the standing, cross-release gaps between the
 project's stated intent and its current state.
 
+Because the "⚙️ Goals & Constraints" table below is synthesised partly from `HISTORY.md`'s Future Roadmap
+Implications sections, check whether that table needs a matching update whenever `HISTORY.md` changes — most
+concretely, whenever a release is being prepped and `HISTORY.md` gains its new Historical Timeline entry, per
+`AGENTS.md`'s Release Checklist.
+
 ---
 
 ## ⚙️ Goals & Constraints (Synthesised)

@@ -329,7 +329,10 @@ anything downstream references them:
    narrative depth and in the same style as the existing entries. If the release is significant enough to have shifted
    the project's trajectory, also thread it through the other sections that already track version-by-version state
    (Architectural Evolution, Feature Timeline, Key Learnings, Future Roadmap, Conclusion/footer). Use how the
-   immediately preceding version was woven into those sections as the template.
+   immediately preceding version was woven into those sections as the template. Then check whether
+   `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
+   synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that
+   table stale.
 5. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent

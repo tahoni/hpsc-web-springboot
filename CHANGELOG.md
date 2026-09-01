@@ -130,6 +130,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   that order, before any version-specific work begins — the full codebase sweep for brand-new gaps first, then the
   diff-driven check for gaps this branch's own work has closed or progressed, since the latter needs the plan
   already reflecting whatever the former just found. Renumbers the remaining checklist steps accordingly
+- **`AGENTS.md`'s Release Checklist step 4 and `prep-version-release`'s matching step:** Both now end by checking
+  whether `improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update after `HISTORY.md` is
+  extended — the table is synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change
+  there can leave it stale. `improvement-plan.md`'s own "🎯 Purpose & Scope" section states the same dependency
 
 ## 🧾 [8.1.0] - 2026-09-01
 
