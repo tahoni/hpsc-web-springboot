@@ -21,8 +21,8 @@ class MatchRequestForCSVTest {
     void testJsonSerialization_whenFullyPopulated_thenUsesUpperCamelCasePropertyNames() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        MatchRequestForCSV request = new MatchRequestForCSV(
-                LocalDate.of(2026, 4, 10), "Club Championship", "Test Club", "Pistol", "Level 1", 2);
+        MatchRequestForCSV request = new MatchRequestForCSV(LocalDate.of(2026, 4, 10), "Club Championship",
+                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two");
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -34,7 +34,7 @@ class MatchRequestForCSVTest {
         assertEquals("Test Club", node.get("Club").asText());
         assertEquals("Pistol", node.get("MatchFirearmType").asText());
         assertEquals("Level 1", node.get("MatchCategory").asText());
-        assertEquals(2, node.get("NumberOfStages").asInt());
+        assertEquals("1-Stage One;2-Stage Two", node.get("Stages").asText());
     }
 
     @Test
@@ -42,7 +42,7 @@ class MatchRequestForCSVTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequestForCSV request = new MatchRequestForCSV(
-                LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, 0);
+                LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null);
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -54,6 +54,7 @@ class MatchRequestForCSVTest {
         assertTrue(node.get("MatchFirearmType").isNull());
         assertTrue(node.get("MatchCategory").isNull());
         assertEquals(0, node.get("NumberOfStages").asInt());
+        assertTrue(node.get("Stages").isNull());
     }
 
     // JSON deserialization
@@ -68,7 +69,8 @@ class MatchRequestForCSVTest {
                   "Club": "Test Club",
                   "MatchFirearmType": "Pistol",
                   "MatchCategory": "Level 1",
-                  "NumberOfStages": 2
+                  "NumberOfStages": 2,
+                  "Stages": "1-Stage One;2-Stage Two"
                 }
                 """;
 
@@ -82,6 +84,7 @@ class MatchRequestForCSVTest {
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());
         assertEquals(2, request.getNumberOfStages());
+        assertEquals("1-Stage One;2-Stage Two", request.getStages());
     }
 
     @Test
@@ -105,6 +108,7 @@ class MatchRequestForCSVTest {
         assertNull(request.getMatchFirearmType());
         assertNull(request.getMatchCategory());
         assertEquals(0, request.getNumberOfStages());
+        assertNull(request.getStages());
     }
 
     @Test
@@ -155,8 +159,8 @@ class MatchRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,NumberOfStages
-                2026-04-10,Club Championship,Test Club,Pistol,Level 1,2
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,NumberOfStages,Stages
+                2026-04-10,Club Championship,Test Club,Pistol,Level 1,2,1-Stage One;2-Stage Two
                 """;
 
         // Act
@@ -175,6 +179,7 @@ class MatchRequestForCSVTest {
         assertEquals("Pistol", row.getMatchFirearmType());
         assertEquals("Level 1", row.getMatchCategory());
         assertEquals(2, row.getNumberOfStages());
+        assertEquals("1-Stage One;2-Stage Two", row.getStages());
     }
 
     @Test
@@ -187,7 +192,7 @@ class MatchRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,NumberOfStages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,NumberOfStages,Stages
                 2026-04-10,Club Championship
                 """;
 
@@ -206,6 +211,7 @@ class MatchRequestForCSVTest {
         assertNull(rows.getFirst().getMatchFirearmType());
         assertNull(rows.getFirst().getMatchCategory());
         assertEquals(0, rows.getFirst().getNumberOfStages());
+        assertNull(rows.getFirst().getStages());
     }
 
     @Test
@@ -218,7 +224,7 @@ class MatchRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,NumberOfStages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,NumberOfStages,Stages
                 2026-04-10
                 """;
 

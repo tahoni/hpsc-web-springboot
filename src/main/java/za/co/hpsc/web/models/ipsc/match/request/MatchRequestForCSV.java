@@ -16,10 +16,11 @@ import java.time.LocalDate;
  * Request model for bulk-importing IPSC matches from CSV data.
  *
  * <p>
- * Mirrors {@link MatchRequest}'s fields, other than {@code matchId} and {@code stages} — CSV
- * bulk import only ever creates new matches, so no identifier is accepted, and stages are
- * represented by a plain {@link #numberOfStages} count rather than the full nested
- * {@link MatchStageRequest} list. Column headers are matched using
+ * Mirrors {@link MatchRequest}'s fields, other than {@code matchId} — CSV bulk import only ever
+ * creates new matches, so no identifier is accepted. {@link MatchRequest}'s nested
+ * {@code stages} list is instead represented here as {@link #numberOfStages} (a plain count) and
+ * {@link #stages} (a single semicolon-separated CSV cell of {@code <stageNumber>-<stageName>}
+ * entries, e.g. {@code "1-Stage 1;2-Stage 2"}). Column headers are matched using
  * {@link PropertyNamingStrategies.UpperCamelCaseStrategy}, so a CSV header of {@code MatchName}
  * maps onto the {@code matchName} field, and so on.
  * </p>
@@ -47,6 +48,9 @@ public class MatchRequestForCSV {
     private String matchCategory;
     /** The number of stages that make up this match. */
     private int numberOfStages;
+    /** The stages that make up this match, as a single semicolon-separated CSV cell of
+     * {@code <stageNumber>-<stageName>} entries (e.g. {@code "1-Stage 1;2-Stage 2"}). */
+    private String stages;
 
     /**
      * Constructs a {@code MatchRequestForCSV} from its CSV/JSON representation.
@@ -65,7 +69,8 @@ public class MatchRequestForCSV {
      *                         {@link za.co.hpsc.web.enums.FirearmType} by name.
      * @param matchCategory    the category/tier of this match; resolved against
      *                         {@link za.co.hpsc.web.enums.MatchCategory} by name.
-     * @param numberOfStages   the number of stages that make up this match.
+     * @param stages           the stages that make up this match, as a single semicolon-separated
+     *                         CSV cell of {@code <stageNumber>-<stageName>} entries.
      */
     @JsonCreator
     public MatchRequestForCSV(@JsonProperty(value = "MatchDate", required = true) LocalDate matchDate,
@@ -73,12 +78,12 @@ public class MatchRequestForCSV {
                               @JsonProperty("Club") String club,
                               @JsonProperty("MatchFirearmType") String matchFirearmType,
                               @JsonProperty("MatchCategory") String matchCategory,
-                              @JsonProperty("NumberOfStages") int numberOfStages) {
+                              @JsonProperty("Stages") String stages) {
         this.matchDate = matchDate;
         this.matchName = matchName;
         this.club = club;
         this.matchFirearmType = matchFirearmType;
         this.matchCategory = matchCategory;
-        this.numberOfStages = numberOfStages;
+        this.stages = stages;
     }
 }
