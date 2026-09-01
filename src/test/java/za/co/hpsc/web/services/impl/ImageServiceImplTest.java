@@ -84,8 +84,8 @@ public class ImageServiceImplTest {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName
-                Image 1,Summary 1,Description 1,Category 1,Tag1|Tag2,/path/to/image1,image1.png
-                Image 2,Summary 2,Description 2,Category 2,Tag3|Tag4,/path/to/image2,image2.png
+                Image 1,Summary 1,Description 1,Category 1,Tag1;Tag2,/path/to/image1,image1.png
+                Image 2,Summary 2,Description 2,Category 2,Tag3;Tag4,/path/to/image2,image2.png
                 """;
 
         // Act
@@ -126,8 +126,8 @@ public class ImageServiceImplTest {
         // Arrange
         String csvData = """
                 summary,title,description,category,tags,filePath,fileName
-                Summary 1,Image 1,Description 1,Category 1,Tag1|Tag2,/path/to/image1,image1.png
-                Summary 2,Image 2,Description 2,Category 2,Tag3|Tag4,/path/to/image2,image2.png
+                Summary 1,Image 1,Description 1,Category 1,Tag1;Tag2,/path/to/image1,image1.png
+                Summary 2,Image 2,Description 2,Category 2,Tag3;Tag4,/path/to/image2,image2.png
                 """;
 
         // Act

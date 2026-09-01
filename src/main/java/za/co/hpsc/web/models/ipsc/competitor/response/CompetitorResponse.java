@@ -9,6 +9,7 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * A persisted IPSC competitor, as returned by {@code IpscCompetitorController}'s CRUD endpoints.
@@ -50,6 +51,6 @@ public class CompetitorResponse {
     private String idNumber;
     /** The competitor's cellphone number. */
     private String cellphoneNumber;
-    /** The competitor's email address. */
-    private String emailAddress;
+    /** The competitor's email addresses, if any. */
+    private List<String> emailAddresses;
 }

@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.1.1](#-811---2026-09-01) ← Current
+- [🧾 Version 8.2.0](#-820---2026-09-01) ← Current
+- [🧾 Version 8.1.1](#-811---2026-09-01)
 - [🧾 Version 8.1.0](#-810---2026-09-01)
 - [🧾 Version 8.0.0](#-800---2026-08-31)
 - [🧾 Version 7.4.1](#-741---2026-08-29)
@@ -43,6 +44,76 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.2.0] - 2026-09-01
+
+### 🔄 Changed
+
+#### Domain
+
+- **`Competitor`:** `emailAddress` (a single, optional `String`) replaced with `emailAddresses`
+  (`List<String>`), mapped via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email`
+  child table — a competitor can now have zero or more email addresses
+
+#### Models
+
+- **`CompetitorRequest`, `CompetitorResponse`:** `emailAddress` (`String`) renamed to `emailAddresses`
+  (`List<String>`)
+- **`CompetitorRequestForCSV`:** `emailAddress` renamed to `emailAddresses`; still a single `String`
+  CSV cell, but now holding zero or more semicolon-separated email addresses (e.g.
+  `"a@x.com;b@x.com"`), split into a list when mapped onto `CompetitorRequest`
+
+#### Services
+
+- **`IpscCompetitorServiceImpl`:** `applyFields`, `patchCompetitor`, `toRequest` and `toResponse`
+  updated for `emailAddresses`; new `splitEmailAddresses` helper parses a CSV row's
+  semicolon-separated email cell into a `List<String>`, trimming entries and dropping blanks
+
+#### Controllers
+
+- **`IpscCompetitorController`:** Bulk CSV endpoint's Swagger example header updated from
+  `EmailAddress` to `EmailAddresses`
+
+#### Database
+
+- **`V7_2_0__add_competitor_emails.sql`:** New Flyway migration adding the `competitor_email` table
+  (`competitor_id` FK, `email_address`), backfilling it from any existing non-blank
+  `competitor.email_address` values, then dropping that column
+
+#### Constants
+
+- **`SystemConstants.ARRAY_SEPARATOR`:** New shared `";"` constant, and `ImageServiceImpl`/
+  `AwardServiceImpl`'s bulk CSV parsing switched from `"|"` to it, so every bulk CSV endpoint's
+  multi-value cells (competitor email addresses, image/award tags) now share one separator
+  convention; the `ImageController`/`AwardController` Swagger examples and their CSV parsing tests
+  are updated to match
+
+#### Documentation
+
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates tables' `Static Analysis` row removed
+- **`AGENTS.md`:** `CodeQL/Qodana/JaCoCo` trigger reference updated to `CodeQL/JaCoCo`
+- **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #7 (Qodana CI wiring) closed as
+  not applicable, rather than delivered — see 🗑️ Removed below for why
+
+### 🐛 Fixed
+
+#### Services
+
+- **`IpscCompetitorServiceImpl`:** `applyFields`/`patchCompetitor` now defensively copy
+  `request.getEmailAddresses()` into a new `ArrayList` before storing it on the entity, instead of storing the
+  caller-supplied `List` reference directly. An immutable list (e.g. `List.of(...)`) previously crashed with an
+  unhandled `UnsupportedOperationException` when Hibernate merged an update, bypassing the
+  `FatalException`/`NonFatalException`/`ValidationException` hierarchy entirely; found while adding multi-address
+  test coverage for `patchCompetitor`
+
+### 🗑️ Removed
+
+#### CI/CD & Configuration
+
+- **`.github/workflows/qodana.yml`, `qodana.yaml`:** Qodana static analysis removed. It had failed on every CI run
+  since v8.1.1 added it — a missing `QODANA_TOKEN` repository secret (release-line Qodana linters require one
+  since 2023.2) and an unconditional SARIF-upload step that also failed independently — so there was no working
+  configuration left to preserve
 
 ## 🧾 [8.1.1] - 2026-09-01
 

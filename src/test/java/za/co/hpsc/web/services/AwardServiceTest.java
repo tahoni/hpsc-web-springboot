@@ -89,7 +89,7 @@ public class AwardServiceTest {
     void testCreateAwards_whenSingleCeremonyWithSingleAwardAndAllFields_thenReturnsAllFieldsMapped() {
         // Arrange
         String csvData = CSV_HEADER +
-                "Top Shooter,Best shooter award,Annual top shooter description,Overall,ipsc|hpsc,2026-04-10,awards/top-shooter,IPSC Gala 2026,Annual gala summary,Gala description,Gala Category,gala|annual,Jane Doe,John Roe,Sam Poe,jane.png,john.png,sam.png\n";
+                "Top Shooter,Best shooter award,Annual top shooter description,Overall,ipsc;hpsc,2026-04-10,awards/top-shooter,IPSC Gala 2026,Annual gala summary,Gala description,Gala Category,gala;annual,Jane Doe,John Roe,Sam Poe,jane.png,john.png,sam.png\n";
 
         // Act
         AwardCeremonyResponseHolder responseHolder = assertDoesNotThrow(() -> awardService.createAwards(csvData));
@@ -140,7 +140,7 @@ public class AwardServiceTest {
         // Arrange
         String csvData = """
                 ceremonyTitle,firstPlaceName,secondPlaceName,thirdPlaceName,title,imageFilePath,date,summary,description,category,tags,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
-                Annual Gala,Gold Winner,Silver Winner,Bronze Winner,Best Shot,awards/best,2026-06-15,Shot summary,Shot description,Precision,precision|accuracy,Gala summary,Gala description,Elite,elite|prestige,gold.png,silver.png,bronze.png
+                Annual Gala,Gold Winner,Silver Winner,Bronze Winner,Best Shot,awards/best,2026-06-15,Shot summary,Shot description,Precision,precision;accuracy,Gala summary,Gala description,Elite,elite;prestige,gold.png,silver.png,bronze.png
                 """;
 
         // Act

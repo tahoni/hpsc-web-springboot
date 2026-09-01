@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.Gender;
@@ -27,7 +28,9 @@ import za.co.hpsc.web.services.IpscCompetitorService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -127,7 +130,25 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitorRequestForCSV.getClubNumber(),
                 competitorRequestForCSV.getIdNumber(),
                 competitorRequestForCSV.getCellphoneNumber(),
-                competitorRequestForCSV.getEmailAddress());
+                splitEmailAddresses(competitorRequestForCSV.getEmailAddresses()));
+    }
+
+    /**
+     * Splits a CSV cell of semicolon-separated email addresses into a list.
+     *
+     * @param rawEmailAddresses the raw CSV cell value (e.g. {@code "a@x.com;b@x.com"}); may be
+     *                          null or blank, in which case an empty list is returned.
+     * @return the individual, trimmed email addresses, excluding any blank entries.
+     */
+    protected List<String> splitEmailAddresses(String rawEmailAddresses) {
+        if ((rawEmailAddresses == null) || rawEmailAddresses.isBlank()) {
+            return new ArrayList<>();
+        }
+
+        return Arrays.stream(rawEmailAddresses.split(SystemConstants.ARRAY_SEPARATOR))
+                .map(String::trim)
+                .filter(email -> !email.isBlank())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -186,8 +207,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getCellphoneNumber() != null) {
             competitor.setCellphoneNumber(request.getCellphoneNumber());
         }
-        if (request.getEmailAddress() != null) {
-            competitor.setEmailAddress(request.getEmailAddress());
+        if (request.getEmailAddresses() != null) {
+            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
         }
         competitor = competitorRepository.save(competitor);
 
@@ -221,7 +242,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setClubNumber(request.getClubNumber());
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
-        competitor.setEmailAddress(request.getEmailAddress());
+        competitor.setEmailAddresses(
+                (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
     }
 
     /**
@@ -313,6 +335,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getClubNumber(),
                 competitor.getIdNumber(),
                 competitor.getCellphoneNumber(),
-                competitor.getEmailAddress());
+                competitor.getEmailAddresses());
     }
 }

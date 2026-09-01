@@ -88,7 +88,7 @@ public class ImageServiceIntegrationTest {
     public void testCreateImages_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
         // Arrange
         String csvData = CSV_HEADER +
-                "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains|plains,/photos/nature,landscape.jpg\n";
+                "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains;plains,/photos/nature,landscape.jpg\n";
 
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
@@ -126,7 +126,7 @@ public class ImageServiceIntegrationTest {
     public void testCreateImages_whenMultipleImages_thenReturnsAllMappedResponses() {
         // Arrange
         String csvData = CSV_HEADER +
-                "Photo A,Summary A,Desc A,Events,Tag1|Tag2,/photos/a,a.png\n" +
+                "Photo A,Summary A,Desc A,Events,Tag1;Tag2,/photos/a,a.png\n" +
                 "Photo B,Summary B,Desc B,Portraits,Tag3,/photos/b,b.jpg\n" +
                 "Photo C,,,,,/photos/c,c.gif\n";
 
@@ -176,7 +176,7 @@ public class ImageServiceIntegrationTest {
         // Arrange
         String csvData = """
                 fileName,filePath,tags,category,description,summary,title
-                portrait.png,/photos/portrait,outdoor|sunlight,Portraits,Golden hour portrait,Warm tones,Golden Hour
+                portrait.png,/photos/portrait,outdoor;sunlight,Portraits,Golden hour portrait,Warm tones,Golden Hour
                 """;
 
         // Act
@@ -202,7 +202,7 @@ public class ImageServiceIntegrationTest {
     public void testCreateImages_whenQuotedFieldsContainCommas_thenPreservesCompleteFieldValues() {
         // Arrange
         String csvData = CSV_HEADER +
-                "\"Prize, Giving\",\"Summary, with comma\",\"Description, with comma\",\"Events, Outdoor\",\"gold|silver\",/photos/quoted,quoted.jpg\n";
+                "\"Prize, Giving\",\"Summary, with comma\",\"Description, with comma\",\"Events, Outdoor\",\"gold;silver\",/photos/quoted,quoted.jpg\n";
 
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
@@ -228,7 +228,7 @@ public class ImageServiceIntegrationTest {
         // Arrange
         String csvData = """
                 title,summary,description,category,tags,filePath,fileName\r
-                Windows A,Summary A,Description A,Category A,tag1|tag2,/windows/a,a.png\r
+                Windows A,Summary A,Description A,Category A,tag1;tag2,/windows/a,a.png\r
                 Windows B,Summary B,Description B,Category B,tag3,/windows/b,b.gif\r
                 """;
 
@@ -247,10 +247,10 @@ public class ImageServiceIntegrationTest {
     }
 
     @Test
-    public void testCreateImages_whenTagsUsePipeSeparator_thenParsesEachTagAsListEntry() {
+    public void testCreateImages_whenTagsUseSemicolonSeparator_thenParsesEachTagAsListEntry() {
         // Arrange
         String csvDataWithTags = CSV_HEADER +
-                "Wildlife,,,Nature,lion|tiger|cheetah,/photos/wild,animal.png\n";
+                "Wildlife,,,Nature,lion;tiger;cheetah,/photos/wild,animal.png\n";
 
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() ->
