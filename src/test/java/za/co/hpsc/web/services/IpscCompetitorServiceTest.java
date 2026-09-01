@@ -19,6 +19,7 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,6 +73,15 @@ public class IpscCompetitorServiceTest {
         // Arrange
         CompetitorRequest request = validRequest("HPSC-001");
         request.setLastName("  ");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(request));
+    }
+
+    @Test
+    void testCreateCompetitor_whenClubNumberIsMissing_thenThrowsValidationException() {
+        // Arrange
+        CompetitorRequest request = validRequest(null);
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitor(request));
@@ -403,6 +413,78 @@ public class IpscCompetitorServiceTest {
 
         // Assert
         assertEquals(ClubIdentifier.HPSC, patched.getHomeClub());
+    }
+
+    @Test
+    void testPatchCompetitor_whenGenderIsProvided_thenGenderIsResolvedAndSet() {
+        // Arrange
+        Competitor existing = new Competitor();
+        existing.setId(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubSaveReturnsSameEntity();
+
+        CompetitorRequest patch = new CompetitorRequest();
+        patch.setGender(Gender.Female.toString());
+
+        // Act
+        CompetitorResponse patched = assertDoesNotThrow(() -> ipscCompetitorService.patchCompetitor(1L, patch));
+
+        // Assert
+        assertEquals(Gender.Female, patched.getGender());
+    }
+
+    @Test
+    void testPatchCompetitor_whenClubNumberIsProvided_thenClubNumberChanges() {
+        // Arrange
+        Competitor existing = new Competitor();
+        existing.setId(1L);
+        existing.setClubNumber("HPSC-001");
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubSaveReturnsSameEntity();
+
+        CompetitorRequest patch = new CompetitorRequest();
+        patch.setClubNumber("HPSC-002");
+
+        // Act
+        CompetitorResponse patched = assertDoesNotThrow(() -> ipscCompetitorService.patchCompetitor(1L, patch));
+
+        // Assert
+        assertEquals("HPSC-002", patched.getClubNumber());
+    }
+
+    @Test
+    void testPatchCompetitor_whenRemainingSimpleFieldsAreProvided_thenAllChange() {
+        // Arrange
+        Competitor existing = new Competitor();
+        existing.setId(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubSaveReturnsSameEntity();
+
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        CompetitorRequest patch = new CompetitorRequest();
+        patch.setLastName("Smith");
+        patch.setMiddleNames("Ann");
+        patch.setNickname("Janie");
+        patch.setDateOfBirth(dateOfBirth);
+        patch.setSapsaNumber(12345);
+        patch.setCompetitorNumber("C-001");
+        patch.setIdNumber("8001015800083");
+        patch.setCellphoneNumber("0821234567");
+        patch.setEmailAddress("jane@example.com");
+
+        // Act
+        CompetitorResponse patched = assertDoesNotThrow(() -> ipscCompetitorService.patchCompetitor(1L, patch));
+
+        // Assert
+        assertEquals("Smith", patched.getLastName());
+        assertEquals("Ann", patched.getMiddleNames());
+        assertEquals("Janie", patched.getNickname());
+        assertEquals(dateOfBirth, patched.getDateOfBirth());
+        assertEquals(12345, patched.getSapsaNumber());
+        assertEquals("C-001", patched.getCompetitorNumber());
+        assertEquals("8001015800083", patched.getIdNumber());
+        assertEquals("0821234567", patched.getCellphoneNumber());
+        assertEquals("jane@example.com", patched.getEmailAddress());
     }
 
     // updateCompetitor()

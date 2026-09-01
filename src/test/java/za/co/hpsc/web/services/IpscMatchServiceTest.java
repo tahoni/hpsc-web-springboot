@@ -86,6 +86,15 @@ public class IpscMatchServiceTest {
     }
 
     @Test
+    void testCreateMatch_whenClubIsMissing_thenThrowsValidationException() {
+        // Arrange
+        MatchRequest request = validRequest(null);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+    }
+
+    @Test
     void testCreateMatch_whenClubIsBlank_thenThrowsValidationException() {
         // Arrange
         MatchRequest request = validRequest("  ");
@@ -314,6 +323,101 @@ public class IpscMatchServiceTest {
 
         MatchRequest patch = new MatchRequest();
         patch.setMatchFirearmType("Not A Firearm Type");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(1L, patch));
+    }
+
+    @Test
+    void testPatchMatch_whenClubIsProvided_thenClubIsResolvedAndSet() {
+        // Arrange
+        IpscMatch existing = new IpscMatch();
+        existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+
+        MatchRequest patch = new MatchRequest();
+        patch.setClub("Test Club");
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        assertEquals(ClubIdentifier.HPSC, patched.getClub());
+    }
+
+    @Test
+    void testPatchMatch_whenMatchDateIsProvided_thenMatchDateChanges() {
+        // Arrange
+        IpscMatch existing = new IpscMatch();
+        existing.setId(1L);
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+
+        LocalDate newDate = LocalDate.of(2027, 3, 20);
+        MatchRequest patch = new MatchRequest();
+        patch.setMatchDate(newDate);
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        assertEquals(newDate, patched.getMatchDate());
+    }
+
+    @Test
+    void testPatchMatch_whenMatchFirearmTypeIsProvided_thenMatchFirearmTypeIsResolvedAndSet() {
+        // Arrange
+        IpscMatch existing = new IpscMatch();
+        existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+
+        MatchRequest patch = new MatchRequest();
+        patch.setMatchFirearmType(FirearmType.RIFLE.toString());
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        assertEquals(FirearmType.RIFLE, patched.getMatchFirearmType());
+    }
+
+    @Test
+    void testPatchMatch_whenMatchCategoryIsProvided_thenMatchCategoryIsResolvedAndSet() {
+        // Arrange
+        IpscMatch existing = new IpscMatch();
+        existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+
+        MatchRequest patch = new MatchRequest();
+        patch.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        assertEquals(MatchCategory.CLUB_SHOOT, patched.getMatchCategory());
+    }
+
+    @Test
+    void testPatchMatch_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
+        IpscMatch existing = new IpscMatch();
+        existing.setId(1L);
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
+
+        MatchRequest patch = new MatchRequest();
+        patch.setMatchCategory("Not A Match Category");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(1L, patch));
