@@ -12,6 +12,7 @@ detailed system design.
 - [🧪 Running Tests](#-running-tests)
 - [🏛️ Architecture at a Glance](#-architecture-at-a-glance)
 - [📚 Documentation Conventions](#-documentation-conventions)
+- [🗺️ Roadmap](#-roadmap)
 - [🔀 Git & PR Workflow](#-git--pr-workflow)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [🚢 Cutting a Release](#-cutting-a-release)
@@ -157,6 +158,27 @@ repository. Highlights:
 - `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When
   updating `RELEASE_NOTES.md`, `HISTORY.md` or `CHANGELOG.md`, check whether `README.md`/`ARCHITECTURE.md` need the same
   update (the "reverse sync rule").
+
+---
+
+## 🗺️ Roadmap
+
+| File                        | Purpose                                                                                                          |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------|
+| `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
+
+Both live in `documentation/roadmap/`. `improvement-plan.md` opens with a Goals & Constraints table, then a series of
+numbered `### N. <Title>` gap sections — each with Evidence, Why it matters and a Proposed improvement, gaining an
+Outcome or Progress paragraph once work against it lands — followed by a Now/Next/Later/Ongoing Roadmap table and a
+Success Criteria list. `improvement-plan-tasks.md` breaks those same gaps into checkboxes under the same
+Now/Next/Later/Ongoing phases, with each block naming its originating gap number.
+
+Unlike `README.md`/`ARCHITECTURE.md`, `improvement-plan.md` is explicitly **not evergreen** — it's a point-in-time
+reading of the project, revisited only when a gap closes or a new one is identified. A closed or progressed gap gains
+a status suffix on its header (e.g. "— ✅ Closed in vX.Y.Z" or "— 🟡 Partially progressed in vX.Y.Z") and an
+Outcome/Progress paragraph — the original analysis is never deleted or rewritten, and task-list items are checked off
+in place rather than removed, so the history of what was considered and why stays intact.
 
 ---
 

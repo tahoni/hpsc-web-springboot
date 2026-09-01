@@ -57,6 +57,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CLAUDE.md`:** New "Working on Complex Tasks" section instructing use of the TodoWrite tool for multistep or
   non-trivial tasks, matching `AGENTS.md`'s existing "Track complex work with a todo list" Git Workflow convention
   and the sibling `hpsc-web-vite` project's `CLAUDE.md`
+- **`CONTRIBUTING.md`:** New "🗺️ Roadmap" section documenting `documentation/roadmap/improvement-plan.md`/
+  `improvement-plan-tasks.md`'s structure (Goals & Constraints table, numbered gap sections, Roadmap/Success
+  Criteria) and their not-evergreen, closed-in-place maintenance convention — the only one of `README.md`/
+  `AGENTS.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md` that didn't already list these files
 
 #### Tooling
 
