@@ -45,6 +45,25 @@ class CompetitorRequestTest {
     }
 
     @Test
+    void testJsonSerialization_whenMultipleEmailAddresses_thenSerializesAllOfThem() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        CompetitorRequest request = new CompetitorRequest(
+                1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567",
+                List.of("jane.doe@example.com", "jane2.doe@example.com"));
+
+        // Act
+        String json = mapper.writeValueAsString(request);
+        JsonNode node = mapper.readTree(json);
+
+        // Assert
+        assertEquals(2, node.get("emailAddresses").size());
+        assertEquals("jane.doe@example.com", node.get("emailAddresses").get(0).asText());
+        assertEquals("jane2.doe@example.com", node.get("emailAddresses").get(1).asText());
+    }
+
+    @Test
     void testJsonSerialization_whenOnlyRequiredFieldsSet_thenSerializesWithNullOptionals() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -107,6 +126,26 @@ class CompetitorRequestTest {
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
         assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
+    }
+
+    @Test
+    void testJsonDeserialization_whenMultipleEmailAddressesProvided_thenMapsAllOfThem() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String json = """
+                {
+                  "firstName": "Jane",
+                  "lastName": "Doe",
+                  "clubNumber": "HPSC-001",
+                  "emailAddresses": ["jane.doe@example.com", "jane2.doe@example.com"]
+                }
+                """;
+
+        // Act
+        CompetitorRequest request = mapper.readValue(json, CompetitorRequest.class);
+
+        // Assert
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
     }
 
     @Test

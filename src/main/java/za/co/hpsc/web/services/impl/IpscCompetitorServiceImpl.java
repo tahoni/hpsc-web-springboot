@@ -208,7 +208,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             competitor.setCellphoneNumber(request.getCellphoneNumber());
         }
         if (request.getEmailAddresses() != null) {
-            competitor.setEmailAddresses(request.getEmailAddresses());
+            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
         }
         competitor = competitorRepository.save(competitor);
 
@@ -242,7 +242,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setClubNumber(request.getClubNumber());
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
-        competitor.setEmailAddresses((request.getEmailAddresses() != null) ? request.getEmailAddresses() : new ArrayList<>());
+        competitor.setEmailAddresses(
+                (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
     }
 
     /**

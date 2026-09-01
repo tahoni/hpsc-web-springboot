@@ -145,6 +145,22 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
     }
 
+    @Test
+    void testCreateCompetitor_whenMultipleEmailAddresses_thenAllArePersisted() {
+        // Arrange
+        CompetitorRequest request = validRequest("HPSC-001");
+        request.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
+
+        // Act
+        CompetitorResponse response = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitor(request));
+        CompetitorResponse fetched = assertDoesNotThrow(
+                () -> ipscCompetitorService.getCompetitor(response.getCompetitorId()));
+
+        // Assert
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), response.getEmailAddresses());
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), fetched.getEmailAddresses());
+    }
+
     // createCompetitors()
     private static final String CSV_HEADER =
             "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses\n";
@@ -355,6 +371,25 @@ class IpscCompetitorServiceIntegrationTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.patchCompetitor(created.getCompetitorId(), patch));
+    }
+
+    @Test
+    void testPatchCompetitor_whenMultipleEmailAddressesProvided_thenAllArePersisted() {
+        // Arrange
+        CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
+
+        CompetitorRequest patch = new CompetitorRequest();
+        patch.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
+
+        // Act
+        CompetitorResponse patched = assertDoesNotThrow(
+                () -> ipscCompetitorService.patchCompetitor(created.getCompetitorId(), patch));
+        CompetitorResponse fetched = assertDoesNotThrow(
+                () -> ipscCompetitorService.getCompetitor(created.getCompetitorId()));
+
+        // Assert
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), patched.getEmailAddresses());
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), fetched.getEmailAddresses());
     }
 
     // updateCompetitor()

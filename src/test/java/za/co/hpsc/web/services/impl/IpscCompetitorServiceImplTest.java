@@ -108,6 +108,23 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testApplyFields_whenMultipleEmailAddresses_thenCompetitorHasAllOfThem() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setClubNumber("HPSC-001");
+        request.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
+        Competitor competitor = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), competitor.getEmailAddresses());
+    }
+
+    @Test
     void testApplyFields_whenHomeClubIsBlank_thenHomeClubIsNull() {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
@@ -454,6 +471,19 @@ class IpscCompetitorServiceImplTest {
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
+    }
+
+    @Test
+    void testToResponse_whenMultipleEmailAddresses_thenAllAreMapped() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
+
+        // Act
+        CompetitorResponse response = ipscCompetitorServiceImpl.toResponse(competitor);
+
+        // Assert
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), response.getEmailAddresses());
     }
 
     // validateForCreate()
