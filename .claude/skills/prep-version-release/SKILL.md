@@ -53,7 +53,7 @@ Steps:
 5. **Run the `sync-unreleased-changes` skill before touching CHANGELOG.md.** Release branches are cut from `develop`
    (per AGENTS.md's Branching Model), so invoke it with its default base (`develop`) — never skip this even if
    `[Unreleased]` looks complete: it cross-checks every commit and any uncommitted diff against the actual
-   `[Unreleased]` entries, fills in anything missing, flags drifted entries, and consolidates duplicate `#### <Area>`
+   `[Unreleased]` entries, fills in anything missing, flags drifted entries and consolidates duplicate `#### <Area>`
    sub-headers. The next step renames `[Unreleased]` wholesale, so it must be fully accurate first. If it flags any
    entries as drifted, resolve those with the user before continuing — don't fold a flagged entry into the new version
    section unresolved.
@@ -74,7 +74,7 @@ Steps:
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent
    commit. For the **Contributors** section, list every unique commit author on the release branch since it diverged
    from `main` — `git log main..HEAD --format='%an'` (or the equivalent GitHub "Contributors" view for the release's
-   PRs), deduplicated — rather than a generic placeholder like "Development Team", and include every account found, bots
+   PRs), deduplicated — rather than a generic placeholder like "Development Team", and include every account found; bots
    (e.g. `dependabot[bot]`, `ImgBotApp`) included.
 9. **Apply the reverse sync rule**: check whether any of this version's changes are relevant to `README.md` (goal, tech
    stack, project structure, quick start) or `ARCHITECTURE.md` (system design, layering, data flows) and update those
