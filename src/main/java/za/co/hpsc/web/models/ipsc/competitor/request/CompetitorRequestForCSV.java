@@ -30,60 +30,34 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class CompetitorRequestForCSV {
-    /**
-     * The competitor's first name.
-     */
+    /** The competitor's first name. */
     @JsonProperty(required = true)
     private String firstName;
-    /**
-     * The competitor's last name.
-     */
+    /** The competitor's last name. */
     @JsonProperty(required = true)
     private String lastName;
-    /**
-     * The competitor's middle name(s), if any.
-     */
+    /** The competitor's middle name(s), if any. */
     private String middleNames;
-    /**
-     * The competitor's nickname, if any.
-     */
+    /** The competitor's nickname, if any. */
     private String nickname;
-    /**
-     * The competitor's date of birth.
-     */
+    /** The competitor's date of birth. */
     @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
     private LocalDate dateOfBirth;
-    /**
-     * The competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name.
-     */
+    /** The competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name. */
     private String gender;
-    /**
-     * The name of the competitor's home club; resolved against existing clubs by name.
-     */
+    /** The name of the competitor's home club; resolved against existing clubs by name. */
     private String homeClub;
-    /**
-     * The competitor's SAPSA membership number.
-     */
+    /** The competitor's SAPSA membership number. */
     private Integer sapsaNumber;
-    /**
-     * The competitor's number, as assigned for competition.
-     */
+    /** The competitor's number, as assigned for competition. */
     private String competitorNumber;
-    /**
-     * The competitor's home club membership number; must be unique across all competitors.
-     */
+    /** The competitor's home club membership number; must be unique across all competitors. */
     private String clubNumber;
-    /**
-     * The competitor's national identity number.
-     */
+    /** The competitor's national identity number. */
     private String idNumber;
-    /**
-     * The competitor's cellphone number.
-     */
+    /** The competitor's cellphone number. */
     private String cellphoneNumber;
-    /**
-     * The competitor's email address.
-     */
+    /** The competitor's email address. */
     private String emailAddress;
 
     /**
