@@ -65,6 +65,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   newly-closed or newly-progressed gaps in both files, following the same evidence-based methodology used to write
   and maintain the plan's existing gaps by hand this release. Never commits — drafts the edits and stops for review,
   same as `prep-version-release`
+- **`/sync-improvement-plan-gaps`:** New Claude Code skill, narrower than `/update-improvement-plan-gaps` above —
+  checks the current branch's diff (mirroring `sync-unreleased-changes`' merge-base/diff-gathering approach) against
+  only the plan's already-tracked gaps, to catch one this branch's own work closed or progressed. Never adds a new
+  gap number itself; flags anything that looks like one for a separate `/update-improvement-plan-gaps` sweep instead.
+  Also never commits on its own
 
 #### Testing
 
