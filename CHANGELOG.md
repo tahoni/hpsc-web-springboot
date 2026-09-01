@@ -104,6 +104,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   domain, but the underlying Award/Image question stays open. The Roadmap table promotes Gap #4 (coverage
   enforcement) into the vacated Next slot and rewords the Ongoing row now that Gap #5's specific overrides are gone
 
+#### Tooling
+
+- **`.claude/skills/generate-pr-description` renamed to `prep-version-release`:** Better reflects what the skill
+  actually does (the whole release-prep checklist, not just the PR description step); its `generate-pr-summary`
+  cross-reference is updated to match
+
 ## 🧾 [8.1.0] - 2026-09-01
 
 ### ➕ Added

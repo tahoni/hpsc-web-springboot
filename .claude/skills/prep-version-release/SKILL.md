@@ -1,5 +1,5 @@
 ---
-name: generate-pr-description
+name: prep-version-release
 description: Prepare a new version release — RELEASE_NOTES.md, CHANGELOG.md, HISTORY.md, reverse-synced docs and a draft release PR description — following AGENTS.md's Release Checklist. Use whenever the user is preparing/cutting a release PR or asks to draft release documentation for a version.
 user-invocable: true
 allowed-tools:
@@ -15,7 +15,7 @@ allowed-tools:
   - Write
 ---
 
-# Generate New Version PR
+# Prepare Version Release
 
 The version to prepare a release for is passed as `args` (e.g. `7.2.0`) — if not supplied, ask the user for it before
 proceeding. The rest of this skill refers to that value as `$VERSION`.
