@@ -164,7 +164,7 @@ repository. Highlights:
 ## 🗺️ Roadmap
 
 | File                        | Purpose                                                                                                          |
-|-----------------------------|---------------------------------------------------------------------------------------------------------------------|
+|-----------------------------|------------------------------------------------------------------------------------------------------------------|
 | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
@@ -177,7 +177,7 @@ Now/Next/Later/Ongoing phases, with each block naming its originating gap number
 Unlike `README.md`/`ARCHITECTURE.md`, `improvement-plan.md` is explicitly **not evergreen** — it's a point-in-time
 reading of the project, revisited only when a gap closes or a new one is identified. A closed or progressed gap gains
 a status suffix on its header (e.g. "— ✅ Closed in vX.Y.Z" or "— 🟡 Partially progressed in vX.Y.Z") and an
-Outcome/Progress paragraph — the original analysis is never deleted or rewritten, and task-list items are checked off
+Outcome/Progress paragraph; the original analysis is never deleted or rewritten, and task-list items are checked off
 in place rather than removed, so the history of what was considered and why stays intact.
 
 ---
