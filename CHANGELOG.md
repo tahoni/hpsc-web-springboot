@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.1.0](#-810---2026-09-01) ← Current
+- [🧾 Version 8.1.1](#-811---2026-09-01) ← Current
+- [🧾 Version 8.1.0](#-810---2026-09-01)
 - [🧾 Version 8.0.0](#-800---2026-08-31)
 - [🧾 Version 7.4.1](#-741---2026-08-29)
 - [🧾 Version 7.4.0](#-740---2026-08-29)
@@ -42,6 +43,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.1.1] - 2026-09-01
 
 ### ➕ Added
 
@@ -101,6 +104,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Build & Metadata
 
+- Project version bumped to **8.1.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 - **`pom.xml`:** Spring Boot parent bumped `4.1.0` → `4.1.1`. As part of this:
     - Removed the `jackson-databind` (`2.21.5`) `dependencyManagement` override — Boot 4.1.1 now manages this version
       itself
@@ -110,6 +114,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
     - Updated the flyway-maven-plugin's inline sync comment to reference `4.1.1`; the pinned `flyway-mysql` version
       (`12.4.0`) is unchanged, as Boot 4.1.1 still manages `flyway.version` at `12.4.0`
     - Verified: full test suite (746 tests) passes against the bumped parent
+- **`pom.xml`:** Removed the `jackson-bom.version` property override (pinned `3.1.5`) — found by Gap #5's own
+  recurring-check task during this release's gap-sync sweep, confirmed redundant against
+  `spring-boot-dependencies:4.1.1`'s own managed default (also `3.1.5`) via the parent POM directly, not just an
+  echoed property. Verified: full test suite (775 tests) passes with the override removed
 
 #### Documentation
 
