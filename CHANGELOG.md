@@ -69,7 +69,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   checks the current branch's diff (mirroring `sync-unreleased-changes`' merge-base/diff-gathering approach) against
   only the plan's already-tracked gaps, to catch one this branch's own work closed or progressed. Never adds a new
   gap number itself; flags anything that looks like one for a separate `/update-improvement-plan-gaps` sweep instead.
-  Also never commits on its own
+  It also never commits on its own
 
 #### Testing
 
@@ -89,7 +89,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   existing "field is blank" validation test (`clubNumber`, match `club`) to close a branch JaCoCo flagged as
   unreached
 - Full-suite line/branch coverage rose from 92.9%/93.4% to 98.34%/98.84% as a result (746 → 775 tests); see
-  `documentation/roadmap/improvement-plan.md`'s Gap #4 for the remaining, deliberately-untested gaps (three
+  `documentation/roadmap/improvement-plan.md`'s Gap #4 for the remaining, deliberately untested gaps (three
   structurally-unreachable `IOException` catch blocks in the CSV `read*()` methods, `ImageResponse`'s dead
   null-fallback branch, the unused `IpscConstants` class, and `HpscWebApplication.main()`)
 
@@ -122,6 +122,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`.claude/skills/generate-pr-description` renamed to `prep-version-release`:** Better reflects what the skill
   actually does (the whole release-prep checklist, not just the PR description step); its `generate-pr-summary`
   cross-reference is updated to match
+- **`prep-version-release`:** New step 2 runs `update-improvement-plan-gaps` then `sync-improvement-plan-gaps`, in
+  that order, before any version-specific work begins — the full codebase sweep for brand-new gaps first, then the
+  diff-driven check for gaps this branch's own work has closed or progressed, since the latter needs the plan
+  already reflecting whatever the former just found. Renumbers the remaining checklist steps accordingly
 
 ## 🧾 [8.1.0] - 2026-09-01
 
