@@ -51,6 +51,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   non-trivial tasks, matching `AGENTS.md`'s existing "Track complex work with a todo list" Git Workflow convention
   and the sibling `hpsc-web-vite` project's `CLAUDE.md`
 
+### 🔄 Changed
+
+#### Build & Metadata
+
+- **`pom.xml`:** Spring Boot parent bumped `4.1.0` → `4.1.1`. As part of this:
+    - Removed the `jackson-databind` (`2.21.5`) `dependencyManagement` override — Boot 4.1.1 now manages this version
+      itself
+    - Removed the `log4j-api` (`2.25.5`, CVE-2026-49844 fix) `dependencyManagement` override — Boot 4.1.1 now manages
+      this version itself
+    - Corrected the developer contact email (`leonil@tahoni.info` → `tahoni@gmail.com`)
+    - Updated the flyway-maven-plugin's inline sync comment to reference `4.1.1`; the pinned `flyway-mysql` version
+      (`12.4.0`) is unchanged, as Boot 4.1.1 still manages `flyway.version` at `12.4.0`
+    - Verified: full test suite (746 tests) passes against the bumped parent
+
+#### Documentation
+
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #1 (match/competitor service and
+  controller layer) and Gap #5 (`jackson-databind` version override) marked ✅ Closed — in v8.0.0 and by this
+  release's Spring Boot bump respectively — with Outcome notes and checked-off task lists rather than deleted
+  analysis, per the plan's own Success Criteria instructions. Gap #3 (Award/Image CSV persistence) gains a Progress
+  note: v8.1.0's competitor bulk CSV import and its `ARCHITECTURE.md` contrast narrow the ambiguity for that one
+  domain, but the underlying Award/Image question stays open. The Roadmap table promotes Gap #4 (coverage
+  enforcement) into the vacated Next slot and rewords the Ongoing row now that Gap #5's specific overrides are gone
+
 ## 🧾 [8.1.0] - 2026-09-01
 
 ### ➕ Added
