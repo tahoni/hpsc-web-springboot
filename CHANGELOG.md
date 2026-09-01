@@ -74,6 +74,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorServiceImplTest`:** New tests covering the impl-only `readCompetitors`/`toRequest` protected
   helper methods
 
+### 🔄 Changed
+
+#### Models
+
+- **`MatchRequest`, `MatchStageRequest`, `MatchResponse`, `MatchStageResponse`, `MatchOverallScoresRequest`,
+  `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`, `MatchStageScoresRequestForCSV`:** Added `@NotNull`
+  to fields that are always required (e.g. `matchName`, `matchDate`, `stageNumber`, `name`, `membershipNumber`),
+  documenting the existing contract rather than changing behaviour — matching the `@NotNull` already used on
+  `CompetitorRequest`/`ImageRequest`
+
 ## 🧾 [8.0.0] - 2026-08-31
 
 ### ➕ Added

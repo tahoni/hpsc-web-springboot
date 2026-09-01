@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.scores.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,8 +38,10 @@ import java.util.List;
 @NoArgsConstructor
 public class MatchOverallScoresRequest {
     /** Internal identifier of the match this result belongs to. */
+    @NotNull
     private Long matchId;
     /** The competitor's full name. */
+    @NotNull
     private String name;
     /** Overall match score as a percentage of the match winner's score (winner = 100%). */
     private BigDecimal percentage;
@@ -63,6 +66,7 @@ public class MatchOverallScoresRequest {
      * hit is worth. */
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
+    @NotNull
     private String membershipNumber;
     /** Total A-zone (alpha) hits across the match — the highest-value scoring zone. */
     private Integer alpha;

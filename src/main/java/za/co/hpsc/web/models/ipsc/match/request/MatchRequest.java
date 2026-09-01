@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.match.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +27,10 @@ public class MatchRequest {
     /** Identifier of the match to update; {@code null} when this request is creating a new match. */
     private Long matchId;
     /** Date the match was/will be shot. */
+    @NotNull
     private LocalDate matchDate;
     /** The match's name. */
+    @NotNull
     private String matchName;
     /** The name of the club hosting the match; resolved against existing clubs by name. */
     private String club;

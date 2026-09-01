@@ -3,6 +3,7 @@ package za.co.hpsc.web.models.ipsc.scores.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,8 +45,10 @@ public abstract class MatchStageScoresRequestForCSV {
      * populated separately. */
     private Long matchId;
     /** The stage's number/order within the match. */
+    @NotNull
     private Integer stageNumber;
     /** The competitor's full name. */
+    @NotNull
     private String name;
     /** This stage's score as a percentage of the stage winner's hit factor (winner = 100%). */
     @JsonProperty("%")
@@ -77,6 +80,7 @@ public abstract class MatchStageScoresRequestForCSV {
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
     @JsonProperty("Mem#")
+    @NotNull
     private String membershipNumber;
     /** A-zone (alpha) hits on this stage — the highest-value scoring zone. */
     @JsonProperty("A")

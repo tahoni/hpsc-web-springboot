@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.match.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MatchStageResponse {
     /** The stage's own identifier. */
+    @NotNull
     private Long stageId;
     /** The stage's number/order within the match. */
+    @NotNull
     private Integer stageNumber;
     /** The stage's name, e.g. "Stage 1 - The Bank Job". */
     private String stageName;

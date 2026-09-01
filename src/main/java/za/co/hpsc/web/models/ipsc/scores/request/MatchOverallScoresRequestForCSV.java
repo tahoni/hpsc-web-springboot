@@ -3,6 +3,7 @@ package za.co.hpsc.web.models.ipsc.scores.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,7 @@ public abstract class MatchOverallScoresRequestForCSV {
      * populated separately. */
     private Long matchId;
     /** The competitor's full name. */
+    @NotNull
     private String name;
     /** Overall match score as a percentage of the match winner's score (winner = 100%). */
     @JsonProperty("%")
@@ -79,6 +81,7 @@ public abstract class MatchOverallScoresRequestForCSV {
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
     @JsonProperty("Mem#")
+    @NotNull
     private String membershipNumber;
     /** Total A-zone (alpha) hits across the match — the highest-value scoring zone. */
     @JsonProperty("A")

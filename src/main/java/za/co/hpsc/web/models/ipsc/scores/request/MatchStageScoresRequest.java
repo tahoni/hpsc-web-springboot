@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.scores.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,10 +36,13 @@ import java.util.List;
 @NoArgsConstructor
 public class MatchStageScoresRequest {
     /** Internal identifier of the match this stage result belongs to. */
+    @NotNull
     private Long matchId;
     /** The stage's number/order within the match. */
+    @NotNull
     private Integer stageNumber;
     /** The competitor's full name. */
+    @NotNull
     private String name;
     /** This stage's score as a percentage of the stage winner's hit factor (winner = 100%). */
     private BigDecimal stagePercentage;
@@ -60,6 +64,7 @@ public class MatchStageScoresRequest {
     /** Major or Minor power factor — determines how many raw points each alpha/charlie/delta hit is worth. */
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
+    @NotNull
     private String membershipNumber;
     /** A-zone (alpha) hits on this stage — the highest-value scoring zone. */
     private Integer alpha;
