@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.competitor.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class CompetitorResponse {
     /** The competitor's own identifier. */
+    @NotNull
     private Long competitorId;
     /** The competitor's first name. */
+    @NotNull
     private String firstName;
     /** The competitor's last name. */
+    @NotNull
     private String lastName;
     /** The competitor's middle name(s), if any. */
     private String middleNames;
@@ -40,6 +44,7 @@ public class CompetitorResponse {
     /** The competitor's number, as assigned for competition. */
     private String competitorNumber;
     /** The competitor's home club membership number. */
+    @NotNull
     private String clubNumber;
     /** The competitor's national identity number. */
     private String idNumber;

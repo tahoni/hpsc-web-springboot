@@ -106,6 +106,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `@JsonProperty(required = true)` moves from `competitorNumber` to `clubNumber`, correcting a mismatch between
   the JSON-level requirement and `IpscCompetitorServiceImpl.validateForCreate`'s actual required fields
   (`firstName`, `lastName`, `clubNumber`)
+- **`CompetitorResponse`:** Added `@NotNull` to `competitorId`, `firstName`, `lastName` and `clubNumber` — every
+  persisted competitor always has these set, documenting the existing contract rather than changing behaviour,
+  matching the `@NotNull` already used on `CompetitorRequest`/`ImageRequest`
 
 ## 🧾 [8.0.0] - 2026-08-31
 
