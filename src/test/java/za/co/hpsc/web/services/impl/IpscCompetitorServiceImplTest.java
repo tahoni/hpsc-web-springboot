@@ -27,8 +27,9 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
  * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code readCompetitors},
- * {@code resolveGender}, {@code resolveHomeClub}, {@code toRequest}, {@code toResponse},
- * {@code validateForCreate}) - not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
+ * {@code resolveGender}, {@code resolveHomeClub}, {@code splitEmailAddresses}, {@code toRequest},
+ * {@code toResponse}, {@code validateForCreate}) - not declared on
+ * {@link za.co.hpsc.web.services.IpscCompetitorService}.
  * The interface's create/update/patch/get contract is covered by
  * {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}.
  */
@@ -67,7 +68,7 @@ class IpscCompetitorServiceImplTest {
         request.setClubNumber("HPSC-001");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
-        request.setEmailAddress("jane.doe@example.com");
+        request.setEmailAddresses(List.of("jane.doe@example.com"));
 
         Competitor competitor = new Competitor();
 
@@ -87,7 +88,40 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", competitor.getClubNumber());
         assertEquals("9001015800083", competitor.getIdNumber());
         assertEquals("0821234567", competitor.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", competitor.getEmailAddress());
+        assertEquals(List.of("jane.doe@example.com"), competitor.getEmailAddresses());
+    }
+
+    @Test
+    void testApplyFields_whenEmailAddressesIsNull_thenCompetitorEmailAddressesIsEmpty() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setClubNumber("HPSC-001");
+        Competitor competitor = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals(List.of(), competitor.getEmailAddresses());
+    }
+
+    @Test
+    void testApplyFields_whenMultipleEmailAddresses_thenCompetitorHasAllOfThem() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setClubNumber("HPSC-001");
+        request.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
+        Competitor competitor = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), competitor.getEmailAddresses());
     }
 
     @Test
@@ -151,7 +185,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenValidCsv_thenReturnsCompetitorRequestForCSVList() {
         // Arrange
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
                 Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com
                 John,Smith,,,,,,,,HPSC-002,,,
                 """;
@@ -175,7 +209,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", first.getClubNumber());
         assertEquals("9001015800083", first.getIdNumber());
         assertEquals("0821234567", first.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", first.getEmailAddress());
+        assertEquals("jane.doe@example.com", first.getEmailAddresses());
 
         CompetitorRequestForCSV second = rows.get(1);
         assertEquals("John", second.getFirstName());
@@ -187,7 +221,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
-                ClubNumber,LastName,FirstName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,IdNumber,CellphoneNumber,EmailAddress
+                ClubNumber,LastName,FirstName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,IdNumber,CellphoneNumber,EmailAddresses
                 HPSC-001,Doe,Jane,,,,,,,,,,
                 """;
 
@@ -205,7 +239,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyList() {
         // Arrange
         String csvData =
-                "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress\n";
+                "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses\n";
 
         // Act
         List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -297,13 +331,42 @@ class IpscCompetitorServiceImplTest {
         assertSame(club, resolved);
     }
 
+    // splitEmailAddresses()
+    @Test
+    void testSplitEmailAddresses_whenNull_thenReturnsEmptyList() {
+        assertEquals(List.of(), ipscCompetitorServiceImpl.splitEmailAddresses(null));
+    }
+
+    @Test
+    void testSplitEmailAddresses_whenBlank_thenReturnsEmptyList() {
+        assertEquals(List.of(), ipscCompetitorServiceImpl.splitEmailAddresses("  "));
+    }
+
+    @Test
+    void testSplitEmailAddresses_whenSingleEmail_thenReturnsSingletonList() {
+        assertEquals(List.of("jane.doe@example.com"),
+                ipscCompetitorServiceImpl.splitEmailAddresses("jane.doe@example.com"));
+    }
+
+    @Test
+    void testSplitEmailAddresses_whenMultipleEmails_thenReturnsTrimmedList() {
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"),
+                ipscCompetitorServiceImpl.splitEmailAddresses(" jane.doe@example.com ; jane2.doe@example.com "));
+    }
+
+    @Test
+    void testSplitEmailAddresses_whenContainsBlankEntries_thenExcludesThem() {
+        assertEquals(List.of("jane.doe@example.com"),
+                ipscCompetitorServiceImpl.splitEmailAddresses("jane.doe@example.com;;  "));
+    }
+
     // toRequest()
     @Test
     void testToRequest_whenAllFieldsPresent_thenMapsAllFieldsOntoCompetitorRequest() {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com");
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com;jane2.doe@example.com");
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
@@ -322,7 +385,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", request.getEmailAddress());
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
     }
 
     @Test
@@ -345,7 +408,7 @@ class IpscCompetitorServiceImplTest {
         assertNull(request.getCompetitorNumber());
         assertNull(request.getIdNumber());
         assertNull(request.getCellphoneNumber());
-        assertNull(request.getEmailAddress());
+        assertEquals(List.of(), request.getEmailAddresses());
     }
 
     // toResponse()
@@ -389,7 +452,7 @@ class IpscCompetitorServiceImplTest {
         competitor.setClubNumber("HPSC-001");
         competitor.setIdNumber("9001015800083");
         competitor.setCellphoneNumber("0821234567");
-        competitor.setEmailAddress("jane.doe@example.com");
+        competitor.setEmailAddresses(List.of("jane.doe@example.com"));
 
         // Act
         CompetitorResponse response = ipscCompetitorServiceImpl.toResponse(competitor);
@@ -407,7 +470,20 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", response.getEmailAddress());
+        assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
+    }
+
+    @Test
+    void testToResponse_whenMultipleEmailAddresses_thenAllAreMapped() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
+
+        // Act
+        CompetitorResponse response = ipscCompetitorServiceImpl.toResponse(competitor);
+
+        // Assert
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), response.getEmailAddresses());
     }
 
     // validateForCreate()

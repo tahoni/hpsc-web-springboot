@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.HpscConstants;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Request to create or update an IPSC competitor.
@@ -50,8 +51,8 @@ public class CompetitorRequest {
     private String idNumber;
     /** The competitor's cellphone number. */
     private String cellphoneNumber;
-    /** The competitor's email address. */
-    private String emailAddress;
+    /** The competitor's email addresses, if any. */
+    private List<String> emailAddresses;
 
     /**
      * Constructs a {@code CompetitorRequest} from its JSON representation.
@@ -70,7 +71,7 @@ public class CompetitorRequest {
      *                         Must not be null or blank.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
-     * @param emailAddress     the competitor's email address.
+     * @param emailAddresses   the competitor's email addresses, if any.
      */
     @JsonCreator
     public CompetitorRequest(@JsonProperty("competitorId") Long competitorId,
@@ -86,7 +87,7 @@ public class CompetitorRequest {
                              @JsonProperty(value = "clubNumber", required = true) String clubNumber,
                              @JsonProperty("idNumber") String idNumber,
                              @JsonProperty("cellphoneNumber") String cellphoneNumber,
-                             @JsonProperty("emailAddress") String emailAddress) {
+                             @JsonProperty("emailAddresses") List<String> emailAddresses) {
         this.competitorId = competitorId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -100,6 +101,6 @@ public class CompetitorRequest {
         this.clubNumber = clubNumber;
         this.idNumber = idNumber;
         this.cellphoneNumber = cellphoneNumber;
-        this.emailAddress = emailAddress;
+        this.emailAddresses = emailAddresses;
     }
 }

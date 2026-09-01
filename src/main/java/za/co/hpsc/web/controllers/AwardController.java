@@ -74,7 +74,7 @@ public class AwardController {
                             schema = @Schema(implementation = AwardRequest.class),
                             examples = @ExampleObject("""
                                     title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
-                                    string,string,string,string,string|string,yyyy-MM-dd,string,string,string,string,string,string,string,string,string,string,string,string
+                                    string,string,string,string,string;string,yyyy-MM-dd,string,string,string,string,string,string,string,string,string,string,string,string
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, FatalException {

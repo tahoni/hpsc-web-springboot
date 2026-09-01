@@ -57,8 +57,8 @@ public class CompetitorRequestForCSV {
     private String idNumber;
     /** The competitor's cellphone number. */
     private String cellphoneNumber;
-    /** The competitor's email address. */
-    private String emailAddress;
+    /** The competitor's email addresses, if any, as a single semicolon-separated CSV cell (e.g. {@code "a@x.com;b@x.com"}). */
+    private String emailAddresses;
 
     /**
      * Constructs a {@code CompetitorRequestForCSV} from its CSV/JSON representation.
@@ -82,7 +82,8 @@ public class CompetitorRequestForCSV {
      * @param clubNumber       the competitor's home club membership number.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
-     * @param emailAddress     the competitor's email address.
+     * @param emailAddresses   the competitor's email addresses, if any, as a single
+     *                         semicolon-separated CSV cell (e.g. {@code "a@x.com;b@x.com"}).
      */
     @JsonCreator
     public CompetitorRequestForCSV(@JsonProperty(value = "FirstName", required = true) String firstName,
@@ -97,7 +98,7 @@ public class CompetitorRequestForCSV {
                                    @JsonProperty("ClubNumber") String clubNumber,
                                    @JsonProperty("IdNumber") String idNumber,
                                    @JsonProperty("CellphoneNumber") String cellphoneNumber,
-                                   @JsonProperty("EmailAddress") String emailAddress) {
+                                   @JsonProperty("EmailAddresses") String emailAddresses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleNames = middleNames;
@@ -110,6 +111,6 @@ public class CompetitorRequestForCSV {
         this.clubNumber = clubNumber;
         this.idNumber = idNumber;
         this.cellphoneNumber = cellphoneNumber;
-        this.emailAddress = emailAddress;
+        this.emailAddresses = emailAddresses;
     }
 }

@@ -42,7 +42,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                       |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                   |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                          |
-| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and code coverage (JaCoCo) are established quality gates; `./mvnw test` is documented as reviewer/local-only, not an automatic gate; Qodana static analysis is configured but likewise not wired into CI                                              |
+| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and code coverage (JaCoCo) are established quality gates; `./mvnw test` is documented as reviewer/local-only, not an automatic gate; Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7)                      |
 | `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                 |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                    |
@@ -189,7 +189,7 @@ controller layer doesn't — but for the scoring/shooter-log domain specifically
 Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
 fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
-### 7. Qodana static analysis is configured but never runs in CI — 🟡 Partially progressed in v8.1.1
+### 7. Qodana static analysis is configured but never runs in CI — ✅ Closed as not applicable in v8.2.0
 
 **Evidence:** `ARCHITECTURE.md`'s CI/CD & Quality Gates table states the `Static Analysis` (Qodana JVM) gate is "Run
 locally / via IDE against `qodana.yaml` — no CI workflow wired up yet" — still true of `ARCHITECTURE.md` itself as
@@ -208,10 +208,23 @@ Analysis` row — the same closing move Gap #2 proposes for `Build & Tests`.
 
 **Progress:** `.github/workflows/qodana.yml` now exists, running `JetBrains/qodana-action` against the existing
 `qodana.yaml` config on push/PR to `develop`/`main`, mirroring `codeql.yml`'s trigger branches exactly as proposed.
-Not yet closed: the workflow hasn't been verified as actually succeeding in the Actions tab (this branch hasn't
-been pushed since it was added), and `ARCHITECTURE.md`'s CI/CD & Quality Gates table still states "no CI workflow
-wired up yet" on the `Static Analysis` row — that update is deliberately deferred until a real run is confirmed
-green, per this gap's own "once live" wording.
+Not yet closed: `ARCHITECTURE.md`'s CI/CD & Quality Gates table still states "no CI workflow wired up yet" on the
+`Static Analysis` row — that update is deliberately deferred until a real run is confirmed green, per this gap's own
+"once live" wording. This is now confirmed further off than "merely unverified": every run since the workflow was
+added (`gh run list --workflow=qodana.yml`, five most recent runs on `develop`/`main` as of this check) has failed
+with the same two errors — `qodana scan failed with exit code 1` because release-line Qodana linters since 2023.2
+require a `QODANA_TOKEN` (no such secret is configured in this repository), and a second, independent failure in the
+same job, `Input required and not supplied: sarif_file`, because the `github/codeql-action/upload-sarif@v4` step
+still runs even when the scan step produced no SARIF file to upload. Both need fixing — provisioning a
+`QODANA_TOKEN` repository secret (or switching to a Community linter that doesn't require one) and conditioning the
+SARIF upload step on the scan step's success — before this gap can close.
+
+**Outcome:** Rather than fix the two issues Progress identified, `.github/workflows/qodana.yml` and `qodana.yaml`
+were removed entirely in v8.2.0, along with every other reference to Qodana across `ARCHITECTURE.md`,
+`CONTRIBUTING.md` and `AGENTS.md`'s CI/CD documentation. The gate had never once succeeded since it was added, so
+there was no working baseline to preserve, and re-enabling it would still require provisioning a `QODANA_TOKEN`
+secret this project doesn't currently have. This closes the gap as not applicable rather than as delivered — if
+static analysis in CI is wanted again in the future, it should be scoped as a new gap rather than reopening this one.
 
 ---
 
@@ -219,7 +232,7 @@ green, per this gap's own "once live" wording.
 
 | Phase       | Focus                                                                                                                                                                                                              |
 |-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Add the CI build/test gate (#2) and wire Qodana static analysis into CI (#7) — both lowest effort, closing gaps the project's own docs already flag                                                                |
+| **Now**     | Add the CI build/test gate (#2) — lowest effort, closing a gap the project's own docs already flag. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed                                 |
 | **Next**    | Coverage enforcement (#4), now against the current, refreshed 92.9%/93.4% baseline; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 |
 | **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                   |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                    |
@@ -234,8 +247,8 @@ green, per this gap's own "once live" wording.
 - `./mvnw verify -Pcoverage` (or equivalent) runs automatically on PRs to `develop`/`main`, so `ARCHITECTURE.md`'s
   CI/CD & Quality Gates table can drop the "locally / by reviewers" caveat on the `Build & Tests` row.
 - Coverage regressions fail CI rather than being caught only when the next `HISTORY.md` entry is written.
-- `ARCHITECTURE.md`'s CI/CD & Quality Gates table can drop its "no CI workflow wired up yet" caveat on the
-  `Static Analysis` row once Qodana runs automatically alongside CodeQL.
+- ✅ Met in v8.2.0 (as not applicable): the `Static Analysis` row is gone from `ARCHITECTURE.md`'s CI/CD & Quality
+  Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.
 - A real `MatchScoreController`/`ShooterLogController` (or equivalent) exists and is tested, closing the gap
   `README.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` currently described as "still being built".
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s

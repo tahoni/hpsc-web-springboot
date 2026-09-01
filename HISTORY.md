@@ -21,6 +21,34 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.2.0 (September 1, 2026)
+
+**Theme:** Competitor Multi-Email Support & Bulk CSV Separator Standardisation
+
+**Key Focus:**
+
+- `Competitor.emailAddress` (a single, optional `String`) replaced with `emailAddresses` (`List<String>`), mapped
+  via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email` child table — a competitor can now have
+  zero or more email addresses; `V7_2_0__add_competitor_emails.sql` backfills the new table from any existing
+  non-blank `email_address` values before dropping that column
+- `CompetitorRequest`/`CompetitorResponse` renamed `emailAddress` to `emailAddresses`; `CompetitorRequestForCSV`
+  keeps a single `String` CSV cell but now holds zero or more semicolon-separated addresses (e.g. `"a@x.com;b@x.com"`),
+  split into a list via `IpscCompetitorServiceImpl`'s new `splitEmailAddresses` helper
+- New shared `SystemConstants.ARRAY_SEPARATOR` (`";"`) constant; `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV
+  parsing switched from `"|"` to it, so every bulk CSV endpoint's multi-value cells (competitor email addresses,
+  image/award tags) now share one separator convention, with the `AwardController`/`ImageController`/
+  `IpscCompetitorController` Swagger examples updated to match
+- Qodana static analysis removed entirely (`.github/workflows/qodana.yml`, `qodana.yaml`, and every reference in
+  `ARCHITECTURE.md`/`CONTRIBUTING.md`/`AGENTS.md`'s CI/CD documentation): a release audit found it had failed on
+  every CI run since v8.1.1 added it, and `documentation/roadmap/improvement-plan.md`'s Gap #7 closes as not
+  applicable rather than delivered
+- New genuinely multiple-address tests (not just single-address or null/empty) added across every layer
+  `emailAddresses` touches, surfacing a real bug: `IpscCompetitorServiceImpl.applyFields`/`patchCompetitor` stored
+  the caller-supplied `List` reference directly onto the entity, crashing with an unhandled
+  `UnsupportedOperationException` on an immutable list at Hibernate merge time; both now defensively copy into a
+  new `ArrayList`
+- Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.1.1 (September 1, 2026)
 
 **Theme:** CI Static Analysis, Release-Process Self-Maintenance & Coverage Regression Fixes
@@ -40,7 +68,7 @@ evolution of architecture, features and design philosophy across all versions.
 - Recreated `NonFatalExceptionTest`/`FatalExceptionTest`/`ValidationExceptionTest` — these existed as of v7.2.0 but
   were dropped with no replacement, leaving the exception hierarchy at 20% line coverage; added tests for the
   `models/ipsc/shared` scoring groundwork classes (0% coverage) and every `patchCompetitor`/`patchMatch` field's
-  previously-untested success path. Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch),
+  previously untested success path. Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch),
   746 → 775 tests
 - Spring Boot parent bumped `4.1.0` → `4.1.1`, dropping the now-redundant `jackson-databind`/`log4j-api`
   `dependencyManagement` overrides; the recurring dependency-currency check then caught a third redundant override,
@@ -1062,6 +1090,69 @@ coverage.
 
 ---
 
+### Phase 22: Competitor Multi-Email Support & Bulk CSV Separator Standardisation (v8.2.0)
+
+**Duration:** September 1, 2026
+
+A domain feature release: competitors gain multiple email addresses, and every bulk CSV endpoint's multi-value cell
+format is unified onto one separator convention.
+
+**Key Accomplishments:**
+
+**Competitor Multi-Email Support**
+
+- `Competitor.emailAddress` (a single, optional `String`) replaced with `emailAddresses` (`List<String>`), mapped
+  via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email` child table
+- `V7_2_0__add_competitor_emails.sql` backfills the new table from any existing non-blank `email_address` values,
+  then drops that column
+- `CompetitorRequest`/`CompetitorResponse` renamed `emailAddress` to `emailAddresses`; `CompetitorRequestForCSV`
+  keeps a single CSV cell but now holds zero or more semicolon-separated addresses, split via
+  `IpscCompetitorServiceImpl`'s new `splitEmailAddresses` helper
+
+**Bulk CSV Separator Standardisation**
+
+- New shared `SystemConstants.ARRAY_SEPARATOR` (`";"`); `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing
+  switched from `"|"` to it, so competitor email addresses and image/award tags now share one multi-value cell
+  convention, with the `AwardController`/`ImageController`/`IpscCompetitorController` Swagger examples updated to
+  match
+
+**Static Analysis Removal**
+
+- Qodana static analysis removed entirely: `.github/workflows/qodana.yml`, `qodana.yaml`, and every reference in
+  `ARCHITECTURE.md`/`CONTRIBUTING.md`/`AGENTS.md`'s CI/CD documentation. A release audit found it had failed on
+  every CI run since v8.1.1 added it — a missing `QODANA_TOKEN` secret and an unconditional SARIF-upload step — with
+  no working baseline left to preserve
+- `documentation/roadmap/improvement-plan.md`'s Gap #7 (Qodana CI wiring) closed as not applicable rather than
+  delivered
+
+**Architecture Highlights:**
+
+- No layering change — a domain-model extension (`@ElementCollection` child table) and a cross-cutting constant,
+  both within the existing service/controller structure
+
+**Technical Focus:**
+
+- Domain-model evolution (single value → collection, backed by a new child table)
+- Cross-endpoint consistency (shared constant replacing two independently hardcoded separators)
+
+**Bug Fix**
+
+- `IpscCompetitorServiceImpl.applyFields`/`patchCompetitor` stored the caller-supplied `emailAddresses` `List`
+  reference directly onto the entity; an immutable list (e.g. `List.of(...)`) crashed with an unhandled
+  `UnsupportedOperationException` when Hibernate merged an update, bypassing the exception hierarchy entirely. Found
+  while adding genuinely-multiple-address test coverage (every existing test had only used a single-element list);
+  both methods now defensively copy into a new `ArrayList`
+
+**Test Coverage:**
+
+- Existing CSV parsing, request/response model and bulk-import tests updated for the new `emailAddresses` shape and
+  separator
+- New multi-address tests (2+ emails in one list/CSV cell) added to `CompetitorRequestTest`,
+  `IpscCompetitorServiceImplTest`, `IpscCompetitorServiceTest` and `IpscCompetitorServiceIntegrationTest`; 781 → 790
+  tests
+
+---
+
 ### Phase 21: CI Static Analysis, Release-Process Self-Maintenance & Coverage Regression Fixes (v8.1.1)
 
 **Duration:** September 1, 2026
@@ -1094,7 +1185,7 @@ v8.0.0.
   overload — these existed as of v7.2.0 but were dropped somewhere before now with no replacement, leaving the
   exception hierarchy at 20% line coverage
 - New tests for the `models/ipsc/shared` scoring groundwork classes (0% coverage previously) and every
-  `patchCompetitor`/`patchMatch` field's previously-untested success path
+  `patchCompetitor`/`patchMatch` field's previously untested success path
 - Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch), 746 → 775 tests
 
 **Dependency Clean-up**
@@ -1972,6 +2063,25 @@ Focused consolidation of services, introduction of custom JPA converters and rep
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and
 comprehensive test coverage across all services and utilities.
+
+---
+
+### Milestone 22: Competitor Multi-Email Support & Bulk CSV Separator Standardisation (v8.2.0)
+
+- `Competitor.emailAddress` (`String`) replaced with `emailAddresses` (`List<String>`), backed by a new
+  `competitor_email` child table and a backfilling Flyway migration
+- New `SystemConstants.ARRAY_SEPARATOR` unifies `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing with the
+  competitor domain's semicolon-separated multi-value convention
+- Qodana static analysis removed after a roadmap audit found it had been failing on every CI run since v8.1.1;
+  `improvement-plan.md`'s Gap #7 closed as not applicable
+- New genuinely multiple-address tests surfaced a real bug in `IpscCompetitorServiceImpl.applyFields`/
+  `patchCompetitor` — an immutable `emailAddresses` list crashed with an unhandled `UnsupportedOperationException`
+  on update; both methods now defensively copy into a new `ArrayList`
+
+**Achievement:** Extended the competitor domain to support more than one email address, closed a lingering
+inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats, removed a
+CI quality gate that had never once succeeded, and fixed a real crash-on-update bug found by writing genuinely
+thorough multi-address test coverage instead of only single-element cases.
 
 ---
 
@@ -2937,9 +3047,23 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.1.1, the following areas are identified for future enhancement:
+Based on the evolution to v8.2.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.1.1)
+### Recently Completed (v8.2.0)
+
+- `Competitor.emailAddress` (`String`) replaced with `emailAddresses` (`List<String>`), backed by a new
+  `competitor_email` child table and a backfilling Flyway migration
+- New `SystemConstants.ARRAY_SEPARATOR` unifies `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing with the
+  competitor domain's semicolon-separated multi-value convention
+- Qodana static analysis removed entirely — it had failed on every CI run since v8.1.1 added it (missing
+  `QODANA_TOKEN` secret, unconditional SARIF upload) — closing `documentation/roadmap/improvement-plan.md`'s Gap #7
+  as not applicable
+- New genuinely-multiple-address test coverage surfaced and fixed a real bug: `IpscCompetitorServiceImpl`'s
+  `applyFields`/`patchCompetitor` now defensively copy `emailAddresses` into a new `ArrayList` instead of storing
+  the caller-supplied `List` reference directly, avoiding an unhandled `UnsupportedOperationException` on update
+- Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.1.1)
 
 - New `.github/workflows/qodana.yml` completes the Qodana static-analysis CI gate, configured but unwired since
   v8.0.0
