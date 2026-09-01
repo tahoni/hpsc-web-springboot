@@ -45,6 +45,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### ➕ Added
 
+#### CI/CD & Configuration
+
+- **`.github/workflows/qodana.yml`:** New workflow running JetBrains' `qodana-action` against the existing
+  `qodana.yaml` configuration, triggered on push/PR to `develop` and `main` (mirroring `codeql.yml`'s trigger
+  branches). Results upload as SARIF to GitHub code scanning alongside CodeQL, so no Qodana Cloud token or other
+  secret is required
+
 #### Documentation
 
 - **`CLAUDE.md`:** New "Working on Complex Tasks" section instructing use of the TodoWrite tool for multistep or
