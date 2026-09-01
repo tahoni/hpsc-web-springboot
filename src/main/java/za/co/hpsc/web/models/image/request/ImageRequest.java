@@ -33,7 +33,7 @@ public class ImageRequest extends Request {
 
     /**
      * Constructs a new {@code ImageRequest} object with the specified title,
-     * file path, and file name.
+     * file path and file name.
      * <p>
      * This constructor initialises the image request by setting the title using the superclass
      * constructor and handling null values for file path and file name by replacing them

@@ -14,7 +14,7 @@ long-standing empty stub is replaced by two full CRUD controllers — `IpscCompe
 DTOs and a `Gender` enum extended to match the shape of the project's other enums. Alongside the domain work, this
 release renames `processCsv` to `createAwards`/`createImages` and every enum's `getByX` factory methods to `fromX`,
 invests in a comprehensive Javadoc/`@since` documentation pass, merges `CLAUDE.md`'s guidance into a single
-`AGENTS.md` reference, migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM
+`AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM
 static analysis.
 
 ---
@@ -288,7 +288,7 @@ Version 8.0.0 completes the IPSC module rebuild begun as groundwork in v6.0.0: `
 replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new services, DTOs and the largest test
 expansion since v5.4.0. Alongside the domain work, this release also renames long-standing inconsistent method names,
 invests in a comprehensive Javadoc/`@since` documentation pass, consolidates `CLAUDE.md` into `AGENTS.md`, migrates
-the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM static analysis — marking the
+the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM static analysis; marking the
 transition from a project with substantial architectural groundwork to one with a genuinely complete, if still
 growing, IPSC feature set.
 

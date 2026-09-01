@@ -7,7 +7,7 @@ import za.co.hpsc.web.models.award.shared.Placing;
 
 /**
  * Represents an award placement in a competition or event,
- * including information about the place, name, and an associated image.
+ * including information about the place, name and an associated image.
  *
  * <p>
  * Extends the {@code Placing} class to include additional details specific to awards.
@@ -22,7 +22,7 @@ public class AwardPlacing extends Placing {
     private String imageFilePath = "";
 
     /**
-     * Constructs an {@code AwardPlacing} instance with the specified place, name,
+     * Constructs an {@code AwardPlacing} instance with the specified place, name
      * and image file path.
      *
      * @param place         the ordinal position or rank for this award placement.

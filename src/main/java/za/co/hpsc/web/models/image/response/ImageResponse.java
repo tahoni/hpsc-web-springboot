@@ -18,7 +18,7 @@ import java.util.UUID;
  * Represents a response object specifically designed for handling images.
  * This class extends the functionality of the {@link Response} superclass
  * by including additional fields and behaviours related to image-specific
- * properties, such as file path, file name, and MIME type.
+ * properties, such as file path, file name and MIME type.
  * <p>
  * The {@code ImageResponse} class provides multiple constructors for
  * creating instances with varying levels of details and integrates
@@ -43,7 +43,7 @@ public class ImageResponse extends Response {
 
     /**
      * Constructs a new {@code ImageResponse} object with specified UUID, title,
-     * file path, file name, and MIME type.
+     * file path, file name and MIME type.
      *
      * <p>
      * This constructor initialises the fields and ensures that the
@@ -154,7 +154,7 @@ public class ImageResponse extends Response {
      * <p>
      * This constructor initialises the {@code ImageResponse} fields based on the
      * information encapsulated in the given {@link ImageRequest}. The attributes such as
-     * title, summary, description, category, tags, file path, and file name are copied
+     * title, summary, description, category, tags, file path and file name are copied
      * from the {@link ImageRequest} instance.
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>

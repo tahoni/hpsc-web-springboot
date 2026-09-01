@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents a response containing award details for first, second, and third places.
+ * Represents a response containing award details for first, second and third places.
  * This class extends the {@link Response} class to include information such as
- * the first, second, and third place winners.
+ * the first, second and third place winners.
  *
  * <p>
  * The {@code AwardResponse} class is designed to encapsulate information
- * about an award, including details of individual winners for first, second,
+ * about an award, including details of individual winners for first, second
  * and third places.
  * The class provides multiple constructors for flexible initialisation with varying
- * levels of detail, including options to set UUID, title, description, tags,
+ * levels of detail, including options to set UUID, title, description, tags
  * and other response metadata.
  * </p>
  *
@@ -36,7 +36,7 @@ public class AwardResponse extends Response {
 
     /**
      * Constructs a new {@code AwardResponse} object with the specified award places for
-     * first, second, and third positions.
+     * first, second and third positions.
      *
      * <p>
      * A randomly generated UUID is assigned through the superclass constructor.
@@ -60,7 +60,7 @@ public class AwardResponse extends Response {
 
     /**
      * Constructs a new {@code AwardResponse} object with the specified UUID and award places
-     * for first, second, and third positions.
+     * for first, second and third positions.
      *
      * <p>
      * A randomly generated UUID is assigned through the superclass constructor
@@ -85,8 +85,8 @@ public class AwardResponse extends Response {
     }
 
     /**
-     * Constructs a new {@code AwardResponse} object with the specified UUID, title,
-     * and award places for first, second, and third positions.
+     * Constructs a new {@code AwardResponse} object with the specified UUID, title
+     * and award places for first, second and third positions.
      *
      * <p>
      * A randomly generated UUID is assigned through the superclass constructor
@@ -115,7 +115,7 @@ public class AwardResponse extends Response {
 
     /**
      * Constructs a new {@code AwardResponse} object with the specified UUID, title,
-     * summary, description, category, tags, and award places for first, second,
+     * summary, description, category, tags and award places for first, second
      * and third positions.
      *
      * <p>
@@ -154,7 +154,7 @@ public class AwardResponse extends Response {
 
     /**
      * Constructs a new {@code AwardResponse} object with the specified title, summary,
-     * description, category, tags, and award places for first, second, and third positions.
+     * description, category, tags and award places for first, second and third positions.
      *
      * <p>
      * A randomly generated UUID is assigned through the superclass constructor.
@@ -189,11 +189,11 @@ public class AwardResponse extends Response {
 
     /**
      * Constructs a new {@code AwardResponse} object with the specified title, summary,
-     * description, category, tags, and award place details for first, second,
+     * description, category, tags and award place details for first, second
      * and third positions.
      *
      * <p>
-     * This constructor allows setting of award place details for first, second, and third
+     * This constructor allows setting of award place details for first, second and third
      * place by creating {@link AwardPlacing} objects using the provided parameters
      * of names and image file paths.
      * A randomly generated UUID is assigned through the superclass constructor.
@@ -240,15 +240,15 @@ public class AwardResponse extends Response {
      * <p>
      * This constructor initialises the {@code AwardResponse} fields based on the
      * information encapsulated in the given {@link AwardRequest}. The attributes such as
-     * title, summary, description, category, tags, file path, and file name are copied
-     * from the {@link AwardRequest} instance. The award place details for first, second,
+     * title, summary, description, category, tags, file path and file name are copied
+     * from the {@link AwardRequest} instance. The award place details for first, second
      * and third positions are also copied from the request object.
      * A randomly generated UUID is assigned through the superclass constructor.
      * </p>
      *
      * @param awardRequest the request object containing details such as title, summary,
-     *                     description, category, tags, and award place details for first,
-     *                     second, and third positions.
+     *                     description, category, tags and award place details for first,
+     *                     second and third positions.
      *                     Must not be null.
      * @since 1.1.1
      */

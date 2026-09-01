@@ -13,7 +13,7 @@ import lombok.Setter;
  * (e.g. first place, second place) along with an associated name
  * (e.g. the participant or team achieving the placement).
  * Typically, objects of this class can be used in contexts involving
- * rankings, leaderboard displays, or competition results.
+ * rankings, leaderboard displays or competition results.
  * </p>
  *
  * @since 1.1.3

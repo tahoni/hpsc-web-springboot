@@ -14,12 +14,12 @@ import java.util.List;
  * <p>
  * The {@code AwardRequestForCSV} abstract class encapsulates metadata about an image,
  * including its title, summary, detailed description, category, associated tags, file
- * path, and file name.
+ * path and file name.
  * This class is specifically designed to handle structured data points required for
  * generating or managing CSV representations of images.
- * The class mandates the presence of certain required fields. The title, file path,
+ * The class mandates the presence of certain required fields. The title, file path
  * and file name define the basic attributes of an image.
- * Additional optional fields such as summary, description, category, and tags provide
+ * Additional optional fields such as summary, description, category and tags provide
  * further descriptive information about the image.
  * This class uses the {@code @JsonProperty} annotation to specify mandatory fields
  * for JSON deserialization and ensures that they are populated when an instance is created.
@@ -47,11 +47,11 @@ public abstract class ImageRequestForCsv {
 
     /**
      * Constructs a new {@code ImageRequestForCsv} instance with the specified title,
-     * file path, and file name.
+     * file path and file name.
      *
      * <p>
      * This constructor is annotated with {@code @JsonCreator} to enable
-     * deserialization from JSON, specifically requiring the title, file path,
+     * deserialization from JSON, specifically requiring the title, file path
      * and file name as mandatory fields. The provided details are used to
      * initialise the corresponding attributes of the object.
      * </p>
