@@ -1,10 +1,12 @@
 package za.co.hpsc.web.models.ipsc.match.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.HpscConstants;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +30,7 @@ public class MatchRequest {
     private Long matchId;
     /** Date the match was/will be shot. */
     @NotNull
+    @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
     /** The match's name. */
     @NotNull

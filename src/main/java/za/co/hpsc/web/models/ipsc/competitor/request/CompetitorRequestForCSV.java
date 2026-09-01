@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.competitor.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.HpscConstants;
 
 import java.time.LocalDate;
 
@@ -50,6 +52,7 @@ public class CompetitorRequestForCSV {
     /**
      * The competitor's date of birth.
      */
+    @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
     private LocalDate dateOfBirth;
     /**
      * The competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name.
