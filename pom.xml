@@ -43,7 +43,6 @@
         <maven.compiler.target>25</maven.compiler.target>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.14</jacoco.version>
-        <jackson-bom.version>3.1.5</jackson-bom.version>
     </properties>
 
     <dependencies>
