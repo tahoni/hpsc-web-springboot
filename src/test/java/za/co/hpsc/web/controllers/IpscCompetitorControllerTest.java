@@ -7,11 +7,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.services.IpscCompetitorService;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -86,6 +90,78 @@ class IpscCompetitorControllerTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorController.createCompetitor(request));
+    }
+
+    // createCompetitors()
+    private static final String VALID_CSV = """
+            FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
+            John,Doe,,,,,,,,CLUB001,,,
+            """;
+
+    @Test
+    void testCreateCompetitors_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        CompetitorResponseHolder holder = new CompetitorResponseHolder(List.of());
+        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(holder);
+
+        // Act
+        ResponseEntity<CompetitorResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+    }
+
+    @Test
+    void testCreateCompetitors_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        CompetitorResponseHolder holder = new CompetitorResponseHolder(List.of(new CompetitorResponse()));
+        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(holder);
+
+        // Act
+        ResponseEntity<CompetitorResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
+
+        // Assert
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testCreateCompetitors_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(new CompetitorResponseHolder(List.of()));
+
+        // Act
+        ipscCompetitorController.createCompetitors(VALID_CSV);
+
+        // Assert
+        verify(ipscCompetitorService).createCompetitors(VALID_CSV);
+        verifyNoMoreInteractions(ipscCompetitorService);
+    }
+
+    @Test
+    void testCreateCompetitors_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenThrow(new ValidationException("First name is required."));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
+    }
+
+    @Test
+    void testCreateCompetitors_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenThrow(new NonFatalException("No club found with name Unknown"));
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
+    }
+
+    @Test
+    void testCreateCompetitors_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenThrow(new FatalException("Error reading CSV data"));
+
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
     }
 
     // getCompetitor()

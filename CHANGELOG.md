@@ -64,6 +64,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorResponseHolder`:** New response container (`models/ipsc/competitor/response/`) holding the
   `CompetitorResponse`s created by a bulk CSV import
 
+#### Tests
+
+- **`IpscCompetitorControllerTest`:** New tests covering `createCompetitors`'s `201` response, delegation to the
+  service and propagation of `ValidationException`/`NonFatalException`/`FatalException`
+- **`IpscCompetitorServiceTest`, `IpscCompetitorServiceIntegrationTest`:** New tests covering `createCompetitors`'s
+  validation, row-level gender/home-club resolution and bulk persistence, exercised through the interface with mocked
+  repositories and against the real H2-backed Spring context
+- **`IpscCompetitorServiceImplTest`:** New tests covering the impl-only `readCompetitors`/`toRequest` protected
+  helper methods
+
 ## 🧾 [8.0.0] - 2026-08-31
 
 ### ➕ Added
