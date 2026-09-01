@@ -1,107 +1,66 @@
-# Release Notes – Version 8.0.0
+# Release Notes – Version 8.1.0
 
-**Release Date:** August 31, 2026 **Status:** ✨ Stable
+**Release Date:** September 1, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**IPSC Module Rebuild Complete — Competitor & Match CRUD**
+**Competitor Bulk CSV Import & Required-Field Enforcement Fixes**
 
-Version 8.0.0 completes the IPSC module rebuild that v6.0.0 through v7.4.0 laid groundwork for. `IpscController`'s
-long-standing empty stub is replaced by two full CRUD controllers — `IpscCompetitorController` and
-`IpscMatchController` — backed by new `IpscCompetitorService`/`IpscMatchService` implementations, new request/response
-DTOs and a `Gender` enum extended to match the shape of the project's other enums. Alongside the domain work, this
-release renames `processCsv` to `createAwards`/`createImages` and every enum's `getByX` factory methods to `fromX`,
-invests in a comprehensive Javadoc/`@since` documentation pass, merges `CLAUDE.md`'s guidance into a single
-`AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM
-static analysis.
+Version 8.1.0 extends the IPSC competitor module completed in v8.0.0 with bulk CSV import —
+`IpscCompetitorController.createCompetitors` follows the same bulk-import convention as
+`AwardController`/`ImageController`, but, unlike those, actually persists each row. While building and testing that
+feature, this release also uncovers and fixes a subtle Jackson gotcha affecting every `@JsonProperty(required = true)`
+field added across the IPSC request models to date: without a matching `@JsonCreator` constructor, the annotation
+never actually fires. `CompetitorRequestForCSV`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest` and the
+not-yet-wired `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus their CSV variants) are all corrected, each
+gaining a `@JsonCreator` constructor and comprehensive new unit test coverage.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 🆕 IPSC Competitor & Match CRUD
+### 🆕 Competitor Bulk CSV Import
 
-- **`IpscCompetitorController`** — full CRUD on `/ipsc/competitors`: `createCompetitor` (`POST`), `updateCompetitor`
-  (`PUT /{competitorId}`, full replace), `patchCompetitor` (`PATCH /{competitorId}`, partial update),
-  `getCompetitor` (`GET /{competitorId}`)
-- **`IpscMatchController`** — full CRUD on `/ipsc/matches`: `createMatch` (`POST`), `updateMatch`
-  (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update), `getMatch`
-  (`GET /{matchId}`) and `getAllMatches` (`GET`, returns every match)
-- Both follow this project's action-named REST method convention (`create`/`update`/`patch`/`get`, not
-  `post`/`put`/`patch`/`get`)
+- **`IpscCompetitorController.createCompetitors`** (`POST /ipsc/competitors/bulk`, consumes `text/csv`) — parses CSV
+  data into `CompetitorRequestForCSV` rows and creates each competitor via the existing
+  `IpscCompetitorService.createCompetitor` validation/gender/home-club-resolution logic
+- Unlike `AwardController`/`ImageController`'s bulk endpoints, which only build response objects without persisting,
+  this endpoint actually saves each competitor
+- New **`CompetitorRequestForCSV`** (CSV-mapped, `UpperCamelCase` Practiscore-style headers) and
+  **`CompetitorResponseHolder`** models (`models/ipsc/competitor/`)
 
-### 🏗️ IpscCompetitorService & IpscMatchService
+### 🐛 Required-Field Enforcement Fix
 
-- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`** — resolves the request's optional home club by name (404 via
-  `NonFatalException` if named but not found) and its optional gender by name (400 via `ValidationException` if
-  unrecognised), maps `CompetitorRequest` to/from the existing `Competitor` entity and persists via the existing
-  `CompetitorRepository`. Unlike the match service's club, the home club (and gender) is optional — a `null`/blank
-  name simply leaves the field unset, and `updateCompetitor`'s full replace clears any previously set value the
-  request omits
-- **`IpscMatchService`/`IpscMatchServiceImpl`** — resolves the request's club by name (404 if not found) and its
-  firearm type/category by name (400 if unrecognised), maps `MatchRequest` to/from the existing
-  `IpscMatch`/`IpscMatchStage` entities and persists via the existing repositories. `patchMatch` upserts stages by
-  stage number (updating a matching stage in place, adding a new one otherwise) rather than replacing the whole stage
-  list, unlike `updateMatch`'s full replace; `getAllMatches` returns every persisted match together with its stages
+- **Root cause:** `@JsonProperty(required = true)` only fires for creator (constructor) parameters — a class relying
+  on its default no-args constructor and setters silently accepts a missing "required" field as `null`
+- **`CompetitorRequestForCSV`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest`** — each gained a
+  `@JsonCreator` constructor with every parameter bound via `@JsonProperty`, replacing their Lombok
+  `@AllArgsConstructor` (same signature/order, so every existing positional constructor call across the codebase and
+  test suite is unaffected). A missing required field now genuinely throws `MismatchedInputException` during parsing
+- **`CompetitorRequest`** — its Jackson-required third field was `competitorNumber`, when
+  `IpscCompetitorServiceImpl.validateForCreate` actually requires `clubNumber`; corrected to match
+- **`MatchOverallScoresRequest`/`MatchStageScoresRequest`** (plus their CSV variants) — brought in line with the same
+  fix even though neither is wired into a controller yet; the two CSV variants' constructors now include `matchId`
+  (typically `null`, since it isn't part of the CSV export) so their signature matches their plain counterpart's
+  exactly, making them usable as a `csvMapper.addMixIn(...)` mixin — the same pattern
+  `AwardServiceImpl`/`ImageServiceImpl` already use for `AwardRequestForCSV`/`ImageRequestForCsv`
 
-### 📦 New Request/Response DTOs & Package Restructuring
+### 📅 Explicit Date Format
 
-- **`CompetitorRequest`**/**`CompetitorResponse`** (`models/ipsc/competitor/`) — mirror `Competitor`'s persisted
-  fields; `CompetitorResponse.homeClub` is typed as `ClubIdentifier` rather than a plain club-name `String`, since a
-  persisted competitor's home club is always resolvable
-- **`MatchResponse`**/**`MatchStageResponse`** (`models/ipsc/match/response/`) — unlike the request,
-  `MatchResponse.club` is typed as `ClubIdentifier` rather than a plain `String`
-- **`MatchRequest`** gains `matchFirearmType`/`matchCategory` fields, resolved by name against `FirearmType`/
-  `MatchCategory` in the service layer, matching how `club` is already resolved
-- `models/ipsc/request` split into `models/ipsc/match/request/` (match/stage submission) and
-  `models/ipsc/scores/request/` (competitor scores submission) to match the module's per-concern shape
-
-### 👤 Gender Enum & Persistence
-
-- **`Gender`** gains `name`/`abbreviation` fields, a case-insensitive `fromName()` factory method and a `toString()`
-  override, bringing it in line with the shape of the project's other enums
-- **`GenderConverter`** — new `AttributeConverter<Gender, String>`, wired onto `Competitor.gender` via `@Convert`;
-  converts blank/invalid stored values to `null` instead of letting `@Enumerated(STRING)` throw, matching the other
-  enum converters
-
-### 🔄 Rename & Consistency Sweep
-
-- **`AwardService.processCsv`**/**`ImageService.processCsv`** renamed to `createAwards`/`createImages`, matching the
-  already-named `AwardController.createAwards`/`ImageController.createImages`
-- **Bulk CSV endpoints** moved from `POST /awards`/`POST /images` to `POST /awards/bulk`/`POST /images/bulk` and now
-  return `201 Created` (previously `200 OK`), matching `IpscCompetitorController.createCompetitor`'s convention
-- **`getByName`/`getByAbbreviation`/`getByCode`/`getByAbbreviationOrName`** factory methods renamed to
-  `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName` across `ClubIdentifier`, `CompetitorCategory`,
-  `Division`, `FirearmType`, `MatchCategory` and `PowerFactor` — behaviour unchanged
-
-### 📚 Comprehensive Javadoc/`@since` Pass
-
-- Class- and method-level `@since` tags added across models, converters, exceptions, utils, constants and enums,
-  correcting several that had drifted or were missing entirely (e.g. `DateUtil`'s `@since` corrected from `2.0.0` to
-  `4.1.0` after tracing its delete/recreate history)
-- **`ControllerAdvice`** gains a class-level `@since 1.0.0` tag and full `@param`/`@return` Javadoc on every exception
-  handler and helper method — none of it was previously documented
-- **`FatalException`/`NonFatalException`/`ValidationException`** constructor Javadoc trimmed of duplicated JDK prose;
-  `@since` tags corrected from the JDK superclasses' own versions to this project's actual `1.0.0` introduction
-
-### 🛠️ Documentation Consolidation & AI-Agent Tooling
-
-- **`AGENTS.md`/`CLAUDE.md`** — `CLAUDE.md`'s Project Overview, Build & Run Commands, Architecture and Testing
-  Patterns sections merged into `AGENTS.md` so any AI coding agent gets the same guidance; `CLAUDE.md` reduced to a
-  short pointer
-- **AI-agent tooling** migrated from `.claude/commands/*.md` slash commands to `.claude/skills/*/SKILL.md` Skills;
-  `generate-pr-description` now runs `sync-unreleased-changes` as a prerequisite step before drafting a release
-- New `AGENTS.md` conventions: line wrapping (100–120 characters), an extended Arrange-Act-Assert rule requiring an
-  explicit `// Arrange`/`// Act`/`// Assert` comment per phase and a test-helper-placement rule (private
-  fixture/setup helpers go after every `@Test` method)
-- **`qodana.yaml`** re-added — `jetbrains/qodana-jvm:2026.2` linter on the `qodana.starter` profile, targeting JDK 25
+- **`CompetitorRequest`/`CompetitorRequestForCSV`/`MatchRequest`** — `@JsonFormat(pattern =
+  HpscConstants.HPSC_INPUT_DATE_FORMAT)` added to their `LocalDate` fields (`dateOfBirth`/`matchDate`), making the
+  accepted `yyyy-MM-dd` input format explicit rather than relying on Jackson's default parsing, matching
+  `AwardRequestForCSV`'s existing use of the same pattern
 
 ### 🧪 Test Coverage Expansion
 
-The largest single-release test expansion since v5.4.0: full unit and integration coverage for both new
-controllers/services, plus new coverage for the `Gender` enum and its converter.
+- New unit tests for `IpscCompetitorController`/`IpscCompetitorService`/`IpscCompetitorServiceImpl`'s bulk import
+- New unit tests for every touched request model's JSON/CSV (de)serialization and required-field enforcement:
+  `CompetitorRequestTest`, `CompetitorRequestForCSVTest`, `MatchRequestTest`, `MatchStageRequestTest`,
+  `MatchOverallScoresRequestTest`, `MatchStageScoresRequestTest`, `MatchOverallScoresRequestForCSVTest`,
+  `MatchStageScoresRequestForCSVTest`
 
 ---
 
@@ -111,79 +70,38 @@ controllers/services, plus new coverage for the `Gender` enum and its converter.
 
 #### Controllers
 
-- `IpscCompetitorController` — full CRUD on `/ipsc/competitors`
-- `IpscMatchController` — full CRUD on `/ipsc/matches`
+- `IpscCompetitorController.createCompetitors` — `POST /ipsc/competitors/bulk`, consumes `text/csv`
 
 #### Services
 
-- `IpscCompetitorService`/`IpscCompetitorServiceImpl`
-- `IpscMatchService`/`IpscMatchServiceImpl`
+- `IpscCompetitorService`/`IpscCompetitorServiceImpl.createCompetitors`
 
 #### Models
 
-- `CompetitorRequest`, `CompetitorResponse`
-- `MatchResponse`, `MatchStageResponse`
-
-#### Converters
-
-- `GenderConverter`
-
-#### Tooling
-
-- `.claude/skills/generate-commit-message`, `generate-pr-description`, `sync-unreleased-changes`,
-  `generate-pr-summary`, `scaffold-unit-tests`, `scaffold-integration-tests`
-- `qodana.yaml`
+- `CompetitorRequestForCSV`, `CompetitorResponseHolder`
 
 #### Tests
 
 - `IpscCompetitorControllerTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceIntegrationTest`,
-  `IpscCompetitorServiceImplTest`
-- `IpscMatchControllerTest`, `IpscMatchServiceTest`, `IpscMatchServiceIntegrationTest`, `IpscMatchServiceImplTest`
-- `GenderTest`, `GenderConverterTest`
+  `IpscCompetitorServiceImplTest` — new `createCompetitors` coverage
+- `CompetitorRequestForCSVTest`, `CompetitorRequestTest`, `MatchRequestTest`, `MatchStageRequestTest`,
+  `MatchOverallScoresRequestTest`, `MatchStageScoresRequestTest`, `MatchOverallScoresRequestForCSVTest`,
+  `MatchStageScoresRequestForCSVTest`
 
 ### Changed
 
 #### Models
 
-- `MatchOverallResultRequest`/`MatchStageResultRequest` renamed to `MatchOverallScoresRequest`/
-  `MatchStageScoresRequest` (with CSV variants); their `division`/`club`/`powerFactor`/`categories` fields strongly
-  typed instead of free-text `String`s
-- `models/ipsc/request` split into `models/ipsc/match/request`/`models/ipsc/scores/request`
-- `Placing` moved from `models/shared` to `models/award/shared`
-
-#### Services
-
-- `AwardService.processCsv`/`ImageService.processCsv` renamed to `createAwards`/`createImages`
-
-#### Controllers
-
-- `AwardController`/`ImageController` bulk CSV endpoints moved to `/awards/bulk`/`/images/bulk`, returning
-  `201 Created`
-
-#### Enums
-
-- `getByX` factory methods renamed to `fromX` across `ClubIdentifier`, `CompetitorCategory`, `Division`,
-  `FirearmType`, `MatchCategory`, `PowerFactor`
-- `Gender` gains `name`/`abbreviation`, `fromName()`, `toString()`
-
-#### Tooling
-
-- All `.claude/commands/*.md` slash commands converted to `.claude/skills/*/SKILL.md` Skills
-
-### Removed
-
-#### Controllers
-
-- `IpscController` — superseded by `IpscCompetitorController`/`IpscMatchController`
-
-#### Models
-
-- `MatchStagesRequest` — unused wrapper, never consumed by any controller
-
-#### Tests
-
-- `FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest` — only exercised JDK superclass
-  constructor delegation, no project-specific logic
+- `MatchRequest`, `MatchStageRequest`, `MatchResponse`, `MatchStageResponse`, `MatchOverallScoresRequest`,
+  `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`, `MatchStageScoresRequestForCSV` — required fields
+  documented with `@NotNull`, then corrected to `@JsonProperty(required = true)` backed by a new `@JsonCreator`
+  constructor so the requirement is actually enforced
+- `CompetitorRequestForCSV` — `firstName`/`lastName` require a `@JsonCreator` constructor bound to their
+  `UpperCamelCase` column names; a CSV row or JSON payload missing either now fails at parse time
+- `CompetitorRequest` — gained a `@JsonCreator` constructor; required field corrected from `competitorNumber` to
+  `clubNumber`
+- `CompetitorRequest`/`CompetitorRequestForCSV`/`MatchRequest` — explicit `@JsonFormat` date pattern
+- `CompetitorResponse` — `@NotNull` documentation added to `competitorId`/`firstName`/`lastName`/`clubNumber`
 
 ---
 
@@ -191,76 +109,70 @@ controllers/services, plus new coverage for the `Gender` enum and its converter.
 
 ### For API Consumers
 
-- **`IpscController`'s `/ipsc/competitor` endpoint is gone.** Competitor and match management now live at
-  `/ipsc/competitors` and `/ipsc/matches` respectively, via `IpscCompetitorController`/`IpscMatchController`.
-- **Bulk award/image endpoints moved and changed status code.** `POST /awards`/`POST /images` are now
-  `POST /awards/bulk`/`POST /images/bulk`, returning `201 Created` instead of `200 OK`.
+- **A CSV row or JSON payload missing a required field now fails at parse time (`400 Bad Request`) instead of being
+  silently accepted as `null`.** This applies to `POST`/`PUT`/`PATCH` requests against `IpscCompetitorController` and
+  `IpscMatchController` — `firstName`/`lastName`/`clubNumber` for competitors, `matchDate`/`matchName` for matches,
+  `stageNumber` for match stages. If any caller was previously relying on these fields being silently optional,
+  requests omitting them will now be rejected.
+- **New bulk import endpoint:** `POST /ipsc/competitors/bulk` (`Content-Type: text/csv`) creates competitors from a
+  CSV file, following the same `UpperCamelCase`-header convention Practiscore exports use.
 
 ### For Developers
 
-- **`AwardService.processCsv`/`ImageService.processCsv`** are now `createAwards`/`createImages` — update any direct
-  callers.
-- **Enum factory methods renamed.** `getByName`/`getByAbbreviation`/`getByCode`/`getByAbbreviationOrName` are now
-  `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName` on `ClubIdentifier`, `CompetitorCategory`,
-  `Division`, `FirearmType`, `MatchCategory` and `PowerFactor`.
-- **`MatchOverallResultRequest`/`MatchStageResultRequest`** are now `MatchOverallScoresRequest`/
-  `MatchStageScoresRequest`, under `za.co.hpsc.web.models.ipsc.scores.request` instead of
-  `za.co.hpsc.web.models.ipsc.request`.
-- **AI-agent tooling moved.** Anything invoking a `/generate-commit-message`-style slash command should instead use
-  the equivalent Skill under `.claude/skills/`.
+- **`CompetitorRequest`/`CompetitorRequestForCSV`/`MatchRequest`/`MatchStageRequest`** no longer have a
+  Lombok-generated `@AllArgsConstructor`; a hand-written `@JsonCreator` constructor with the same signature replaces
+  it, so existing positional constructor calls are unaffected, but new callers should be aware the constructor is no
+  longer auto-generated.
 
 ---
 
 ## 📊 Statistics
 
-- **Total Commits:** 68
-- **Files Changed:** 123
-- **Insertions:** 6,859 lines
-- **Deletions:** 1,722 lines
-- **Net Change:** +5,137 lines
-- **New Source Files:** 11
-- **New Test Files:** 10
-- **Deleted Test Files:** 3
+- **Total Commits:** 23
+- **Files Changed:** 41
+- **Insertions:** 3,015 lines
+- **Deletions:** 78 lines
+- **Net Change:** +2,937 lines
+- **New Source Files:** 2
+- **New Test Files:** 8
+- **Deleted Test Files:** 0
 
 ---
 
 ## 🧭 Design Notes
 
-- **Complete the rebuild before extending it further.** v6.0.0 through v7.4.0 deliberately laid IPSC domain-layer
-  groundwork (DTOs, shared scoring fields) ahead of the service/controller layer. This release closes that gap with
-  real, resource-oriented CRUD rather than adding yet more groundwork on top of an empty stub.
-- **Fix naming inconsistencies while the module is already being touched.** `processCsv`→`createAwards`/`createImages`
-  and `getByX`→`fromX` were both pre-existing inconsistencies unrelated to the IPSC rebuild itself, but this release
-  was a natural point to clear them rather than let them compound further.
-- **Consolidate documentation and tooling alongside the domain work.** Merging `CLAUDE.md` into `AGENTS.md` and
-  migrating slash commands to Skills isn't IPSC-specific, but both were overdue and benefit from landing in the same
-  release as a broader round of Javadoc/`@since` accuracy work.
-- **Run `sync-unreleased-changes` before every release from now on.** Auditing this release's own `CHANGELOG.md`
-  surfaced several gaps (new test files, a reverse-sync to `ARCHITECTURE.md`, an under-described `ControllerAdvice`
-  entry) that a manual pass had missed — `generate-pr-description` now enforces this automatically.
+- **Fix the bug everywhere it appears, not just where it was found.** The Jackson required-field gotcha was first
+  discovered in `CompetitorRequestForCSV`, but a repo-wide check found the same `@AllArgsConstructor` +
+  `@JsonProperty(required = true)` pattern already applied to `MatchRequest`/`MatchStageRequest` and — even though
+  unused by any controller yet — `MatchOverallScoresRequest`/`MatchStageScoresRequest`. All were corrected in this
+  release rather than leaving a latent bug for whoever wires the scores models up next.
+- **Verify the fix, don't just assume it.** A throwaway `csvMapper.addMixIn(...)` scratch test (written, run, then
+  discarded) confirmed the scores CSV variants' constructors are genuinely mixin-compatible with their plain
+  counterparts before committing to that design, the same pattern `AwardServiceImpl`/`ImageServiceImpl` already use.
+- **Correct a validation mismatch found along the way.** `CompetitorRequest`'s Jackson-required field was
+  `competitorNumber`, but `IpscCompetitorServiceImpl.validateForCreate` actually requires `clubNumber` — a genuine,
+  pre-existing inconsistency between the JSON contract and the business rule, fixed as part of the same pass.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw test` — full suite passing.
-- New unit tests: `IpscCompetitorServiceTest`, `IpscMatchServiceTest`, `IpscCompetitorServiceImplTest`,
-  `IpscMatchServiceImplTest`, `IpscCompetitorControllerTest`, `IpscMatchControllerTest`, `GenderTest`,
-  `GenderConverterTest`.
-- New integration tests: `IpscCompetitorServiceIntegrationTest`, `IpscMatchServiceIntegrationTest` — H2-backed,
-  covering validation, not-found (404) and unrecognised-value (400) paths, and the full create/replace/patch/get
-  contract.
-- Mechanical test updates: `ClubIdentifierTest`, `CompetitorCategoryTest`, `DivisionTest`, `FirearmTypeTest`,
-  `MatchCategoryTest`, `PowerFactorTest` updated to call the renamed `fromX` factory methods;
-  `AwardControllerTest`/`ImageControllerTest`/`AwardServiceTest`/`ImageServiceTest`/their integration tests updated
-  for the `createAwards`/`createImages` rename and `201 Created`.
+- `./mvnw test` — full suite passing (746 tests).
+- New unit tests: `IpscCompetitorControllerTest` (`createCompetitors`), `IpscCompetitorServiceTest`/
+  `IpscCompetitorServiceIntegrationTest` (validation, row-level resolution, bulk persistence),
+  `IpscCompetitorServiceImplTest` (`readCompetitors`/`toRequest`).
+- New model tests: `CompetitorRequestForCSVTest`, `CompetitorRequestTest`, `MatchRequestTest`,
+  `MatchStageRequestTest`, `MatchOverallScoresRequestTest`, `MatchStageScoresRequestTest`,
+  `MatchOverallScoresRequestForCSVTest`, `MatchStageScoresRequestForCSVTest` — JSON/CSV (de)serialization,
+  `@JsonFormat` date patterns, Practiscore column mapping (via a concrete test subclass for the abstract CSV classes)
+  and required-field enforcement (`MismatchedInputException`).
 
 ---
 
 ## 🐛 Known Issues
 
 - Competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains groundwork only — not
-  yet wired to any controller.
+  yet wired to any controller (carried over from v8.0.0).
 - No calculation service exists yet for `ShooterLog`/`ShooterLogCompetitor`, which remains schema-only (carried over
   from v7.0.0 – v7.1.0).
 
@@ -268,7 +180,8 @@ controllers/services, plus new coverage for the `Gender` enum and its converter.
 
 ## 🔮 Future Enhancements
 
-- Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) into an endpoint.
+- Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) into an endpoint — their
+  `@JsonCreator` constructors and required-field enforcement are now correct and ready for this.
 - Build a `ShooterLogService` to calculate and persist best-4-match snapshots.
 - Populate `overallRanking`, `clubRanking` and `isVisitor` during match-result import; seed `Club.identifier` and
   backfill `Competitor.homeClub`.
@@ -284,13 +197,13 @@ Leoni Lubbinge
 
 ## 📝 Notes
 
-Version 8.0.0 completes the IPSC module rebuild begun as groundwork in v6.0.0: `IpscController`'s empty stub is
-replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new services, DTOs and the largest test
-expansion since v5.4.0. Alongside the domain work, this release also renames long-standing inconsistent method names,
-invests in a comprehensive Javadoc/`@since` documentation pass, consolidates `CLAUDE.md` into `AGENTS.md`, migrates
-the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM static analysis; marking the
-transition from a project with substantial architectural groundwork to one with a genuinely complete, if still
-growing, IPSC feature set.
+Version 8.1.0 extends the competitor module with bulk CSV import and, while building and testing it, uncovers and
+fixes a subtle Jackson gotcha present across every `@JsonProperty(required = true)` field added to the IPSC request
+models to date — `@JsonProperty(required = true)` only fires for creator (constructor) parameters, so a class relying
+on its default no-args constructor and setters was silently accepting a missing "required" field as `null`.
+`CompetitorRequestForCSV`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest` and the not-yet-wired
+`MatchOverallScoresRequest`/`MatchStageScoresRequest` are all corrected, each backed by comprehensive new unit test
+coverage confirming the fix actually works.
 
 ---
 
