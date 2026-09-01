@@ -1,7 +1,7 @@
 package za.co.hpsc.web.models.ipsc.match.request;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,15 +21,31 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class MatchStageRequest {
     /** Identifier of the match this stage belongs to; may be unset when nested in a {@link MatchRequest}
      * that is itself creating the match. */
     private Long matchId;
     /** The stage's number/order within the match. */
-    @NotNull
+    @JsonProperty(required = true)
     private Integer stageNumber;
     /** The stage's name, e.g. "Stage 1 - The Bank Job". */
     private String stageName;
+
+    /**
+     * Constructs a {@code MatchStageRequest} from its JSON representation.
+     *
+     * @param matchId     the identifier of the match this stage belongs to; may be unset when nested in a
+     *                    {@link MatchRequest} that is itself creating the match.
+     * @param stageNumber the stage's number/order within the match. Must not be null.
+     * @param stageName   the stage's name, e.g. "Stage 1 - The Bank Job".
+     */
+    @JsonCreator
+    public MatchStageRequest(@JsonProperty("matchId") Long matchId,
+                             @JsonProperty(value = "stageNumber", required = true) Integer stageNumber,
+                             @JsonProperty("stageName") String stageName) {
+        this.matchId = matchId;
+        this.stageNumber = stageNumber;
+        this.stageName = stageName;
+    }
 }

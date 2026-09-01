@@ -79,6 +79,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorRequestTest`:** New tests covering `CompetitorRequest`'s `@JsonCreator` constructor — JSON
   (de)serialization, `competitorNumber` no longer being required, and `firstName`/`lastName`/`clubNumber` each
   throwing `MismatchedInputException` when missing
+- **`MatchRequestTest`:** New tests covering `MatchRequest`'s JSON (de)serialization, including its nested `stages`
+  list and `@JsonFormat`-patterned `matchDate`, and `matchDate`/`matchName` each throwing `MismatchedInputException`
+  when missing
+- **`MatchStageRequestTest`:** New tests covering `MatchStageRequest`'s JSON (de)serialization and `stageNumber`
+  throwing `MismatchedInputException` when missing
 
 ### 🔄 Changed
 
@@ -89,6 +94,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   to fields that are always required (e.g. `matchName`, `matchDate`, `stageNumber`, `name`, `membershipNumber`),
   documenting the existing contract rather than changing behaviour — matching the `@NotNull` already used on
   `CompetitorRequest`/`ImageRequest`
+- **`MatchRequest`, `MatchStageRequest`:** `@NotNull` on `matchDate`/`matchName`/`stageNumber` above was later
+  switched to `@JsonProperty(required = true)`, but neither class had a `@JsonCreator` constructor, so the
+  annotation was a no-op — a missing field just deserialised as `null` via the Lombok no-args constructor and
+  setters. Both classes gained a `@JsonCreator` constructor with each parameter bound via `@JsonProperty`,
+  replacing `@AllArgsConstructor` (same signature/order, so every existing positional `new MatchRequest(...)`/
+  `new MatchStageRequest(...)` call is unaffected) — a missing `matchDate`, `matchName` or `stageNumber` now
+  throws `MismatchedInputException` during parsing, matching the fix already applied to
+  `CompetitorRequestForCSV`/`CompetitorRequest`
 - **`CompetitorRequestForCSV`:** `firstName`/`lastName` switched from `@NotNull` to `@JsonProperty(required = true)`,
   and a `@JsonCreator` constructor added with each of its 13 parameters bound to its
   `UpperCamelCase` column name explicitly (a multi-argument creator needs this, since `@JsonNaming` alone only
