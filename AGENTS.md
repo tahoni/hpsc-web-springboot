@@ -73,7 +73,8 @@ currently in use.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles)'s Database Profiles section for the profile/DDL matrix —
 tests activate the `test` profile automatically, so no database setup is required to run them. See
-[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/JaCoCo triggers.
+[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/Qodana/JaCoCo
+triggers.
 
 ---
 
@@ -319,13 +320,20 @@ and `release/*` included — must never open a PR directly against `main`.
 When cutting a new version, work through these steps **in order** — the version number and date must be final before
 anything downstream references them:
 
-1. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`.
-2. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
+1. **Check `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`.** Before starting any
+   version-specific work, check whether this release has closed, progressed or newly revealed any of the gaps
+   tracked there, and update them accordingly.
+2. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`.
+3. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
    match.
-3. **Add a `CHANGELOG.md` entry.** New `## 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog categories
+4. **Verify `CHANGELOG.md`'s `## 🧪 [Unreleased]` section is complete.** Cross-check every commit and any uncommitted
+   diff on the release branch against its entries before renaming it in the next step — don't assume it's already
+   accurate just because entries were added along the way; fill in anything missing and resolve any drifted entries
+   with the author first.
+5. **Add a `CHANGELOG.md` entry.** New `## 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog categories
    that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit any that are
    empty). Update the Table of Contents and move the "← Current" marker to the new version.
-4. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase and a Milestone for the new version, at the same
+6. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase and a Milestone for the new version, at the same
    narrative depth and in the same style as the existing entries. If the release is significant enough to have shifted
    the project's trajectory, also thread it through the other sections that already track version-by-version state
    (Architectural Evolution, Feature Timeline, Key Learnings, Future Roadmap, Conclusion/footer). Use how the
@@ -333,7 +341,7 @@ anything downstream references them:
    `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
    synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that
    table stale.
-5. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
+7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent
    commit — diff the release branch against `main` (`git log main..HEAD`, `git diff --stat main...HEAD`) to confirm full
@@ -341,11 +349,13 @@ anything downstream references them:
    since it diverged from `main` — `git log main..HEAD --format='%an'` (or the equivalent GitHub "Contributors" view for
    the release's PRs), deduplicated; rather than a generic placeholder like "Development Team", and include every
    account found, bots (e.g. `dependabot[bot]`, `ImgBotApp`) included.
-6. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
+8. **Update `CONTRIBUTING.md`** only if this version's changes affect developer setup, database profiles, workflow or
+   testing conventions documented there.
+9. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
    `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
-7. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it
-   small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only, no line-by-line
-   detail. Structure:
+10. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it
+    small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only, no line-by-line
+    detail. Structure:
     - `## 🎯 Summary` — two to four bullets on what the release is and why
     - `## 📦 Key Changes` — condensed from the CHANGELOG entry's categories (Added/Changed/Fixed/Removed), high-level
       rather than exhaustive

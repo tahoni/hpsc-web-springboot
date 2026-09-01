@@ -120,6 +120,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   note: v8.1.0's competitor bulk CSV import and its `ARCHITECTURE.md` contrast narrow the ambiguity for that one
   domain, but the underlying Award/Image question stays open. The Roadmap table promotes Gap #4 (coverage
   enforcement) into the vacated Next slot and rewords the Ongoing row now that Gap #5's specific overrides are gone
+- **`AGENTS.md`'s Release Checklist:** Re-synced against `prep-version-release`'s actual, current process, which had
+  drifted ahead of it — adds a new step 1 to check `improvement-plan.md`/`improvement-plan-tasks.md` for gaps before
+  version-specific work begins, a new step 4 to verify `CHANGELOG.md`'s `[Unreleased]` section is complete before
+  renaming it, and a new step 8 to update `CONTRIBUTING.md` when applicable, matching the skill's steps 2, 5 and 10
+  respectively (described tool-agnostically, without naming the skill). Also fixes a stale Build & Run Commands
+  pointer that named only CodeQL/JaCoCo among `ARCHITECTURE.md`'s CI/CD gates, missing Qodana
 
 #### Tooling
 
