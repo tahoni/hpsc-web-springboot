@@ -3,6 +3,8 @@ package za.co.hpsc.web.models.ipsc.competitor.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,17 +13,23 @@ import za.co.hpsc.web.constants.HpscConstants;
 import java.time.LocalDate;
 
 /**
- * Request to create or update an IPSC competitor.
+ * Request model for bulk-importing IPSC competitors from CSV data.
  *
- * @see za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse
- * @since 8.0.0
+ * <p>
+ * Mirrors {@link CompetitorRequest}'s fields, other than {@code competitorId} — CSV bulk import
+ * only ever creates new competitors, so no identifier is accepted. Column headers are matched
+ * using {@link PropertyNamingStrategies.UpperCamelCaseStrategy}, so a CSV header of
+ * {@code FirstName} maps onto the {@code firstName} field, and so on.
+ * </p>
+ *
+ * @see CompetitorRequest
+ * @since 8.1.0
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class CompetitorRequest {
-    /** Identifier of the competitor to update, or {@code null} when creating a new competitor. */
-    private Long competitorId;
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
+public class CompetitorRequestForCSV {
     /** The competitor's first name. */
     @JsonProperty(required = true)
     private String firstName;
@@ -44,7 +52,6 @@ public class CompetitorRequest {
     /** The competitor's number, as assigned for competition. */
     private String competitorNumber;
     /** The competitor's home club membership number; must be unique across all competitors. */
-    @JsonProperty(required = true)
     private String clubNumber;
     /** The competitor's national identity number. */
     private String idNumber;
@@ -54,9 +61,15 @@ public class CompetitorRequest {
     private String emailAddress;
 
     /**
-     * Constructs a {@code CompetitorRequest} from its JSON representation.
+     * Constructs a {@code CompetitorRequestForCSV} from its CSV/JSON representation.
      *
-     * @param competitorId     the identifier of the competitor to update, or {@code null} when creating a new one.
+     * <p>
+     * Each parameter is bound to its {@link PropertyNamingStrategies.UpperCamelCaseStrategy}
+     * column/property name explicitly, since {@code @JsonNaming} alone only governs
+     * serialisation — a multi-argument {@code @JsonCreator} constructor needs each parameter's
+     * name spelled out for Jackson to bind it during deserialisation.
+     * </p>
+     *
      * @param firstName        the competitor's first name. Must not be null or blank.
      * @param lastName         the competitor's last name. Must not be null or blank.
      * @param middleNames      the competitor's middle name(s), if any.
@@ -66,28 +79,25 @@ public class CompetitorRequest {
      * @param homeClub         the name of the competitor's home club; resolved against existing clubs by name.
      * @param sapsaNumber      the competitor's SAPSA membership number.
      * @param competitorNumber the competitor's number, as assigned for competition.
-     * @param clubNumber       the competitor's home club membership number; must be unique across all competitors.
-     *                         Must not be null or blank.
+     * @param clubNumber       the competitor's home club membership number.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
      * @param emailAddress     the competitor's email address.
      */
     @JsonCreator
-    public CompetitorRequest(@JsonProperty("competitorId") Long competitorId,
-                             @JsonProperty(value = "firstName", required = true) String firstName,
-                             @JsonProperty(value = "lastName", required = true) String lastName,
-                             @JsonProperty("middleNames") String middleNames,
-                             @JsonProperty("nickname") String nickname,
-                             @JsonProperty("dateOfBirth") LocalDate dateOfBirth,
-                             @JsonProperty("gender") String gender,
-                             @JsonProperty("homeClub") String homeClub,
-                             @JsonProperty("sapsaNumber") Integer sapsaNumber,
-                             @JsonProperty("competitorNumber") String competitorNumber,
-                             @JsonProperty(value = "clubNumber", required = true) String clubNumber,
-                             @JsonProperty("idNumber") String idNumber,
-                             @JsonProperty("cellphoneNumber") String cellphoneNumber,
-                             @JsonProperty("emailAddress") String emailAddress) {
-        this.competitorId = competitorId;
+    public CompetitorRequestForCSV(@JsonProperty(value = "FirstName", required = true) String firstName,
+                                   @JsonProperty(value = "LastName", required = true) String lastName,
+                                   @JsonProperty("MiddleNames") String middleNames,
+                                   @JsonProperty("Nickname") String nickname,
+                                   @JsonProperty("DateOfBirth") LocalDate dateOfBirth,
+                                   @JsonProperty("Gender") String gender,
+                                   @JsonProperty("HomeClub") String homeClub,
+                                   @JsonProperty("SapsaNumber") Integer sapsaNumber,
+                                   @JsonProperty("CompetitorNumber") String competitorNumber,
+                                   @JsonProperty("ClubNumber") String clubNumber,
+                                   @JsonProperty("IdNumber") String idNumber,
+                                   @JsonProperty("CellphoneNumber") String cellphoneNumber,
+                                   @JsonProperty("EmailAddress") String emailAddress) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleNames = middleNames;

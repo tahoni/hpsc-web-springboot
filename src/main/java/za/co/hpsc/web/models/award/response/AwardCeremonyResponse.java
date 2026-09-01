@@ -16,13 +16,13 @@ import java.util.UUID;
 /**
  * Represents a response object that contains details about an award ceremony.
  * This class extends the {@link Response} class to include information such as
- * the date of the ceremony, the path to representative images, and a list of awards.
+ * the date of the ceremony, the path to representative images and a list of awards.
  * <p>
  * The {@code AwardCeremonyResponse} class is designed to encapsulate information
  * about an award ceremony, including details of individual awards presented during
  * the event. The class provides multiple constructors for flexible initialisation
  * with varying levels of detail, including options to set UUID, title, description,
- * tags, and other response metadata.
+ * tags and other response metadata.
  * </p>
  *
  * @since 1.1.0
@@ -40,7 +40,7 @@ public class AwardCeremonyResponse extends Response {
 
     /**
      * Constructs a new {@code AwardCeremonyResponse} object with the specified date,
-     * image file path, and list of awards.
+     * image file path and list of awards.
      *
      * <p>
      * This constructor initialises the fields and ensures that the
@@ -66,7 +66,7 @@ public class AwardCeremonyResponse extends Response {
 
     /**
      * Constructs a new {@code AwardCeremonyResponse} object with the specified UUID, date,
-     * image file path, and list of awards.
+     * image file path and list of awards.
      *
      * <p>
      * This constructor initialises the fields and ensures that the
@@ -98,7 +98,7 @@ public class AwardCeremonyResponse extends Response {
 
     /**
      * Constructs a new {@code AwardCeremonyResponse} object with the specified unique
-     * identifier, title, date, image file path, and list of awards.
+     * identifier, title, date, image file path and list of awards.
      *
      * <p>
      * This constructor initialises the fields and ensures that the
@@ -175,7 +175,7 @@ public class AwardCeremonyResponse extends Response {
 
     /**
      * Constructs new {@code AwardCeremonyResponse} object with the specified title,
-     * summary, description, category, tags, date, image file path, and list of awards.
+     * summary, description, category, tags, date, image file path and list of awards.
      *
      * <p>
      * This constructor initialises the fields and ensures that the
@@ -218,7 +218,7 @@ public class AwardCeremonyResponse extends Response {
      *
      * <p>
      * The first element in the list is used to initialise the award ceremony's
-     * title, description, summary, category, tags, date, and image file path.
+     * title, description, summary, category, tags, date and image file path.
      * A collection of {@link AwardResponse} objects is created from the
      * provided {@link AwardRequest} list.
      * A randomly generated UUID is assigned through the superclass constructor.

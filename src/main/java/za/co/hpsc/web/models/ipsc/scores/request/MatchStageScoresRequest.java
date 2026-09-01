@@ -1,6 +1,7 @@
 package za.co.hpsc.web.models.ipsc.scores.request;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,14 +32,16 @@ import java.util.List;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class MatchStageScoresRequest {
     /** Internal identifier of the match this stage result belongs to. */
+    @JsonProperty(required = true)
     private Long matchId;
     /** The stage's number/order within the match. */
+    @JsonProperty(required = true)
     private Integer stageNumber;
     /** The competitor's full name. */
+    @JsonProperty(required = true)
     private String name;
     /** This stage's score as a percentage of the stage winner's hit factor (winner = 100%). */
     private BigDecimal stagePercentage;
@@ -60,6 +63,7 @@ public class MatchStageScoresRequest {
     /** Major or Minor power factor — determines how many raw points each alpha/charlie/delta hit is worth. */
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
+    @JsonProperty(required = true)
     private String membershipNumber;
     /** A-zone (alpha) hits on this stage — the highest-value scoring zone. */
     private Integer alpha;
@@ -77,4 +81,74 @@ public class MatchStageScoresRequest {
     private Integer proceduralErrors;
     /** Additional penalties (e.g. safety, range command) applied on this stage, on top of scoring/procedurals. */
     private Integer additionalPenalties;
+
+    /**
+     * Constructs a {@code MatchStageScoresRequest} from its JSON representation.
+     *
+     * @param matchId             the internal identifier of the match this stage result belongs to. Must not be null.
+     * @param stageNumber         the stage's number/order within the match. Must not be null.
+     * @param name                the competitor's full name. Must not be null or blank.
+     * @param stagePercentage     this stage's score as a percentage of the stage winner's hit factor.
+     * @param stagePoints         weighted score points earned on this stage.
+     * @param points              raw score points on this stage, before weighting against the stage winner.
+     * @param hitFactor           hit factor for this stage — raw score divided by time.
+     * @param time                time, in seconds, taken to complete this stage.
+     * @param division            division the competitor shot in.
+     * @param club                the competitor's club.
+     * @param categories          competitor categories entered.
+     * @param powerFactor         major or Minor power factor.
+     * @param membershipNumber    the competitor's membership number. Must not be null or blank.
+     * @param alpha               A-zone (alpha) hits on this stage.
+     * @param charlie             C-zone (charlie) hits on this stage.
+     * @param delta               D-zone (delta) hits on this stage.
+     * @param misses              required hits not scored (misses) on this stage.
+     * @param noPenaltyMisses     misses that didn't attract the usual miss penalty.
+     * @param noShoots            no-shoot penalty hits on this stage.
+     * @param proceduralErrors    procedural penalties applied on this stage.
+     * @param additionalPenalties additional penalties applied on this stage.
+     */
+    @JsonCreator
+    public MatchStageScoresRequest(@JsonProperty(value = "matchId", required = true) Long matchId,
+                                   @JsonProperty(value = "stageNumber", required = true) Integer stageNumber,
+                                   @JsonProperty(value = "name", required = true) String name,
+                                   @JsonProperty("stagePercentage") BigDecimal stagePercentage,
+                                   @JsonProperty("stagePoints") BigDecimal stagePoints,
+                                   @JsonProperty("points") Integer points,
+                                   @JsonProperty("hitFactor") BigDecimal hitFactor,
+                                   @JsonProperty("time") BigDecimal time,
+                                   @JsonProperty("division") Division division,
+                                   @JsonProperty("club") ClubIdentifier club,
+                                   @JsonProperty("categories") List<CompetitorCategory> categories,
+                                   @JsonProperty("powerFactor") PowerFactor powerFactor,
+                                   @JsonProperty(value = "membershipNumber", required = true) String membershipNumber,
+                                   @JsonProperty("alpha") Integer alpha,
+                                   @JsonProperty("charlie") Integer charlie,
+                                   @JsonProperty("delta") Integer delta,
+                                   @JsonProperty("misses") Integer misses,
+                                   @JsonProperty("noPenaltyMisses") Integer noPenaltyMisses,
+                                   @JsonProperty("noShoots") Integer noShoots,
+                                   @JsonProperty("proceduralErrors") Integer proceduralErrors,
+                                   @JsonProperty("additionalPenalties") Integer additionalPenalties) {
+        this.matchId = matchId;
+        this.stageNumber = stageNumber;
+        this.name = name;
+        this.stagePercentage = stagePercentage;
+        this.stagePoints = stagePoints;
+        this.points = points;
+        this.hitFactor = hitFactor;
+        this.time = time;
+        this.division = division;
+        this.club = club;
+        this.categories = categories;
+        this.powerFactor = powerFactor;
+        this.membershipNumber = membershipNumber;
+        this.alpha = alpha;
+        this.charlie = charlie;
+        this.delta = delta;
+        this.misses = misses;
+        this.noPenaltyMisses = noPenaltyMisses;
+        this.noShoots = noShoots;
+        this.proceduralErrors = proceduralErrors;
+        this.additionalPenalties = additionalPenalties;
+    }
 }

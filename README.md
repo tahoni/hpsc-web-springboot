@@ -26,7 +26,7 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 
 - **Award Ceremonies**: Award data and ceremony grouping, processed from CSV
 - **Image Gallery**: Image metadata processing from CSV
-- **IPSC Competitors**: Competitor record CRUD, including optional home club and gender
+- **IPSC Competitors**: Competitor record CRUD, including optional home club and gender, plus bulk CSV import
 - **IPSC Matches**: Match and match-stage CRUD, including firearm type and match category resolution
 
 JPA entities and repositories also exist for match/competitor scoring and shooter logs. Request DTOs exist for
@@ -61,7 +61,8 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
 ## ✨ Features
 
-- **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data.
+- **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data, plus bulk competitor
+  import that persists each row.
 - **IPSC Competitor & Match Management**: Full CRUD for competitors and matches (with stages), including club,
   gender, firearm-type and match-category resolution by name.
 - **Match Scoring Domain Model**: JPA entities, repositories, type-safe enum converters and request DTOs for

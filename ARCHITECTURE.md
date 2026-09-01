@@ -19,6 +19,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 - [🔀 Data Flow](#-data-flow)
     - [📈 Typical Request-Response Flow](#-typical-request-response-flow)
     - [📥 Award / Image CSV Processing Flow](#-award--image-csv-processing-flow)
+    - [📥 Competitor Bulk CSV Import Flow](#-competitor-bulk-csv-import-flow)
 - [✅ Quality Attributes](#-quality-attributes)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [📚 Development Guidelines](#-development-guidelines)
@@ -118,7 +119,7 @@ responsibilities:
 |----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
 | **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
-| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, via `IpscCompetitorController`/`IpscMatchController`                                                 |
+| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, plus competitor bulk CSV import, via `IpscCompetitorController`/`IpscMatchController`                |
 | **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
@@ -143,7 +144,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 |----------------------------|---------------------|-------------------------------------------|
 | `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                      |
 | `ImageController`          | `/hpsc-web/images`  | Image CSV processing                      |
-| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD                      |
+| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import    |
 | `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages |
 
 All controllers:
@@ -167,9 +168,11 @@ Contains all business logic.
 | `AwardService`          | `AwardServiceImpl`          | Award CSV processing                      |
 | `ImageService`          | `ImageServiceImpl`          | Image CSV processing                      |
 | `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages |
-| `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD                      |
+| `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import    |
 
-> The wider match/competitor domain's bulk-import and entity-initialisation service layer remains removed pending a rebuild — only the CRUD services above currently exist.
+> The wider match domain's bulk-import and entity-initialisation service layer remains removed pending a rebuild —
+> competitor CRUD now also supports bulk CSV import (`IpscCompetitorController.createCompetitors`), persisting each
+> row via the same validation/resolution logic as the single-competitor `createCompetitor` endpoint.
 
 ---
 
@@ -233,8 +236,9 @@ envelope.
 #### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
 DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest` and `MatchResponse`/`MatchStageResponse`
-(consumed by `IpscMatchController`), `CompetitorRequest` and `CompetitorResponse` (consumed by
-`IpscCompetitorController`), and, still groundwork only — not yet consumed by any controller —
+(consumed by `IpscMatchController`), `CompetitorRequest`/`CompetitorResponse` (consumed by
+`IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorRequestForCSV`/`CompetitorResponseHolder`
+(its bulk CSV import endpoint), and, still groundwork only — not yet consumed by any controller —
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
@@ -317,7 +321,7 @@ Client → HTTP Request
 
 ### 📥 Award / Image CSV Processing Flow
 
-The only data-processing pipeline currently implemented, handled by `AwardController` and `ImageController`:
+Handled by `AwardController` and `ImageController` — parses CSV into response records without persisting anything:
 
 ```
 Client uploads CSV (Content-Type: text/csv)
@@ -329,8 +333,24 @@ Client uploads CSV (Content-Type: text/csv)
 ← JSON response
 ```
 
+### 📥 Competitor Bulk CSV Import Flow
+
+Handled by `IpscCompetitorController` — unlike the Award/Image flow above, each row is actually persisted:
+
+```
+Client uploads CSV (Content-Type: text/csv)
+    → IpscCompetitorController.createCompetitors
+        → IpscCompetitorService.createCompetitors
+            (parses CSV via Jackson CsvMapper into CompetitorRequestForCSV rows, then persists each via the same
+             createCompetitor validation/gender/home-club-resolution logic the single-competitor endpoint uses)
+        ← CompetitorResponseHolder
+    ← ResponseEntity<...>
+← JSON response
+```
+
 > The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`,
-> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer.
+> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer. The competitor
+> bulk CSV import above is a new, unrelated implementation, not a restoration of that removed flow.
 
 ---
 

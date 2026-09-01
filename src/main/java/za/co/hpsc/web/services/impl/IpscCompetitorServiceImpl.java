@@ -1,5 +1,12 @@
 package za.co.hpsc.web.services.impl;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvReadException;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -7,13 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.Gender;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestForCSV;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -36,6 +50,84 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor = competitorRepository.save(competitor);
 
         return toResponse(competitor);
+    }
+
+    @Override
+    @Transactional
+    public CompetitorResponseHolder createCompetitors(String csvData)
+            throws FatalException {
+
+        if (csvData == null || csvData.isBlank()) {
+            log.error("The provided csv data is null or empty.");
+            throw new ValidationException("CSV data cannot be null or blank.");
+        }
+
+        List<CompetitorRequestForCSV> competitorRequestForCSVList = readCompetitors(csvData);
+
+        List<CompetitorResponse> competitorResponseList = new ArrayList<>();
+        for (CompetitorRequestForCSV competitorRequestForCSV : competitorRequestForCSVList) {
+            competitorResponseList.add(createCompetitor(toRequest(competitorRequestForCSV)));
+        }
+
+        return new CompetitorResponseHolder(competitorResponseList);
+    }
+
+    /**
+     * Reads competitor data from a CSV-formatted string and converts it into a list of
+     * {@link CompetitorRequestForCSV} objects.
+     *
+     * @param csvData the CSV data containing competitor information, one competitor per row.
+     *                Must not be null or blank.
+     * @return a list of {@link CompetitorRequestForCSV} objects parsed from the provided CSV data.
+     * @throws ValidationException if the CSV data cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     */
+    protected List<CompetitorRequestForCSV> readCompetitors(@NotNull @NotBlank String csvData)
+            throws FatalException {
+        CsvMapper csvMapper = new CsvMapper();
+        csvMapper.registerModule(new JavaTimeModule());
+        CsvSchema csvSchema = csvMapper
+                .schemaFor(CompetitorRequestForCSV.class)
+                .withColumnReordering(true)
+                .withHeader();
+
+        try (MappingIterator<CompetitorRequestForCSV> requestMappingIterator =
+                     csvMapper.readerFor(CompetitorRequestForCSV.class)
+                             .with(csvSchema)
+                             .readValues(csvData)) {
+            return requestMappingIterator.readAll();
+
+        } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
+            log.error("Error parsing CSV data: {}", e.getMessage(), e);
+            throw new ValidationException("Invalid CSV data format: " + e.getMessage(), e);
+        } catch (IOException e) {
+            log.error("Error reading CSV data: {}", e.getMessage(), e);
+            throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Maps a {@link CompetitorRequestForCSV} row onto a {@link CompetitorRequest}.
+     *
+     * @param competitorRequestForCSV the CSV row to map; must not be null.
+     * @return the equivalent {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
+     */
+    protected CompetitorRequest toRequest(@NotNull CompetitorRequestForCSV competitorRequestForCSV) {
+        return new CompetitorRequest(
+                null,
+                competitorRequestForCSV.getFirstName(),
+                competitorRequestForCSV.getLastName(),
+                competitorRequestForCSV.getMiddleNames(),
+                competitorRequestForCSV.getNickname(),
+                competitorRequestForCSV.getDateOfBirth(),
+                competitorRequestForCSV.getGender(),
+                competitorRequestForCSV.getHomeClub(),
+                competitorRequestForCSV.getSapsaNumber(),
+                competitorRequestForCSV.getCompetitorNumber(),
+                competitorRequestForCSV.getClubNumber(),
+                competitorRequestForCSV.getIdNumber(),
+                competitorRequestForCSV.getCellphoneNumber(),
+                competitorRequestForCSV.getEmailAddress());
     }
 
     @Override

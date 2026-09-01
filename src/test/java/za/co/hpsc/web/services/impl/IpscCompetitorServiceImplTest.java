@@ -12,11 +12,13 @@ import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestForCSV;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,10 +26,11 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code resolveGender},
- * {@code resolveHomeClub}, {@code toResponse}, {@code validateForCreate}) - not declared on
- * {@link za.co.hpsc.web.services.IpscCompetitorService}. The interface's create/update/patch/get
- * contract is covered by {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}.
+ * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code readCompetitors},
+ * {@code resolveGender}, {@code resolveHomeClub}, {@code toRequest}, {@code toResponse},
+ * {@code validateForCreate}) - not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
+ * The interface's create/update/patch/get contract is covered by
+ * {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}.
  */
 @ExtendWith(MockitoExtension.class)
 class IpscCompetitorServiceImplTest {
@@ -143,6 +146,98 @@ class IpscCompetitorServiceImplTest {
         assertSame(competitor, found);
     }
 
+    // readCompetitors()
+    @Test
+    void testReadCompetitors_whenValidCsv_thenReturnsCompetitorRequestForCSVList() {
+        // Arrange
+        String csvData = """
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
+                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com
+                John,Smith,,,,,,,,HPSC-002,,,
+                """;
+
+        // Act
+        List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+
+        // Assert
+        assertEquals(2, rows.size());
+
+        CompetitorRequestForCSV first = rows.getFirst();
+        assertEquals("Jane", first.getFirstName());
+        assertEquals("Doe", first.getLastName());
+        assertEquals("Ann", first.getMiddleNames());
+        assertEquals("Janie", first.getNickname());
+        assertEquals(LocalDate.of(1990, 1, 1), first.getDateOfBirth());
+        assertEquals("Female", first.getGender());
+        assertEquals("Test Club", first.getHomeClub());
+        assertEquals(12345, first.getSapsaNumber());
+        assertEquals("C-1", first.getCompetitorNumber());
+        assertEquals("HPSC-001", first.getClubNumber());
+        assertEquals("9001015800083", first.getIdNumber());
+        assertEquals("0821234567", first.getCellphoneNumber());
+        assertEquals("jane.doe@example.com", first.getEmailAddress());
+
+        CompetitorRequestForCSV second = rows.get(1);
+        assertEquals("John", second.getFirstName());
+        assertEquals("Smith", second.getLastName());
+        assertEquals("HPSC-002", second.getClubNumber());
+    }
+
+    @Test
+    void testReadCompetitors_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
+        // Arrange
+        String csvData = """
+                ClubNumber,LastName,FirstName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,IdNumber,CellphoneNumber,EmailAddress
+                HPSC-001,Doe,Jane,,,,,,,,,,
+                """;
+
+        // Act
+        List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, rows.size());
+        assertEquals("Jane", rows.getFirst().getFirstName());
+        assertEquals("Doe", rows.getFirst().getLastName());
+        assertEquals("HPSC-001", rows.getFirst().getClubNumber());
+    }
+
+    @Test
+    void testReadCompetitors_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyList() {
+        // Arrange
+        String csvData =
+                "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress\n";
+
+        // Act
+        List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+
+        // Assert
+        assertTrue(rows.isEmpty());
+    }
+
+    @Test
+    void testReadCompetitors_whenHeaderIsMissingColumns_thenThrowsValidationException() {
+        // Arrange
+        String csvData = "FirstName,LastName\nJane,Doe\n";
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+    }
+
+    @Test
+    void testReadCompetitors_whenCsvHasNoHeaderRow_thenThrowsValidationException() {
+        // Arrange
+        String csvData = "Invalid CSV With One Column and no Header";
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+    }
+
+    @Test
+    void testReadCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(null));
+    }
+
     // resolveGender()
     @Test
     void testResolveGender_whenGenderIsNull_thenReturnsNull() {
@@ -200,6 +295,57 @@ class IpscCompetitorServiceImplTest {
 
         // Assert
         assertSame(club, resolved);
+    }
+
+    // toRequest()
+    @Test
+    void testToRequest_whenAllFieldsPresent_thenMapsAllFieldsOntoCompetitorRequest() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com");
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertNull(request.getCompetitorId());
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("Doe", request.getLastName());
+        assertEquals("Ann", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals(LocalDate.of(1990, 1, 1), request.getDateOfBirth());
+        assertEquals("Female", request.getGender());
+        assertEquals("Test Club", request.getHomeClub());
+        assertEquals(12345, request.getSapsaNumber());
+        assertEquals("C-1", request.getCompetitorNumber());
+        assertEquals("HPSC-001", request.getClubNumber());
+        assertEquals("9001015800083", request.getIdNumber());
+        assertEquals("0821234567", request.getCellphoneNumber());
+        assertEquals("jane.doe@example.com", request.getEmailAddress());
+    }
+
+    @Test
+    void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertNull(request.getCompetitorId());
+        assertNull(request.getMiddleNames());
+        assertNull(request.getNickname());
+        assertNull(request.getDateOfBirth());
+        assertNull(request.getGender());
+        assertNull(request.getHomeClub());
+        assertNull(request.getSapsaNumber());
+        assertNull(request.getCompetitorNumber());
+        assertNull(request.getIdNumber());
+        assertNull(request.getCellphoneNumber());
+        assertNull(request.getEmailAddress());
     }
 
     // toResponse()

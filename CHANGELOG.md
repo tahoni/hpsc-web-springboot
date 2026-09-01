@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.0.0](#-800---2026-08-31) ← Current
+- [🧾 Version 8.1.0](#-810---2026-09-01) ← Current
+- [🧾 Version 8.0.0](#-800---2026-08-31)
 - [🧾 Version 7.4.1](#-741---2026-08-29)
 - [🧾 Version 7.4.0](#-740---2026-08-29)
 - [🧾 Version 7.3.0](#-730---2026-08-25)
@@ -41,6 +42,117 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.1.0] - 2026-09-01
+
+### ➕ Added
+
+#### Controllers
+
+- **`IpscCompetitorController`:** New `createCompetitors` endpoint (`POST /ipsc/competitors/bulk`, consumes
+  `text/csv`) for bulk-creating IPSC competitors from CSV data, following the same bulk-import convention as
+  `AwardController.createAwards`/`ImageController.createImages`
+
+#### Services
+
+- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New `createCompetitors` method that parses CSV data into
+  `CompetitorRequestForCSV` rows and creates each competitor via the existing `createCompetitor` validation/gender/
+  home-club-resolution logic — unlike `AwardService`/`ImageService`'s CSV endpoints, which only build response
+  objects without persisting
+
+#### Models
+
+- **`CompetitorRequestForCSV`:** New CSV-mapped request model (`models/ipsc/competitor/request/`) for bulk competitor
+  import, mirroring `CompetitorRequest`'s fields other than `competitorId`
+- **`CompetitorResponseHolder`:** New response container (`models/ipsc/competitor/response/`) holding the
+  `CompetitorResponse`s created by a bulk CSV import
+
+#### Tests
+
+- **`IpscCompetitorControllerTest`:** New tests covering `createCompetitors`'s `201` response, delegation to the
+  service and propagation of `ValidationException`/`NonFatalException`/`FatalException`
+- **`IpscCompetitorServiceTest`, `IpscCompetitorServiceIntegrationTest`:** New tests covering `createCompetitors`'s
+  validation, row-level gender/home-club resolution and bulk persistence, exercised through the interface with mocked
+  repositories and against the real H2-backed Spring context
+- **`IpscCompetitorServiceImplTest`:** New tests covering the impl-only `readCompetitors`/`toRequest` protected
+  helper methods
+- **`CompetitorRequestForCSVTest`:** New tests covering `CompetitorRequestForCSV`'s `UpperCamelCase` JSON
+  (de)serialization and `@JsonFormat`-patterned `dateOfBirth`, its CSV deserialization via `CsvMapper`/`CsvSchema`,
+  and the `@JsonCreator` constructor's enforcement of `firstName`/`lastName` as required creator properties
+- **`CompetitorRequestTest`:** New tests covering `CompetitorRequest`'s `@JsonCreator` constructor — JSON
+  (de)serialization, `competitorNumber` no longer being required, and `firstName`/`lastName`/`clubNumber` each
+  throwing `MismatchedInputException` when missing
+- **`MatchRequestTest`:** New tests covering `MatchRequest`'s JSON (de)serialization, including its nested `stages`
+  list and `@JsonFormat`-patterned `matchDate`, and `matchDate`/`matchName` each throwing `MismatchedInputException`
+  when missing
+- **`MatchStageRequestTest`:** New tests covering `MatchStageRequest`'s JSON (de)serialization and `stageNumber`
+  throwing `MismatchedInputException` when missing
+- **`MatchOverallScoresRequestTest`, `MatchStageScoresRequestTest`:** New tests covering their `@JsonCreator`
+  constructors' JSON (de)serialization and required fields (`matchId`/`name`/`membershipNumber`, plus `stageNumber`
+  for the stage variant) each throwing `MismatchedInputException` when missing
+- **`MatchOverallScoresRequestForCSVTest`, `MatchStageScoresRequestForCSVTest`:** New tests covering the CSV
+  variants' Practiscore column mapping (both `@JsonProperty`-overridden columns like `Mem#`/`HF` and the
+  `@JsonNaming`-transformed ones like `Time`) via a concrete test subclass, required-field enforcement, and using
+  each as a `csvMapper.addMixIn(...)` mixin onto its plain counterpart — the same pattern
+  `AwardServiceImpl`/`ImageServiceImpl` use for `AwardRequestForCSV`/`ImageRequestForCsv`
+
+### 🔄 Changed
+
+#### Models
+
+- **`MatchRequest`, `MatchStageRequest`, `MatchResponse`, `MatchStageResponse`, `MatchOverallScoresRequest`,
+  `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`, `MatchStageScoresRequestForCSV`:** Added `@NotNull`
+  to fields that are always required (e.g. `matchName`, `matchDate`, `stageNumber`, `name`, `membershipNumber`),
+  documenting the existing contract rather than changing behaviour — matching the `@NotNull` already used on
+  `CompetitorRequest`/`ImageRequest`
+- **`MatchRequest`, `MatchStageRequest`:** `@NotNull` on `matchDate`/`matchName`/`stageNumber` above was later
+  switched to `@JsonProperty(required = true)`, but neither class had a `@JsonCreator` constructor, so the
+  annotation was a no-op — a missing field just deserialised as `null` via the Lombok no-args constructor and
+  setters. Both classes gained a `@JsonCreator` constructor with each parameter bound via `@JsonProperty`,
+  replacing `@AllArgsConstructor` (same signature/order, so every existing positional `new MatchRequest(...)`/
+  `new MatchStageRequest(...)` call is unaffected) — a missing `matchDate`, `matchName` or `stageNumber` now
+  throws `MismatchedInputException` during parsing, matching the fix already applied to
+  `CompetitorRequestForCSV`/`CompetitorRequest`
+- **`CompetitorRequestForCSV`:** `firstName`/`lastName` switched from `@NotNull` to `@JsonProperty(required = true)`,
+  and a `@JsonCreator` constructor added with each of its 13 parameters bound to its
+  `UpperCamelCase` column name explicitly (a multi-argument creator needs this, since `@JsonNaming` alone only
+  governs serialisation) — so a CSV row or JSON payload missing either column now fails with
+  `MismatchedInputException` during parsing, rather than only being caught later by
+  `IpscCompetitorService.createCompetitor`'s validation. Matches the required-column enforcement
+  `AwardRequestForCSV`/`ImageRequestForCsv` already have
+- **`CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`:** Added
+  `@JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)` to their `LocalDate` fields (`dateOfBirth`/
+  `matchDate`), making the accepted `yyyy-MM-dd` input format explicit rather than relying on Jackson's default
+  `LocalDate` parsing — matching `AwardRequestForCSV`'s existing use of the same pattern on its `date` field
+- **`CompetitorRequest`:** Added a `@JsonCreator` constructor with each of its 14 parameters bound via
+  `@JsonProperty`, replacing the Lombok `@AllArgsConstructor` (same signature, so `IpscCompetitorServiceImpl
+  .toRequest`'s positional call is unaffected) — `firstName`/`lastName` remain `required = true`, and
+  `@JsonProperty(required = true)` moves from `competitorNumber` to `clubNumber`, correcting a mismatch between
+  the JSON-level requirement and `IpscCompetitorServiceImpl.validateForCreate`'s actual required fields
+  (`firstName`, `lastName`, `clubNumber`)
+- **`CompetitorResponse`:** Added `@NotNull` to `competitorId`, `firstName`, `lastName` and `clubNumber` — every
+  persisted competitor always has these set, documenting the existing contract rather than changing behaviour,
+  matching the `@NotNull` already used on `CompetitorRequest`/`ImageRequest`
+- **`MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchOverallScoresRequestForCSV`,
+  `MatchStageScoresRequestForCSV`:** `@NotNull` on `matchId`/`name`/`membershipNumber` (plus `stageNumber` for the
+  stage variants) switched to `@JsonProperty(required = true)`, and each class gained a `@JsonCreator` constructor
+  with every parameter bound via `@JsonProperty`, replacing `@AllArgsConstructor` — the same fix already applied to
+  `MatchRequest`/`MatchStageRequest`. The two CSV variants' constructors bind each parameter to its exact Practiscore
+  column name (the field's own override, or the `@JsonNaming` `UpperCamelCase` transform where there's none), and
+  now include `matchId` (typically `null`, since it isn't part of the CSV export) so their signature matches their
+  plain counterpart's exactly — making them usable as a `csvMapper.addMixIn(...)` mixin, the same pattern
+  `AwardServiceImpl`/`ImageServiceImpl` use for `AwardRequestForCSV`/`ImageRequestForCsv`. None of these four classes
+  are wired into a controller or service yet, so this only affects future consumers. `name`/`stageNumber`/
+  `membershipNumber` also carry `@JsonProperty(required = true)` at the field level on the two CSV variants, matching
+  the field-level annotation already present alongside the constructor-level one on
+  `CompetitorRequestForCSV`/`CompetitorRequest`
+
+### 🗑️ Removed
+
+#### Configuration
+
+- **`application.properties`:** `hpsc.web.app.club.filter.abbreviation` — not read anywhere in the codebase via
+  `@Value`/`@ConfigurationProperties`, and not referenced by any other `application-*.properties` file
 
 ## 🧾 [8.0.0] - 2026-08-31
 
