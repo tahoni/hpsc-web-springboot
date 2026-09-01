@@ -34,7 +34,7 @@ project's stated intent and its current state.
 | Source                                              | Goal / constraint                                                                                                                                                                                                                                                                |
 |-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                             |
-| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                      |
+| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                       |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                   |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                          |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and code coverage (JaCoCo) are established quality gates; `./mvnw test` is documented as reviewer/local-only, not an automatic gate; Qodana static analysis is configured but likewise not wired into CI                                              |
@@ -116,7 +116,7 @@ is still unresolved and not yet stated explicitly in `README.md`/`ARCHITECTURE.m
 **Evidence:** `HISTORY.md` tracks line/branch coverage percentages release over release (97.3%/98.1% as of v7.2.0) via
 the JaCoCo `coverage` Maven profile, but nothing fails a build when coverage regresses. That v7.2.0 figure was never
 updated for v8.0.0 or v8.1.0, despite the suite growing from 492 to 746 tests — and running `./mvnw verify -Pcoverage`
-against the current tree shows the real figure has since dropped to **92.9% line / 93.4% branch**, not merely gone
+against the current tree shows the real figure has since dropped to **92.9% line / 93.4% branch**; not merely gone
 stale in the document but actively regressed from what `HISTORY.md` still states.
 
 **Why it matters:** Manually re-reading a percentage in `HISTORY.md` each release is exactly the kind of drift the
@@ -127,7 +127,7 @@ version-coupled narrative in `README.md`).
 baseline) to the `coverage` profile, and wire it into the CI gate proposed in #2, so a regression fails the build rather
 than only showing up in the next `HISTORY.md` entry.
 
-### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.2.0
+### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
 **Evidence:** `pom.xml` explicitly pins `jackson-databind` to `2.21.5` with the comment: "Spring Boot 4.1.0 still
 manages jackson-databind (2.x) one patch behind its fix version; override it explicitly until a Spring Boot release
@@ -148,9 +148,9 @@ same way and dropped alongside it. This category of clean-up recurs — re-check
 future release per the Release Checklist (this gap's Ongoing counterpart, #5's own recurring check, stays in force
 even though the specific overrides it named are gone).
 
-### 6. Match scoring / shooter-log service and controller layer is not yet built
+### 6. Match scoring / shooter-log service and controller layer are not yet built
 
-**Evidence:** `ARCHITECTURE.md`'s Feature Support table states "JPA entities and repositories exist for
+**Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
 match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
 built"; its `repositories/` package comment marks `MatchCompetitor`/`MatchStageCompetitor`/`ShooterLog*` as "not yet
 wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScoresRequest` "groundwork only — not yet
@@ -177,7 +177,7 @@ locally / via IDE against `qodana.yaml` — no CI workflow wired up yet". `qodan
 `codeql.yml` — no Qodana Scan action exists.
 
 **Why it matters:** Distinct from Gap #2 (which is about the `./mvnw test`/build gate, not static analysis) — a
-second, separately-named quality gate the architecture document itself already flags as configured but not
+second, separately named quality gate the architecture document itself already flags as configured but not
 automated, sitting unused since the config was written.
 
 **Proposed improvement:** Add a `qodana.yml` workflow (JetBrains' `qodana-action`) triggered on push/PR to `develop`
@@ -189,12 +189,12 @@ Analysis` row — the same closing move Gap #2 proposes for `Build & Tests`.
 
 ## 🚀 Roadmap
 
-| Phase       | Focus                                                                                                                                                           |
-|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Add the CI build/test gate (#2) and wire Qodana static analysis into CI (#7) — both lowest effort, closing gaps the project's own docs already flag             |
+| Phase       | Focus                                                                                                                                                                                                              |
+|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | Add the CI build/test gate (#2) and wire Qodana static analysis into CI (#7) — both lowest effort, closing gaps the project's own docs already flag                                                                |
 | **Next**    | Coverage enforcement (#4), now against the current, refreshed 92.9%/93.4% baseline; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 |
-| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                |
-| **Ongoing** | #5's overrides are gone as of v8.2.0; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
+| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                   |
+| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                    |
 
 ---
 
@@ -209,7 +209,7 @@ Analysis` row — the same closing move Gap #2 proposes for `Build & Tests`.
 - `ARCHITECTURE.md`'s CI/CD & Quality Gates table can drop its "no CI workflow wired up yet" caveat on the
   `Static Analysis` row once Qodana runs automatically alongside CodeQL.
 - A real `MatchScoreController`/`ShooterLogController` (or equivalent) exists and is tested, closing the gap
-  `README.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` currently describe as "still being built".
+  `README.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` currently described as "still being built".
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   per-version Future Roadmap notes rather than being deleted silently from here.
 

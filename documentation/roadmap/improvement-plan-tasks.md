@@ -96,10 +96,10 @@ evidence and reasoning there.
 
 ## 🔄 Ongoing
 
-**Dependency currency check** *(improvement-plan.md → Gap #5)* — ✅ Closed in v8.2.0
+**Dependency currency check** *(improvement-plan.md → Gap #5)* — ✅ Closed in v8.1.1
 
 - [x] At each release, confirm whether Spring Boot's managed `jackson-databind` version has caught up to the manual
-  override in `pom.xml` — confirmed for v8.2.0: the `spring-boot-starter-parent` bump to `4.1.1` manages
+  override in `pom.xml` — confirmed for v8.1.1: the `spring-boot-starter-parent` bump to `4.1.1` manages
   `jackson-databind` `2.21.5` directly
 - [x] Drop the override in the same pass as the version bump once it's redundant — done, along with a second
   `log4j-api` override (CVE-2026-49844 fix) added since, also picked up by the same bump
