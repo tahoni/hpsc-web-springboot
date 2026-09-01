@@ -142,7 +142,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   now include `matchId` (typically `null`, since it isn't part of the CSV export) so their signature matches their
   plain counterpart's exactly — making them usable as a `csvMapper.addMixIn(...)` mixin, the same pattern
   `AwardServiceImpl`/`ImageServiceImpl` use for `AwardRequestForCSV`/`ImageRequestForCsv`. None of these four classes
-  are wired into a controller or service yet, so this only affects future consumers
+  are wired into a controller or service yet, so this only affects future consumers. `name`/`stageNumber`/
+  `membershipNumber` also carry `@JsonProperty(required = true)` at the field level on the two CSV variants, matching
+  the field-level annotation already present alongside the constructor-level one on
+  `CompetitorRequestForCSV`/`CompetitorRequest`
 
 ## 🧾 [8.0.0] - 2026-08-31
 
