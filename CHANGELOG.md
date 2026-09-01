@@ -83,6 +83,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   to fields that are always required (e.g. `matchName`, `matchDate`, `stageNumber`, `name`, `membershipNumber`),
   documenting the existing contract rather than changing behaviour — matching the `@NotNull` already used on
   `CompetitorRequest`/`ImageRequest`
+- **`CompetitorRequestForCSV`:** `firstName`/`lastName` switched from `@NotNull` to `@JsonProperty(required = true)`,
+  so a CSV row missing either column entirely now fails during parsing rather than later validation — matching the
+  `@JsonProperty(required = true)` pattern already used by `AwardRequestForCSV`/`ImageRequestForCsv`
 
 ## 🧾 [8.0.0] - 2026-08-31
 

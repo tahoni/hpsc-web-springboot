@@ -1,8 +1,8 @@
 package za.co.hpsc.web.models.ipsc.competitor.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,12 +32,12 @@ public class CompetitorRequestForCSV {
     /**
      * The competitor's first name.
      */
-    @NotNull
+    @JsonProperty(required = true)
     private String firstName;
     /**
      * The competitor's last name.
      */
-    @NotNull
+    @JsonProperty(required = true)
     private String lastName;
     /**
      * The competitor's middle name(s), if any.
