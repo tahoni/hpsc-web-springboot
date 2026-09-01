@@ -84,6 +84,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   when missing
 - **`MatchStageRequestTest`:** New tests covering `MatchStageRequest`'s JSON (de)serialization and `stageNumber`
   throwing `MismatchedInputException` when missing
+- **`MatchOverallScoresRequestTest`, `MatchStageScoresRequestTest`:** New tests covering their `@JsonCreator`
+  constructors' JSON (de)serialization and required fields (`matchId`/`name`/`membershipNumber`, plus `stageNumber`
+  for the stage variant) each throwing `MismatchedInputException` when missing
+- **`MatchOverallScoresRequestForCSVTest`, `MatchStageScoresRequestForCSVTest`:** New tests covering the CSV
+  variants' Practiscore column mapping (both `@JsonProperty`-overridden columns like `Mem#`/`HF` and the
+  `@JsonNaming`-transformed ones like `Time`) via a concrete test subclass, required-field enforcement, and using
+  each as a `csvMapper.addMixIn(...)` mixin onto its plain counterpart — the same pattern
+  `AwardServiceImpl`/`ImageServiceImpl` use for `AwardRequestForCSV`/`ImageRequestForCsv`
 
 ### 🔄 Changed
 
@@ -122,6 +130,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorResponse`:** Added `@NotNull` to `competitorId`, `firstName`, `lastName` and `clubNumber` — every
   persisted competitor always has these set, documenting the existing contract rather than changing behaviour,
   matching the `@NotNull` already used on `CompetitorRequest`/`ImageRequest`
+- **`MatchOverallScoresRequest`, `MatchStageScoresRequest`, `MatchOverallScoresRequestForCSV`,
+  `MatchStageScoresRequestForCSV`:** `@NotNull` on `matchId`/`name`/`membershipNumber` (plus `stageNumber` for the
+  stage variants) switched to `@JsonProperty(required = true)`, and each class gained a `@JsonCreator` constructor
+  with every parameter bound via `@JsonProperty`, replacing `@AllArgsConstructor` — the same fix already applied to
+  `MatchRequest`/`MatchStageRequest`. The two CSV variants' constructors bind each parameter to its exact Practiscore
+  column name (the field's own override, or the `@JsonNaming` `UpperCamelCase` transform where there's none), and
+  now include `matchId` (typically `null`, since it isn't part of the CSV export) so their signature matches their
+  plain counterpart's exactly — making them usable as a `csvMapper.addMixIn(...)` mixin, the same pattern
+  `AwardServiceImpl`/`ImageServiceImpl` use for `AwardRequestForCSV`/`ImageRequestForCsv`. None of these four classes
+  are wired into a controller or service yet, so this only affects future consumers
 
 ## 🧾 [8.0.0] - 2026-08-31
 

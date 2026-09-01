@@ -1,7 +1,7 @@
 package za.co.hpsc.web.models.ipsc.scores.request;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,14 +34,13 @@ import java.util.List;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class MatchOverallScoresRequest {
     /** Internal identifier of the match this result belongs to. */
-    @NotNull
+    @JsonProperty(required = true)
     private Long matchId;
     /** The competitor's full name. */
-    @NotNull
+    @JsonProperty(required = true)
     private String name;
     /** Overall match score as a percentage of the match winner's score (winner = 100%). */
     private BigDecimal percentage;
@@ -66,7 +65,7 @@ public class MatchOverallScoresRequest {
      * hit is worth. */
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
-    @NotNull
+    @JsonProperty(required = true)
     private String membershipNumber;
     /** Total A-zone (alpha) hits across the match — the highest-value scoring zone. */
     private Integer alpha;
@@ -86,4 +85,71 @@ public class MatchOverallScoresRequest {
     /** Total additional penalties (e.g. safety, range command) applied across the match,
      * on top of scoring/procedurals. */
     private Integer additionalPenalties;
+
+    /**
+     * Constructs a {@code MatchOverallScoresRequest} from its JSON representation.
+     *
+     * @param matchId                    the internal identifier of the match this result belongs to. Must not be null.
+     * @param name                       the competitor's full name. Must not be null or blank.
+     * @param percentage                 overall match score as a percentage of the match winner's score.
+     * @param points                     total weighted points earned across the match.
+     * @param time                       total time, in seconds, taken across the match's stages.
+     * @param percentageOfPossiblePoints total hits as a percentage of the maximum points available in the match.
+     * @param hitFactor                  hit factor — raw score divided by time.
+     * @param division                   division the competitor shot in.
+     * @param club                       the competitor's club.
+     * @param categories                 competitor categories entered.
+     * @param powerFactor                major or Minor power factor.
+     * @param membershipNumber           the competitor's membership number. Must not be null or blank.
+     * @param alpha                      total A-zone (alpha) hits across the match.
+     * @param charlie                    total C-zone (charlie) hits across the match.
+     * @param delta                      total D-zone (delta) hits across the match.
+     * @param misses                     total required hits not scored (misses) across the match.
+     * @param noPenaltyMisses            total misses that didn't attract the usual miss penalty.
+     * @param noShoots                   total no-shoot penalty hits across the match.
+     * @param proceduralErrors           total procedural penalties applied across the match.
+     * @param additionalPenalties        total additional penalties applied across the match.
+     */
+    @JsonCreator
+    public MatchOverallScoresRequest(@JsonProperty(value = "matchId", required = true) Long matchId,
+                                     @JsonProperty(value = "name", required = true) String name,
+                                     @JsonProperty("percentage") BigDecimal percentage,
+                                     @JsonProperty("points") BigDecimal points,
+                                     @JsonProperty("time") BigDecimal time,
+                                     @JsonProperty("percentageOfPossiblePoints") BigDecimal percentageOfPossiblePoints,
+                                     @JsonProperty("hitFactor") BigDecimal hitFactor,
+                                     @JsonProperty("division") Division division,
+                                     @JsonProperty("club") ClubIdentifier club,
+                                     @JsonProperty("categories") List<CompetitorCategory> categories,
+                                     @JsonProperty("powerFactor") PowerFactor powerFactor,
+                                     @JsonProperty(value = "membershipNumber", required = true) String membershipNumber,
+                                     @JsonProperty("alpha") Integer alpha,
+                                     @JsonProperty("charlie") Integer charlie,
+                                     @JsonProperty("delta") Integer delta,
+                                     @JsonProperty("misses") Integer misses,
+                                     @JsonProperty("noPenaltyMisses") Integer noPenaltyMisses,
+                                     @JsonProperty("noShoots") Integer noShoots,
+                                     @JsonProperty("proceduralErrors") Integer proceduralErrors,
+                                     @JsonProperty("additionalPenalties") Integer additionalPenalties) {
+        this.matchId = matchId;
+        this.name = name;
+        this.percentage = percentage;
+        this.points = points;
+        this.time = time;
+        this.percentageOfPossiblePoints = percentageOfPossiblePoints;
+        this.hitFactor = hitFactor;
+        this.division = division;
+        this.club = club;
+        this.categories = categories;
+        this.powerFactor = powerFactor;
+        this.membershipNumber = membershipNumber;
+        this.alpha = alpha;
+        this.charlie = charlie;
+        this.delta = delta;
+        this.misses = misses;
+        this.noPenaltyMisses = noPenaltyMisses;
+        this.noShoots = noShoots;
+        this.proceduralErrors = proceduralErrors;
+        this.additionalPenalties = additionalPenalties;
+    }
 }

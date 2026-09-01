@@ -1,10 +1,9 @@
 package za.co.hpsc.web.models.ipsc.scores.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,7 +36,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public abstract class MatchStageScoresRequestForCSV {
@@ -45,10 +43,8 @@ public abstract class MatchStageScoresRequestForCSV {
      * populated separately. */
     private Long matchId;
     /** The stage's number/order within the match. */
-    @NotNull
     private Integer stageNumber;
     /** The competitor's full name. */
-    @NotNull
     private String name;
     /** This stage's score as a percentage of the stage winner's hit factor (winner = 100%). */
     @JsonProperty("%")
@@ -80,7 +76,6 @@ public abstract class MatchStageScoresRequestForCSV {
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
     @JsonProperty("Mem#")
-    @NotNull
     private String membershipNumber;
     /** A-zone (alpha) hits on this stage — the highest-value scoring zone. */
     @JsonProperty("A")
@@ -106,4 +101,84 @@ public abstract class MatchStageScoresRequestForCSV {
     /** Additional penalties (e.g. safety, range command) applied on this stage, on top of scoring/procedurals. */
     @JsonProperty("Apen")
     private Integer additionalPenalties;
+
+    /**
+     * Constructs a {@code MatchStageScoresRequestForCSV} from its Practiscore CSV/JSON row.
+     *
+     * <p>
+     * Each parameter is bound to its Practiscore column name explicitly (matching the field's own
+     * {@link JsonProperty} override, or the {@link JsonNaming} strategy's transform where none is
+     * set), since a multi-argument {@code @JsonCreator} constructor needs this spelled out for
+     * Jackson to bind it during deserialisation. {@code matchId} isn't part of the CSV export
+     * itself, but is still accepted here (typically {@code null}) so this constructor's signature
+     * matches {@link MatchStageScoresRequest}'s.
+     * </p>
+     *
+     * @param matchId             the internal identifier of the match this stage result belongs to; not part of
+     *                            the CSV export, typically {@code null} here.
+     * @param stageNumber         the stage's number/order within the match. Must not be null.
+     * @param name                the competitor's full name. Must not be null or blank.
+     * @param stagePercentage     this stage's score as a percentage of the stage winner's hit factor.
+     * @param stagePoints         weighted score points earned on this stage.
+     * @param points              raw score points on this stage, before weighting against the stage winner.
+     * @param hitFactor           hit factor for this stage — raw score divided by time.
+     * @param time                time, in seconds, taken to complete this stage.
+     * @param division            division the competitor shot in.
+     * @param club                the competitor's club.
+     * @param categories          competitor categories entered.
+     * @param powerFactor         major or Minor power factor.
+     * @param membershipNumber    the competitor's membership number. Must not be null or blank.
+     * @param alpha               A-zone (alpha) hits on this stage.
+     * @param charlie             C-zone (charlie) hits on this stage.
+     * @param delta               D-zone (delta) hits on this stage.
+     * @param misses              required hits not scored (misses) on this stage.
+     * @param noPenaltyMisses     misses that didn't attract the usual miss penalty.
+     * @param noShoots            no-shoot penalty hits on this stage.
+     * @param proceduralErrors    procedural penalties applied on this stage.
+     * @param additionalPenalties additional penalties applied on this stage.
+     */
+    @JsonCreator
+    public MatchStageScoresRequestForCSV(@JsonProperty("MatchId") Long matchId,
+                                         @JsonProperty(value = "StageNumber", required = true) Integer stageNumber,
+                                         @JsonProperty(value = "Name", required = true) String name,
+                                         @JsonProperty("%") BigDecimal stagePercentage,
+                                         @JsonProperty("Stg Pts") BigDecimal stagePoints,
+                                         @JsonProperty("Pts") Integer points,
+                                         @JsonProperty("HF") BigDecimal hitFactor,
+                                         @JsonProperty("Time") BigDecimal time,
+                                         @JsonProperty("Div") Division division,
+                                         @JsonProperty("Class") ClubIdentifier club,
+                                         @JsonProperty("Cats") List<CompetitorCategory> categories,
+                                         @JsonProperty("PF") PowerFactor powerFactor,
+                                         @JsonProperty(value = "Mem#", required = true) String membershipNumber,
+                                         @JsonProperty("A") Integer alpha,
+                                         @JsonProperty("C") Integer charlie,
+                                         @JsonProperty("D") Integer delta,
+                                         @JsonProperty("M") Integer misses,
+                                         @JsonProperty("NPM") Integer noPenaltyMisses,
+                                         @JsonProperty("NS") Integer noShoots,
+                                         @JsonProperty("Proc") Integer proceduralErrors,
+                                         @JsonProperty("Apen") Integer additionalPenalties) {
+        this.matchId = matchId;
+        this.stageNumber = stageNumber;
+        this.name = name;
+        this.stagePercentage = stagePercentage;
+        this.stagePoints = stagePoints;
+        this.points = points;
+        this.hitFactor = hitFactor;
+        this.time = time;
+        this.division = division;
+        this.club = club;
+        this.categories = categories;
+        this.powerFactor = powerFactor;
+        this.membershipNumber = membershipNumber;
+        this.alpha = alpha;
+        this.charlie = charlie;
+        this.delta = delta;
+        this.misses = misses;
+        this.noPenaltyMisses = noPenaltyMisses;
+        this.noShoots = noShoots;
+        this.proceduralErrors = proceduralErrors;
+        this.additionalPenalties = additionalPenalties;
+    }
 }

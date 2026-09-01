@@ -1,10 +1,9 @@
 package za.co.hpsc.web.models.ipsc.scores.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,7 +37,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public abstract class MatchOverallScoresRequestForCSV {
@@ -46,7 +44,6 @@ public abstract class MatchOverallScoresRequestForCSV {
      * populated separately. */
     private Long matchId;
     /** The competitor's full name. */
-    @NotNull
     private String name;
     /** Overall match score as a percentage of the match winner's score (winner = 100%). */
     @JsonProperty("%")
@@ -81,7 +78,6 @@ public abstract class MatchOverallScoresRequestForCSV {
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
     @JsonProperty("Mem#")
-    @NotNull
     private String membershipNumber;
     /** Total A-zone (alpha) hits across the match — the highest-value scoring zone. */
     @JsonProperty("A")
@@ -108,4 +104,81 @@ public abstract class MatchOverallScoresRequestForCSV {
      * on top of scoring/procedurals. */
     @JsonProperty("Apen")
     private Integer additionalPenalties;
+
+    /**
+     * Constructs a {@code MatchOverallScoresRequestForCSV} from its Practiscore CSV/JSON row.
+     *
+     * <p>
+     * Each parameter is bound to its Practiscore column name explicitly (matching the field's own
+     * {@link JsonProperty} override, or the {@link JsonNaming} strategy's transform where none is
+     * set), since a multi-argument {@code @JsonCreator} constructor needs this spelled out for
+     * Jackson to bind it during deserialisation. {@code matchId} isn't part of the CSV export
+     * itself, but is still accepted here (typically {@code null}) so this constructor's signature
+     * matches {@link MatchOverallScoresRequest}'s.
+     * </p>
+     *
+     * @param matchId                    the internal identifier of the match this result belongs to; not part of
+     *                                   the CSV export, typically {@code null} here.
+     * @param name                       the competitor's full name. Must not be null or blank.
+     * @param percentage                 overall match score as a percentage of the match winner's score.
+     * @param points                     total weighted points earned across the match.
+     * @param time                       total time, in seconds, taken across the match's stages.
+     * @param percentageOfPossiblePoints total hits as a percentage of the maximum points available in the match.
+     * @param hitFactor                  hit factor — raw score divided by time.
+     * @param division                   division the competitor shot in.
+     * @param club                       the competitor's club.
+     * @param categories                 competitor categories entered.
+     * @param powerFactor                major or Minor power factor.
+     * @param membershipNumber           the competitor's membership number. Must not be null or blank.
+     * @param alpha                      total A-zone (alpha) hits across the match.
+     * @param charlie                    total C-zone (charlie) hits across the match.
+     * @param delta                      total D-zone (delta) hits across the match.
+     * @param misses                     total required hits not scored (misses) across the match.
+     * @param noPenaltyMisses            total misses that didn't attract the usual miss penalty.
+     * @param noShoots                   total no-shoot penalty hits across the match.
+     * @param proceduralErrors           total procedural penalties applied across the match.
+     * @param additionalPenalties        total additional penalties applied across the match.
+     */
+    @JsonCreator
+    public MatchOverallScoresRequestForCSV(@JsonProperty("MatchId") Long matchId,
+                                           @JsonProperty(value = "Name", required = true) String name,
+                                           @JsonProperty("%") BigDecimal percentage,
+                                           @JsonProperty("Pts") BigDecimal points,
+                                           @JsonProperty("Time") BigDecimal time,
+                                           @JsonProperty("%psbl") BigDecimal percentageOfPossiblePoints,
+                                           @JsonProperty("HF") BigDecimal hitFactor,
+                                           @JsonProperty("Div") Division division,
+                                           @JsonProperty("Class") ClubIdentifier club,
+                                           @JsonProperty("Cats") List<CompetitorCategory> categories,
+                                           @JsonProperty("PF") PowerFactor powerFactor,
+                                           @JsonProperty(value = "Mem#", required = true) String membershipNumber,
+                                           @JsonProperty("A") Integer alpha,
+                                           @JsonProperty("C") Integer charlie,
+                                           @JsonProperty("D") Integer delta,
+                                           @JsonProperty("M") Integer misses,
+                                           @JsonProperty("NPM") Integer noPenaltyMisses,
+                                           @JsonProperty("NS") Integer noShoots,
+                                           @JsonProperty("Proc") Integer proceduralErrors,
+                                           @JsonProperty("Apen") Integer additionalPenalties) {
+        this.matchId = matchId;
+        this.name = name;
+        this.percentage = percentage;
+        this.points = points;
+        this.time = time;
+        this.percentageOfPossiblePoints = percentageOfPossiblePoints;
+        this.hitFactor = hitFactor;
+        this.division = division;
+        this.club = club;
+        this.categories = categories;
+        this.powerFactor = powerFactor;
+        this.membershipNumber = membershipNumber;
+        this.alpha = alpha;
+        this.charlie = charlie;
+        this.delta = delta;
+        this.misses = misses;
+        this.noPenaltyMisses = noPenaltyMisses;
+        this.noShoots = noShoots;
+        this.proceduralErrors = proceduralErrors;
+        this.additionalPenalties = additionalPenalties;
+    }
 }
