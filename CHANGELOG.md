@@ -88,6 +88,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   convention; the `ImageController`/`AwardController` Swagger examples and their CSV parsing tests
   are updated to match
 
+#### Documentation
+
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates tables' `Static Analysis` row removed
+- **`AGENTS.md`:** `CodeQL/Qodana/JaCoCo` trigger reference updated to `CodeQL/JaCoCo`
+- **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #7 (Qodana CI wiring) closed as
+  not applicable, rather than delivered — see 🗑️ Removed below for why
+
+### 🗑️ Removed
+
+#### CI/CD & Configuration
+
+- **`.github/workflows/qodana.yml`, `qodana.yaml`:** Qodana static analysis removed. It had failed on every CI run
+  since v8.1.1 added it — a missing `QODANA_TOKEN` repository secret (release-line Qodana linters require one
+  since 2023.2) and an unconditional SARIF-upload step that also failed independently — so there was no working
+  configuration left to preserve
+
 ## 🧾 [8.1.1] - 2026-09-01
 
 ### ➕ Added

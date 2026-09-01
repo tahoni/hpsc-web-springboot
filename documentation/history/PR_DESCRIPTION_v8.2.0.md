@@ -6,8 +6,8 @@
   `competitor_email` child table and a backfilling Flyway migration.
 - `AwardService`/`ImageService`'s bulk CSV parsing switches from `|` to `;` via a new
   `SystemConstants.ARRAY_SEPARATOR`, matching the competitor domain's convention.
-- A roadmap audit run as part of this release found `.github/workflows/qodana.yml` (added in v8.1.1) has actually
-  failed on every run since — tracked as an updated finding on Gap #7, not fixed in this release.
+- A roadmap audit run as part of this release found `.github/workflows/qodana.yml` (added in v8.1.1) had actually
+  failed on every run since; rather than fix it, Qodana static analysis is removed from the project entirely.
 
 ## 📦 Key Changes
 
@@ -20,8 +20,13 @@
   `toResponse` updated
 - `SystemConstants.ARRAY_SEPARATOR` (`";"`) — adopted by `AwardServiceImpl`/`ImageServiceImpl`, replacing `"|"`
 - `AwardController`, `ImageController`, `IpscCompetitorController` — Swagger examples updated to match
-- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 updated with the confirmed
-  Qodana CI failure (missing `QODANA_TOKEN` secret, unconditional SARIF upload)
+- `ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md` — every Qodana reference in the CI/CD documentation removed
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 closed as not applicable
+
+**Removed**
+
+- `.github/workflows/qodana.yml`, `qodana.yaml` — Qodana static analysis; had failed on every CI run since v8.1.1
+  added it (missing `QODANA_TOKEN` secret, unconditional SARIF-upload step)
 
 ## 🧪 Test Plan
 

@@ -38,10 +38,10 @@ evolution of architecture, features and design philosophy across all versions.
   parsing switched from `"|"` to it, so every bulk CSV endpoint's multi-value cells (competitor email addresses,
   image/award tags) now share one separator convention, with the `AwardController`/`ImageController`/
   `IpscCompetitorController` Swagger examples updated to match
-- `documentation/roadmap/improvement-plan.md`'s Gap #7 (Qodana CI wiring) updated with a real finding from this
-  release's own audit: `.github/workflows/qodana.yml` isn't merely unverified, it has failed on every run since
-  v8.1.1 added it — release-line Qodana linters require a `QODANA_TOKEN` secret that isn't configured, and the
-  SARIF-upload step isn't conditioned on the scan step succeeding
+- Qodana static analysis removed entirely (`.github/workflows/qodana.yml`, `qodana.yaml`, and every reference in
+  `ARCHITECTURE.md`/`CONTRIBUTING.md`/`AGENTS.md`'s CI/CD documentation): a release audit found it had failed on
+  every CI run since v8.1.1 added it, and `documentation/roadmap/improvement-plan.md`'s Gap #7 closes as not
+  applicable rather than delivered
 - Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 8.1.1 (September 1, 2026)
@@ -1111,12 +1111,14 @@ format is unified onto one separator convention.
   convention, with the `AwardController`/`ImageController`/`IpscCompetitorController` Swagger examples updated to
   match
 
-**Documentation & Roadmap**
+**Static Analysis Removal**
 
-- `documentation/roadmap/improvement-plan.md`'s Gap #7 (Qodana CI wiring) updated with a real finding from this
-  release's own audit: `.github/workflows/qodana.yml` has failed on every run since v8.1.1 added it — a missing
-  `QODANA_TOKEN` secret and an unconditional SARIF-upload step, not merely an unverified workflow as previously
-  recorded
+- Qodana static analysis removed entirely: `.github/workflows/qodana.yml`, `qodana.yaml`, and every reference in
+  `ARCHITECTURE.md`/`CONTRIBUTING.md`/`AGENTS.md`'s CI/CD documentation. A release audit found it had failed on
+  every CI run since v8.1.1 added it — a missing `QODANA_TOKEN` secret and an unconditional SARIF-upload step — with
+  no working baseline left to preserve
+- `documentation/roadmap/improvement-plan.md`'s Gap #7 (Qodana CI wiring) closed as not applicable rather than
+  delivered
 
 **Architecture Highlights:**
 
@@ -2054,11 +2056,12 @@ comprehensive test coverage across all services and utilities.
   `competitor_email` child table and a backfilling Flyway migration
 - New `SystemConstants.ARRAY_SEPARATOR` unifies `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing with the
   competitor domain's semicolon-separated multi-value convention
-- Roadmap audit found `.github/workflows/qodana.yml` has been failing on every run since v8.1.1 (missing
-  `QODANA_TOKEN`, unconditional SARIF upload) — `improvement-plan.md`'s Gap #7 updated accordingly
+- Qodana static analysis removed after a roadmap audit found it had been failing on every CI run since v8.1.1;
+  `improvement-plan.md`'s Gap #7 closed as not applicable
 
-**Achievement:** Extended the competitor domain to support more than one email address, and closed a lingering
-inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats.
+**Achievement:** Extended the competitor domain to support more than one email address, closed a lingering
+inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats, and removed a
+CI quality gate that had never once succeeded.
 
 ---
 
@@ -3032,9 +3035,9 @@ Based on the evolution to v8.2.0, the following areas are identified for future 
   `competitor_email` child table and a backfilling Flyway migration
 - New `SystemConstants.ARRAY_SEPARATOR` unifies `AwardServiceImpl`/`ImageServiceImpl`'s bulk CSV parsing with the
   competitor domain's semicolon-separated multi-value convention
-- `documentation/roadmap/improvement-plan.md`'s Gap #7 updated: `.github/workflows/qodana.yml` confirmed actually
-  failing on every run since v8.1.1 (missing `QODANA_TOKEN` secret, unconditional SARIF upload), not merely
-  unverified as previously recorded
+- Qodana static analysis removed entirely — it had failed on every CI run since v8.1.1 added it (missing
+  `QODANA_TOKEN` secret, unconditional SARIF upload) — closing `documentation/roadmap/improvement-plan.md`'s Gap #7
+  as not applicable
 - Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Previously Completed (v8.1.1)

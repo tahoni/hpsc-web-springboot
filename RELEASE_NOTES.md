@@ -12,8 +12,8 @@ Version 8.2.0 is a domain feature release: competitors can now hold more than on
 endpoint's multi-value cell format is unified onto a single, shared separator. `Competitor.emailAddress` becomes
 `emailAddresses` (`List<String>`), backed by a new `competitor_email` child table; `AwardService`/`ImageService`'s
 bulk CSV parsing switches from `|` to `;` to match. A roadmap audit run as part of this release also found that
-`.github/workflows/qodana.yml` — added in v8.1.1 — has actually been failing on every run since, not merely
-unverified as previously recorded.
+`.github/workflows/qodana.yml` — added in v8.1.1 — had actually been failing on every run since; rather than fix
+it, Qodana static analysis is removed from the project entirely in this release.
 
 ---
 
@@ -37,13 +37,16 @@ unverified as previously recorded.
   multi-value cell convention across every bulk CSV endpoint
 - `AwardController`/`ImageController`/`IpscCompetitorController`'s Swagger examples updated to match
 
-### 🗺️ Roadmap Audit Finding
+### 🗑️ Qodana Static Analysis Removed
 
-- **Gap #7 (Qodana CI wiring)** — `documentation/roadmap/improvement-plan.md` previously recorded this workflow as
-  merely "not yet verified as succeeding." This release's own audit (`gh run list --workflow=qodana.yml`) found it
-  has actually failed on every run since v8.1.1 added it: a missing `QODANA_TOKEN` repository secret (release-line
-  Qodana linters require one since 2023.2), plus an unconditional `github/codeql-action/upload-sarif@v4` step that
-  also fails with `Input required and not supplied: sarif_file` when the scan produced nothing to upload
+- **`.github/workflows/qodana.yml`, `qodana.yaml`** — `documentation/roadmap/improvement-plan.md` previously
+  recorded this workflow as merely "not yet verified as succeeding." This release's own audit
+  (`gh run list --workflow=qodana.yml`) found it has actually failed on every run since v8.1.1 added it: a missing
+  `QODANA_TOKEN` repository secret (release-line Qodana linters require one since 2023.2), plus an unconditional
+  `github/codeql-action/upload-sarif@v4` step that also fails with `Input required and not supplied: sarif_file`
+  when the scan produced nothing to upload. Rather than fix both issues, both files are removed, along with every
+  Qodana reference across `ARCHITECTURE.md`, `CONTRIBUTING.md` and `AGENTS.md`'s CI/CD documentation — Gap #7 is
+  closed as not applicable rather than delivered
 
 ---
 
@@ -83,8 +86,17 @@ unverified as previously recorded.
 
 #### Documentation
 
-- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 updated with the confirmed
-  Qodana CI failure and its two root causes
+- `ARCHITECTURE.md`, `CONTRIBUTING.md` — CI/CD & Quality Gates tables' `Static Analysis` row removed
+- `AGENTS.md` — `CodeQL/Qodana/JaCoCo` trigger reference updated to `CodeQL/JaCoCo`
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 (Qodana CI wiring) closed as not
+  applicable
+
+### Removed
+
+#### CI/CD & Configuration
+
+- `.github/workflows/qodana.yml`, `qodana.yaml` — Qodana static analysis removed after failing on every CI run
+  since v8.1.1 added it (see Key Highlights)
 
 ---
 
@@ -104,17 +116,20 @@ unverified as previously recorded.
 - Existing `competitor.email_address` data is preserved: the Flyway migration backfills it into the new
   `competitor_email` table before dropping the old column, so no manual data migration is required beyond running
   the migration itself.
+- Qodana static analysis is gone from CI and from the project entirely — `.github/workflows/qodana.yml` and
+  `qodana.yaml` no longer exist. No local setup is required to accommodate this; there's simply nothing to run.
 
 ---
 
 ## 📊 Statistics
 
-- **Total Commits:** 2
-- **Files Changed:** 25
-- **Insertions:** 239 lines
-- **Deletions:** 90 lines
-- **Net Change:** +149 lines
+- **Total Commits:** 9
+- **Files Changed:** 29
+- **Insertions:** 209 lines
+- **Deletions:** 191 lines
+- **Net Change:** +18 lines
 - **New Source Files:** 1 (`V7_2_0__add_competitor_emails.sql`)
+- **Deleted Files:** 2 (`.github/workflows/qodana.yml`, `qodana.yaml`)
 - **New Test Files:** 0
 - **Deleted Test Files:** 0
 
@@ -127,10 +142,11 @@ unverified as previously recorded.
   and standardising both onto `;` removes a needless inconsistency rather than adding a new one.
 - **A child table, not a delimited column.** `emailAddresses` is modelled as a proper `@ElementCollection` table
   rather than a delimited string column, keeping the domain model queryable and consistent with how the rest of the
-  schema represents one-to-many data — the CSV-cell delimiting is a transport-format concern confined to
+  schema represents one-to-many data; the CSV-cell delimiting is a transport-format concern confined to
   `CompetitorRequestForCSV`, not the entity itself.
-- **Verify CI claims against the Actions tab, not the workflow file.** `qodana.yml` reads as complete and correctly
-  configured; only checking `gh run list` against real run history revealed it has never actually succeeded.
+- **Verify CI claims against the Actions tab, not the workflow file.** `qodana.yml` read as complete and correctly
+  configured; only checking `gh run list` against real run history revealed it had never actually succeeded — and
+  a workflow that has never worked isn't worth patching over removing, once no working baseline exists to protect.
 
 ---
 
@@ -150,17 +166,18 @@ unverified as previously recorded.
   not yet wired to any controller (carried over from v8.0.0).
 - No calculation service exists yet for `ShooterLog`/`ShooterLogCompetitor`, which remains schema-only (carried
   over from v7.0.0 – v7.1.0).
-- `.github/workflows/qodana.yml` has failed on every run since it was added in v8.1.1 — missing `QODANA_TOKEN`
-  secret and an unconditional SARIF-upload step (see Roadmap Audit Finding above).
 - No automatic build/test gate runs on pull requests yet — `./mvnw test`/`./mvnw verify -Pcoverage` remain
   reviewer/local-only (carried over from v7.2.0).
+- No static analysis gate runs in CI following Qodana's removal (see Key Highlights) — CodeQL (security) and
+  JaCoCo (coverage) remain the only automated quality gates.
 
 ---
 
 ## 🔮 Future Enhancements
 
-- Provision a `QODANA_TOKEN` repository secret (or switch to a Community linter) and make the SARIF-upload step
-  conditional on the scan step's success, so `.github/workflows/qodana.yml` actually completes a run.
+- If static analysis in CI is wanted again, scope it as a new roadmap gap rather than re-adding Qodana as
+  previously configured — a `QODANA_TOKEN` secret would still be required, or a Community linter that doesn't need
+  one.
 - Add a `build.yml` (or extend `codeql.yml`'s trigger set) running `./mvnw verify -Pcoverage` on push/PR, and a
   JaCoCo coverage-check rule wired into it, so a coverage regression fails the build automatically.
 - Build a `MatchScoreService`/`ShooterLogService` (interface + `impl/` split) over the existing repositories,
@@ -180,7 +197,7 @@ Leoni Lubbinge
 
 Version 8.2.0 extends the competitor domain to support more than one email address and closes a lingering
 inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats. A roadmap audit
-run alongside the release also surfaced that the Qodana CI workflow added in v8.1.1 has never actually succeeded —
+run alongside the release also surfaced that the Qodana CI workflow added in v8.1.1 has never actually succeeded;
 tracked as an updated finding on Gap #7 rather than fixed in this release, since it's an infrastructure/secrets
 concern independent of this version's domain changes.
 
