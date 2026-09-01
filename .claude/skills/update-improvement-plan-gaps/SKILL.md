@@ -87,8 +87,6 @@ are exempt, per `AGENTS.md`'s Documentation Conventions):
 awk '{ if (length($0) > 120) print FILENAME":"FNR": "length($0) }' documentation/roadmap/improvement-plan.md documentation/roadmap/improvement-plan-tasks.md
 ```
 
-Only flag lines you introduced or edited — pre-existing overflow elsewhere in the file is not this skill's job to fix.
-
 If the sweep finds nothing new and nothing to progress, say so plainly rather than manufacturing a gap to report.
 
 Do not run `git commit` or `git push` — draft the edits and stop for the user's review, same as `prep-version-release`
