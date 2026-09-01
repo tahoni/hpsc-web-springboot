@@ -2565,8 +2565,8 @@ AttributeConverters
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
 - **Version 8.x (v8.0.0 – v8.1.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
-  (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth,
-  then extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
+  (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
+  Then extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
   `@JsonProperty(required = true)` actually enforces required fields via matching `@JsonCreator` constructors.
 
 ### Initial Phase (v1.0.0)
