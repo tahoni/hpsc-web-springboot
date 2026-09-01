@@ -24,17 +24,17 @@ evidence and reasoning there.
 - [ ] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "locally / by reviewers" caveat on
   the `Build & Tests` row
 
-**Qodana CI wiring** *(improvement-plan.md → Gap #7)* — 🟡 Partially progressed in v8.1.1
+**Qodana CI wiring** *(improvement-plan.md → Gap #7)* — ✅ Closed as not applicable in v8.2.0
 
 - [x] Add `.github/workflows/qodana.yml` using JetBrains' `qodana-action`, triggered on push/PR to `develop` and
-  `main`, mirroring `codeql.yml`'s trigger branches
-- [ ] Confirm the workflow runs against the existing `qodana.yaml` config without further changes — checked via
-  `gh run list --workflow=qodana.yml`: every run so far has failed, not merely gone unverified. Two fixes are needed:
-  add a `QODANA_TOKEN` repository secret (release-line Qodana linters require one since 2023.2), and make the
-  `github/codeql-action/upload-sarif@v4` step conditional so it doesn't also fail with
-  `Input required and not supplied: sarif_file` when the scan step produced nothing to upload
-- [ ] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "no CI workflow wired up yet"
-  caveat on the `Static Analysis` row
+  `main`, mirroring `codeql.yml`'s trigger branches — done in v8.1.1, removed again in v8.2.0 (see below)
+- [x] ~~Confirm the workflow runs against the existing `qodana.yaml` config without further changes~~ — checked via
+  `gh run list --workflow=qodana.yml`: every run had failed, not merely gone unverified (missing `QODANA_TOKEN`
+  secret, unconditional SARIF upload). Rather than fix both issues, `.github/workflows/qodana.yml`/`qodana.yaml`
+  were removed entirely in v8.2.0 — no working baseline existed to preserve
+- [x] ~~Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "no CI workflow wired up yet"
+  caveat on the `Static Analysis` row~~ — done differently: the `Static Analysis` row was removed from that table
+  entirely in v8.2.0, along with every other Qodana reference in `ARCHITECTURE.md`/`CONTRIBUTING.md`/`AGENTS.md`
 
 ---
 
