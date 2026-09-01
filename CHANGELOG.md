@@ -45,6 +45,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Models
+
+- **`MatchRequestForCSV`:** New class-level Javadoc and `@JsonCreator` constructor, binding `MatchDate`/
+  `MatchName`/`Club`/`MatchFirearmType`/`MatchCategory`/`NumberOfStages` to their `UpperCamelCase`
+  column/property names for CSV/JSON deserialization — matching `CompetitorRequestForCSV`'s pattern
+- **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON
+  (de)serialization, its CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
+  constructor's enforcement of `matchDate`/`matchName` as required creator properties
+
 ## 🧾 [8.2.0] - 2026-09-01
 
 ### 🔄 Changed
