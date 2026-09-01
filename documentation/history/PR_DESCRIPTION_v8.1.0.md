@@ -41,6 +41,10 @@
 - `CompetitorResponse` — `@NotNull` documentation added to always-set fields
 - `README.md`/`ARCHITECTURE.md` reverse-synced to describe the new bulk CSV import endpoint and data flow
 
+**Removed**
+
+- `application.properties`'s unused `hpsc.web.app.club.filter.abbreviation` property
+
 ## 🧪 Test Plan
 
 - [x] `./mvnw test` — full suite passing (746 tests)

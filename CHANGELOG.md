@@ -147,6 +147,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   the field-level annotation already present alongside the constructor-level one on
   `CompetitorRequestForCSV`/`CompetitorRequest`
 
+### 🗑️ Removed
+
+#### Configuration
+
+- **`application.properties`:** `hpsc.web.app.club.filter.abbreviation` — not read anywhere in the codebase via
+  `@Value`/`@ConfigurationProperties`, and not referenced by any other `application-*.properties` file
+
 ## 🧾 [8.0.0] - 2026-08-31
 
 ### ➕ Added

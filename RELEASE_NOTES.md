@@ -103,6 +103,12 @@ gaining a `@JsonCreator` constructor and comprehensive new unit test coverage.
 - `CompetitorRequest`/`CompetitorRequestForCSV`/`MatchRequest` — explicit `@JsonFormat` date pattern
 - `CompetitorResponse` — `@NotNull` documentation added to `competitorId`/`firstName`/`lastName`/`clubNumber`
 
+### Removed
+
+#### Configuration
+
+- `application.properties` — `hpsc.web.app.club.filter.abbreviation`, unused dead configuration
+
 ---
 
 ## 🔄 Migration Guide
