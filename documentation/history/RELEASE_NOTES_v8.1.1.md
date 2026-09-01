@@ -44,7 +44,7 @@ manual roadmap-gap maintenance performed by hand across v8.0.0/v8.1.0.
   coverage
 - Recreated all three, covering every constructor overload, and added new tests for the `models/ipsc/shared`
   scoring groundwork classes (0% coverage previously) and every `patchCompetitor`/`patchMatch` field's
-  previously-untested success path
+  previously untested success path
 - Full-suite coverage rose from 92.9%/93.4% to **98.34%/98.84%** (line/branch), 746 → 775 tests
 
 ### 📦 Dependency Clean-up
@@ -189,8 +189,8 @@ Leoni Lubbinge
 ## 📝 Notes
 
 Version 8.1.1 completes a CI quality gate the project's own architecture documentation had flagged as configured
-but unwired since v8.0.0, closes a real silent test-coverage regression from a deleted test suite, and builds the
-tooling for the release process to keep auditing its own roadmap documentation going forward — no new domain
+but unwired since v8.0.0, closes a real silent test-coverage regression from a deleted test suite and builds the
+tooling for the release process to keep auditing its own roadmap documentation going forward; no new domain
 feature, but meaningful process maturity ahead of the next feature release.
 
 ---
