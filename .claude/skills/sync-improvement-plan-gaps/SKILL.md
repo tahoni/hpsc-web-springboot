@@ -46,7 +46,7 @@ Before drafting, run these yourself and read their output:
 
 ## 🚀 Instructions
 
-1. **Combine the committed and uncommitted diffs** from steps 4-7 above into one change set — that's everything this
+1. **Combine the committed and uncommitted diffs** from steps 4–7 above into one change set — that's everything this
    branch introduces relative to its base.
 2. **For each open (or only-partially-progressed) gap**, decide whether the diff satisfies its Proposed improvement,
    in full or in part:
@@ -54,7 +54,7 @@ Before drafting, run these yourself and read their output:
       asks, not merely something adjacent or related to the same area of code.
     - Search the diff for the specific files, classes, config or workflows the gap's Evidence names — a gap can't be
       closed by a diff that never touches what its Evidence pointed at.
-    - A gap can be **fully closed**, **newly progressed but still open**, or **untouched** by this branch — most gaps
+    - A gap can be **fully closed**, **newly progressed but still open** or **untouched** by this branch — most gaps
       will be untouched on any given branch, and that's the expected, unremarkable outcome.
 3. **Leave every gap this branch didn't touch exactly as it is.** This skill corrects/adds status for what changed on
    this branch — it does not re-litigate, reword or re-open gaps the branch had nothing to do with.
@@ -69,8 +69,8 @@ Before drafting, run these yourself and read their output:
    this plan's existing Progress/Outcome notes.
 6. **Update the "⚙️ Goals & Constraints" table, the "🚀 Roadmap" table, and the "✅ Success Criteria" list** in
    `improvement-plan.md` wherever a status change above affects them (e.g. a gap moving out of the Now/Next phase, or
-   a Success Criteria bullet becoming met) — these drift out of sync with the gap list if touched inconsistently.
-7. **Never add a new gap number.** If the diff reveals something that looks like a genuinely new, previously-untracked
+   a Success Criteria bullet becoming met); these drift out of sync with the gap list if touched inconsistently.
+7. **Never add a new gap number.** If the diff reveals something that looks like a genuinely new, previously untracked
    gap, mention it in the output below instead of adding it here — that's `update-improvement-plan-gaps`' job, not
    this skill's.
 8. **Mirror every status change into `improvement-plan-tasks.md`**, under the same Now/Next/Later/Ongoing phase
