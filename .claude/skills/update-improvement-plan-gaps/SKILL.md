@@ -47,7 +47,7 @@ Look specifically for the same four things the plan's existing gaps were built f
    isn't yet one of the tracked numbers from step 1 above.
 2. **Doc-vs-doc or doc-vs-code disagreement.** The same category of drift the existing gaps were built from — e.g.
    two docs contradicting each other, or a doc's claim not matching what `Glob`/`Grep`/`Read` show in the actual
-   source tree — an unused class, a workflow file that doesn't exist, a config flag nobody reads.
+   source tree. That is, an unused class, a workflow file that doesn't exist, a config flag nobody reads.
 3. **A stale number.** A percentage, count or version reference stated in a doc that a quick check (e.g.
    `./mvnw verify -Pcoverage` for a coverage figure, or `git log --oneline | wc -l` for a commit count) shows is no
    longer accurate. Don't run expensive checks speculatively — only when a doc actually states a checkable number.
