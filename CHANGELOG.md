@@ -75,7 +75,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   helper methods
 - **`CompetitorRequestForCSVTest`:** New tests covering `CompetitorRequestForCSV`'s `UpperCamelCase` JSON
   (de)serialization and `@JsonFormat`-patterned `dateOfBirth`, its CSV deserialization via `CsvMapper`/`CsvSchema`,
-  and the (currently unenforced) `@JsonProperty(required = true)` on `firstName`/`lastName`
+  and the `@JsonCreator` constructor's enforcement of `firstName`/`lastName` as required creator properties
 
 ### 🔄 Changed
 
@@ -87,10 +87,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   documenting the existing contract rather than changing behaviour — matching the `@NotNull` already used on
   `CompetitorRequest`/`ImageRequest`
 - **`CompetitorRequestForCSV`:** `firstName`/`lastName` switched from `@NotNull` to `@JsonProperty(required = true)`,
-  matching the pattern `AwardRequestForCSV`/`ImageRequestForCsv` use — though since this class has no
-  `@JsonCreator` constructor, the annotation currently only documents intent and doesn't change parsing behaviour; a
-  row missing either column still leaves the field `null` until `IpscCompetitorService.createCompetitor`'s
-  validation catches it
+  and a `@JsonCreator` constructor added with each of its 13 parameters bound to its
+  `UpperCamelCase` column name explicitly (a multi-argument creator needs this, since `@JsonNaming` alone only
+  governs serialisation) — so a CSV row or JSON payload missing either column now fails with
+  `MismatchedInputException` during parsing, rather than only being caught later by
+  `IpscCompetitorService.createCompetitor`'s validation. Matches the required-column enforcement
+  `AwardRequestForCSV`/`ImageRequestForCsv` already have
 - **`CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`:** Added
   `@JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)` to their `LocalDate` fields (`dateOfBirth`/
   `matchDate`), making the accepted `yyyy-MM-dd` input format explicit rather than relying on Jackson's default

@@ -3,6 +3,7 @@ package za.co.hpsc.web.models.ipsc.competitor.request;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -128,9 +129,9 @@ class CompetitorRequestForCSVTest {
     }
 
     @Test
-    void testJsonDeserialization_whenFirstNameMissing_thenLeavesFieldNull() throws Exception {
-        // Arrange - no @JsonCreator constructor backs this class, so @JsonProperty(required = true)
-        // on firstName/lastName isn't enforced by plain property-based deserialization
+    void testJsonDeserialization_whenFirstNameMissing_thenThrowsMismatchedInputException() {
+        // Arrange - the @JsonCreator constructor's firstName/lastName params are marked
+        // @JsonProperty(required = true), so Jackson enforces them as required creator properties
         ObjectMapper mapper = new ObjectMapper();
         String json = """
                 {
@@ -138,16 +139,12 @@ class CompetitorRequestForCSVTest {
                 }
                 """;
 
-        // Act
-        CompetitorRequestForCSV request = mapper.readValue(json, CompetitorRequestForCSV.class);
-
-        // Assert
-        assertNull(request.getFirstName());
-        assertEquals("Doe", request.getLastName());
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, CompetitorRequestForCSV.class));
     }
 
     @Test
-    void testJsonDeserialization_whenLastNameMissing_thenLeavesFieldNull() throws Exception {
+    void testJsonDeserialization_whenLastNameMissing_thenThrowsMismatchedInputException() {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         String json = """
@@ -156,26 +153,17 @@ class CompetitorRequestForCSVTest {
                 }
                 """;
 
-        // Act
-        CompetitorRequestForCSV request = mapper.readValue(json, CompetitorRequestForCSV.class);
-
-        // Assert
-        assertEquals("Jane", request.getFirstName());
-        assertNull(request.getLastName());
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, CompetitorRequestForCSV.class));
     }
 
     @Test
-    void testJsonDeserialization_whenEmptyObject_thenReturnsInstanceWithAllFieldsNull() throws Exception {
+    void testJsonDeserialization_whenEmptyObject_thenThrowsMismatchedInputException() {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
 
-        // Act
-        CompetitorRequestForCSV request = mapper.readValue("{}", CompetitorRequestForCSV.class);
-
-        // Assert
-        assertNull(request.getFirstName());
-        assertNull(request.getLastName());
-        assertNull(request.getClubNumber());
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", CompetitorRequestForCSV.class));
     }
 
     // CSV deserialization
@@ -209,7 +197,7 @@ class CompetitorRequestForCSVTest {
     }
 
     @Test
-    void testCsvDeserialization_whenRowIsRaggedAndMissesTrailingColumns_thenLeavesMissingFieldsNull() throws Exception {
+    void testCsvDeserialization_whenRowIsRaggedAndMissesOnlyOptionalTrailingColumns_thenLeavesThemNull() throws Exception {
         // Arrange - CsvSchema.schemaFor(...).withHeader() requires every schema column in the
         // header, but doesn't require every row to supply a value for each of them
         CsvMapper csvMapper = new CsvMapper();
@@ -218,7 +206,7 @@ class CompetitorRequestForCSVTest {
                 .withHeader();
         String csvData = """
                 FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
-                Jane
+                Jane,Doe
                 """;
 
         // Act
@@ -231,6 +219,30 @@ class CompetitorRequestForCSVTest {
         // Assert
         assertEquals(1, rows.size());
         assertEquals("Jane", rows.getFirst().getFirstName());
-        assertNull(rows.getFirst().getLastName());
+        assertEquals("Doe", rows.getFirst().getLastName());
+        assertNull(rows.getFirst().getMiddleNames());
+        assertNull(rows.getFirst().getEmailAddress());
+    }
+
+    @Test
+    void testCsvDeserialization_whenRowIsRaggedAndMissesRequiredColumn_thenThrowsMismatchedInputException() {
+        // Arrange - a row missing LastName entirely (not just blank) still trips the required
+        // creator property check, same as a missing JSON key
+        CsvMapper csvMapper = new CsvMapper();
+        CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestForCSV.class)
+                .withColumnReordering(true)
+                .withHeader();
+        String csvData = """
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddress
+                Jane
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> {
+            try (MappingIterator<CompetitorRequestForCSV> it =
+                         csvMapper.readerFor(CompetitorRequestForCSV.class).with(csvSchema).readValues(csvData)) {
+                it.readAll();
+            }
+        });
     }
 }
