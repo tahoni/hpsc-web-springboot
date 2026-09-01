@@ -73,6 +73,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   repositories and against the real H2-backed Spring context
 - **`IpscCompetitorServiceImplTest`:** New tests covering the impl-only `readCompetitors`/`toRequest` protected
   helper methods
+- **`CompetitorRequestForCSVTest`:** New tests covering `CompetitorRequestForCSV`'s `UpperCamelCase` JSON
+  (de)serialization and `@JsonFormat`-patterned `dateOfBirth`, its CSV deserialization via `CsvMapper`/`CsvSchema`,
+  and the (currently unenforced) `@JsonProperty(required = true)` on `firstName`/`lastName`
 
 ### 🔄 Changed
 
