@@ -3033,7 +3033,7 @@ replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new `Ips
 implementations, real competitor and match CRUD with club/gender/firearm-type/match-category resolution and the
 largest test expansion since v5.4.0. Alongside the domain work, the release also merges `CLAUDE.md`'s guidance into a
 single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana
-JVM static analysis — marking the transition from a project with substantial architectural groundwork to one with a
+JVM static analysis — marking the transition from a project with significant architectural groundwork to one with a
 genuinely complete, if still growing, IPSC feature set.
 
 ---
