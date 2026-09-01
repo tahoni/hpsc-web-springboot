@@ -44,6 +44,7 @@ public abstract class MatchOverallScoresRequestForCSV {
      * populated separately. */
     private Long matchId;
     /** The competitor's full name. */
+    @JsonProperty(required = true)
     private String name;
     /** Overall match score as a percentage of the match winner's score (winner = 100%). */
     @JsonProperty("%")
@@ -77,7 +78,7 @@ public abstract class MatchOverallScoresRequestForCSV {
     @JsonProperty("PF")
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
-    @JsonProperty("Mem#")
+    @JsonProperty(value = "Mem#", required = true)
     private String membershipNumber;
     /** Total A-zone (alpha) hits across the match — the highest-value scoring zone. */
     @JsonProperty("A")

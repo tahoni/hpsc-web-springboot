@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class CompetitorResponseHolder {
+    /** The list of competitors created by the bulk import. */
     @NotNull
     private List<CompetitorResponse> competitors;
 }

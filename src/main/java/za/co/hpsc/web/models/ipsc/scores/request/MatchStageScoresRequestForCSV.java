@@ -43,6 +43,7 @@ public abstract class MatchStageScoresRequestForCSV {
      * populated separately. */
     private Long matchId;
     /** The stage's number/order within the match. */
+    @JsonProperty(required = true)
     private Integer stageNumber;
     /** The competitor's full name. */
     private String name;
@@ -75,7 +76,7 @@ public abstract class MatchStageScoresRequestForCSV {
     @JsonProperty("PF")
     private PowerFactor powerFactor;
     /** The competitor's membership number. */
-    @JsonProperty("Mem#")
+    @JsonProperty(value = "Mem#", required = true)
     private String membershipNumber;
     /** A-zone (alpha) hits on this stage — the highest-value scoring zone. */
     @JsonProperty("A")
