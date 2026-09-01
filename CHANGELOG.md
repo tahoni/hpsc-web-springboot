@@ -43,6 +43,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Documentation
+
+- **`CLAUDE.md`:** New "Working on Complex Tasks" section instructing use of the TodoWrite tool for multistep or
+  non-trivial tasks, matching `AGENTS.md`'s existing "Track complex work with a todo list" Git Workflow convention
+  and the sibling `hpsc-web-vite` project's `CLAUDE.md`
+
 ## 🧾 [8.1.0] - 2026-09-01
 
 ### ➕ Added
