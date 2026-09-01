@@ -1,9 +1,11 @@
 package za.co.hpsc.web.services;
 
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 
 /**
  * The {@code IpscCompetitorService} interface provides methods for creating, updating and
@@ -24,6 +26,27 @@ public interface IpscCompetitorService {
      * @throws NonFatalException   if the named home club cannot be found.
      */
     CompetitorResponse createCompetitor(CompetitorRequest request) throws ValidationException, NonFatalException;
+
+    /**
+     * Creates a batch of new IPSC competitors from CSV data.
+     *
+     * <p>
+     * Each row is created independently via {@link #createCompetitor(CompetitorRequest)}, so the
+     * same validation, gender resolution and home club resolution rules apply per row.
+     * </p>
+     *
+     * @param csvData the CSV data containing competitor information, one competitor per row.
+     *                Must not be null or blank.
+     * @return a {@link CompetitorResponseHolder} containing the created competitors, in the same
+     * order as the CSV rows.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
+     *                             missing a required field, or if a row's gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}.
+     * @throws NonFatalException   if a row's named home club cannot be found.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     */
+    CompetitorResponseHolder createCompetitors(String csvData)
+            throws ValidationException, NonFatalException, FatalException;
 
     /**
      * Fully replaces an existing IPSC competitor's fields with those on the request.

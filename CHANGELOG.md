@@ -42,6 +42,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Controllers
+
+- **`IpscCompetitorController`:** New `createCompetitors` endpoint (`POST /ipsc/competitors/bulk`, consumes
+  `text/csv`) for bulk-creating IPSC competitors from CSV data, following the same bulk-import convention as
+  `AwardController.createAwards`/`ImageController.createImages`
+
+#### Services
+
+- **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New `createCompetitors` method that parses CSV data into
+  `CompetitorRequestForCSV` rows and creates each competitor via the existing `createCompetitor` validation/gender/
+  home-club-resolution logic — unlike `AwardService`/`ImageService`'s CSV endpoints, which only build response
+  objects without persisting
+
+#### Models
+
+- **`CompetitorRequestForCSV`:** New CSV-mapped request model (`models/ipsc/competitor/request/`) for bulk competitor
+  import, mirroring `CompetitorRequest`'s fields other than `competitorId`
+- **`CompetitorResponseHolder`:** New response container (`models/ipsc/competitor/response/`) holding the
+  `CompetitorResponse`s created by a bulk CSV import
+
 ## 🧾 [8.0.0] - 2026-08-31
 
 ### ➕ Added
