@@ -1065,7 +1065,7 @@ IPSC request models to date: without a matching `@JsonCreator` constructor, the 
 **Architecture Highlights:**
 
 - Confirms `MatchOverallScoresRequest`/`MatchStageScoresRequest` remain groundwork — their constructors and
-  annotations are now correct, but neither is wired into a controller or service yet
+  annotations are now correct, but neither is wired into a controller nor service yet
 
 **Technical Focus:**
 
@@ -1899,7 +1899,7 @@ pattern was first introduced.
 - `IpscCompetitorController`/`IpscMatchController` full CRUD, replacing the long-standing empty `IpscController` stub
 - New `IpscCompetitorService`/`IpscMatchService` + impls; new `Gender` enum capabilities and `GenderConverter`
 - Comprehensive Javadoc/`@since` documentation pass; AI-agent tooling migrated from slash commands to Skills
-- Largest test expansion since v5.4.0: full unit + integration coverage for both new controllers/services
+- Largest test expansion since v5.4.0: full unit and integration coverage for both new controllers/services
 
 **Achievement:** Completed the IPSC module rebuild begun as groundwork in v6.0.0 — the platform now has real,
 resource-oriented competitor and match management, not just an empty stub.
@@ -2517,7 +2517,7 @@ AttributeConverters
   closed in `ControllerResponseTest`, `FirearmTypeTest`, `ControllerAdviceTest` (suite coverage 95.7%/91.7% →
   97.3%/98.1%); `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with
   the new `// methodName()` header-comment/ordering convention (comments and reordering only — no behaviour change)
-- **v8.0.0:** New unit + integration test coverage for `IpscCompetitorController`/`Service`/`ServiceImpl` and
+- **v8.0.0:** New unit and integration test coverage for `IpscCompetitorController`/`Service`/`ServiceImpl` and
   `IpscMatchController`/`Service`/`ServiceImpl`; new `GenderTest`/`GenderConverterTest`; mechanical test updates for the
   `fromX` enum-factory rename — the largest single-release test expansion since v5.4.0
 
@@ -2804,7 +2804,7 @@ AttributeConverters
     - New `IpscCompetitorService`/`IpscMatchService` + impls, `Gender` enum enhancements and `GenderConverter`
     - Naming consistency sweep: `processCsv` → `createAwards`/`createImages`, enum `getByX` → `fromX` factories
     - Comprehensive Javadoc/`@since` pass; AI-agent tooling migrated from slash commands to Skills
-    - Largest single-release test expansion since v5.4.0 — full unit + integration coverage for both new
+    - Largest single-release test expansion since v5.4.0 — full unit and integration coverage for both new
       controllers/services
 15. **Jackson Required-Field Gotcha (v8.1.0):** `@JsonProperty(required = true)` only fires for creator (constructor)
     parameters — a class deserialised via its default no-args constructor and setters silently treats a missing
@@ -3032,7 +3032,7 @@ Version 8.0.0 completes the IPSC module rebuild that v6.0.0 first began: `IpscCo
 replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new `IpscCompetitorService`/`IpscMatchService`
 implementations, real competitor and match CRUD with club/gender/firearm-type/match-category resolution and the
 largest test expansion since v5.4.0. Alongside the domain work, the release also merges `CLAUDE.md`'s guidance into a
-single `AGENTS.md` reference, migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana
+single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana
 JVM static analysis — marking the transition from a project with substantial architectural groundwork to one with a
 genuinely complete, if still growing, IPSC feature set.
 
@@ -3057,7 +3057,7 @@ technical information
 - `AGENTS.md`/`CLAUDE.md` merged into a single tool-agnostic reference; AI-agent tooling migrated from
   `.claude/commands/*.md` slash commands to `.claude/skills/*/SKILL.md` Skills; Qodana JVM static analysis re-added
 - Project version bumped to 8.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
-- Largest single-release test expansion since v5.4.0: full unit + integration coverage for both new
+- Largest single-release test expansion since v5.4.0: full unit and integration coverage for both new
   controllers/services, plus `GenderTest`/`GenderConverterTest`
 
 **Previous Update (v7.2.0):**
