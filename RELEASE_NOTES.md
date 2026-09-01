@@ -120,7 +120,7 @@ gaining a `@JsonCreator` constructor and comprehensive new unit test coverage.
 ### For Developers
 
 - **`CompetitorRequest`/`CompetitorRequestForCSV`/`MatchRequest`/`MatchStageRequest`** no longer have a
-  Lombok-generated `@AllArgsConstructor`; a hand-written `@JsonCreator` constructor with the same signature replaces
+  Lombok-generated `@AllArgsConstructor`; a handwritten `@JsonCreator` constructor with the same signature replaces
   it, so existing positional constructor calls are unaffected, but new callers should be aware the constructor is no
   longer auto-generated.
 

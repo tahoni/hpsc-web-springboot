@@ -119,7 +119,7 @@ responsibilities:
 |----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
 | **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
-| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, plus competitor bulk CSV import, via `IpscCompetitorController`/`IpscMatchController` |
+| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, plus competitor bulk CSV import, via `IpscCompetitorController`/`IpscMatchController`                |
 | **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
@@ -144,7 +144,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 |----------------------------|---------------------|-------------------------------------------|
 | `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                      |
 | `ImageController`          | `/hpsc-web/images`  | Image CSV processing                      |
-| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import     |
+| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import    |
 | `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages |
 
 All controllers:
@@ -349,7 +349,7 @@ Client uploads CSV (Content-Type: text/csv)
 ```
 
 > The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`,
-> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer. Competitor
+> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer. The competitor
 > bulk CSV import above is a new, unrelated implementation, not a restoration of that removed flow.
 
 ---
