@@ -74,7 +74,7 @@ public class ImageController {
                             schema = @Schema(implementation = ImageRequest.class),
                             examples = @ExampleObject("""
                                     title,summary,description,category,tags,filePath,fileName
-                                    string,string,string,string|string,string,string
+                                    string,string,string,string;string,string,string
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, FatalException {

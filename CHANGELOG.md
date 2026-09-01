@@ -77,6 +77,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (`competitor_id` FK, `email_address`), backfilling it from any existing non-blank
   `competitor.email_address` values, then dropping that column
 
+#### Constants
+
+- **`SystemConstants.ARRAY_SEPARATOR`:** New shared `";"` constant, and `ImageServiceImpl`/
+  `AwardServiceImpl`'s bulk CSV parsing switched from `"|"` to it, so every bulk CSV endpoint's
+  multi-value cells (competitor email addresses, image/award tags) now share one separator
+  convention; the `ImageController`/`AwardController` Swagger examples and their CSV parsing tests
+  are updated to match
+
 ## 🧾 [8.1.1] - 2026-09-01
 
 ### ➕ Added

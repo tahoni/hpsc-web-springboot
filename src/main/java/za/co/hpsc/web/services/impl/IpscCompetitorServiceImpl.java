@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.Gender;
@@ -144,7 +145,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             return new ArrayList<>();
         }
 
-        return Arrays.stream(rawEmailAddresses.split(";"))
+        return Arrays.stream(rawEmailAddresses.split(SystemConstants.ARRAY_SEPARATOR))
                 .map(String::trim)
                 .filter(email -> !email.isBlank())
                 .collect(Collectors.toList());

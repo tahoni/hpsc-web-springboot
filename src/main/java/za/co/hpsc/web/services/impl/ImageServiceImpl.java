@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.image.request.ImageRequest;
@@ -64,7 +65,7 @@ public class ImageServiceImpl implements ImageService {
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = csvMapper
                 .schemaFor(ImageRequestForCsv.class)
-                .withArrayElementSeparator("|")
+                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
                 .withColumnReordering(true)
                 .withHeader();
         csvMapper.addMixIn(ImageRequest.class, ImageRequestForCsv.class);

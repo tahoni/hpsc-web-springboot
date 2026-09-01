@@ -87,7 +87,7 @@ public class ImageServiceTest {
     void testCreateImages_whenSingleImageWithAllFields_thenReturnsMappedResponse() {
         // Arrange
         String csvData = CSV_HEADER +
-                "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains|plains,/photos/nature,landscape.jpg\n";
+                "Landscape Shot,Beautiful landscape,A wide open field,Nature,mountains;plains,/photos/nature,landscape.jpg\n";
 
         // Act
         ImageResponseHolder responseHolder = assertDoesNotThrow(() -> imageService.createImages(csvData));
@@ -109,7 +109,7 @@ public class ImageServiceTest {
     void testCreateImages_whenMultipleImages_thenReturnsAllMappedResponses() {
         // Arrange
         String csvData = CSV_HEADER +
-                "Photo A,Summary A,Desc A,Events,Tag1|Tag2,/photos/a,a.png\n" +
+                "Photo A,Summary A,Desc A,Events,Tag1;Tag2,/photos/a,a.png\n" +
                 "Photo B,Summary B,Desc B,Portraits,Tag3,/photos/b,b.jpg\n";
 
         // Act
@@ -127,7 +127,7 @@ public class ImageServiceTest {
         // Arrange
         String csvData = """
                 fileName,filePath,tags,category,description,summary,title
-                portrait.png,/photos/portrait,outdoor|sunlight,Portraits,Golden hour portrait,Warm tones,Golden Hour
+                portrait.png,/photos/portrait,outdoor;sunlight,Portraits,Golden hour portrait,Warm tones,Golden Hour
                 """;
 
         // Act
