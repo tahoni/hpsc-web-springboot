@@ -109,7 +109,9 @@ evidence and reasoning there.
 - [x] Drop the override in the same pass as the version bump once it's redundant — done, along with a second
   `log4j-api` override (CVE-2026-49844 fix) added since, also picked up by the same bump
 - [ ] Recurring: repeat this check at each future release for any newly added manual dependency-version overrides —
-  this specific instance is closed, but the practice itself stays in force
+  already paid off once, within this same v8.1.1 release: the `jackson-bom.version` property (pinned `3.1.5`)
+  matched Boot 4.1.1's own managed default exactly, so it was dropped too. This specific instance is closed, but
+  the practice itself stays in force for future releases
 
 ---
 

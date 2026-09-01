@@ -161,9 +161,12 @@ the version bump happens.
 **Outcome:** Bumping the `spring-boot-starter-parent` to `4.1.1` picked up `jackson-databind` `2.21.5` by default, so
 the manual override was dropped from `pom.xml`'s `dependencyManagement` in the same pass, exactly as this gap
 proposed. A second manual override added later for `log4j-api` (CVE-2026-49844) was resolved by the parent bump the
-same way and dropped alongside it. This category of clean-up recurs — re-check remaining manual overrides at each
-future release per the Release Checklist (this gap's Ongoing counterpart, #5's own recurring check, stays in force
-even though the specific overrides it named are gone).
+same way and dropped alongside it. The recurring check itself then caught a third instance during v8.1.1's own
+release prep: the `jackson-bom.version` property (pinned `3.1.5`) matched Boot 4.1.1's own managed default exactly
+(confirmed via the parent POM directly, not just an echoed property), so it was redundant too and has been dropped.
+This category of clean-up recurs — re-check remaining manual overrides at each future release per the Release
+Checklist (this gap's Ongoing counterpart, #5's own recurring check, stays in force even though the specific
+overrides it named are gone).
 
 ### 6. Match scoring / shooter-log service and controller layer are not yet built
 
