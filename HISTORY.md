@@ -21,6 +21,32 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.1.0 (September 1, 2026)
+
+**Theme:** Competitor Bulk CSV Import & Required-Field Enforcement Fixes
+
+**Key Focus:**
+
+- New `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`, consumes `text/csv`) backed by
+  `IpscCompetitorService`/`IpscCompetitorServiceImpl`, following `AwardController`/`ImageController`'s bulk-import
+  convention — but, unlike those, actually persisting each row via the existing `createCompetitor`
+  validation/gender/home-club-resolution logic
+- New `CompetitorRequestForCSV`/`CompetitorResponseHolder` models (`models/ipsc/competitor/`)
+- Found and fixed a recurring Jackson gotcha: `@JsonProperty(required = true)` is silently inert without a matching
+  `@JsonCreator` constructor. `CompetitorRequestForCSV`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest` and
+  the not-yet-wired `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus their CSV variants) all gained a
+  `@JsonCreator` constructor, each parameter bound via `@JsonProperty`, replacing their Lombok `@AllArgsConstructor`
+- The two scores CSV variants' constructors now match their plain counterpart's signature exactly (including a
+  CSV-absent `matchId`), making them usable as a `csvMapper.addMixIn(...)` mixin, matching
+  `AwardServiceImpl`/`ImageServiceImpl` — though neither is wired into a controller yet
+- Corrected a genuine mismatch found while fixing the above: `CompetitorRequest`'s Jackson-required third field was
+  `competitorNumber`, when `IpscCompetitorServiceImpl.validateForCreate` actually requires `clubNumber`
+- `@JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)` added to `CompetitorRequest`/`CompetitorRequestForCSV`/
+  `MatchRequest`'s `LocalDate` fields, making the accepted `yyyy-MM-dd` format explicit
+- New unit tests for every touched request model's JSON/CSV (de)serialization and required-field enforcement, plus
+  `IpscCompetitorController`/`Service`/`ServiceImpl` coverage for the new bulk endpoint
+- Project version bumped to 8.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.0.0 (August 31, 2026)
 
 **Theme:** IPSC Module Rebuild Complete — Competitor & Match CRUD
@@ -1007,6 +1033,55 @@ coverage.
 
 ---
 
+### Phase 20: Competitor Bulk CSV Import & Required-Field Enforcement Fixes (v8.1.0)
+
+**Duration:** September 1, 2026
+
+Extends the IPSC competitor module completed in v8.0.0 with bulk CSV import, then — while building and testing it —
+uncovers and fixes a subtle Jackson gotcha affecting every `@JsonProperty(required = true)` field added across the
+IPSC request models to date: without a matching `@JsonCreator` constructor, the annotation never actually fires.
+
+**Key Accomplishments:**
+
+**Competitor Bulk CSV Import**
+
+- `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`, consumes `text/csv`) parses CSV data
+  into `CompetitorRequestForCSV` rows and creates each competitor via the existing `createCompetitor` logic — unlike
+  `AwardController`/`ImageController`'s bulk endpoints, which only build response objects without persisting
+- New `CompetitorRequestForCSV` (CSV-mapped, `UpperCamelCase` headers) and `CompetitorResponseHolder` models
+
+**Required-Field Enforcement Fix**
+
+- Root cause: `@JsonProperty(required = true)` only fires for creator (constructor) parameters — a class deserialised
+  via its default no-args constructor and setters silently accepts a missing "required" field as `null`
+- `CompetitorRequestForCSV`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest`, `MatchOverallScoresRequest`/
+  `MatchStageScoresRequest` and their CSV variants each gained a `@JsonCreator` constructor with every parameter
+  bound via `@JsonProperty`, replacing their Lombok `@AllArgsConstructor`
+- `CompetitorRequest`'s required third field corrected from `competitorNumber` to `clubNumber`, matching
+  `IpscCompetitorServiceImpl.validateForCreate`'s actual validation
+- The scores CSV variants' constructors now match their plain counterparts' signatures exactly, verified via a
+  `csvMapper.addMixIn(...)` mixin test — the same pattern `AwardServiceImpl`/`ImageServiceImpl` already use
+
+**Architecture Highlights:**
+
+- Confirms `MatchOverallScoresRequest`/`MatchStageScoresRequest` remain groundwork — their constructors and
+  annotations are now correct, but neither is wired into a controller or service yet
+
+**Technical Focus:**
+
+- Bulk data import (competitor CSV)
+- Jackson deserialisation correctness (`@JsonCreator`/`@JsonProperty(required = true)`)
+- Request-model test coverage
+
+**Test Coverage:**
+
+- New unit tests across `IpscCompetitorController`/`Service`/`ServiceImpl`'s bulk import, and eight request-model
+  test classes (`CompetitorRequestTest`, `CompetitorRequestForCSVTest`, `MatchRequestTest`, `MatchStageRequestTest`,
+  `MatchOverallScoresRequestTest`, `MatchStageScoresRequestTest`, `MatchOverallScoresRequestForCSVTest`,
+  `MatchStageScoresRequestForCSVTest`)
+
+---
+
 ### Phase 19: IPSC Module Completion — Competitor & Match CRUD (v8.0.0)
 
 **Duration:** August 31, 2026
@@ -1799,6 +1874,23 @@ Focused consolidation of services, introduction of custom JPA converters and rep
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and
 comprehensive test coverage across all services and utilities.
+
+---
+
+### Milestone 20: Competitor Bulk CSV Import & Required-Field Fixes (v8.1.0)
+
+- `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`) persists competitors from CSV data,
+  unlike `AwardController`/`ImageController`'s response-only bulk endpoints
+- Discovered and fixed a Jackson gotcha affecting every IPSC request model to date: `@JsonProperty(required = true)`
+  needs a matching `@JsonCreator` constructor to actually enforce anything
+- `CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`, `MatchStageRequest` and the scores request models
+  all gained a `@JsonCreator` constructor; `CompetitorRequest`'s required field corrected from `competitorNumber` to
+  `clubNumber`
+- New unit tests across the bulk-import feature and every touched request model
+
+**Achievement:** Extended the IPSC competitor module with bulk CSV import, and — while testing it — found and fixed a
+silent validation gap present across every `@JsonProperty(required = true)` field added since the required-field
+pattern was first introduced.
 
 ---
 
@@ -2712,14 +2804,35 @@ AttributeConverters
     - Comprehensive Javadoc/`@since` pass; AI-agent tooling migrated from slash commands to Skills
     - Largest single-release test expansion since v5.4.0 — full unit + integration coverage for both new
       controllers/services
+15. **Jackson Required-Field Gotcha (v8.1.0):** `@JsonProperty(required = true)` only fires for creator (constructor)
+    parameters — a class deserialised via its default no-args constructor and setters silently treats a missing
+    "required" field as `null`
+    - Fixed across every IPSC request model to date by adding a `@JsonCreator` constructor with each parameter bound
+      via `@JsonProperty`, replacing the affected classes' Lombok `@AllArgsConstructor`
+    - Verified with a throwaway `csvMapper.addMixIn(...)` scratch test that the two not-yet-wired scores CSV variants
+      are correctly mixin-compatible with their plain counterparts, the same pattern
+      `AwardServiceImpl`/`ImageServiceImpl` already use for `AwardRequestForCSV`/`ImageRequestForCsv`
+    - Caught a genuine validation mismatch along the way: `CompetitorRequest`'s Jackson-required field was
+      `competitorNumber`, not the actually-validated `clubNumber`
 
 ---
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.1.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.0.0)
+### Recently Completed (v8.1.0)
+
+- New `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`) persists competitors from CSV
+  data via the existing `createCompetitor` logic
+- New `CompetitorRequestForCSV`/`CompetitorResponseHolder` models
+- Fixed a Jackson gotcha affecting every `@JsonProperty(required = true)` field added to date: `CompetitorRequest`,
+  `CompetitorRequestForCSV`, `MatchRequest`, `MatchStageRequest` and the scores request models all gained a
+  `@JsonCreator` constructor so required fields are actually enforced
+- `CompetitorRequest`'s required field corrected from `competitorNumber` to `clubNumber`
+- Project version bumped to 8.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.0.0)
 
 - `IpscCompetitorController`/`IpscMatchController` full CRUD, replacing the empty `IpscController` stub
 - New `IpscCompetitorService`/`IpscMatchService` + impls; new `CompetitorRequest`/`CompetitorResponse`,
@@ -2862,6 +2975,9 @@ for managing practical shooting competition data. This evolution demonstrates a 
   retrofitted across the existing suite, alongside four JaCoCo-identified coverage gaps closed (v7.2.0)
 - **IPSC Module Completion:** `IpscCompetitorController`/`IpscMatchController` replace the empty `IpscController` stub
   with full, layered competitor and match CRUD — completing work begun as groundwork in v6.0.0 (v8.0.0)
+- **Bulk Import Extended & Validation Correctness:** `IpscCompetitorController.createCompetitors` extends the CSV
+  bulk-import pattern to competitors with genuine persistence, and a project-wide fix ensures
+  `@JsonProperty(required = true)` actually enforces required fields via matching `@JsonCreator` constructors (v8.1.0)
 
 The transition to Semantic Versioning in v5.0.0, the test suite consolidation in v5.1.0, the major architectural
 refactoring in v5.2.0, the service consolidation with custom converters in v5.3.0, the competitor enrolment system with
