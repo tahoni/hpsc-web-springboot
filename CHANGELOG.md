@@ -95,6 +95,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #7 (Qodana CI wiring) closed as
   not applicable, rather than delivered — see 🗑️ Removed below for why
 
+### 🐛 Fixed
+
+#### Services
+
+- **`IpscCompetitorServiceImpl`:** `applyFields`/`patchCompetitor` now defensively copy
+  `request.getEmailAddresses()` into a new `ArrayList` before storing it on the entity, instead of storing the
+  caller-supplied `List` reference directly. An immutable list (e.g. `List.of(...)`) previously crashed with an
+  unhandled `UnsupportedOperationException` when Hibernate merged an update, bypassing the
+  `FatalException`/`NonFatalException`/`ValidationException` hierarchy entirely; found while adding multi-address
+  test coverage for `patchCompetitor`
+
 ### 🗑️ Removed
 
 #### CI/CD & Configuration

@@ -37,6 +37,18 @@ it, Qodana static analysis is removed from the project entirely in this release.
   multi-value cell convention across every bulk CSV endpoint
 - `AwardController`/`ImageController`/`IpscCompetitorController`'s Swagger examples updated to match
 
+### 🐛 Multi-Address Test Coverage & a Real Bug Found Along the Way
+
+- New tests exercise a genuine multi-element `emailAddresses` list (not just single-address or empty/null cases)
+  across every layer this feature touches: `CompetitorRequest` JSON (de)serialisation, `IpscCompetitorServiceImpl`'s
+  `applyFields`/`toResponse` helpers, and `IpscCompetitorService`'s `createCompetitor`/`createCompetitors`/
+  `patchCompetitor` contract, at both the unit and Spring-context integration level
+- Writing the `patchCompetitor` integration test surfaced a real bug: `applyFields`/`patchCompetitor` stored the
+  caller-supplied `List` reference directly onto the entity. An immutable list (e.g. `List.of(...)`) crashed with
+  an unhandled `UnsupportedOperationException` when Hibernate merged the update — bypassing the
+  `FatalException`/`NonFatalException`/`ValidationException` hierarchy entirely and surfacing as a raw 500. Both
+  methods now defensively copy into a new `ArrayList` before storing
+
 ### 🗑️ Qodana Static Analysis Removed
 
 - **`.github/workflows/qodana.yml`, `qodana.yaml`** — `documentation/roadmap/improvement-plan.md` previously
@@ -91,6 +103,14 @@ it, Qodana static analysis is removed from the project entirely in this release.
 - `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 (Qodana CI wiring) closed as not
   applicable
 
+### Fixed
+
+#### Services
+
+- `IpscCompetitorServiceImpl` — `applyFields`/`patchCompetitor` now defensively copy `emailAddresses` into a new
+  `ArrayList` instead of storing the caller-supplied `List` reference directly, avoiding an unhandled
+  `UnsupportedOperationException` if that list is immutable
+
 ### Removed
 
 #### CI/CD & Configuration
@@ -123,11 +143,11 @@ it, Qodana static analysis is removed from the project entirely in this release.
 
 ## 📊 Statistics
 
-- **Total Commits:** 9
+- **Total Commits:** 11
 - **Files Changed:** 29
-- **Insertions:** 209 lines
+- **Insertions:** 363 lines
 - **Deletions:** 191 lines
-- **Net Change:** +18 lines
+- **Net Change:** +172 lines
 - **New Source Files:** 1 (`V7_2_0__add_competitor_emails.sql`)
 - **Deleted Files:** 2 (`.github/workflows/qodana.yml`, `qodana.yaml`)
 - **New Test Files:** 0
@@ -147,16 +167,23 @@ it, Qodana static analysis is removed from the project entirely in this release.
 - **Verify CI claims against the Actions tab, not the workflow file.** `qodana.yml` read as complete and correctly
   configured; only checking `gh run list` against real run history revealed it had never actually succeeded — and
   a workflow that has never worked isn't worth patching over removing, once no working baseline exists to protect.
+- **A genuinely multi-element test case finds bugs a singleton doesn't.** Every existing `emailAddresses` test used
+  either a single-element list or null/empty — none had ever exercised a list with more than one address moving
+  through a real Hibernate merge. Adding that case is what surfaced the `UnsupportedOperationException` bug, not a
+  code review of the mapping logic itself.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw test` — full suite passing.
+- `./mvnw test` — full suite passing (790 tests, up from 781; 0 failures/errors).
 - Updated tests: `IpscCompetitorControllerTest`, `CompetitorRequestForCSVTest`, `CompetitorRequestTest`,
   `AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`,
   `IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `AwardServiceImplTest`, `ImageServiceImplTest`,
   `IpscCompetitorServiceImplTest` — all updated for the `emailAddresses` shape and the `;` separator.
+- New genuinely-multiple-address tests added to `CompetitorRequestTest`, `IpscCompetitorServiceImplTest`,
+  `IpscCompetitorServiceTest` and `IpscCompetitorServiceIntegrationTest`, closing the gap where every existing
+  `emailAddresses` test used only a single-element list (or null/empty).
 
 ---
 

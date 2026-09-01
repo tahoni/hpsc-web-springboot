@@ -8,6 +8,9 @@
   `SystemConstants.ARRAY_SEPARATOR`, matching the competitor domain's convention.
 - A roadmap audit run as part of this release found `.github/workflows/qodana.yml` (added in v8.1.1) had actually
   failed on every run since; rather than fix it, Qodana static analysis is removed from the project entirely.
+- New genuinely-multiple-address tests (not just single-address or null/empty) surfaced a real bug:
+  `IpscCompetitorServiceImpl.applyFields`/`patchCompetitor` crashed with an unhandled
+  `UnsupportedOperationException` on an immutable `emailAddresses` list at update time — now fixed.
 
 ## 📦 Key Changes
 
@@ -23,6 +26,11 @@
 - `ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md` — every Qodana reference in the CI/CD documentation removed
 - `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 closed as not applicable
 
+**Fixed**
+
+- `IpscCompetitorServiceImpl` — `applyFields`/`patchCompetitor` now defensively copy `emailAddresses` into a new
+  `ArrayList` instead of storing the caller-supplied `List` reference directly
+
 **Removed**
 
 - `.github/workflows/qodana.yml`, `qodana.yaml` — Qodana static analysis; had failed on every CI run since v8.1.1
@@ -30,7 +38,9 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw test` — full suite passing (781 tests, up from 775; 0 failures/errors)
+- [x] `./mvnw test` — full suite passing (790 tests, up from 775; 0 failures/errors)
+- [x] Added genuinely-multiple-address tests across every layer `emailAddresses` touches (`CompetitorRequestTest`,
+      `IpscCompetitorServiceImplTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceIntegrationTest`)
 - [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/RELEASE_NOTES_v8.2.0.md`
 - [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md`
 

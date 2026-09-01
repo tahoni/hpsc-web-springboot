@@ -42,6 +42,11 @@ evolution of architecture, features and design philosophy across all versions.
   `ARCHITECTURE.md`/`CONTRIBUTING.md`/`AGENTS.md`'s CI/CD documentation): a release audit found it had failed on
   every CI run since v8.1.1 added it, and `documentation/roadmap/improvement-plan.md`'s Gap #7 closes as not
   applicable rather than delivered
+- New genuinely-multiple-address tests (not just single-address or null/empty) added across every layer
+  `emailAddresses` touches, surfacing a real bug: `IpscCompetitorServiceImpl.applyFields`/`patchCompetitor` stored
+  the caller-supplied `List` reference directly onto the entity, crashing with an unhandled
+  `UnsupportedOperationException` on an immutable list at Hibernate merge time; both now defensively copy into a
+  new `ArrayList`
 - Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 8.1.1 (September 1, 2026)
@@ -1130,10 +1135,21 @@ format is unified onto one separator convention.
 - Domain-model evolution (single value → collection, backed by a new child table)
 - Cross-endpoint consistency (shared constant replacing two independently hardcoded separators)
 
+**Bug Fix**
+
+- `IpscCompetitorServiceImpl.applyFields`/`patchCompetitor` stored the caller-supplied `emailAddresses` `List`
+  reference directly onto the entity; an immutable list (e.g. `List.of(...)`) crashed with an unhandled
+  `UnsupportedOperationException` when Hibernate merged an update, bypassing the exception hierarchy entirely. Found
+  while adding genuinely-multiple-address test coverage (every existing test had only used a single-element list);
+  both methods now defensively copy into a new `ArrayList`
+
 **Test Coverage:**
 
 - Existing CSV parsing, request/response model and bulk-import tests updated for the new `emailAddresses` shape and
   separator
+- New multi-address tests (2+ emails in one list/CSV cell) added to `CompetitorRequestTest`,
+  `IpscCompetitorServiceImplTest`, `IpscCompetitorServiceTest` and `IpscCompetitorServiceIntegrationTest`; 781 → 790
+  tests
 
 ---
 
@@ -2058,10 +2074,14 @@ comprehensive test coverage across all services and utilities.
   competitor domain's semicolon-separated multi-value convention
 - Qodana static analysis removed after a roadmap audit found it had been failing on every CI run since v8.1.1;
   `improvement-plan.md`'s Gap #7 closed as not applicable
+- New genuinely-multiple-address tests surfaced a real bug in `IpscCompetitorServiceImpl.applyFields`/
+  `patchCompetitor` — an immutable `emailAddresses` list crashed with an unhandled `UnsupportedOperationException`
+  on update; both methods now defensively copy into a new `ArrayList`
 
 **Achievement:** Extended the competitor domain to support more than one email address, closed a lingering
-inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats, and removed a
-CI quality gate that had never once succeeded.
+inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats, removed a
+CI quality gate that had never once succeeded, and fixed a real crash-on-update bug found by writing genuinely
+thorough multi-address test coverage instead of only single-element cases.
 
 ---
 
@@ -3038,6 +3058,9 @@ Based on the evolution to v8.2.0, the following areas are identified for future 
 - Qodana static analysis removed entirely — it had failed on every CI run since v8.1.1 added it (missing
   `QODANA_TOKEN` secret, unconditional SARIF upload) — closing `documentation/roadmap/improvement-plan.md`'s Gap #7
   as not applicable
+- New genuinely-multiple-address test coverage surfaced and fixed a real bug: `IpscCompetitorServiceImpl`'s
+  `applyFields`/`patchCompetitor` now defensively copy `emailAddresses` into a new `ArrayList` instead of storing
+  the caller-supplied `List` reference directly, avoiding an unhandled `UnsupportedOperationException` on update
 - Project version bumped to 8.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Previously Completed (v8.1.1)
