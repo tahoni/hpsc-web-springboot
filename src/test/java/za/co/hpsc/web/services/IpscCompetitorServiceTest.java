@@ -236,9 +236,9 @@ public class IpscCompetitorServiceTest {
 
         // Assert
         assertEquals(1, holder.getCompetitors().size());
-        assertEquals("Jane", holder.getCompetitors().get(0).getFirstName());
-        assertEquals("Doe", holder.getCompetitors().get(0).getLastName());
-        assertEquals("HPSC-001", holder.getCompetitors().get(0).getClubNumber());
+        assertEquals("Jane", holder.getCompetitors().getFirst().getFirstName());
+        assertEquals("Doe", holder.getCompetitors().getFirst().getLastName());
+        assertEquals("HPSC-001", holder.getCompetitors().getFirst().getClubNumber());
     }
 
     @Test
@@ -255,7 +255,7 @@ public class IpscCompetitorServiceTest {
 
         // Assert
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"),
-                holder.getCompetitors().get(0).getEmailAddresses());
+                holder.getCompetitors().getFirst().getEmailAddresses());
     }
 
     @Test

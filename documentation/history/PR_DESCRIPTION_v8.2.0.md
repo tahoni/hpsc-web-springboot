@@ -8,7 +8,7 @@
   `SystemConstants.ARRAY_SEPARATOR`, matching the competitor domain's convention.
 - A roadmap audit run as part of this release found `.github/workflows/qodana.yml` (added in v8.1.1) had actually
   failed on every run since; rather than fix it, Qodana static analysis is removed from the project entirely.
-- New genuinely-multiple-address tests (not just single-address or null/empty) surfaced a real bug:
+- New genuinely multiple-address tests (not just single-address or null/empty) surfaced a real bug:
   `IpscCompetitorServiceImpl.applyFields`/`patchCompetitor` crashed with an unhandled
   `UnsupportedOperationException` on an immutable `emailAddresses` list at update time — now fixed.
 

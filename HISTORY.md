@@ -42,7 +42,7 @@ evolution of architecture, features and design philosophy across all versions.
   `ARCHITECTURE.md`/`CONTRIBUTING.md`/`AGENTS.md`'s CI/CD documentation): a release audit found it had failed on
   every CI run since v8.1.1 added it, and `documentation/roadmap/improvement-plan.md`'s Gap #7 closes as not
   applicable rather than delivered
-- New genuinely-multiple-address tests (not just single-address or null/empty) added across every layer
+- New genuinely multiple-address tests (not just single-address or null/empty) added across every layer
   `emailAddresses` touches, surfacing a real bug: `IpscCompetitorServiceImpl.applyFields`/`patchCompetitor` stored
   the caller-supplied `List` reference directly onto the entity, crashing with an unhandled
   `UnsupportedOperationException` on an immutable list at Hibernate merge time; both now defensively copy into a
@@ -68,7 +68,7 @@ evolution of architecture, features and design philosophy across all versions.
 - Recreated `NonFatalExceptionTest`/`FatalExceptionTest`/`ValidationExceptionTest` — these existed as of v7.2.0 but
   were dropped with no replacement, leaving the exception hierarchy at 20% line coverage; added tests for the
   `models/ipsc/shared` scoring groundwork classes (0% coverage) and every `patchCompetitor`/`patchMatch` field's
-  previously-untested success path. Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch),
+  previously untested success path. Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch),
   746 → 775 tests
 - Spring Boot parent bumped `4.1.0` → `4.1.1`, dropping the now-redundant `jackson-databind`/`log4j-api`
   `dependencyManagement` overrides; the recurring dependency-currency check then caught a third redundant override,
@@ -1185,7 +1185,7 @@ v8.0.0.
   overload — these existed as of v7.2.0 but were dropped somewhere before now with no replacement, leaving the
   exception hierarchy at 20% line coverage
 - New tests for the `models/ipsc/shared` scoring groundwork classes (0% coverage previously) and every
-  `patchCompetitor`/`patchMatch` field's previously-untested success path
+  `patchCompetitor`/`patchMatch` field's previously untested success path
 - Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch), 746 → 775 tests
 
 **Dependency Clean-up**
@@ -2074,7 +2074,7 @@ comprehensive test coverage across all services and utilities.
   competitor domain's semicolon-separated multi-value convention
 - Qodana static analysis removed after a roadmap audit found it had been failing on every CI run since v8.1.1;
   `improvement-plan.md`'s Gap #7 closed as not applicable
-- New genuinely-multiple-address tests surfaced a real bug in `IpscCompetitorServiceImpl.applyFields`/
+- New genuinely multiple-address tests surfaced a real bug in `IpscCompetitorServiceImpl.applyFields`/
   `patchCompetitor` — an immutable `emailAddresses` list crashed with an unhandled `UnsupportedOperationException`
   on update; both methods now defensively copy into a new `ArrayList`
 

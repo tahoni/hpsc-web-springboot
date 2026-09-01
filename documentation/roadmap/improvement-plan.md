@@ -224,18 +224,18 @@ were removed entirely in v8.2.0, along with every other reference to Qodana acro
 `CONTRIBUTING.md` and `AGENTS.md`'s CI/CD documentation. The gate had never once succeeded since it was added, so
 there was no working baseline to preserve, and re-enabling it would still require provisioning a `QODANA_TOKEN`
 secret this project doesn't currently have. This closes the gap as not applicable rather than as delivered — if
-static analysis in CI is wanted again in future, it should be scoped as a new gap rather than reopening this one.
+static analysis in CI is wanted again in the future, it should be scoped as a new gap rather than reopening this one.
 
 ---
 
 ## 🚀 Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                                  |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Add the CI build/test gate (#2) — lowest effort, closing a gap the project's own docs already flag. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
-| **Next**    | Coverage enforcement (#4), now against the current, refreshed 92.9%/93.4% baseline; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1     |
-| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                       |
-| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                        |
+| Phase       | Focus                                                                                                                                                                                                              |
+|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | Add the CI build/test gate (#2) — lowest effort, closing a gap the project's own docs already flag. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed                                 |
+| **Next**    | Coverage enforcement (#4), now against the current, refreshed 92.9%/93.4% baseline; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 |
+| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                   |
+| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                    |
 
 ---
 
