@@ -81,8 +81,9 @@ existing single-`createCompetitor` logic per row instead of introducing new orch
 ### 2. No automatic build/test gate on pull requests
 
 **Evidence:** `ARCHITECTURE.md`'s own CI/CD & Quality Gates table states the `Build & Tests` gate runs "locally / by
-reviewers before merge" — `.github/workflows` contains only `codeql.yml`. `AGENTS.md`'s Merging rules require "all tests
-pass" before a `release/*` branch merges, but nothing enforces that automatically.
+reviewers before merge" — `.github/workflows` contains only `codeql.yml` and, as of Gap #7, `qodana.yml`; neither
+runs `./mvnw test`. `AGENTS.md`'s Merging rules require "all tests pass" before a `release/*` branch merges, but
+nothing enforces that automatically.
 
 **Why it matters:** A GitFlow model with `feature/*` → `develop` and `release/*` → `develop` → `main` promotion depends
 on tests being genuinely green at each merge; today that depends entirely on reviewer discipline.
@@ -180,12 +181,13 @@ controller layer doesn't — but for the scoring/shooter-log domain specifically
 Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
 fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
-### 7. Qodana static analysis is configured but never runs in CI
+### 7. Qodana static analysis is configured but never runs in CI — 🟡 Partially progressed in v8.1.1
 
 **Evidence:** `ARCHITECTURE.md`'s CI/CD & Quality Gates table states the `Static Analysis` (Qodana JVM) gate is "Run
-locally / via IDE against `qodana.yaml` — no CI workflow wired up yet". `qodana.yaml` is fully configured (profile
-`qodana.starter`, `projectJDK: "25"`, linter `jetbrains/qodana-jvm:2026.2`), but `.github/workflows/` contains only
-`codeql.yml` — no Qodana Scan action exists.
+locally / via IDE against `qodana.yaml` — no CI workflow wired up yet" — still true of `ARCHITECTURE.md` itself as
+written, though see Progress below. `qodana.yaml` is fully configured (profile `qodana.starter`, `projectJDK: "25"`,
+linter `jetbrains/qodana-jvm:2026.2`); at the time this gap was written, `.github/workflows/` contained only
+`codeql.yml`, with no Qodana Scan action.
 
 **Why it matters:** Distinct from Gap #2 (which is about the `./mvnw test`/build gate, not static analysis) — a
 second, separately named quality gate the architecture document itself already flags as configured but not
@@ -195,6 +197,13 @@ automated, sitting unused since the config was written.
 and `main`, mirroring `codeql.yml`'s (and the proposed `build.yml`'s) trigger branches. Once live, update
 `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "no CI workflow wired up yet" caveat on the `Static
 Analysis` row — the same closing move Gap #2 proposes for `Build & Tests`.
+
+**Progress:** `.github/workflows/qodana.yml` now exists, running `JetBrains/qodana-action` against the existing
+`qodana.yaml` config on push/PR to `develop`/`main`, mirroring `codeql.yml`'s trigger branches exactly as proposed.
+Not yet closed: the workflow hasn't been verified as actually succeeding in the Actions tab (this branch hasn't
+been pushed since it was added), and `ARCHITECTURE.md`'s CI/CD & Quality Gates table still states "no CI workflow
+wired up yet" on the `Static Analysis` row — that update is deliberately deferred until a real run is confirmed
+green, per this gap's own "once live" wording.
 
 ---
 

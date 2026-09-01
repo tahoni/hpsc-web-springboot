@@ -24,12 +24,12 @@ evidence and reasoning there.
 - [ ] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "locally / by reviewers" caveat on
   the `Build & Tests` row
 
-**Qodana CI wiring** *(improvement-plan.md → Gap #7)*
+**Qodana CI wiring** *(improvement-plan.md → Gap #7)* — 🟡 Partially progressed in v8.1.1
 
 - [x] Add `.github/workflows/qodana.yml` using JetBrains' `qodana-action`, triggered on push/PR to `develop` and
   `main`, mirroring `codeql.yml`'s trigger branches
-- [ ] Confirm the workflow runs against the existing `qodana.yaml` config without further changes — pending: verify
-  in the Actions tab once this is pushed
+- [ ] Confirm the workflow runs against the existing `qodana.yaml` config without further changes — still pending:
+  this branch hasn't been pushed since the workflow was added, so no real Actions run has been observed yet
 - [ ] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "no CI workflow wired up yet"
   caveat on the `Static Analysis` row
 
