@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from the repository -->
     </parent>
 
     <!-- Application definition -->
     <groupId>za.co.hpsc</groupId>
     <artifactId>hpsc-web</artifactId>
-    <version>8.1.0</version>
+    <version>8.1.1</version>
     <name>hpsc-web</name>
     <description>HPSC website backend</description>
 
@@ -29,7 +29,7 @@
         <developer>
             <id>tahoni</id>
             <name>Leoni Lubbinge</name>
-            <email>leonil@tahoni.info</email>
+            <email>tahoni@gmail.com</email>
         </developer>
     </developers>
     <scm>
@@ -43,28 +43,7 @@
         <maven.compiler.target>25</maven.compiler.target>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.14</jacoco.version>
-        <jackson-bom.version>3.1.5</jackson-bom.version>
     </properties>
-
-    <!-- Spring Boot 4.1.0 still manages jackson-databind (2.x) one patch behind its fix version;
-         override it explicitly until a Spring Boot release picks up 2.21.5 by default. -->
-    <!-- Spring Boot 4.1.0 still manages log4j-api (pulled in transitively via log4j-to-slf4j)
-         one patch behind its fix version for CVE-2026-49844 (GHSA-qv9r-c865-cp47); override it
-         explicitly until a Spring Boot release picks up 2.25.5 by default. -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.21.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>2.25.5</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- Web -->
@@ -88,6 +67,11 @@
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
@@ -96,6 +80,12 @@
             <artifactId>flyway-mysql</artifactId>
         </dependency>
 
+        <!-- Documentation -->
+        <dependency>
+            <groupId>org.springframework.restdocs</groupId>
+            <artifactId>spring-restdocs-mockmvc</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -150,16 +140,6 @@
             <artifactId>spring-boot-starter-validation-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.restdocs</groupId>
-            <artifactId>spring-restdocs-mockmvc</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -209,7 +189,7 @@
                 </configuration>
                 <!-- Plugin-scoped dependencies don't inherit Spring Boot's dependencyManagement,
                      so this must be kept in sync by hand with the flyway.version Spring Boot
-                     manages (spring-boot-dependencies:4.1.0 -> flyway.version 12.4.0) whenever
+                     manages (spring-boot-dependencies:4.1.1 -> flyway.version 12.4.0) whenever
                      the parent is bumped. -->
                 <dependencies>
                     <dependency>

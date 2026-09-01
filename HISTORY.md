@@ -21,6 +21,35 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.1.1 (September 1, 2026)
+
+**Theme:** CI Static Analysis, Release-Process Self-Maintenance & Coverage Regression Fixes
+
+**Key Focus:**
+
+- New `.github/workflows/qodana.yml` runs JetBrains' `qodana-action` against the existing `qodana.yaml` config on
+  push/PR to `develop`/`main`, mirroring `codeql.yml`'s trigger branches; results upload as SARIF to GitHub code
+  scanning
+- Two new Claude Code skills, `update-improvement-plan-gaps` (full codebase sweep for new gaps) and
+  `sync-improvement-plan-gaps` (diff-driven check for gaps a branch's own work has closed or progressed), formalise
+  the manual roadmap-maintenance work performed by hand across v8.0.0/v8.1.0; `generate-pr-description` renamed to
+  `prep-version-release` to reflect its actual scope, and now runs both new skills as its own first step
+- `AGENTS.md`'s Release Checklist re-synced against `prep-version-release`'s actual process, which had drifted
+  ahead of it — three new steps added (improvement-plan gap check, `[Unreleased]` completeness verification,
+  conditional `CONTRIBUTING.md` update), described tool-agnostically
+- Recreated `NonFatalExceptionTest`/`FatalExceptionTest`/`ValidationExceptionTest` — these existed as of v7.2.0 but
+  were dropped with no replacement, leaving the exception hierarchy at 20% line coverage; added tests for the
+  `models/ipsc/shared` scoring groundwork classes (0% coverage) and every `patchCompetitor`/`patchMatch` field's
+  previously-untested success path. Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch),
+  746 → 775 tests
+- Spring Boot parent bumped `4.1.0` → `4.1.1`, dropping the now-redundant `jackson-databind`/`log4j-api`
+  `dependencyManagement` overrides; the recurring dependency-currency check then caught a third redundant override,
+  `jackson-bom.version`, confirmed against the parent POM directly
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` gain two new gaps (match-scoring
+  service/controller layer; Qodana CI wiring — the latter partially progressed by this release's own workflow
+  addition), and `CONTRIBUTING.md` gains a new "🗺️ Roadmap" section documenting both files' structure
+- Project version bumped to 8.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.1.0 (September 1, 2026)
 
 **Theme:** Competitor Bulk CSV Import & Required-Field Enforcement Fixes
@@ -1033,6 +1062,75 @@ coverage.
 
 ---
 
+### Phase 21: CI Static Analysis, Release-Process Self-Maintenance & Coverage Regression Fixes (v8.1.1)
+
+**Duration:** September 1, 2026
+
+A process-and-quality patch release: no new domain feature, but real coverage-regression fixes, a self-maintaining
+release-checklist/roadmap tooling loop, and a completed CI quality gate that had sat configured but unwired since
+v8.0.0.
+
+**Key Accomplishments:**
+
+**CI Static Analysis**
+
+- New `.github/workflows/qodana.yml` runs `JetBrains/qodana-action` against the existing `qodana.yaml` config on
+  push/PR to `develop`/`main`, mirroring `codeql.yml`'s trigger branches; results upload as SARIF to GitHub code
+  scanning, so no Qodana Cloud token or other secret is required
+
+**Release-Process Self-Maintenance**
+
+- New `update-improvement-plan-gaps`/`sync-improvement-plan-gaps` Claude Code skills formalise the manual
+  roadmap-gap-maintenance work done by hand across v8.0.0/v8.1.0 — a full-sweep audit and a diff-driven check,
+  respectively; `generate-pr-description` renamed to `prep-version-release` to reflect its actual scope and now
+  runs both new skills as its first step
+- `AGENTS.md`'s Release Checklist re-synced against `prep-version-release`'s actual, drifted-ahead process: three
+  new steps (improvement-plan gap check, `[Unreleased]` completeness verification, conditional `CONTRIBUTING.md`
+  update), described tool-agnostically without naming the skills
+
+**Coverage Regression Fixes**
+
+- Recreated `NonFatalExceptionTest`/`FatalExceptionTest`/`ValidationExceptionTest`, covering every constructor
+  overload — these existed as of v7.2.0 but were dropped somewhere before now with no replacement, leaving the
+  exception hierarchy at 20% line coverage
+- New tests for the `models/ipsc/shared` scoring groundwork classes (0% coverage previously) and every
+  `patchCompetitor`/`patchMatch` field's previously-untested success path
+- Full-suite coverage rose from 92.9%/93.4% to 98.34%/98.84% (line/branch), 746 → 775 tests
+
+**Dependency Clean-up**
+
+- Spring Boot parent bumped `4.1.0` → `4.1.1`, dropping the now-redundant `jackson-databind`/`log4j-api`
+  `dependencyManagement` overrides
+- The recurring dependency-currency check then caught a third redundant override, `jackson-bom.version`, confirmed
+  against the parent POM directly rather than an echoed property
+
+**Documentation & Roadmap**
+
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` gain two new gaps (match-scoring
+  service/controller layer; Qodana CI wiring, the latter partially progressed by this release's own workflow
+  addition) and close Gap #5 (`jackson-databind` override)
+- `CONTRIBUTING.md` gains a new "🗺️ Roadmap" section documenting both roadmap files' structure and maintenance
+  convention — the only one of `README.md`/`AGENTS.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md` that didn't already list
+  them
+
+**Architecture Highlights:**
+
+- No architectural change — this release is process, tooling, dependency and test-coverage work only
+
+**Technical Focus:**
+
+- CI/CD quality gate completion (static analysis)
+- Release-process and roadmap-documentation self-maintenance
+- Test-coverage regression recovery
+- Dependency currency
+
+**Test Coverage:**
+
+- 29 new tests added (746 → 775): the recreated exception hierarchy tests, three new shared-scoring-model test
+  classes, and expanded `patchCompetitor`/`patchMatch` success-path coverage
+
+---
+
 ### Phase 20: Competitor Bulk CSV Import & Required-Field Enforcement Fixes (v8.1.0)
 
 **Duration:** September 1, 2026
@@ -1877,6 +1975,22 @@ comprehensive test coverage across all services and utilities.
 
 ---
 
+### Milestone 21: CI Static Analysis, Release-Process Self-Maintenance & Coverage Regression Fixes (v8.1.1)
+
+- New `.github/workflows/qodana.yml` completes a CI quality gate that had sat configured but unwired since v8.0.0
+- New `update-improvement-plan-gaps`/`sync-improvement-plan-gaps` skills formalise roadmap-gap maintenance;
+  `generate-pr-description` renamed to `prep-version-release` and now runs both as its first step
+- Recreated a deleted exception-hierarchy test suite and closed several other coverage gaps, taking the suite from
+  92.9%/93.4% to 98.34%/98.84% (line/branch)
+- Spring Boot bumped `4.1.0` → `4.1.1`; three now-redundant dependency overrides dropped, one found by the
+  recurring dependency-currency check itself
+
+**Achievement:** Closed a real, silent test-coverage regression, completed a CI quality gate the project's own
+documentation had flagged as configured-but-unwired since v8.0.0, and built the tooling for the release process to
+keep auditing its own roadmap documentation going forward — no new domain feature, but meaningful process maturity.
+
+---
+
 ### Milestone 20: Competitor Bulk CSV Import & Required-Field Fixes (v8.1.0)
 
 - `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`) persists competitors from CSV data,
@@ -2563,11 +2677,13 @@ AttributeConverters
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.1.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.1.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Then extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
   `@JsonProperty(required = true)` actually enforces required fields via matching `@JsonCreator` constructors.
+  Finally, close a silent test-coverage regression, complete the CI static-analysis gate, and build tooling so the
+  release process keeps auditing its own roadmap documentation going forward.
 
 ### Initial Phase (v1.0.0)
 
@@ -2821,9 +2937,21 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.1.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.1.1, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.1.0)
+### Recently Completed (v8.1.1)
+
+- New `.github/workflows/qodana.yml` completes the Qodana static-analysis CI gate, configured but unwired since
+  v8.0.0
+- Recreated the deleted exception-hierarchy test suite and closed other coverage gaps; full-suite coverage rose
+  from 92.9%/93.4% to 98.34%/98.84% (line/branch)
+- Spring Boot bumped `4.1.0` → `4.1.1`; `jackson-databind`, `log4j-api` and `jackson-bom.version` overrides all
+  dropped as redundant
+- `documentation/roadmap/improvement-plan.md` gains two new gaps (match-scoring service layer; remaining Qodana
+  CI-verification work) and closes the `jackson-databind` override gap
+- Project version bumped to 8.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.1.0)
 
 - New `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`) persists competitors from CSV
   data via the existing `createCompetitor` logic
@@ -3033,7 +3161,7 @@ replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new `Ips
 implementations, real competitor and match CRUD with club/gender/firearm-type/match-category resolution and the
 largest test expansion since v5.4.0. Alongside the domain work, the release also merges `CLAUDE.md`'s guidance into a
 single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana
-JVM static analysis — marking the transition from a project with substantial architectural groundwork to one with a
+JVM static analysis — marking the transition from a project with significant architectural groundwork to one with a
 genuinely complete, if still growing, IPSC feature set.
 
 ---

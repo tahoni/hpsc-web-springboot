@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.1.0](#-810---2026-09-01) ← Current
+- [🧾 Version 8.1.1](#-811---2026-09-01) ← Current
+- [🧾 Version 8.1.0](#-810---2026-09-01)
 - [🧾 Version 8.0.0](#-800---2026-08-31)
 - [🧾 Version 7.4.1](#-741---2026-08-29)
 - [🧾 Version 7.4.0](#-740---2026-08-29)
@@ -42,6 +43,111 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.1.1] - 2026-09-01
+
+### ➕ Added
+
+#### CI/CD & Configuration
+
+- **`.github/workflows/qodana.yml`:** New workflow running JetBrains' `qodana-action` against the existing
+  `qodana.yaml` configuration, triggered on push/PR to `develop` and `main` (mirroring `codeql.yml`'s trigger
+  branches). Results upload as SARIF to GitHub code scanning alongside CodeQL, so no Qodana Cloud token or other
+  secret is required
+
+#### Documentation
+
+- **`CLAUDE.md`:** New "Working on Complex Tasks" section instructing use of the TodoWrite tool for multistep or
+  non-trivial tasks, matching `AGENTS.md`'s existing "Track complex work with a todo list" Git Workflow convention
+  and the sibling `hpsc-web-vite` project's `CLAUDE.md`
+- **`CONTRIBUTING.md`:** New "🗺️ Roadmap" section documenting `documentation/roadmap/improvement-plan.md`/
+  `improvement-plan-tasks.md`'s structure (Goals & Constraints table, numbered gap sections, Roadmap/Success
+  Criteria) and their not-evergreen, closed-in-place maintenance convention — the only one of `README.md`/
+  `AGENTS.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md` that didn't already list these files
+
+#### Tooling
+
+- **`/update-improvement-plan-gaps`:** New Claude Code skill that audits the codebase against
+  `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` and records any newly identified,
+  newly-closed or newly-progressed gaps in both files, following the same evidence-based methodology used to write
+  and maintain the plan's existing gaps by hand this release. Never commits — drafts the edits and stops for review,
+  same as `prep-version-release`
+- **`/sync-improvement-plan-gaps`:** New Claude Code skill, narrower than `/update-improvement-plan-gaps` above —
+  checks the current branch's diff (mirroring `sync-unreleased-changes`' merge-base/diff-gathering approach) against
+  only the plan's already-tracked gaps, to catch one this branch's own work closed or progressed. Never adds a new
+  gap number itself; flags anything that looks like one for a separate `/update-improvement-plan-gaps` sweep instead.
+  It also never commits on its own
+
+#### Testing
+
+- **`NonFatalExceptionTest`, `FatalExceptionTest`, `ValidationExceptionTest`:** New test classes covering all
+  constructor overloads of the three exception hierarchy base classes, closing a real regression — these existed as
+  of v7.2.0 but were dropped somewhere between then and now with no replacement, leaving the classes at 20% line
+  coverage (only the single-`message` constructor got incidental exercise via other tests)
+- **`IpscCommonScoreTest`, `IpscMatchScoreTest`, `IpscMatchStageScoreTest`:** New test classes for the
+  `models/ipsc/shared` scoring groundwork classes (0% coverage previously, as nothing references them outside
+  Javadoc yet), each covering the one handwritten all-args constructor per `AGENTS.md`'s rule against testing
+  Lombok-generated behaviour in isolation
+- **`IpscCompetitorServiceTest`, `IpscMatchServiceTest`:** Added success-path coverage for every `patchCompetitor`/
+  `patchMatch` field that was previously only exercised via its validation-failure branch (e.g. `clubNumber`,
+  `homeClub`/`club`, `gender`/`matchFirearmType`/`matchCategory` resolution, `matchDate` and the remaining simple
+  string/date/numeric fields) — patching a single field's happy path had never actually been asserted for most
+  fields since the endpoints were introduced in v8.0.0. Also adds the missing "field is `null`" counterpart to each
+  existing "field is blank" validation test (`clubNumber`, match `club`) to close a branch JaCoCo flagged as
+  unreached
+- Full-suite line/branch coverage rose from 92.9%/93.4% to 98.34%/98.84% as a result (746 → 775 tests); see
+  `documentation/roadmap/improvement-plan.md`'s Gap #4 for the remaining, deliberately untested gaps (three
+  structurally-unreachable `IOException` catch blocks in the CSV `read*()` methods, `ImageResponse`'s dead
+  null-fallback branch, the unused `IpscConstants` class, and `HpscWebApplication.main()`)
+
+### 🔄 Changed
+
+#### Build & Metadata
+
+- Project version bumped to **8.1.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+- **`pom.xml`:** Spring Boot parent bumped `4.1.0` → `4.1.1`. As part of this:
+    - Removed the `jackson-databind` (`2.21.5`) `dependencyManagement` override — Boot 4.1.1 now manages this version
+      itself
+    - Removed the `log4j-api` (`2.25.5`, CVE-2026-49844 fix) `dependencyManagement` override — Boot 4.1.1 now manages
+      this version itself
+    - Corrected the developer contact email (`leonil@tahoni.info` → `tahoni@gmail.com`)
+    - Updated the flyway-maven-plugin's inline sync comment to reference `4.1.1`; the pinned `flyway-mysql` version
+      (`12.4.0`) is unchanged, as Boot 4.1.1 still manages `flyway.version` at `12.4.0`
+    - Verified: full test suite (746 tests) passes against the bumped parent
+- **`pom.xml`:** Removed the `jackson-bom.version` property override (pinned `3.1.5`) — found by Gap #5's own
+  recurring-check task during this release's gap-sync sweep, confirmed redundant against
+  `spring-boot-dependencies:4.1.1`'s own managed default (also `3.1.5`) via the parent POM directly, not just an
+  echoed property. Verified: full test suite (775 tests) passes with the override removed
+
+#### Documentation
+
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #1 (match/competitor service and
+  controller layer) and Gap #5 (`jackson-databind` version override) marked ✅ Closed — in v8.0.0 and by this
+  release's Spring Boot bump respectively — with Outcome notes and checked-off task lists rather than deleted
+  analysis, per the plan's own Success Criteria instructions. Gap #3 (Award/Image CSV persistence) gains a Progress
+  note: v8.1.0's competitor bulk CSV import and its `ARCHITECTURE.md` contrast narrow the ambiguity for that one
+  domain, but the underlying Award/Image question stays open. The Roadmap table promotes Gap #4 (coverage
+  enforcement) into the vacated Next slot and rewords the Ongoing row now that Gap #5's specific overrides are gone
+- **`AGENTS.md`'s Release Checklist:** Re-synced against `prep-version-release`'s actual, current process, which had
+  drifted ahead of it — adds a new step 1 to check `improvement-plan.md`/`improvement-plan-tasks.md` for gaps before
+  version-specific work begins, a new step 4 to verify `CHANGELOG.md`'s `[Unreleased]` section is complete before
+  renaming it, and a new step 8 to update `CONTRIBUTING.md` when applicable, matching the skill's steps 2, 5 and 10
+  respectively (described tool-agnostically, without naming the skill). Also fixes a stale Build & Run Commands
+  pointer that named only CodeQL/JaCoCo among `ARCHITECTURE.md`'s CI/CD gates, missing Qodana
+
+#### Tooling
+
+- **`.claude/skills/generate-pr-description` renamed to `prep-version-release`:** Better reflects what the skill
+  actually does (the whole release-prep checklist, not just the PR description step); its `generate-pr-summary`
+  cross-reference is updated to match
+- **`prep-version-release`:** New step 2 runs `update-improvement-plan-gaps` then `sync-improvement-plan-gaps`, in
+  that order, before any version-specific work begins — the full codebase sweep for brand-new gaps first, then the
+  diff-driven check for gaps this branch's own work has closed or progressed, since the latter needs the plan
+  already reflecting whatever the former just found. Renumbers the remaining checklist steps accordingly
+- **`AGENTS.md`'s Release Checklist step 4 and `prep-version-release`'s matching step:** Both now end by checking
+  whether `improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update after `HISTORY.md` is
+  extended — the table is synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change
+  there can leave it stale. `improvement-plan.md`'s own "🎯 Purpose & Scope" section states the same dependency
 
 ## 🧾 [8.1.0] - 2026-09-01
 

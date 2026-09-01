@@ -60,20 +60,20 @@ changed. Treat it as the single source of truth.
       em-dash-separated description of what changed and why.
     - British English spelling and grammar throughout.
 5. **For each change already covered**, verify the existing entry is still accurate against the actual diff (right
-   file/class named, description still matches what the code does) — flag any that have drifted, but don't rewrite
+   file/class named, description still matches what the code does); flag any that have drifted, but don't rewrite
    entries that are still correct just to change their wording.
 6. **Do not remove or alter entries** for changes unrelated to this branch's diff — this skill only adds/corrects
    coverage for what this branch actually introduced.
 7. **Consolidate duplicate sub-headers across the whole `[Unreleased]` section**, not just newly added entries — this
    catches drift left by earlier runs or by commits that each added their own `#### <Area>` block. Within each
    `### <Category>` section (`Added`/`Changed`/`Fixed`/`Deprecated`/`Removed`/`Security`), if the same `#### <Area>`
-   heading appears more than once, merge every occurrence into a single block at the position of its first occurrence —
+   heading appears more than once, merge every occurrence into a single block at the position of its first occurrence;
    concatenate the bullets in their original relative order, then delete the now-empty duplicate heading(s). Don't
    reorder, reword or deduplicate the surviving bullets themselves, and don't merge headings that are only similarly
    named (e.g. `Models` and `DTOs` stay separate unless the file already treats them as the same area).
 8. **Apply the edits directly to `CHANGELOG.md`** using Edit — new bullets under their correct subheading/area (creating
    empty category headings only if genuinely needed, matching the file's existing heading order), plus the sub-header
-   consolidation from step 7 — do not leave the fix as a suggestion. Do not touch the Table of Contents or any released
+   consolidation from step 7; do not leave the fix as a suggestion. Do not touch the Table of Contents or any released
    version section.
 
 ## 📤 Output
