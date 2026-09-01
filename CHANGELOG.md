@@ -58,6 +58,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   non-trivial tasks, matching `AGENTS.md`'s existing "Track complex work with a todo list" Git Workflow convention
   and the sibling `hpsc-web-vite` project's `CLAUDE.md`
 
+#### Tooling
+
+- **`/update-improvement-plan-gaps`:** New Claude Code skill that audits the codebase against
+  `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` and records any newly identified,
+  newly-closed or newly-progressed gaps in both files, following the same evidence-based methodology used to write
+  and maintain the plan's existing gaps by hand this release. Never commits — drafts the edits and stops for review,
+  same as `prep-version-release`
+
 #### Testing
 
 - **`NonFatalExceptionTest`, `FatalExceptionTest`, `ValidationExceptionTest`:** New test classes covering all
