@@ -3,6 +3,7 @@ package za.co.hpsc.web.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,11 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
+import za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.List;
@@ -65,6 +69,50 @@ public class IpscMatchController {
     ResponseEntity<MatchResponse> createMatch(@RequestBody MatchRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchService.createMatch(request));
+    }
+
+    /**
+     * Creates a batch of new IPSC matches, together with their stages, from CSV data.
+     *
+     * @param csvData the CSV content as a string containing details about matches, formatted
+     *                according to the expected schema. This parameter is required and cannot be
+     *                null.
+     * @return a {@link MatchResponseHolder} containing the created matches.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
+     *                             missing a required field, if a row's firearm type/category is
+     *                             unrecognised, or if a row's stages cell is malformed.
+     * @throws NonFatalException   if a row's named club cannot be found.
+     * @throws FatalException      if a critical error occurs during processing, that prevents the
+     *                             operation from completing successfully.
+     */
+    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create matches", description = "Create IPSC matches, together with their stages, in bulk from CSV data.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Matches created.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MatchResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
+                    + "missing, the firearm type/category is unrecognised, or a stages cell is malformed.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "404", description = "A row's named club could not be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while processing the CSV data.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<MatchResponseHolder> createMatches(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "text/csv",
+                            schema = @Schema(implementation = MatchRequestForCSV.class),
+                            examples = @ExampleObject("""
+                                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                                    yyyy-MM-dd,string,string,string,string,1-Stage 1;2-Stage 2
+                                    """)))
+            @RequestBody String csvData)
+            throws ValidationException, NonFatalException, FatalException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchService.createMatches(csvData));
     }
 
     /**

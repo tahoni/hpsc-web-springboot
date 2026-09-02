@@ -20,6 +20,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     - [📈 Typical Request-Response Flow](#-typical-request-response-flow)
     - [📥 Award / Image CSV Processing Flow](#-award--image-csv-processing-flow)
     - [📥 Competitor Bulk CSV Import Flow](#-competitor-bulk-csv-import-flow)
+    - [📥 Match Bulk CSV Import Flow](#-match-bulk-csv-import-flow)
 - [✅ Quality Attributes](#-quality-attributes)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [📚 Development Guidelines](#-development-guidelines)
@@ -118,7 +119,7 @@ responsibilities:
 |----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
 | **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
-| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, plus competitor bulk CSV import, via `IpscCompetitorController`/`IpscMatchController`                |
+| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                  |
 | **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
@@ -144,7 +145,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 | `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                      |
 | `ImageController`          | `/hpsc-web/images`  | Image CSV processing                      |
 | `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import    |
-| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages |
+| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages, + bulk CSV import |
 
 All controllers:
 
@@ -166,12 +167,14 @@ Contains all business logic.
 |-------------------------|-----------------------------|-------------------------------------------|
 | `AwardService`          | `AwardServiceImpl`          | Award CSV processing                      |
 | `ImageService`          | `ImageServiceImpl`          | Image CSV processing                      |
-| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages |
+| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages, + bulk CSV import |
 | `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import    |
 
-> The wider match domain's bulk-import and entity-initialisation service layer remains removed pending a rebuild —
-> competitor CRUD now also supports bulk CSV import (`IpscCompetitorController.createCompetitors`), persisting each
-> row via the same validation/resolution logic as the single-competitor `createCompetitor` endpoint.
+> Both IPSC domains now support bulk CSV import, each persisting every row via the same validation/resolution logic
+> as its single-item `create` endpoint: `IpscCompetitorController.createCompetitors`
+> (`IpscCompetitorService`/`IpscCompetitorServiceImpl`, v8.1.0) and `IpscMatchController.createMatches`
+> (`IpscMatchService`/`IpscMatchServiceImpl`, v8.3.0), which additionally parses a `Stages` CSV cell into
+> `MatchStageRequest`s via `parseStages`.
 
 ---
 
@@ -235,7 +238,8 @@ envelope.
 #### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
 DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest` and `MatchResponse`/`MatchStageResponse`
-(consumed by `IpscMatchController`), `CompetitorRequest`/`CompetitorResponse` (consumed by
+(consumed by `IpscMatchController`'s single-match CRUD endpoints) and `MatchRequestForCSV`/`MatchResponseHolder`
+(its bulk CSV import endpoint), `CompetitorRequest`/`CompetitorResponse` (consumed by
 `IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorRequestForCSV`/`CompetitorResponseHolder`
 (its bulk CSV import endpoint), and, still groundwork only — not yet consumed by any controller —
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
@@ -347,9 +351,26 @@ Client uploads CSV (Content-Type: text/csv)
 ← JSON response
 ```
 
+### 📥 Match Bulk CSV Import Flow
+
+Handled by `IpscMatchController` — same shape as the Competitor flow above, each row is actually persisted:
+
+```
+Client uploads CSV (Content-Type: text/csv)
+    → IpscMatchController.createMatches
+        → IpscMatchService.createMatches
+            (parses CSV via Jackson CsvMapper into MatchRequestForCSV rows, splits each row's semicolon-separated
+             Stages cell into MatchStageRequests via parseStages, then persists each row via the same createMatch
+             validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
+        ← MatchResponseHolder
+    ← ResponseEntity<...>
+← JSON response
+```
+
 > The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`,
-> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer. The competitor
-> bulk CSV import above is a new, unrelated implementation, not a restoration of that removed flow.
+> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer. The
+> competitor and match bulk CSV import flows above are new, unrelated implementations, not a restoration of that
+> removed flow.
 
 ---
 

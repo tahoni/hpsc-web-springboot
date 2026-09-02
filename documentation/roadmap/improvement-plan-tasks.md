@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s seven gaps, organised by that
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s eight gaps, organised by that
 document's Now/Next/Later/Ongoing phasing. Each section names its originating gap number for traceability back to the
 evidence and reasoning there.
 
@@ -60,6 +60,23 @@ evidence and reasoning there.
   reappears — don't rebuild the removed `TransformationService`/`DomainService` abstraction pre-emptively —
   honoured; v8.1.0's competitor bulk CSV import reuses the existing single-`createCompetitor` logic per row
   instead of introducing new cross-entity orchestration
+
+**Match bulk CSV import** *(improvement-plan.md → Gap #8)* — ✅ Closed in v8.3.0
+
+- [x] Introduce `MatchRequestForCSV`/`MatchResponseHolder` (`models/ipsc/match/request/`,
+  `models/ipsc/match/response/`), mirroring `CompetitorRequestForCSV`/`CompetitorResponseHolder`'s `UpperCamelCase`
+  CSV/JSON `@JsonCreator` pattern — with stages represented as a single semicolon-separated
+  `<stageNumber>-<stageName>` cell, since CSV has no native nested-row representation
+- [x] Add `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) and
+  `IpscMatchService`/`IpscMatchServiceImpl.createMatches`, mirroring `IpscCompetitorController`/
+  `IpscCompetitorServiceImpl.createCompetitors`'s `readMatches`/`toRequest` shape, persisting each row via the
+  existing single-`createMatch` validation/club/firearm-type/category-resolution logic
+- [x] Add a `parseStages` helper splitting the delimited `Stages` cell into `MatchStageRequest`s — new relative to
+  the competitor flow, which has no equivalent nested-collection column to parse
+- [x] Add Mockito-based controller/service/impl unit tests per the `scaffold-unit-tests` conventions —
+  `IpscMatchControllerTest`/`IpscMatchServiceTest`/`IpscMatchServiceImplTest`/`MatchRequestForCSVTest`
+- [x] Update `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
+  competitor-only endpoint/service/data-flow documentation to reflect the new endpoint
 
 **Coverage enforcement** *(improvement-plan.md → Gap #4)*
 

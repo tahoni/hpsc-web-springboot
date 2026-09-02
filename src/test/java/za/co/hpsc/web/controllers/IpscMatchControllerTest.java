@@ -7,10 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.List;
@@ -88,6 +90,78 @@ class IpscMatchControllerTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchController.createMatch(request));
+    }
+
+    // createMatches()
+    private static final String VALID_CSV = """
+            MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+            2026-04-10,Club Championship,Test Club,Pistol,Level 1,1-Stage One;2-Stage Two
+            """;
+
+    @Test
+    void testCreateMatches_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        MatchResponseHolder holder = new MatchResponseHolder(List.of());
+        when(ipscMatchService.createMatches(VALID_CSV)).thenReturn(holder);
+
+        // Act
+        ResponseEntity<MatchResponseHolder> result = ipscMatchController.createMatches(VALID_CSV);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+    }
+
+    @Test
+    void testCreateMatches_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        MatchResponseHolder holder = new MatchResponseHolder(List.of(new MatchResponse()));
+        when(ipscMatchService.createMatches(VALID_CSV)).thenReturn(holder);
+
+        // Act
+        ResponseEntity<MatchResponseHolder> result = ipscMatchController.createMatches(VALID_CSV);
+
+        // Assert
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testCreateMatches_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscMatchService.createMatches(VALID_CSV)).thenReturn(new MatchResponseHolder(List.of()));
+
+        // Act
+        ipscMatchController.createMatches(VALID_CSV);
+
+        // Assert
+        verify(ipscMatchService).createMatches(VALID_CSV);
+        verifyNoMoreInteractions(ipscMatchService);
+    }
+
+    @Test
+    void testCreateMatches_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscMatchService.createMatches(VALID_CSV)).thenThrow(new ValidationException("Match name is required."));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchController.createMatches(VALID_CSV));
+    }
+
+    @Test
+    void testCreateMatches_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscMatchService.createMatches(VALID_CSV)).thenThrow(new NonFatalException("No club found with name Unknown"));
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchController.createMatches(VALID_CSV));
+    }
+
+    @Test
+    void testCreateMatches_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        when(ipscMatchService.createMatches(VALID_CSV)).thenThrow(new FatalException("Error reading CSV data"));
+
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchController.createMatches(VALID_CSV));
     }
 
     // getMatch()

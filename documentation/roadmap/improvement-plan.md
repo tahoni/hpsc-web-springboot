@@ -226,6 +226,39 @@ there was no working baseline to preserve, and re-enabling it would still requir
 secret this project doesn't currently have. This closes the gap as not applicable rather than as delivered — if
 static analysis in CI is wanted again in the future, it should be scoped as a new gap rather than reopening this one.
 
+### 8. Match bulk CSV import remains removed pending a rebuild — ✅ Closed in v8.3.0
+
+**Evidence:** `ARCHITECTURE.md`'s Feature Support and Service Layer tables described only competitor CRUD as having
+"bulk CSV import", listing match CRUD without it; its Service Layer note stated explicitly, "the wider match domain's
+bulk-import and entity-initialisation service layer remains removed pending a rebuild — competitor CRUD now also
+supports bulk CSV import"; and its Data Flow section for the match/competitor bulk-import and CRUD flows "described
+in earlier versions of this document" stated they "have been removed pending a rebuild", with the competitor bulk CSV
+import flow "a new, unrelated implementation, not a restoration of that removed flow" — leaving the match domain's
+equivalent undelivered and unmentioned as anything but historical.
+
+**Why it matters:** The same shape of gap that closed Gap #1 and is tracked as still-open for scoring/shooter-logs in
+Gap #6 — a capability the project's own architecture documentation named as deliberately deferred, for the second of
+the two domains (`IpscCompetitorController`/`IpscMatchController`) that share an otherwise-identical CRUD shape. Left
+unclosed, the asymmetry between "competitor bulk import exists, match bulk import doesn't" has no roadmap entry
+explaining whether it's intentional or simply not yet scheduled.
+
+**Proposed improvement:** Apply the same mirrored pattern Gap #1's Outcome already used for the competitor domain:
+introduce a `MatchRequestForCSV`/`MatchResponseHolder` pair alongside the existing `CompetitorRequestForCSV`/
+`CompetitorResponseHolder`, and an `IpscMatchController.createMatches`/`IpscMatchService.createMatches` pair that
+persists each CSV row via the existing single-`createMatch` validation/club/firearm-type/category-resolution logic —
+no new cross-entity orchestration, per the discipline Gap #1 established.
+
+**Outcome:** Delivered in v8.3.0. `MatchRequestForCSV` (`models/ipsc/match/request/`) mirrors
+`CompetitorRequestForCSV`'s `UpperCamelCase` CSV/JSON `@JsonCreator` pattern, with its stages represented as a single
+semicolon-separated `<stageNumber>-<stageName>` cell rather than a nested list (CSV has no native nested-row
+representation). `MatchResponseHolder` mirrors `CompetitorResponseHolder`. `IpscMatchController.createMatches`
+(`POST /ipsc/matches/bulk`, consumes `text/csv`) and `IpscMatchService`/`IpscMatchServiceImpl.createMatches` mirror
+`IpscCompetitorController`/`IpscCompetitorServiceImpl`'s `createCompetitors` shape exactly: a `readMatches` CSV-parsing
+helper, a `toRequest` row-to-`MatchRequest` mapper, and (new relative to the competitor flow, since matches have no
+CSV-native nested-stage representation) a `parseStages` helper splitting the delimited `Stages` cell into
+`MatchStageRequest`s. `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
+competitor-only endpoint/service/data-flow documentation are updated in the same release to reflect this.
+
 ---
 
 ## 🚀 Roadmap
@@ -233,7 +266,7 @@ static analysis in CI is wanted again in the future, it should be scoped as a ne
 | Phase       | Focus                                                                                                                                                                                                              |
 |-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Add the CI build/test gate (#2) — lowest effort, closing a gap the project's own docs already flag. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed                                 |
-| **Next**    | Coverage enforcement (#4), now against the current, refreshed 92.9%/93.4% baseline; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 |
+| **Next**    | Coverage enforcement (#4), now against the current, refreshed 92.9%/93.4% baseline; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 and #8 |
 | **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                   |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                    |
 
@@ -251,6 +284,9 @@ static analysis in CI is wanted again in the future, it should be scoped as a ne
   Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.
 - A real `MatchScoreController`/`ShooterLogController` (or equivalent) exists and is tested, closing the gap
   `README.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` currently described as "still being built".
+- ✅ Met in v8.3.0: `IpscMatchController.createMatches`/`IpscMatchService.createMatches` mirror the competitor bulk
+  CSV import pattern, closing Gap #8 and removing the last asymmetry between the two CRUD domains' bulk-import
+  support.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   per-version Future Roadmap notes rather than being deleted silently from here.
 

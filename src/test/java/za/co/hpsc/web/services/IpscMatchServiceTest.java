@@ -17,6 +17,8 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchStageRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
+import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.match.response.MatchStageResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
@@ -198,6 +200,157 @@ public class IpscMatchServiceTest {
         assertEquals("Stage 1 - The Bank Job", response.getStages().getFirst().getStageName());
         assertEquals(2, response.getStages().get(1).getStageNumber());
         assertEquals("Stage 2 - The Getaway", response.getStages().get(1).getStageName());
+    }
+
+    // createMatches()
+    @Test
+    void testCreateMatches_whenCsvDataIsNull_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(null));
+    }
+
+    @Test
+    void testCreateMatches_whenCsvDataIsBlank_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches("   "));
+    }
+
+    @Test
+    void testCreateMatches_whenCsvDataIsMalformed_thenThrowsValidationException() {
+        // Arrange
+        String csvData = "NotAHeader\nSomeRow,Value";
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+    }
+
+    @Test
+    void testCreateMatches_whenSingleValidRow_thenReturnsHolderWithMappedResponse() {
+        // Arrange
+        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,Club Championship,Test Club,%s,%s,
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act
+        MatchResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        assertEquals(1, holder.getMatches().size());
+        assertEquals("Club Championship", holder.getMatches().getFirst().getMatchName());
+        assertEquals(ClubIdentifier.HPSC, holder.getMatches().getFirst().getClub());
+    }
+
+    @Test
+    void testCreateMatches_whenRowHasStages_thenStagesAreMappedInOrder() {
+        // Arrange
+        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+        stubStageSaveAssignsIncrementingId();
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,Club Championship,Test Club,%s,%s,1-Stage One;2-Stage Two
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act
+        MatchResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        List<MatchStageResponse> stages = holder.getMatches().getFirst().getStages();
+        assertEquals(2, stages.size());
+        assertEquals(1, stages.get(0).getStageNumber());
+        assertEquals("Stage One", stages.get(0).getStageName());
+        assertEquals(2, stages.get(1).getStageNumber());
+        assertEquals("Stage Two", stages.get(1).getStageName());
+    }
+
+    @Test
+    void testCreateMatches_whenMultipleValidRows_thenPersistsEachRowInOrder() {
+        // Arrange
+        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,First Match,Test Club,%1$s,%2$s,
+                2026-09-19,Second Match,Test Club,%1$s,%2$s,
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act
+        MatchResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        assertEquals(2, holder.getMatches().size());
+        assertEquals("First Match", holder.getMatches().get(0).getMatchName());
+        assertEquals("Second Match", holder.getMatches().get(1).getMatchName());
+        verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
+    }
+
+    @Test
+    void testCreateMatches_whenRowIsMissingRequiredField_thenThrowsValidationException() {
+        // Arrange - MatchName is present but blank, so it survives CSV parsing and instead trips
+        // createMatch's own validation
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,,Test Club,%s,%s,
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+    }
+
+    @Test
+    void testCreateMatches_whenRowHasUnrecognisedFirearmType_thenThrowsValidationException() {
+        // Arrange
+        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,Club Championship,Test Club,Not A Firearm Type,%s,
+                """.formatted(MatchCategory.CLUB_SHOOT);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+    }
+
+    @Test
+    void testCreateMatches_whenRowClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,Club Championship,No Such Club,%s,%s,
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchService.createMatches(csvData));
+    }
+
+    @Test
+    void testCreateMatches_whenRowStagesEntryIsMalformed_thenThrowsValidationException() {
+        // Arrange - a stages entry without a "-" separator can't be split into <stageNumber>-<stageName>
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,Club Championship,Test Club,%s,%s,StageWithoutSeparator
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+    }
+
+    @Test
+    void testCreateMatches_whenRowStagesEntryHasNonNumericStageNumber_thenThrowsValidationException() {
+        // Arrange
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                2026-09-12,Club Championship,Test Club,%s,%s,X-Stage One
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
     }
 
     // getAllMatches()
