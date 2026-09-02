@@ -54,6 +54,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git), and uploads the JaCoCo HTML/XML report as a
   build artifact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
 
+### 🔄 Changed
+
+#### Configuration
+
+- **`pom.xml`:** New `jacoco-maven-plugin` `check` execution in the `coverage` profile enforces a `BUNDLE`-level
+  `LINE`/`COVEREDRATIO` minimum of `0.51` (51%), wired into `build.yml`'s CI gate so a coverage regression fails
+  the build — a deliberately low regression backstop, not a threshold near the current ~98% baseline. Partially
+  progresses Gap #4
+
 ## 🧾 [8.2.0] - 2026-09-01
 
 ### 🔄 Changed
