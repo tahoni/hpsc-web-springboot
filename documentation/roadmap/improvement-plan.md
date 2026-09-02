@@ -1,8 +1,8 @@
 # Improvement Plan
 
 This document synthesises the goals and constraints stated across this repository's documentation and configuration into
-a single set of prioritised improvement opportunities. Unlike [`README.md`](/README.md) and [
-`ARCHITECTURE.md`](/ARCHITECTURE.md), it is not evergreen — it reflects a point-in-time reading of the project and
+a single set of prioritised improvement opportunities. Unlike [`README.md`](/README.md) and 
+[`ARCHITECTURE.md`](/ARCHITECTURE.md), it is not evergreen — it reflects a point-in-time reading of the project and
 should be revisited whenever a major gap it names is closed or a new one is identified.
 
 ## Table of Contents
