@@ -21,6 +21,34 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.3.1 (September 2, 2026)
+
+**Theme:** CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity
+
+**Key Focus:**
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, mirroring
+  `codeql.yml`'s trigger branches — completes `documentation/roadmap/improvement-plan.md`'s Gap #2 (no automatic
+  build/test gate on pull requests)
+- New JaCoCo `check` execution in `pom.xml`'s `coverage` profile enforces a `BUNDLE`-level `LINE`/`COVEREDRATIO`
+  minimum, initially `0.51` (51%) as a deliberately low regression backstop, then raised to `0.86` (86%) within the
+  same branch, wired into the new CI gate so a coverage regression fails the build — still below the actual current
+  baseline, which a fresh `./mvnw verify -Pcoverage` run measured at 98.16%/98.94% (line/branch), 836 tests — up
+  from 775 at v8.1.1; further tightening the floor closer to that baseline is left as a follow-up once the 86%
+  threshold has run cleanly in CI, partially progressing Gap #4 (coverage measured but not enforced)
+- `AwardService.createAwards()`/`ImageService.createImages()` CSV processing confirmed intentionally stateless by
+  design, not an unfinished persistence layer — `README.md`/`ARCHITECTURE.md` now state this explicitly, closing
+  Gap #3 (open since v8.1.0)
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to reflect the new gate and drop the
+  stale "locally / by reviewers"/"All PRs" language; `ARCHITECTURE.md`'s Award/Image CSV Processing Flow diagram and
+  `documentation/roadmap/improvement-plan.md`'s Gap #3 Evidence also corrected from the stale `processCsv()` method
+  name to `createAwards()`/`createImages()`, renamed back in v8.0.0
+- `AwardControllerTest`/`ImageControllerTest`'s stale `// processCsv()` test-grouping comments corrected to
+  `// createAwards()`/`// createImages()`
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`: Gap #2 closed, Gap #3 closed, Gap #4
+  marked partially progressed
+- Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.3.0 (September 2, 2026)
 
 **Theme:** Match Bulk CSV Import
@@ -1112,6 +1140,68 @@ coverage.
 
 ---
 
+### Phase 24: CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity (v8.3.1)
+
+**Duration:** September 2, 2026
+
+A process-and-quality patch release: no new domain feature, but a completed CI build/test gate, the project's first
+coverage-regression-enforcement rule (tightened twice within the same branch), and a resolved documentation
+ambiguity around Award/Image CSV persistence — closing out work v8.1.1's coverage-regression fixes and Gap #4's
+baseline-setting groundwork left open, plus Gap #3's design-intent question left open since v8.1.0.
+
+**Key Accomplishments:**
+
+**CI Build/Test Gate**
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, mirroring
+  `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests via
+  `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git) and uploads the JaCoCo HTML/XML report as a build
+  artefact
+
+**Coverage Enforcement**
+
+- New JaCoCo `check` execution in the `coverage` Maven profile enforces a `BUNDLE`-level `LINE`/`COVEREDRATIO`
+  minimum, wired into the new CI gate so a coverage regression fails the build
+- Set initially to `0.51` (51%) as a deliberately low regression backstop, then raised to `0.86` (86%) within the
+  same branch: a fresh coverage run measured the real baseline at 98.16% line / 98.94% branch coverage (836 tests,
+  up from 775 at v8.1.1) — tightening the floor further, closer to that baseline, is left as a follow-up once the
+  86% threshold has run cleanly in CI
+
+**CSV Persistence Clarity**
+
+- `AwardService.createAwards()`/`ImageService.createImages()` confirmed intentionally stateless by design, not an
+  unfinished persistence layer — `README.md`'s Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s
+  Service Layer table and Award/Image CSV Processing Flow section now say so explicitly
+
+**Documentation**
+
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to reflect the new gate and rule,
+  dropping the stale "locally / by reviewers"/"All PRs" language
+- `ARCHITECTURE.md`'s Award/Image CSV Processing Flow diagram and `documentation/roadmap/improvement-plan.md`'s
+  Gap #3 Evidence corrected from the stale `processCsv()` method name to `createAwards()`/`createImages()`, renamed
+  back in v8.0.0; `AwardControllerTest`/`ImageControllerTest`'s matching `// processCsv()` test-grouping comments
+  corrected the same way
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`: Gap #2 (no automatic build/test gate)
+  closed; Gap #3 (CSV persistence ambiguity) closed; Gap #4 (coverage measured but not enforced) marked partially
+  progressed
+
+**Architecture Highlights:**
+
+- No architectural change — this release is CI/CD tooling and documentation work only
+
+**Technical Focus:**
+
+- CI/CD quality gate completion (build/test automation)
+- Coverage-regression enforcement (tightened in two steps, still short of the real baseline)
+- Documentation-intent clarification (Award/Image CSV persistence)
+
+**Test Coverage:**
+
+- No dedicated new unit/integration test coverage added for this release; verified via the full test suite
+  (836 tests), `./mvnw verify -Pcoverage` and a fresh baseline measurement (98.16%/98.94% line/branch)
+
+---
+
 ### Phase 23: Match Bulk CSV Import (v8.3.0)
 
 **Duration:** September 2, 2026
@@ -1317,7 +1407,7 @@ IPSC request models to date: without a matching `@JsonCreator` constructor, the 
   bound via `@JsonProperty`, replacing their Lombok `@AllArgsConstructor`
 - `CompetitorRequest`'s required third field corrected from `competitorNumber` to `clubNumber`, matching
   `IpscCompetitorServiceImpl.validateForCreate`'s actual validation
-- The scores CSV variants' constructors now match their plain counterparts' signatures exactly, verified via a
+- The score CSV variants' constructors now match their plain counterparts' signatures exactly, verified via a
   `csvMapper.addMixIn(...)` mixin test — the same pattern `AwardServiceImpl`/`ImageServiceImpl` already use
 
 **Architecture Highlights:**
@@ -2135,6 +2225,23 @@ comprehensive test coverage across all services and utilities.
 
 ---
 
+### Milestone 24: CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity (v8.3.1)
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing
+  `improvement-plan.md`'s Gap #2
+- New JaCoCo `check` execution enforces a `LINE`/`COVEREDRATIO` minimum — 51% initially, then 86% within the same
+  branch — wired into the CI gate, still below the real baseline of 98.16%/98.94% (line/branch), 836 tests
+- `AwardService.createAwards()`/`ImageService.createImages()` confirmed intentionally stateless by design, closing
+  Gap #3
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
+
+**Achievement:** Completed the CI build/test gate that had been running only "locally / by reviewers", added the
+project's first coverage-regression rule — tightened from 51% to 86% against a freshly-measured real baseline of
+98.16%/98.94%, with further tightening left as a follow-up — and resolved a standing design-intent ambiguity around
+Award/Image CSV persistence.
+
+---
+
 ### Milestone 23: Match Bulk CSV Import (v8.3.0)
 
 - `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`) persists matches, together with their stages,
@@ -2164,7 +2271,7 @@ of the two IPSC entities' bulk-import gaps that `ARCHITECTURE.md` had documented
 
 **Achievement:** Extended the competitor domain to support more than one email address, closed a lingering
 inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats, removed a
-CI quality gate that had never once succeeded, and fixed a real crash-on-update bug found by writing genuinely
+CI quality gate that had never once succeeded and fixed a real crash-on-update bug found by writing genuinely
 thorough multi-address test coverage instead of only single-element cases.
 
 ---
@@ -2180,7 +2287,7 @@ thorough multi-address test coverage instead of only single-element cases.
   recurring dependency-currency check itself
 
 **Achievement:** Closed a real, silent test-coverage regression, completed a CI quality gate the project's own
-documentation had flagged as configured-but-unwired since v8.0.0, and built the tooling for the release process to
+documentation had flagged as configured-but-unwired since v8.0.0 and built the tooling for the release process to
 keep auditing its own roadmap documentation going forward — no new domain feature, but meaningful process maturity.
 
 ---
@@ -2876,7 +2983,7 @@ AttributeConverters
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Then extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
   `@JsonProperty(required = true)` actually enforces required fields via matching `@JsonCreator` constructors.
-  Finally, close a silent test-coverage regression, complete the CI static-analysis gate, and build tooling so the
+  Finally, close a silent test-coverage regression, complete the CI static-analysis gate and build tooling so the
   release process keeps auditing its own roadmap documentation going forward.
 
 ### Initial Phase (v1.0.0)
@@ -3131,9 +3238,20 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.3.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.3.1, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.3.0)
+### Recently Completed (v8.3.1)
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing Gap #2
+- New JaCoCo `check` execution enforces a `LINE`/`COVEREDRATIO` minimum — 51% initially, then raised to 86% within
+  the same branch — still below the real baseline (98.16%/98.94% line/branch, 836 tests, up from 775 tests /
+  98.34%/98.84% at v8.1.1), partially progressing Gap #4
+- `AwardService.createAwards()`/`ImageService.createImages()` CSV processing confirmed intentionally stateless by
+  design, closing Gap #3
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
+- Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.3.0)
 
 - New `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`) persists matches, together with their stages,
   from CSV data via the existing `createMatch` logic, mirroring the competitor domain's v8.1.0 bulk-import shape
@@ -3176,7 +3294,7 @@ Based on the evolution to v8.3.0, the following areas are identified for future 
   data via the existing `createCompetitor` logic
 - New `CompetitorRequestForCSV`/`CompetitorResponseHolder` models
 - Fixed a Jackson gotcha affecting every `@JsonProperty(required = true)` field added to date: `CompetitorRequest`,
-  `CompetitorRequestForCSV`, `MatchRequest`, `MatchStageRequest` and the scores request models all gained a
+  `CompetitorRequestForCSV`, `MatchRequest`, `MatchStageRequest` and the score request models all gained a
   `@JsonCreator` constructor so required fields are actually enforced
 - `CompetitorRequest`'s required field corrected from `competitorNumber` to `clubNumber`
 - Project version bumped to 8.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
@@ -3386,8 +3504,8 @@ genuinely complete, if still growing, IPSC feature set.
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** August 31, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 8.0.0 (August 31, 2026)  
+**Last Updated:** September 2, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 8.3.1 (September 2, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for detailed
 technical information
 

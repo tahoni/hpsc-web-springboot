@@ -24,8 +24,9 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 The HPSC Website backend is a Spring Boot application designed to manage and serve data for the Hartbeespoortdam
 Practical Shooting Club platform. It currently provides RESTful APIs for:
 
-- **Award Ceremonies**: Award data and ceremony grouping, processed from CSV
-- **Image Gallery**: Image metadata processing from CSV
+- **Award Ceremonies**: Award data and ceremony grouping, processed from CSV — a stateless transform by design,
+  not persisted
+- **Image Gallery**: Image metadata processing from CSV — a stateless transform by design, not persisted
 - **IPSC Competitors**: Competitor record CRUD, including optional home club and gender, plus bulk CSV import
 - **IPSC Matches**: Match and match-stage CRUD, including firearm type and match category resolution, plus bulk CSV
   import
