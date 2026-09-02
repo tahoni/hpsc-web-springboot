@@ -230,11 +230,11 @@ and `release/*` included — must never open a PR directly against `main`.
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                  | Trigger                                                                           |
-|-----------------------|-----------------------|-----------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`) |
-| **Code Coverage**     | JaCoCo                | `./mvnw verify -Pcoverage` — reports at `target/site/jacoco/`                     |
-| **Build & Tests**     | Maven (`./mvnw test`) | All PRs; H2 in-memory — no external DB required                                   |
+| Gate                  | Tool                                                                       | Trigger                                                                           |
+|-----------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                                                                    | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`) |
+| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`)                                        | Push / PR to `main` / `develop` (`.github/workflows/build.yml`); H2 in-memory — no external DB required |
+| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`check` goal, `coverage` profile)      | Enforced automatically as part of the `Build & Tests` gate above                  |
 
 ---
 

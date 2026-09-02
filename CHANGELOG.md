@@ -63,6 +63,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   the build — a deliberately low regression backstop, not a threshold near the current ~98% baseline. Partially
   progresses Gap #4
 
+#### Documentation
+
+- **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables updated to reflect the new `build.yml` gate
+  and JaCoCo coverage-check rule, dropping the stale "locally / by reviewers"/"All PRs" language
+- **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #2 closed, Gap #4 marked
+  partially progressed (both version-pending, delivered on a `feature/*` branch rather than a `release/*` branch)
+
 ## 🧾 [8.2.0] - 2026-09-01
 
 ### 🔄 Changed
