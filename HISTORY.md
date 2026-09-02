@@ -21,28 +21,6 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
-### Version 8.3.0 (September 2, 2026)
-
-**Theme:** Match Bulk CSV Import
-
-**Key Focus:**
-
-- New `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) backed by
-  `IpscMatchService`/`IpscMatchServiceImpl`, extending the IPSC match module with the same bulk-import convention
-  `IpscCompetitorController.createCompetitors` established in v8.1.0 — each row persisted via the existing
-  `createMatch` validation/club/firearm-type/category-resolution logic
-- New `MatchRequestForCSV` model (`models/ipsc/match/request/`), matching `CompetitorRequestForCSV`'s
-  `UpperCamelCase` `@JsonCreator` pattern; its `stages` field is a single semicolon-separated CSV cell of
-  `<stageNumber>-<stageName>` entries (e.g. `"1-Stage One;2-Stage Two"`) rather than a nested list, since CSV has no
-  native concept of a repeated group — an earlier `numberOfStages` count field was tried and dropped in favour of
-  this delimited design before either ever reached `develop`
-- New `IpscMatchServiceImpl.parseStages` helper splits each `Stages` cell entry on its first `-` into a
-  `MatchStageRequest`; new `readMatches`/`toRequest` helpers mirror `IpscCompetitorServiceImpl`'s CSV-parsing pattern
-- New `MatchResponseHolder` response container (`models/ipsc/match/response/`), mirroring `CompetitorResponseHolder`
-- New unit tests across `IpscMatchController`/`Service`/`ServiceImpl`'s bulk import, and `MatchRequestForCSV`'s
-  `UpperCamelCase` JSON/CSV (de)serialisation and required-field enforcement
-- Project version bumped to 8.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
-
 ### Version 8.2.0 (September 1, 2026)
 
 **Theme:** Competitor Multi-Email Support & Bulk CSV Separator Standardisation
@@ -1112,53 +1090,6 @@ coverage.
 
 ---
 
-### Phase 23: Match Bulk CSV Import (v8.3.0)
-
-**Duration:** September 2, 2026
-
-Extends the IPSC match module with bulk CSV import, mirroring the competitor bulk-import convention v8.1.0
-established — but designing its multi-stage cell format from a discarded first attempt rather than reusing an
-existing pattern outright.
-
-**Key Accomplishments:**
-
-**Match Bulk CSV Import**
-
-- `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) parses CSV data into
-  `MatchRequestForCSV` rows and creates each match via the existing `createMatch`
-  validation/club/firearm-type/category-resolution logic, matching `IpscCompetitorController.createCompetitors`'s
-  bulk-import shape
-- New `MatchRequestForCSV` (CSV-mapped, `UpperCamelCase` headers, `@JsonCreator` constructor) and
-  `MatchResponseHolder` models (`models/ipsc/match/`)
-- `IpscMatchServiceImpl` gains three protected helpers: `readMatches` (CSV → `MatchRequestForCSV` rows, mirroring
-  `IpscCompetitorServiceImpl`'s CSV-parsing pattern), `toRequest` (row → `MatchRequest`), and `parseStages`, which
-  splits each `Stages` cell entry on its first `-` into a `MatchStageRequest`
-
-**Stages Cell Design**
-
-- CSV has no native concept of a repeated group, so a match's stages — a nested list on `MatchRequest` — needed a
-  single-cell representation; an initial `numberOfStages` count field was implemented, then dropped in favour of a
-  single semicolon-separated `stages` cell of `<stageNumber>-<stageName>` entries (e.g. `"1-Stage One;2-Stage Two"`)
-  before either design reached `develop`, once it was clear a count alone couldn't carry each stage's name
-
-**Architecture Highlights:**
-
-- No layering change — extends the existing controller/service/model triad `IpscCompetitorController`'s bulk import
-  already established, applied to the match domain
-
-**Technical Focus:**
-
-- Bulk data import (match CSV)
-- CSV multi-value cell design (delimited-entry parsing vs. a count-only field)
-- Request-model test coverage
-
-**Test Coverage:**
-
-- New unit tests across `IpscMatchController`/`Service`/`ServiceImpl`'s bulk import, and `MatchRequestForCSVTest`'s
-  `UpperCamelCase` JSON/CSV (de)serialisation and required-field enforcement
-
----
-
 ### Phase 22: Competitor Multi-Email Support & Bulk CSV Separator Standardisation (v8.2.0)
 
 **Duration:** September 1, 2026
@@ -2132,21 +2063,6 @@ Focused consolidation of services, introduction of custom JPA converters and rep
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and
 comprehensive test coverage across all services and utilities.
-
----
-
-### Milestone 23: Match Bulk CSV Import (v8.3.0)
-
-- `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`) persists matches, together with their stages,
-  from CSV data, mirroring `IpscCompetitorController.createCompetitors`'s v8.1.0 bulk-import shape
-- New `MatchRequestForCSV`/`MatchResponseHolder` models; a discarded `numberOfStages` count-field attempt was
-  replaced with a single semicolon-separated `stages` cell of `<stageNumber>-<stageName>` entries before either
-  design reached `develop`
-- `improvement-plan.md`'s Gap #8 (match bulk CSV import stated as removed pending a rebuild) closed
-- New unit tests across the bulk-import feature and `MatchRequestForCSV`'s JSON/CSV (de)serialisation
-
-**Achievement:** Brought the match domain to parity with the competitor domain's bulk CSV import, closing the last
-of the two IPSC entities' bulk-import gaps that `ARCHITECTURE.md` had documented as outstanding since v8.1.0.
 
 ---
 
@@ -3131,20 +3047,9 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.3.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.2.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.3.0)
-
-- New `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`) persists matches, together with their stages,
-  from CSV data via the existing `createMatch` logic, mirroring the competitor domain's v8.1.0 bulk-import shape
-- New `MatchRequestForCSV`/`MatchResponseHolder` models; its `stages` field is a single semicolon-separated CSV
-  cell of `<stageNumber>-<stageName>` entries, replacing a discarded `numberOfStages` count-field attempt before
-  either design reached `develop`
-- `documentation/roadmap/improvement-plan.md`'s Gap #8 (match bulk CSV import stated as removed pending a rebuild)
-  closed
-- Project version bumped to 8.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
-
-### Previously Completed (v8.2.0)
+### Recently Completed (v8.2.0)
 
 - `Competitor.emailAddress` (`String`) replaced with `emailAddresses` (`List<String>`), backed by a new
   `competitor_email` child table and a backfilling Flyway migration

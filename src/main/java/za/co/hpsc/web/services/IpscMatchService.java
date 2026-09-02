@@ -1,11 +1,9 @@
 package za.co.hpsc.web.services;
 
-import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 
 import java.util.List;
 
@@ -29,31 +27,6 @@ public interface IpscMatchService {
      * @throws NonFatalException   if the named club cannot be found.
      */
     MatchResponse createMatch(MatchRequest request) throws ValidationException, NonFatalException;
-
-    /**
-     * Creates a batch of new IPSC matches, together with their stages, from CSV data.
-     *
-     * <p>
-     * Each row is created independently via {@link #createMatch(MatchRequest)}, so the same
-     * validation, firearm type/category resolution and club resolution rules apply per row. A
-     * row's {@code Stages} cell is parsed into individual stages as described on
-     * {@link za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV#getStages()}.
-     * </p>
-     *
-     * @param csvData the CSV data containing match information, one match per row. Must not be
-     *                null or blank.
-     * @return a {@link MatchResponseHolder} containing the created matches, in the same order as
-     * the CSV rows.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
-     *                             missing a required field, if a row's firearm type/category
-     *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
-     *                             {@link za.co.hpsc.web.enums.MatchCategory}, or if a row's
-     *                             {@code Stages} cell is malformed.
-     * @throws NonFatalException   if a row's named club cannot be found.
-     * @throws FatalException      if an I/O error occurs while reading the CSV data.
-     */
-    MatchResponseHolder createMatches(String csvData)
-            throws ValidationException, NonFatalException, FatalException;
 
     /**
      * Fully replaces an existing IPSC match's fields and stages with those on the request.

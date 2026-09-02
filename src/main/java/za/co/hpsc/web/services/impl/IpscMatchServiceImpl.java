@@ -1,38 +1,25 @@
 package za.co.hpsc.web.services.impl;
 
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvReadException;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV;
 import za.co.hpsc.web.models.ipsc.match.request.MatchStageRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 import za.co.hpsc.web.models.ipsc.match.response.MatchStageResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.services.IpscMatchService;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -64,113 +51,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<IpscMatchStage> stages = replaceStages(match, request.getStages());
         return toResponse(match, stages);
-    }
-
-    @Override
-    @Transactional
-    public MatchResponseHolder createMatches(String csvData) throws FatalException {
-        if (csvData == null || csvData.isBlank()) {
-            log.error("The provided csv data is null or empty.");
-            throw new ValidationException("CSV data cannot be null or blank.");
-        }
-
-        List<MatchRequestForCSV> matchRequestForCSVList = readMatches(csvData);
-
-        List<MatchResponse> matchResponseList = new ArrayList<>();
-        for (MatchRequestForCSV matchRequestForCSV : matchRequestForCSVList) {
-            matchResponseList.add(createMatch(toRequest(matchRequestForCSV)));
-        }
-
-        return new MatchResponseHolder(matchResponseList);
-    }
-
-    /**
-     * Reads match data from a CSV-formatted string and converts it into a list of
-     * {@link MatchRequestForCSV} objects.
-     *
-     * @param csvData the CSV data containing match information, one match per row. Must not be
-     *                null or blank.
-     * @return a list of {@link MatchRequestForCSV} objects parsed from the provided CSV data.
-     * @throws ValidationException if the CSV data cannot be parsed.
-     * @throws FatalException      if an I/O error occurs while reading the CSV data.
-     */
-    protected List<MatchRequestForCSV> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
-        CsvMapper csvMapper = new CsvMapper();
-        csvMapper.registerModule(new JavaTimeModule());
-        CsvSchema csvSchema = csvMapper
-                .schemaFor(MatchRequestForCSV.class)
-                .withColumnReordering(true)
-                .withHeader();
-
-        try (MappingIterator<MatchRequestForCSV> requestMappingIterator =
-                     csvMapper.readerFor(MatchRequestForCSV.class)
-                             .with(csvSchema)
-                             .readValues(csvData)) {
-            return requestMappingIterator.readAll();
-
-        } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
-            log.error("Error parsing CSV data: {}", e.getMessage(), e);
-            throw new ValidationException("Invalid CSV data format: " + e.getMessage(), e);
-        } catch (IOException e) {
-            log.error("Error reading CSV data: {}", e.getMessage(), e);
-            throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Maps a {@link MatchRequestForCSV} row onto a {@link MatchRequest}.
-     *
-     * @param matchRequestForCSV the CSV row to map; must not be null.
-     * @return the equivalent {@link MatchRequest}, with a {@code null} {@code matchId} and its
-     * {@code Stages} cell parsed into {@link MatchStageRequest}s.
-     */
-    protected MatchRequest toRequest(@NotNull MatchRequestForCSV matchRequestForCSV) {
-        return new MatchRequest(
-                null,
-                matchRequestForCSV.getMatchDate(),
-                matchRequestForCSV.getMatchName(),
-                matchRequestForCSV.getClub(),
-                matchRequestForCSV.getMatchFirearmType(),
-                matchRequestForCSV.getMatchCategory(),
-                parseStages(matchRequestForCSV.getStages()));
-    }
-
-    /**
-     * Parses a CSV cell of semicolon-separated {@code <stageNumber>-<stageName>} entries into a
-     * list of {@link MatchStageRequest}s.
-     *
-     * @param rawStages the raw CSV cell value (e.g. {@code "1-Stage One;2-Stage Two"}); may be
-     *                  null or blank, in which case an empty list is returned.
-     * @return the individual stages, in the order given.
-     * @throws ValidationException if an entry doesn't start with a numeric stage number followed
-     *                             by a {@code "-"}.
-     */
-    protected List<MatchStageRequest> parseStages(String rawStages) {
-        if ((rawStages == null) || rawStages.isBlank()) {
-            return new ArrayList<>();
-        }
-
-        List<MatchStageRequest> stages = new ArrayList<>();
-        for (String entry : rawStages.split(SystemConstants.ARRAY_SEPARATOR)) {
-            if (entry.isBlank()) {
-                continue;
-            }
-
-            int separatorIndex = entry.indexOf('-');
-            if (separatorIndex < 0) {
-                throw new ValidationException("Invalid stage entry (expected <stageNumber>-<stageName>): " + entry);
-            }
-
-            String stageNumber = entry.substring(0, separatorIndex).trim();
-            String stageName = entry.substring(separatorIndex + 1).trim();
-            try {
-                stages.add(new MatchStageRequest(null, Integer.valueOf(stageNumber), stageName));
-            } catch (NumberFormatException e) {
-                throw new ValidationException("Invalid stage number in entry: " + entry, e);
-            }
-        }
-
-        return stages;
     }
 
     @Override
