@@ -1317,7 +1317,7 @@ IPSC request models to date: without a matching `@JsonCreator` constructor, the 
   bound via `@JsonProperty`, replacing their Lombok `@AllArgsConstructor`
 - `CompetitorRequest`'s required third field corrected from `competitorNumber` to `clubNumber`, matching
   `IpscCompetitorServiceImpl.validateForCreate`'s actual validation
-- The scores CSV variants' constructors now match their plain counterparts' signatures exactly, verified via a
+- The score CSV variants' constructors now match their plain counterparts' signatures exactly, verified via a
   `csvMapper.addMixIn(...)` mixin test — the same pattern `AwardServiceImpl`/`ImageServiceImpl` already use
 
 **Architecture Highlights:**
@@ -2164,7 +2164,7 @@ of the two IPSC entities' bulk-import gaps that `ARCHITECTURE.md` had documented
 
 **Achievement:** Extended the competitor domain to support more than one email address, closed a lingering
 inconsistency between the competitor and award/image bulk CSV endpoints' multi-value cell formats, removed a
-CI quality gate that had never once succeeded, and fixed a real crash-on-update bug found by writing genuinely
+CI quality gate that had never once succeeded and fixed a real crash-on-update bug found by writing genuinely
 thorough multi-address test coverage instead of only single-element cases.
 
 ---
@@ -2180,7 +2180,7 @@ thorough multi-address test coverage instead of only single-element cases.
   recurring dependency-currency check itself
 
 **Achievement:** Closed a real, silent test-coverage regression, completed a CI quality gate the project's own
-documentation had flagged as configured-but-unwired since v8.0.0, and built the tooling for the release process to
+documentation had flagged as configured-but-unwired since v8.0.0 and built the tooling for the release process to
 keep auditing its own roadmap documentation going forward — no new domain feature, but meaningful process maturity.
 
 ---
@@ -2876,7 +2876,7 @@ AttributeConverters
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Then extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
   `@JsonProperty(required = true)` actually enforces required fields via matching `@JsonCreator` constructors.
-  Finally, close a silent test-coverage regression, complete the CI static-analysis gate, and build tooling so the
+  Finally, close a silent test-coverage regression, complete the CI static-analysis gate and build tooling so the
   release process keeps auditing its own roadmap documentation going forward.
 
 ### Initial Phase (v1.0.0)
@@ -3176,7 +3176,7 @@ Based on the evolution to v8.3.0, the following areas are identified for future 
   data via the existing `createCompetitor` logic
 - New `CompetitorRequestForCSV`/`CompetitorResponseHolder` models
 - Fixed a Jackson gotcha affecting every `@JsonProperty(required = true)` field added to date: `CompetitorRequest`,
-  `CompetitorRequestForCSV`, `MatchRequest`, `MatchStageRequest` and the scores request models all gained a
+  `CompetitorRequestForCSV`, `MatchRequest`, `MatchStageRequest` and the score request models all gained a
   `@JsonCreator` constructor so required fields are actually enforced
 - `CompetitorRequest`'s required field corrected from `competitorNumber` to `clubNumber`
 - Project version bumped to 8.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
