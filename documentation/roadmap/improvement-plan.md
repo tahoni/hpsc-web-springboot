@@ -42,7 +42,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                          |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                      |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                             |
-| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 51% JaCoCo line-coverage minimum (see Gap #2/#4); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
+| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces an 86% JaCoCo line-coverage minimum (see Gap #2/#4); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
 | `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                    |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                    |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                       |
@@ -163,6 +163,12 @@ once the gate has run cleanly for a few releases, rather than risking a strict t
 one. Not marked fully closed for that reason. This lands in v8.3.1; `HISTORY.md`'s coverage figure refresh for the
 current baseline (measured at 98.16%/98.94% line/branch as of this release-prep pass, 836 tests) is tracked as
 this release's own task in `improvement-plan-tasks.md` rather than assumed done here.
+
+**Tightened again (same branch, before v8.3.1 ships):** The `LINE`/`COVEREDRATIO` minimum was raised a second time,
+from `0.51` to `0.86` (86%), directly in `pom.xml` — sooner than the "once the gate has run cleanly for a few
+releases" plan stated just above, so worth confirming that acceleration is deliberate rather than reverting it here.
+Still not marked fully closed: 86% is meaningfully closer to the real baseline than 51% was, but still short of
+"near" the 98.16%/98.94% figure, and this new threshold hasn't yet run in CI to confirm it holds cleanly.
 
 ### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
@@ -285,8 +291,8 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's new 51% JaCoCo line-coverage floor. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
-| **Next**    | Tighten #4's coverage floor closer to the real baseline (~98%) once the gate has run cleanly across a few releases; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 |
+| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% within the same branch. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
+| **Next**    | Confirm #4's 86% floor holds cleanly in CI, then continue tightening it closer to the real baseline (~98%); then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 |
 | **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                                                   |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                    |
 
@@ -300,8 +306,9 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 - ✅ Met in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` automatically on push/PR to
   `develop`/`main`; `ARCHITECTURE.md`'s CI/CD & Quality Gates table has dropped the "locally / by reviewers" caveat
   on the `Build & Tests` row.
-- 🟡 Partially met in v8.3.1: a 51%-minimum JaCoCo `check` rule fails CI on a real regression, but the floor
-  is deliberately far below the ~98% actual baseline rather than "near" it — fully met once that floor is tightened.
+- 🟡 Partially met in v8.3.1: an 86%-minimum JaCoCo `check` rule (raised from an initial 51% within the same
+  branch) fails CI on a real regression, but the floor is still below the ~98% actual baseline rather than "near"
+  it — fully met once that floor is tightened further.
 - ✅ Met in v8.2.0 (as not applicable): the `Static Analysis` row is gone from `ARCHITECTURE.md`'s CI/CD & Quality
   Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.
 - A real `MatchScoreController`/`ShooterLogController` (or equivalent) exists and is tested, closing the gap

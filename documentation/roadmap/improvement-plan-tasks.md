@@ -87,9 +87,9 @@ evidence and reasoning there.
   hierarchy, the `models/ipsc/shared` scoring classes and every untested `patchCompetitor`/`patchMatch` field
   success-path brought the suite from 92.9%/93.4% to 98.34%/98.84% (line/branch), 746 → 775 tests
 - [x] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile — done
-  differently: a `LINE`/`COVEREDRATIO` minimum of `0.51` (51%), a deliberately low regression backstop rather than
-  "near the current baseline" (~98%) — tightening it is left as a follow-up once the gate has run cleanly for a few
-  releases
+  differently: a `LINE`/`COVEREDRATIO` minimum, initially `0.51` (51%) as a deliberately low regression backstop,
+  then raised to `0.86` (86%) within this same branch — still short of "near the current baseline" (~98%), and not
+  yet confirmed to hold cleanly in CI at the new threshold
 - [x] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build — the
   `check` execution runs as part of `build.yml`'s `./mvnw verify -Pcoverage` step
 - [x] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number — done in
