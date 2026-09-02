@@ -107,7 +107,7 @@ enforces Gap #4's coverage-check rule, closing that gap's CI-wiring half in the 
 `feature/ci-build-test-gate` branch off `develop`, not a `release/*` branch; this release-prep pass fills in the
 closing version, v8.3.1.
 
-### 3. Award/Image CSV pipelines never persist — 🟡 Partially narrowed in v8.1.0
+### 3. Award/Image CSV pipelines never persist — ✅ Closed in v8.3.1
 
 **Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.processCsv()`/
 `ImageService.processCsv()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
@@ -126,6 +126,11 @@ persisting CSV import for the competitor domain — and `ARCHITECTURE.md` now co
 Award/Image flow ("without persisting anything") in an adjacent data-flow section. That narrows the ambiguity for
 readers, but the underlying question for `AwardService`/`ImageService` themselves — deliberate design or oversight —
 is still unresolved and not yet stated explicitly in `README.md`/`ARCHITECTURE.md`.
+
+**Outcome:** Confirmed as deliberate: `AwardService`/`ImageService` CSV processing is intentionally stateless, not
+an unfinished persistence layer. `README.md`'s Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s
+Service Layer table/Award-Image CSV Processing Flow section now state this explicitly, resolving the ambiguity this
+gap's Proposed improvement asked to clarify. No persistence is planned for these two pipelines.
 
 ### 4. Coverage is measured but not enforced — 🟡 Partially progressed in v8.3.1
 
@@ -293,7 +298,7 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% within the same branch. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
 | **Next**    | Confirm #4's 86% floor holds cleanly in CI, then continue tightening it closer to the real baseline (~98%); then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                           |
-| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                                                                                                     |
+| **Later**   | No items currently scoped — #3, this phase's previous occupant, closed in v8.3.1                                                                                                                                                                                                                    |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                      |
 
 ---
@@ -311,6 +316,9 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
   it — fully met once that floor is tightened further.
 - ✅ Met in v8.2.0 (as not applicable): the `Static Analysis` row is gone from `ARCHITECTURE.md`'s CI/CD & Quality
   Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.
+- ✅ Met in v8.3.1: `AwardService`/`ImageService` CSV processing is confirmed intentionally stateless, and
+  `README.md`/`ARCHITECTURE.md` now say so explicitly, closing Gap #3's ambiguity between deliberate design and
+  oversight.
 - A real `MatchScoreController`/`ShooterLogController` (or equivalent) exists and is tested, closing the gap
   `README.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` currently described as "still being built".
 - ✅ Met in v8.3.0: `IpscMatchController.createMatches`/`IpscMatchService.createMatches` mirror the competitor bulk

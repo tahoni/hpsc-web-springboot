@@ -114,16 +114,18 @@ evidence and reasoning there.
 
 ## 🔬 Later
 
-**CSV persistence clarification** *(improvement-plan.md → Gap #3)* — 🟡 Partially narrowed in v8.1.0
+**CSV persistence clarification** *(improvement-plan.md → Gap #3)* — ✅ Closed in v8.3.1
 
 - [x] If persistence is intended: scope it as its own roadmap item once the service layer from the Next phase
   exists — done for the competitor domain specifically: `IpscCompetitorController.createCompetitors` (v8.1.0) is a
   scoped, deliberate persisting-CSV-import feature, and `ARCHITECTURE.md` now contrasts it directly against the
   Award/Image flow ("without persisting anything") in an adjacent data-flow section
-- [ ] Decide whether `AwardService`/`ImageService` CSV processing itself is meant to stay stateless by design or
-  should gain persistence — still undecided; the v8.1.0 contrast narrows the ambiguity but doesn't resolve it
-- [ ] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md` for `AwardService`/
-  `ImageService` themselves, not just by implication via the new competitor flow
+- [x] Decide whether `AwardService`/`ImageService` CSV processing itself is meant to stay stateless by design or
+  should gain persistence — decided in v8.3.1: confirmed intentionally stateless, no persistence planned
+- [x] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md` for `AwardService`/
+  `ImageService` themselves, not just by implication via the new competitor flow — done in v8.3.1: `README.md`'s
+  Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s Service Layer table/Award-Image CSV Processing
+  Flow section now say so explicitly
 
 ---
 

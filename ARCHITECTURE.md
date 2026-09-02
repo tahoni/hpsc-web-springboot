@@ -165,10 +165,14 @@ Contains all business logic.
 
 | Interface               | Implementation              | Role                                                         |
 |-------------------------|-----------------------------|--------------------------------------------------------------|
-| `AwardService`          | `AwardServiceImpl`          | Award CSV processing                                         |
-| `ImageService`          | `ImageServiceImpl`          | Image CSV processing                                         |
+| `AwardService`          | `AwardServiceImpl`          | Award CSV processing (deliberately stateless — see below)    |
+| `ImageService`          | `ImageServiceImpl`          | Image CSV processing (deliberately stateless — see below)    |
 | `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages, + bulk CSV import |
 | `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
+
+> `AwardService.processCsv()`/`ImageService.processCsv()` are stateless by design, not an unfinished persistence
+> layer: each parses CSV into response records only, with no repository write — a preview/validation transform
+> rather than an import. See the Award/Image CSV Processing Flow below.
 
 > Both IPSC domains now support bulk CSV import, each persisting every row via the same validation/resolution logic
 > as its single-item `create` endpoint: `IpscCompetitorController.createCompetitors`
@@ -324,13 +328,14 @@ Client → HTTP Request
 
 ### 📥 Award / Image CSV Processing Flow
 
-Handled by `AwardController` and `ImageController` — parses CSV into response records without persisting anything:
+Handled by `AwardController` and `ImageController` — deliberately stateless by design, parsing CSV into response
+records without persisting anything:
 
 ```
 Client uploads CSV (Content-Type: text/csv)
     → AwardController / ImageController
         → AwardService.processCsv() / ImageService.processCsv()
-            (parses CSV via Jackson CsvMapper, maps to response records — no persistence)
+            (parses CSV via Jackson CsvMapper, maps to response records — deliberately no persistence)
         ← AwardCeremonyResponseHolder / ImageResponseHolder
     ← ResponseEntity<...>
 ← JSON response
