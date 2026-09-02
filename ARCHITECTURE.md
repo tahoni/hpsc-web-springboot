@@ -140,11 +140,11 @@ HTTP Request
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                 | Mapping             | Responsibility                            |
-|----------------------------|---------------------|-------------------------------------------|
-| `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                      |
-| `ImageController`          | `/hpsc-web/images`  | Image CSV processing                      |
-| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import    |
+| Controller                 | Mapping             | Responsibility                                               |
+|----------------------------|---------------------|--------------------------------------------------------------|
+| `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                                         |
+| `ImageController`          | `/hpsc-web/images`  | Image CSV processing                                         |
+| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import                       |
 | `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages, + bulk CSV import |
 
 All controllers:
@@ -163,12 +163,12 @@ All controllers:
 
 Contains all business logic.
 
-| Interface               | Implementation              | Role                                      |
-|-------------------------|-----------------------------|-------------------------------------------|
-| `AwardService`          | `AwardServiceImpl`          | Award CSV processing                      |
-| `ImageService`          | `ImageServiceImpl`          | Image CSV processing                      |
+| Interface               | Implementation              | Role                                                         |
+|-------------------------|-----------------------------|--------------------------------------------------------------|
+| `AwardService`          | `AwardServiceImpl`          | Award CSV processing                                         |
+| `ImageService`          | `ImageServiceImpl`          | Image CSV processing                                         |
 | `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages, + bulk CSV import |
-| `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import    |
+| `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
 
 > Both IPSC domains now support bulk CSV import, each persisting every row via the same validation/resolution logic
 > as its single-item `create` endpoint: `IpscCompetitorController.createCompetitors`
