@@ -77,6 +77,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON
   (de)serialization, its CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
   constructor's enforcement of `matchDate`/`matchName` as required creator properties
+- **`IpscMatchControllerTest`:** New tests covering `createMatches`'s `201` response, delegation to the
+  service and propagation of `ValidationException`/`NonFatalException`/`FatalException`
+- **`IpscMatchServiceTest`:** New tests covering `createMatches`'s CSV validation, row-level club/firearm-type/
+  category resolution, stage parsing and bulk persistence, exercised through the interface with mocked
+  repositories
+- **`IpscMatchServiceImplTest`:** New tests covering the impl-only `parseStages`/`readMatches`/`toRequest`
+  protected helper methods
 
 ## 🧾 [8.2.0] - 2026-09-01
 
