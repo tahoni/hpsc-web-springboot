@@ -21,6 +21,27 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.3.1 (September 2, 2026)
+
+**Theme:** CI Build/Test Gate & Coverage Enforcement
+
+**Key Focus:**
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, mirroring
+  `codeql.yml`'s trigger branches — completes `documentation/roadmap/improvement-plan.md`'s Gap #2 (no automatic
+  build/test gate on pull requests)
+- New JaCoCo `check` execution in `pom.xml`'s `coverage` profile enforces a `BUNDLE`-level `LINE`/`COVEREDRATIO`
+  minimum of `0.51` (51%), wired into the new CI gate so a coverage regression fails the build — a deliberately low
+  regression backstop rather than a threshold near the real baseline, since a fresh `./mvnw verify -Pcoverage` run
+  measured the actual current baseline at 98.16%/98.94% (line/branch), 836 tests — up from 775 at v8.1.1; tightening
+  the floor closer to that baseline is left as a follow-up once the gate has run cleanly for a few releases,
+  partially progressing Gap #4 (coverage measured but not enforced)
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to reflect the new gate and drop the
+  stale "locally / by reviewers"/"All PRs" language
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`: Gap #2 closed, Gap #4 marked partially
+  progressed
+- Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.3.0 (September 2, 2026)
 
 **Theme:** Match Bulk CSV Import
@@ -1112,6 +1133,54 @@ coverage.
 
 ---
 
+### Phase 24: CI Build/Test Gate & Coverage Enforcement (v8.3.1)
+
+**Duration:** September 2, 2026
+
+A process-and-quality patch release: no new domain feature, but a completed CI build/test gate and the project's
+first coverage-regression-enforcement rule, closing out work v8.1.1's coverage-regression fixes and Gap #4's
+baseline-setting groundwork left open.
+
+**Key Accomplishments:**
+
+**CI Build/Test Gate**
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, mirroring
+  `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests via
+  `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git) and uploads the JaCoCo HTML/XML report as a build
+  artefact
+
+**Coverage Enforcement**
+
+- New JaCoCo `check` execution in the `coverage` Maven profile enforces a `BUNDLE`-level `LINE`/`COVEREDRATIO`
+  minimum of `0.51` (51%), wired into the new CI gate so a coverage regression fails the build
+- A deliberately low regression backstop, not a threshold near the current baseline: a fresh coverage run measured
+  the real baseline at 98.16% line / 98.94% branch coverage (836 tests, up from 775 at v8.1.1) — tightening the
+  floor closer to that baseline is left as a follow-up once the gate has run cleanly for a few releases
+
+**Documentation**
+
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to reflect the new gate and rule,
+  dropping the stale "locally / by reviewers"/"All PRs" language
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`: Gap #2 (no automatic build/test gate)
+  closed; Gap #4 (coverage measured but not enforced) marked partially progressed
+
+**Architecture Highlights:**
+
+- No architectural change — this release is CI/CD tooling and documentation work only
+
+**Technical Focus:**
+
+- CI/CD quality gate completion (build/test automation)
+- Coverage-regression enforcement (a low, deliberate floor rather than a strict one)
+
+**Test Coverage:**
+
+- No dedicated new unit/integration test coverage added for this release; verified via the full test suite
+  (836 tests), `./mvnw verify -Pcoverage` and a fresh baseline measurement (98.16%/98.94% line/branch)
+
+---
+
 ### Phase 23: Match Bulk CSV Import (v8.3.0)
 
 **Duration:** September 2, 2026
@@ -2135,6 +2204,20 @@ comprehensive test coverage across all services and utilities.
 
 ---
 
+### Milestone 24: CI Build/Test Gate & Coverage Enforcement (v8.3.1)
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing
+  `improvement-plan.md`'s Gap #2
+- New JaCoCo `check` execution enforces a 51% `LINE`/`COVEREDRATIO` minimum, wired into the CI gate — a deliberately
+  low regression backstop against a real baseline of 98.16%/98.94% (line/branch), 836 tests
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
+
+**Achievement:** Completed the CI build/test gate that had been running only "locally / by reviewers", and added the
+project's first coverage-regression rule — set deliberately low for now, against a freshly-measured real baseline of
+98.16%/98.94%, with tightening left as a follow-up.
+
+---
+
 ### Milestone 23: Match Bulk CSV Import (v8.3.0)
 
 - `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`) persists matches, together with their stages,
@@ -3131,9 +3214,18 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.3.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.3.1, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.3.0)
+### Recently Completed (v8.3.1)
+
+- New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing Gap #2
+- New JaCoCo `check` execution enforces a 51% `LINE`/`COVEREDRATIO` minimum — a deliberately low regression backstop
+  against the real baseline (98.16%/98.94% line/branch, 836 tests, up from 775 tests / 98.34%/98.84% at v8.1.1),
+  partially progressing Gap #4
+- `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
+- Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.3.0)
 
 - New `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`) persists matches, together with their stages,
   from CSV data via the existing `createMatch` logic, mirroring the competitor domain's v8.1.0 bulk-import shape
@@ -3386,8 +3478,8 @@ genuinely complete, if still growing, IPSC feature set.
 ---
 
 **Document Created:** February 24, 2026  
-**Last Updated:** August 31, 2026  
-**Coverage:** Version 1.0.0 (January 4, 2026) through Version 8.0.0 (August 31, 2026)  
+**Last Updated:** September 2, 2026  
+**Coverage:** Version 1.0.0 (January 4, 2026) through Version 8.3.1 (September 2, 2026)  
 **Reference:** See [CHANGELOG.md](CHANGELOG.md) and [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for detailed
 technical information
 

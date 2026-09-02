@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.3.0](#-830---2026-09-02) ← Current
+- [🧾 Version 8.3.1](#-831---2026-09-02) ← Current
+- [🧾 Version 8.3.0](#-830---2026-09-02)
 - [🧾 Version 8.2.0](#-820---2026-09-01)
 - [🧾 Version 8.1.1](#-811---2026-09-01)
 - [🧾 Version 8.1.0](#-810---2026-09-01)
@@ -45,6 +46,34 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.3.1] - 2026-09-02
+
+### ➕ Added
+
+#### CI/CD
+
+- **`.github/workflows/build.yml`:** New workflow runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`,
+  mirroring `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests
+  via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git) and uploads the JaCoCo HTML/XML report as a
+  build artefact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
+
+### 🔄 Changed
+
+#### Configuration
+
+- **`pom.xml`:** New `jacoco-maven-plugin` `check` execution in the `coverage` profile enforces a `BUNDLE`-level
+  `LINE`/`COVEREDRATIO` minimum of `0.51` (51%), wired into `build.yml`'s CI gate so a coverage regression fails
+  the build — a deliberately low regression backstop, not a threshold near the current ~98% baseline. Partially
+  progresses Gap #4
+
+#### Documentation
+
+- **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables updated to reflect the new `build.yml` gate
+  and JaCoCo coverage-check rule, dropping the stale "locally / by reviewers"/"All PRs" language
+- **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #2 closed in v8.3.1; Gap #4 marked
+  partially progressed in v8.3.1, noting the refreshed coverage baseline (98.16%/98.94% line/branch, 836 tests) and
+  that `HISTORY.md`'s coverage figure refresh remains this release's own outstanding task
 
 ## 🧾 [8.3.0] - 2026-09-02
 
@@ -87,31 +116,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   repositories
 - **`IpscMatchServiceImplTest`:** New tests covering the impl-only `parseStages`/`readMatches`/`toRequest`
   protected helper methods
-
-### ➕ Added
-
-#### CI/CD
-
-- **`.github/workflows/build.yml`:** New workflow runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`,
-  mirroring `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests
-  via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git) and uploads the JaCoCo HTML/XML report as a
-  build artefact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
-
-### 🔄 Changed
-
-#### Configuration
-
-- **`pom.xml`:** New `jacoco-maven-plugin` `check` execution in the `coverage` profile enforces a `BUNDLE`-level
-  `LINE`/`COVEREDRATIO` minimum of `0.51` (51%), wired into `build.yml`'s CI gate so a coverage regression fails
-  the build — a deliberately low regression backstop, not a threshold near the current ~98% baseline. Partially
-  progresses Gap #4
-
-#### Documentation
-
-- **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables updated to reflect the new `build.yml` gate
-  and JaCoCo coverage-check rule, dropping the stale "locally / by reviewers"/"All PRs" language
-- **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #2 closed, Gap #4 marked
-  partially progressed (both version-pending, delivered on a `feature/*` branch rather than a `release/*` branch)
 
 ## 🧾 [8.2.0] - 2026-09-01
 
