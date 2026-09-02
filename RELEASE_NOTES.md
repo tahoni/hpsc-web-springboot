@@ -177,7 +177,7 @@ Leoni Lubbinge
 
 Version 8.3.1 is a process/tooling and documentation-clarity release: no domain feature or API change, but a real,
 previously missing CI safety net (automatic build/test gate), the project's first automated coverage-regression
-check, and a resolved design ambiguity around Award/Image CSV persistence. Closes
+check and a resolved design ambiguity around Award/Image CSV persistence. Closes
 `documentation/roadmap/improvement-plan.md`'s Gap #2 and Gap #3, and partially progresses Gap #4 — carried since
 v7.2.0/v8.0.0/v8.1.0 respectively.
 
