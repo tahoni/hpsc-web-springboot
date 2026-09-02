@@ -83,7 +83,7 @@ orchestration was deliberately held off per step 3 above, until v8.1.0's competi
 existing single-`createCompetitor` logic per row instead of introducing new orchestration. See
 [`improvement-plan-tasks.md`](improvement-plan-tasks.md#-next) for the full checklist.
 
-### 2. No automatic build/test gate on pull requests — ✅ Closed (version pending)
+### 2. No automatic build/test gate on pull requests — ✅ Closed in v8.3.1
 
 **Evidence:** `ARCHITECTURE.md`'s own CI/CD & Quality Gates table states the `Build & Tests` gate runs "locally / by
 reviewers before merge" — `.github/workflows` contains only `codeql.yml` and, as of Gap #7, `qodana.yml`; neither
@@ -104,8 +104,8 @@ tracked with the execute bit in git and would otherwise fail with "Permission de
 uploads the JaCoCo HTML/XML report as a build artefact. `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates
 tables updated to match, dropping the stale "locally / by reviewers"/"All PRs" language. The `-Pcoverage` run also now
 enforces Gap #4's coverage-check rule, closing that gap's CI-wiring half in the same workflow. Delivered on a
-`feature/ci-build-test-gate` branch off `develop`, not a `release/*` branch, so the closing version is filled in at
-the next release-prep pass rather than guessed here.
+`feature/ci-build-test-gate` branch off `develop`, not a `release/*` branch; this release-prep pass fills in the
+closing version, v8.3.1.
 
 ### 3. Award/Image CSV pipelines never persist — 🟡 Partially narrowed in v8.1.0
 
@@ -127,7 +127,7 @@ Award/Image flow ("without persisting anything") in an adjacent data-flow sectio
 readers, but the underlying question for `AwardService`/`ImageService` themselves — deliberate design or oversight —
 is still unresolved and not yet stated explicitly in `README.md`/`ARCHITECTURE.md`.
 
-### 4. Coverage is measured but not enforced — 🟡 Partially progressed (version pending)
+### 4. Coverage is measured but not enforced — 🟡 Partially progressed in v8.3.1
 
 **Evidence:** `HISTORY.md` tracks line/branch coverage percentages release over release (97.3%/98.1% as of v7.2.0) via
 the JaCoCo `coverage` Maven profile, but nothing fails a build when coverage regresses. That v7.2.0 figure was never
@@ -160,8 +160,9 @@ than only surfacing in the next `HISTORY.md` entry, closing the CI-enforcement h
 improvement. The chosen 51% floor is deliberately a low-regression backstop, not "near the current baseline"
 (~98%) as originally proposed here; tightening it closer to the real baseline is left as a deliberate follow-up
 once the gate has run cleanly for a few releases, rather than risking a strict threshold blocking merges on day
-one. Not marked fully closed for that reason. `HISTORY.md`'s coverage figure still needs refreshing once this
-lands in a release.
+one. Not marked fully closed for that reason. This lands in v8.3.1; `HISTORY.md`'s coverage figure refresh for the
+current baseline (measured at 98.16%/98.94% line/branch as of this release-prep pass, 836 tests) is tracked as
+this release's own task in `improvement-plan-tasks.md` rather than assumed done here.
 
 ### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
@@ -284,7 +285,7 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #2 delivered: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's new 51% JaCoCo line-coverage floor. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
+| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's new 51% JaCoCo line-coverage floor. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
 | **Next**    | Tighten #4's coverage floor closer to the real baseline (~98%) once the gate has run cleanly across a few releases; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 |
 | **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                                                   |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                    |
@@ -296,10 +297,10 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 - ✅ Met in v8.0.0: `IpscCompetitorController`/`IpscMatchController` expose real, tested endpoints backed by the
   existing entity/repository layer, closing the gap named identically in `README.md`, `ARCHITECTURE.md` and
   `CLAUDE.md`.
-- ✅ Met (version pending): `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` automatically on push/PR to
+- ✅ Met in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` automatically on push/PR to
   `develop`/`main`; `ARCHITECTURE.md`'s CI/CD & Quality Gates table has dropped the "locally / by reviewers" caveat
   on the `Build & Tests` row.
-- 🟡 Partially met (version pending): a 51%-minimum JaCoCo `check` rule fails CI on a real regression, but the floor
+- 🟡 Partially met in v8.3.1: a 51%-minimum JaCoCo `check` rule fails CI on a real regression, but the floor
   is deliberately far below the ~98% actual baseline rather than "near" it — fully met once that floor is tightened.
 - ✅ Met in v8.2.0 (as not applicable): the `Static Analysis` row is gone from `ARCHITECTURE.md`'s CI/CD & Quality
   Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.

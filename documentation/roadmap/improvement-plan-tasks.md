@@ -15,7 +15,7 @@ evidence and reasoning there.
 
 ## 🚀 Now
 
-**CI build/test gate** *(improvement-plan.md → Gap #2)* — ✅ Closed (version pending)
+**CI build/test gate** *(improvement-plan.md → Gap #2)* — ✅ Closed in v8.3.1
 
 - [x] Add `.github/workflows/build.yml`, triggered on push/PR to `develop` and `main`, mirroring `codeql.yml`'s trigger
   branches
@@ -81,7 +81,7 @@ evidence and reasoning there.
 - [x] Update `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
   competitor-only endpoint/service/data-flow documentation to reflect the new endpoint
 
-**Coverage enforcement** *(improvement-plan.md → Gap #4)* — 🟡 Partially progressed (version pending)
+**Coverage enforcement** *(improvement-plan.md → Gap #4)* — 🟡 Partially progressed in v8.3.1
 
 - [x] ~~Baseline the real coverage figure before setting a rule~~ — done: targeted tests for the exception
   hierarchy, the `models/ipsc/shared` scoring classes and every untested `patchCompetitor`/`patchMatch` field
@@ -92,8 +92,10 @@ evidence and reasoning there.
   releases
 - [x] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build — the
   `check` execution runs as part of `build.yml`'s `./mvnw verify -Pcoverage` step
-- [ ] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number — still
-  outstanding
+- [x] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number — done in
+  v8.3.1: a fresh `./mvnw verify -Pcoverage` run measured the real current baseline at 98.16%/98.94% (line/branch),
+  836 tests, recorded in `HISTORY.md`'s Historical Timeline, Phase 24, Milestone 24 and Future Roadmap Implications
+  entries
 
 **Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)*
 
