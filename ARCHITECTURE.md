@@ -369,11 +369,11 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                                                                                          | Trigger                                                            |
-|-----------------------|------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                                                                                        | Push / PR to `main` / `develop`; weekly schedule                  |
-| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                          | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)    | Enforced automatically as part of the `Build & Tests` gate above  |
+| Gate                  | Tool                                                                                         | Trigger                                                                 |
+|-----------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                                                                                       | Push / PR to `main` / `develop`; weekly schedule                        |
+| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                        | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
+| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
 
 ---
 

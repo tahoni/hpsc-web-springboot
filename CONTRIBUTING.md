@@ -143,7 +143,7 @@ Full conventions live in [`AGENTS.md`](AGENTS.md) — read it before writing or 
 repository. Highlights:
 
 - **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see
-  `AGENTS.md`'s exceptions list for legal boilerplate and third-party names.
+  `AGENTS.md`'s list of exceptions for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
   "prose, comments and Javadoc") — see `AGENTS.md`'s Serial commas rule.
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
@@ -230,11 +230,11 @@ and `release/*` included — must never open a PR directly against `main`.
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                                                                       | Trigger                                                                           |
-|-----------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                                                                    | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`) |
-| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`)                                        | Push / PR to `main` / `develop` (`.github/workflows/build.yml`); H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`check` goal, `coverage` profile)      | Enforced automatically as part of the `Build & Tests` gate above                  |
+| Gate                  | Tool                                                                 | Trigger                                                                                                 |
+|-----------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| **Security Analysis** | CodeQL                                                               | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`)                       |
+| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`)                                   | Push / PR to `main` / `develop` (`.github/workflows/build.yml`); H2 in-memory — no external DB required |
+| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above                                        |
 
 ---
 

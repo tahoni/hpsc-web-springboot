@@ -51,8 +51,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`.github/workflows/build.yml`:** New workflow runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`,
   mirroring `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests
-  via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git), and uploads the JaCoCo HTML/XML report as a
-  build artifact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
+  via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git) and uploads the JaCoCo HTML/XML report as a
+  build artefact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
 
 ### 🔄 Changed
 
@@ -227,7 +227,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`'s Release Checklist:** Re-synced against `prep-version-release`'s actual, current process, which had
   drifted ahead of it — adds a new step 1 to check `improvement-plan.md`/`improvement-plan-tasks.md` for gaps before
   version-specific work begins, a new step 4 to verify `CHANGELOG.md`'s `[Unreleased]` section is complete before
-  renaming it, and a new step 8 to update `CONTRIBUTING.md` when applicable, matching the skill's steps 2, 5 and 10
+  renaming it and a new step 8 to update `CONTRIBUTING.md` when applicable, matching the skill's steps 2, 5 and 10
   respectively (described tool-agnostically, without naming the skill). Also fixes a stale Build & Run Commands
   pointer that named only CodeQL/JaCoCo among `ARCHITECTURE.md`'s CI/CD gates, missing Qodana
 
