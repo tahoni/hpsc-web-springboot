@@ -282,8 +282,8 @@ representation). `MatchResponseHolder` mirrors `CompetitorResponseHolder`. `Ipsc
 `IpscCompetitorController`/`IpscCompetitorServiceImpl`'s `createCompetitors` shape exactly: a `readMatches` CSV-parsing
 helper, a `toRequest` row-to-`MatchRequest` mapper, and (new relative to the competitor flow, since matches have no
 CSV-native nested-stage representation) a `parseStages` helper splitting the delimited `Stages` cell into
-`MatchStageRequest`s. `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language, and its
-competitor-only endpoint/service/data-flow documentation is updated in the same release to reflect this.
+`MatchStageRequest`s. `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
+competitor-only endpoint/service/data-flow documentation are updated in the same release to reflect this.
 
 ---
 
