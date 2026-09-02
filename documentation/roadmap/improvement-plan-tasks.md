@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s seven gaps, organised by that
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s eight gaps, organised by that
 document's Now/Next/Later/Ongoing phasing. Each section names its originating gap number for traceability back to the
 evidence and reasoning there.
 
