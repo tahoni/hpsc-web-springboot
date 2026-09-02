@@ -12,7 +12,7 @@ Version 8.3.1 is a process-and-quality patch release: pull requests to `main`/`d
 build/test gate for the first time — new `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR,
 mirroring `codeql.yml`'s trigger branches. Wired into that same run is the project's first coverage-regression rule:
 a new JaCoCo `check` execution enforces a `BUNDLE`-level `LINE`/`COVEREDRATIO` minimum of `0.51` (51%) — deliberately
-a low regression backstop rather than a threshold near the real baseline, which a fresh `./mvnw verify -Pcoverage`
+a low-regression backstop rather than a threshold near the real baseline, which a fresh `./mvnw verify -Pcoverage`
 run measured at 98.16%/98.94% (line/branch), 836 tests. This closes `documentation/roadmap/improvement-plan.md`'s
 Gap #2 (no automatic build/test gate) and partially progresses Gap #4 (coverage measured but not enforced).
 
@@ -152,7 +152,7 @@ Leoni Lubbinge
 
 ## 📝 Notes
 
-Version 8.3.1 is a process/tooling release: no domain feature or API change, but a real, previously-missing CI
+Version 8.3.1 is a process/tooling release: no domain feature or API change, but a real, previously missing CI
 safety net (automatic build/test gate) and the project's first automated coverage-regression check, closing
 `documentation/roadmap/improvement-plan.md`'s Gap #2 and partially progressing Gap #4 — both carried since v7.2.0/
 v8.0.0.
