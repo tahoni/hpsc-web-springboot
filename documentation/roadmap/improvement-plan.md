@@ -109,8 +109,8 @@ closing version, v8.3.1.
 
 ### 3. Award/Image CSV pipelines never persist — ✅ Closed in v8.3.1
 
-**Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.processCsv()`/
-`ImageService.processCsv()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
+**Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.createAwards()`/
+`ImageService.createImages()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
 
 **Why it matters:** `README.md` describes the platform as managing "IPSC match data, competitor tracking, club
 operations, awards" — but the only working endpoints today are stateless transforms. It's unclear from the documentation
@@ -298,7 +298,7 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% within the same branch. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
 | **Next**    | Confirm #4's 86% floor holds cleanly in CI, then continue tightening it closer to the real baseline (~98%); then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                           |
-| **Later**   | No items currently scoped — #3, this phase's previous occupant, closed in v8.3.1                                                                                                                                                                                                                    |
+| **Later**   | No items currently scoped — #3, this phase's previous occupant, closed in v8.3.1                                                                                                                                                                                                                     |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                      |
 
 ---

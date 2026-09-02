@@ -170,7 +170,7 @@ Contains all business logic.
 | `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages, + bulk CSV import |
 | `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
 
-> `AwardService.processCsv()`/`ImageService.processCsv()` are stateless by design, not an unfinished persistence
+> `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
 > rather than an import. See the Award/Image CSV Processing Flow below.
 
@@ -334,7 +334,7 @@ records without persisting anything:
 ```
 Client uploads CSV (Content-Type: text/csv)
     → AwardController / ImageController
-        → AwardService.processCsv() / ImageService.processCsv()
+        → AwardService.createAwards() / ImageService.createImages()
             (parses CSV via Jackson CsvMapper, maps to response records — deliberately no persistence)
         ← AwardCeremonyResponseHolder / ImageResponseHolder
     ← ResponseEntity<...>
