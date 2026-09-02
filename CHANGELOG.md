@@ -45,6 +45,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### CI/CD
+
+- **`.github/workflows/build.yml`:** New workflow runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`,
+  mirroring `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests
+  via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git), and uploads the JaCoCo HTML/XML report as a
+  build artifact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
+
 ## 🧾 [8.2.0] - 2026-09-01
 
 ### 🔄 Changed
