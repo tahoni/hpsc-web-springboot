@@ -1,8 +1,8 @@
 # Improvement Plan
 
 This document synthesises the goals and constraints stated across this repository's documentation and configuration into
-a single set of prioritised improvement opportunities. Unlike [`README.md`](/README.md) and [
-`ARCHITECTURE.md`](/ARCHITECTURE.md), it is not evergreen — it reflects a point-in-time reading of the project and
+a single set of prioritised improvement opportunities. Unlike [`README.md`](/README.md) and 
+[`ARCHITECTURE.md`](/ARCHITECTURE.md), it is not evergreen — it reflects a point-in-time reading of the project and
 should be revisited whenever a major gap it names is closed or a new one is identified.
 
 ## Table of Contents
@@ -36,19 +36,19 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 
 ## ⚙️ Goals & Constraints (Synthesised)
 
-| Source                                              | Goal / constraint                                                                                                                                                                                                                                                                |
-|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                             |
-| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                       |
-| `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                   |
-| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                          |
-| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and code coverage (JaCoCo) are established quality gates; `./mvnw test` is documented as reviewer/local-only, not an automatic gate; Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7)                      |
-| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs |
-| `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                 |
-| `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                    |
-| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint (see [Gaps](#-gaps--improvement-opportunities))                                                                                           |
-| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                            |
-| `CONTRIBUTING.md`, `application.properties`         | Three distinct runtime profiles (none/prod, `dev`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors                                                                                               |
+| Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                    |
+|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                 |
+| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                           |
+| `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                       |
+| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                              |
+| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces an 86% JaCoCo line-coverage minimum (see Gap #2/#4); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
+| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                     |
+| `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                     |
+| `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                        |
+| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint (see [Gaps](#-gaps--improvement-opportunities))                                                                                                                               |
+| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                |
+| `CONTRIBUTING.md`, `application.properties`         | Three distinct runtime profiles (none/prod, `dev`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors                                                                                                                                   |
 
 ---
 
@@ -83,7 +83,7 @@ orchestration was deliberately held off per step 3 above, until v8.1.0's competi
 existing single-`createCompetitor` logic per row instead of introducing new orchestration. See
 [`improvement-plan-tasks.md`](improvement-plan-tasks.md#-next) for the full checklist.
 
-### 2. No automatic build/test gate on pull requests
+### 2. No automatic build/test gate on pull requests — ✅ Closed in v8.3.1
 
 **Evidence:** `ARCHITECTURE.md`'s own CI/CD & Quality Gates table states the `Build & Tests` gate runs "locally / by
 reviewers before merge" — `.github/workflows` contains only `codeql.yml` and, as of Gap #7, `qodana.yml`; neither
@@ -97,10 +97,20 @@ on tests being genuinely green at each merge; today that depends entirely on rev
 on push/PR to `develop` and `main`, mirroring CodeQL's existing trigger branches. This closes a gap the project's own
 architecture document already names.
 
-### 3. Award/Image CSV pipelines never persist — 🟡 Partially narrowed in v8.1.0
+**Outcome:** Delivered as `.github/workflows/build.yml`, triggered on push/PR to `main`/`develop`, mirroring
+`codeql.yml`'s trigger branches exactly as proposed. It sets up JDK 25 via `actions/setup-java` (Maven-cached), then
+runs `sh ./mvnw --batch-mode verify -Pcoverage` — `sh` rather than a direct `./mvnw` invocation, since `mvnw` isn't
+tracked with the execute bit in git and would otherwise fail with "Permission denied" on the Ubuntu runner — and
+uploads the JaCoCo HTML/XML report as a build artefact. `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates
+tables updated to match, dropping the stale "locally / by reviewers"/"All PRs" language. The `-Pcoverage` run also now
+enforces Gap #4's coverage-check rule, closing that gap's CI-wiring half in the same workflow. Delivered on a
+`feature/ci-build-test-gate` branch off `develop`, not a `release/*` branch; this release-prep pass fills in the
+closing version, v8.3.1.
 
-**Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.processCsv()`/
-`ImageService.processCsv()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
+### 3. Award/Image CSV pipelines never persist — ✅ Closed in v8.3.1
+
+**Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.createAwards()`/
+`ImageService.createImages()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
 
 **Why it matters:** `README.md` describes the platform as managing "IPSC match data, competitor tracking, club
 operations, awards" — but the only working endpoints today are stateless transforms. It's unclear from the documentation
@@ -117,7 +127,12 @@ Award/Image flow ("without persisting anything") in an adjacent data-flow sectio
 readers, but the underlying question for `AwardService`/`ImageService` themselves — deliberate design or oversight —
 is still unresolved and not yet stated explicitly in `README.md`/`ARCHITECTURE.md`.
 
-### 4. Coverage is measured but not enforced
+**Outcome:** Confirmed as deliberate: `AwardService`/`ImageService` CSV processing is intentionally stateless, not
+an unfinished persistence layer. `README.md`'s Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s
+Service Layer table/Award-Image CSV Processing Flow section now state this explicitly, resolving the ambiguity this
+gap's Proposed improvement asked to clarify. No persistence is planned for these two pipelines.
+
+### 4. Coverage is measured but not enforced — 🟡 Partially progressed in v8.3.1
 
 **Evidence:** `HISTORY.md` tracks line/branch coverage percentages release over release (97.3%/98.1% as of v7.2.0) via
 the JaCoCo `coverage` Maven profile, but nothing fails a build when coverage regresses. That v7.2.0 figure was never
@@ -143,6 +158,22 @@ three structurally-unreachable `IOException` catch blocks in the CSV `read*()` m
 never be null when checked), the still-unused `IpscConstants` class (no test-a-constants-class convention exists in
 this codebase), and `HpscWebApplication.main()` (excluded as impractical/low-value — testing it would start a real
 embedded server). `HISTORY.md`'s coverage figure still needs refreshing to this new baseline once #2's CI gate lands.
+
+**Further progress:** A `check` execution was added to the `coverage` profile's `jacoco-maven-plugin` (`BUNDLE`-level,
+`LINE`/`COVEREDRATIO` minimum `0.51`), wired into #2's new `build.yml` gate — a regression now fails the build rather
+than only surfacing in the next `HISTORY.md` entry, closing the CI-enforcement half of this gap's proposed
+improvement. The chosen 51% floor is deliberately a low-regression backstop, not "near the current baseline"
+(~98%) as originally proposed here; tightening it closer to the real baseline is left as a deliberate follow-up
+once the gate has run cleanly for a few releases, rather than risking a strict threshold blocking merges on day
+one. Not marked fully closed for that reason. This lands in v8.3.1; `HISTORY.md`'s coverage figure refresh for the
+current baseline (measured at 98.16%/98.94% line/branch as of this release-prep pass, 836 tests) is tracked as
+this release's own task in `improvement-plan-tasks.md` rather than assumed done here.
+
+**Tightened again (same branch, before v8.3.1 ships):** The `LINE`/`COVEREDRATIO` minimum was raised a second time,
+from `0.51` to `0.86` (86%), directly in `pom.xml` — sooner than the "once the gate has run cleanly for a few
+releases" plan stated just above, so worth confirming that acceleration is deliberate rather than reverting it here.
+Still not marked fully closed: 86% is meaningfully closer to the real baseline than 51% was, but still short of
+"near" the 98.16%/98.94% figure, and this new threshold hasn't yet run in CI to confirm it holds cleanly.
 
 ### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
@@ -236,7 +267,7 @@ in earlier versions of this document" stated they "have been removed pending a r
 import flow "a new, unrelated implementation, not a restoration of that removed flow" — leaving the match domain's
 equivalent undelivered and unmentioned as anything but historical.
 
-**Why it matters:** The same shape of gap that closed Gap #1 and is tracked as still-open for scoring/shooter-logs in
+**Why it matters:** The same shape of the gap that closed Gap #1 and is tracked as still-open for scoring/shooter-logs in
 Gap #6 — a capability the project's own architecture documentation named as deliberately deferred, for the second of
 the two domains (`IpscCompetitorController`/`IpscMatchController`) that share an otherwise-identical CRUD shape. Left
 unclosed, the asymmetry between "competitor bulk import exists, match bulk import doesn't" has no roadmap entry
@@ -263,12 +294,12 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 
 ## 🚀 Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                              |
-|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Add the CI build/test gate (#2) — lowest effort, closing a gap the project's own docs already flag. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed                                 |
-| **Next**    | Coverage enforcement (#4), now against the current, refreshed 92.9%/93.4% baseline; then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1 and #8 |
-| **Later**   | Clarify the remaining CSV persistence question (#3) for `AwardService`/`ImageService` as part of scoping the next domain feature                                                                                   |
-| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                    |
+| Phase       | Focus                                                                                                                                                                                                                                                                                                |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% within the same branch. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
+| **Next**    | Confirm #4's 86% floor holds cleanly in CI, then continue tightening it closer to the real baseline (~98%); then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                           |
+| **Later**   | No items currently scoped — #3, this phase's previous occupant, closed in v8.3.1                                                                                                                                                                                                                     |
+| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                      |
 
 ---
 
@@ -277,11 +308,17 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 - ✅ Met in v8.0.0: `IpscCompetitorController`/`IpscMatchController` expose real, tested endpoints backed by the
   existing entity/repository layer, closing the gap named identically in `README.md`, `ARCHITECTURE.md` and
   `CLAUDE.md`.
-- `./mvnw verify -Pcoverage` (or equivalent) runs automatically on PRs to `develop`/`main`, so `ARCHITECTURE.md`'s
-  CI/CD & Quality Gates table can drop the "locally / by reviewers" caveat on the `Build & Tests` row.
-- Coverage regressions fail CI rather than being caught only when the next `HISTORY.md` entry is written.
+- ✅ Met in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` automatically on push/PR to
+  `develop`/`main`; `ARCHITECTURE.md`'s CI/CD & Quality Gates table has dropped the "locally / by reviewers" caveat
+  on the `Build & Tests` row.
+- 🟡 Partially met in v8.3.1: an 86%-minimum JaCoCo `check` rule (raised from an initial 51% within the same
+  branch) fails CI on a real regression, but the floor is still below the ~98% actual baseline rather than "near"
+  it — fully met once that floor is tightened further.
 - ✅ Met in v8.2.0 (as not applicable): the `Static Analysis` row is gone from `ARCHITECTURE.md`'s CI/CD & Quality
   Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.
+- ✅ Met in v8.3.1: `AwardService`/`ImageService` CSV processing is confirmed intentionally stateless, and
+  `README.md`/`ARCHITECTURE.md` now say so explicitly, closing Gap #3's ambiguity between deliberate design and
+  oversight.
 - A real `MatchScoreController`/`ShooterLogController` (or equivalent) exists and is tested, closing the gap
   `README.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` currently described as "still being built".
 - ✅ Met in v8.3.0: `IpscMatchController.createMatches`/`IpscMatchService.createMatches` mirror the competitor bulk

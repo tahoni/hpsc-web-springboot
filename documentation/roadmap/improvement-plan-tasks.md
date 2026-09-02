@@ -15,14 +15,17 @@ evidence and reasoning there.
 
 ## 🚀 Now
 
-**CI build/test gate** *(improvement-plan.md → Gap #2)*
+**CI build/test gate** *(improvement-plan.md → Gap #2)* — ✅ Closed in v8.3.1
 
-- [ ] Add `.github/workflows/build.yml`, triggered on push/PR to `develop` and `main`, mirroring `codeql.yml`'s trigger
+- [x] Add `.github/workflows/build.yml`, triggered on push/PR to `develop` and `main`, mirroring `codeql.yml`'s trigger
   branches
-- [ ] Run `./mvnw verify -Pcoverage` as the workflow's build step
-- [ ] Confirm the workflow fails the PR check when a test fails (not just when the build doesn't compile)
-- [ ] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "locally / by reviewers" caveat on
-  the `Build & Tests` row
+- [x] Run `./mvnw verify -Pcoverage` as the workflow's build step — invoked as `sh ./mvnw ...` rather than a direct
+  `./mvnw ...`, since `mvnw` isn't tracked with the execute bit in git and would fail with "Permission denied" on
+  the Ubuntu runner otherwise
+- [x] Confirm the workflow fails the PR check when a test fails (not just when the build doesn't compile) — the
+  new JaCoCo `check` execution (see Gap #4 below) also fails it on a coverage regression, not just a test failure
+- [x] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "locally / by reviewers" caveat on
+  the `Build & Tests` row — `CONTRIBUTING.md`'s matching table updated too
 
 **Qodana CI wiring** *(improvement-plan.md → Gap #7)* — ✅ Closed as not applicable in v8.2.0
 
@@ -78,16 +81,21 @@ evidence and reasoning there.
 - [x] Update `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
   competitor-only endpoint/service/data-flow documentation to reflect the new endpoint
 
-**Coverage enforcement** *(improvement-plan.md → Gap #4)*
+**Coverage enforcement** *(improvement-plan.md → Gap #4)* — 🟡 Partially progressed in v8.3.1
 
 - [x] ~~Baseline the real coverage figure before setting a rule~~ — done: targeted tests for the exception
   hierarchy, the `models/ipsc/shared` scoring classes and every untested `patchCompetitor`/`patchMatch` field
   success-path brought the suite from 92.9%/93.4% to 98.34%/98.84% (line/branch), 746 → 775 tests
-- [ ] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile — the
-  baseline is now the refreshed 98.34%/98.84% (line/branch), not the earlier 92.9%/93.4% figure or the stale
-  97.3%/98.1% still recorded in `HISTORY.md`
-- [ ] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build
-- [ ] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number
+- [x] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile — done
+  differently: a `LINE`/`COVEREDRATIO` minimum, initially `0.51` (51%) as a deliberately low regression backstop,
+  then raised to `0.86` (86%) within this same branch — still short of "near the current baseline" (~98%), and not
+  yet confirmed to hold cleanly in CI at the new threshold
+- [x] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build — the
+  `check` execution runs as part of `build.yml`'s `./mvnw verify -Pcoverage` step
+- [x] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number — done in
+  v8.3.1: a fresh `./mvnw verify -Pcoverage` run measured the real current baseline at 98.16%/98.94% (line/branch),
+  836 tests, recorded in `HISTORY.md`'s Historical Timeline, Phase 24, Milestone 24 and Future Roadmap Implications
+  entries
 
 **Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)*
 
@@ -106,16 +114,18 @@ evidence and reasoning there.
 
 ## 🔬 Later
 
-**CSV persistence clarification** *(improvement-plan.md → Gap #3)* — 🟡 Partially narrowed in v8.1.0
+**CSV persistence clarification** *(improvement-plan.md → Gap #3)* — ✅ Closed in v8.3.1
 
 - [x] If persistence is intended: scope it as its own roadmap item once the service layer from the Next phase
   exists — done for the competitor domain specifically: `IpscCompetitorController.createCompetitors` (v8.1.0) is a
   scoped, deliberate persisting-CSV-import feature, and `ARCHITECTURE.md` now contrasts it directly against the
   Award/Image flow ("without persisting anything") in an adjacent data-flow section
-- [ ] Decide whether `AwardService`/`ImageService` CSV processing itself is meant to stay stateless by design or
-  should gain persistence — still undecided; the v8.1.0 contrast narrows the ambiguity but doesn't resolve it
-- [ ] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md` for `AwardService`/
-  `ImageService` themselves, not just by implication via the new competitor flow
+- [x] Decide whether `AwardService`/`ImageService` CSV processing itself is meant to stay stateless by design or
+  should gain persistence — decided in v8.3.1: confirmed intentionally stateless, no persistence planned
+- [x] If stateless by design: state that explicitly in `README.md`/`ARCHITECTURE.md` for `AwardService`/
+  `ImageService` themselves, not just by implication via the new competitor flow — done in v8.3.1: `README.md`'s
+  Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s Service Layer table/Award-Image CSV Processing
+  Flow section now say so explicitly
 
 ---
 

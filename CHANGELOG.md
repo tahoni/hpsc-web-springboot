@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.3.0](#-830---2026-09-02) ← Current
+- [🧾 Version 8.3.1](#-831---2026-09-02) ← Current
+- [🧾 Version 8.3.0](#-830---2026-09-02)
 - [🧾 Version 8.2.0](#-820---2026-09-01)
 - [🧾 Version 8.1.1](#-811---2026-09-01)
 - [🧾 Version 8.1.0](#-810---2026-09-01)
@@ -45,6 +46,45 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.3.1] - 2026-09-02
+
+### ➕ Added
+
+#### CI/CD
+
+- **`.github/workflows/build.yml`:** New workflow runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`,
+  mirroring `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests
+  via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git) and uploads the JaCoCo HTML/XML report as a
+  build artefact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
+
+### 🔄 Changed
+
+#### Configuration
+
+- **`pom.xml`:** New `jacoco-maven-plugin` `check` execution in the `coverage` profile enforces a `BUNDLE`-level
+  `LINE`/`COVEREDRATIO` minimum, initially `0.51` (51%) as a deliberately low regression backstop, then raised to
+  `0.86` (86%) within the same branch, wired into `build.yml`'s CI gate so a coverage regression fails the build —
+  still short of the ~98% real baseline. Partially progresses Gap #4
+
+#### Documentation
+
+- **`README.md`/`ARCHITECTURE.md`:** Confirmed `AwardService.createAwards()`/`ImageService.createImages()` CSV
+  processing is intentionally stateless by design, not an unfinished persistence layer — closes Gap #3
+- **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables updated to reflect the new `build.yml` gate
+  and JaCoCo coverage-check rule, dropping the stale "locally / by reviewers"/"All PRs" language
+- **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #2 closed in v8.3.1; Gap #3
+  closed in v8.3.1; Gap #4 marked partially progressed in v8.3.1, noting the refreshed coverage baseline
+  (98.16%/98.94% line/branch, 836 tests) and the JaCoCo floor tightened twice within the same branch (51% → 86%);
+  `HISTORY.md`'s coverage figure refresh is done, recorded in its Historical Timeline, Phase 24 and Milestone 24
+
+### 🐛 Fixed
+
+- **`ARCHITECTURE.md`/`documentation/roadmap/improvement-plan.md`:** Corrected stale `processCsv()` method
+  references (renamed to `createAwards()`/`createImages()` in v8.0.0) in the Award/Image CSV Processing Flow
+  diagram and Gap #3's Evidence text
+- **`AwardControllerTest`/`ImageControllerTest`:** Corrected stale `// processCsv()` test-grouping comments to
+  `// createAwards()`/`// createImages()`, matching the same v8.0.0 rename
 
 ## 🧾 [8.3.0] - 2026-09-02
 
@@ -245,7 +285,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`'s Release Checklist:** Re-synced against `prep-version-release`'s actual, current process, which had
   drifted ahead of it — adds a new step 1 to check `improvement-plan.md`/`improvement-plan-tasks.md` for gaps before
   version-specific work begins, a new step 4 to verify `CHANGELOG.md`'s `[Unreleased]` section is complete before
-  renaming it, and a new step 8 to update `CONTRIBUTING.md` when applicable, matching the skill's steps 2, 5 and 10
+  renaming it and a new step 8 to update `CONTRIBUTING.md` when applicable, matching the skill's steps 2, 5 and 10
   respectively (described tool-agnostically, without naming the skill). Also fixes a stale Build & Run Commands
   pointer that named only CodeQL/JaCoCo among `ARCHITECTURE.md`'s CI/CD gates, missing Qodana
 
