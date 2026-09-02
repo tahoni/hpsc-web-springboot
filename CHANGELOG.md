@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.2.0](#-820---2026-09-01) ← Current
+- [🧾 Version 8.3.0](#-830---2026-09-02) ← Current
+- [🧾 Version 8.2.0](#-820---2026-09-01)
 - [🧾 Version 8.1.1](#-811---2026-09-01)
 - [🧾 Version 8.1.0](#-810---2026-09-01)
 - [🧾 Version 8.0.0](#-800---2026-08-31)
@@ -44,6 +45,48 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.3.0] - 2026-09-02
+
+### ➕ Added
+
+#### Controllers
+
+- **`IpscMatchController`:** New `createMatches` endpoint (`POST /ipsc/matches/bulk`, consumes `text/csv`)
+  for bulk-creating IPSC matches, together with their stages, from CSV data, following the same
+  bulk-import convention as `IpscCompetitorController.createCompetitors`
+
+#### Services
+
+- **`IpscMatchService`/`IpscMatchServiceImpl`:** New `createMatches` method that parses CSV data into
+  `MatchRequestForCSV` rows and creates each match via the existing `createMatch` validation/club/
+  firearm-type/category-resolution logic; new `readMatches` and `toRequest` protected helpers mirror
+  `IpscCompetitorServiceImpl`'s CSV-parsing pattern, and a new `parseStages` helper splits a row's
+  semicolon-separated `Stages` cell into `MatchStageRequest`s, splitting each entry on its first `-` into
+  `<stageNumber>-<stageName>`
+
+#### Models
+
+- **`MatchRequestForCSV`:** New class-level Javadoc and `@JsonCreator` constructor, binding `MatchDate`/
+  `MatchName`/`Club`/`MatchFirearmType`/`MatchCategory`/`Stages` to their `UpperCamelCase`
+  column/property names for CSV/JSON deserialization — matching `CompetitorRequestForCSV`'s
+  pattern. The `stages` field is a single semicolon-separated CSV cell of
+  `<stageNumber>-<stageName>` entries (e.g. `"1-Stage One;2-Stage Two"`)
+- **`MatchResponseHolder`:** New response container (`models/ipsc/match/response/`) holding the
+  `MatchResponse`s created by a bulk CSV import, mirroring `CompetitorResponseHolder`
+
+#### Tests
+
+- **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON
+  (de)serialization, its CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
+  constructor's enforcement of `matchDate`/`matchName` as required creator properties
+- **`IpscMatchControllerTest`:** New tests covering `createMatches`'s `201` response, delegation to the
+  service and propagation of `ValidationException`/`NonFatalException`/`FatalException`
+- **`IpscMatchServiceTest`:** New tests covering `createMatches`'s CSV validation, row-level club/firearm-type/
+  category resolution, stage parsing and bulk persistence, exercised through the interface with mocked
+  repositories
+- **`IpscMatchServiceImplTest`:** New tests covering the impl-only `parseStages`/`readMatches`/`toRequest`
+  protected helper methods
 
 ## 🧾 [8.2.0] - 2026-09-01
 
