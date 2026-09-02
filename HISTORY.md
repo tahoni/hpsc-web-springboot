@@ -23,7 +23,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ### Version 8.3.1 (September 2, 2026)
 
-**Theme:** CI Build/Test Gate & Coverage Enforcement
+**Theme:** CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity
 
 **Key Focus:**
 
@@ -31,15 +31,22 @@ evolution of architecture, features and design philosophy across all versions.
   `codeql.yml`'s trigger branches — completes `documentation/roadmap/improvement-plan.md`'s Gap #2 (no automatic
   build/test gate on pull requests)
 - New JaCoCo `check` execution in `pom.xml`'s `coverage` profile enforces a `BUNDLE`-level `LINE`/`COVEREDRATIO`
-  minimum of `0.51` (51%), wired into the new CI gate so a coverage regression fails the build — a deliberately low
-  regression backstop rather than a threshold near the real baseline, since a fresh `./mvnw verify -Pcoverage` run
-  measured the actual current baseline at 98.16%/98.94% (line/branch), 836 tests — up from 775 at v8.1.1; tightening
-  the floor closer to that baseline is left as a follow-up once the gate has run cleanly for a few releases,
-  partially progressing Gap #4 (coverage measured but not enforced)
+  minimum, initially `0.51` (51%) as a deliberately low regression backstop, then raised to `0.86` (86%) within the
+  same branch, wired into the new CI gate so a coverage regression fails the build — still below the actual current
+  baseline, which a fresh `./mvnw verify -Pcoverage` run measured at 98.16%/98.94% (line/branch), 836 tests — up
+  from 775 at v8.1.1; further tightening the floor closer to that baseline is left as a follow-up once the 86%
+  threshold has run cleanly in CI, partially progressing Gap #4 (coverage measured but not enforced)
+- `AwardService.createAwards()`/`ImageService.createImages()` CSV processing confirmed intentionally stateless by
+  design, not an unfinished persistence layer — `README.md`/`ARCHITECTURE.md` now state this explicitly, closing
+  Gap #3 (open since v8.1.0)
 - `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to reflect the new gate and drop the
-  stale "locally / by reviewers"/"All PRs" language
-- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`: Gap #2 closed, Gap #4 marked partially
-  progressed
+  stale "locally / by reviewers"/"All PRs" language; `ARCHITECTURE.md`'s Award/Image CSV Processing Flow diagram and
+  `documentation/roadmap/improvement-plan.md`'s Gap #3 Evidence also corrected from the stale `processCsv()` method
+  name to `createAwards()`/`createImages()`, renamed back in v8.0.0
+- `AwardControllerTest`/`ImageControllerTest`'s stale `// processCsv()` test-grouping comments corrected to
+  `// createAwards()`/`// createImages()`
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`: Gap #2 closed, Gap #3 closed, Gap #4
+  marked partially progressed
 - Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 8.3.0 (September 2, 2026)
@@ -1133,13 +1140,14 @@ coverage.
 
 ---
 
-### Phase 24: CI Build/Test Gate & Coverage Enforcement (v8.3.1)
+### Phase 24: CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity (v8.3.1)
 
 **Duration:** September 2, 2026
 
-A process-and-quality patch release: no new domain feature, but a completed CI build/test gate and the project's
-first coverage-regression-enforcement rule, closing out work v8.1.1's coverage-regression fixes and Gap #4's
-baseline-setting groundwork left open.
+A process-and-quality patch release: no new domain feature, but a completed CI build/test gate, the project's first
+coverage-regression-enforcement rule (tightened twice within the same branch), and a resolved documentation
+ambiguity around Award/Image CSV persistence — closing out work v8.1.1's coverage-regression fixes and Gap #4's
+baseline-setting groundwork left open, plus Gap #3's design-intent question left open since v8.1.0.
 
 **Key Accomplishments:**
 
@@ -1153,17 +1161,29 @@ baseline-setting groundwork left open.
 **Coverage Enforcement**
 
 - New JaCoCo `check` execution in the `coverage` Maven profile enforces a `BUNDLE`-level `LINE`/`COVEREDRATIO`
-  minimum of `0.51` (51%), wired into the new CI gate so a coverage regression fails the build
-- A deliberately low regression backstop, not a threshold near the current baseline: a fresh coverage run measured
-  the real baseline at 98.16% line / 98.94% branch coverage (836 tests, up from 775 at v8.1.1) — tightening the
-  floor closer to that baseline is left as a follow-up once the gate has run cleanly for a few releases
+  minimum, wired into the new CI gate so a coverage regression fails the build
+- Set initially to `0.51` (51%) as a deliberately low regression backstop, then raised to `0.86` (86%) within the
+  same branch: a fresh coverage run measured the real baseline at 98.16% line / 98.94% branch coverage (836 tests,
+  up from 775 at v8.1.1) — tightening the floor further, closer to that baseline, is left as a follow-up once the
+  86% threshold has run cleanly in CI
+
+**CSV Persistence Clarity**
+
+- `AwardService.createAwards()`/`ImageService.createImages()` confirmed intentionally stateless by design, not an
+  unfinished persistence layer — `README.md`'s Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s
+  Service Layer table and Award/Image CSV Processing Flow section now say so explicitly
 
 **Documentation**
 
 - `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to reflect the new gate and rule,
   dropping the stale "locally / by reviewers"/"All PRs" language
+- `ARCHITECTURE.md`'s Award/Image CSV Processing Flow diagram and `documentation/roadmap/improvement-plan.md`'s
+  Gap #3 Evidence corrected from the stale `processCsv()` method name to `createAwards()`/`createImages()`, renamed
+  back in v8.0.0; `AwardControllerTest`/`ImageControllerTest`'s matching `// processCsv()` test-grouping comments
+  corrected the same way
 - `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`: Gap #2 (no automatic build/test gate)
-  closed; Gap #4 (coverage measured but not enforced) marked partially progressed
+  closed; Gap #3 (CSV persistence ambiguity) closed; Gap #4 (coverage measured but not enforced) marked partially
+  progressed
 
 **Architecture Highlights:**
 
@@ -1172,7 +1192,8 @@ baseline-setting groundwork left open.
 **Technical Focus:**
 
 - CI/CD quality gate completion (build/test automation)
-- Coverage-regression enforcement (a low, deliberate floor rather than a strict one)
+- Coverage-regression enforcement (tightened in two steps, still short of the real baseline)
+- Documentation-intent clarification (Award/Image CSV persistence)
 
 **Test Coverage:**
 
@@ -2204,17 +2225,20 @@ comprehensive test coverage across all services and utilities.
 
 ---
 
-### Milestone 24: CI Build/Test Gate & Coverage Enforcement (v8.3.1)
+### Milestone 24: CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity (v8.3.1)
 
 - New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing
   `improvement-plan.md`'s Gap #2
-- New JaCoCo `check` execution enforces a 51% `LINE`/`COVEREDRATIO` minimum, wired into the CI gate — a deliberately
-  low regression backstop against a real baseline of 98.16%/98.94% (line/branch), 836 tests
+- New JaCoCo `check` execution enforces a `LINE`/`COVEREDRATIO` minimum — 51% initially, then 86% within the same
+  branch — wired into the CI gate, still below the real baseline of 98.16%/98.94% (line/branch), 836 tests
+- `AwardService.createAwards()`/`ImageService.createImages()` confirmed intentionally stateless by design, closing
+  Gap #3
 - `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
 
-**Achievement:** Completed the CI build/test gate that had been running only "locally / by reviewers", and added the
-project's first coverage-regression rule — set deliberately low for now, against a freshly-measured real baseline of
-98.16%/98.94%, with tightening left as a follow-up.
+**Achievement:** Completed the CI build/test gate that had been running only "locally / by reviewers", added the
+project's first coverage-regression rule — tightened from 51% to 86% against a freshly-measured real baseline of
+98.16%/98.94%, with further tightening left as a follow-up — and resolved a standing design-intent ambiguity around
+Award/Image CSV persistence.
 
 ---
 
@@ -3219,9 +3243,11 @@ Based on the evolution to v8.3.1, the following areas are identified for future 
 ### Recently Completed (v8.3.1)
 
 - New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing Gap #2
-- New JaCoCo `check` execution enforces a 51% `LINE`/`COVEREDRATIO` minimum — a deliberately low regression backstop
-  against the real baseline (98.16%/98.94% line/branch, 836 tests, up from 775 tests / 98.34%/98.84% at v8.1.1),
-  partially progressing Gap #4
+- New JaCoCo `check` execution enforces a `LINE`/`COVEREDRATIO` minimum — 51% initially, then raised to 86% within
+  the same branch — still below the real baseline (98.16%/98.94% line/branch, 836 tests, up from 775 tests /
+  98.34%/98.84% at v8.1.1), partially progressing Gap #4
+- `AwardService.createAwards()`/`ImageService.createImages()` CSV processing confirmed intentionally stateless by
+  design, closing Gap #3
 - `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
 - Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
