@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
@@ -88,21 +89,43 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testCreateMatch_whenClubIsMissing_thenThrowsValidationException() {
+    void testCreateMatch_whenClubIsMissing_thenDefaultsToDefaultMatchClub() {
         // Arrange
+        stubDefaultClub();
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         MatchRequest request = validRequest(null);
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+        // Act
+        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
+
+        // Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER, response.getClub());
     }
 
     @Test
-    void testCreateMatch_whenClubIsBlank_thenThrowsValidationException() {
+    void testCreateMatch_whenClubIsBlank_thenDefaultsToDefaultMatchClub() {
         // Arrange
+        stubDefaultClub();
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         MatchRequest request = validRequest("  ");
 
+        // Act
+        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
+
+        // Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER, response.getClub());
+    }
+
+    @Test
+    void testCreateMatch_whenClubIsMissingAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)).thenReturn(Optional.empty());
+        MatchRequest request = validRequest(null);
+
         // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+        assertThrows(NonFatalException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
@@ -138,7 +161,7 @@ public class IpscMatchServiceTest {
     @Test
     void testCreateMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
         request.setMatchFirearmType("Not A Firearm Type");
 
@@ -149,7 +172,7 @@ public class IpscMatchServiceTest {
     @Test
     void testCreateMatch_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
         request.setMatchCategory("Not A Category");
 
@@ -160,7 +183,7 @@ public class IpscMatchServiceTest {
     @Test
     void testCreateMatch_whenRequestHasNoStages_thenReturnsMappedResponseWithEmptyStageList() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         MatchRequest request = validRequest("Test Club");
@@ -172,7 +195,7 @@ public class IpscMatchServiceTest {
         assertEquals(1L, response.getMatchId());
         assertEquals("Club Championship", response.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), response.getMatchDate());
-        assertEquals(ClubIdentifier.HPSC, response.getClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
         assertTrue(response.getStages().isEmpty());
@@ -181,7 +204,7 @@ public class IpscMatchServiceTest {
     @Test
     void testCreateMatch_whenRequestIncludesStages_thenPersistsStagesInOrder() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         stubStageSaveAssignsIncrementingId();
@@ -227,7 +250,7 @@ public class IpscMatchServiceTest {
     @Test
     void testCreateMatches_whenSingleValidRow_thenReturnsHolderWithMappedResponse() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         String csvData = """
@@ -241,13 +264,13 @@ public class IpscMatchServiceTest {
         // Assert
         assertEquals(1, holder.getMatches().size());
         assertEquals("Club Championship", holder.getMatches().getFirst().getMatchName());
-        assertEquals(ClubIdentifier.HPSC, holder.getMatches().getFirst().getClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, holder.getMatches().getFirst().getClub());
     }
 
     @Test
     void testCreateMatches_whenRowHasStages_thenStagesAreMappedInOrder() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         stubStageSaveAssignsIncrementingId();
@@ -271,7 +294,7 @@ public class IpscMatchServiceTest {
     @Test
     void testCreateMatches_whenMultipleValidRows_thenPersistsEachRowInOrder() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         String csvData = """
@@ -306,7 +329,7 @@ public class IpscMatchServiceTest {
     @Test
     void testCreateMatches_whenRowHasUnrecognisedFirearmType_thenThrowsValidationException() {
         // Arrange
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
                 2026-09-12,Club Championship,Test Club,Not A Firearm Type,%s,
@@ -366,7 +389,7 @@ public class IpscMatchServiceTest {
     @Test
     void testGetAllMatches_whenMatchesExist_thenReturnsAllWithStages() {
         // Arrange
-        Club club = newClub("Test Club", ClubIdentifier.HPSC);
+        Club club = newClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         IpscMatch first = new IpscMatch();
         first.setId(1L);
         first.setName("First Match");
@@ -414,7 +437,7 @@ public class IpscMatchServiceTest {
     @Test
     void testGetMatch_whenMatchExists_thenReturnsMatchWithStages() {
         // Arrange
-        Club club = newClub("Test Club", ClubIdentifier.HPSC);
+        Club club = newClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         IpscMatch match = new IpscMatch();
         match.setId(1L);
         match.setName("Club Championship");
@@ -488,7 +511,7 @@ public class IpscMatchServiceTest {
         existing.setId(1L);
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
-        stubExistingClub("Test Club", ClubIdentifier.HPSC);
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
@@ -499,7 +522,7 @@ public class IpscMatchServiceTest {
         MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
 
         // Assert
-        assertEquals(ClubIdentifier.HPSC, patched.getClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, patched.getClub());
     }
 
     @Test
@@ -579,7 +602,7 @@ public class IpscMatchServiceTest {
     @Test
     void testPatchMatch_whenOnlyMatchNameIsProvided_thenOnlyMatchNameChangesAndStagesAreUnchanged() {
         // Arrange
-        Club club = newClub("Test Club", ClubIdentifier.HPSC);
+        Club club = newClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
         existing.setName("Club Championship");
@@ -604,7 +627,7 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertEquals("Renamed Championship", patched.getMatchName());
-        assertEquals(ClubIdentifier.HPSC, patched.getClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, patched.getClub());
         assertEquals(1, patched.getStages().size());
         assertEquals("Stage 1", patched.getStages().getFirst().getStageName());
         verify(ipscMatchStageRepository, never()).save(any(IpscMatchStage.class));
@@ -771,6 +794,12 @@ public class IpscMatchServiceTest {
     private Club stubExistingClub(String name, ClubIdentifier identifier) {
         Club club = newClub(name, identifier);
         when(clubRepository.findByName(name)).thenReturn(Optional.of(club));
+        return club;
+    }
+
+    private Club stubDefaultClub() {
+        Club club = newClub("Eufees Clubs", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)).thenReturn(Optional.of(club));
         return club;
     }
 

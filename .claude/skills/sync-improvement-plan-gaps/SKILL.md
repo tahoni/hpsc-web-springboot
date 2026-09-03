@@ -39,16 +39,18 @@ Before drafting, run these yourself and read their output:
 5. `git --no-pager diff <merge-base>..HEAD` (full diff of this branch against its base)
 6. `git status --short` (working tree status — uncommitted changes, if any)
 7. `git --no-pager diff HEAD` (uncommitted diff, staged and unstaged, if any)
-8. Read `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` in full. For every gap that is
-   not already annotated `✅ Closed`, note its number, title and — most importantly — its **Proposed improvement**
-   text: that's the concrete claim you're checking the diff against.
+8. Read `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` in full. Both group gaps into
+   three status sections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — mirrored identically across the two
+   files. For every gap in 🟡 Partially Completed or ⚪ Open (i.e. not already annotated `✅ Closed`), note its
+   number, title and — most importantly — its **Proposed improvement** text: that's the concrete claim you're
+   checking the diff against.
 9. Read `AGENTS.md` in full for conventions.
 
 ## 🚀 Instructions
 
 1. **Combine the committed and uncommitted diffs** from steps 4–7 above into one change set — that's everything this
    branch introduces relative to its base.
-2. **For each open (or only-partially-progressed) gap**, decide whether the diff satisfies its Proposed improvement,
+2. **For each ⚪ Open (or 🟡 Partially Completed) gap**, decide whether the diff satisfies its Proposed improvement,
    in full or in part:
     - Read the gap's Proposed improvement text closely — a gap is only "closed" when the diff does what it actually
       asks, not merely something adjacent or related to the same area of code.
@@ -59,29 +61,32 @@ Before drafting, run these yourself and read their output:
 3. **Leave every gap this branch didn't touch exactly as it is.** This skill corrects/adds status for what changed on
    this branch — it does not re-litigate, reword or re-open gaps the branch had nothing to do with.
 4. **For a newly closed gap**, in `improvement-plan.md`:
-    - Append `— ✅ Closed in vX.Y.Z` to that gap's `###` header, where the version is read from the current
+    - Append `— ✅ Closed in vX.Y.Z` to that gap's `####` header, where the version is read from the current
       `release/vX.Y.Z` branch name (or, off a release branch, ask the user which version this will ship as — never
       guess or reuse an already-shipped version number).
     - Add an **Outcome:** paragraph describing what actually shipped and citing the specific files/commits, without
       deleting or rewriting the original Evidence/Why it matters/Proposed improvement analysis.
-5. **For a newly progressed (not yet closed) gap**, add a `— 🟡 Partially progressed in vX.Y.Z`-style suffix to the
+    - Move the whole `#### N. ...` block into the "✅ Completed" subsection of "🔍 Gaps & Improvement Opportunities"
+      (out of "🟡 Partially Completed" or "⚪ Open", wherever it currently sits).
+5. **For a newly progressed (not yet closed) gap**, add a `— 🟡 Partially completed in vX.Y.Z`-style suffix to the
    header and a **Progress:** paragraph describing what changed and what's still outstanding — matching the tone of
-   this plan's existing Progress/Outcome notes.
+   this plan's existing Progress/Outcome notes — then move the whole block into "🟡 Partially Completed" (replacing
+   its "*No gaps are currently partially completed*" placeholder text if it's currently empty).
 6. **Update the "⚙️ Goals & Constraints" table, the "🚀 Roadmap" table, and the "✅ Success Criteria" list** in
    `improvement-plan.md` wherever a status change above affects them (e.g. a gap moving out of the Now/Next phase, or
    a Success Criteria bullet becoming met); these drift out of sync with the gap list if touched inconsistently.
 7. **Never add a new gap number.** If the diff reveals something that looks like a genuinely new, previously untracked
    gap, mention it in the output below instead of adding it here — that's `update-improvement-plan-gaps`' job, not
    this skill's.
-8. **Mirror every status change into `improvement-plan-tasks.md`**, under the same Now/Next/Later/Ongoing phase
-   headers:
+8. **Mirror every status change into `improvement-plan-tasks.md`**, under the same ✅ Completed / 🟡 Partially
+   Completed / ⚪ Open sections:
     - Check off the specific task-list items this branch's diff fulfilled — **never delete a task line**, per the
       file's own closing instruction. Add a short note after each checked item explaining how it was actually
       fulfilled if that differs from the original wording.
     - Annotate the block's header the same way as the corresponding `improvement-plan.md` section (✅ Closed / 🟡
-      Partially progressed).
-    - If a gap's phase changes as a result (e.g. promoted from Later to Next because this branch met a precondition),
-      move its whole block to the new phase section rather than leaving a stale copy behind.
+      Partially completed).
+    - Move its whole block to the matching section (⚪ Open → 🟡 Partially Completed → ✅ Completed) as a result,
+      rather than leaving a stale copy behind. Never skip a section.
 
 Before finishing, run a line-wrap check on both files:
 

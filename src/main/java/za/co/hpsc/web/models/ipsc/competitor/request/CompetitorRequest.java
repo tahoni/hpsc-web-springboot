@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.HpscConstants;
+import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +34,7 @@ public class CompetitorRequest {
     /** The competitor's nickname, if any. */
     private String nickname;
     /** The competitor's date of birth. */
-    @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate dateOfBirth;
     /** The competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name. */
     private String gender;
@@ -44,8 +44,11 @@ public class CompetitorRequest {
     private Integer sapsaNumber;
     /** The competitor's number, as assigned for competition. */
     private String competitorNumber;
-    /** The competitor's home club membership number; must be unique across all competitors. */
-    @JsonProperty(required = true)
+    /**
+     * The competitor's HPSC membership number; must be unique across all competitors. Required
+     * when {@code homeClub} is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION},
+     * ignored (forced to {@code null}) otherwise.
+     */
     private String clubNumber;
     /** The competitor's national identity number. */
     private String idNumber;
@@ -67,8 +70,8 @@ public class CompetitorRequest {
      * @param homeClub         the name of the competitor's home club; resolved against existing clubs by name.
      * @param sapsaNumber      the competitor's SAPSA membership number.
      * @param competitorNumber the competitor's number, as assigned for competition.
-     * @param clubNumber       the competitor's home club membership number; must be unique across all competitors.
-     *                         Must not be null or blank.
+     * @param clubNumber       the competitor's HPSC membership number; must be unique across all competitors.
+     *                         Required when {@code homeClub} is HPSC, ignored (forced to {@code null}) otherwise.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
      * @param emailAddresses   the competitor's email addresses, if any.
@@ -84,7 +87,7 @@ public class CompetitorRequest {
                              @JsonProperty("homeClub") String homeClub,
                              @JsonProperty("sapsaNumber") Integer sapsaNumber,
                              @JsonProperty("competitorNumber") String competitorNumber,
-                             @JsonProperty(value = "clubNumber", required = true) String clubNumber,
+                             @JsonProperty("clubNumber") String clubNumber,
                              @JsonProperty("idNumber") String idNumber,
                              @JsonProperty("cellphoneNumber") String cellphoneNumber,
                              @JsonProperty("emailAddresses") List<String> emailAddresses) {

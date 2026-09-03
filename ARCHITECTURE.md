@@ -41,7 +41,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
 | API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
 | Validation        | Hibernate Validator, Jakarta Validation                             |
-| Testing           | JUnit, Mockito, Spring Test                                         |
+| Testing           | JUnit, Mockito, Spring Test, Spring REST Docs                       |
 | Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
 | Code generation   | Lombok                                                              |
 | Port / context    | `8081` / `/hpsc-web`                                                |
@@ -51,49 +51,42 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ## 📁 Project Structure
 
 ```text
+├───.claude/
+│   └───skills/                 # Claude Code skill definitions, one SKILL.md per skill
 ├───.github/
 │   └───workflows/              # GitHub Actions — CI/CD, CodeQL
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
 │   ├───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
+│   ├───recommendations/        # Fuller rationale/examples behind condensed AGENTS.md conventions
 │   └───roadmap/                # Concrete task-list breakdown of improvement-plan.md's gaps
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
-│   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
+│   │   ├───configs/            # Spring configuration (ControllerAdvice)
 │   │   ├───constants/          # Application-wide constants
-│   │   │                           HpscConstants, IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
-│   │   │                           AwardController, ImageController
-│   │   │                           IpscCompetitorController, IpscMatchController
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
-│   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
-│   │   │                           DivisionConverter, FirearmTypeConverter
-│   │   │                           MatchCategoryConverter, PowerFactorConverter
 │   │   ├───domain/             # JPA entities (database tables)
-│   │   │                           Club, Competitor, IpscMatch, IpscMatchStage
-│   │   │                           MatchCompetitor, MatchStageCompetitor
-│   │   │                           ShooterLog, ShooterLogCompetitor
 │   │   ├───enums/              # Domain enumerations
-│   │   │                           ClubIdentifier, CompetitorCategory, Division
-│   │   │                           FirearmType, MatchCategory, PowerFactor
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
 │   │   ├───models/             # DTOs, request/response models
-│   │   │   ├───award/          # Award request/response models
+│   │   │   ├───award/          # Award request/response/shared models
 │   │   │   ├───image/          # Image gallery request/response models
 │   │   │   ├───ipsc/
-│   │   │   │   ├───match/request/  # IPSC match/stage request DTOs, consumed by IpscMatchController
-│   │   │   │   ├───scores/request/ # IPSC competitor scores request DTOs (groundwork)
-│   │   │   │   └───shared/         # Comstock-scoring shared fields (groundwork)
-│   │   │   ├───shared/         # Placing
-│   │   │   └───(root)          # Request, Response, ControllerResponse
-│   │   ├───repositories/       # Spring Data JPA interfaces — Club/Competitor/IpscMatch/IpscMatchStage wired to the
-│   │   │                           IPSC services; MatchCompetitor/MatchStageCompetitor/ShooterLog* not yet wired
+│   │   │   │   ├───competitor/request/  # IPSC competitor request DTOs
+│   │   │   │   ├───competitor/response/ # IPSC competitor response DTOs
+│   │   │   │   ├───match/request/       # IPSC match/stage request DTOs
+│   │   │   │   ├───match/response/      # IPSC match/stage response DTOs
+│   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
+│   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
+│   │   │   └───(root)          # Top-level request/response wrapper models
+│   │   ├───repositories/       # Spring Data JPA interfaces — IPSC ones wired to services, the rest not yet wired
 │   │   ├───services/           # Service interfaces
 │   │   │   └───impl/           # Service implementations
 │   │   └───utils/              # Utility classes
-│   │                               DateUtil, NumberUtil, StringUtil, ValueUtil
 │   └───main/resources/
+│       ├───db/migration/       # Flyway migration scripts (V<X>_<Y>_<Z>__description.sql)
 │       ├───logback-spring.xml  # Logging configuration
 │       └───application*.properties
 └───src/test/java/za/co/hpsc/web/
@@ -142,8 +135,8 @@ Handles incoming HTTP requests. Does not contain business logic.
 
 | Controller                 | Mapping             | Responsibility                                               |
 |----------------------------|---------------------|--------------------------------------------------------------|
-| `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                                         |
-| `ImageController`          | `/hpsc-web/images`  | Image CSV processing                                         |
+| `AwardController`          | `/awards`           | Award CSV processing                                         |
+| `ImageController`          | `/images`           | Image CSV processing                                         |
 | `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import                       |
 | `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages, + bulk CSV import |
 
@@ -174,10 +167,10 @@ Contains all business logic.
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
 > rather than an import. See the Award/Image CSV Processing Flow below.
 
-> Both IPSC domains now support bulk CSV import, each persisting every row via the same validation/resolution logic
+> Both IPSC domains support bulk CSV import, each persisting every row via the same validation/resolution logic
 > as its single-item `create` endpoint: `IpscCompetitorController.createCompetitors`
-> (`IpscCompetitorService`/`IpscCompetitorServiceImpl`, v8.1.0) and `IpscMatchController.createMatches`
-> (`IpscMatchService`/`IpscMatchServiceImpl`, v8.3.0), which additionally parses a `Stages` CSV cell into
+> (`IpscCompetitorService`/`IpscCompetitorServiceImpl`) and `IpscMatchController.createMatches`
+> (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses a `Stages` CSV cell into
 > `MatchStageRequest`s via `parseStages`.
 
 ---
@@ -188,18 +181,19 @@ Contains all business logic.
 
 The JPA entities map to database tables:
 
-| Entity                 | Table                    | Key Relationships                                                                                     |
-|------------------------|--------------------------|-------------------------------------------------------------------------------------------------------|
-| `Club`                 | `club`                   | One-to-many → `IpscMatch`, `Competitor` (home club), `ShooterLog`                                     |
-| `Competitor`           | `competitor`             | Many-to-one ← `Club` (home club, optional); One-to-many → `MatchCompetitor`, `ShooterLog`             |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor`, `ShooterLogCompetitor`       |
-| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`                                       |
-| `MatchCompetitor`      | `match_competitor`       | Many-to-one ← `IpscMatch`, `Competitor`; One-to-many → `MatchStageCompetitor`, `ShooterLogCompetitor` |
-| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                                                     |
-| `ShooterLog`           | `shooter_log`            | Many-to-one ← `Competitor`, `Club`; One-to-many → `ShooterLogCompetitor`                              |
-| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one ← `ShooterLog`, `MatchCompetitor`, `IpscMatch`                                            |
+| Entity                 | Table                    | Key Relationships                                                                    |
+|------------------------|--------------------------|--------------------------------------------------------------------------------------|
+| `Club`                 | `club`                   | No outgoing references; targeted by `Competitor`, `IpscMatch` and `ShooterLog` below |
+| `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                                           |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                                 |
+| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one → `IpscMatch`                                                            |
+| `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                              |
+| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one → `MatchCompetitor`, `IpscMatchStage`                                    |
+| `ShooterLog`           | `shooter_log`            | Many-to-one → `Competitor`, `Club`                                                   |
+| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `MatchCompetitor`, `IpscMatch`                           |
 
-All bidirectional `@OneToMany` relationships include `mappedBy` to avoid duplicate join table creation.
+Every relationship is unidirectional: only the owning (child) side declares a `@ManyToOne`/`@JoinColumn`. No entity
+declares a back-referencing `@OneToMany` collection, so there is no `mappedBy` anywhere in the domain model.
 
 #### Custom JPA Attribute Converters (`za.co.hpsc.web.converters`)
 
@@ -212,6 +206,7 @@ All enum-typed entity fields use explicit `AttributeConverter` implementations r
 | `CompetitorCategoryConverter` | `CompetitorCategory` | String              |
 | `DivisionConverter`           | `Division`           | String              |
 | `FirearmTypeConverter`        | `FirearmType`        | String              |
+| `GenderConverter`             | `Gender`             | String              |
 | `MatchCategoryConverter`      | `MatchCategory`      | String              |
 | `PowerFactorConverter`        | `PowerFactor`        | String              |
 
@@ -228,10 +223,7 @@ DTOs and request/response models, grouped by feature domain:
 
 #### `models/award/` and `models/image/`
 
-Request/response models for the award and image CSV pipelines.
-
-#### `models/shared/`
-
+Request/response models for the award and image CSV pipelines. `models/award/shared/` additionally holds
 `Placing`, a shared result-placement model.
 
 #### Package root (`za.co.hpsc.web.models`)
@@ -276,8 +268,7 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 #### Constants (`za.co.hpsc.web.constants`)
 
-`HpscConstants`, `IpscConstants`, `SystemConstants` — application-wide constant definitions shared across services and
-converters.
+`IpscConstants`, `SystemConstants` — application-wide constant definitions shared across services and converters.
 
 ---
 
@@ -399,7 +390,7 @@ Client uploads CSV (Content-Type: text/csv)
 |-----------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
 | **Security Analysis** | CodeQL                                                                                       | Push / PR to `main` / `develop`; weekly schedule                        |
 | **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                        | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
+| **Code Coverage**     | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
 
 ---
 

@@ -18,11 +18,15 @@ public interface IpscCompetitorService {
     /**
      * Creates a new IPSC competitor.
      *
-     * @param request the competitor to create. Must not be null and must carry a first name,
-     *                last name and club number.
+     * @param request the competitor to create. Must not be null and must carry a first name and
+     *                last name; a club number is required only when {@code homeClub} is
+     *                {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION} and
+     *                is otherwise ignored (forced to {@code null}).
      * @return the created competitor, including its generated ID.
-     * @throws ValidationException if a required field is missing, or the gender doesn't match a
-     *                             known {@link za.co.hpsc.web.enums.Gender}.
+     * @throws ValidationException if a required field is missing, the gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}, or the home club is
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number.
      * @throws NonFatalException   if the named home club cannot be found.
      */
     CompetitorResponse createCompetitor(CompetitorRequest request) throws ValidationException, NonFatalException;
@@ -40,8 +44,10 @@ public interface IpscCompetitorService {
      * @return a {@link CompetitorResponseHolder} containing the created competitors, in the same
      * order as the CSV rows.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
-     *                             missing a required field, or if a row's gender doesn't match a
-     *                             known {@link za.co.hpsc.web.enums.Gender}.
+     *                             missing a required field, if a row's gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}, or if a row's home
+     *                             club is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number.
      * @throws NonFatalException   if a row's named home club cannot be found.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
@@ -53,10 +59,14 @@ public interface IpscCompetitorService {
      *
      * @param competitorId the identifier of the competitor to replace.
      * @param request      the competitor's replacement fields. Must not be null and must carry
-     *                     a first name, last name and club number.
+     *                     a first name and last name; a club number is required only when
+     *                     {@code homeClub} is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                     and is otherwise ignored (forced to {@code null}).
      * @return the updated competitor.
-     * @throws ValidationException if a required field is missing, or the gender doesn't match a
-     *                             known {@link za.co.hpsc.web.enums.Gender}.
+     * @throws ValidationException if a required field is missing, the gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}, or the home club is
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
@@ -69,10 +79,16 @@ public interface IpscCompetitorService {
      *
      * @param competitorId the identifier of the competitor to update.
      * @param request      the fields to change. Must not be null; any field left {@code null}
-     *                     is left unchanged.
+     *                     is left unchanged. Touching either {@code homeClub} or
+     *                     {@code clubNumber} re-applies the club number rule: required when the
+     *                     resulting home club is
+     *                     {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION},
+     *                     forced to {@code null} otherwise.
      * @return the updated competitor.
-     * @throws ValidationException if the club number is blank, or the gender doesn't match a
-     *                             known {@link za.co.hpsc.web.enums.Gender}.
+     * @throws ValidationException if the resulting home club is
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number, or the gender doesn't match a known
+     *                             {@link za.co.hpsc.web.enums.Gender}.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */

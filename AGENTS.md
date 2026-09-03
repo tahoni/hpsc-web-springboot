@@ -50,6 +50,15 @@ server.
 Exact pinned versions are not listed here — they drift with every dependency bump. Check `pom.xml` for the versions
 currently in use.
 
+**Flyway migration versioning is independent of the app version.** `db/migration/V<X>_<Y>_<Z>__description.sql`
+filenames are their own counter, baselined at `7.0.0` (`spring.flyway.baseline-version` in `pom.xml`/
+`application-local.properties`) to match the hand-built schema Flyway inherited when it was first wired up — they do
+**not** track `pom.xml`'s `<project><version>`. Most releases ship no schema change at all, so the two numbers drift
+apart by design; a new migration's version is simply the next one after the highest existing `db/migration` file,
+regardless of the app version at the time. Treat any resemblance between a migration version and an app version as
+coincidental — e.g. `V7_2_0__add_competitor_emails.sql` actually shipped in app v8.2.0, and there is a wholly
+unrelated app release literally named v7.2.0.
+
 ---
 
 ## 🚀 Build & Run Commands
@@ -97,6 +106,29 @@ diagrams.
 All exceptions should extend `FatalException`, `NonFatalException` or `ValidationException`. The `ControllerAdvice`
 automatically maps these to the correct HTTP status and JSON response shape — do not catch and re-throw as generic
 `RuntimeException`.
+
+### REST conventions
+
+- **URL paths** name the resource, not the action: plural nouns for collections (`/matches`, not `/match`), a path
+  variable to identify a single resource (`/matches/{matchId}`, not `/matches?id=`), and sub-resources nested under
+  their parent when they can't meaningfully exist independently of it. Never encode the HTTP verb into the path —
+  `@PostMapping` already says that; a path like `/matches/create` duplicates it.
+- **Handler methods** are named `<action><Resource>`, using the action word each HTTP verb typically maps to: `GET`
+  (collection) → `getAll`/`list`/`findAll`; `GET` (single) → `get`/`getById`/`find`; `POST` → `create`/`add`;
+  `PUT` → `update`/`replace`; `PATCH` → `patch`/`partialUpdate`; `DELETE` → `delete`/`remove`. `PUT` and `PATCH`
+  aren't interchangeable: `PUT` replaces the resource in full, `PATCH` applies only the fields the client sent.
+- See [`standard-rest-conventions.md`](documentation/recommendations/standard-rest-conventions.md) in
+  `documentation/recommendations/` for the full rationale and current-codebase examples.
+
+### Member ordering
+
+Within a class, order members: constructors first, then public methods, then — in a non-`final`, extendable
+("open") class — protected methods, then private methods last. Private helpers always sit at the very end, below
+every protected method, regardless of where they were originally declared; a class with no private helpers simply
+ends after its last protected method. Within each visibility group, keep the existing relative order rather than
+alphabetising — that stricter, alphabetised ordering is specific to test classes, per the Test Conventions below. A
+`final` utility class (e.g. `NumberUtil`, `IpscConstants`) can't be subclassed, so it has no protected members to
+place; its private helpers, if any, still go after every public method.
 
 ---
 
@@ -222,8 +254,18 @@ Four documentation-only folders supplement these:
   | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
   | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
-- **`documentation/recommendations/`** holds non-binding style guidance for topics `AGENTS.md`/`CLAUDE.md` don't
-  (yet) cover as a hard rule — e.g. `standard-rest-conventions.md`, REST endpoint/method naming.
+  Both group their gaps into three status sections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — mirrored
+  identically across the two files; a gap's number is assigned once and never reused or resequenced, so it stays
+  stable even as the gap moves between sections. A gap moves to 🟡 Partially Completed once it has a documented
+  Progress note (or, in `improvement-plan-tasks.md`, at least one checked item) but hasn't reached a final Outcome,
+  and to ✅ Completed once it has (its `###`/`####` header there gains a "✅ Closed in vX.Y.Z" suffix, or "✅ Closed
+  as not applicable in vX.Y.Z" if it was resolved by removing the thing rather than delivering it). Never delete or
+  renumber a gap or delete a checked task line when moving it between sections — only relocate the whole block.
+
+- **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
+  this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
+  conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the
+  Tech Stack section's Flyway note above).
 
 ---
 
@@ -265,6 +307,12 @@ Four documentation-only folders supplement these:
   same change.
 - Directories covered by `.gitignore` (e.g. `.idea/`, `target/`, `.run/`, `.junie/`, `logs/`) must never appear in that
   tree.
+- Tracked tooling directories — `.claude/` and `.github/` — do belong in the tree, even though they sit alongside
+  gitignored directories at the repository root: they hold version-controlled configuration (Claude Code skills, GitHub
+  Actions workflows) rather than local machine state.
+- Package/directory comments in the tree describe purpose generically and must never enumerate the individual classes
+  or files inside — classes are added, renamed and removed far more often than the packages that hold them, so a
+  listed class name goes stale quickly while the generic description keeps the tree evergreen.
 
 ---
 
@@ -350,9 +398,13 @@ anything downstream references them:
    account found, bots (e.g. `dependabot[bot]`, `ImgBotApp`) included.
 8. **Update `CONTRIBUTING.md`** only if this version's changes affect developer setup, database profiles, workflow or
    testing conventions documented there.
-9. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
-   `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
-10. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it
+9. **Verify `ARCHITECTURE.md`'s Project Structure tree against disk.** Per-change Directory Tree Maintenance
+   (above) still lets drift slip through, so treat every release as a backstop: cross-check the tree against the
+   actual repository structure and correct any directory that's missing, renamed or gone stale, including tracked
+   tooling directories (`.claude/`, `.github/`) — not just `src/`.
+10. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
+    `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
+11. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it
     small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only, no line-by-line
     detail. Structure:
     - `## 🎯 Summary` — two to four bullets on what the release is and why
