@@ -278,7 +278,7 @@ concept in this project:
 | 🌳   | Decision tree / quick reference       |
 | 🏆   | Most popular / prevailing convention  |
 | 🗝️   | Key principles                        |
-| ⏭️   | Next / upcoming                       |
+| ⏭️    | Next / upcoming                       |
 | ⏳   | Later / pending                       |
 | 🔁   | Ongoing / recurring                   |
 | ⚖️   | Comparison / trade-offs               |
@@ -329,7 +329,7 @@ Four documentation-only folders supplement these:
 the standard documentation set above:
 
 | File                        | Purpose                                                                                                          |
-|-----------------------------|--------------------------------------------------------------------------------------------------------------------|
+|-----------------------------|------------------------------------------------------------------------------------------------------------------|
 | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
