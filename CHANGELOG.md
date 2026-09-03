@@ -119,6 +119,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CONTRIBUTING.md`:** New REST endpoint/method naming bullet added to the "Rules enforced by convention" list
   (mirrors `AGENTS.md`'s new subsection); Database Profiles section's Flyway migration guidance extended to note
   that the version number is independent of the app version, per `AGENTS.md`'s Tech Stack note
+- **`AGENTS.md`:** New Release Checklist step 9 verifies `ARCHITECTURE.md`'s Project Structure tree against the
+  actual repository structure at every release — a backstop for the per-change Directory Tree Maintenance rule,
+  which this branch caught slipping (the tracked `.claude/skills/` directory and the removed `HpscConstants` class
+  both went stale in the tree before being caught here). Steps 9/10 renumbered to 10/11
 
 #### Models
 

@@ -377,9 +377,13 @@ anything downstream references them:
    account found, bots (e.g. `dependabot[bot]`, `ImgBotApp`) included.
 8. **Update `CONTRIBUTING.md`** only if this version's changes affect developer setup, database profiles, workflow or
    testing conventions documented there.
-9. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
-   `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
-10. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it
+9. **Verify `ARCHITECTURE.md`'s Project Structure tree against disk.** Per-change Directory Tree Maintenance
+   (above) still lets drift slip through, so treat every release as a backstop: cross-check the tree against the
+   actual repository structure and correct any directory that's missing, renamed or gone stale, including tracked
+   tooling directories (`.claude/`, `.github/`) — not just `src/`.
+10. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
+    `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
+11. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it
     small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only, no line-by-line
     detail. Structure:
     - `## 🎯 Summary` — two to four bullets on what the release is and why
