@@ -86,6 +86,62 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         return new MatchResponseHolder(matchResponseList);
     }
 
+    @Override
+    @Transactional
+    public MatchResponse updateMatch(Long matchId, MatchRequest request) throws FatalException {
+        validateForCreate(request);
+        IpscMatch match = findMatchOrThrow(matchId);
+
+        applyFields(match, request);
+        match = ipscMatchRepository.save(match);
+
+        List<IpscMatchStage> stages = replaceStages(match, request.getStages());
+        return toResponse(match, stages);
+    }
+
+    @Override
+    @Transactional
+    public MatchResponse patchMatch(Long matchId, MatchRequest request) throws FatalException {
+        IpscMatch match = findMatchOrThrow(matchId);
+
+        if (request.getClub() != null) {
+            match.setClub(resolveClub(request.getClub()));
+        }
+        if (request.getMatchName() != null) {
+            match.setName(request.getMatchName());
+        }
+        if (request.getMatchDate() != null) {
+            match.setScheduledDate(request.getMatchDate().atStartOfDay());
+        }
+        if (request.getMatchFirearmType() != null) {
+            match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
+        }
+        if (request.getMatchCategory() != null) {
+            match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
+        }
+        match = ipscMatchRepository.save(match);
+
+        List<IpscMatchStage> stages = (request.getStages() != null)
+                ? upsertStages(match, request.getStages())
+                : ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId);
+        return toResponse(match, stages);
+    }
+
+    @Override
+    public MatchResponse getMatch(Long matchId) {
+        IpscMatch match = findMatchOrThrow(matchId);
+        List<IpscMatchStage> stages = ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId);
+        return toResponse(match, stages);
+    }
+
+    @Override
+    public List<MatchResponse> getAllMatches() {
+        return ipscMatchRepository.findAll().stream()
+                .map(match -> toResponse(match,
+                        ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId())))
+                .toList();
+    }
+
     /**
      * Reads match data from a CSV-formatted string and converts it into a list of
      * {@link MatchRequestForCSV} objects.
@@ -173,62 +229,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
 
         return stages;
-    }
-
-    @Override
-    @Transactional
-    public MatchResponse updateMatch(Long matchId, MatchRequest request) throws FatalException {
-        validateForCreate(request);
-        IpscMatch match = findMatchOrThrow(matchId);
-
-        applyFields(match, request);
-        match = ipscMatchRepository.save(match);
-
-        List<IpscMatchStage> stages = replaceStages(match, request.getStages());
-        return toResponse(match, stages);
-    }
-
-    @Override
-    @Transactional
-    public MatchResponse patchMatch(Long matchId, MatchRequest request) throws FatalException {
-        IpscMatch match = findMatchOrThrow(matchId);
-
-        if (request.getClub() != null) {
-            match.setClub(resolveClub(request.getClub()));
-        }
-        if (request.getMatchName() != null) {
-            match.setName(request.getMatchName());
-        }
-        if (request.getMatchDate() != null) {
-            match.setScheduledDate(request.getMatchDate().atStartOfDay());
-        }
-        if (request.getMatchFirearmType() != null) {
-            match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
-        }
-        if (request.getMatchCategory() != null) {
-            match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
-        }
-        match = ipscMatchRepository.save(match);
-
-        List<IpscMatchStage> stages = (request.getStages() != null)
-                ? upsertStages(match, request.getStages())
-                : ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId);
-        return toResponse(match, stages);
-    }
-
-    @Override
-    public MatchResponse getMatch(Long matchId) {
-        IpscMatch match = findMatchOrThrow(matchId);
-        List<IpscMatchStage> stages = ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId);
-        return toResponse(match, stages);
-    }
-
-    @Override
-    public List<MatchResponse> getAllMatches() {
-        return ipscMatchRepository.findAll().stream()
-                .map(match -> toResponse(match,
-                        ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId())))
-                .toList();
     }
 
     /**

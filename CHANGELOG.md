@@ -143,6 +143,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   actual repository structure at every release — a backstop for the per-change Directory Tree Maintenance rule,
   which this branch caught slipping (the tracked `.claude/skills/` directory and the removed `HpscConstants` class
   both went stale in the tree before being caught here). Steps 9/10 renumbered to 10/11
+- **`AGENTS.md`:** New Member ordering subsection under Architecture — constructors, then public methods, then (in
+  a non-`final`, extendable class) protected methods, then private methods last, keeping each visibility group's
+  existing relative order rather than alphabetising (that stricter rule stays specific to test classes, per Test
+  Conventions). `CONTRIBUTING.md`'s "Rules enforced by convention" list gained a matching condensed bullet
 
 #### Models
 
@@ -160,6 +164,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorService`:** Same Javadoc link swap as `IpscCompetitorController` above, across
   `createCompetitor`/`createCompetitors`/`updateCompetitor`/`patchCompetitor`'s `@throws ValidationException`
   descriptions and their "home club is HPSC" parameter notes
+- **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Reordered to match the new Member ordering convention —
+  `readCompetitors`/`toRequest`/`splitEmailAddresses` and `readMatches`/`toRequest`/`parseStages` respectively were
+  each sitting between two public methods; moved down after every public method, alongside the rest of each
+  class's protected helpers. No behavioural change, purely a reorder
 
 #### Tests
 

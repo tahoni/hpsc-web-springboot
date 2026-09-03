@@ -77,6 +77,73 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         return new CompetitorResponseHolder(competitorResponseList);
     }
 
+    @Override
+    @Transactional
+    public CompetitorResponse updateCompetitor(Long competitorId, CompetitorRequest request) {
+        validateForCreate(request);
+        Competitor competitor = findCompetitorOrThrow(competitorId);
+
+        applyFields(competitor, request);
+        competitor = competitorRepository.save(competitor);
+
+        return toResponse(competitor);
+    }
+
+    @Override
+    @Transactional
+    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
+        Competitor competitor = findCompetitorOrThrow(competitorId);
+
+        if (request.getFirstName() != null) {
+            competitor.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            competitor.setLastName(request.getLastName());
+        }
+        if (request.getMiddleNames() != null) {
+            competitor.setMiddleNames(request.getMiddleNames());
+        }
+        if (request.getNickname() != null) {
+            competitor.setNickname(request.getNickname());
+        }
+        if (request.getDateOfBirth() != null) {
+            competitor.setDateOfBirth(request.getDateOfBirth());
+        }
+        if (request.getGender() != null) {
+            competitor.setGender(resolveGender(request.getGender()));
+        }
+        if (request.getHomeClub() != null) {
+            competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
+        }
+        if (request.getSapsaNumber() != null) {
+            competitor.setSapsaNumber(request.getSapsaNumber());
+        }
+        if (request.getCompetitorNumber() != null) {
+            competitor.setCompetitorNumber(request.getCompetitorNumber());
+        }
+        if ((request.getHomeClub() != null) || (request.getClubNumber() != null)) {
+            String clubNumber = (request.getClubNumber() != null) ? request.getClubNumber() : competitor.getClubNumber();
+            competitor.setClubNumber(resolveClubNumber(competitor.getHomeClub(), clubNumber));
+        }
+        if (request.getIdNumber() != null) {
+            competitor.setIdNumber(request.getIdNumber());
+        }
+        if (request.getCellphoneNumber() != null) {
+            competitor.setCellphoneNumber(request.getCellphoneNumber());
+        }
+        if (request.getEmailAddresses() != null) {
+            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
+        }
+        competitor = competitorRepository.save(competitor);
+
+        return toResponse(competitor);
+    }
+
+    @Override
+    public CompetitorResponse getCompetitor(Long competitorId) {
+        return toResponse(findCompetitorOrThrow(competitorId));
+    }
+
     /**
      * Reads competitor data from a CSV-formatted string and converts it into a list of
      * {@link CompetitorRequestForCSV} objects.
@@ -151,73 +218,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 .map(String::trim)
                 .filter(email -> !email.isBlank())
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional
-    public CompetitorResponse updateCompetitor(Long competitorId, CompetitorRequest request) {
-        validateForCreate(request);
-        Competitor competitor = findCompetitorOrThrow(competitorId);
-
-        applyFields(competitor, request);
-        competitor = competitorRepository.save(competitor);
-
-        return toResponse(competitor);
-    }
-
-    @Override
-    @Transactional
-    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
-        Competitor competitor = findCompetitorOrThrow(competitorId);
-
-        if (request.getFirstName() != null) {
-            competitor.setFirstName(request.getFirstName());
-        }
-        if (request.getLastName() != null) {
-            competitor.setLastName(request.getLastName());
-        }
-        if (request.getMiddleNames() != null) {
-            competitor.setMiddleNames(request.getMiddleNames());
-        }
-        if (request.getNickname() != null) {
-            competitor.setNickname(request.getNickname());
-        }
-        if (request.getDateOfBirth() != null) {
-            competitor.setDateOfBirth(request.getDateOfBirth());
-        }
-        if (request.getGender() != null) {
-            competitor.setGender(resolveGender(request.getGender()));
-        }
-        if (request.getHomeClub() != null) {
-            competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
-        }
-        if (request.getSapsaNumber() != null) {
-            competitor.setSapsaNumber(request.getSapsaNumber());
-        }
-        if (request.getCompetitorNumber() != null) {
-            competitor.setCompetitorNumber(request.getCompetitorNumber());
-        }
-        if ((request.getHomeClub() != null) || (request.getClubNumber() != null)) {
-            String clubNumber = (request.getClubNumber() != null) ? request.getClubNumber() : competitor.getClubNumber();
-            competitor.setClubNumber(resolveClubNumber(competitor.getHomeClub(), clubNumber));
-        }
-        if (request.getIdNumber() != null) {
-            competitor.setIdNumber(request.getIdNumber());
-        }
-        if (request.getCellphoneNumber() != null) {
-            competitor.setCellphoneNumber(request.getCellphoneNumber());
-        }
-        if (request.getEmailAddresses() != null) {
-            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
-        }
-        competitor = competitorRepository.save(competitor);
-
-        return toResponse(competitor);
-    }
-
-    @Override
-    public CompetitorResponse getCompetitor(Long competitorId) {
-        return toResponse(findCompetitorOrThrow(competitorId));
     }
 
     /**

@@ -139,6 +139,8 @@ HTTP Request
 - REST endpoints use plural nouns for collections and a path variable for a single resource (`/matches/{matchId}`,
   not `/matches?id=`); handler methods are named `<action><Resource>` matching the HTTP verb (e.g. `createMatch`,
   `getMatch`) — see [`AGENTS.md`](AGENTS.md#-architecture)'s REST conventions subsection.
+- A class's members are ordered constructors, then public methods, then (in a non-`final` class) protected methods,
+  then private methods last — see [`AGENTS.md`](AGENTS.md#-architecture)'s Member ordering subsection.
 
 ---
 

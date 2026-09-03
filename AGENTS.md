@@ -120,6 +120,16 @@ automatically maps these to the correct HTTP status and JSON response shape — 
 - See [`standard-rest-conventions.md`](documentation/recommendations/standard-rest-conventions.md) in
   `documentation/recommendations/` for the full rationale and current-codebase examples.
 
+### Member ordering
+
+Within a class, order members: constructors first, then public methods, then — in a non-`final`, extendable
+("open") class — protected methods, then private methods last. Private helpers always sit at the very end, below
+every protected method, regardless of where they were originally declared; a class with no private helpers simply
+ends after its last protected method. Within each visibility group, keep the existing relative order rather than
+alphabetising — that stricter, alphabetised ordering is specific to test classes, per Test Conventions below. A
+`final` utility class (e.g. `NumberUtil`, `IpscConstants`) can't be subclassed, so it has no protected members to
+place; its private helpers, if any, still go after every public method.
+
 ---
 
 ## 📝 Documentation Conventions
