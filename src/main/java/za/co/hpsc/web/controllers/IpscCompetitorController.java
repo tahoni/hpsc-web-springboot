@@ -47,7 +47,7 @@ public class IpscCompetitorController {
      *
      * @param request the competitor to create.
      * @return the created {@link CompetitorResponse}, including its generated ID.
-     * @throws ValidationException if a required field is missing, the gender is unrecognised, or
+     * @throws ValidationException if a required field is missing, the gender is unrecognised or
      *                             the home club is HPSC without a club number.
      * @throws NonFatalException   if the named home club cannot be found.
      */
@@ -123,7 +123,7 @@ public class IpscCompetitorController {
      * @param competitorId the identifier of the competitor to replace.
      * @param request      the competitor's replacement fields.
      * @return the updated {@link CompetitorResponse}.
-     * @throws ValidationException if a required field is missing, the gender is unrecognised, or
+     * @throws ValidationException if a required field is missing, the gender is unrecognised or
      *                             the home club is HPSC without a club number.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.

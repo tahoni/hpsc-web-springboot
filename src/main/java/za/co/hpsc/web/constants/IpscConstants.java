@@ -39,5 +39,7 @@ public final class IpscConstants {
 
     public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;
     public static final ClubIdentifier DEFAULT_MATCH_CLUB_IDENTIFIER = ClubIdentifier.ALL;
-    public static final ClubIdentifier HOME_CLUB_IDENTIFIER = ClubIdentifier.HPSC;
+
+    public static final String HOME_CLUB_ABBREVIATION = "HPSC";
+    public static final ClubIdentifier HOME_CLUB_IDENTIFIER = ClubIdentifier.fromAbbreviation(HOME_CLUB_ABBREVIATION).orElse(null);
 }

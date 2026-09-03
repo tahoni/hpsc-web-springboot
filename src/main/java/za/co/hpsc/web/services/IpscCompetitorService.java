@@ -19,7 +19,7 @@ public interface IpscCompetitorService {
      * Creates a new IPSC competitor.
      *
      * @param request the competitor to create. Must not be null and must carry a first name and
-     *                last name; a club number is required only when {@code homeClub} is HPSC, and
+     *                last name; a club number is required only when {@code homeClub} is HPSC and
      *                is otherwise ignored (forced to {@code null}).
      * @return the created competitor, including its generated ID.
      * @throws ValidationException if a required field is missing, the gender doesn't match a
@@ -57,7 +57,7 @@ public interface IpscCompetitorService {
      * @param competitorId the identifier of the competitor to replace.
      * @param request      the competitor's replacement fields. Must not be null and must carry
      *                     a first name and last name; a club number is required only when
-     *                     {@code homeClub} is HPSC, and is otherwise ignored (forced to
+     *                     {@code homeClub} is HPSC and is otherwise ignored (forced to
      *                     {@code null}).
      * @return the updated competitor.
      * @throws ValidationException if a required field is missing, the gender doesn't match a
