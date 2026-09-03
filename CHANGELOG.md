@@ -79,6 +79,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   established them — `README.md`/`ARCHITECTURE.md` first, then `AGENTS.md`/`CONTRIBUTING.md`, then
   `CHANGELOG.md`/`HISTORY.md`, then `RELEASE_NOTES.md`/PR description — rather than their prior arbitrary order
 
+### 🐛 Fixed
+
+#### Documentation
+
+- **`CHANGELOG.md`:** Removed a duplicate, truncated `## 🧾 [5.0.0] - 2026-02-24` section that preceded the real,
+  complete one — the duplicate heading text meant GitHub suffixed the second heading's anchor, so the Table of
+  Contents' "Version 5.0.0" link only ever reached the incomplete copy
+
 ## 🧾 [8.4.0] - 2026-09-03
 
 ### ➕ Added
@@ -2111,55 +2119,6 @@ No security-related changes in this release.
 
 - **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact duplicate
   at the end of the file
-
-### 🔐 Security
-
----
-
-## 🧾 [5.0.0] - 2026-02-24
-
-### ➕ Added
-
-#### Domain Entity Initialisation Framework
-
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database
-  lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for
-  predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository
-  lookup, optional entity creation and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID
-  generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper
-  relationship linking to parent match entities
-- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish
-  many-to-many relationships between matches and competitors
-- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation
-  of stage-specific competitor records with score and performance data
-
-#### IPSC Match Record Generation
-
-- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
-  comprehensive match records for external representation
-- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match
-  response records with embedded competitor data
-- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** -
-  Create detailed competitor match records with stage-wise performance data
-- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level
-  competitor records from database entities
-- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific
-  competitor records with individual stage scores
-
-#### Service Layer
-
-- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match results
-    - Improved edge case handling
-    - Better robustness in match result transformation
-    - Additional null-safety checks
-
-### ⚠️ Deprecated
-
-### 🗑️ Removed
 
 ### 🔐 Security
 
