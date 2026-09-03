@@ -395,6 +395,25 @@ class IpscCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testPatchCompetitor_whenClubNumberIsProvidedButHomeClubIsNotHpsc_thenClubNumberIsForcedNull() {
+        // Arrange
+        createClub("Other Club", ClubIdentifier.SOSC);
+        CompetitorRequest createRequest = validRequest("HPSC-001");
+        createRequest.setHomeClub("Other Club");
+        CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
+
+        CompetitorRequest patch = new CompetitorRequest();
+        patch.setClubNumber("HPSC-002");
+
+        // Act
+        CompetitorResponse patched = assertDoesNotThrow(
+                () -> ipscCompetitorService.patchCompetitor(created.getCompetitorId(), patch));
+
+        // Assert
+        assertNull(patched.getClubNumber());
+    }
+
+    @Test
     void testPatchCompetitor_whenHomeClubDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
         CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
