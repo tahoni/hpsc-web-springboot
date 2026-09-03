@@ -244,6 +244,14 @@ Four documentation-only folders supplement these:
   | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
   | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
+  Both group their gaps into three status sections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — mirrored
+  identically across the two files; a gap's number is assigned once and never reused or resequenced, so it stays
+  stable even as the gap moves between sections. A gap moves to 🟡 Partially Completed once it has a documented
+  Progress note (or, in `improvement-plan-tasks.md`, at least one checked item) but hasn't reached a final Outcome,
+  and to ✅ Completed once it has (its `###`/`####` header there gains a "✅ Closed in vX.Y.Z" suffix, or "✅ Closed
+  as not applicable in vX.Y.Z" if it was resolved by removing the thing rather than delivering it). Never delete or
+  renumber a gap, or delete a checked task line, when moving it between sections — only relocate the whole block.
+
 - **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
   this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
   conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the

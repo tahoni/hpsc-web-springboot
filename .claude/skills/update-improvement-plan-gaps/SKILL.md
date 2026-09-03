@@ -26,9 +26,11 @@ re-verify) — steer the audit toward it, but still do the full sweep below rath
 
 Read these fully before drafting anything — you cannot tell what's *new* without first knowing what's already tracked:
 
-1. `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md`, in full. Note every gap's number,
-   title, and current status (open / ✅ Closed in vX.Y.Z / 🟡 partially progressed) — this is the baseline you're
-   diffing against, and gap numbers are never reused or renumbered.
+1. `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md`, in full. Both group gaps into three
+   status sections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — mirrored identically across the two files.
+   Note every gap's number, title, current section and status suffix (✅ Closed in vX.Y.Z / 🟡 Partially completed
+   in vX.Y.Z / no suffix if ⚪ Open) — this is the baseline you're diffing against, and gap numbers are never
+   reused or renumbered, even when a gap moves between sections.
 2. `git branch --show-current` — if it's a `release/vX.Y.Z` branch, that's the version any newly closed gap should be
    annotated with; don't guess or reuse an already-shipped version number (a gap closed by work on this branch was
    **not** closed in whatever version `HISTORY.md`'s most recent entry already covers).
@@ -51,34 +53,40 @@ Look specifically for the same four things the plan's existing gaps were built f
 3. **A stale number.** A percentage, count or version reference stated in a doc that a quick check (e.g.
    `./mvnw verify -Pcoverage` for a coverage figure, or `git log --oneline | wc -l` for a commit count) shows is no
    longer accurate. Don't run expensive checks speculatively — only when a doc actually states a checkable number.
-4. **A newly met precondition on an existing gap.** Re-read each *open* gap's own text for phrases like "once X
-   exists" or "once the service layer lands" — if recent work (check `git log` since the gap was last touched) has
-   now satisfied that precondition, that gap's phase (Now/Next/Later) or status should move; even if it isn't fully
-   closed yet.
+4. **A newly met precondition on an existing gap.** Re-read each ⚪ Open (or 🟡 Partially Completed) gap's own text
+   for phrases like "once X exists" or "once the service layer lands" — if recent work (check `git log` since the
+   gap was last touched) has now satisfied that precondition, that gap's section should move; even if it isn't
+   fully closed yet.
 
 For anything you find, follow `improvement-plan.md`'s own established template exactly — read a couple of its
 existing gap sections first and match their shape and tone, not just their headings:
 
-- **New gap:** append `### N. <Title>` (next sequential number — never reuse or resequence existing numbers) under
-  "🔍 Gaps & Improvement Opportunities", with **Evidence:**, **Why it matters:**, and **Proposed improvement:**
-  paragraphs, citing the exact files/lines that back it up.
-- **Newly closed gap:** append a `— ✅ Closed in vX.Y.Z` suffix to that gap's `###` header (per step 2 above for the
-  version) and add an **Outcome:** paragraph — never delete or rewrite the original analysis, per the plan's own
-  "✅ Success Criteria" instruction to move closed items into `HISTORY.md` rather than erasing them here.
-- **Newly progressed (not yet closed) gap:** add a `— 🟡 Partially narrowed in vX.Y.Z`-style suffix and a
-  **Progress:** paragraph describing what changed and what's still open.
+- **New gap:** append `#### N. <Title>` (next sequential number — never reuse or resequence existing numbers) under
+  the "⚪ Open" subsection of "🔍 Gaps & Improvement Opportunities", with **Evidence:**, **Why it matters:**, and
+  **Proposed improvement:** paragraphs, citing the exact files/lines that back it up.
+- **Newly closed gap:** append a `— ✅ Closed in vX.Y.Z` suffix to that gap's `####` header (per step 2 above for
+  the version) and add an **Outcome:** paragraph, then move the whole `#### N. ...` block into the "✅ Completed"
+  subsection — never delete or rewrite the original analysis, per the plan's own "✅ Success Criteria" instruction
+  to move closed items into `HISTORY.md` rather than erasing them here.
+- **Newly progressed (not yet closed) gap:** add a `— 🟡 Partially completed in vX.Y.Z`-style suffix and a
+  **Progress:** paragraph describing what changed and what's still open, then move the whole block into the
+  "🟡 Partially Completed" subsection (replacing its "*No gaps are currently partially completed*" placeholder text
+  if it's currently empty).
 - Update the "⚙️ Goals & Constraints" table, the "🚀 Roadmap" table, and the "✅ Success Criteria" list to match
   every change made above — these three sections drift out of sync with the gap list if touched inconsistently.
 
-Then mirror every change into `improvement-plan-tasks.md`, under the same Now/Next/Later/Ongoing phase headers:
+Then mirror every change into `improvement-plan-tasks.md`, under the same ✅ Completed / 🟡 Partially Completed /
+⚪ Open sections:
 
-- A new gap gets a new checkbox block, placed under whichever phase its urgency warrants (match the phrasing style
-  of the "🚀 Roadmap" table entry you just wrote).
+- A new gap gets a new checkbox block under "⚪ Open" (match the phrasing style of the "🚀 Roadmap" table entry you
+  just wrote in `improvement-plan.md`).
 - Check off items in place for closed/progressed work — **never delete a task line**, per the file's own closing
   instruction. Add a short note after a checked item explaining how it was actually fulfilled if that differs from
   the original wording.
-- If a gap's phase changes (e.g. promoted from Later to Next because a precondition landed), move its whole block to
-  the new phase section rather than leaving a stale copy behind.
+- If a gap's status changes (e.g. its first item gets checked, or every item is now checked), move its whole
+  block to the matching section (⚪ Open → 🟡 Partially Completed → ✅ Completed) rather than leaving a stale
+  copy behind. Never skip a section (a gap with only some items checked belongs in 🟡 Partially Completed, not
+  ✅ Completed).
 
 Before finishing, run a line-wrap check on both files' diffs (100–120 characters; tables, code blocks and diagrams
 are exempt, per `AGENTS.md`'s Documentation Conventions):

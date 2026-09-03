@@ -54,7 +54,14 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 
 ## 🔍 Gaps & Improvement Opportunities
 
-### 1. Match/competitor service and controller layer is the single largest stated gap — ✅ Closed in v8.0.0
+Gaps are grouped by completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — and numbered sequentially
+across the whole document; a number is assigned once and never reused or resequenced, so it stays a gap's stable
+identifier even after it moves between sections as its status changes (e.g. Open → Partially Completed → Completed).
+Within each section, gaps stay in ascending number order.
+
+### ✅ Completed
+
+#### 1. Match/competitor service and controller layer is the single largest stated gap — ✅ Closed in v8.0.0
 
 **Evidence:** `README.md`, `ARCHITECTURE.md` and `CLAUDE.md` all independently flag that `IpscController` is an empty
 stub, that `repositories/` currently has no service-layer caller and that the service/model/entity-service layers
@@ -83,7 +90,7 @@ orchestration was deliberately held off per step 3 above, until v8.1.0's competi
 existing single-`createCompetitor` logic per row instead of introducing new orchestration. See
 [`improvement-plan-tasks.md`](improvement-plan-tasks.md#-next) for the full checklist.
 
-### 2. No automatic build/test gate on pull requests — ✅ Closed in v8.3.1
+#### 2. No automatic build/test gate on pull requests — ✅ Closed in v8.3.1
 
 **Evidence:** `ARCHITECTURE.md`'s own CI/CD & Quality Gates table states the `Build & Tests` gate runs "locally / by
 reviewers before merge" — `.github/workflows` contains only `codeql.yml` and, as of Gap #7, `qodana.yml`; neither
@@ -107,7 +114,7 @@ enforces Gap #4's coverage-check rule, closing that gap's CI-wiring half in the 
 `feature/ci-build-test-gate` branch off `develop`, not a `release/*` branch; this release-prep pass fills in the
 closing version, v8.3.1.
 
-### 3. Award/Image CSV pipelines never persist — ✅ Closed in v8.3.1
+#### 3. Award/Image CSV pipelines never persist — ✅ Closed in v8.3.1
 
 **Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.createAwards()`/
 `ImageService.createImages()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
@@ -132,7 +139,7 @@ an unfinished persistence layer. `README.md`'s Award Ceremonies/Image Gallery bu
 Service Layer table/Award-Image CSV Processing Flow section now state this explicitly, resolving the ambiguity this
 gap's Proposed improvement asked to clarify. No persistence is planned for these two pipelines.
 
-### 4. Coverage is measured but not enforced — ✅ Closed in v8.4.0
+#### 4. Coverage is measured but not enforced — ✅ Closed in v8.4.0
 
 **Evidence:** `HISTORY.md` tracks line/branch coverage percentages release over release (97.3%/98.1% as of v7.2.0) via
 the JaCoCo `coverage` Maven profile, but nothing fails a build when coverage regresses. That v7.2.0 figure was never
@@ -186,7 +193,7 @@ The `BRANCH` counter is still not separately enforced — only `LINE`, as establ
 in v8.3.1 — which remains a deliberate, documented deviation from the original "line/branch minimum" wording rather
 than an oversight.
 
-### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
+#### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
 **Evidence:** `pom.xml` explicitly pins `jackson-databind` to `2.21.5` with the comment: "Spring Boot 4.1.0 still
 manages jackson-databind (2.x) one patch behind its fix version; override it explicitly until a Spring Boot release
@@ -210,28 +217,7 @@ This category of clean-up recurs — re-check remaining manual overrides at each
 Checklist (this gap's Ongoing counterpart, #5's own recurring check, stays in force even though the specific
 overrides it named are gone).
 
-### 6. Match scoring / shooter-log service and controller layer are not yet built
-
-**Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
-match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
-built"; its `repositories/` package comment marks `MatchCompetitor`/`MatchStageCompetitor`/`ShooterLog*` as "not yet
-wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScoresRequest` "groundwork only — not yet
-consumed by any controller". `README.md` and `CONTRIBUTING.md` independently restate the same gap, and
-`documentation/history/RELEASE_NOTES_v8.1.0.md`'s Known Issues/Future Enhancements carry it forward from v8.0.0,
-explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
-"ready" for wiring.
-
-**Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
-controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
-"known gap" across the project's own documentation, yet was not separately tracked here.
-
-**Proposed improvement:** Apply the same phased pattern that closed Gap #1: introduce `MatchScoreService`/
-`ShooterLogService` (interface + `impl/` split) over the existing repositories, add controller endpoints backed by
-`@SpringBootTest` integration tests, and only then consider cross-entity orchestration (e.g. importing a full
-Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
-fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
-
-### 7. Qodana static analysis is configured but never runs in CI — ✅ Closed as not applicable in v8.2.0
+#### 7. Qodana static analysis is configured but never runs in CI — ✅ Closed as not applicable in v8.2.0
 
 **Evidence:** `ARCHITECTURE.md`'s CI/CD & Quality Gates table states the `Static Analysis` (Qodana JVM) gate is "Run
 locally / via IDE against `qodana.yaml` — no CI workflow wired up yet" — still true of `ARCHITECTURE.md` itself as
@@ -268,7 +254,7 @@ there was no working baseline to preserve, and re-enabling it would still requir
 secret this project doesn't currently have. This closes the gap as not applicable rather than as delivered — if
 static analysis in CI is wanted again in the future, it should be scoped as a new gap rather than reopening this one.
 
-### 8. Match bulk CSV import remains removed pending a rebuild — ✅ Closed in v8.3.0
+#### 8. Match bulk CSV import remains removed pending a rebuild — ✅ Closed in v8.3.0
 
 **Evidence:** `ARCHITECTURE.md`'s Feature Support and Service Layer tables described only competitor CRUD as having
 "bulk CSV import", listing match CRUD without it; its Service Layer note stated explicitly, "the wider match domain's
@@ -301,7 +287,7 @@ CSV-native nested-stage representation) a `parseStages` helper splitting the del
 `MatchStageRequest`s. `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
 competitor-only endpoint/service/data-flow documentation are updated in the same release to reflect this.
 
-### 9. `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — ✅ Closed in v8.4.0
+#### 9. `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — ✅ Closed in v8.4.0
 
 **Evidence:** `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER = ClubIdentifier.ALL` exists (added alongside
 `HOME_CLUB_IDENTIFIER` this branch) but is referenced nowhere else in `src/` — grepping the whole tree for
@@ -330,6 +316,35 @@ naming `"Eufees Clubs"`, remove the unused constant rather than leaving inert gr
 instead, mirroring `IpscCompetitorServiceImpl.resolveHomeClub`/`resolveClubNumber`'s "apply the domain default"
 pattern, and throwing `NonFatalException` if even the default club is missing. `MatchRequest`/`MatchRequestForCSV`'s
 `club` field Javadoc now documents the default explicitly.
+
+### 🟡 Partially Completed
+
+*No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
+`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
+but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+### ⚪ Open
+
+#### 6. Match scoring / shooter-log service and controller layer are not yet built
+
+**Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
+match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
+built"; its `repositories/` package comment marks `MatchCompetitor`/`MatchStageCompetitor`/`ShooterLog*` as "not yet
+wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScoresRequest` "groundwork only — not yet
+consumed by any controller". `README.md` and `CONTRIBUTING.md` independently restate the same gap, and
+`documentation/history/RELEASE_NOTES_v8.1.0.md`'s Known Issues/Future Enhancements carry it forward from v8.0.0,
+explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
+"ready" for wiring.
+
+**Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
+controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
+"known gap" across the project's own documentation, yet was not separately tracked here.
+
+**Proposed improvement:** Apply the same phased pattern that closed Gap #1: introduce `MatchScoreService`/
+`ShooterLogService` (interface + `impl/` split) over the existing repositories, add controller endpoints backed by
+`@SpringBootTest` integration tests, and only then consider cross-entity orchestration (e.g. importing a full
+Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
+fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
 ---
 
