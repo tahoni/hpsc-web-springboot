@@ -144,8 +144,8 @@ Handles incoming HTTP requests. Does not contain business logic.
 
 | Controller                 | Mapping             | Responsibility                                               |
 |----------------------------|---------------------|--------------------------------------------------------------|
-| `AwardController`          | `/hpsc-web/awards`  | Award CSV processing                                         |
-| `ImageController`          | `/hpsc-web/images`  | Image CSV processing                                         |
+| `AwardController`          | `/awards`           | Award CSV processing                                         |
+| `ImageController`          | `/images`           | Image CSV processing                                         |
 | `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import                       |
 | `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages, + bulk CSV import |
 

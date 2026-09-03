@@ -131,6 +131,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** Project Structure tree's `configs/` comment corrected from "Spring configuration
   (ControllerAdvice, OpenAPI)" to "Spring configuration (ControllerAdvice)" — `configs/` only contains
   `ControllerAdvice`; `@OpenAPIDefinition` is actually on `HpscWebApplication.java`
+- **`ARCHITECTURE.md`:** Presentation Layer table's Mapping column made consistent — `AwardController`/
+  `ImageController` were shown with the `/hpsc-web` context-path prefix while the IPSC controllers weren't, but
+  none of the actual `@RequestMapping` values include it (Spring prepends `server.servlet.context-path`
+  automatically). All four rows now show the mapping as declared in code
 
 ## 🧾 [8.3.1] - 2026-09-02
 
