@@ -163,6 +163,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   gained a clarifying bullet: tracked tooling directories (`.claude/`, `.github/`) belong in the tree, even though
   they sit alongside gitignored directories at the repository root — only `.gitignore`-covered directories are
   excluded from it
+- **`ARCHITECTURE.md`:** Project Structure tree brought fully in sync with disk, per the new Release Checklist
+  step above: added the previously undocumented `documentation/recommendations/` and
+  `src/main/resources/db/migration/` directories, and added `Gender`/`GenderConverter` to the `enums/`/
+  `converters/` class lists — both existed on disk already but were never added to the tree
 - **`documentation/recommendations/flyway-migration-versioning.md`:** Realigned the Current State table's column
   widths; a follow-up pass restored "sub-versions"' hyphen after an editor pass had dropped it to "subversions",
   which reads as "acts of subversion" rather than the intended meaning

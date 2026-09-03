@@ -59,6 +59,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
 │   ├───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
+│   ├───recommendations/        # Fuller rationale/examples behind condensed AGENTS.md conventions
 │   └───roadmap/                # Concrete task-list breakdown of improvement-plan.md's gaps
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
@@ -70,7 +71,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │                           IpscCompetitorController, IpscMatchController
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
 │   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
-│   │   │                           DivisionConverter, FirearmTypeConverter
+│   │   │                           DivisionConverter, FirearmTypeConverter, GenderConverter
 │   │   │                           MatchCategoryConverter, PowerFactorConverter
 │   │   ├───domain/             # JPA entities (database tables)
 │   │   │                           Club, Competitor, IpscMatch, IpscMatchStage
@@ -78,7 +79,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │                           ShooterLog, ShooterLogCompetitor
 │   │   ├───enums/              # Domain enumerations
 │   │   │                           ClubIdentifier, CompetitorCategory, Division
-│   │   │                           FirearmType, MatchCategory, PowerFactor
+│   │   │                           FirearmType, Gender, MatchCategory, PowerFactor
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
 │   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response/shared models, including the shared Placing model
@@ -98,6 +99,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   └───utils/              # Utility classes
 │   │                               DateUtil, NumberUtil, StringUtil, ValueUtil
 │   └───main/resources/
+│       ├───db/migration/       # Flyway migration scripts (V<X>_<Y>_<Z>__description.sql)
 │       ├───logback-spring.xml  # Logging configuration
 │       └───application*.properties
 └───src/test/java/za/co/hpsc/web/
