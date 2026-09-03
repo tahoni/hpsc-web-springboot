@@ -106,6 +106,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`HISTORY.md`:** Restored "Standards Adoption" in the Conclusion's bullet list after an earlier typo-fix pass
   had singularised it to "Standard Adoption", flipping its meaning and leaving it inconsistent with the Milestone 8
   heading
+- **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables' Code Coverage row corrected from a stale
+  "minimum 51% line coverage" to "minimum 97%", matching the floor `pom.xml` actually enforces since it was
+  tightened in this branch
 
 ## 🧾 [8.3.1] - 2026-09-02
 

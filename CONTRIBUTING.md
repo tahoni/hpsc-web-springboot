@@ -239,7 +239,7 @@ and `release/*` included — must never open a PR directly against `main`.
 |-----------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
 | **Security Analysis** | CodeQL                                                               | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`)                       |
 | **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`)                                   | Push / PR to `main` / `develop` (`.github/workflows/build.yml`); H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above                                        |
+| **Code Coverage**     | JaCoCo, minimum 97% line coverage (`check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above                                        |
 
 ---
 
