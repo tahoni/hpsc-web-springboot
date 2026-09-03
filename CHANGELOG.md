@@ -115,6 +115,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** Domain Entities table corrected — it described every relationship as bidirectional
   (`One-to-many ←/→`) with `mappedBy` collections, but the domain model has no `@OneToMany` fields at all; every
   relationship is unidirectional `@ManyToOne` from the child side. Table and its footnote rewritten to match
+- **`README.md`:** Installation and Execution steps corrected — they told a new developer to hand-edit
+  `application.properties` with a literal username/password against a `hpsc_db` database, but the application
+  actually reads credentials from `MYSQL_USER`/`MYSQL_PASSWORD` env vars regardless of profile and has no
+  `spring.datasource.url` outside a profile, so the documented steps couldn't actually start the app. Now mirrors
+  `CONTRIBUTING.md`'s `dev` profile flow (`hpsc_dev`) and links to it for the full profile matrix; the startup URL
+  corrected to include the `/hpsc-web` context path
 
 ## 🧾 [8.3.1] - 2026-09-02
 
