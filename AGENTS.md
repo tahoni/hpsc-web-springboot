@@ -107,6 +107,19 @@ All exceptions should extend `FatalException`, `NonFatalException` or `Validatio
 automatically maps these to the correct HTTP status and JSON response shape — do not catch and re-throw as generic
 `RuntimeException`.
 
+### REST conventions
+
+- **URL paths** name the resource, not the action: plural nouns for collections (`/matches`, not `/match`), a path
+  variable to identify a single resource (`/matches/{matchId}`, not `/matches?id=`), and sub-resources nested under
+  their parent when they can't meaningfully exist independently of it. Never encode the HTTP verb into the path —
+  `@PostMapping` already says that; a path like `/matches/create` duplicates it.
+- **Handler methods** are named `<action><Resource>`, using the action word each HTTP verb typically maps to: `GET`
+  (collection) → `getAll`/`list`/`findAll`; `GET` (single) → `get`/`getById`/`find`; `POST` → `create`/`add`;
+  `PUT` → `update`/`replace`; `PATCH` → `patch`/`partialUpdate`; `DELETE` → `delete`/`remove`. `PUT` and `PATCH`
+  aren't interchangeable: `PUT` replaces the resource in full, `PATCH` applies only the fields the client sent.
+- See [`standard-rest-conventions.md`](documentation/recommendations/standard-rest-conventions.md) in
+  `documentation/recommendations/` for the full rationale and current-codebase examples.
+
 ---
 
 ## 📝 Documentation Conventions
@@ -231,9 +244,10 @@ Four documentation-only folders supplement these:
   | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
   | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
-- **`documentation/recommendations/`** holds non-binding style guidance for topics `AGENTS.md`/`CLAUDE.md` don't
-  (yet) cover as a hard rule — e.g. `standard-rest-conventions.md` (REST endpoint/method naming) and
-  `flyway-migration-versioning.md` (why `db/migration` version numbers stay independent of the app version).
+- **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
+  this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
+  conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the
+  Tech Stack section's Flyway note above).
 
 ---
 

@@ -1,8 +1,9 @@
 # REST Conventions
 
 Recommended naming conventions for this project's REST endpoints — both the URL paths themselves and the Java handler
-methods behind them. Nothing here is currently enforced by [`AGENTS.md`](/AGENTS.md) or [`CLAUDE.md`](/CLAUDE.md); this
-document exists so new and rebuilt controllers converge on one consistent style rather than each reinventing it.
+methods behind them. [`AGENTS.md`](/AGENTS.md)'s Architecture section states the rules themselves as a condensed
+summary; this document expands on the reasoning and current-codebase examples behind them, so new and rebuilt
+controllers converge on one consistent style rather than each reinventing it.
 
 ## Table of Contents
 

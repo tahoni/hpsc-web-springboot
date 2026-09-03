@@ -75,7 +75,9 @@ detailed system design.
 
 Schema changes are managed by Flyway (`src/main/resources/db/migration/`) for every profile except `test`, where
 Hibernate generates the schema directly from the entities on each run. When you add or change a JPA entity, add a
-corresponding `V<version>__description.sql` migration.
+corresponding `V<version>__description.sql` migration. That version number is its own independent counter,
+baselined at `7.0.0` and incrementing from the highest existing migration file — it does **not** track `pom.xml`'s
+app version; see [`AGENTS.md`](AGENTS.md#-tech-stack)'s Flyway note for why.
 
 ---
 
@@ -134,6 +136,9 @@ HTTP Request
   them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException`.
 - Enum-typed entity fields use an explicit `AttributeConverter` (see `converters/`) rather than
   `@Enumerated(EnumType.STRING)`.
+- REST endpoints use plural nouns for collections and a path variable for a single resource (`/matches/{matchId}`,
+  not `/matches?id=`); handler methods are named `<action><Resource>` matching the HTTP verb (e.g. `createMatch`,
+  `getMatch`) — see [`AGENTS.md`](AGENTS.md#-architecture)'s REST conventions subsection.
 
 ---
 

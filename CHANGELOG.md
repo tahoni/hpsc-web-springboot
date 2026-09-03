@@ -84,6 +84,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   note — why independent versioning is the right call for this project, how to choose the next migration's version
   number, and a table of every existing migration against the app version it actually shipped in. Documentation
   File Map's `documentation/recommendations/` row updated to reference it
+- **`AGENTS.md`:** New REST conventions subsection under Architecture, condensing
+  `standard-rest-conventions.md`'s URL path/handler method naming rules into an actual convention rather than
+  leaving them purely non-binding; that recommendations doc's intro updated to point back to it
+- **`CONTRIBUTING.md`:** New REST endpoint/method naming bullet added to the "Rules enforced by convention" list
+  (mirrors `AGENTS.md`'s new subsection); Database Profiles section's Flyway migration guidance extended to note
+  that the version number is independent of the app version, per `AGENTS.md`'s Tech Stack note
 
 ### 🐛 Fixed
 
