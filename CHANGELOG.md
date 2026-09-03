@@ -123,6 +123,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`:** `🔄`'s registered concept corrected from "Changed items / data flow" to "Changed items /
   design patterns" — `ARCHITECTURE.md`'s actual "Data Flow" heading uses `🔀`, not `🔄`; `🔄` is really used for
   "Key Design Patterns", which the old description never reflected
+- **`HISTORY.md`:** "Future Roadmap Implications" heading used `🚀` instead of `🗺️`, despite naming the same
+  Roadmap concept `🗺️` is registered for and used consistently everywhere else — switched to `🗺️`
 
 ## 🧾 [8.4.0] - 2026-09-03
 
