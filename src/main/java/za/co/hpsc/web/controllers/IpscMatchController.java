@@ -52,7 +52,9 @@ public class IpscMatchController {
      * @return the created {@link MatchResponse}, including its generated ID and any persisted stages.
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if the named club cannot be found.
-     * @throws FatalException      if no club is named and {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
+     * @throws FatalException      if no club is named and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match", description = "Create a new IPSC match, optionally together with its stages.")
@@ -87,8 +89,8 @@ public class IpscMatchController {
      *                             unrecognised, or if a row's stages cell is malformed.
      * @throws NonFatalException   if a row's named club cannot be found.
      * @throws FatalException      if a critical error occurs during processing, that prevents the
-     *                             operation from completing successfully — including a row naming
-     *                             no club while {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             operation from completing successfully — including a row naming no club while
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
      */
     @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -130,7 +132,9 @@ public class IpscMatchController {
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
-     * @throws FatalException      if no club is named and {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
+     * @throws FatalException      if no club is named and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     @PutMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Replace match", description = "Fully replace an existing IPSC match's fields and stages.")
@@ -165,7 +169,9 @@ public class IpscMatchController {
      * @throws ValidationException if the named club is blank, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
-     * @throws FatalException      if the request's {@code club} is blank and {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
+     * @throws FatalException      if the request's {@code club} is blank and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     @PatchMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update match", description = "Partially update an existing IPSC match; only non-null fields are applied.")
