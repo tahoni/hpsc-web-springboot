@@ -42,7 +42,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                           |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                       |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                              |
-| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces an 86% JaCoCo line-coverage minimum (see Gap #2/#4); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
+| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real ~98.4% baseline in v8.4.0 (Gap #4 closed); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
 | `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                     |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                     |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                        |
@@ -185,11 +185,14 @@ Still not marked fully closed: 86% is meaningfully closer to the real baseline t
 **Outcome:** The 86% floor was confirmed holding cleanly in CI (`build.yml` succeeded on both the `develop` push and
 the `main` promotion that shipped v8.3.1). With that confirmed, the `LINE`/`COVEREDRATIO` minimum was tightened a
 third time, from `0.86` to `0.97` (97%) directly in `pom.xml` — deliberately just under the real baseline
-(98.16%/98.94% line/branch, still 836 tests as of this pass, confirmed unchanged by a fresh local
+(98.16%/98.94% line/branch, 836 tests as of that pass, confirmed unchanged by a fresh local
 `./mvnw verify -Pcoverage` run) rather than pinned exactly to it, leaving a small margin so ordinary line-count
 fluctuation doesn't trip the gate while still being genuinely "near" the baseline this gap's Proposed improvement
 asked for. Verified locally that `./mvnw verify -Pcoverage` passes cleanly at the new threshold before landing it.
-The `BRANCH` counter is still not separately enforced — only `LINE`, as established when this gate was first added
+The suite continued to grow afterwards, within the same v8.4.0 branch (further `resolveClub`/`FatalException`
+coverage and Javadoc/member-ordering passes); a final `./mvnw verify -Pcoverage` re-run at this release's prep time
+measured 98.44%/98.98% line/branch, 868 tests — still comfortably above the 97% floor. The `BRANCH` counter is
+still not separately enforced — only `LINE`, as established when this gate was first added
 in v8.3.1 — which remains a deliberate, documented deviation from the original "line/branch minimum" wording rather
 than an oversight.
 

@@ -82,6 +82,9 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   `build.yml` succeeding on both the `develop` push and the `main` promotion that shipped v8.3.1
   (`gh run list --workflow=build.yml`), then tightened to `0.97` in v8.4.0 and re-verified locally with a clean
   `./mvnw verify -Pcoverage` run before landing it
+- [x] Re-verify the coverage figure at this release's own prep time, since the suite kept growing after the `0.97`
+  tightening landed — a final `./mvnw verify -Pcoverage` run measured 98.44%/98.98% line/branch, 868 tests (up from
+  836), still comfortably clear of the 97% floor
 
 **Dependency currency check** *(improvement-plan.md → Gap #5)* — ✅ Closed in v8.1.1
 
