@@ -60,7 +60,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Enums
 
 - **`ClubIdentifier`:** New `ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) alongside the
-  existing club constants
+  existing club constants; class Javadoc extended to explain that `ALL` is used in the Match
+  domain to indicate a match hosted jointly by the three real clubs (`SOSC`, `HPSC`, `PMPSC`)
+  rather than by a single one of them
 
 ## 🧾 [8.3.1] - 2026-09-02
 
