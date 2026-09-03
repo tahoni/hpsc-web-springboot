@@ -48,6 +48,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Documentation
+
+- **`AGENTS.md`/`CONTRIBUTING.md`:** New "🧩 Claude Code Skills" section documenting the project-specific skills
+  under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
+  pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
+  sections
+
 ## 🧾 [8.4.0] - 2026-09-03
 
 ### ➕ Added

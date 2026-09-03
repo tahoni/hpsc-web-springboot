@@ -13,6 +13,7 @@ convention; no Claude-Code-specific content is split out from it.
 - [🏛️ Architecture](#-architecture)
 - [📝 Documentation Conventions](#-documentation-conventions)
 - [🗺️ Documentation File Map](#-documentation-file-map)
+- [🧩 Claude Code Skills](#-claude-code-skills)
 - [🧪 Test Conventions](#-test-conventions)
 - [📁 Directory Tree Maintenance](#-directory-tree-maintenance)
 - [🔀 Git Workflow](#-git-workflow)
@@ -214,6 +215,7 @@ genuinely new concept. Icons already established in this repository's documentat
 | ✅   | Quality attributes             |
 | 🔬   | CI/CD & quality gates          |
 | 🚢   | Release process                |
+| 🧩   | Tooling / automation           |
 
 ---
 
@@ -266,6 +268,29 @@ Four documentation-only folders supplement these:
   this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
   conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the
   Tech Stack section's Flyway note above).
+
+---
+
+## 🧩 Claude Code Skills
+
+`.claude/skills/` holds this repository's project-specific Claude Code skills, one `SKILL.md` per skill. Each encodes
+a workflow described elsewhere in this file — the Git Workflow conventions, the Release Checklist or the Test
+Conventions — as a repeatable, invokable procedure, so an agent doesn't have to reconstruct it from scratch each time:
+
+| Skill                          | Purpose                                                                                      |
+|--------------------------------|----------------------------------------------------------------------------------------------|
+| `generate-commit-message`      | Generate a commit message and matching `CHANGELOG.md` entry for the working tree's changes   |
+| `sync-unreleased-changes`      | Reconcile `CHANGELOG.md`'s `## 🧪 [Unreleased]` section against the current branch's changes |
+| `sync-improvement-plan-gaps`   | Mark gaps in `improvement-plan.md` as closed/progressed once a branch has addressed them     |
+| `update-improvement-plan-gaps` | Audit the codebase against `improvement-plan.md`/`improvement-plan-tasks.md` for new gaps    |
+| `prep-version-release`         | Prepare a release's `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md` and PR description      |
+| `generate-pr-summary`          | Condense a version's PR description and release notes into a short PR summary                |
+| `scaffold-unit-tests`          | Scaffold unit tests for a service, model or exception class, per the Test Conventions below  |
+| `scaffold-integration-tests`   | Scaffold `@SpringBootTest` integration tests for a service, per the Test Conventions below   |
+
+`.claude/` is a tracked tooling directory (see Directory Tree Maintenance below) — a new skill, or a change to an
+existing one, is committed like any other project file, and `ARCHITECTURE.md`'s Project Structure tree only needs
+updating if `.claude/`'s own layout changes, not for individual skill additions.
 
 ---
 

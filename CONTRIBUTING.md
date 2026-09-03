@@ -11,6 +11,7 @@ detailed system design.
 - [🗄️ Database Profiles](#-database-profiles)
 - [🧪 Running Tests](#-running-tests)
 - [🏛️ Architecture at a Glance](#-architecture-at-a-glance)
+- [🧩 Claude Code Skills](#-claude-code-skills)
 - [📚 Documentation Conventions](#-documentation-conventions)
 - [🗺️ Roadmap](#-roadmap)
 - [🔀 Git & PR Workflow](#-git--pr-workflow)
@@ -141,6 +142,17 @@ HTTP Request
   `getMatch`) — see [`AGENTS.md`](AGENTS.md#-architecture)'s REST conventions subsection.
 - A class's members are ordered constructors, then public methods, then (in a non-`final` class) protected methods,
   then private methods last — see [`AGENTS.md`](AGENTS.md#-architecture)'s Member ordering subsection.
+
+---
+
+## 🧩 Claude Code Skills
+
+If you're using Claude Code, this repository ships a set of project-specific skills under `.claude/skills/` (one
+`SKILL.md` per skill) that automate the workflows this document and [`AGENTS.md`](AGENTS.md) describe — generating a
+commit message, syncing `CHANGELOG.md`'s Unreleased section, scaffolding unit or integration tests or preparing a
+release. See [`AGENTS.md`'s Claude Code Skills section](AGENTS.md#-claude-code-skills) for the full list and what
+each one does. They're optional — everything they do can also be done by hand, following the conventions documented
+here — but they save re-deriving the same procedure each time.
 
 ---
 
