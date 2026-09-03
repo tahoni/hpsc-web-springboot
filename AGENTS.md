@@ -189,33 +189,46 @@ Every heading listed in a Table of Contents is prefixed with an emoji, and its T
 icon already established for a concept rather than inventing a new one; only pick a new emoji when introducing a
 genuinely new concept. Icons already established in this repository's documentation:
 
-| Icon | Concept                        |
-|------|--------------------------------|
-| 📖   | Introduction / overview        |
-| 🔗   | Repository / links             |
-| ⚙️   | Technology / configuration     |
-| ✨   | Features                       |
-| 🚀   | Instructions / getting started |
-| 📋   | Prerequisites                  |
-| 🔧   | Installation / setup           |
-| 📚   | Documentation                  |
-| 🧪   | Testing                        |
-| 🏛️   | Architecture                   |
-| 📜   | License                        |
-| 👤   | Author                         |
-| 🎯   | Theme / system overview        |
-| 🔄   | Changed items / data flow      |
-| ✅   | Quality attributes             |
-| 🔬   | CI/CD & quality gates          |
-| 📤   | Output                         |
-| 🚢   | Release process                |
-| 🧩   | Tooling / automation           |
-| ➕   | Added items                    |
-| 🐛   | Fixed items                    |
-| ⚠️   | Deprecated items               |
-| 🗑️   | Removed items                  |
-| 🔐   | Security                       |
-| 🔍   | Current state / inspection     |
+| Icon | Concept                           |
+|------|-----------------------------------|
+| 📖   | Introduction / overview           |
+| 🔗   | Repository / links                |
+| ⚙️   | Technology / configuration        |
+| ✨   | Features                          |
+| 🚀   | Instructions / getting started    |
+| 📋   | Prerequisites                     |
+| 🔧   | Installation / setup              |
+| 📚   | Documentation                     |
+| 🧪   | Testing                           |
+| 🏛️   | Architecture                      |
+| 📜   | License                           |
+| 👤   | Author                            |
+| 🎯   | Theme / system overview           |
+| 🔄   | Changed items / data flow         |
+| ✅   | Quality attributes                |
+| 🔬   | CI/CD & quality gates             |
+| 🔀   | Data flow / Git workflow          |
+| 📤   | Output                            |
+| 🚢   | Release process                   |
+| 🧩   | Tooling / automation              |
+| ➕   | Added items                       |
+| 🐛   | Fixed items                       |
+| ⚠️   | Deprecated items                  |
+| 🗑️   | Removed items                     |
+| 🔐   | Security                          |
+| 🧾   | Version entry                     |
+| 📅   | Timeline                          |
+| 💡   | Philosophy / rationale            |
+| 🎓   | Conclusion                        |
+| 🔍   | Current state / inspection        |
+| ⭐   | Key highlights                    |
+| 📦   | What's new / key changes          |
+| 📊   | Statistics                        |
+| 🧭   | Design notes                      |
+| 🔮   | Future enhancements               |
+| 👥   | Contributors                      |
+| 📝   | Notes                             |
+| 🛡️   | Robustness / validation hardening |
 
 ---
 
