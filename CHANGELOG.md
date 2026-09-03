@@ -138,6 +138,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** Technology Stack table's Testing row gained `Spring REST Docs`, matching `README.md`'s
   Technology section and the `spring-restdocs-mockmvc` dependency already declared in `pom.xml`
 
+### 🔐 Security
+
+- **`tomcat-embed-core`/`tomcat-embed-el`/`tomcat-embed-websocket`:** Overridden `11.0.24` → `11.0.25` via a new
+  `pom.xml` `tomcat.version` property, closing three critical GitHub-flagged advisories:
+  [CVE-2026-68525](https://nvd.nist.gov/vuln/detail/CVE-2026-68525) (GHSA-h3x4-894j-xpx5, FORM authentication
+  incorrect authorization), [CVE-2026-65905](https://nvd.nist.gov/vuln/detail/CVE-2026-65905)
+  (GHSA-9xv2-5v5q-p794, DIGEST authenticator replay bypass) and
+  [CVE-2026-65182](https://nvd.nist.gov/vuln/detail/CVE-2026-65182) (GHSA-gcx9-497g-6cp6, improper access
+  control) — all transitive via `spring-boot-starter-tomcat`, still pinned to `11.0.24` by
+  `spring-boot-starter-parent:4.1.1`'s dependency management with no newer 4.1.x release yet published
+
 ## 🧾 [8.3.1] - 2026-09-02
 
 ### ➕ Added
