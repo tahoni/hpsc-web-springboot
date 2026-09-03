@@ -83,6 +83,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `develop` and `main` `build.yml` runs that shipped v8.3.1. Closes
   `documentation/roadmap/improvement-plan.md`'s Gap #4
 
+#### Constants
+
+- **`SystemConstants`:** New `TIME_FORMAT` (`"HH:mm"`), `DEFAULT_DATE_FORMAT` (alias for `ISO_DATE_FORMAT`) and
+  `DEFAULT_DATE_TIME_FORMAT` (alias for `ISO_DATE_TIME_FORMAT`) constants; `ISO_DATE_TIME_FORMAT` now composes
+  from the new `TIME_FORMAT` instead of an inline `" HH:mm"` literal — same resulting `"yyyy-MM-dd HH:mm"` value.
+  Unused `LONG_DATE_FORMAT`/`LONG_DATE_TIME_FORMAT` dropped; nothing in the codebase referenced either
+
 #### Database
 
 - **`Competitor.clubNumber`:** Column relaxed from `nullable = false` to nullable, matching the new HPSC-only
@@ -106,6 +113,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CONTRIBUTING.md`:** New REST endpoint/method naming bullet added to the "Rules enforced by convention" list
   (mirrors `AGENTS.md`'s new subsection); Database Profiles section's Flyway migration guidance extended to note
   that the version number is independent of the app version, per `AGENTS.md`'s Tech Stack note
+
+#### Models
+
+- **`AwardRequestForCSV`, `CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`, `MatchRequestForCSV`:**
+  Each `LocalDate` field's `@JsonFormat(pattern = ...)` now points at `SystemConstants.DEFAULT_DATE_FORMAT`
+  (`AwardRequestForCSV.date`) or `IpscConstants.IPSC_INPUT_DATE_FORMAT` (the IPSC competitor/match classes'
+  `dateOfBirth`/`matchDate`) instead of the now-removed `HpscConstants.HPSC_INPUT_DATE_FORMAT` — every constant
+  resolves to the same `"yyyy-MM-dd"` pattern, so the accepted input format itself is unchanged
 
 ### 🐛 Fixed
 
@@ -153,6 +168,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   automatically). All four rows now show the mapping as declared in code
 - **`ARCHITECTURE.md`:** Technology Stack table's Testing row gained `Spring REST Docs`, matching `README.md`'s
   Technology section and the `spring-restdocs-mockmvc` dependency already declared in `pom.xml`
+
+### 🗑️ Removed
+
+#### Constants
+
+- **`HpscConstants`:** Removed entirely. Its sole constant, `HPSC_INPUT_DATE_FORMAT`, was just an alias for
+  `SystemConstants.ISO_DATE_FORMAT`; every former user now references `SystemConstants.DEFAULT_DATE_FORMAT` or
+  `IpscConstants.IPSC_INPUT_DATE_FORMAT` directly instead (see Changed → Models above)
 
 ### 🔐 Security
 
