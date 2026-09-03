@@ -22,9 +22,8 @@ public final class IpscConstants {
 
     /** Date pattern for every IPSC request DTO's date field (competitor date of birth, match date). */
     public static final String IPSC_INPUT_DATE_FORMAT = SystemConstants.ISO_DATE_FORMAT;
+    /** Date/time pattern for every IPSC request DTO's date/time field (match start time). */
     public static final String IPSC_INPUT_DATE_TIME_FORMAT = SystemConstants.ISO_DATE_TIME_FORMAT;
-    public static final String IPSC_OUTPUT_DATE_FORMAT = SystemConstants.ISO_DATE_FORMAT;
-    public static final String IPSC_OUTPUT_DATE_TIME_FORMAT = SystemConstants.ISO_DATE_TIME_FORMAT;
 
     public static final List<String> EXCLUDE_ICS_ALIAS = List.of("15000", "16000");
     public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS = List.of(ClubIdentifier.UNKNOWN);
@@ -41,7 +40,7 @@ public final class IpscConstants {
     public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;
     /**
      * Club identifier a match defaults to when its {@code club} field is omitted — the seeded joint-club record
-     * ({@code "Eufees Clubs"}). See {@link za.co.hpsc.web.services.impl.IpscMatchServiceImpl#resolveClub}.
+     * ({@code "Eufees Clubs"}).
      */
     public static final ClubIdentifier DEFAULT_MATCH_CLUB_IDENTIFIER = ClubIdentifier.ALL;
 

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * <p>
  * Extends {@link IpscCommonScore} with the values specific to a single stage: the
  * {@link #rawPoints} scored (alpha/charlie/delta hits weighted by the power factor less
- * no-shoots, misses, and penalties), and the resulting {@link #hitFactor} —
+ * no-shoots, misses and penalties), and the resulting {@link #hitFactor} —
  * {@code rawPoints / time}, using the inherited {@link IpscCommonScore#getTime() time} —
  * which is the figure Comstock stages are actually ranked on. The stage winner's hit factor
  * is the 100% benchmark that every other competitor's
