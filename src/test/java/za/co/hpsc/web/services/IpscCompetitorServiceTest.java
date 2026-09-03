@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
@@ -83,7 +84,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Club club = new Club();
         club.setName("HPSC");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("HPSC")).thenReturn(Optional.of(club));
 
         CompetitorRequest request = validRequest(null);
@@ -98,7 +99,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Club club = new Club();
         club.setName("HPSC");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("HPSC")).thenReturn(Optional.of(club));
 
         CompetitorRequest request = validRequest("  ");
@@ -183,7 +184,7 @@ public class IpscCompetitorServiceTest {
         Club club = new Club();
         club.setId(10L);
         club.setName("Test Club");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
         stubSaveReturnsSameEntity();
 
@@ -208,7 +209,7 @@ public class IpscCompetitorServiceTest {
         assertEquals("Ann", response.getMiddleNames());
         assertEquals("Janie", response.getNickname());
         assertEquals(Gender.Female, response.getGender());
-        assertEquals(ClubIdentifier.HPSC, response.getHomeClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getHomeClub());
         assertEquals(12345, response.getSapsaNumber());
         assertEquals("C-1", response.getCompetitorNumber());
         assertEquals("HPSC-001", response.getClubNumber());
@@ -272,7 +273,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Club club = new Club();
         club.setName("HPSC");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("HPSC")).thenReturn(Optional.of(club));
         stubSaveReturnsSameEntity();
         String csvData = """
@@ -409,7 +410,7 @@ public class IpscCompetitorServiceTest {
     void testPatchCompetitor_whenHomeClubIsHpscAndClubNumberIsBlank_thenThrowsValidationException() {
         // Arrange
         Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         Competitor existing = new Competitor();
         existing.setId(1L);
         existing.setHomeClub(club);
@@ -446,7 +447,7 @@ public class IpscCompetitorServiceTest {
     void testPatchCompetitor_whenHomeClubChangesToNonHpsc_thenClubNumberBecomesNull() {
         // Arrange
         Club existingClub = new Club();
-        existingClub.setIdentifier(ClubIdentifier.HPSC);
+        existingClub.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         Competitor existing = new Competitor();
         existing.setId(1L);
         existing.setHomeClub(existingClub);
@@ -478,7 +479,7 @@ public class IpscCompetitorServiceTest {
 
         Club club = new Club();
         club.setName("HPSC");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("HPSC")).thenReturn(Optional.of(club));
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -550,7 +551,7 @@ public class IpscCompetitorServiceTest {
         Club club = new Club();
         club.setId(10L);
         club.setName("Test Club");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
         stubSaveReturnsSameEntity();
 
@@ -562,7 +563,7 @@ public class IpscCompetitorServiceTest {
         CompetitorResponse patched = assertDoesNotThrow(() -> ipscCompetitorService.patchCompetitor(1L, patch));
 
         // Assert
-        assertEquals(ClubIdentifier.HPSC, patched.getHomeClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, patched.getHomeClub());
         assertEquals("HPSC-010", patched.getClubNumber());
     }
 
@@ -588,7 +589,7 @@ public class IpscCompetitorServiceTest {
     void testPatchCompetitor_whenClubNumberIsProvided_thenClubNumberChanges() {
         // Arrange
         Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         Competitor existing = new Competitor();
         existing.setId(1L);
         existing.setHomeClub(club);
@@ -730,7 +731,7 @@ public class IpscCompetitorServiceTest {
         Club otherClub = new Club();
         otherClub.setId(20L);
         otherClub.setName("Other Club");
-        otherClub.setIdentifier(ClubIdentifier.HPSC);
+        otherClub.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("Other Club")).thenReturn(Optional.of(otherClub));
         stubSaveReturnsSameEntity();
 
@@ -749,7 +750,7 @@ public class IpscCompetitorServiceTest {
         assertEquals("Different", updated.getFirstName());
         assertEquals("Name", updated.getLastName());
         assertEquals("HPSC-002", updated.getClubNumber());
-        assertEquals(ClubIdentifier.HPSC, updated.getHomeClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, updated.getHomeClub());
     }
 
     @Test

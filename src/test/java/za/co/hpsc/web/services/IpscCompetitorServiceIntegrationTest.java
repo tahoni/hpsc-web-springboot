@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
@@ -70,7 +71,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testCreateCompetitor_whenHomeClubIsHpscAndClubNumberIsBlank_thenThrowsValidationException() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         CompetitorRequest request = validRequest("  ");
         request.setHomeClub("Test Club");
 
@@ -129,7 +130,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testCreateCompetitor_whenRequestIsValid_thenPersistsCompetitor() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         CompetitorRequest request = validRequest("HPSC-001");
         request.setHomeClub("Test Club");
         request.setMiddleNames("Ann");
@@ -153,7 +154,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("Janie", response.getNickname());
         assertEquals(LocalDate.of(1990, 1, 1), response.getDateOfBirth());
         assertEquals(Gender.Female, response.getGender());
-        assertEquals(ClubIdentifier.HPSC, response.getHomeClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getHomeClub());
         assertEquals(12345, response.getSapsaNumber());
         assertEquals("C-1", response.getCompetitorNumber());
         assertEquals("HPSC-001", response.getClubNumber());
@@ -254,7 +255,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testCreateCompetitors_whenSingleRowWithAllFields_thenPersistsCompetitorWithAllFieldsMapped() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         String csvData = CSV_HEADER +
                 "Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com\n";
 
@@ -271,7 +272,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("Janie", response.getNickname());
         assertEquals(LocalDate.of(1990, 1, 1), response.getDateOfBirth());
         assertEquals(Gender.Female, response.getGender());
-        assertEquals(ClubIdentifier.HPSC, response.getHomeClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getHomeClub());
         assertEquals(12345, response.getSapsaNumber());
         assertEquals("C-1", response.getCompetitorNumber());
         assertEquals("HPSC-001", response.getClubNumber());
@@ -288,7 +289,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testCreateCompetitors_whenMultipleValidRows_thenPersistsEachCompetitorInOrder() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         String csvData = CSV_HEADER +
                 "Jane,Doe,,,,,Test Club,,,HPSC-001,,,\n" +
                 "John,Smith,,,,,Test Club,,,HPSC-002,,,\n";
@@ -341,7 +342,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testPatchCompetitor_whenOnlyFirstNameIsProvided_thenOnlyFirstNameChanges() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         CompetitorRequest createRequest = validRequest("HPSC-001");
         createRequest.setHomeClub("Test Club");
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
@@ -361,7 +362,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testPatchCompetitor_whenHomeClubIsHpscAndClubNumberIsBlank_thenThrowsValidationException() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         CompetitorRequest createRequest = validRequest("HPSC-001");
         createRequest.setHomeClub("Test Club");
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
@@ -376,7 +377,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testPatchCompetitor_whenHomeClubChangesToNonHpsc_thenClubNumberBecomesNull() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         createClub("Other Club", ClubIdentifier.SOSC);
         CompetitorRequest createRequest = validRequest("HPSC-001");
         createRequest.setHomeClub("Test Club");
@@ -491,7 +492,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testUpdateCompetitor_whenRequestIsValid_thenReplacesAllFields() {
         // Arrange
-        createClub("Other Club", ClubIdentifier.HPSC);
+        createClub("Other Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
 
         CompetitorRequest replacement = new CompetitorRequest();
@@ -508,7 +509,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("Different", updated.getFirstName());
         assertEquals("Name", updated.getLastName());
         assertEquals("HPSC-002", updated.getClubNumber());
-        assertEquals(ClubIdentifier.HPSC, updated.getHomeClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, updated.getHomeClub());
     }
 
     @Test
@@ -532,7 +533,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testUpdateCompetitor_whenHomeClubIsOmitted_thenExistingHomeClubIsCleared() {
         // Arrange
-        createClub("Test Club", ClubIdentifier.HPSC);
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         CompetitorRequest createRequest = validRequest("HPSC-001");
         createRequest.setHomeClub("Test Club");
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);

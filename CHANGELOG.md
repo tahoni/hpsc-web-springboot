@@ -134,6 +134,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `createCompetitor`/`createCompetitors`/`updateCompetitor`/`patchCompetitor`'s `@throws ValidationException`
   descriptions and their "home club is HPSC" parameter notes
 
+#### Tests
+
+- **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceIntegrationTest`,
+  `IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Hardcoded `ClubIdentifier.HPSC` references switched to
+  `IpscConstants.HOME_CLUB_IDENTIFIER`, matching production code's new constant; no behavioural change, since the
+  constant currently always resolves to `ClubIdentifier.HPSC`
+
 ### 🐛 Fixed
 
 #### Database

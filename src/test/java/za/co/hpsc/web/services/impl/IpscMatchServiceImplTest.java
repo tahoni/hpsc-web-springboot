@@ -6,10 +6,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.NonFatalException;
@@ -60,7 +60,7 @@ class IpscMatchServiceImplTest {
         Club club = new Club();
         club.setId(10L);
         club.setName("Test Club");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
         MatchRequest request = validRequest("Test Club");
         IpscMatch match = new IpscMatch();
@@ -447,7 +447,7 @@ class IpscMatchServiceImplTest {
     void testToResponse_whenMatchHasClub_thenMapsClubIdentifier() {
         // Arrange
         Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         IpscMatch match = new IpscMatch();
         match.setId(1L);
         match.setName("Club Championship");
@@ -463,7 +463,7 @@ class IpscMatchServiceImplTest {
         assertEquals(1L, response.getMatchId());
         assertEquals("Club Championship", response.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), response.getMatchDate());
-        assertEquals(ClubIdentifier.HPSC, response.getClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
     }
