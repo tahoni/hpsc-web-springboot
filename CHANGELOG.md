@@ -121,6 +121,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `spring.datasource.url` outside a profile, so the documented steps couldn't actually start the app. Now mirrors
   `CONTRIBUTING.md`'s `dev` profile flow (`hpsc_dev`) and links to it for the full profile matrix; the startup URL
   corrected to include the `/hpsc-web` context path
+- **`ARCHITECTURE.md`:** Project Structure tree and Model Layer section corrected — both described a top-level
+  `models/shared/` package holding `Placing`, but it actually lives at `models/award/shared/Placing.java`; no
+  top-level `models/shared/` package exists. The tree also gained the previously undocumented `models/ipsc/competitor/`
+  request/response directories and the `models/ipsc/match/response/` directory it was missing
 
 ## 🧾 [8.3.1] - 2026-09-02
 

@@ -79,13 +79,15 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │                           FirearmType, MatchCategory, PowerFactor
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
 │   │   ├───models/             # DTOs, request/response models
-│   │   │   ├───award/          # Award request/response models
+│   │   │   ├───award/          # Award request/response/shared models, including the shared Placing model
 │   │   │   ├───image/          # Image gallery request/response models
 │   │   │   ├───ipsc/
-│   │   │   │   ├───match/request/  # IPSC match/stage request DTOs, consumed by IpscMatchController
-│   │   │   │   ├───scores/request/ # IPSC competitor scores request DTOs (groundwork)
-│   │   │   │   └───shared/         # Comstock-scoring shared fields (groundwork)
-│   │   │   ├───shared/         # Placing
+│   │   │   │   ├───competitor/request/  # IPSC competitor request DTOs, consumed by IpscCompetitorController
+│   │   │   │   ├───competitor/response/ # IPSC competitor response DTOs
+│   │   │   │   ├───match/request/       # IPSC match/stage request DTOs, consumed by IpscMatchController
+│   │   │   │   ├───match/response/      # IPSC match/stage response DTOs
+│   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
+│   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
 │   │   │   └───(root)          # Request, Response, ControllerResponse
 │   │   ├───repositories/       # Spring Data JPA interfaces — Club/Competitor/IpscMatch/IpscMatchStage wired to the
 │   │   │                           IPSC services; MatchCompetitor/MatchStageCompetitor/ShooterLog* not yet wired
@@ -229,10 +231,7 @@ DTOs and request/response models, grouped by feature domain:
 
 #### `models/award/` and `models/image/`
 
-Request/response models for the award and image CSV pipelines.
-
-#### `models/shared/`
-
+Request/response models for the award and image CSV pipelines. `models/award/shared/` additionally holds
 `Placing`, a shared result-placement model.
 
 #### Package root (`za.co.hpsc.web.models`)
