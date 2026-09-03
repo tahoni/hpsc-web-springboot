@@ -81,21 +81,27 @@ evidence and reasoning there.
 - [x] Update `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
   competitor-only endpoint/service/data-flow documentation to reflect the new endpoint
 
-**Coverage enforcement** *(improvement-plan.md → Gap #4)* — 🟡 Partially progressed in v8.3.1
+**Coverage enforcement** *(improvement-plan.md → Gap #4)* — ✅ Closed in v8.4.0
 
 - [x] ~~Baseline the real coverage figure before setting a rule~~ — done: targeted tests for the exception
   hierarchy, the `models/ipsc/shared` scoring classes and every untested `patchCompetitor`/`patchMatch` field
   success-path brought the suite from 92.9%/93.4% to 98.34%/98.84% (line/branch), 746 → 775 tests
 - [x] Add a JaCoCo `<rule>` (line/branch minimum near the current baseline) to the `coverage` Maven profile — done
   differently: a `LINE`/`COVEREDRATIO` minimum, initially `0.51` (51%) as a deliberately low regression backstop,
-  then raised to `0.86` (86%) within this same branch — still short of "near the current baseline" (~98%), and not
-  yet confirmed to hold cleanly in CI at the new threshold
+  raised to `0.86` (86%) within the v8.3.1 branch, then to `0.97` (97%) in v8.4.0 once the 86% floor was confirmed
+  holding cleanly in CI — genuinely "near the current baseline" (98.16%/98.94%) now, with a small deliberate margin
+  rather than pinned exactly to it. `BRANCH` is still not separately enforced, only `LINE` — a documented deviation
+  from the original wording, not an oversight
 - [x] Wire that rule into the CI gate added in the Now phase, so a coverage regression fails the build — the
   `check` execution runs as part of `build.yml`'s `./mvnw verify -Pcoverage` step
 - [x] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number — done in
   v8.3.1: a fresh `./mvnw verify -Pcoverage` run measured the real current baseline at 98.16%/98.94% (line/branch),
   836 tests, recorded in `HISTORY.md`'s Historical Timeline, Phase 24, Milestone 24 and Future Roadmap Implications
   entries
+- [x] Confirm the 86% floor holds cleanly in CI, then tighten it closer to the real baseline — confirmed via
+  `build.yml` succeeding on both the `develop` push and the `main` promotion that shipped v8.3.1
+  (`gh run list --workflow=build.yml`), then tightened to `0.97` in v8.4.0 and re-verified locally with a clean
+  `./mvnw verify -Pcoverage` run before landing it
 
 **Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)*
 

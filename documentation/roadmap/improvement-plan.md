@@ -132,7 +132,7 @@ an unfinished persistence layer. `README.md`'s Award Ceremonies/Image Gallery bu
 Service Layer table/Award-Image CSV Processing Flow section now state this explicitly, resolving the ambiguity this
 gap's Proposed improvement asked to clarify. No persistence is planned for these two pipelines.
 
-### 4. Coverage is measured but not enforced — 🟡 Partially progressed in v8.3.1
+### 4. Coverage is measured but not enforced — ✅ Closed in v8.4.0
 
 **Evidence:** `HISTORY.md` tracks line/branch coverage percentages release over release (97.3%/98.1% as of v7.2.0) via
 the JaCoCo `coverage` Maven profile, but nothing fails a build when coverage regresses. That v7.2.0 figure was never
@@ -174,6 +174,17 @@ from `0.51` to `0.86` (86%), directly in `pom.xml` — sooner than the "once the
 releases" plan stated just above, so worth confirming that acceleration is deliberate rather than reverting it here.
 Still not marked fully closed: 86% is meaningfully closer to the real baseline than 51% was, but still short of
 "near" the 98.16%/98.94% figure, and this new threshold hasn't yet run in CI to confirm it holds cleanly.
+
+**Outcome:** The 86% floor was confirmed holding cleanly in CI (`build.yml` succeeded on both the `develop` push and
+the `main` promotion that shipped v8.3.1). With that confirmed, the `LINE`/`COVEREDRATIO` minimum was tightened a
+third time, from `0.86` to `0.97` (97%) directly in `pom.xml` — deliberately just under the real baseline
+(98.16%/98.94% line/branch, still 836 tests as of this pass, confirmed unchanged by a fresh local
+`./mvnw verify -Pcoverage` run) rather than pinned exactly to it, leaving a small margin so ordinary line-count
+fluctuation doesn't trip the gate while still being genuinely "near" the baseline this gap's Proposed improvement
+asked for. Verified locally that `./mvnw verify -Pcoverage` passes cleanly at the new threshold before landing it.
+The `BRANCH` counter is still not separately enforced — only `LINE`, as established when this gate was first added
+in v8.3.1 — which remains a deliberate, documented deviation from the original "line/branch minimum" wording rather
+than an oversight.
 
 ### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
@@ -296,8 +307,8 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% within the same branch. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
-| **Next**    | Confirm #4's 86% floor holds cleanly in CI, then continue tightening it closer to the real baseline (~98%); then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                           |
+| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% to 97% across v8.3.1/v8.4.0, now closed. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
+| **Next**    | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                                                                             |
 | **Later**   | No items currently scoped — #3, this phase's previous occupant, closed in v8.3.1                                                                                                                                                                                                                     |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                      |
 
@@ -311,9 +322,9 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 - ✅ Met in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` automatically on push/PR to
   `develop`/`main`; `ARCHITECTURE.md`'s CI/CD & Quality Gates table has dropped the "locally / by reviewers" caveat
   on the `Build & Tests` row.
-- 🟡 Partially met in v8.3.1: an 86%-minimum JaCoCo `check` rule (raised from an initial 51% within the same
-  branch) fails CI on a real regression, but the floor is still below the ~98% actual baseline rather than "near"
-  it — fully met once that floor is tightened further.
+- ✅ Met in v8.4.0: a 97%-minimum JaCoCo `check` rule (raised from 51% to 86% in v8.3.1, then to 97% here, once the
+  86% floor was confirmed holding cleanly in CI) fails CI on a real regression, and the floor now sits genuinely
+  near the ~98.16%/98.94% actual baseline rather than merely below it.
 - ✅ Met in v8.2.0 (as not applicable): the `Static Analysis` row is gone from `ARCHITECTURE.md`'s CI/CD & Quality
   Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.
 - ✅ Met in v8.3.1: `AwardService`/`ImageService` CSV processing is confirmed intentionally stateless, and

@@ -64,6 +64,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   domain to indicate a match hosted jointly by the three real clubs (`SOSC`, `HPSC`, `PMPSC`)
   rather than by a single one of them
 
+### 🔄 Changed
+
+#### Configuration
+
+- **`pom.xml`:** `jacoco-maven-plugin`'s `check` execution `LINE`/`COVEREDRATIO` minimum raised from `0.86` to
+  `0.97`, now genuinely near the real baseline (98.16%/98.94% line/branch, 836 tests, reconfirmed unchanged by a
+  fresh `./mvnw verify -Pcoverage` run) after the 86% floor was confirmed holding cleanly in CI on both the
+  `develop` and `main` `build.yml` runs that shipped v8.3.1. Closes
+  `documentation/roadmap/improvement-plan.md`'s Gap #4
+
 ## 🧾 [8.3.1] - 2026-09-02
 
 ### ➕ Added
