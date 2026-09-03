@@ -80,6 +80,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   independent counter, baselined at `7.0.0`, and do not track `pom.xml`'s app version — prompted by
   `V7_2_0__add_competitor_emails.sql` actually shipping in app v8.2.0, coinciding by name only with the wholly
   unrelated app release v7.2.0
+- **`documentation/recommendations/flyway-migration-versioning.md`:** New recommendations doc expanding on that
+  note — why independent versioning is the right call for this project, how to choose the next migration's version
+  number, and a table of every existing migration against the app version it actually shipped in. Documentation
+  File Map's `documentation/recommendations/` row updated to reference it
 
 ### 🐛 Fixed
 

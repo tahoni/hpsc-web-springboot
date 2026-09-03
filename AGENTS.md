@@ -232,7 +232,8 @@ Four documentation-only folders supplement these:
   | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
 - **`documentation/recommendations/`** holds non-binding style guidance for topics `AGENTS.md`/`CLAUDE.md` don't
-  (yet) cover as a hard rule — e.g. `standard-rest-conventions.md`, REST endpoint/method naming.
+  (yet) cover as a hard rule — e.g. `standard-rest-conventions.md` (REST endpoint/method naming) and
+  `flyway-migration-versioning.md` (why `db/migration` version numbers stay independent of the app version).
 
 ---
 
