@@ -81,6 +81,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `V7_2_0__add_competitor_emails.sql` actually shipping in app v8.2.0, coinciding by name only with the wholly
   unrelated app release v7.2.0
 
+### 🐛 Fixed
+
+#### Database
+
+- **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment
+  ("infrequently-changed" → "infrequently changed")
+
 ## 🧾 [8.3.1] - 2026-09-02
 
 ### ➕ Added
