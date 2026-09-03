@@ -229,6 +229,7 @@ genuinely new concept. Icons already established in this repository's documentat
 | 👥   | Contributors                      |
 | 📝   | Notes                             |
 | 🛡️   | Robustness / validation hardening |
+| 🔓   | Optional / relaxed constraint     |
 
 ---
 

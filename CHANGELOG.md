@@ -56,11 +56,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
   pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
   sections
-- **`AGENTS.md`:** 13 previously-unregistered icons added to the icon registry table, backfilling ones already in
+- **`AGENTS.md`:** 14 previously-unregistered icons added to the icon registry table, backfilling ones already in
   real use but missing from it — `🔀` (Data flow / Git workflow), `🧾` (Version entry), `📅` (Timeline), `💡`
   (Philosophy / rationale), `🎓` (Conclusion), `⭐` (Key highlights), `📦` (What's new / key changes), `📊`
-  (Statistics), `🧭` (Design notes), `🔮` (Future enhancements), `👥` (Contributors), `📝` (Notes) and `🛡️`
-  (Robustness / validation hardening, reused across several past releases' Key Highlights)
+  (Statistics), `🧭` (Design notes), `🔮` (Future enhancements), `👥` (Contributors), `📝` (Notes), `🛡️`
+  (Robustness / validation hardening, reused across several past releases' Key Highlights) and `🔓` (Optional /
+  relaxed constraint)
 
 ### 🔄 Changed
 
