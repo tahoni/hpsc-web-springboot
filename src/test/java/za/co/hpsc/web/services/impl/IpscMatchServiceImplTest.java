@@ -66,7 +66,7 @@ class IpscMatchServiceImplTest {
         IpscMatch match = new IpscMatch();
 
         // Act
-        ipscMatchServiceImpl.applyFields(match, request);
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.applyFields(match, request));
 
         // Assert
         assertSame(club, match.getClub());

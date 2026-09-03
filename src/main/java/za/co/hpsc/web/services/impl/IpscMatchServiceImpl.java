@@ -56,7 +56,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     @Override
     @Transactional
-    public MatchResponse createMatch(MatchRequest request) {
+    public MatchResponse createMatch(MatchRequest request) throws FatalException {
         validateForCreate(request);
 
         IpscMatch match = new IpscMatch();
@@ -176,7 +176,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     @Override
     @Transactional
-    public MatchResponse updateMatch(Long matchId, MatchRequest request) {
+    public MatchResponse updateMatch(Long matchId, MatchRequest request) throws FatalException {
         validateForCreate(request);
         IpscMatch match = findMatchOrThrow(matchId);
 
@@ -189,7 +189,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     @Override
     @Transactional
-    public MatchResponse patchMatch(Long matchId, MatchRequest request) {
+    public MatchResponse patchMatch(Long matchId, MatchRequest request) throws FatalException {
         IpscMatch match = findMatchOrThrow(matchId);
 
         if (request.getClub() != null) {
@@ -239,8 +239,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param request the request carrying the field values; must not be null.
      * @throws NonFatalException if the request's club name doesn't match an existing club, or no
      *                           club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
+     * @throws FatalException    if {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
      */
-    protected void applyFields(@NotNull IpscMatch match, @NotNull MatchRequest request) {
+    protected void applyFields(@NotNull IpscMatch match, @NotNull MatchRequest request) throws FatalException {
         match.setClub(resolveClub(request.getClub()));
         match.setName(request.getMatchName());
         match.setScheduledDate(request.getMatchDate().atStartOfDay());
@@ -334,9 +335,15 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing
      *                           club, or if no club exists for
      *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
+     * @throws FatalException    if {@code clubName} wasn't supplied and
+     *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
      */
-    protected Club resolveClub(String clubName) {
+    protected Club resolveClub(String clubName) throws FatalException {
         if ((clubName == null) || clubName.isBlank()) {
+            if (IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER == null) {
+                throw new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured.");
+            }
+
             return clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)
                     .orElseThrow(() -> new NonFatalException(
                             "No club found with identifier " + IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER));

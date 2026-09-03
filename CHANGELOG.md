@@ -79,8 +79,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (`ClubIdentifier.ALL`, the seeded `"Eufees Clubs"` club) instead of `validateForCreate` throwing
   `ValidationException("Club is required.")`. `IpscMatchServiceImpl.resolveClub()` now mirrors
   `IpscCompetitorServiceImpl.resolveHomeClub()`/`resolveClubNumber()`'s "apply the domain default" pattern,
-  throwing `NonFatalException` if even the default club is missing from the database. Closes
-  `documentation/roadmap/improvement-plan.md`'s Gap #9
+  throwing `NonFatalException` if even the default club is missing from the database, or a new `FatalException`
+  if `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` itself is null — a defensive check, since the constant is
+  always `ClubIdentifier.ALL` today. `IpscMatchService`'s `createMatch`/`updateMatch`/`patchMatch` (and
+  `IpscMatchController`'s matching endpoints) now declare `throws FatalException` to carry this; `resolveClub()`/
+  `applyFields()` do the same on the impl side. Closes `documentation/roadmap/improvement-plan.md`'s Gap #9
 
 #### Configuration
 
@@ -158,6 +161,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `whenClubIsMissing` cases that previously asserted `ValidationException` now assert the club defaults to
   `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER`, matching the behaviour change above; new cases cover
   `resolveClub`/`createMatch` throwing `NonFatalException` when even the default club is missing
+- **`IpscMatchServiceImplTest`, `IpscMatchServiceIntegrationTest`, `IpscMatchControllerTest`:** Test methods that
+  call `createMatch`/`updateMatch`/`patchMatch`/`applyFields` directly (as fixture setup or the method under
+  test) now declare/wrap for the new checked `FatalException`, matching the production signature changes above;
+  no behavioural change to the tests themselves
 
 ### 🐛 Fixed
 
