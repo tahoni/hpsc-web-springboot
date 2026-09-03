@@ -83,7 +83,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   if `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` itself is null — a defensive check, since the constant is
   always `ClubIdentifier.ALL` today. `IpscMatchService`'s `createMatch`/`updateMatch`/`patchMatch` (and
   `IpscMatchController`'s matching endpoints) now declare `throws FatalException` to carry this; `resolveClub()`/
-  `applyFields()` do the same on the impl side. Closes `documentation/roadmap/improvement-plan.md`'s Gap #9
+  `applyFields()` do the same on the impl side. `resolveClub(String)` now delegates to a new
+  `resolveClub(String, ClubIdentifier)` overload that takes the default identifier as a parameter rather than
+  reading the constant directly — the same "stays unit testable if that constant were ever null" pattern
+  `IpscCompetitorServiceImpl.isHpscMember()` already uses for `HOME_CLUB_IDENTIFIER`. Closes
+  `documentation/roadmap/improvement-plan.md`'s Gap #9
 
 #### Configuration
 
@@ -165,6 +169,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   call `createMatch`/`updateMatch`/`patchMatch`/`applyFields` directly (as fixture setup or the method under
   test) now declare/wrap for the new checked `FatalException`, matching the production signature changes above;
   no behavioural change to the tests themselves
+- **`IpscMatchServiceImplTest`:** New `resolveClub(String, ClubIdentifier)` cases cover the new overload directly:
+  throwing `FatalException` when the default identifier is null (with a null or blank club name), and correctly
+  ignoring the default identifier when a club name is supplied
+- **`IpscMatchControllerTest`:** New `testCreateMatch_whenServiceThrowsFatalException_thenExceptionPropagates`,
+  `testPatchMatch_whenServiceThrowsFatalException_thenExceptionPropagates` and
+  `testUpdateMatch_whenServiceThrowsFatalException_thenExceptionPropagates` cases confirm a `FatalException`
+  thrown by the service propagates through the controller, mirroring the existing `createMatches` coverage for
+  the same exception type
 
 ### 🐛 Fixed
 

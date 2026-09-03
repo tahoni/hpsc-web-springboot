@@ -12,6 +12,7 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
@@ -414,6 +415,32 @@ class IpscMatchServiceImplTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.resolveClub(null));
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsNullAndDefaultIdentifierIsNull_thenThrowsFatalException() {
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchServiceImpl.resolveClub(null, null));
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsBlankAndDefaultIdentifierIsNull_thenThrowsFatalException() {
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchServiceImpl.resolveClub("  ", null));
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsSuppliedAndDefaultIdentifierIsNull_thenIgnoresDefaultIdentifier() {
+        // Arrange
+        Club club = new Club();
+        club.setName("Test Club");
+        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+
+        // Act
+        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub("Test Club", null));
+
+        // Assert
+        assertSame(club, resolved);
     }
 
     // resolveFirearmType()

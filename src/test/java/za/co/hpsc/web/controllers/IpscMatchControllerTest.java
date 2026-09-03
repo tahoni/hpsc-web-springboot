@@ -92,6 +92,17 @@ class IpscMatchControllerTest {
         assertThrows(NonFatalException.class, () -> ipscMatchController.createMatch(request));
     }
 
+    @Test
+    void testCreateMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        MatchRequest request = new MatchRequest();
+        when(ipscMatchService.createMatch(request))
+                .thenThrow(new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured."));
+
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchController.createMatch(request));
+    }
+
     // createMatches()
     private static final String VALID_CSV = """
             MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
@@ -269,6 +280,17 @@ class IpscMatchControllerTest {
         assertThrows(NonFatalException.class, () -> ipscMatchController.patchMatch(99L, request));
     }
 
+    @Test
+    void testPatchMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        MatchRequest request = new MatchRequest();
+        when(ipscMatchService.patchMatch(1L, request))
+                .thenThrow(new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured."));
+
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchController.patchMatch(1L, request));
+    }
+
     // updateMatch()
     @Test
     void testUpdateMatch_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException, FatalException {
@@ -317,5 +339,16 @@ class IpscMatchControllerTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchController.updateMatch(99L, request));
+    }
+
+    @Test
+    void testUpdateMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
+        // Arrange
+        MatchRequest request = new MatchRequest();
+        when(ipscMatchService.updateMatch(1L, request))
+                .thenThrow(new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured."));
+
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchController.updateMatch(1L, request));
     }
 }

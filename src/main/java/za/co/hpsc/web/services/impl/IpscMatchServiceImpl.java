@@ -16,6 +16,7 @@ import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
@@ -339,14 +340,38 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
      */
     protected Club resolveClub(String clubName) throws FatalException {
+        return resolveClub(clubName, IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+    }
+
+    /**
+     * Resolves a club by name, defaulting to {@code defaultIdentifier} when none is supplied.
+     *
+     * <p>
+     * {@code defaultIdentifier} is taken as a parameter, rather than read directly from
+     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} in this method, purely so this check
+     * stays unit testable if that constant were ever null (which cannot happen with today's
+     * value, but which this method is deliberately written to guard against rather than
+     * silently mishandle).
+     * </p>
+     *
+     * @param clubName          the club name to look up; may be null or blank, in which case
+     *                          {@code defaultIdentifier} is resolved instead.
+     * @param defaultIdentifier the identifier to resolve when {@code clubName} isn't supplied;
+     *                          may be null.
+     * @return the matching {@link Club}.
+     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing
+     *                           club, or if no club exists for {@code defaultIdentifier}.
+     * @throws FatalException    if {@code clubName} wasn't supplied and {@code defaultIdentifier}
+     *                           is null.
+     */
+    protected Club resolveClub(String clubName, ClubIdentifier defaultIdentifier) throws FatalException {
         if ((clubName == null) || clubName.isBlank()) {
-            if (IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER == null) {
+            if (defaultIdentifier == null) {
                 throw new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured.");
             }
 
-            return clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)
-                    .orElseThrow(() -> new NonFatalException(
-                            "No club found with identifier " + IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER));
+            return clubRepository.findByIdentifier(defaultIdentifier)
+                    .orElseThrow(() -> new NonFatalException("No club found with identifier " + defaultIdentifier));
         }
 
         return clubRepository.findByName(clubName)
