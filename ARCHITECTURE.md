@@ -62,7 +62,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice)
 │   │   ├───constants/          # Application-wide constants
-│   │   │                           HpscConstants, IpscConstants, SystemConstants
+│   │   │                           IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
 │   │   │                           AwardController, ImageController
 │   │   │                           IpscCompetitorController, IpscMatchController
@@ -277,8 +277,7 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 #### Constants (`za.co.hpsc.web.constants`)
 
-`HpscConstants`, `IpscConstants`, `SystemConstants` — application-wide constant definitions shared across services and
-converters.
+`IpscConstants`, `SystemConstants` — application-wide constant definitions shared across services and converters.
 
 ---
 

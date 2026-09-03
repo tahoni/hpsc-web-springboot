@@ -150,6 +150,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Documentation
 
+- **`ARCHITECTURE.md`:** Dropped `HpscConstants` from the Project Structure tree's `constants/` comment and the
+  Constants support-layer subsection's class list — the class no longer exists, removed earlier this branch
 - **`documentation/recommendations/flyway-migration-versioning.md`:** Realigned the Current State table's column
   widths; a follow-up pass restored "sub-versions"' hyphen after an editor pass had dropped it to "subversions",
   which reads as "acts of subversion" rather than the intended meaning
