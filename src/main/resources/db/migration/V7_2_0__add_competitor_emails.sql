@@ -7,7 +7,7 @@
 -- List<String> emailAddresses (see Competitor.java), so the pair of columns below
 -- (competitor_id, email_address) is the table's implicit composite primary key -- Hibernate
 -- manages this element collection with delete-all/reinsert semantics on change, which is fine
--- given the small, infrequently-changed size of this collection.
+-- given the small, infrequently changed size of this collection.
 -- =============================================================================================
 
 CREATE TABLE competitor_email

@@ -75,7 +75,9 @@ detailed system design.
 
 Schema changes are managed by Flyway (`src/main/resources/db/migration/`) for every profile except `test`, where
 Hibernate generates the schema directly from the entities on each run. When you add or change a JPA entity, add a
-corresponding `V<version>__description.sql` migration.
+corresponding `V<version>__description.sql` migration. That version number is its own independent counter,
+baselined at `7.0.0` and incrementing from the highest existing migration file — it does **not** track `pom.xml`'s
+app version; see [`AGENTS.md`](AGENTS.md#-tech-stack)'s Flyway note for why.
 
 ---
 
@@ -134,6 +136,11 @@ HTTP Request
   them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException`.
 - Enum-typed entity fields use an explicit `AttributeConverter` (see `converters/`) rather than
   `@Enumerated(EnumType.STRING)`.
+- REST endpoints use plural nouns for collections and a path variable for a single resource (`/matches/{matchId}`,
+  not `/matches?id=`); handler methods are named `<action><Resource>` matching the HTTP verb (e.g. `createMatch`,
+  `getMatch`) — see [`AGENTS.md`](AGENTS.md#-architecture)'s REST conventions subsection.
+- A class's members are ordered constructors, then public methods, then (in a non-`final` class) protected methods,
+  then private methods last — see [`AGENTS.md`](AGENTS.md#-architecture)'s Member ordering subsection.
 
 ---
 
@@ -168,17 +175,20 @@ repository. Highlights:
 | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
-Both live in `documentation/roadmap/`. `improvement-plan.md` opens with a Goals & Constraints table, then a series of
-numbered `### N. <Title>` gap sections — each with Evidence, Why it matters and a Proposed improvement, gaining an
-Outcome or Progress paragraph once work against it lands — followed by a Now/Next/Later/Ongoing Roadmap table and a
-Success Criteria list. `improvement-plan-tasks.md` breaks those same gaps into checkboxes under the same
-Now/Next/Later/Ongoing phases, with each block naming its originating gap number.
+Both live in `documentation/roadmap/`. `improvement-plan.md` opens with a Goals & Constraints table, then its "🔍
+Gaps & Improvement Opportunities" section groups numbered `#### N. <Title>` gap sections into three status
+subsections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — each with Evidence, Why it matters and a Proposed
+improvement, gaining an Outcome or Progress paragraph once work against it lands. That's followed by a
+Now/Next/Later/Ongoing Roadmap table (forward-looking priority, a separate concern from completion status) and a
+Success Criteria list. `improvement-plan-tasks.md` mirrors the same three status sections, breaking each gap into
+checkboxes, with each block naming its originating gap number.
 
 Unlike `README.md`/`ARCHITECTURE.md`, `improvement-plan.md` is explicitly **not evergreen** — it's a point-in-time
-reading of the project, revisited only when a gap closes or a new one is identified. A closed or progressed gap gains
-a status suffix on its header (e.g. "— ✅ Closed in vX.Y.Z" or "— 🟡 Partially progressed in vX.Y.Z") and an
-Outcome/Progress paragraph; the original analysis is never deleted or rewritten, and task-list items are checked off
-in place rather than removed, so the history of what was considered and why stays intact.
+reading of the project, revisited only when a gap closes, progresses or a new one is identified. A closed or
+progressed gap gains a status suffix on its header (e.g. "— ✅ Closed in vX.Y.Z" or "— 🟡 Partially completed in
+vX.Y.Z") and an Outcome/Progress paragraph, and its whole block moves into the matching status section in both
+files; the original analysis is never deleted or rewritten, and task-list items are checked off in place rather
+than removed, so the history of what was considered and why stays intact.
 
 ---
 
@@ -224,7 +234,10 @@ and `release/*` included — must never open a PR directly against `main`.
   bug fix into a single commit.
 - **Track complex work with a todo list** so progress on multistep tasks stays visible.
 - Directory changes must stay in sync with documentation: whenever a root-level directory is added or removed, update
-  `ARCHITECTURE.md`'s Project Structure tree in the same change.
+  `ARCHITECTURE.md`'s Project Structure tree in the same change. Tracked tooling directories — `.claude/`,
+  `.github/` — belong in that tree; only `.gitignore`-covered directories are excluded from it. Package/directory
+  comments describe purpose generically and never list the individual classes inside — those drift too fast to keep
+  in sync.
 
 ---
 
@@ -234,7 +247,7 @@ and `release/*` included — must never open a PR directly against `main`.
 |-----------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
 | **Security Analysis** | CodeQL                                                               | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`)                       |
 | **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`)                                   | Push / PR to `main` / `develop` (`.github/workflows/build.yml`); H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 51% line coverage (`check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above                                        |
+| **Code Coverage**     | JaCoCo, minimum 97% line coverage (`check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above                                        |
 
 ---
 

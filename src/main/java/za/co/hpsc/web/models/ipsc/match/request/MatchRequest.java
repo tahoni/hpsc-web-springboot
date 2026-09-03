@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.HpscConstants;
+import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,12 +29,16 @@ public class MatchRequest {
     private Long matchId;
     /** Date the match was/will be shot. */
     @JsonProperty(required = true)
-    @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
     /** The match's name. */
     @JsonProperty(required = true)
     private String matchName;
-    /** The name of the club hosting the match; resolved against existing clubs by name. */
+    /**
+     * The name of the club hosting the match; resolved against existing clubs by name. May be
+     * null or blank, in which case the match defaults to
+     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
+     */
     private String club;
     /** The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
     private String matchFirearmType;
@@ -50,6 +54,8 @@ public class MatchRequest {
      * @param matchDate        the date the match was/will be shot. Must not be null.
      * @param matchName        the match's name. Must not be null or blank.
      * @param club             the name of the club hosting the match; resolved against existing clubs by name.
+     *                         May be null or blank, in which case the match defaults to
+     *                         {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      * @param matchFirearmType the firearm type this match is shot with; resolved against
      *                         {@link za.co.hpsc.web.enums.FirearmType} by name.
      * @param matchCategory    the category/tier of this match; resolved against

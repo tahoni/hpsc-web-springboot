@@ -42,7 +42,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                           |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                       |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                              |
-| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces an 86% JaCoCo line-coverage minimum (see Gap #2/#4); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
+| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real ~98.4% baseline in v8.4.0 (Gap #4 closed); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
 | `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                     |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                     |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                        |
@@ -54,7 +54,14 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 
 ## 🔍 Gaps & Improvement Opportunities
 
-### 1. Match/competitor service and controller layer is the single largest stated gap — ✅ Closed in v8.0.0
+Gaps are grouped by completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — and numbered sequentially
+across the whole document; a number is assigned once and never reused or resequenced, so it stays a gap's stable
+identifier even after it moves between sections as its status changes (e.g. Open → Partially Completed → Completed).
+Within each section, gaps stay in ascending number order.
+
+### ✅ Completed
+
+#### 1. Match/competitor service and controller layer is the single largest stated gap — ✅ Closed in v8.0.0
 
 **Evidence:** `README.md`, `ARCHITECTURE.md` and `CLAUDE.md` all independently flag that `IpscController` is an empty
 stub, that `repositories/` currently has no service-layer caller and that the service/model/entity-service layers
@@ -81,9 +88,9 @@ CRUD controllers superseding the empty `IpscController` stub, each backed by Moc
 `ClubRepository`) rather than via a dedicated `ClubService` — a simpler equivalent, not a gap. Cross-entity
 orchestration was deliberately held off per step 3 above, until v8.1.0's competitor bulk CSV import reused the
 existing single-`createCompetitor` logic per row instead of introducing new orchestration. See
-[`improvement-plan-tasks.md`](improvement-plan-tasks.md#-next) for the full checklist.
+[`improvement-plan-tasks.md`](improvement-plan-tasks.md#-completed) for the full checklist.
 
-### 2. No automatic build/test gate on pull requests — ✅ Closed in v8.3.1
+#### 2. No automatic build/test gate on pull requests — ✅ Closed in v8.3.1
 
 **Evidence:** `ARCHITECTURE.md`'s own CI/CD & Quality Gates table states the `Build & Tests` gate runs "locally / by
 reviewers before merge" — `.github/workflows` contains only `codeql.yml` and, as of Gap #7, `qodana.yml`; neither
@@ -107,7 +114,7 @@ enforces Gap #4's coverage-check rule, closing that gap's CI-wiring half in the 
 `feature/ci-build-test-gate` branch off `develop`, not a `release/*` branch; this release-prep pass fills in the
 closing version, v8.3.1.
 
-### 3. Award/Image CSV pipelines never persist — ✅ Closed in v8.3.1
+#### 3. Award/Image CSV pipelines never persist — ✅ Closed in v8.3.1
 
 **Evidence:** `ARCHITECTURE.md`'s data-flow diagram for the only implemented pipeline notes `AwardService.createAwards()`/
 `ImageService.createImages()` "parses CSV via Jackson CsvMapper, maps to response records — **no persistence**".
@@ -132,7 +139,7 @@ an unfinished persistence layer. `README.md`'s Award Ceremonies/Image Gallery bu
 Service Layer table/Award-Image CSV Processing Flow section now state this explicitly, resolving the ambiguity this
 gap's Proposed improvement asked to clarify. No persistence is planned for these two pipelines.
 
-### 4. Coverage is measured but not enforced — 🟡 Partially progressed in v8.3.1
+#### 4. Coverage is measured but not enforced — ✅ Closed in v8.4.0
 
 **Evidence:** `HISTORY.md` tracks line/branch coverage percentages release over release (97.3%/98.1% as of v7.2.0) via
 the JaCoCo `coverage` Maven profile, but nothing fails a build when coverage regresses. That v7.2.0 figure was never
@@ -175,7 +182,21 @@ releases" plan stated just above, so worth confirming that acceleration is delib
 Still not marked fully closed: 86% is meaningfully closer to the real baseline than 51% was, but still short of
 "near" the 98.16%/98.94% figure, and this new threshold hasn't yet run in CI to confirm it holds cleanly.
 
-### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
+**Outcome:** The 86% floor was confirmed holding cleanly in CI (`build.yml` succeeded on both the `develop` push and
+the `main` promotion that shipped v8.3.1). With that confirmed, the `LINE`/`COVEREDRATIO` minimum was tightened a
+third time, from `0.86` to `0.97` (97%) directly in `pom.xml` — deliberately just under the real baseline
+(98.16%/98.94% line/branch, 836 tests as of that pass, confirmed unchanged by a fresh local
+`./mvnw verify -Pcoverage` run) rather than pinned exactly to it, leaving a small margin so ordinary line-count
+fluctuation doesn't trip the gate while still being genuinely "near" the baseline this gap's Proposed improvement
+asked for. Verified locally that `./mvnw verify -Pcoverage` passes cleanly at the new threshold before landing it.
+The suite continued to grow afterwards, within the same v8.4.0 branch (further `resolveClub`/`FatalException`
+coverage and Javadoc/member-ordering passes); a final `./mvnw verify -Pcoverage` re-run at this release's prep time
+measured 98.44%/98.98% line/branch, 868 tests — still comfortably above the 97% floor. The `BRANCH` counter is
+still not separately enforced — only `LINE`, as established when this gate was first added
+in v8.3.1 — which remains a deliberate, documented deviation from the original "line/branch minimum" wording rather
+than an oversight.
+
+#### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
 **Evidence:** `pom.xml` explicitly pins `jackson-databind` to `2.21.5` with the comment: "Spring Boot 4.1.0 still
 manages jackson-databind (2.x) one patch behind its fix version; override it explicitly until a Spring Boot release
@@ -199,28 +220,7 @@ This category of clean-up recurs — re-check remaining manual overrides at each
 Checklist (this gap's Ongoing counterpart, #5's own recurring check, stays in force even though the specific
 overrides it named are gone).
 
-### 6. Match scoring / shooter-log service and controller layer are not yet built
-
-**Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
-match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
-built"; its `repositories/` package comment marks `MatchCompetitor`/`MatchStageCompetitor`/`ShooterLog*` as "not yet
-wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScoresRequest` "groundwork only — not yet
-consumed by any controller". `README.md` and `CONTRIBUTING.md` independently restate the same gap, and
-`documentation/history/RELEASE_NOTES_v8.1.0.md`'s Known Issues/Future Enhancements carry it forward from v8.0.0,
-explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
-"ready" for wiring.
-
-**Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
-controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
-"known gap" across the project's own documentation, yet was not separately tracked here.
-
-**Proposed improvement:** Apply the same phased pattern that closed Gap #1: introduce `MatchScoreService`/
-`ShooterLogService` (interface + `impl/` split) over the existing repositories, add controller endpoints backed by
-`@SpringBootTest` integration tests, and only then consider cross-entity orchestration (e.g. importing a full
-Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
-fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
-
-### 7. Qodana static analysis is configured but never runs in CI — ✅ Closed as not applicable in v8.2.0
+#### 7. Qodana static analysis is configured but never runs in CI — ✅ Closed as not applicable in v8.2.0
 
 **Evidence:** `ARCHITECTURE.md`'s CI/CD & Quality Gates table states the `Static Analysis` (Qodana JVM) gate is "Run
 locally / via IDE against `qodana.yaml` — no CI workflow wired up yet" — still true of `ARCHITECTURE.md` itself as
@@ -257,7 +257,7 @@ there was no working baseline to preserve, and re-enabling it would still requir
 secret this project doesn't currently have. This closes the gap as not applicable rather than as delivered — if
 static analysis in CI is wanted again in the future, it should be scoped as a new gap rather than reopening this one.
 
-### 8. Match bulk CSV import remains removed pending a rebuild — ✅ Closed in v8.3.0
+#### 8. Match bulk CSV import remains removed pending a rebuild — ✅ Closed in v8.3.0
 
 **Evidence:** `ARCHITECTURE.md`'s Feature Support and Service Layer tables described only competitor CRUD as having
 "bulk CSV import", listing match CRUD without it; its Service Layer note stated explicitly, "the wider match domain's
@@ -290,16 +290,75 @@ CSV-native nested-stage representation) a `parseStages` helper splitting the del
 `MatchStageRequest`s. `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
 competitor-only endpoint/service/data-flow documentation are updated in the same release to reflect this.
 
+#### 9. `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — ✅ Closed in v8.4.0
+
+**Evidence:** `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER = ClubIdentifier.ALL` exists (added alongside
+`HOME_CLUB_IDENTIFIER` this branch) but is referenced nowhere else in `src/` — grepping the whole tree for
+`DEFAULT_MATCH_CLUB_IDENTIFIER` finds only its own declaration. `ClubIdentifier.ALL`'s own Javadoc states it "is
+used in the Match domain to indicate that a match is hosted jointly by the three real clubs (`SOSC`, `HPSC` and
+`PMPSC`), rather than by a single one of them" — a real, seeded club (`V7_3_0__seed_club_data.sql` inserts
+`"Eufees Clubs"` / `ALL`). `IpscMatch.club` and the `ipsc_match.club_id` schema column are both nullable
+(`V7_0_0__create_schema.sql`, no `nullable = false` on `IpscMatch`'s `@JoinColumn`), yet
+`IpscMatchServiceImpl.validateForCreate` unconditionally rejects a missing club — `if ((request.getClub() == null)
+|| request.getClub().isBlank()) { throw new ValidationException("Club is required."); }` — so there is no code
+path where a match's club could ever actually default to `ClubIdentifier.ALL`, or be left unset at all.
+
+**Why it matters:** The nullable schema column and the new constant both signal an intended "default to `ALL` when
+unspecified" behaviour for joint-club matches, but nothing wires them together yet. A caller who wants to record a
+joint-club match today has no shorthand for it — they'd have to already know to pass the literal seeded club name
+`"Eufees Clubs"` — so the constant currently only documents an intention rather than doing anything.
+
+**Proposed improvement:** Either (a) wire it in: when `club` is omitted on `createMatch`, resolve it via
+`clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)` instead of throwing, mirroring how
+`IpscCompetitorServiceImpl.resolveHomeClub`/`resolveClubNumber` already treat an absent optional field as "apply
+the domain default" rather than an error; or (b) if joint-club matches are meant to always be created by explicitly
+naming `"Eufees Clubs"`, remove the unused constant rather than leaving inert groundwork in `IpscConstants`.
+
+**Outcome:** Delivered option (a). `IpscMatchServiceImpl.validateForCreate` no longer rejects a missing/blank
+`club`; `resolveClub` now resolves it via `clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)`
+instead, mirroring `IpscCompetitorServiceImpl.resolveHomeClub`/`resolveClubNumber`'s "apply the domain default"
+pattern, and throwing `NonFatalException` if even the default club is missing. `MatchRequest`/`MatchRequestForCSV`'s
+`club` field Javadoc now documents the default explicitly.
+
+### 🟡 Partially Completed
+
+*No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
+`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
+but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+### ⚪ Open
+
+#### 6. Match scoring / shooter-log service and controller layer are not yet built
+
+**Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
+match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
+built"; its `repositories/` package comment marks `MatchCompetitor`/`MatchStageCompetitor`/`ShooterLog*` as "not yet
+wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScoresRequest` "groundwork only — not yet
+consumed by any controller". `README.md` and `CONTRIBUTING.md` independently restate the same gap, and
+`documentation/history/RELEASE_NOTES_v8.1.0.md`'s Known Issues/Future Enhancements carry it forward from v8.0.0,
+explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
+"ready" for wiring.
+
+**Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
+controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
+"known gap" across the project's own documentation, yet was not separately tracked here.
+
+**Proposed improvement:** Apply the same phased pattern that closed Gap #1: introduce `MatchScoreService`/
+`ShooterLogService` (interface + `impl/` split) over the existing repositories, add controller endpoints backed by
+`@SpringBootTest` integration tests, and only then consider cross-entity orchestration (e.g. importing a full
+Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
+fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
+
 ---
 
 ## 🚀 Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                                                                                                                |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% within the same branch. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
-| **Next**    | Confirm #4's 86% floor holds cleanly in CI, then continue tightening it closer to the real baseline (~98%); then begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                           |
-| **Later**   | No items currently scoped — #3, this phase's previous occupant, closed in v8.3.1                                                                                                                                                                                                                     |
-| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                      |
+| Phase       | Focus                                                                                                                                                                                                                                                                                                                 |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% to 97% across v8.3.1/v8.4.0, now closed. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
+| **Next**    | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                                                                                             |
+| **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                                                                                                                                                                      |
+| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                                       |
 
 ---
 
@@ -311,9 +370,9 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 - ✅ Met in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` automatically on push/PR to
   `develop`/`main`; `ARCHITECTURE.md`'s CI/CD & Quality Gates table has dropped the "locally / by reviewers" caveat
   on the `Build & Tests` row.
-- 🟡 Partially met in v8.3.1: an 86%-minimum JaCoCo `check` rule (raised from an initial 51% within the same
-  branch) fails CI on a real regression, but the floor is still below the ~98% actual baseline rather than "near"
-  it — fully met once that floor is tightened further.
+- ✅ Met in v8.4.0: a 97%-minimum JaCoCo `check` rule (raised from 51% to 86% in v8.3.1, then to 97% here, once the
+  86% floor was confirmed holding cleanly in CI) fails CI on a real regression, and the floor now sits genuinely
+  near the ~98.16%/98.94% actual baseline rather than merely below it.
 - ✅ Met in v8.2.0 (as not applicable): the `Static Analysis` row is gone from `ARCHITECTURE.md`'s CI/CD & Quality
   Gates table entirely — Qodana was removed rather than made to run automatically, closing Gap #7 the other way.
 - ✅ Met in v8.3.1: `AwardService`/`ImageService` CSV processing is confirmed intentionally stateless, and
@@ -324,6 +383,8 @@ competitor-only endpoint/service/data-flow documentation are updated in the same
 - ✅ Met in v8.3.0: `IpscMatchController.createMatches`/`IpscMatchService.createMatches` mirror the competitor bulk
   CSV import pattern, closing Gap #8 and removing the last asymmetry between the two CRUD domains' bulk-import
   support.
+- ✅ Met in v8.4.0: `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is now applied by `IpscMatchServiceImpl.resolveClub`
+  when a match's `club` is omitted, closing Gap #9's inert-groundwork-constant gap.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   per-version Future Roadmap notes rather than being deleted silently from here.
 

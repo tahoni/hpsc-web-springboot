@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.3.1](#-831---2026-09-02) ← Current
+- [🧾 Version 8.4.0](#-840---2026-09-03) ← Current
+- [🧾 Version 8.3.1](#-831---2026-09-02)
 - [🧾 Version 8.3.0](#-830---2026-09-02)
 - [🧾 Version 8.2.0](#-820---2026-09-01)
 - [🧾 Version 8.1.1](#-811---2026-09-01)
@@ -46,6 +47,255 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.4.0] - 2026-09-03
+
+### ➕ Added
+
+#### Database
+
+- **`V7_3_0__seed_club_data.sql`:** New Flyway migration seeds the `club` table with the 5 named
+  `ClubIdentifier` constants (`SOSC`, `HPSC`, `PMPSC`, `VISITOR`, `ALL`); `UNKNOWN` is the enum's
+  default/unmatched placeholder rather than a real club, so it's intentionally excluded. `name`/
+  `abbreviation` come from `ClubIdentifier.name`/`abbreviation`, and `identifier` is set to the
+  same abbreviation, matching `ClubIdentifierConverter`'s persisted representation
+
+#### Enums
+
+- **`ClubIdentifier`:** New `ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) alongside the
+  existing club constants; class Javadoc extended to explain that `ALL` is used in the Match
+  domain to indicate a match hosted jointly by the three real clubs (`SOSC`, `HPSC`, `PMPSC`)
+  rather than by a single one of them
+
+### 🔄 Changed
+
+#### API
+
+- **`IpscCompetitorController`/`IpscCompetitorServiceImpl`:** `clubNumber` is no longer unconditionally required on
+  competitor create/update — it's now required only when the competitor's home club is HPSC, and forced to
+  `null` for every other home club, including none, regardless of what a request supplies. `CompetitorRequest`'s
+  `clubNumber` is no longer a Jackson-required property. New `IpscCompetitorServiceImpl.resolveClubNumber()`
+  centralises the rule for `createCompetitor()`/`updateCompetitor()` (via `applyFields()`) and `patchCompetitor()`,
+  which re-applies it whenever a patch touches `homeClub` or `clubNumber`
+- **`IpscMatchController`/`IpscMatchServiceImpl`:** `club` is no longer unconditionally required on match
+  create/update — a missing or blank `club` now resolves to `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER`
+  (`ClubIdentifier.ALL`, the seeded `"Eufees Clubs"` club) instead of `validateForCreate` throwing
+  `ValidationException("Club is required.")`. `IpscMatchServiceImpl.resolveClub()` now mirrors
+  `IpscCompetitorServiceImpl.resolveHomeClub()`/`resolveClubNumber()`'s "apply the domain default" pattern,
+  throwing `NonFatalException` if even the default club is missing from the database, or a new `FatalException`
+  if `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` itself is null — a defensive check, since the constant is
+  always `ClubIdentifier.ALL` today. `IpscMatchService`'s `createMatch`/`updateMatch`/`patchMatch` (and
+  `IpscMatchController`'s matching endpoints) now declare `throws FatalException` to carry this; `resolveClub()`/
+  `applyFields()` do the same on the impl side. `resolveClub(String)` now delegates to a new
+  `resolveClub(String, ClubIdentifier)` overload that takes the default identifier as a parameter rather than
+  reading the constant directly — the same "stays unit testable if that constant were ever null" pattern
+  `IpscCompetitorServiceImpl.isHpscMember()` already uses for `HOME_CLUB_IDENTIFIER`. Closes
+  `documentation/roadmap/improvement-plan.md`'s Gap #9
+
+#### Configuration
+
+- **`pom.xml`:** `jacoco-maven-plugin`'s `check` execution `LINE`/`COVEREDRATIO` minimum raised from `0.86` to
+  `0.97`, now genuinely near the real baseline (98.16%/98.94% line/branch, 836 tests as of that pass, reconfirmed
+  unchanged by a fresh `./mvnw verify -Pcoverage` run) after the 86% floor was confirmed holding cleanly in CI on
+  both the `develop` and `main` `build.yml` runs that shipped v8.3.1. The suite continued to grow afterwards, within
+  the same v8.4.0 branch; a final `./mvnw verify -Pcoverage` re-run at this release's prep time measured
+  98.44%/98.98% line/branch, 868 tests — still comfortably clear of the new floor. Closes
+  `documentation/roadmap/improvement-plan.md`'s Gap #4
+
+#### Constants
+
+- **`SystemConstants`:** New `TIME_FORMAT` (`"HH:mm"`), `DEFAULT_DATE_FORMAT` (alias for `ISO_DATE_FORMAT`) and
+  `DEFAULT_DATE_TIME_FORMAT` (alias for `ISO_DATE_TIME_FORMAT`) constants; `ISO_DATE_TIME_FORMAT` now composes
+  from the new `TIME_FORMAT` instead of an inline `" HH:mm"` literal — same resulting `"yyyy-MM-dd HH:mm"` value.
+  Unused `LONG_DATE_FORMAT`/`LONG_DATE_TIME_FORMAT` dropped; nothing in the codebase referenced either
+- **`SystemConstants`, `IpscConstants`:** Every constant actually referenced elsewhere in the codebase gained a
+  one-line field Javadoc explaining its purpose (`DEFAULT_SCALE`, `TIME_FORMAT`, `ISO_DATE_FORMAT`,
+  `ISO_DATE_TIME_FORMAT`, `DEFAULT_DATE_FORMAT`, `ARRAY_SEPARATOR`, `IPSC_INPUT_DATE_FORMAT`,
+  `DEFAULT_MATCH_CLUB_IDENTIFIER`, `HOME_CLUB_ABBREVIATION`, `HOME_CLUB_IDENTIFIER`). Fields with no reference
+  anywhere outside their own declaration (e.g. `EXCLUDE_ICS_ALIAS`, `MAX_SAPSA_NUMBER`, `STAGE_POINTS_SCALE`,
+  `DEFAULT_MATCH_CATEGORY`) were deliberately left undocumented rather than inventing a rationale for dead code
+
+#### Controllers
+
+- **`IpscCompetitorController`:** Javadoc's hardcoded "HPSC" mentions in each `@throws ValidationException`
+  description replaced with `{@link IpscConstants#HOME_CLUB_ABBREVIATION}` links, matching the constants
+  centralisation above
+
+#### Database
+
+- **`Competitor.clubNumber`:** Column relaxed from `nullable = false` to nullable, matching the new HPSC-only
+  requirement above; the `uk_competitor_club_number` unique constraint is unchanged, since MySQL/H2 treat
+  multiple `NULL`s as distinct under a `UNIQUE` constraint. New `V7_4_0__make_club_number_nullable.sql` migration
+  relaxes the column and clears `club_number` on any existing competitor whose home club isn't HPSC
+
+#### Documentation
+
+- **`AGENTS.md`:** New Tech Stack note explaining that `db/migration/V<X>_<Y>_<Z>__*.sql` filenames are their own
+  independent counter, baselined at `7.0.0`, and do not track `pom.xml`'s app version — prompted by
+  `V7_2_0__add_competitor_emails.sql` actually shipping in app v8.2.0, coinciding by name only with the wholly
+  unrelated app release v7.2.0
+- **`documentation/recommendations/flyway-migration-versioning.md`:** New recommendations doc expanding on that
+  note — why independent versioning is the right call for this project, how to choose the next migration's version
+  number and a table of every existing migration against the app version it actually shipped in. Documentation
+  File Map's `documentation/recommendations/` row updated to reference it
+- **`AGENTS.md`:** New REST conventions subsection under Architecture, condensing
+  `standard-rest-conventions.md`'s URL path/handler method naming rules into an actual convention rather than
+  leaving them purely non-binding; that recommendations doc's intro updated to point back to it
+- **`CONTRIBUTING.md`:** New REST endpoint/method naming bullet added to the "Rules enforced by convention" list
+  (mirrors `AGENTS.md`'s new subsection); Database Profiles section's Flyway migration guidance extended to note
+  that the version number is independent of the app version, per `AGENTS.md`'s Tech Stack note
+- **`AGENTS.md`:** New Release Checklist step 9 verifies `ARCHITECTURE.md`'s Project Structure tree against the
+  actual repository structure at every release — a backstop for the per-change Directory Tree Maintenance rule,
+  which this branch caught slipping (the tracked `.claude/skills/` directory and the removed `HpscConstants` class
+  both went stale in the tree before being caught here). Steps 9/10 renumbered to 10/11
+- **`AGENTS.md`:** New Member ordering subsection under Architecture — constructors, then public methods, then (in
+  a non-`final`, extendable class) protected methods, then private methods last, keeping each visibility group's
+  existing relative order rather than alphabetising (that stricter rule stays specific to test classes, per Test
+  Conventions). `CONTRIBUTING.md`'s "Rules enforced by convention" list gained a matching condensed bullet
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** "Gaps & Improvement Opportunities"
+  restructured from a flat, inline-status numbered list into three explicit sections — ✅ Completed, 🟡 Partially
+  Completed, ⚪ Open (gap headers demoted from `###` to `####`, numbers unchanged and never resequenced) — so a
+  reader can see what's still open at a glance; `improvement-plan-tasks.md`'s checkbox lists mirror the same three
+  sections instead of the previous Now/Next/Later/Ongoing phasing, which had become mostly historical now that
+  eight of nine gaps are closed. The forward-looking Now/Next/Later/Ongoing Roadmap table is unchanged — a separate
+  priority concept, not a completion-status tracker. `AGENTS.md`'s roadmap doc-map entry and `CONTRIBUTING.md`'s
+  condensed Roadmap section document the new convention; a stale `improvement-plan-tasks.md#-next` anchor left over
+  from the old phasing, in Gap #1's checklist link, corrected to `#-completed`
+
+#### Models
+
+- **`AwardRequestForCSV`, `CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`, `MatchRequestForCSV`:**
+  Each `LocalDate` field's `@JsonFormat(pattern = ...)` now points at `SystemConstants.DEFAULT_DATE_FORMAT`
+  (`AwardRequestForCSV.date`) or `IpscConstants.IPSC_INPUT_DATE_FORMAT` (the IPSC competitor/match classes'
+  `dateOfBirth`/`matchDate`) instead of the now-removed `HpscConstants.HPSC_INPUT_DATE_FORMAT` — every constant
+  resolves to the same `"yyyy-MM-dd"` pattern, so the accepted input format itself is unchanged
+- **`MatchRequest`/`MatchRequestForCSV`:** `club` field/constructor-param Javadoc now documents the new
+  default-to-`IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` behaviour above, instead of implying the name is
+  always resolved against an existing club
+
+#### Services
+
+- **`IpscCompetitorService`:** Same Javadoc link swap as `IpscCompetitorController` above, across
+  `createCompetitor`/`createCompetitors`/`updateCompetitor`/`patchCompetitor`'s `@throws ValidationException`
+  descriptions and their "home club is HPSC" parameter notes
+- **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Reordered to match the new Member ordering convention —
+  `readCompetitors`/`toRequest`/`splitEmailAddresses` and `readMatches`/`toRequest`/`parseStages` respectively were
+  each sitting between two public methods; moved down after every public method, alongside the rest of each
+  class's protected helpers. No behavioural change, purely a reorder
+
+#### Tests
+
+- **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceIntegrationTest`,
+  `IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Hardcoded `ClubIdentifier.HPSC` references switched to
+  `IpscConstants.HOME_CLUB_IDENTIFIER`, matching production code's new constant; no behavioural change, since the
+  constant currently always resolves to `ClubIdentifier.HPSC`
+- **`IpscMatchServiceImplTest`, `IpscMatchServiceTest`, `IpscMatchServiceIntegrationTest`:** `whenClubIsBlank`/
+  `whenClubIsMissing` cases that previously asserted `ValidationException` now assert the club defaults to
+  `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER`, matching the behaviour change above; new cases cover
+  `resolveClub`/`createMatch` throwing `NonFatalException` when even the default club is missing
+- **`IpscMatchServiceImplTest`, `IpscMatchServiceIntegrationTest`, `IpscMatchControllerTest`:** Test methods that
+  call `createMatch`/`updateMatch`/`patchMatch`/`applyFields` directly (as fixture setup or the method under
+  test) now declare/wrap for the new checked `FatalException`, matching the production signature changes above;
+  no behavioural change to the tests themselves
+- **`IpscMatchServiceImplTest`:** New `resolveClub(String, ClubIdentifier)` cases cover the new overload directly:
+  throwing `FatalException` when the default identifier is null (with a null or blank club name), and correctly
+  ignoring the default identifier when a club name is supplied
+- **`IpscMatchControllerTest`:** New `testCreateMatch_whenServiceThrowsFatalException_thenExceptionPropagates`,
+  `testPatchMatch_whenServiceThrowsFatalException_thenExceptionPropagates` and
+  `testUpdateMatch_whenServiceThrowsFatalException_thenExceptionPropagates` cases confirm a `FatalException`
+  thrown by the service propagates through the controller, mirroring the existing `createMatches` coverage for
+  the same exception type
+
+#### Tooling
+
+- **`sync-improvement-plan-gaps`, `update-improvement-plan-gaps`:** Both skills updated to read/write the new
+  ✅ Completed / 🟡 Partially Completed / ⚪ Open section structure above instead of the old Now/Next/Later/Ongoing
+  phase headers, including moving a gap's whole block between sections as its status changes
+
+### 🐛 Fixed
+
+#### Database
+
+- **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment
+  ("infrequently-changed" → "infrequently changed")
+
+#### Documentation
+
+- **`ARCHITECTURE.md`:** Dropped `HpscConstants` from the Project Structure tree's `constants/` comment and the
+  Constants support-layer subsection's class list — the class no longer exists, removed earlier this branch
+- **`ARCHITECTURE.md`:** Project Structure tree was missing the tracked `.claude/skills/` directory entirely.
+  Added it, described generically rather than naming individual skills — unlike the fixed, slow-moving package
+  structure the tree lists class names for elsewhere, skills are added/removed often enough that naming each one
+  would drift. `AGENTS.md`'s Directory Tree Maintenance rule and `CONTRIBUTING.md`'s condensed mention of it both
+  gained a clarifying bullet: tracked tooling directories (`.claude/`, `.github/`) belong in the tree, even though
+  they sit alongside gitignored directories at the repository root — only `.gitignore`-covered directories are
+  excluded from it
+- **`ARCHITECTURE.md`:** Project Structure tree brought fully in sync with disk, per the new Release Checklist
+  step above: added the previously undocumented `documentation/recommendations/` and
+  `src/main/resources/db/migration/` directories, and added `Gender`/`GenderConverter` to the `enums/`/
+  `converters/` class lists — both existed on disk already but were never added to the tree
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Realigned the Current State table's column
+  widths; a follow-up pass restored "sub-versions"' hyphen after an editor pass had dropped it to "subversions",
+  which reads as "acts of subversion" rather than the intended meaning
+- **`HISTORY.md`:** Restored "Standards Adoption" in the Conclusion's bullet list after an earlier typo-fix pass
+  had singularised it to "Standard Adoption", flipping its meaning and leaving it inconsistent with the Milestone 8
+  heading
+- **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables' Code Coverage row corrected from a stale
+  "minimum 51% line coverage" to "minimum 97%", matching the floor `pom.xml` actually enforces since it was
+  tightened in this branch
+- **`ARCHITECTURE.md`:** Dropped `v8.1.0`/`v8.3.0` version references from the Service Layer section's IPSC bulk
+  CSV import note — this file is evergreen documentation and must not name specific project versions, per its own
+  Evergreen Documentation rule in `AGENTS.md`
+- **`ARCHITECTURE.md`:** Domain Entities table corrected — it described every relationship as bidirectional
+  (`One-to-many ←/→`) with `mappedBy` collections, but the domain model has no `@OneToMany` fields at all; every
+  relationship is unidirectional `@ManyToOne` from the child side. Table and its footnote rewritten to match
+- **`README.md`:** Installation and Execution steps corrected — they told a new developer to hand-edit
+  `application.properties` with a literal username/password against a `hpsc_db` database, but the application
+  actually reads credentials from `MYSQL_USER`/`MYSQL_PASSWORD` env vars regardless of profile and has no
+  `spring.datasource.url` outside a profile, so the documented steps couldn't actually start the app. Now mirrors
+  `CONTRIBUTING.md`'s `dev` profile flow (`hpsc_dev`) and links to it for the full profile matrix; the startup URL
+  corrected to include the `/hpsc-web` context path
+- **`ARCHITECTURE.md`:** Project Structure tree and Model Layer section corrected — both described a top-level
+  `models/shared/` package holding `Placing`, but it actually lives at `models/award/shared/Placing.java`; no
+  top-level `models/shared/` package exists. The tree also gained the previously undocumented `models/ipsc/competitor/`
+  request/response directories and the `models/ipsc/match/response/` directory it was missing
+- **`ARCHITECTURE.md`:** Added the missing `GenderConverter` row to the Custom JPA Attribute Converters table —
+  the class exists in `converters/` and `Gender` is already listed in the Enumerations table, but the converter
+  itself had never been added
+- **`ARCHITECTURE.md`:** Project Structure tree's `configs/` comment corrected from "Spring configuration
+  (ControllerAdvice, OpenAPI)" to "Spring configuration (ControllerAdvice)" — `configs/` only contains
+  `ControllerAdvice`; `@OpenAPIDefinition` is actually on `HpscWebApplication.java`
+- **`ARCHITECTURE.md`:** Presentation Layer table's Mapping column made consistent — `AwardController`/
+  `ImageController` were shown with the `/hpsc-web` context-path prefix while the IPSC controllers weren't, but
+  none of the actual `@RequestMapping` values include it (Spring prepends `server.servlet.context-path`
+  automatically). All four rows now show the mapping as declared in code
+- **`ARCHITECTURE.md`:** Technology Stack table's Testing row gained `Spring REST Docs`, matching `README.md`'s
+  Technology section and the `spring-restdocs-mockmvc` dependency already declared in `pom.xml`
+- **`ARCHITECTURE.md`:** Project Structure tree's `constants/`, `controllers/`, `converters/`, `domain/`, `enums/`,
+  `models/` (root), `repositories/` and `utils/` comments dropped their individual class-name listings — same
+  rationale already applied to `.claude/skills/`: classes are added, renamed and removed far more often than the
+  packages that hold them, so naming each one drifts out of sync (as `GenderConverter` above just did). `AGENTS.md`'s
+  Directory Tree Maintenance rule and `CONTRIBUTING.md`'s condensed mention both gained a matching bullet making the
+  no-class-names rule explicit for the whole tree, not just skills
+
+### 🗑️ Removed
+
+#### Constants
+
+- **`HpscConstants`:** Removed entirely. Its sole constant, `HPSC_INPUT_DATE_FORMAT`, was just an alias for
+  `SystemConstants.ISO_DATE_FORMAT`; every former user now references `SystemConstants.DEFAULT_DATE_FORMAT` or
+  `IpscConstants.IPSC_INPUT_DATE_FORMAT` directly instead (see Changed → Models above)
+
+### 🔐 Security
+
+- **`tomcat-embed-core`/`tomcat-embed-el`/`tomcat-embed-websocket`:** Overridden `11.0.24` → `11.0.25` via a new
+  `pom.xml` `tomcat.version` property, closing three critical GitHub-flagged advisories:
+  [CVE-2026-68525](https://nvd.nist.gov/vuln/detail/CVE-2026-68525) (GHSA-h3x4-894j-xpx5, FORM authentication
+  incorrect authorization), [CVE-2026-65905](https://nvd.nist.gov/vuln/detail/CVE-2026-65905)
+  (GHSA-9xv2-5v5q-p794, DIGEST authenticator replay bypass) and
+  [CVE-2026-65182](https://nvd.nist.gov/vuln/detail/CVE-2026-65182) (GHSA-gcx9-497g-6cp6, improper access
+  control) — all transitive via `spring-boot-starter-tomcat`, still pinned to `11.0.24` by
+  `spring-boot-starter-parent:4.1.1`'s dependency management with no newer 4.1.x release yet published
 
 ## 🧾 [8.3.1] - 2026-09-02
 

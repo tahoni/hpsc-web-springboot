@@ -11,9 +11,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
@@ -73,6 +75,73 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         }
 
         return new CompetitorResponseHolder(competitorResponseList);
+    }
+
+    @Override
+    @Transactional
+    public CompetitorResponse updateCompetitor(Long competitorId, CompetitorRequest request) {
+        validateForCreate(request);
+        Competitor competitor = findCompetitorOrThrow(competitorId);
+
+        applyFields(competitor, request);
+        competitor = competitorRepository.save(competitor);
+
+        return toResponse(competitor);
+    }
+
+    @Override
+    @Transactional
+    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
+        Competitor competitor = findCompetitorOrThrow(competitorId);
+
+        if (request.getFirstName() != null) {
+            competitor.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            competitor.setLastName(request.getLastName());
+        }
+        if (request.getMiddleNames() != null) {
+            competitor.setMiddleNames(request.getMiddleNames());
+        }
+        if (request.getNickname() != null) {
+            competitor.setNickname(request.getNickname());
+        }
+        if (request.getDateOfBirth() != null) {
+            competitor.setDateOfBirth(request.getDateOfBirth());
+        }
+        if (request.getGender() != null) {
+            competitor.setGender(resolveGender(request.getGender()));
+        }
+        if (request.getHomeClub() != null) {
+            competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
+        }
+        if (request.getSapsaNumber() != null) {
+            competitor.setSapsaNumber(request.getSapsaNumber());
+        }
+        if (request.getCompetitorNumber() != null) {
+            competitor.setCompetitorNumber(request.getCompetitorNumber());
+        }
+        if ((request.getHomeClub() != null) || (request.getClubNumber() != null)) {
+            String clubNumber = (request.getClubNumber() != null) ? request.getClubNumber() : competitor.getClubNumber();
+            competitor.setClubNumber(resolveClubNumber(competitor.getHomeClub(), clubNumber));
+        }
+        if (request.getIdNumber() != null) {
+            competitor.setIdNumber(request.getIdNumber());
+        }
+        if (request.getCellphoneNumber() != null) {
+            competitor.setCellphoneNumber(request.getCellphoneNumber());
+        }
+        if (request.getEmailAddresses() != null) {
+            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
+        }
+        competitor = competitorRepository.save(competitor);
+
+        return toResponse(competitor);
+    }
+
+    @Override
+    public CompetitorResponse getCompetitor(Long competitorId) {
+        return toResponse(findCompetitorOrThrow(competitorId));
     }
 
     /**
@@ -151,82 +220,15 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional
-    public CompetitorResponse updateCompetitor(Long competitorId, CompetitorRequest request) {
-        validateForCreate(request);
-        Competitor competitor = findCompetitorOrThrow(competitorId);
-
-        applyFields(competitor, request);
-        competitor = competitorRepository.save(competitor);
-
-        return toResponse(competitor);
-    }
-
-    @Override
-    @Transactional
-    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
-        Competitor competitor = findCompetitorOrThrow(competitorId);
-
-        if (request.getFirstName() != null) {
-            competitor.setFirstName(request.getFirstName());
-        }
-        if (request.getLastName() != null) {
-            competitor.setLastName(request.getLastName());
-        }
-        if (request.getMiddleNames() != null) {
-            competitor.setMiddleNames(request.getMiddleNames());
-        }
-        if (request.getNickname() != null) {
-            competitor.setNickname(request.getNickname());
-        }
-        if (request.getDateOfBirth() != null) {
-            competitor.setDateOfBirth(request.getDateOfBirth());
-        }
-        if (request.getGender() != null) {
-            competitor.setGender(resolveGender(request.getGender()));
-        }
-        if (request.getHomeClub() != null) {
-            competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
-        }
-        if (request.getSapsaNumber() != null) {
-            competitor.setSapsaNumber(request.getSapsaNumber());
-        }
-        if (request.getCompetitorNumber() != null) {
-            competitor.setCompetitorNumber(request.getCompetitorNumber());
-        }
-        if (request.getClubNumber() != null) {
-            if (request.getClubNumber().isBlank()) {
-                throw new ValidationException("Club number cannot be blank.");
-            }
-            competitor.setClubNumber(request.getClubNumber());
-        }
-        if (request.getIdNumber() != null) {
-            competitor.setIdNumber(request.getIdNumber());
-        }
-        if (request.getCellphoneNumber() != null) {
-            competitor.setCellphoneNumber(request.getCellphoneNumber());
-        }
-        if (request.getEmailAddresses() != null) {
-            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
-        }
-        competitor = competitorRepository.save(competitor);
-
-        return toResponse(competitor);
-    }
-
-    @Override
-    public CompetitorResponse getCompetitor(Long competitorId) {
-        return toResponse(findCompetitorOrThrow(competitorId));
-    }
-
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
      * gender and named home club in the process.
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
-     * @throws ValidationException if the request's gender doesn't match a known {@link Gender}.
+     * @throws ValidationException if the request's gender doesn't match a known {@link Gender},
+     *                             or the resolved home club is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             but no club number was supplied.
      * @throws NonFatalException   if the request's home club name doesn't match an existing club.
      */
     protected void applyFields(@NotNull Competitor competitor, @NotNull CompetitorRequest request) {
@@ -236,10 +238,11 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setNickname(request.getNickname());
         competitor.setDateOfBirth(request.getDateOfBirth());
         competitor.setGender(resolveGender(request.getGender()));
-        competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
+        Club homeClub = resolveHomeClub(request.getHomeClub());
+        competitor.setHomeClub(homeClub);
         competitor.setSapsaNumber(request.getSapsaNumber());
         competitor.setCompetitorNumber(request.getCompetitorNumber());
-        competitor.setClubNumber(request.getClubNumber());
+        competitor.setClubNumber(resolveClubNumber(homeClub, request.getClubNumber()));
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
         competitor.setEmailAddresses(
@@ -256,6 +259,59 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     protected Competitor findCompetitorOrThrow(Long competitorId) {
         return competitorRepository.findById(competitorId)
                 .orElseThrow(() -> new NonFatalException("No competitor found with ID " + competitorId));
+    }
+
+    /**
+     * Resolves a competitor's club number against their home club.
+     *
+     * <p>
+     * A club number is only meaningful for HPSC's own members: it's required when
+     * {@code homeClub} is {@link IpscConstants#HOME_CLUB_IDENTIFIER}, and forced to {@code null}
+     * for every other home club, including none, regardless of what was supplied on the request.
+     * </p>
+     *
+     * @param homeClub   the competitor's resolved home club; may be null.
+     * @param clubNumber the club number supplied on the request; may be null or blank.
+     * @return {@code clubNumber} when {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION},
+     * otherwise {@code null}.
+     * @throws ValidationException if {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             but {@code clubNumber} is null or blank.
+     */
+    protected String resolveClubNumber(Club homeClub, String clubNumber) {
+        if (!isHpscMember(homeClub, IpscConstants.HOME_CLUB_IDENTIFIER)) {
+            return null;
+        }
+
+        if ((clubNumber == null) || clubNumber.isBlank()) {
+            throw new ValidationException(String.format("Club number is required for %s competitors.",
+                    IpscConstants.HOME_CLUB_ABBREVIATION));
+        }
+
+        return clubNumber;
+    }
+
+    /**
+     * Determines whether {@code homeClub}'s identifier matches {@code homeClubIdentifier}.
+     *
+     * <p>
+     * {@code homeClubIdentifier} is taken as a parameter, rather than read directly from
+     * {@link IpscConstants#HOME_CLUB_IDENTIFIER} in this method, purely so this check stays unit
+     * testable if that constant were ever null (e.g. if
+     * {@link ClubIdentifier#fromAbbreviation(String)} ever failed to resolve
+     * {@link IpscConstants#HOME_CLUB_ABBREVIATION}, which cannot happen with today's enum values,
+     * but which the constant is deliberately written to tolerate rather than throw on). A null
+     * {@code homeClubIdentifier} always yields {@code false} here, never a false match -- even
+     * against a {@code homeClub} whose own identifier happens to be null.
+     * </p>
+     *
+     * @param homeClub           the competitor's resolved home club; may be null.
+     * @param homeClubIdentifier the identifier {@code homeClub} must carry to count as a match;
+     *                           may be null.
+     * @return {@code true} only if both are non-null and {@code homeClub}'s identifier matches
+     * {@code homeClubIdentifier}.
+     */
+    protected boolean isHpscMember(Club homeClub, ClubIdentifier homeClubIdentifier) {
+        return (homeClub != null) && (homeClubIdentifier != null) && (homeClub.getIdentifier() == homeClubIdentifier);
     }
 
     /**
@@ -308,9 +364,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         }
         if ((request.getLastName() == null) || request.getLastName().isBlank()) {
             throw new ValidationException("Last name is required.");
-        }
-        if ((request.getClubNumber() == null) || request.getClubNumber().isBlank()) {
-            throw new ValidationException("Club number is required.");
         }
     }
 

@@ -27,8 +27,12 @@ public interface IpscMatchService {
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
      *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if the named club cannot be found.
+     * @throws FatalException      if no club is named and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
-    MatchResponse createMatch(MatchRequest request) throws ValidationException, NonFatalException;
+    MatchResponse createMatch(MatchRequest request)
+            throws ValidationException, NonFatalException, FatalException;
 
     /**
      * Creates a batch of new IPSC matches, together with their stages, from CSV data.
@@ -50,7 +54,10 @@ public interface IpscMatchService {
      *                             {@link za.co.hpsc.web.enums.MatchCategory}, or if a row's
      *                             {@code Stages} cell is malformed.
      * @throws NonFatalException   if a row's named club cannot be found.
-     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data, or a row names
+     *                             no club and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     MatchResponseHolder createMatches(String csvData)
             throws ValidationException, NonFatalException, FatalException;
@@ -72,8 +79,12 @@ public interface IpscMatchService {
      *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
+     * @throws FatalException      if no club is named and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
-    MatchResponse updateMatch(Long matchId, MatchRequest request) throws ValidationException, NonFatalException;
+    MatchResponse updateMatch(Long matchId, MatchRequest request)
+            throws ValidationException, NonFatalException, FatalException;
 
     /**
      * Partially updates an existing IPSC match, applying only the non-null fields on the
@@ -94,8 +105,12 @@ public interface IpscMatchService {
      *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
+     * @throws FatalException      if the request's {@code club} is blank and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
-    MatchResponse patchMatch(Long matchId, MatchRequest request) throws ValidationException, NonFatalException;
+    MatchResponse patchMatch(Long matchId, MatchRequest request)
+            throws ValidationException, NonFatalException, FatalException;
 
     /**
      * Retrieves an existing IPSC match together with its stages.
@@ -104,7 +119,8 @@ public interface IpscMatchService {
      * @return the match, including its persisted stages.
      * @throws NonFatalException if no match with {@code matchId} exists.
      */
-    MatchResponse getMatch(Long matchId) throws NonFatalException;
+    MatchResponse getMatch(Long matchId)
+            throws NonFatalException;
 
     /**
      * Retrieves every IPSC match together with its stages.

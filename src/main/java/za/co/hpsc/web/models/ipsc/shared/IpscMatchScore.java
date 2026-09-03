@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * <p>
  * Extends {@link IpscCommonScore} with the match-level total: {@link #percentageOfPossiblePoints}
  * summarises the competitor's overall combat accuracy across every stage (total alpha/charlie/delta
- * hits weighted by the power factor less no-shoots, misses, and penalties, as a percentage of the
+ * hits weighted by the power factor less no-shoots, misses and penalties, as a percentage of the
  * maximum points available in the match), independent of time. The inherited
  * {@link IpscCommonScore#getWeightedPoints() points} and {@link IpscCommonScore#getPercentage() percentage}
  * are instead the sum of the competitor's per-stage Comstock (hit-factor) percentages/points,

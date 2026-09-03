@@ -52,6 +52,9 @@ public class IpscMatchController {
      * @return the created {@link MatchResponse}, including its generated ID and any persisted stages.
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if the named club cannot be found.
+     * @throws FatalException      if no club is named and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match", description = "Create a new IPSC match, optionally together with its stages.")
@@ -64,10 +67,13 @@ public class IpscMatchController {
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "The named club could not be found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while resolving the default match club.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     ResponseEntity<MatchResponse> createMatch(@RequestBody MatchRequest request)
-            throws ValidationException, NonFatalException {
+            throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchService.createMatch(request));
     }
 
@@ -83,7 +89,9 @@ public class IpscMatchController {
      *                             unrecognised, or if a row's stages cell is malformed.
      * @throws NonFatalException   if a row's named club cannot be found.
      * @throws FatalException      if a critical error occurs during processing, that prevents the
-     *                             operation from completing successfully.
+     *                             operation from completing successfully — including a row naming no club while
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create matches", description = "Create IPSC matches, together with their stages, in bulk from CSV data.")
@@ -124,6 +132,9 @@ public class IpscMatchController {
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
+     * @throws FatalException      if no club is named and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     @PutMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Replace match", description = "Fully replace an existing IPSC match's fields and stages.")
@@ -136,12 +147,15 @@ public class IpscMatchController {
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID, or the named club, could be found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while resolving the default match club.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     ResponseEntity<MatchResponse> updateMatch(
             @Parameter(description = "Identifier of the match to replace.") @PathVariable Long matchId,
             @RequestBody MatchRequest request)
-            throws ValidationException, NonFatalException {
+            throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.ok(ipscMatchService.updateMatch(matchId, request));
     }
 
@@ -155,6 +169,9 @@ public class IpscMatchController {
      * @throws ValidationException if the named club is blank, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
+     * @throws FatalException      if the request's {@code club} is blank and
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                             is null.
      */
     @PatchMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update match", description = "Partially update an existing IPSC match; only non-null fields are applied.")
@@ -167,12 +184,15 @@ public class IpscMatchController {
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID, or the named club, could be found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while resolving the default match club.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     ResponseEntity<MatchResponse> patchMatch(
             @Parameter(description = "Identifier of the match to update.") @PathVariable Long matchId,
             @RequestBody MatchRequest request)
-            throws ValidationException, NonFatalException {
+            throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.ok(ipscMatchService.patchMatch(matchId, request));
     }
 

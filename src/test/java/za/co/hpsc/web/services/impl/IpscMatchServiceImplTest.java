@@ -6,12 +6,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.IpscMatchStage;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
@@ -60,13 +61,13 @@ class IpscMatchServiceImplTest {
         Club club = new Club();
         club.setId(10L);
         club.setName("Test Club");
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
         MatchRequest request = validRequest("Test Club");
         IpscMatch match = new IpscMatch();
 
         // Act
-        ipscMatchServiceImpl.applyFields(match, request);
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.applyFields(match, request));
 
         // Assert
         assertSame(club, match.getClub());
@@ -376,6 +377,72 @@ class IpscMatchServiceImplTest {
         assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.resolveClub("No Such Club"));
     }
 
+    @Test
+    void testResolveClub_whenClubNameIsNull_thenReturnsDefaultMatchClub() {
+        // Arrange
+        Club defaultClub = new Club();
+        defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(Optional.of(defaultClub));
+
+        // Act
+        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub(null));
+
+        // Assert
+        assertSame(defaultClub, resolved);
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsBlank_thenReturnsDefaultMatchClub() {
+        // Arrange
+        Club defaultClub = new Club();
+        defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(Optional.of(defaultClub));
+
+        // Act
+        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub("  "));
+
+        // Assert
+        assertSame(defaultClub, resolved);
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsNullAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.resolveClub(null));
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsNullAndDefaultIdentifierIsNull_thenThrowsFatalException() {
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchServiceImpl.resolveClub(null, null));
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsBlankAndDefaultIdentifierIsNull_thenThrowsFatalException() {
+        // Act & Assert
+        assertThrows(FatalException.class, () -> ipscMatchServiceImpl.resolveClub("  ", null));
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsSuppliedAndDefaultIdentifierIsNull_thenIgnoresDefaultIdentifier() {
+        // Arrange
+        Club club = new Club();
+        club.setName("Test Club");
+        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+
+        // Act
+        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub("Test Club", null));
+
+        // Assert
+        assertSame(club, resolved);
+    }
+
     // resolveFirearmType()
     @Test
     void testResolveFirearmType_whenFirearmTypeIsValid_thenReturnsMatchingFirearmType() {
@@ -447,7 +514,7 @@ class IpscMatchServiceImplTest {
     void testToResponse_whenMatchHasClub_thenMapsClubIdentifier() {
         // Arrange
         Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         IpscMatch match = new IpscMatch();
         match.setId(1L);
         match.setName("Club Championship");
@@ -463,7 +530,7 @@ class IpscMatchServiceImplTest {
         assertEquals(1L, response.getMatchId());
         assertEquals("Club Championship", response.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), response.getMatchDate());
-        assertEquals(ClubIdentifier.HPSC, response.getClub());
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
     }
@@ -602,15 +669,6 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testValidateForCreate_whenClubIsBlank_thenThrowsValidationException() {
-        // Arrange
-        MatchRequest request = validRequest("  ");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.validateForCreate(request));
-    }
-
-    @Test
     void testValidateForCreate_whenMatchFirearmTypeIsBlank_thenThrowsValidationException() {
         // Arrange
         MatchRequest request = validRequest("Test Club");
@@ -634,6 +692,12 @@ class IpscMatchServiceImplTest {
     void testValidateForCreate_whenRequestIsValid_thenDoesNotThrow() {
         // Act & Assert
         assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(validRequest("Test Club")));
+    }
+
+    @Test
+    void testValidateForCreate_whenClubIsBlank_thenDoesNotThrow() {
+        // Act & Assert
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(validRequest("  ")));
     }
 
     // Helpers

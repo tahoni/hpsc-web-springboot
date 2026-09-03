@@ -93,26 +93,25 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
    cd hpsc-web-springboot
    ```
 
-2. **Configure the database**:
-    - Create a MySQL database for the application
-    - Update `src/main/resources/application.properties` with your database credentials:
-      ```properties
-      spring.datasource.url=jdbc:mysql://localhost:3306/hpsc_db
-      spring.datasource.username=your_username
-      spring.datasource.password=your_password
-      ```
+2. **Create a local MySQL database** (e.g. `hpsc_dev`), then export the credentials the application always reads
+   from the environment, regardless of profile:
+   ```bash
+   export MYSQL_USER=your_username
+   export MYSQL_PASSWORD=your_password
+   ```
 
 3. **Build the project**:
    ```bash
    ./mvnw clean install
    ```
 
-4. **Run the application**:
+4. **Run the application** against the `dev` profile (points at `localhost:3306/hpsc_dev`):
    ```bash
-   ./mvnw spring-boot:run
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
    ```
 
-The application starts by default on `http://localhost:8081`.
+The application starts on `http://localhost:8081/hpsc-web`. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles) for the full profile/DDL matrix and other database options.
 
 ## 📚 API Documentation
 

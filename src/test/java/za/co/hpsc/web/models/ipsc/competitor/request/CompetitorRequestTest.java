@@ -175,7 +175,7 @@ class CompetitorRequestTest {
 
     @Test
     void testJsonDeserialization_whenCompetitorNumberMissing_thenDoesNotThrow() {
-        // Arrange - competitorNumber isn't required; only firstName, lastName and clubNumber are
+        // Arrange - competitorNumber isn't required; only firstName and lastName are
         ObjectMapper mapper = new ObjectMapper();
         String json = """
                 {
@@ -220,8 +220,9 @@ class CompetitorRequestTest {
     }
 
     @Test
-    void testJsonDeserialization_whenClubNumberMissing_thenThrowsMismatchedInputException() {
-        // Arrange
+    void testJsonDeserialization_whenClubNumberMissing_thenClubNumberIsNull() throws Exception {
+        // Arrange - clubNumber isn't a Jackson-required property; IpscCompetitorServiceImpl enforces
+        // it conditionally, based on the resolved home club
         ObjectMapper mapper = new ObjectMapper();
         String json = """
                 {
@@ -230,8 +231,11 @@ class CompetitorRequestTest {
                 }
                 """;
 
-        // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, CompetitorRequest.class));
+        // Act
+        CompetitorRequest request = mapper.readValue(json, CompetitorRequest.class);
+
+        // Assert
+        assertNull(request.getClubNumber());
     }
 
     @Test

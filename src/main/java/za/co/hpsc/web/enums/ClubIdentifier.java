@@ -12,7 +12,9 @@ import java.util.Optional;
  * Each club is associated with a full name, an abbreviation and a code for cross-referencing
  * with external systems. {@code VISITOR} represents a competitor visiting from outside the
  * recognised clubs, and {@code UNKNOWN} is the default constant used when a club could not
- * be matched.
+ * be matched. {@code ALL} is used in the Match domain to indicate that a match is hosted
+ * jointly by the three real clubs ({@code SOSC}, {@code HPSC} and {@code PMPSC}), rather than
+ * by a single one of them.
  * </p>
  *
  * @since 5.0.0
@@ -23,6 +25,7 @@ public enum ClubIdentifier {
     HPSC("Hartbeespoortdam Practical Shooting Club", "HPSC", "BBB"),
     PMPSC("Pretoria Military Practical Shooting Club", "PMPSC", "CCC"),
     VISITOR("Visitor", "V", "UUU"),
+    ALL("Eufees Clubs", "All", "ALL"),
     UNKNOWN;
 
     private final String name;

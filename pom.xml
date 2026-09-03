@@ -12,7 +12,7 @@
     <!-- Application definition -->
     <groupId>za.co.hpsc</groupId>
     <artifactId>hpsc-web</artifactId>
-    <version>8.3.1</version>
+    <version>8.4.0</version>
     <name>hpsc-web</name>
     <description>HPSC website backend</description>
 
@@ -43,6 +43,9 @@
         <maven.compiler.target>25</maven.compiler.target>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.14</jacoco.version>
+        <!-- Override spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs
+             (GHSA-h3x4-894j-xpx5, GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25. -->
+        <tomcat.version>11.0.25</tomcat.version>
     </properties>
 
     <dependencies>
@@ -290,7 +293,7 @@
                                                 <limit>
                                                     <counter>LINE</counter>
                                                     <value>COVEREDRATIO</value>
-                                                    <minimum>0.86</minimum>
+                                                    <minimum>0.97</minimum>
                                                 </limit>
                                             </limits>
                                         </rule>
