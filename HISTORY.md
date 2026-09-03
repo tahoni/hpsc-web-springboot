@@ -2342,7 +2342,7 @@ comprehensive test coverage across all services and utilities.
   tree release-checklist backstop; `tomcat-embed-*` patched to 11.0.25 for three critical CVEs
 
 **Achievement:** Extended the domain-default pattern from competitors to matches, completed the coverage-regression
-floor's climb to its real baseline, and hardened the project's own documentation/convention discipline.
+floor's climb to its real baseline and hardened the project's own documentation/convention discipline.
 
 ---
 
@@ -2357,7 +2357,7 @@ floor's climb to its real baseline, and hardened the project's own documentation
 - `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
 
 **Achievement:** Completed the CI build/test gate that had been running only "locally / by reviewers", added the
-project's first coverage-regression rule — tightened from 51% to 86% against a freshly-measured real baseline of
+project's first coverage-regression rule — tightened from 51% to 86% against a freshly measured real baseline of
 98.16%/98.94%, with further tightening left as a follow-up — and resolved a standing design-intent ambiguity around
 Award/Image CSV persistence.
 

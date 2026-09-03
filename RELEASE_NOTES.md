@@ -18,7 +18,7 @@ tightened from 86% to 97% — now genuinely close to the real, freshly re-measur
 convention hardening: a new Member ordering convention, REST naming rules promoted from recommendation to
 convention, a release-checklist backstop that keeps `ARCHITECTURE.md`'s Project Structure tree honest, the
 `improvement-plan.md`/`improvement-plan-tasks.md` restructure into ✅ Completed/🟡 Partially Completed/⚪ Open
-sections, and a Tomcat security patch closing three critical CVEs.
+sections and a Tomcat security patch closing three critical CVEs.
 
 ---
 
@@ -255,7 +255,7 @@ Leoni Lubbinge
 ## 📝 Notes
 
 Version 8.4.0 extends the competitor module's "domain default" pattern to matches, closes out the coverage-floor
-work started in v8.3.1 by reaching a genuinely near-baseline 97% minimum, and removes a stale `HpscConstants` class
+work started in v8.3.1 by reaching a genuinely near-baseline 97% minimum and removes a stale `HpscConstants` class
 in favour of the shared date-format constants introduced alongside it. Closes
 `documentation/roadmap/improvement-plan.md`'s Gap #4 and Gap #9.
 

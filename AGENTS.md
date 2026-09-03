@@ -126,7 +126,7 @@ Within a class, order members: constructors first, then public methods, then —
 ("open") class — protected methods, then private methods last. Private helpers always sit at the very end, below
 every protected method, regardless of where they were originally declared; a class with no private helpers simply
 ends after its last protected method. Within each visibility group, keep the existing relative order rather than
-alphabetising — that stricter, alphabetised ordering is specific to test classes, per Test Conventions below. A
+alphabetising — that stricter, alphabetised ordering is specific to test classes, per the Test Conventions below. A
 `final` utility class (e.g. `NumberUtil`, `IpscConstants`) can't be subclassed, so it has no protected members to
 place; its private helpers, if any, still go after every public method.
 
@@ -260,7 +260,7 @@ Four documentation-only folders supplement these:
   Progress note (or, in `improvement-plan-tasks.md`, at least one checked item) but hasn't reached a final Outcome,
   and to ✅ Completed once it has (its `###`/`####` header there gains a "✅ Closed in vX.Y.Z" suffix, or "✅ Closed
   as not applicable in vX.Y.Z" if it was resolved by removing the thing rather than delivering it). Never delete or
-  renumber a gap, or delete a checked task line, when moving it between sections — only relocate the whole block.
+  renumber a gap or delete a checked task line when moving it between sections — only relocate the whole block.
 
 - **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
   this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
