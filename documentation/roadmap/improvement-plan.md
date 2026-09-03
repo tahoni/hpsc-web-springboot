@@ -88,7 +88,7 @@ CRUD controllers superseding the empty `IpscController` stub, each backed by Moc
 `ClubRepository`) rather than via a dedicated `ClubService` — a simpler equivalent, not a gap. Cross-entity
 orchestration was deliberately held off per step 3 above, until v8.1.0's competitor bulk CSV import reused the
 existing single-`createCompetitor` logic per row instead of introducing new orchestration. See
-[`improvement-plan-tasks.md`](improvement-plan-tasks.md#-next) for the full checklist.
+[`improvement-plan-tasks.md`](improvement-plan-tasks.md#-completed) for the full checklist.
 
 #### 2. No automatic build/test gate on pull requests — ✅ Closed in v8.3.1
 
@@ -354,7 +354,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% to 97% across v8.3.1/v8.4.0, now closed. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
 | **Next**    | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                                                                                             |
-| **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                                                                                                                                                                        |
+| **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                                                                                                                                                                      |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                                       |
 
 ---
