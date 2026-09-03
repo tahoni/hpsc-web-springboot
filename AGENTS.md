@@ -229,7 +229,7 @@ genuinely new concept. Icons already established in this repository's documentat
 | 🗂️   | Documentation file index          |
 | 🌲   | Evergreen documentation           |
 | ➕   | Added items                       |
-| 🐛   | Fixed items                       |
+| 🐛   | Bugs / fixed items                |
 | ⚠️   | Deprecated items                  |
 | 🗑️   | Removed items                     |
 | 🔐   | Security                          |

@@ -125,6 +125,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   "Key Design Patterns", which the old description never reflected
 - **`HISTORY.md`:** "Future Roadmap Implications" heading used `🚀` instead of `🗺️`, despite naming the same
   Roadmap concept `🗺️` is registered for and used consistently everywhere else — switched to `🗺️`
+- **`RELEASE_NOTES.md`:** "Migration Guide" heading used `🔄` instead of `🚀`, the icon `CHANGELOG.md`'s
+  equivalent "Upgrade Guide" heading already uses for the same underlying concept — switched to `🚀`. 17
+  archived `documentation/history/RELEASE_NOTES_vX.Y.Z.md` files share this same pre-existing inconsistency but
+  were deliberately left untouched, consistent with treating those archives as frozen historical snapshots
+- **`AGENTS.md`:** `🐛`'s registered concept broadened from "Fixed items" to "Bugs / fixed items", since
+  `RELEASE_NOTES.md`'s "Known Issues" heading (28 of 30 archived releases) consistently reuses it for open,
+  not-yet-fixed bugs — a deliberate, long-standing pattern the narrower description didn't account for
 
 ## 🧾 [8.4.0] - 2026-09-03
 
