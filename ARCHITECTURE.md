@@ -174,10 +174,10 @@ Contains all business logic.
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
 > rather than an import. See the Award/Image CSV Processing Flow below.
 
-> Both IPSC domains now support bulk CSV import, each persisting every row via the same validation/resolution logic
+> Both IPSC domains support bulk CSV import, each persisting every row via the same validation/resolution logic
 > as its single-item `create` endpoint: `IpscCompetitorController.createCompetitors`
-> (`IpscCompetitorService`/`IpscCompetitorServiceImpl`, v8.1.0) and `IpscMatchController.createMatches`
-> (`IpscMatchService`/`IpscMatchServiceImpl`, v8.3.0), which additionally parses a `Stages` CSV cell into
+> (`IpscCompetitorService`/`IpscCompetitorServiceImpl`) and `IpscMatchController.createMatches`
+> (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses a `Stages` CSV cell into
 > `MatchStageRequest`s via `parseStages`.
 
 ---

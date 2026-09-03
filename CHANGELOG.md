@@ -109,6 +109,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables' Code Coverage row corrected from a stale
   "minimum 51% line coverage" to "minimum 97%", matching the floor `pom.xml` actually enforces since it was
   tightened in this branch
+- **`ARCHITECTURE.md`:** Dropped `v8.1.0`/`v8.3.0` version references from the Service Layer section's IPSC bulk
+  CSV import note — this file is evergreen documentation and must not name specific project versions, per its own
+  Evergreen Documentation rule in `AGENTS.md`
 
 ## 🧾 [8.3.1] - 2026-09-02
 
