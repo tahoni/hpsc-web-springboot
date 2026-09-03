@@ -187,7 +187,7 @@ controllers/services, plus new coverage for the `Gender` enum and its converter.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For API Consumers
 

@@ -101,7 +101,7 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Deployers
 

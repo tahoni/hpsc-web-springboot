@@ -59,7 +59,7 @@ No domain model, API surface or test behaviour changes.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Deployers
 

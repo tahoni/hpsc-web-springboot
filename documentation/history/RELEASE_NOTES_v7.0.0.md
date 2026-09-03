@@ -180,7 +180,7 @@ The `repositories/` package was empty (repositories for these six entities were 
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Deployers
 

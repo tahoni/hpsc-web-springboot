@@ -159,7 +159,7 @@ sections and a Tomcat security patch closing three critical CVEs.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For API Consumers
 

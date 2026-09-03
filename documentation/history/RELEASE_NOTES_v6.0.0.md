@@ -245,7 +245,7 @@ Eight new test classes were added; and one removed.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Developers
 
