@@ -68,10 +68,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`:** `🟡` (Partially completed) and `⚪` (Open / not started) added to the icon registry table,
   completing the three-way status scheme alongside the already-registered `✅`, used throughout
   `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md`
+- **`AGENTS.md`:** `🤔` (Reasoning), `🔢` (Numbering / sequence) and `🏷️` (Naming convention) added to the icon
+  registry table, backfilling icons already used in `documentation/recommendations/flyway-migration-versioning.md`
+  and `standard-rest-conventions.md`
 
 ### 🔄 Changed
 
 #### Documentation
+
+- **`documentation/recommendations/flyway-migration-versioning.md`/`standard-rest-conventions.md`:** "Overview"
+  headings (and their Table of Contents entries) now use `📖`, already registered in `AGENTS.md`'s icon table for
+  "Introduction / overview", instead of `🌐` — which is registered for the unrelated "Presentation / API layer"
+  concept
 
 - **`ARCHITECTURE.md`:** "Presentation Layer" and "Model Layer" headings (and their Table of Contents entries)
   now use dedicated `🌐`/`🧬` icons instead of `📊`/`📦`, which were already registered in `AGENTS.md`'s icon

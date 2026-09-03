@@ -222,6 +222,9 @@ genuinely new concept. Icons already established in this repository's documentat
 | 🧩   | Tooling / automation              |
 | 🟡   | Partially completed               |
 | ⚪   | Open / not started                |
+| 🤔   | Reasoning                         |
+| 🔢   | Numbering / sequence              |
+| 🏷️   | Naming convention                 |
 | ➕   | Added items                       |
 | 🐛   | Fixed items                       |
 | ⚠️   | Deprecated items                  |

@@ -7,7 +7,7 @@ controllers converge on one consistent style rather than each reinventing it.
 
 ## Table of Contents
 
-- [🌐 Overview](#-overview)
+- [📖 Overview](#-overview)
 - [🔗 Endpoint (URL) Naming](#-endpoint-url-naming)
 - [🏷️ Method Naming](#-method-naming)
 - [🔍 Current State in This Codebase](#-current-state-in-this-codebase)
@@ -15,7 +15,7 @@ controllers converge on one consistent style rather than each reinventing it.
 
 ---
 
-## 🌐 Overview
+## 📖 Overview
 
 Two conventions matter for a REST endpoint, and they're independent of each other:
 
