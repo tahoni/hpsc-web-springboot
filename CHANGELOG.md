@@ -74,6 +74,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `develop` and `main` `build.yml` runs that shipped v8.3.1. Closes
   `documentation/roadmap/improvement-plan.md`'s Gap #4
 
+#### Documentation
+
+- **`AGENTS.md`:** New Tech Stack note explaining that `db/migration/V<X>_<Y>_<Z>__*.sql` filenames are their own
+  independent counter, baselined at `7.0.0`, and do not track `pom.xml`'s app version — prompted by
+  `V7_2_0__add_competitor_emails.sql` actually shipping in app v8.2.0, coinciding by name only with the wholly
+  unrelated app release v7.2.0
+
 ## 🧾 [8.3.1] - 2026-09-02
 
 ### ➕ Added
