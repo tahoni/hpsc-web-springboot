@@ -58,7 +58,7 @@ static analysis.
 - `models/ipsc/request` split into `models/ipsc/match/request/` (match/stage submission) and
   `models/ipsc/scores/request/` (competitor scores submission) to match the module's per-concern shape
 
-### 👤 Gender Enum & Persistence
+### 🧬 Gender Enum & Persistence
 
 - **`Gender`** gains `name`/`abbreviation` fields, a case-insensitive `fromName()` factory method and a `toString()`
   override, bringing it in line with the shape of the project's other enums

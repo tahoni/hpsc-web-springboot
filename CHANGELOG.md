@@ -80,7 +80,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   headings (and their Table of Contents entries) now use `📖`, already registered in `AGENTS.md`'s icon table for
   "Introduction / overview", instead of `🌐` — which is registered for the unrelated "Presentation / API layer"
   concept
-
 - **`ARCHITECTURE.md`:** "Presentation Layer" and "Model Layer" headings (and their Table of Contents entries)
   now use dedicated `🌐`/`🧬` icons instead of `📊`/`📦`, which were already registered in `AGENTS.md`'s icon
   table for the unrelated "Statistics" and "What's new / key changes" concepts
@@ -97,6 +96,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CHANGELOG.md`:** Removed a duplicate, truncated `## 🧾 [5.0.0] - 2026-02-24` section that preceded the real,
   complete one — the duplicate heading text meant GitHub suffixed the second heading's anchor, so the Table of
   Contents' "Version 5.0.0" link only ever reached the incomplete copy
+- **`documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md`:** Five archived
+  sub-headings reused an already-registered icon for an unrelated concept — `📂`→`📁` (Project/directory
+  structure), `📅`→`🔢` (collided with Timeline; the heading is actually about numbering), `🔒`→`🔐`
+  (Security), `👤`→`🧬` (collided with Author; the heading is actually about a domain enum/DTO), `📈`→`🧪`
+  (collided with Request-response flow; the heading is actually about test coverage)
 
 ## 🧾 [8.4.0] - 2026-09-03
 

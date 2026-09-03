@@ -20,7 +20,7 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 - New `services/AwardServiceTest`/`services/ImageServiceTest` — Mockito-based unit tests exercising `createAwards`, the only method each interface declares, through the interface type rather than the impl class.
 - Superseded the old `services/impl/AwardServiceTest`/`services/impl/ImageServiceTest`, whose thin `createAwards` coverage was tested directly against the impl class. Impl-only helper methods (`readAwards`/`mapAwards`, `readImages`/`mapImages`) remain covered by the existing `services/impl/*ImplTest` classes.
 
-### 📈 Four JaCoCo Coverage Gaps Closed
+### 🧪 Four JaCoCo Coverage Gaps Closed
 
 - **`ControllerResponse(boolean, String)`** — previously completely untested; covers the message/error swap based on `success`.
 - **`ControllerResponse(LocalDateTime, String, String)`** — covers the derived-`success`-from-error-presence branch (non-null/non-blank error, and blank-but-non-null error).

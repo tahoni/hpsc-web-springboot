@@ -87,7 +87,7 @@ New entity service methods that were added to support the refactor:
 - `CompetitorEntityService.findCompetitorById(Long)` / implementation
 - `MatchStageCompetitorEntityService.findMatchStageCompetitorById(Long)` / implementation
 
-### 📂 IPSC Model Package Restructuring
+### 📁 IPSC Model Package Restructuring
 
 All IPSC model classes previously at `models/ipsc/` are now grouped under `models/ipsc/common/`,
 with a new sibling sub-package `models/ipsc/match/` for match-only models:
