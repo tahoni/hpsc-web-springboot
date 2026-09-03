@@ -103,6 +103,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `DEFAULT_DATE_TIME_FORMAT` (alias for `ISO_DATE_TIME_FORMAT`) constants; `ISO_DATE_TIME_FORMAT` now composes
   from the new `TIME_FORMAT` instead of an inline `" HH:mm"` literal — same resulting `"yyyy-MM-dd HH:mm"` value.
   Unused `LONG_DATE_FORMAT`/`LONG_DATE_TIME_FORMAT` dropped; nothing in the codebase referenced either
+- **`SystemConstants`, `IpscConstants`:** Every constant actually referenced elsewhere in the codebase gained a
+  one-line field Javadoc explaining its purpose (`DEFAULT_SCALE`, `TIME_FORMAT`, `ISO_DATE_FORMAT`,
+  `ISO_DATE_TIME_FORMAT`, `DEFAULT_DATE_FORMAT`, `ARRAY_SEPARATOR`, `IPSC_INPUT_DATE_FORMAT`,
+  `DEFAULT_MATCH_CLUB_IDENTIFIER`, `HOME_CLUB_ABBREVIATION`, `HOME_CLUB_IDENTIFIER`). Fields with no reference
+  anywhere outside their own declaration (e.g. `EXCLUDE_ICS_ALIAS`, `MAX_SAPSA_NUMBER`, `STAGE_POINTS_SCALE`,
+  `DEFAULT_MATCH_CATEGORY`) were deliberately left undocumented rather than inventing a rationale for dead code
 
 #### Controllers
 
