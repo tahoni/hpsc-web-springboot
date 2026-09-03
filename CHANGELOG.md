@@ -56,6 +56,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
   pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
   sections
+- **`AGENTS.md`:** New "Reserved" sub-table under "Icons in headings" listing the 26 icons from the sibling
+  `hpsc-web-vite` repository's own icon registry that aren't used here (frontend-specific concepts like routing,
+  styling/theming, layout regions and page-content zones) — kept reserved so they're never accidentally
+  repurposed here for an unrelated concept, mirroring the reserved table `hpsc-web-vite`'s own `AGENTS.md`
+  already keeps for this repository's icons
 - **`AGENTS.md`:** New "🗺️ Roadmap Planning" section giving `documentation/roadmap/`'s file structure and gap
   status/numbering conventions a dedicated home, promoted out of the "Documentation File Map" section where it
   was previously buried as a sub-bullet — cross-links the `update-improvement-plan-gaps`/`sync-improvement-plan-gaps`

@@ -250,6 +250,39 @@ genuinely new concept. Icons already established in this repository's documentat
 | 🛡️   | Robustness / validation hardening |
 | 🔓   | Optional / relaxed constraint     |
 
+Icons reserved from the sibling `hpsc-web-vite` repository's registry for concepts specific to that project (a
+Vite/TypeScript frontend) — not used here, kept reserved so they're never accidentally repurposed for an unrelated
+concept in this project:
+
+| Icon | Reserved for (vite)                   |
+|------|---------------------------------------|
+| 🧰   | Available scripts / tooling           |
+| 🛣️   | Routing / navigation                  |
+| 🎨   | Styling and theming / design          |
+| 🛠️   | Development guidelines                |
+| 🛤️   | Roadmap                               |
+| ☑️   | Checklist                             |
+| 📐   | Layout structure                      |
+| 🔝   | Header                                |
+| 📄   | Body / page content                   |
+| ⬇️   | Footer                                |
+| 📱   | Responsive design                     |
+| 💻   | Technical implementation              |
+| 🖥️   | User interface                        |
+| ♻️   | General code improvements             |
+| 💰   | Funding / sponsorship                 |
+| 👍   | Recommendation / best practices       |
+| 🌊   | Global scope / cascading styles       |
+| 🧵   | Shared / cross-feature infrastructure |
+| 🧱   | Component/layout folder shape         |
+| 🌳   | Decision tree / quick reference       |
+| 🏆   | Most popular / prevailing convention  |
+| 🗝️   | Key principles                        |
+| ⏭️   | Next / upcoming                       |
+| ⏳   | Later / pending                       |
+| 🔁   | Ongoing / recurring                   |
+| ⚖️   | Comparison / trade-offs               |
+
 ---
 
 ## 🗂️ Documentation File Map
