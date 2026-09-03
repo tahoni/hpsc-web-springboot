@@ -97,6 +97,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CONTRIBUTING.md`:** "Roadmap" section condensed to a short pointer at `AGENTS.md`'s new "Roadmap Planning"
   section (matching the "Documentation Conventions" section's existing highlights-and-link pattern), instead of
   duplicating the full file-structure and status-convention detail now maintained in one place
+- **`AGENTS.md`:** `✅`'s registered concept broadened from "Quality attributes" to "Quality attributes /
+  completed", since it's also the established icon for the "Completed" status alongside `🟡`/`⚪` throughout
+  `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`
 
 ### 🐛 Fixed
 
@@ -132,6 +135,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`:** `🐛`'s registered concept broadened from "Fixed items" to "Bugs / fixed items", since
   `RELEASE_NOTES.md`'s "Known Issues" heading (28 of 30 archived releases) consistently reuses it for open,
   not-yet-fixed bugs — a deliberate, long-standing pattern the narrower description didn't account for
+- **`documentation/roadmap/improvement-plan.md`:** Its own "Roadmap" heading and both inline references to
+  `HISTORY.md`'s "Future Roadmap Implications" section used `🚀` instead of `🗺️` — the same inconsistency just
+  fixed in `HISTORY.md` itself, now corrected here too, plus a pre-existing line-wrap violation nearby
 
 ## 🧾 [8.4.0] - 2026-09-03
 

@@ -10,7 +10,7 @@ should be revisited whenever a major gap it names is closed or a new one is iden
 - [🎯 Purpose & Scope](#-purpose--scope)
 - [⚙️ Goals & Constraints (Synthesised)](#-goals--constraints-synthesised)
 - [🔍 Gaps & Improvement Opportunities](#-gaps--improvement-opportunities)
-- [🚀 Roadmap](#-roadmap)
+- [🗺️ Roadmap](#-roadmap)
 - [✅ Success Criteria](#-success-criteria)
 - [📚 Related Documentation](#-related-documentation)
 
@@ -23,9 +23,9 @@ This plan draws only on what the repository already states about itself — `REA
 `.github/workflows` — rather than introducing new goals. Where the documentation and the configuration disagree, or
 where a stated goal has no corresponding work item yet, that gap is called out below as an improvement opportunity.
 
-It complements, rather than duplicates, `HISTORY.md`'s per-release "🚀 Future Roadmap Implications" section: that section
-tracks what changed release-to-release, while this document tracks the standing, cross-release gaps between the
-project's stated intent and its current state.
+It complements, rather than duplicates, `HISTORY.md`'s per-release "🗺️ Future Roadmap Implications" section: that
+section tracks what changed release-to-release, while this document tracks the standing, cross-release gaps
+between the project's stated intent and its current state.
 
 Because the "⚙️ Goals & Constraints" table below is synthesised partly from `HISTORY.md`'s Future Roadmap
 Implications sections, check whether that table needs a matching update whenever `HISTORY.md` changes — most
@@ -351,7 +351,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ---
 
-## 🚀 Roadmap
+## 🗺️ Roadmap
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                 |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -398,4 +398,4 @@ this plan:
 - [`ARCHITECTURE.md`](/ARCHITECTURE.md) — the CI/CD & Quality Gates table and layered-architecture rules this plan
   builds on
 - [`AGENTS.md`](/AGENTS.md) — the Git Workflow and Release Checklist referenced throughout
-- [`HISTORY.md`](/HISTORY.md) — per-release "🚀 Future Roadmap Implications" sections this plan complements
+- [`HISTORY.md`](/HISTORY.md) — per-release "🗺️ Future Roadmap Implications" sections this plan complements
