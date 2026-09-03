@@ -153,10 +153,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** Dropped `HpscConstants` from the Project Structure tree's `constants/` comment and the
   Constants support-layer subsection's class list — the class no longer exists, removed earlier this branch
 - **`ARCHITECTURE.md`:** Project Structure tree was missing the tracked `.claude/skills/` directory entirely.
-  Added it, listing each of the 8 current skill directories. `AGENTS.md`'s Directory Tree Maintenance rule and
-  `CONTRIBUTING.md`'s condensed mention of it both gained a clarifying bullet: tracked tooling directories
-  (`.claude/`, `.github/`) belong in the tree, even though they sit alongside gitignored directories at the
-  repository root — only `.gitignore`-covered directories are excluded from it
+  Added it, described generically rather than naming individual skills — unlike the fixed, slow-moving package
+  structure the tree lists class names for elsewhere, skills are added/removed often enough that naming each one
+  would drift. `AGENTS.md`'s Directory Tree Maintenance rule and `CONTRIBUTING.md`'s condensed mention of it both
+  gained a clarifying bullet: tracked tooling directories (`.claude/`, `.github/`) belong in the tree, even though
+  they sit alongside gitignored directories at the repository root — only `.gitignore`-covered directories are
+  excluded from it
 - **`documentation/recommendations/flyway-migration-versioning.md`:** Realigned the Current State table's column
   widths; a follow-up pass restored "sub-versions"' hyphen after an editor pass had dropped it to "subversions",
   which reads as "acts of subversion" rather than the intended meaning

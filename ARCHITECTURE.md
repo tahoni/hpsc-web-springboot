@@ -53,9 +53,6 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ```text
 ├───.claude/
 │   └───skills/                 # Claude Code skill definitions, one SKILL.md per skill
-│                                    generate-commit-message, generate-pr-summary, prep-version-release
-│                                    scaffold-integration-tests, scaffold-unit-tests, sync-improvement-plan-gaps
-│                                    sync-unreleased-changes, update-improvement-plan-gaps
 ├───.github/
 │   └───workflows/              # GitHub Actions — CI/CD, CodeQL
 ├───.mvn/wrapper/               # Maven wrapper
