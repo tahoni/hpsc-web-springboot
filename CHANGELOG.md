@@ -204,6 +204,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   automatically). All four rows now show the mapping as declared in code
 - **`ARCHITECTURE.md`:** Technology Stack table's Testing row gained `Spring REST Docs`, matching `README.md`'s
   Technology section and the `spring-restdocs-mockmvc` dependency already declared in `pom.xml`
+- **`ARCHITECTURE.md`:** Project Structure tree's `constants/`, `controllers/`, `converters/`, `domain/`, `enums/`,
+  `models/` (root), `repositories/` and `utils/` comments dropped their individual class-name listings — same
+  rationale already applied to `.claude/skills/`: classes are added, renamed and removed far more often than the
+  packages that hold them, so naming each one drifts out of sync (as `GenderConverter` above just did). `AGENTS.md`'s
+  Directory Tree Maintenance rule and `CONTRIBUTING.md`'s condensed mention both gained a matching bullet making the
+  no-class-names rule explicit for the whole tree, not just skills
 
 ### 🗑️ Removed
 

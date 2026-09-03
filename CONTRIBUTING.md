@@ -230,7 +230,9 @@ and `release/*` included — must never open a PR directly against `main`.
 - **Track complex work with a todo list** so progress on multistep tasks stays visible.
 - Directory changes must stay in sync with documentation: whenever a root-level directory is added or removed, update
   `ARCHITECTURE.md`'s Project Structure tree in the same change. Tracked tooling directories — `.claude/`,
-  `.github/` — belong in that tree; only `.gitignore`-covered directories are excluded from it.
+  `.github/` — belong in that tree; only `.gitignore`-covered directories are excluded from it. Package/directory
+  comments describe purpose generically and never list the individual classes inside — those drift too fast to keep
+  in sync.
 
 ---
 

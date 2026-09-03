@@ -292,6 +292,9 @@ Four documentation-only folders supplement these:
 - Tracked tooling directories — `.claude/` and `.github/` — do belong in the tree, even though they sit alongside
   gitignored directories at the repository root: they hold version-controlled configuration (Claude Code skills, GitHub
   Actions workflows) rather than local machine state.
+- Package/directory comments in the tree describe purpose generically and must never enumerate the individual classes
+  or files inside — classes are added, renamed and removed far more often than the packages that hold them, so a
+  listed class name goes stale quickly while the generic description keeps the tree evergreen.
 
 ---
 

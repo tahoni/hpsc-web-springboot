@@ -65,39 +65,26 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice)
 │   │   ├───constants/          # Application-wide constants
-│   │   │                           IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
-│   │   │                           AwardController, ImageController
-│   │   │                           IpscCompetitorController, IpscMatchController
 │   │   ├───converters/         # Custom JPA AttributeConverters for all enum fields
-│   │   │                           ClubIdentifierConverter, CompetitorCategoryConverter
-│   │   │                           DivisionConverter, FirearmTypeConverter, GenderConverter
-│   │   │                           MatchCategoryConverter, PowerFactorConverter
 │   │   ├───domain/             # JPA entities (database tables)
-│   │   │                           Club, Competitor, IpscMatch, IpscMatchStage
-│   │   │                           MatchCompetitor, MatchStageCompetitor
-│   │   │                           ShooterLog, ShooterLogCompetitor
 │   │   ├───enums/              # Domain enumerations
-│   │   │                           ClubIdentifier, CompetitorCategory, Division
-│   │   │                           FirearmType, Gender, MatchCategory, PowerFactor
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
 │   │   ├───models/             # DTOs, request/response models
-│   │   │   ├───award/          # Award request/response/shared models, including the shared Placing model
+│   │   │   ├───award/          # Award request/response/shared models
 │   │   │   ├───image/          # Image gallery request/response models
 │   │   │   ├───ipsc/
-│   │   │   │   ├───competitor/request/  # IPSC competitor request DTOs, consumed by IpscCompetitorController
+│   │   │   │   ├───competitor/request/  # IPSC competitor request DTOs
 │   │   │   │   ├───competitor/response/ # IPSC competitor response DTOs
-│   │   │   │   ├───match/request/       # IPSC match/stage request DTOs, consumed by IpscMatchController
+│   │   │   │   ├───match/request/       # IPSC match/stage request DTOs
 │   │   │   │   ├───match/response/      # IPSC match/stage response DTOs
 │   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
 │   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
-│   │   │   └───(root)          # Request, Response, ControllerResponse
-│   │   ├───repositories/       # Spring Data JPA interfaces — Club/Competitor/IpscMatch/IpscMatchStage wired to the
-│   │   │                           IPSC services; MatchCompetitor/MatchStageCompetitor/ShooterLog* not yet wired
+│   │   │   └───(root)          # Top-level request/response wrapper models
+│   │   ├───repositories/       # Spring Data JPA interfaces — IPSC ones wired to services, the rest not yet wired
 │   │   ├───services/           # Service interfaces
 │   │   │   └───impl/           # Service implementations
 │   │   └───utils/              # Utility classes
-│   │                               DateUtil, NumberUtil, StringUtil, ValueUtil
 │   └───main/resources/
 │       ├───db/migration/       # Flyway migration scripts (V<X>_<Y>_<Z>__description.sql)
 │       ├───logback-spring.xml  # Logging configuration
