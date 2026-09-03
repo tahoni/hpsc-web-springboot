@@ -196,7 +196,7 @@ genuinely new concept. Icons already established in this repository's documentat
 | ⚙️   | Technology / configuration        |
 | ✨   | Features                          |
 | 🚀   | Instructions / getting started    |
-| 📋   | Prerequisites                     |
+| 📋   | Prerequisites / policy            |
 | 🔧   | Installation / setup              |
 | 📚   | Documentation                     |
 | 🧪   | Testing                           |
@@ -226,6 +226,8 @@ genuinely new concept. Icons already established in this repository's documentat
 | 🗑️   | Removed items                     |
 | 🔐   | Security                          |
 | 🧾   | Version entry                     |
+| 💬   | Support / contact                 |
+| 🤝   | Contributing guidelines           |
 | 📅   | Timeline                          |
 | 💡   | Philosophy / rationale            |
 | 🎓   | Conclusion                        |
