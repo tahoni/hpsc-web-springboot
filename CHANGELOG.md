@@ -98,6 +98,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment
   ("infrequently-changed" → "infrequently changed")
 
+#### Documentation
+
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Realigned the Current State table's column
+  widths; also dropped the hyphen from "sub-versions" → "subversions" in the same pass
+
 ## 🧾 [8.3.1] - 2026-09-02
 
 ### ➕ Added

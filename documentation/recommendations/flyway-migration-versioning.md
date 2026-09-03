@@ -32,7 +32,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 - **Most releases touch no schema at all.** Of this project's releases since v7.0.0, only a handful (v7.1.0, and the
   app release that happened to ship what's now `V7_2_0`) introduced a schema change; the rest — v7.2.0 (the app
   release), v8.0.0, v8.1.0, v8.1.1, v8.3.0, v8.3.1 — shipped none. Tying migration numbers to the app version would
-  mean either skipping numbers constantly or inventing awkward sub-versions for releases that touch the schema more
+  mean either skipping numbers constantly or inventing awkward subversions for releases that touch the schema more
   than once.
 - **The two concerns move on different cadences.** Schema evolution is driven by what the domain model needs; app
   releases are driven by everything else (features, fixes, tooling, documentation). Coupling their version numbers
@@ -61,12 +61,12 @@ current at the time it's authored. Treat any resemblance between the two as coin
 
 ## 🔍 Current State in This Codebase
 
-| Migration                             | Shipped in app version | Notes                                                        |
-|----------------------------------------|-------------------------|---------------------------------------------------------------|
-| `V7_0_0__create_schema.sql`            | v7.0.0                  | The Flyway baseline (`spring.flyway.baseline-version=7.0.0`) — chosen to match the app version the hand-built schema was frozen at, not a rule for every migration after it |
-| `V7_1_0__update_shooter_log_schema.sql` | (schema-only change)   | —                                                              |
-| `V7_2_0__add_competitor_emails.sql`    | **v8.2.0**               | The clearest evidence the two counters diverge: there is also a wholly unrelated app release literally named v7.2.0, a hygiene-only pass with no schema change |
-| `V7_3_0__seed_club_data.sql`           | v8.4.0                  | —                                                              |
+| Migration                               | Shipped in app version | Notes                                                                                                                                                                       |
+|-----------------------------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `V7_0_0__create_schema.sql`             | v7.0.0                 | The Flyway baseline (`spring.flyway.baseline-version=7.0.0`) — chosen to match the app version the hand-built schema was frozen at, not a rule for every migration after it |
+| `V7_1_0__update_shooter_log_schema.sql` | (schema-only change)   | —                                                                                                                                                                           |
+| `V7_2_0__add_competitor_emails.sql`     | **v8.2.0**             | The clearest evidence the two counters diverge: there is also a wholly unrelated app release literally named v7.2.0, a hygiene-only pass with no schema change              |
+| `V7_3_0__seed_club_data.sql`            | v8.4.0                 | —                                                                                                                                                                           |
 
 ---
 
