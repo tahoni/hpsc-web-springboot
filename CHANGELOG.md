@@ -112,6 +112,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** Dropped `v8.1.0`/`v8.3.0` version references from the Service Layer section's IPSC bulk
   CSV import note — this file is evergreen documentation and must not name specific project versions, per its own
   Evergreen Documentation rule in `AGENTS.md`
+- **`ARCHITECTURE.md`:** Domain Entities table corrected — it described every relationship as bidirectional
+  (`One-to-many ←/→`) with `mappedBy` collections, but the domain model has no `@OneToMany` fields at all; every
+  relationship is unidirectional `@ManyToOne` from the child side. Table and its footnote rewritten to match
 
 ## 🧾 [8.3.1] - 2026-09-02
 

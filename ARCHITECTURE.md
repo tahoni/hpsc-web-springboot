@@ -188,18 +188,19 @@ Contains all business logic.
 
 The JPA entities map to database tables:
 
-| Entity                 | Table                    | Key Relationships                                                                                     |
-|------------------------|--------------------------|-------------------------------------------------------------------------------------------------------|
-| `Club`                 | `club`                   | One-to-many → `IpscMatch`, `Competitor` (home club), `ShooterLog`                                     |
-| `Competitor`           | `competitor`             | Many-to-one ← `Club` (home club, optional); One-to-many → `MatchCompetitor`, `ShooterLog`             |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one ← `Club`; One-to-many → `IpscMatchStage`, `MatchCompetitor`, `ShooterLogCompetitor`       |
-| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one ← `IpscMatch`; One-to-many → `MatchStageCompetitor`                                       |
-| `MatchCompetitor`      | `match_competitor`       | Many-to-one ← `IpscMatch`, `Competitor`; One-to-many → `MatchStageCompetitor`, `ShooterLogCompetitor` |
-| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one ← `IpscMatchStage`, `MatchCompetitor`                                                     |
-| `ShooterLog`           | `shooter_log`            | Many-to-one ← `Competitor`, `Club`; One-to-many → `ShooterLogCompetitor`                              |
-| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one ← `ShooterLog`, `MatchCompetitor`, `IpscMatch`                                            |
+| Entity                 | Table                    | Key Relationships                                                                    |
+|------------------------|--------------------------|---------------------------------------------------------------------------------------|
+| `Club`                 | `club`                   | No outgoing references; targeted by `Competitor`, `IpscMatch` and `ShooterLog` below |
+| `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                                           |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                                 |
+| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one → `IpscMatch`                                                            |
+| `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                              |
+| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one → `MatchCompetitor`, `IpscMatchStage`                                    |
+| `ShooterLog`           | `shooter_log`            | Many-to-one → `Competitor`, `Club`                                                   |
+| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `MatchCompetitor`, `IpscMatch`                           |
 
-All bidirectional `@OneToMany` relationships include `mappedBy` to avoid duplicate join table creation.
+Every relationship is unidirectional: only the owning (child) side declares a `@ManyToOne`/`@JoinColumn`. No entity
+declares a back-referencing `@OneToMany` collection, so there is no `mappedBy` anywhere in the domain model.
 
 #### Custom JPA Attribute Converters (`za.co.hpsc.web.converters`)
 
