@@ -125,6 +125,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `models/shared/` package holding `Placing`, but it actually lives at `models/award/shared/Placing.java`; no
   top-level `models/shared/` package exists. The tree also gained the previously undocumented `models/ipsc/competitor/`
   request/response directories and the `models/ipsc/match/response/` directory it was missing
+- **`ARCHITECTURE.md`:** Added the missing `GenderConverter` row to the Custom JPA Attribute Converters table —
+  the class exists in `converters/` and `Gender` is already listed in the Enumerations table, but the converter
+  itself had never been added
 
 ## 🧾 [8.3.1] - 2026-09-02
 

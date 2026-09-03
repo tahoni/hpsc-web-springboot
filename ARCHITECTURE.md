@@ -215,6 +215,7 @@ All enum-typed entity fields use explicit `AttributeConverter` implementations r
 | `CompetitorCategoryConverter` | `CompetitorCategory` | String              |
 | `DivisionConverter`           | `Division`           | String              |
 | `FirearmTypeConverter`        | `FirearmType`        | String              |
+| `GenderConverter`             | `Gender`             | String              |
 | `MatchCategoryConverter`      | `MatchCategory`      | String              |
 | `PowerFactorConverter`        | `PowerFactor`        | String              |
 
