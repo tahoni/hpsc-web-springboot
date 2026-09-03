@@ -57,6 +57,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
   sections
 
+### 🔄 Changed
+
+#### Documentation
+
+- **`AGENTS.md`:** Reordered the icon registry table under "Icons in headings" so icons group by the doc(s) that
+  established them — `README.md`/`ARCHITECTURE.md` first, then `AGENTS.md`/`CONTRIBUTING.md`, then
+  `CHANGELOG.md`/`HISTORY.md`, then `RELEASE_NOTES.md`/PR description — rather than their prior arbitrary order
+
 ## 🧾 [8.4.0] - 2026-09-03
 
 ### ➕ Added

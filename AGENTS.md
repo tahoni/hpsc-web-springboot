@@ -196,8 +196,6 @@ genuinely new concept. Icons already established in this repository's documentat
 | ⚙️   | Technology / configuration     |
 | ✨   | Features                       |
 | 🚀   | Instructions / getting started |
-| 🔍   | Current state / inspection     |
-| 📤   | Output                         |
 | 📋   | Prerequisites                  |
 | 🔧   | Installation / setup           |
 | 📚   | Documentation                  |
@@ -207,15 +205,17 @@ genuinely new concept. Icons already established in this repository's documentat
 | 👤   | Author                         |
 | 🎯   | Theme / system overview        |
 | 🔄   | Changed items / data flow      |
+| ✅   | Quality attributes             |
+| 🔬   | CI/CD & quality gates          |
+| 📤   | Output                         |
+| 🚢   | Release process                |
+| 🧩   | Tooling / automation           |
 | ➕   | Added items                    |
 | 🐛   | Fixed items                    |
 | ⚠️   | Deprecated items               |
 | 🗑️   | Removed items                  |
 | 🔐   | Security                       |
-| ✅   | Quality attributes             |
-| 🔬   | CI/CD & quality gates          |
-| 🚢   | Release process                |
-| 🧩   | Tooling / automation           |
+| 🔍   | Current state / inspection     |
 
 ---
 
