@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.3.1](#-831---2026-09-02) ← Current
+- [🧾 Version 8.4.0](#-840---2026-09-03) ← Current
+- [🧾 Version 8.3.1](#-831---2026-09-02)
 - [🧾 Version 8.3.0](#-830---2026-09-02)
 - [🧾 Version 8.2.0](#-820---2026-09-01)
 - [🧾 Version 8.1.1](#-811---2026-09-01)
@@ -46,6 +47,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.4.0] - 2026-09-03
 
 ### ➕ Added
 
@@ -92,9 +95,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Configuration
 
 - **`pom.xml`:** `jacoco-maven-plugin`'s `check` execution `LINE`/`COVEREDRATIO` minimum raised from `0.86` to
-  `0.97`, now genuinely near the real baseline (98.16%/98.94% line/branch, 836 tests, reconfirmed unchanged by a
-  fresh `./mvnw verify -Pcoverage` run) after the 86% floor was confirmed holding cleanly in CI on both the
-  `develop` and `main` `build.yml` runs that shipped v8.3.1. Closes
+  `0.97`, now genuinely near the real baseline (98.16%/98.94% line/branch, 836 tests as of that pass, reconfirmed
+  unchanged by a fresh `./mvnw verify -Pcoverage` run) after the 86% floor was confirmed holding cleanly in CI on
+  both the `develop` and `main` `build.yml` runs that shipped v8.3.1. The suite continued to grow afterwards, within
+  the same v8.4.0 branch; a final `./mvnw verify -Pcoverage` re-run at this release's prep time measured
+  98.44%/98.98% line/branch, 868 tests — still comfortably clear of the new floor. Closes
   `documentation/roadmap/improvement-plan.md`'s Gap #4
 
 #### Constants
@@ -147,6 +152,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   a non-`final`, extendable class) protected methods, then private methods last, keeping each visibility group's
   existing relative order rather than alphabetising (that stricter rule stays specific to test classes, per Test
   Conventions). `CONTRIBUTING.md`'s "Rules enforced by convention" list gained a matching condensed bullet
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** "Gaps & Improvement Opportunities"
+  restructured from a flat, inline-status numbered list into three explicit sections — ✅ Completed, 🟡 Partially
+  Completed, ⚪ Open (gap headers demoted from `###` to `####`, numbers unchanged and never resequenced) — so a
+  reader can see what's still open at a glance; `improvement-plan-tasks.md`'s checkbox lists mirror the same three
+  sections instead of the previous Now/Next/Later/Ongoing phasing, which had become mostly historical now that
+  eight of nine gaps are closed. The forward-looking Now/Next/Later/Ongoing Roadmap table is unchanged — a separate
+  priority concept, not a completion-status tracker. `AGENTS.md`'s roadmap doc-map entry and `CONTRIBUTING.md`'s
+  condensed Roadmap section document the new convention; a stale `improvement-plan-tasks.md#-next` anchor left over
+  from the old phasing, in Gap #1's checklist link, corrected to `#-completed`
 
 #### Models
 
@@ -191,6 +205,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `testUpdateMatch_whenServiceThrowsFatalException_thenExceptionPropagates` cases confirm a `FatalException`
   thrown by the service propagates through the controller, mirroring the existing `createMatches` coverage for
   the same exception type
+
+#### Tooling
+
+- **`sync-improvement-plan-gaps`, `update-improvement-plan-gaps`:** Both skills updated to read/write the new
+  ✅ Completed / 🟡 Partially Completed / ⚪ Open section structure above instead of the old Now/Next/Later/Ongoing
+  phase headers, including moving a gap's whole block between sections as its status changes
 
 ### 🐛 Fixed
 

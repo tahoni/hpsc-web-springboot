@@ -21,6 +21,40 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.4.0 (September 3, 2026)
+
+**Theme:** Club Domain Defaults, Optional Club Numbers & Documentation Convention Hardening
+
+**Key Focus:**
+
+- New `ClubIdentifier.ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) represents a match hosted jointly by all
+  three real clubs; new `V7_3_0__seed_club_data.sql` migration seeds the `club` table with every named
+  `ClubIdentifier` constant
+- `IpscMatchController`/`IpscMatchServiceImpl`: a missing or blank match `club` now defaults to
+  `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` (`ClubIdentifier.ALL`) instead of failing validation;
+  `resolveClub()` mirrors the competitor domain's "apply the domain default" pattern, throwing
+  `NonFatalException`/`FatalException` if the default club is missing from the database or the constant itself is
+  null. Closes Gap #9
+- `IpscCompetitorController`/`IpscCompetitorServiceImpl`: competitor `clubNumber` is now required only when the
+  competitor's home club is HPSC, forced to `null` otherwise; `Competitor.clubNumber` column relaxed to nullable via
+  new `V7_4_0__make_club_number_nullable.sql`
+- `HpscConstants` removed entirely — its sole constant was an alias for `SystemConstants.ISO_DATE_FORMAT`; every
+  former user now references `SystemConstants.DEFAULT_DATE_FORMAT` or `IpscConstants.IPSC_INPUT_DATE_FORMAT` directly
+- JaCoCo `LINE`/`COVEREDRATIO` floor tightened from 86% to 97% after holding cleanly in CI across the `develop`/
+  `main` runs that shipped v8.3.1, closing Gap #4; a fresh `./mvnw verify -Pcoverage` run at this release's prep
+  time measured 98.44%/98.98% line/branch, 868 tests
+- `tomcat-embed-core`/`-el`/`-websocket` overridden `11.0.24` → `11.0.25`, closing three critical CVEs still pinned
+  by `spring-boot-starter-parent:4.1.1`'s dependency management
+- New `AGENTS.md` conventions: Member ordering (constructors → public → protected → private), REST URL/handler-
+  naming rules condensed from `standard-rest-conventions.md`, and a Release Checklist step verifying
+  `ARCHITECTURE.md`'s Project Structure tree against disk at every release
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` restructured into ✅ Completed/
+  🟡 Partially Completed/⚪ Open sections, replacing the previous flat Now/Next/Later/Ongoing phasing
+- `ARCHITECTURE.md` brought fully back in sync with disk — missing `.claude/skills/`, `documentation/
+  recommendations/` and `db/migration/` directories and `Gender`/`GenderConverter` added; stale bidirectional
+  entity relationships, the coverage floor and CSV-flow references corrected
+- Project version bumped to 8.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.3.1 (September 2, 2026)
 
 **Theme:** CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity
@@ -1140,6 +1174,77 @@ coverage.
 
 ---
 
+### Phase 25: Club Domain Defaults, Optional Club Numbers & Documentation Convention Hardening (v8.4.0)
+
+**Duration:** September 3, 2026
+
+A domain-and-documentation release: two real behavioural changes to the IPSC club-handling rules — matches now
+default to a shared `ALL` club instead of failing validation, and competitor club numbers are required only for HPSC
+members — alongside the coverage-regression floor finally reaching its real baseline and a round of convention
+hardening (member ordering, REST naming, a release-checklist tree-accuracy backstop) that closes Gap #4 and Gap #9,
+both left open or partially progressed since v8.1.1/v8.3.1's coverage groundwork.
+
+**Key Accomplishments:**
+
+**Club Domain Defaults**
+
+- New `ClubIdentifier.ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) represents a match hosted jointly by
+  `SOSC`/`HPSC`/`PMPSC`; new `V7_3_0__seed_club_data.sql` migration seeds the `club` table with every named
+  `ClubIdentifier` constant
+- `IpscMatchServiceImpl.resolveClub()` now defaults a missing/blank match `club` to
+  `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` instead of `validateForCreate` throwing `ValidationException`,
+  mirroring the competitor domain's existing "apply the domain default" pattern; throws `NonFatalException` if even
+  the default club is missing from the database, or a new `FatalException` if the constant itself is null. Closes
+  Gap #9
+
+**Optional Club Numbers**
+
+- `IpscCompetitorServiceImpl.resolveClubNumber()` centralises a new rule: `clubNumber` is required only when the
+  competitor's home club is HPSC, and forced to `null` otherwise, on create, update and patch
+- `Competitor.clubNumber` column relaxed to nullable via new `V7_4_0__make_club_number_nullable.sql`, clearing
+  `club_number` on any existing non-HPSC competitor
+
+**Coverage Enforcement Completion**
+
+- JaCoCo `LINE`/`COVEREDRATIO` floor tightened `0.86` → `0.97`, now genuinely near the real baseline after holding
+  cleanly in CI across the `develop` and `main` runs that shipped v8.3.1; a final measurement this release
+  (98.44%/98.98% line/branch, 868 tests) confirms it holds with room to spare. Closes Gap #4
+
+**Convention Hardening**
+
+- New `AGENTS.md` Member ordering convention (constructors → public → protected → private, private helpers always
+  last); `IpscCompetitorServiceImpl`/`IpscMatchServiceImpl` reordered to match
+- REST URL-path/handler-naming rules promoted from `standard-rest-conventions.md`'s recommendations into an actual
+  `AGENTS.md` convention
+- New Release Checklist step verifies `ARCHITECTURE.md`'s Project Structure tree against disk at every release — a
+  backstop after this branch caught `.claude/skills/` and the removed `HpscConstants` class both stale in the tree
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` restructured into ✅ Completed/
+  🟡 Partially Completed/⚪ Open sections, replacing the previous flat Now/Next/Later/Ongoing phasing
+
+**Security**
+
+- `tomcat-embed-core`/`-el`/`-websocket` overridden `11.0.24` → `11.0.25` via a new `pom.xml` `tomcat.version`
+  property, closing three critical CVEs still pinned by `spring-boot-starter-parent:4.1.1`'s dependency management
+
+**Architecture Highlights:**
+
+- No structural architectural change — this release is domain-rule refinement (club defaulting/optional fields), a
+  coverage-floor completion and documentation/convention hardening
+
+**Technical Focus:**
+
+- Domain-default patterns extended from the competitor module to the match module
+- Coverage-regression enforcement reaching its real, sustainable baseline
+- Documentation and convention consistency (member ordering, REST naming, tree-accuracy backstop)
+
+**Test Coverage:**
+
+- New `resolveClub(String, ClubIdentifier)` cases and `FatalException`/`NonFatalException` propagation coverage
+  across `IpscMatchServiceImplTest`/`IpscMatchServiceIntegrationTest`/`IpscMatchControllerTest`; suite grew from 836
+  to 868 tests, verified via a fresh `./mvnw verify -Pcoverage` run (98.44%/98.98% line/branch)
+
+---
+
 ### Phase 24: CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity (v8.3.1)
 
 **Duration:** September 2, 2026
@@ -2225,6 +2330,22 @@ comprehensive test coverage across all services and utilities.
 
 ---
 
+### Milestone 25: Club Domain Defaults, Optional Club Numbers & Documentation Convention Hardening (v8.4.0)
+
+- New `ClubIdentifier.ALL` seeded via `V7_3_0__seed_club_data.sql`; `IpscMatchServiceImpl.resolveClub()` defaults a
+  missing/blank match `club` to it instead of failing validation, closing Gap #9
+- `IpscCompetitorServiceImpl.resolveClubNumber()` requires `clubNumber` only for HPSC-home-club competitors; column
+  relaxed to nullable via `V7_4_0__make_club_number_nullable.sql`
+- JaCoCo `LINE`/`COVEREDRATIO` floor tightened `0.86` → `0.97`, confirmed holding at a fresh 98.44%/98.98%
+  (line/branch, 868 tests) baseline, closing Gap #4
+- `HpscConstants` removed; `AGENTS.md` gained Member ordering and REST naming conventions plus a Project-Structure-
+  tree release-checklist backstop; `tomcat-embed-*` patched to 11.0.25 for three critical CVEs
+
+**Achievement:** Extended the domain-default pattern from competitors to matches, completed the coverage-regression
+floor's climb to its real baseline, and hardened the project's own documentation/convention discipline.
+
+---
+
 ### Milestone 24: CI Build/Test Gate, Coverage Enforcement & CSV Persistence Clarity (v8.3.1)
 
 - New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing
@@ -3238,9 +3359,23 @@ AttributeConverters
 
 ## 🚀 Future Roadmap Implications
 
-Based on the evolution to v8.3.1, the following areas are identified for future enhancement:
+Based on the evolution to v8.4.0, the following areas are identified for future enhancement:
 
-### Recently Completed (v8.3.1)
+### Recently Completed (v8.4.0)
+
+- New `ClubIdentifier.ALL`, seeded via `V7_3_0__seed_club_data.sql`; `IpscMatchServiceImpl.resolveClub()` now
+  defaults a missing/blank match `club` to it instead of failing validation, closing Gap #9
+- `IpscCompetitorServiceImpl.resolveClubNumber()` requires `clubNumber` only when the home club is HPSC;
+  `Competitor.clubNumber` column relaxed to nullable via `V7_4_0__make_club_number_nullable.sql`
+- New JaCoCo `LINE`/`COVEREDRATIO` floor tightened `0.86` → `0.97`, confirmed holding at a fresh 98.44%/98.98%
+  (line/branch, 868 tests) baseline, closing Gap #4
+- `HpscConstants` removed; date-format constants consolidated onto `SystemConstants`/`IpscConstants`
+- `tomcat-embed-core`/`-el`/`-websocket` patched `11.0.24` → `11.0.25`, closing three critical CVEs
+- `AGENTS.md` gained Member ordering and REST naming conventions, plus a Release Checklist step verifying
+  `ARCHITECTURE.md`'s Project Structure tree against disk
+- Project version bumped to 8.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.3.1)
 
 - New `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`, closing Gap #2
 - New JaCoCo `check` execution enforces a `LINE`/`COVEREDRATIO` minimum — 51% initially, then raised to 86% within
