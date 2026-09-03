@@ -289,6 +289,9 @@ Four documentation-only folders supplement these:
   same change.
 - Directories covered by `.gitignore` (e.g. `.idea/`, `target/`, `.run/`, `.junie/`, `logs/`) must never appear in that
   tree.
+- Tracked tooling directories — `.claude/` and `.github/` — do belong in the tree, even though they sit alongside
+  gitignored directories at the repository root: they hold version-controlled configuration (Claude Code skills, GitHub
+  Actions workflows) rather than local machine state.
 
 ---
 
