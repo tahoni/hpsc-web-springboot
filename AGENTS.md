@@ -208,6 +208,15 @@ genuinely new concept. Icons already established in this repository's documentat
 | ✅   | Quality attributes                |
 | 🔬   | CI/CD & quality gates             |
 | 🔀   | Data flow / Git workflow          |
+| 📁   | Project / directory structure     |
+| 🏗️   | Layered architecture              |
+| 🌐   | Presentation / API layer          |
+| ⚡   | Service layer                     |
+| 🗄️   | Database / persistence            |
+| 🧬   | Data model / DTOs                 |
+| 📈   | Request-response flow             |
+| 📥   | Inbound / import flow             |
+| 🗺️   | Roadmap / file map                |
 | 📤   | Output                            |
 | 🚢   | Release process                   |
 | 🧩   | Tooling / automation              |

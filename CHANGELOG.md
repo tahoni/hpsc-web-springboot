@@ -56,16 +56,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
   pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
   sections
-- **`AGENTS.md`:** 14 previously-unregistered icons added to the icon registry table, backfilling ones already in
-  real use but missing from it — `🔀` (Data flow / Git workflow), `🧾` (Version entry), `📅` (Timeline), `💡`
-  (Philosophy / rationale), `🎓` (Conclusion), `⭐` (Key highlights), `📦` (What's new / key changes), `📊`
-  (Statistics), `🧭` (Design notes), `🔮` (Future enhancements), `👥` (Contributors), `📝` (Notes), `🛡️`
-  (Robustness / validation hardening, reused across several past releases' Key Highlights) and `🔓` (Optional /
-  relaxed constraint)
+- **`AGENTS.md`:** 23 previously-unregistered icons added to the icon registry table, backfilling ones already in
+  real use but missing from it — `🔀` (Data flow / Git workflow), `📁` (Project / directory structure), `🏗️`
+  (Layered architecture), `🌐` (Presentation / API layer), `⚡` (Service layer), `🗄️` (Database / persistence),
+  `🧬` (Data model / DTOs), `📈` (Request-response flow), `📥` (Inbound / import flow), `🗺️` (Roadmap / file
+  map), `🧾` (Version entry), `📅` (Timeline), `💡` (Philosophy / rationale), `🎓` (Conclusion), `⭐` (Key
+  highlights), `📦` (What's new / key changes), `📊` (Statistics), `🧭` (Design notes), `🔮` (Future
+  enhancements), `👥` (Contributors), `📝` (Notes), `🛡️` (Robustness / validation hardening, reused across
+  several past releases' Key Highlights) and `🔓` (Optional / relaxed constraint)
 
 ### 🔄 Changed
 
 #### Documentation
+
+- **`ARCHITECTURE.md`:** "Presentation Layer" and "Model Layer" headings (and their Table of Contents entries)
+  now use dedicated `🌐`/`🧬` icons instead of `📊`/`📦`, which were already registered in `AGENTS.md`'s icon
+  table for the unrelated "Statistics" and "What's new / key changes" concepts
 
 - **`AGENTS.md`:** Reordered the icon registry table under "Icons in headings" so icons group by the doc(s) that
   established them — `README.md`/`ARCHITECTURE.md` first, then `AGENTS.md`/`CONTRIBUTING.md`, then
