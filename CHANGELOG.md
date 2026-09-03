@@ -74,6 +74,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `clubNumber` is no longer a Jackson-required property. New `IpscCompetitorServiceImpl.resolveClubNumber()`
   centralises the rule for `createCompetitor()`/`updateCompetitor()` (via `applyFields()`) and `patchCompetitor()`,
   which re-applies it whenever a patch touches `homeClub` or `clubNumber`
+- **`IpscMatchController`/`IpscMatchServiceImpl`:** `club` is no longer unconditionally required on match
+  create/update — a missing or blank `club` now resolves to `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER`
+  (`ClubIdentifier.ALL`, the seeded `"Eufees Clubs"` club) instead of `validateForCreate` throwing
+  `ValidationException("Club is required.")`. `IpscMatchServiceImpl.resolveClub()` now mirrors
+  `IpscCompetitorServiceImpl.resolveHomeClub()`/`resolveClubNumber()`'s "apply the domain default" pattern,
+  throwing `NonFatalException` if even the default club is missing from the database. Closes
+  `documentation/roadmap/improvement-plan.md`'s Gap #9
 
 #### Configuration
 
@@ -131,6 +138,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (`AwardRequestForCSV.date`) or `IpscConstants.IPSC_INPUT_DATE_FORMAT` (the IPSC competitor/match classes'
   `dateOfBirth`/`matchDate`) instead of the now-removed `HpscConstants.HPSC_INPUT_DATE_FORMAT` — every constant
   resolves to the same `"yyyy-MM-dd"` pattern, so the accepted input format itself is unchanged
+- **`MatchRequest`/`MatchRequestForCSV`:** `club` field/constructor-param Javadoc now documents the new
+  default-to-`IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` behaviour above, instead of implying the name is
+  always resolved against an existing club
 
 #### Services
 
@@ -144,6 +154,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Hardcoded `ClubIdentifier.HPSC` references switched to
   `IpscConstants.HOME_CLUB_IDENTIFIER`, matching production code's new constant; no behavioural change, since the
   constant currently always resolves to `ClubIdentifier.HPSC`
+- **`IpscMatchServiceImplTest`, `IpscMatchServiceTest`, `IpscMatchServiceIntegrationTest`:** `whenClubIsBlank`/
+  `whenClubIsMissing` cases that previously asserted `ValidationException` now assert the club defaults to
+  `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER`, matching the behaviour change above; new cases cover
+  `resolveClub`/`createMatch` throwing `NonFatalException` when even the default club is missing
 
 ### 🐛 Fixed
 

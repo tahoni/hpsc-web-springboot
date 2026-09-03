@@ -133,14 +133,15 @@ evidence and reasoning there.
   Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s Service Layer table/Award-Image CSV Processing
   Flow section now say so explicitly
 
-**Unused `DEFAULT_MATCH_CLUB_IDENTIFIER` constant** *(improvement-plan.md → Gap #9)*
+**Unused `DEFAULT_MATCH_CLUB_IDENTIFIER` constant** *(improvement-plan.md → Gap #9)* — ✅ Closed in v8.4.0
 
-- [ ] Decide whether joint-club matches should default to `ClubIdentifier.ALL` when `club` is omitted, or must
-  always name `"Eufees Clubs"` explicitly
-- [ ] If defaulting is wanted: wire `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` into
-  `IpscMatchServiceImpl.createMatch`'s club resolution instead of throwing `"Club is required."` when `club` is
-  omitted, mirroring how `resolveHomeClub`/`resolveClubNumber` already treat an absent optional field
-- [ ] If not: remove the unused constant from `IpscConstants` rather than leaving it as inert groundwork
+- [x] Decide whether joint-club matches should default to `ClubIdentifier.ALL` when `club` is omitted or must
+  always name `"Eufees Clubs"` explicitly — decided to default
+- [x] Wire `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` into `IpscMatchServiceImpl`'s club resolution instead of
+  throwing `"Club is required."` when `club` is omitted, mirroring how `resolveHomeClub`/`resolveClubNumber`
+  already treat an absent optional field — `validateForCreate` no longer rejects a missing/blank `club`, and
+  `resolveClub` now resolves `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` via `clubRepository.findByIdentifier`
+  when none is supplied, throwing `NonFatalException` if even that default club is missing
 
 ---
 

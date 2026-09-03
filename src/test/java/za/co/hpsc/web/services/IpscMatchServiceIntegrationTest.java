@@ -73,12 +73,38 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testCreateMatch_whenClubIsBlank_thenThrowsValidationException() {
+    void testCreateMatch_whenClubIsBlank_thenDefaultsToDefaultMatchClub() {
         // Arrange
+        createClub("Eufees Clubs", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("  ");
 
+        // Act
+        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
+
+        // Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER, response.getClub());
+    }
+
+    @Test
+    void testCreateMatch_whenClubIsMissing_thenDefaultsToDefaultMatchClub() {
+        // Arrange
+        createClub("Eufees Clubs", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+        MatchRequest request = validRequest(null);
+
+        // Act
+        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
+
+        // Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER, response.getClub());
+    }
+
+    @Test
+    void testCreateMatch_whenClubIsMissingAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        MatchRequest request = validRequest(null);
+
         // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+        assertThrows(NonFatalException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test

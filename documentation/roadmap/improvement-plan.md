@@ -301,7 +301,7 @@ CSV-native nested-stage representation) a `parseStages` helper splitting the del
 `MatchStageRequest`s. `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
 competitor-only endpoint/service/data-flow documentation are updated in the same release to reflect this.
 
-### 9. `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied
+### 9. `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — ✅ Closed in v8.4.0
 
 **Evidence:** `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER = ClubIdentifier.ALL` exists (added alongside
 `HOME_CLUB_IDENTIFIER` this branch) but is referenced nowhere else in `src/` — grepping the whole tree for
@@ -325,16 +325,22 @@ joint-club match today has no shorthand for it — they'd have to already know t
 the domain default" rather than an error; or (b) if joint-club matches are meant to always be created by explicitly
 naming `"Eufees Clubs"`, remove the unused constant rather than leaving inert groundwork in `IpscConstants`.
 
+**Outcome:** Delivered option (a). `IpscMatchServiceImpl.validateForCreate` no longer rejects a missing/blank
+`club`; `resolveClub` now resolves it via `clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)`
+instead, mirroring `IpscCompetitorServiceImpl.resolveHomeClub`/`resolveClubNumber`'s "apply the domain default"
+pattern, and throwing `NonFatalException` if even the default club is missing. `MatchRequest`/`MatchRequestForCSV`'s
+`club` field Javadoc now documents the default explicitly.
+
 ---
 
 ## 🚀 Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                                                                                                                |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Phase       | Focus                                                                                                                                                                                                                                                                                                                 |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% to 97% across v8.3.1/v8.4.0, now closed. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
-| **Next**    | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                                                                             |
-| **Later**   | #9: either wire `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` into `IpscMatchServiceImpl.createMatch`'s club resolution, or remove the unused constant                                                                                                                                                |
-| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                      |
+| **Next**    | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                                                                                             |
+| **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                                                                                                                                                                        |
+| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                                       |
 
 ---
 
@@ -359,8 +365,8 @@ naming `"Eufees Clubs"`, remove the unused constant rather than leaving inert gr
 - ✅ Met in v8.3.0: `IpscMatchController.createMatches`/`IpscMatchService.createMatches` mirror the competitor bulk
   CSV import pattern, closing Gap #8 and removing the last asymmetry between the two CRUD domains' bulk-import
   support.
-- Either `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is actually applied somewhere in `IpscMatchServiceImpl`, or
-  it's removed — closing Gap #9's inert-groundwork-constant gap one way or the other.
+- ✅ Met in v8.4.0: `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is now applied by `IpscMatchServiceImpl.resolveClub`
+  when a match's `club` is omitted, closing Gap #9's inert-groundwork-constant gap.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   per-version Future Roadmap notes rather than being deleted silently from here.
 

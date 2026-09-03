@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -231,11 +232,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     /**
      * Copies the match-level fields of a {@link MatchRequest} onto an {@link IpscMatch},
-     * resolving the named club in the process.
+     * resolving the named club in the process, defaulting to
+     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} when none is supplied.
      *
      * @param match   the entity to populate; must not be null.
      * @param request the request carrying the field values; must not be null.
-     * @throws NonFatalException if the request's club name doesn't match an existing club.
+     * @throws NonFatalException if the request's club name doesn't match an existing club, or no
+     *                           club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      */
     protected void applyFields(@NotNull IpscMatch match, @NotNull MatchRequest request) {
         match.setClub(resolveClub(request.getClub()));
@@ -322,13 +325,23 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Resolves a club by name.
+     * Resolves a club by name, defaulting to {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     * when none is supplied.
      *
-     * @param clubName the club name to look up.
+     * @param clubName the club name to look up; may be null or blank, in which case the default
+     *                 match club identifier is resolved instead.
      * @return the matching {@link Club}.
-     * @throws NonFatalException if no club with {@code clubName} exists.
+     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing
+     *                           club, or if no club exists for
+     *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      */
     protected Club resolveClub(String clubName) {
+        if ((clubName == null) || clubName.isBlank()) {
+            return clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)
+                    .orElseThrow(() -> new NonFatalException(
+                            "No club found with identifier " + IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER));
+        }
+
         return clubRepository.findByName(clubName)
                 .orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
     }
@@ -373,9 +386,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
         if (request.getMatchDate() == null) {
             throw new ValidationException("Match date is required.");
-        }
-        if ((request.getClub() == null) || request.getClub().isBlank()) {
-            throw new ValidationException("Club is required.");
         }
         if ((request.getMatchFirearmType() == null) || request.getMatchFirearmType().isBlank()) {
             throw new ValidationException("Match firearm type is required.");

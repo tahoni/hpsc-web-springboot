@@ -89,21 +89,43 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testCreateMatch_whenClubIsMissing_thenThrowsValidationException() {
+    void testCreateMatch_whenClubIsMissing_thenDefaultsToDefaultMatchClub() {
         // Arrange
+        stubDefaultClub();
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         MatchRequest request = validRequest(null);
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+        // Act
+        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
+
+        // Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER, response.getClub());
     }
 
     @Test
-    void testCreateMatch_whenClubIsBlank_thenThrowsValidationException() {
+    void testCreateMatch_whenClubIsBlank_thenDefaultsToDefaultMatchClub() {
         // Arrange
+        stubDefaultClub();
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         MatchRequest request = validRequest("  ");
 
+        // Act
+        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
+
+        // Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER, response.getClub());
+    }
+
+    @Test
+    void testCreateMatch_whenClubIsMissingAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)).thenReturn(Optional.empty());
+        MatchRequest request = validRequest(null);
+
         // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+        assertThrows(NonFatalException.class, () -> ipscMatchService.createMatch(request));
     }
 
     @Test
@@ -772,6 +794,12 @@ public class IpscMatchServiceTest {
     private Club stubExistingClub(String name, ClubIdentifier identifier) {
         Club club = newClub(name, identifier);
         when(clubRepository.findByName(name)).thenReturn(Optional.of(club));
+        return club;
+    }
+
+    private Club stubDefaultClub() {
+        Club club = newClub("Eufees Clubs", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)).thenReturn(Optional.of(club));
         return club;
     }
 

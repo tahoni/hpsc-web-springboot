@@ -376,6 +376,46 @@ class IpscMatchServiceImplTest {
         assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.resolveClub("No Such Club"));
     }
 
+    @Test
+    void testResolveClub_whenClubNameIsNull_thenReturnsDefaultMatchClub() {
+        // Arrange
+        Club defaultClub = new Club();
+        defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(Optional.of(defaultClub));
+
+        // Act
+        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub(null));
+
+        // Assert
+        assertSame(defaultClub, resolved);
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsBlank_thenReturnsDefaultMatchClub() {
+        // Arrange
+        Club defaultClub = new Club();
+        defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(Optional.of(defaultClub));
+
+        // Act
+        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub("  "));
+
+        // Assert
+        assertSame(defaultClub, resolved);
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsNullAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.resolveClub(null));
+    }
+
     // resolveFirearmType()
     @Test
     void testResolveFirearmType_whenFirearmTypeIsValid_thenReturnsMatchingFirearmType() {
@@ -602,15 +642,6 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testValidateForCreate_whenClubIsBlank_thenThrowsValidationException() {
-        // Arrange
-        MatchRequest request = validRequest("  ");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.validateForCreate(request));
-    }
-
-    @Test
     void testValidateForCreate_whenMatchFirearmTypeIsBlank_thenThrowsValidationException() {
         // Arrange
         MatchRequest request = validRequest("Test Club");
@@ -634,6 +665,12 @@ class IpscMatchServiceImplTest {
     void testValidateForCreate_whenRequestIsValid_thenDoesNotThrow() {
         // Act & Assert
         assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(validRequest("Test Club")));
+    }
+
+    @Test
+    void testValidateForCreate_whenClubIsBlank_thenDoesNotThrow() {
+        // Act & Assert
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(validRequest("  ")));
     }
 
     // Helpers
