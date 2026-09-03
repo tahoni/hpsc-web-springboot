@@ -48,7 +48,9 @@ public class IpscCompetitorController {
      * @param request the competitor to create.
      * @return the created {@link CompetitorResponse}, including its generated ID.
      * @throws ValidationException if a required field is missing, the gender is unrecognised or
-     *                             the home club is HPSC without a club number.
+     *                             the home club is
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number.
      * @throws NonFatalException   if the named home club cannot be found.
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -80,7 +82,9 @@ public class IpscCompetitorController {
      * @return a {@link CompetitorResponseHolder} containing the created competitors.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
      *                             missing a required field, if a row's gender is unrecognised, or
-     *                             if a row's home club is HPSC without a club number.
+     *                             if a row's home club is
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number.
      * @throws NonFatalException   if a row's named home club cannot be found.
      * @throws FatalException      if a critical error occurs during processing, that prevents the
      *                             operation from completing successfully.
@@ -124,7 +128,9 @@ public class IpscCompetitorController {
      * @param request      the competitor's replacement fields.
      * @return the updated {@link CompetitorResponse}.
      * @throws ValidationException if a required field is missing, the gender is unrecognised or
-     *                             the home club is HPSC without a club number.
+     *                             the home club is
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
@@ -159,8 +165,9 @@ public class IpscCompetitorController {
      *                     Touching either {@code homeClub} or {@code clubNumber} re-applies the
      *                     club number rule against the resulting home club.
      * @return the updated {@link CompetitorResponse}.
-     * @throws ValidationException if the resulting home club is HPSC without a club number, or
-     *                             the gender is unrecognised.
+     * @throws ValidationException if the resulting home club is
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             without a club number, or the gender is unrecognised.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */

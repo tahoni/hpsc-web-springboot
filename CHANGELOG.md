@@ -90,6 +90,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   from the new `TIME_FORMAT` instead of an inline `" HH:mm"` literal — same resulting `"yyyy-MM-dd HH:mm"` value.
   Unused `LONG_DATE_FORMAT`/`LONG_DATE_TIME_FORMAT` dropped; nothing in the codebase referenced either
 
+#### Controllers
+
+- **`IpscCompetitorController`:** Javadoc's hardcoded "HPSC" mentions in each `@throws ValidationException`
+  description replaced with `{@link IpscConstants#HOME_CLUB_ABBREVIATION}` links, matching the constants
+  centralisation above
+
 #### Database
 
 - **`Competitor.clubNumber`:** Column relaxed from `nullable = false` to nullable, matching the new HPSC-only
@@ -121,6 +127,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (`AwardRequestForCSV.date`) or `IpscConstants.IPSC_INPUT_DATE_FORMAT` (the IPSC competitor/match classes'
   `dateOfBirth`/`matchDate`) instead of the now-removed `HpscConstants.HPSC_INPUT_DATE_FORMAT` — every constant
   resolves to the same `"yyyy-MM-dd"` pattern, so the accepted input format itself is unchanged
+
+#### Services
+
+- **`IpscCompetitorService`:** Same Javadoc link swap as `IpscCompetitorController` above, across
+  `createCompetitor`/`createCompetitors`/`updateCompetitor`/`patchCompetitor`'s `@throws ValidationException`
+  descriptions and their "home club is HPSC" parameter notes
 
 ### 🐛 Fixed
 
