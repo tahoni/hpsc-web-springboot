@@ -19,10 +19,11 @@ public class SystemConstants {
 
     public static final int DEFAULT_SCALE = 5;
 
+    public static final String TIME_FORMAT = "HH:mm";
     public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";
-    public static final String ISO_DATE_TIME_FORMAT = ISO_DATE_FORMAT + " HH:mm";
-    public static final String LONG_DATE_FORMAT = "dd MMMM yyyy";
-    public static final String LONG_DATE_TIME_FORMAT = LONG_DATE_FORMAT + " HH:mm";
+    public static final String ISO_DATE_TIME_FORMAT = ISO_DATE_FORMAT + " " + TIME_FORMAT;
+    public static final String DEFAULT_DATE_FORMAT = ISO_DATE_FORMAT;
+    public static final String DEFAULT_DATE_TIME_FORMAT = ISO_DATE_TIME_FORMAT;
 
     public static final String ARRAY_SEPARATOR = ";";
 }

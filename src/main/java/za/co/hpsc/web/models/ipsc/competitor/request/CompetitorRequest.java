@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.HpscConstants;
+import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +34,7 @@ public class CompetitorRequest {
     /** The competitor's nickname, if any. */
     private String nickname;
     /** The competitor's date of birth. */
-    @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate dateOfBirth;
     /** The competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name. */
     private String gender;
@@ -46,7 +46,8 @@ public class CompetitorRequest {
     private String competitorNumber;
     /**
      * The competitor's HPSC membership number; must be unique across all competitors. Required
-     * when {@code homeClub} is HPSC, ignored (forced to {@code null}) otherwise.
+     * when {@code homeClub} is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION},
+     * ignored (forced to {@code null}) otherwise.
      */
     private String clubNumber;
     /** The competitor's national identity number. */

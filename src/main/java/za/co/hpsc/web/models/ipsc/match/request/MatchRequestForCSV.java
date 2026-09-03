@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.constants.HpscConstants;
+import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
 
@@ -35,7 +35,7 @@ import java.time.LocalDate;
 public class MatchRequestForCSV {
     /** Date the match was/will be shot. */
     @JsonProperty(required = true)
-    @JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
     /** The match's name. */
     @JsonProperty(required = true)
