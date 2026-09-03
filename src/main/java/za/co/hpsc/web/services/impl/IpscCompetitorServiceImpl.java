@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
@@ -195,11 +196,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getCompetitorNumber() != null) {
             competitor.setCompetitorNumber(request.getCompetitorNumber());
         }
-        if (request.getClubNumber() != null) {
-            if (request.getClubNumber().isBlank()) {
-                throw new ValidationException("Club number cannot be blank.");
-            }
-            competitor.setClubNumber(request.getClubNumber());
+        if ((request.getHomeClub() != null) || (request.getClubNumber() != null)) {
+            String clubNumber = (request.getClubNumber() != null) ? request.getClubNumber() : competitor.getClubNumber();
+            competitor.setClubNumber(resolveClubNumber(competitor.getHomeClub(), clubNumber));
         }
         if (request.getIdNumber() != null) {
             competitor.setIdNumber(request.getIdNumber());
@@ -226,7 +225,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
-     * @throws ValidationException if the request's gender doesn't match a known {@link Gender}.
+     * @throws ValidationException if the request's gender doesn't match a known {@link Gender}, or the resolved
+     *                              home club is HPSC but no club number was supplied.
      * @throws NonFatalException   if the request's home club name doesn't match an existing club.
      */
     protected void applyFields(@NotNull Competitor competitor, @NotNull CompetitorRequest request) {
@@ -236,10 +236,11 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setNickname(request.getNickname());
         competitor.setDateOfBirth(request.getDateOfBirth());
         competitor.setGender(resolveGender(request.getGender()));
-        competitor.setHomeClub(resolveHomeClub(request.getHomeClub()));
+        Club homeClub = resolveHomeClub(request.getHomeClub());
+        competitor.setHomeClub(homeClub);
         competitor.setSapsaNumber(request.getSapsaNumber());
         competitor.setCompetitorNumber(request.getCompetitorNumber());
-        competitor.setClubNumber(request.getClubNumber());
+        competitor.setClubNumber(resolveClubNumber(homeClub, request.getClubNumber()));
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
         competitor.setEmailAddresses(
@@ -256,6 +257,34 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     protected Competitor findCompetitorOrThrow(Long competitorId) {
         return competitorRepository.findById(competitorId)
                 .orElseThrow(() -> new NonFatalException("No competitor found with ID " + competitorId));
+    }
+
+    /**
+     * Resolves a competitor's club number against their home club.
+     *
+     * <p>
+     * A club number is only meaningful for HPSC's own members: it's required when
+     * {@code homeClub} is {@link ClubIdentifier#HPSC}, and forced to {@code null} for every other
+     * home club, including none, regardless of what was supplied on the request.
+     * </p>
+     *
+     * @param homeClub   the competitor's resolved home club; may be null.
+     * @param clubNumber the club number supplied on the request; may be null or blank.
+     * @return {@code clubNumber} when {@code homeClub} is HPSC, otherwise {@code null}.
+     * @throws ValidationException if {@code homeClub} is HPSC but {@code clubNumber} is null or blank.
+     */
+    protected String resolveClubNumber(Club homeClub, String clubNumber) {
+        boolean isHpscMember = (homeClub != null) && (homeClub.getIdentifier() == ClubIdentifier.HPSC);
+
+        if (!isHpscMember) {
+            return null;
+        }
+
+        if ((clubNumber == null) || clubNumber.isBlank()) {
+            throw new ValidationException("Club number is required for HPSC competitors.");
+        }
+
+        return clubNumber;
     }
 
     /**
@@ -308,9 +337,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         }
         if ((request.getLastName() == null) || request.getLastName().isBlank()) {
             throw new ValidationException("Last name is required.");
-        }
-        if ((request.getClubNumber() == null) || request.getClubNumber().isBlank()) {
-            throw new ValidationException("Club number is required.");
         }
     }
 

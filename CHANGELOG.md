@@ -66,6 +66,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🔄 Changed
 
+#### API
+
+- **`IpscCompetitorController`/`IpscCompetitorServiceImpl`:** `clubNumber` is no longer unconditionally required on
+  competitor create/update — it's now required only when the competitor's home club is HPSC, and forced to
+  `null` for every other home club, including none, regardless of what a request supplies. `CompetitorRequest`'s
+  `clubNumber` is no longer a Jackson-required property. New `IpscCompetitorServiceImpl.resolveClubNumber()`
+  centralises the rule for `createCompetitor()`/`updateCompetitor()` (via `applyFields()`) and `patchCompetitor()`,
+  which re-applies it whenever a patch touches `homeClub` or `clubNumber`
+
 #### Configuration
 
 - **`pom.xml`:** `jacoco-maven-plugin`'s `check` execution `LINE`/`COVEREDRATIO` minimum raised from `0.86` to
@@ -73,6 +82,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   fresh `./mvnw verify -Pcoverage` run) after the 86% floor was confirmed holding cleanly in CI on both the
   `develop` and `main` `build.yml` runs that shipped v8.3.1. Closes
   `documentation/roadmap/improvement-plan.md`'s Gap #4
+
+#### Database
+
+- **`Competitor.clubNumber`:** Column relaxed from `nullable = false` to nullable, matching the new HPSC-only
+  requirement above; the `uk_competitor_club_number` unique constraint is unchanged, since MySQL/H2 treat
+  multiple `NULL`s as distinct under a `UNIQUE` constraint. New `V7_4_0__make_club_number_nullable.sql` migration
+  relaxes the column and clears `club_number` on any existing competitor whose home club isn't HPSC
 
 #### Documentation
 

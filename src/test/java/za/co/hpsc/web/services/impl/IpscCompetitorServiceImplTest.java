@@ -27,9 +27,9 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
  * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code readCompetitors},
- * {@code resolveGender}, {@code resolveHomeClub}, {@code splitEmailAddresses}, {@code toRequest},
- * {@code toResponse}, {@code validateForCreate}) - not declared on
- * {@link za.co.hpsc.web.services.IpscCompetitorService}.
+ * {@code resolveClubNumber}, {@code resolveGender}, {@code resolveHomeClub},
+ * {@code splitEmailAddresses}, {@code toRequest}, {@code toResponse}, {@code validateForCreate}) -
+ * not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
  * The interface's create/update/patch/get contract is covered by
  * {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}.
  */
@@ -97,7 +97,6 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
-        request.setClubNumber("HPSC-001");
         Competitor competitor = new Competitor();
 
         // Act
@@ -113,7 +112,6 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
-        request.setClubNumber("HPSC-001");
         request.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
         Competitor competitor = new Competitor();
 
@@ -125,13 +123,13 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
-    void testApplyFields_whenHomeClubIsBlank_thenHomeClubIsNull() {
+    void testApplyFields_whenHomeClubIsBlank_thenHomeClubAndClubNumberAreNull() {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
-        request.setClubNumber("HPSC-001");
         request.setHomeClub("  ");
+        request.setClubNumber("HPSC-001");
         Competitor competitor = new Competitor();
 
         // Act
@@ -139,6 +137,7 @@ class IpscCompetitorServiceImplTest {
 
         // Assert
         assertNull(competitor.getHomeClub());
+        assertNull(competitor.getClubNumber());
         verifyNoInteractions(clubRepository);
     }
 
@@ -148,7 +147,6 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
-        request.setClubNumber("HPSC-001");
         request.setGender("Not A Gender");
 
         // Act & Assert
@@ -270,6 +268,52 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(null));
+    }
+
+    // resolveClubNumber()
+    @Test
+    void testResolveClubNumber_whenHomeClubIsNull_thenReturnsNull() {
+        assertNull(ipscCompetitorServiceImpl.resolveClubNumber(null, "HPSC-001"));
+    }
+
+    @Test
+    void testResolveClubNumber_whenHomeClubIsNotHpsc_thenReturnsNull() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.SOSC);
+
+        // Act & Assert
+        assertNull(ipscCompetitorServiceImpl.resolveClubNumber(club, "HPSC-001"));
+    }
+
+    @Test
+    void testResolveClubNumber_whenHomeClubIsHpscAndClubNumberIsNull_thenThrowsValidationException() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.resolveClubNumber(club, null));
+    }
+
+    @Test
+    void testResolveClubNumber_whenHomeClubIsHpscAndClubNumberIsBlank_thenThrowsValidationException() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.resolveClubNumber(club, "  "));
+    }
+
+    @Test
+    void testResolveClubNumber_whenHomeClubIsHpscAndClubNumberIsValid_thenReturnsClubNumber() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertEquals("HPSC-001", ipscCompetitorServiceImpl.resolveClubNumber(club, "HPSC-001"));
     }
 
     // resolveGender()
@@ -499,7 +543,6 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("  ");
         request.setLastName("Doe");
-        request.setClubNumber("HPSC-001");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.validateForCreate(request));
@@ -511,19 +554,6 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("  ");
-        request.setClubNumber("HPSC-001");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.validateForCreate(request));
-    }
-
-    @Test
-    void testValidateForCreate_whenClubNumberIsBlank_thenThrowsValidationException() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setClubNumber("  ");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.validateForCreate(request));
@@ -535,7 +565,6 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Jane");
         request.setLastName("Doe");
-        request.setClubNumber("HPSC-001");
 
         // Act & Assert
         assertDoesNotThrow(() -> ipscCompetitorServiceImpl.validateForCreate(request));

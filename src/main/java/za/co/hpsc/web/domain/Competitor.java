@@ -50,7 +50,7 @@ public class Competitor {
     @Column(name = "competitor_number")
     private String competitorNumber;
 
-    @Column(name = "club_number", nullable = false, unique = true)
+    @Column(name = "club_number", unique = true)
     private String clubNumber;
 
     @Column(name = "id_number")

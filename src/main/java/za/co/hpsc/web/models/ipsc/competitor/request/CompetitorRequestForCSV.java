@@ -51,7 +51,10 @@ public class CompetitorRequestForCSV {
     private Integer sapsaNumber;
     /** The competitor's number, as assigned for competition. */
     private String competitorNumber;
-    /** The competitor's home club membership number; must be unique across all competitors. */
+    /**
+     * The competitor's HPSC membership number; must be unique across all competitors. Required
+     * when {@code homeClub} is HPSC, ignored (forced to {@code null}) otherwise.
+     */
     private String clubNumber;
     /** The competitor's national identity number. */
     private String idNumber;
@@ -79,7 +82,8 @@ public class CompetitorRequestForCSV {
      * @param homeClub         the name of the competitor's home club; resolved against existing clubs by name.
      * @param sapsaNumber      the competitor's SAPSA membership number.
      * @param competitorNumber the competitor's number, as assigned for competition.
-     * @param clubNumber       the competitor's home club membership number.
+     * @param clubNumber       the competitor's HPSC membership number; must be unique across all competitors.
+     *                         Required when {@code homeClub} is HPSC, ignored (forced to {@code null}) otherwise.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
      * @param emailAddresses   the competitor's email addresses, if any, as a single
