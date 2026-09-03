@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
@@ -225,8 +226,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
-     * @throws ValidationException if the request's gender doesn't match a known {@link Gender}, or the resolved
-     *                              home club is HPSC but no club number was supplied.
+     * @throws ValidationException if the request's gender doesn't match a known {@link Gender},
+     *                             or the resolved home club is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             but no club number was supplied.
      * @throws NonFatalException   if the request's home club name doesn't match an existing club.
      */
     protected void applyFields(@NotNull Competitor competitor, @NotNull CompetitorRequest request) {
@@ -264,27 +266,52 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      *
      * <p>
      * A club number is only meaningful for HPSC's own members: it's required when
-     * {@code homeClub} is {@link ClubIdentifier#HPSC}, and forced to {@code null} for every other
-     * home club, including none, regardless of what was supplied on the request.
+     * {@code homeClub} is {@link IpscConstants#HOME_CLUB_IDENTIFIER}, and forced to {@code null}
+     * for every other home club, including none, regardless of what was supplied on the request.
      * </p>
      *
      * @param homeClub   the competitor's resolved home club; may be null.
      * @param clubNumber the club number supplied on the request; may be null or blank.
-     * @return {@code clubNumber} when {@code homeClub} is HPSC, otherwise {@code null}.
-     * @throws ValidationException if {@code homeClub} is HPSC but {@code clubNumber} is null or blank.
+     * @return {@code clubNumber} when {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION},
+     * otherwise {@code null}.
+     * @throws ValidationException if {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
+     *                             but {@code clubNumber} is null or blank.
      */
     protected String resolveClubNumber(Club homeClub, String clubNumber) {
-        boolean isHpscMember = (homeClub != null) && (homeClub.getIdentifier() == ClubIdentifier.HPSC);
-
-        if (!isHpscMember) {
+        if (!isHpscMember(homeClub, IpscConstants.HOME_CLUB_IDENTIFIER)) {
             return null;
         }
 
         if ((clubNumber == null) || clubNumber.isBlank()) {
-            throw new ValidationException("Club number is required for HPSC competitors.");
+            throw new ValidationException(String.format("Club number is required for %s competitors.",
+                    IpscConstants.HOME_CLUB_ABBREVIATION));
         }
 
         return clubNumber;
+    }
+
+    /**
+     * Determines whether {@code homeClub}'s identifier matches {@code homeClubIdentifier}.
+     *
+     * <p>
+     * {@code homeClubIdentifier} is taken as a parameter, rather than read directly from
+     * {@link IpscConstants#HOME_CLUB_IDENTIFIER} in this method, purely so this check stays unit
+     * testable if that constant were ever null (e.g. if
+     * {@link ClubIdentifier#fromAbbreviation(String)} ever failed to resolve
+     * {@link IpscConstants#HOME_CLUB_ABBREVIATION}, which cannot happen with today's enum values,
+     * but which the constant is deliberately written to tolerate rather than throw on). A null
+     * {@code homeClubIdentifier} always yields {@code false} here, never a false match -- even
+     * against a {@code homeClub} whose own identifier happens to be null.
+     * </p>
+     *
+     * @param homeClub           the competitor's resolved home club; may be null.
+     * @param homeClubIdentifier the identifier {@code homeClub} must carry to count as a match;
+     *                           may be null.
+     * @return {@code true} only if both are non-null and {@code homeClub}'s identifier matches
+     * {@code homeClubIdentifier}.
+     */
+    protected boolean isHpscMember(Club homeClub, ClubIdentifier homeClubIdentifier) {
+        return (homeClub != null) && (homeClubIdentifier != null) && (homeClub.getIdentifier() == homeClubIdentifier);
     }
 
     /**
