@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s eight gaps, organised by that
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s nine gaps, organised by that
 document's Now/Next/Later/Ongoing phasing. Each section names its originating gap number for traceability back to the
 evidence and reasoning there.
 
@@ -132,6 +132,15 @@ evidence and reasoning there.
   `ImageService` themselves, not just by implication via the new competitor flow — done in v8.3.1: `README.md`'s
   Award Ceremonies/Image Gallery bullets and `ARCHITECTURE.md`'s Service Layer table/Award-Image CSV Processing
   Flow section now say so explicitly
+
+**Unused `DEFAULT_MATCH_CLUB_IDENTIFIER` constant** *(improvement-plan.md → Gap #9)*
+
+- [ ] Decide whether joint-club matches should default to `ClubIdentifier.ALL` when `club` is omitted, or must
+  always name `"Eufees Clubs"` explicitly
+- [ ] If defaulting is wanted: wire `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` into
+  `IpscMatchServiceImpl.createMatch`'s club resolution instead of throwing `"Club is required."` when `club` is
+  omitted, mirroring how `resolveHomeClub`/`resolveClubNumber` already treat an absent optional field
+- [ ] If not: remove the unused constant from `IpscConstants` rather than leaving it as inert groundwork
 
 ---
 
