@@ -65,6 +65,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (Statistics), `🧭` (Design notes), `🔮` (Future enhancements), `👥` (Contributors), `📝` (Notes), `🛡️`
   (Robustness / validation hardening, reused across several past releases' Key Highlights) and `🔓` (Optional /
   relaxed constraint)
+- **`AGENTS.md`:** `🟡` (Partially completed) and `⚪` (Open / not started) added to the icon registry table,
+  completing the three-way status scheme alongside the already-registered `✅`, used throughout
+  `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md`
 
 ### 🔄 Changed
 

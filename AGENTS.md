@@ -220,6 +220,8 @@ genuinely new concept. Icons already established in this repository's documentat
 | 📤   | Output                            |
 | 🚢   | Release process                   |
 | 🧩   | Tooling / automation              |
+| 🟡   | Partially completed               |
+| ⚪   | Open / not started                |
 | ➕   | Added items                       |
 | 🐛   | Fixed items                       |
 | ⚠️   | Deprecated items                  |
