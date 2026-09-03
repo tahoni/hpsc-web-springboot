@@ -14,7 +14,7 @@ than guessing.
 ## 🔍 Gather current state
 
 1. Read `documentation/history/PR_DESCRIPTION_v<version>.md`. If it doesn't exist, tell the user to run the
-   `prep-version-release` skill for that version first, and stop.
+   `prep-version-release` skill for that version first and stop.
 2. Read `documentation/history/RELEASE_NOTES_v<version>.md`. If it doesn't exist, same as above.
 3. Read `AGENTS.md` for conventions.
 
