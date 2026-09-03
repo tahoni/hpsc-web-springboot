@@ -135,6 +135,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `ImageController` were shown with the `/hpsc-web` context-path prefix while the IPSC controllers weren't, but
   none of the actual `@RequestMapping` values include it (Spring prepends `server.servlet.context-path`
   automatically). All four rows now show the mapping as declared in code
+- **`ARCHITECTURE.md`:** Technology Stack table's Testing row gained `Spring REST Docs`, matching `README.md`'s
+  Technology section and the `spring-restdocs-mockmvc` dependency already declared in `pom.xml`
 
 ## 🧾 [8.3.1] - 2026-09-02
 
