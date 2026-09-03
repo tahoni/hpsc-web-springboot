@@ -82,7 +82,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   unrelated app release v7.2.0
 - **`documentation/recommendations/flyway-migration-versioning.md`:** New recommendations doc expanding on that
   note — why independent versioning is the right call for this project, how to choose the next migration's version
-  number, and a table of every existing migration against the app version it actually shipped in. Documentation
+  number and a table of every existing migration against the app version it actually shipped in. Documentation
   File Map's `documentation/recommendations/` row updated to reference it
 - **`AGENTS.md`:** New REST conventions subsection under Architecture, condensing
   `standard-rest-conventions.md`'s URL path/handler method naming rules into an actual convention rather than
