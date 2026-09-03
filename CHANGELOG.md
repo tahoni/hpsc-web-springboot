@@ -117,6 +117,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   inconsistently with each other and with `CONTRIBUTING.md`'s `🗺️ Roadmap` heading — "Roadmap Planning" now uses
   `🗺️` (matching `CONTRIBUTING.md` and the registry's "Roadmap" concept), and "Documentation File Map" switches to
   a new dedicated `🗂️` icon instead of competing for `🗺️` within the same file's own Table of Contents
+- **`README.md`:** "API Documentation" and "Documentation" were two separate headings both using `📚` within the
+  same Table of Contents — switched "API Documentation" to `🌐`, already registered for the closely related
+  "Presentation / API layer" concept
+- **`AGENTS.md`:** `🔄`'s registered concept corrected from "Changed items / data flow" to "Changed items /
+  design patterns" — `ARCHITECTURE.md`'s actual "Data Flow" heading uses `🔀`, not `🔄`; `🔄` is really used for
+  "Key Design Patterns", which the old description never reflected
 
 ## 🧾 [8.4.0] - 2026-09-03
 

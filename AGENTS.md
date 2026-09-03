@@ -205,7 +205,7 @@ genuinely new concept. Icons already established in this repository's documentat
 | 📜   | License                           |
 | 👤   | Author                            |
 | 🎯   | Theme / system overview           |
-| 🔄   | Changed items / data flow         |
+| 🔄   | Changed items / design patterns   |
 | ✅   | Quality attributes                |
 | 🔬   | CI/CD & quality gates             |
 | 🔀   | Data flow / Git workflow          |
