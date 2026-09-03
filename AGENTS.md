@@ -13,6 +13,7 @@ convention; no Claude-Code-specific content is split out from it.
 - [🏛️ Architecture](#-architecture)
 - [📝 Documentation Conventions](#-documentation-conventions)
 - [🗺️ Documentation File Map](#-documentation-file-map)
+- [🎯 Roadmap Planning](#-roadmap-planning)
 - [🧩 Claude Code Skills](#-claude-code-skills)
 - [🧪 Test Conventions](#-test-conventions)
 - [📁 Directory Tree Maintenance](#-directory-tree-maintenance)
@@ -279,25 +280,45 @@ Four documentation-only folders supplement these:
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
 - **`documentation/roadmap/`** holds in-progress planning documents that sit outside the standard documentation set
-  above:
-
-  | File                        | Purpose                                                                                                          |
-  |-----------------------------|------------------------------------------------------------------------------------------------------------------|
-  | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
-  | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
-
-  Both group their gaps into three status sections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — mirrored
-  identically across the two files; a gap's number is assigned once and never reused or resequenced, so it stays
-  stable even as the gap moves between sections. A gap moves to 🟡 Partially Completed once it has a documented
-  Progress note (or, in `improvement-plan-tasks.md`, at least one checked item) but hasn't reached a final Outcome,
-  and to ✅ Completed once it has (its `###`/`####` header there gains a "✅ Closed in vX.Y.Z" suffix, or "✅ Closed
-  as not applicable in vX.Y.Z" if it was resolved by removing the thing rather than delivering it). Never delete or
-  renumber a gap or delete a checked task line when moving it between sections — only relocate the whole block.
-
+  above — see [🎯 Roadmap Planning](#-roadmap-planning) below for the file structure and conventions.
 - **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
   this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
   conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the
   Tech Stack section's Flyway note above).
+
+---
+
+## 🎯 Roadmap Planning
+
+`documentation/roadmap/` holds two in-progress planning documents tracking outstanding project gaps, kept outside
+the standard documentation set above:
+
+| File                        | Purpose                                                                                                          |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
+
+`improvement-plan.md` opens with a Goals & Constraints table synthesised from the project's own docs and
+configuration, then its "🔍 Gaps & Improvement Opportunities" section groups numbered `#### N. <Title>` gap
+sections into three status subsections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — each with Evidence,
+Why it matters and a Proposed improvement, gaining an Outcome or Progress paragraph once work against it lands.
+That's followed by a Now/Next/Later/Ongoing Roadmap table (forward-looking priority, a separate concern from
+completion status) and a Success Criteria list. `improvement-plan-tasks.md` mirrors the same three status
+sections, breaking each gap into checkboxes, with each block naming its originating gap number.
+
+A gap's number is assigned once and never reused or resequenced, so it stays stable even as the gap moves between
+sections. A gap moves to 🟡 Partially Completed once it has a documented Progress note (or, in
+`improvement-plan-tasks.md`, at least one checked item) but hasn't reached a final Outcome, and to ✅ Completed once
+it has (its `###`/`####` header gains a "— ✅ Closed in vX.Y.Z" suffix, or "— ✅ Closed as not applicable in
+vX.Y.Z" if it was resolved by removing the thing rather than delivering it). Never delete or renumber a gap or
+delete a checked task line when moving it between sections — only relocate the whole block.
+
+Unlike `README.md`/`ARCHITECTURE.md`, `improvement-plan.md` is explicitly **not evergreen** — it's a point-in-time
+reading of the project, revisited only when a gap closes, progresses or a new one is identified; the original
+analysis is never deleted or rewritten. The `update-improvement-plan-gaps` skill audits the codebase for new,
+closed or progressed gaps; `sync-improvement-plan-gaps` marks gaps a branch has already addressed — see
+[🧩 Claude Code Skills](#-claude-code-skills) below. Checking this file is also the first step of the
+[🚢 Release Checklist](#-release-checklist) below.
 
 ---
 

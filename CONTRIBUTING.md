@@ -182,25 +182,17 @@ repository. Highlights:
 
 ## 🗺️ Roadmap
 
+Full detail lives in [`AGENTS.md`'s Roadmap Planning section](AGENTS.md#-roadmap-planning). Highlights:
+
 | File                        | Purpose                                                                                                          |
 |-----------------------------|------------------------------------------------------------------------------------------------------------------|
 | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
-Both live in `documentation/roadmap/`. `improvement-plan.md` opens with a Goals & Constraints table, then its "🔍
-Gaps & Improvement Opportunities" section groups numbered `#### N. <Title>` gap sections into three status
-subsections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — each with Evidence, Why it matters and a Proposed
-improvement, gaining an Outcome or Progress paragraph once work against it lands. That's followed by a
-Now/Next/Later/Ongoing Roadmap table (forward-looking priority, a separate concern from completion status) and a
-Success Criteria list. `improvement-plan-tasks.md` mirrors the same three status sections, breaking each gap into
-checkboxes, with each block naming its originating gap number.
-
-Unlike `README.md`/`ARCHITECTURE.md`, `improvement-plan.md` is explicitly **not evergreen** — it's a point-in-time
-reading of the project, revisited only when a gap closes, progresses or a new one is identified. A closed or
-progressed gap gains a status suffix on its header (e.g. "— ✅ Closed in vX.Y.Z" or "— 🟡 Partially completed in
-vX.Y.Z") and an Outcome/Progress paragraph, and its whole block moves into the matching status section in both
-files; the original analysis is never deleted or rewritten, and task-list items are checked off in place rather
-than removed, so the history of what was considered and why stays intact.
+Both live in `documentation/roadmap/` and track outstanding project gaps in three status sections — ✅ Completed,
+🟡 Partially Completed, ⚪ Open — each gap numbered once and never renumbered or deleted as it moves between
+sections. Unlike `README.md`/`ARCHITECTURE.md`, these files are explicitly **not evergreen** — a point-in-time
+reading of the project, revisited only when a gap closes, progresses or a new one is identified.
 
 ---
 

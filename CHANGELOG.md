@@ -56,6 +56,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
   pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
   sections
+- **`AGENTS.md`:** New "🎯 Roadmap Planning" section giving `documentation/roadmap/`'s file structure and gap
+  status/numbering conventions a dedicated home, promoted out of the "Documentation File Map" section where it
+  was previously buried as a sub-bullet — cross-links the `update-improvement-plan-gaps`/`sync-improvement-plan-gaps`
+  skills and the Release Checklist's first step
 - **`AGENTS.md`:** 25 previously-unregistered icons added to the icon registry table, backfilling ones already in
   real use but missing from it — `🔀` (Data flow / Git workflow), `📁` (Project / directory structure), `🏗️`
   (Layered architecture), `🌐` (Presentation / API layer), `⚡` (Service layer), `🗄️` (Database / persistence),
@@ -88,6 +92,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`:** Reordered the icon registry table under "Icons in headings" so icons group by the doc(s) that
   established them — `README.md`/`ARCHITECTURE.md` first, then `AGENTS.md`/`CONTRIBUTING.md`, then
   `CHANGELOG.md`/`HISTORY.md`, then `RELEASE_NOTES.md`/PR description — rather than their prior arbitrary order
+- **`CONTRIBUTING.md`:** "Roadmap" section condensed to a short pointer at `AGENTS.md`'s new "Roadmap Planning"
+  section (matching the "Documentation Conventions" section's existing highlights-and-link pattern), instead of
+  duplicating the full file-structure and status-convention detail now maintained in one place
 
 ### 🐛 Fixed
 
