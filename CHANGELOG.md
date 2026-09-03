@@ -128,6 +128,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** Added the missing `GenderConverter` row to the Custom JPA Attribute Converters table —
   the class exists in `converters/` and `Gender` is already listed in the Enumerations table, but the converter
   itself had never been added
+- **`ARCHITECTURE.md`:** Project Structure tree's `configs/` comment corrected from "Spring configuration
+  (ControllerAdvice, OpenAPI)" to "Spring configuration (ControllerAdvice)" — `configs/` only contains
+  `ControllerAdvice`; `@OpenAPIDefinition` is actually on `HpscWebApplication.java`
 
 ## 🧾 [8.3.1] - 2026-09-02
 

@@ -60,7 +60,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   └───roadmap/                # Concrete task-list breakdown of improvement-plan.md's gaps
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
-│   │   ├───configs/            # Spring configuration (ControllerAdvice, OpenAPI)
+│   │   ├───configs/            # Spring configuration (ControllerAdvice)
 │   │   ├───constants/          # Application-wide constants
 │   │   │                           HpscConstants, IpscConstants, SystemConstants
 │   │   ├───controllers/        # REST controllers
