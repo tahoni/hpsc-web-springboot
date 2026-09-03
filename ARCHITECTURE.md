@@ -191,7 +191,7 @@ Contains all business logic.
 The JPA entities map to database tables:
 
 | Entity                 | Table                    | Key Relationships                                                                    |
-|------------------------|--------------------------|---------------------------------------------------------------------------------------|
+|------------------------|--------------------------|--------------------------------------------------------------------------------------|
 | `Club`                 | `club`                   | No outgoing references; targeted by `Competitor`, `IpscMatch` and `ShooterLog` below |
 | `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                                           |
 | `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                                 |
