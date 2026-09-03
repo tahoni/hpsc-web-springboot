@@ -56,15 +56,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
   pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
   sections
-- **`AGENTS.md`:** New "🎯 Roadmap Planning" section giving `documentation/roadmap/`'s file structure and gap
+- **`AGENTS.md`:** New "🗺️ Roadmap Planning" section giving `documentation/roadmap/`'s file structure and gap
   status/numbering conventions a dedicated home, promoted out of the "Documentation File Map" section where it
   was previously buried as a sub-bullet — cross-links the `update-improvement-plan-gaps`/`sync-improvement-plan-gaps`
   skills and the Release Checklist's first step
 - **`AGENTS.md`:** 25 previously-unregistered icons added to the icon registry table, backfilling ones already in
   real use but missing from it — `🔀` (Data flow / Git workflow), `📁` (Project / directory structure), `🏗️`
   (Layered architecture), `🌐` (Presentation / API layer), `⚡` (Service layer), `🗄️` (Database / persistence),
-  `🧬` (Data model / DTOs), `📈` (Request-response flow), `📥` (Inbound / import flow), `🗺️` (Roadmap / file
-  map), `🧾` (Version entry), `💬` (Support / contact), `🤝` (Contributing guidelines), `📅` (Timeline), `💡`
+  `🧬` (Data model / DTOs), `📈` (Request-response flow), `📥` (Inbound / import flow), `🗺️` (Roadmap),
+  `🧾` (Version entry), `💬` (Support / contact), `🤝` (Contributing guidelines), `📅` (Timeline), `💡`
   (Philosophy / rationale), `🎓` (Conclusion), `⭐` (Key highlights), `📦` (What's new / key changes), `📊`
   (Statistics), `🧭` (Design notes), `🔮` (Future enhancements), `👥` (Contributors), `📝` (Notes), `🛡️`
   (Robustness / validation hardening, reused across several past releases' Key Highlights) and `🔓` (Optional /
@@ -75,6 +75,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`:** `🤔` (Reasoning), `🔢` (Numbering / sequence) and `🏷️` (Naming convention) added to the icon
   registry table, backfilling icons already used in `documentation/recommendations/flyway-migration-versioning.md`
   and `standard-rest-conventions.md`
+- **`AGENTS.md`:** `🗂️` (Documentation file index) and `🌲` (Evergreen documentation) added to the icon registry
+  table for the "Documentation File Map" and "Evergreen Documentation" headings, which had no registry entry
 
 ### 🔄 Changed
 
@@ -108,6 +110,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   structure), `📅`→`🔢` (collided with Timeline; the heading is actually about numbering), `🔒`→`🔐`
   (Security), `👤`→`🧬` (collided with Author; the heading is actually about a domain enum/DTO), `📈`→`🧪`
   (collided with Request-response flow; the heading is actually about test coverage)
+- **`AGENTS.md`:** "Documentation Conventions" heading used `📝`, which is registered for the unrelated "Notes"
+  concept, and didn't match `CONTRIBUTING.md`'s equivalent heading (`📚`) for the same section — switched to `📚`
+  in both places for consistency
+- **`AGENTS.md`:** "Documentation File Map" and the new "Roadmap Planning" section both used `🎯`/`🗺️`
+  inconsistently with each other and with `CONTRIBUTING.md`'s `🗺️ Roadmap` heading — "Roadmap Planning" now uses
+  `🗺️` (matching `CONTRIBUTING.md` and the registry's "Roadmap" concept), and "Documentation File Map" switches to
+  a new dedicated `🗂️` icon instead of competing for `🗺️` within the same file's own Table of Contents
 
 ## 🧾 [8.4.0] - 2026-09-03
 
