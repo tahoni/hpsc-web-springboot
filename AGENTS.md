@@ -216,6 +216,7 @@ genuinely new concept. Icons already established in this repository's documentat
 | 🔬   | CI/CD & quality gates          |
 | 🚢   | Release process                |
 | 🧩   | Tooling / automation           |
+| 🛠️   | Development guidelines         |
 
 ---
 

@@ -56,6 +56,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
   pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
   sections
+- **`AGENTS.md`:** New `🛠️` icon added to the icon registry for the "Development guidelines" concept
+
+### 🔄 Changed
+
+#### Documentation
+
+- **`ARCHITECTURE.md`:** "Development Guidelines" heading and Table of Contents entry now use the dedicated `🛠️`
+  icon instead of reusing `📚` (Documentation), matching the newly registered icon in `AGENTS.md`
 
 ## 🧾 [8.4.0] - 2026-09-03
 

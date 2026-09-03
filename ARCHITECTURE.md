@@ -23,7 +23,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     - [📥 Match Bulk CSV Import Flow](#-match-bulk-csv-import-flow)
 - [✅ Quality Attributes](#-quality-attributes)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
-- [📚 Development Guidelines](#-development-guidelines)
+- [🛠️ Development Guidelines](#-development-guidelines)
 
 ---
 
@@ -394,7 +394,7 @@ Client uploads CSV (Content-Type: text/csv)
 
 ---
 
-## 📚 Development Guidelines
+## 🛠️ Development Guidelines
 
 Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
 commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section
