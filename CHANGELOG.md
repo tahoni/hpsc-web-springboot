@@ -103,6 +103,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`documentation/recommendations/flyway-migration-versioning.md`:** Realigned the Current State table's column
   widths; a follow-up pass restored "sub-versions"' hyphen after an editor pass had dropped it to "subversions",
   which reads as "acts of subversion" rather than the intended meaning
+- **`HISTORY.md`:** Restored "Standards Adoption" in the Conclusion's bullet list after an earlier typo-fix pass
+  had singularised it to "Standard Adoption", flipping its meaning and leaving it inconsistent with the Milestone 8
+  heading
 
 ## 🧾 [8.3.1] - 2026-09-02
 

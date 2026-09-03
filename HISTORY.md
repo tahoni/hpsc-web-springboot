@@ -3418,7 +3418,7 @@ for managing practical shooting competition data. This evolution demonstrates a 
 - **Domain Alignment:** Progressive refinement toward IPSC compliance and specialisation
 - **Architectural Excellence:** Evolution from monolithic to modular, testable architecture with three-tier mapping and
   consolidated service boundaries
-- **Standard Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
+- **Standards Adoption:** Adoption of industry-standard practices (SemVer, documentation patterns)
 - **Quality Focus:** Investment in comprehensive testing and documentation
 - **Code Maintainability:** Systematic refinement of test organisation, consolidation and architectural separation
   (v5.1.0, v5.2.0, v5.3.0, v5.4.0)
