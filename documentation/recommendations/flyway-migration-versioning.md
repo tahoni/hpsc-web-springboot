@@ -32,7 +32,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 - **Most releases touch no schema at all.** Of this project's releases since v7.0.0, only a handful (v7.1.0, and the
   app release that happened to ship what's now `V7_2_0`) introduced a schema change; the rest — v7.2.0 (the app
   release), v8.0.0, v8.1.0, v8.1.1, v8.3.0, v8.3.1 — shipped none. Tying migration numbers to the app version would
-  mean either skipping numbers constantly or inventing awkward subversions for releases that touch the schema more
+  mean either skipping numbers constantly or inventing awkward sub-versions for releases that touch the schema more
   than once.
 - **The two concerns move on different cadences.** Schema evolution is driven by what the domain model needs; app
   releases are driven by everything else (features, fixes, tooling, documentation). Coupling their version numbers

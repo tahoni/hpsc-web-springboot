@@ -101,7 +101,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 #### Documentation
 
 - **`documentation/recommendations/flyway-migration-versioning.md`:** Realigned the Current State table's column
-  widths; also dropped the hyphen from "sub-versions" → "subversions" in the same pass
+  widths; a follow-up pass restored "sub-versions"' hyphen after an editor pass had dropped it to "subversions",
+  which reads as "acts of subversion" rather than the intended meaning
 
 ## 🧾 [8.3.1] - 2026-09-02
 
