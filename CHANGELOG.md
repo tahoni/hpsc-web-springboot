@@ -47,6 +47,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Database
+
+- **`V7_3_0__seed_club_data.sql`:** New Flyway migration seeds the `club` table with the 5 named
+  `ClubIdentifier` constants (`SOSC`, `HPSC`, `PMPSC`, `VISITOR`, `ALL`); `UNKNOWN` is the enum's
+  default/unmatched placeholder rather than a real club, so it's intentionally excluded. `name`/
+  `abbreviation` come from `ClubIdentifier.name`/`abbreviation`, and `identifier` is set to the
+  same abbreviation, matching `ClubIdentifierConverter`'s persisted representation
+
+#### Enums
+
+- **`ClubIdentifier`:** New `ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) alongside the
+  existing club constants
+
 ## 🧾 [8.3.1] - 2026-09-02
 
 ### ➕ Added

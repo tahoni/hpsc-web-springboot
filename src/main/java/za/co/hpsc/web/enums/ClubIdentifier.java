@@ -23,6 +23,7 @@ public enum ClubIdentifier {
     HPSC("Hartbeespoortdam Practical Shooting Club", "HPSC", "BBB"),
     PMPSC("Pretoria Military Practical Shooting Club", "PMPSC", "CCC"),
     VISITOR("Visitor", "V", "UUU"),
+    ALL("Eufees Clubs", "All", "ALL"),
     UNKNOWN;
 
     private final String name;
