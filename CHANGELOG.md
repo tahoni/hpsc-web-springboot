@@ -49,6 +49,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ## 🧪 [Unreleased]
 
+### ➕ Added
+
+#### Documentation
+
+- **`README.md`/`AGENTS.md`:** Both now state that `AGENTS.md` is the ultimate source of truth for this project's
+  conventions, right before their Documentation file tables — every other file's workflow/convention guidance
+  (`CONTRIBUTING.md` included) points back to it rather than restating it
+
 ## 🧾 [8.4.1] - 2026-09-04
 
 ### ➕ Added
