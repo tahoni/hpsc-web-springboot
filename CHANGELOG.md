@@ -119,6 +119,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CONTRIBUTING.md`:** Documentation Conventions section's intro now links to `AGENTS.md`'s specific "Documentation
   Conventions" section anchor instead of the bare file, matching the highlights-and-link pattern every other such
   section (Roadmap, Claude Code Skills, Cutting a Release, Architecture at a Glance) already links precisely
+- **`CONTRIBUTING.md`:** Its Documentation Conventions highlights' five remaining unlinked "see `AGENTS.md`'s X
+  rule" mentions (British English's exceptions list, Serial commas, Line wrapping, the icon registry, Javadoc) now
+  link to the specific `AGENTS.md` subsection anchor each one names, instead of plain backtick text
 
 ### 🐛 Fixed
 

@@ -162,16 +162,16 @@ Full conventions live in [`AGENTS.md`'s Documentation Conventions section](AGENT
 read it before writing or editing any documentation in this repository. Highlights:
 
 - **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see
-  `AGENTS.md`'s list of exceptions for legal boilerplate and third-party names.
+  [`AGENTS.md`'s list of exceptions](AGENTS.md#british-english) for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
-  "prose, comments and Javadoc") — see `AGENTS.md`'s Serial commas rule.
+  "prose, comments and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
-  `AGENTS.md`'s Line wrapping rule.
-- Every `##` heading gets a matching emoji, reused from the established icon registry in `AGENTS.md` rather than
-  invented fresh.
+  [`AGENTS.md`'s Line wrapping rule](AGENTS.md#line-wrapping).
+- Every `##` heading gets a matching emoji, reused from the
+  [established icon registry in `AGENTS.md`](AGENTS.md#icons-in-headings) rather than invented fresh.
 - **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't
   duplicate an interface method's Javadoc on its implementation unless the implementation adds behaviour the
-  interface doesn't already describe — see `AGENTS.md`'s Javadoc rule for the full requirements.
+  interface doesn't already describe — see [`AGENTS.md`'s Javadoc rule](AGENTS.md#javadoc) for the full requirements.
 - Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents — don't
   batch changelog updates into a later PR.
 - `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When
