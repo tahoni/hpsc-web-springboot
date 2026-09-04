@@ -16,7 +16,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [🏛️ Architecture](#-architecture)
 - [📚 Documentation](#-documentation)
     - [🗺️ Roadmap](#-roadmap)
-- [📜 License](#-license)
+- [📜 Licence](#-licence)
 - [👤 Author](#-author)
 
 ## 📖 Introduction
@@ -201,9 +201,9 @@ documentation set above, and not required reading to work in this repository:
 This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) —
 see [CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
 
-## 📜 License
+## 📜 Licence
 
-The copyright license can be found in the [`LICENSE.md`](LICENSE.md) file.
+The copyright licence can be found in the [`LICENSE.md`](LICENSE.md) file.
 
 ## 👤 Author
 

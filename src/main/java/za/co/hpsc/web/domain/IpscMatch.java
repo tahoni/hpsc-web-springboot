@@ -32,6 +32,12 @@ public class IpscMatch {
     @Column(name = "scheduled_date", nullable = false)
     private LocalDateTime scheduledDate;
 
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
+
     @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "match_firearm_type")
     private FirearmType matchFirearmType;

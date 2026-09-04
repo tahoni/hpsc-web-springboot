@@ -11,6 +11,7 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Request model for bulk-importing IPSC matches from CSV data.
@@ -33,11 +34,25 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class MatchRequestForCSV {
-    /** Date the match was/will be shot. */
+    /**
+     * Date the match was/will be shot.
+     */
     @JsonProperty(required = true)
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
-    /** The match's name. */
+    /**
+     * Time the match started; may be null.
+     */
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
+    private LocalDateTime startTime;
+    /**
+     * Time the match ended; may be null.
+     */
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
+    private LocalDateTime endTime;
+    /**
+     * The match's name.
+     */
     @JsonProperty(required = true)
     private String matchName;
     /**
@@ -46,12 +61,18 @@ public class MatchRequestForCSV {
      * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      */
     private String club;
-    /** The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
+    /**
+     * The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name.
+     */
     private String matchFirearmType;
-    /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
+    /**
+     * The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name.
+     */
     private String matchCategory;
-    /** The stages that make up this match, as a single semicolon-separated CSV cell of
-     * {@code <stageNumber>-<stageName>} entries (e.g. {@code "1-Stage 1;2-Stage 2"}). */
+    /**
+     * The stages that make up this match, as a single semicolon-separated CSV cell of
+     * {@code <stageNumber>-<stageName>} entries (e.g. {@code "1-Stage 1;2-Stage 2"}).
+     */
     private String stages;
 
     /**
@@ -75,6 +96,8 @@ public class MatchRequestForCSV {
      *                         {@link za.co.hpsc.web.enums.MatchCategory} by name.
      * @param stages           the stages that make up this match, as a single semicolon-separated
      *                         CSV cell of {@code <stageNumber>-<stageName>} entries.
+     * @param startTime        time the match started; may be null.
+     * @param endTime          time the match ended; may be null.
      */
     @JsonCreator
     public MatchRequestForCSV(@JsonProperty(value = "MatchDate", required = true) LocalDate matchDate,
@@ -82,8 +105,12 @@ public class MatchRequestForCSV {
                               @JsonProperty("Club") String club,
                               @JsonProperty("MatchFirearmType") String matchFirearmType,
                               @JsonProperty("MatchCategory") String matchCategory,
-                              @JsonProperty("Stages") String stages) {
+                              @JsonProperty("Stages") String stages,
+                              @JsonProperty(value = "StartTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT) LocalDateTime startTime,
+                              @JsonProperty(value = "EndTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT) LocalDateTime endTime) {
         this.matchDate = matchDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.matchName = matchName;
         this.club = club;
         this.matchFirearmType = matchFirearmType;

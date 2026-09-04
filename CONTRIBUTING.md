@@ -169,7 +169,7 @@ read it before writing or editing any documentation in this repository. Highligh
 - **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see
   [`AGENTS.md`'s list of exceptions](AGENTS.md#british-english) for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
-  "prose, comments, and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
+  "prose, comments and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
   [`AGENTS.md`'s Line wrapping rule](AGENTS.md#line-wrapping).
 - Every `##` heading gets a matching emoji, reused from the
