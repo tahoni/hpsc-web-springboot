@@ -116,6 +116,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   by any Claude Code skill; `AGENTS.md`'s Branching Model bullets now point to `CONTRIBUTING.md`'s Merging section
   instead of duplicating it. `CONTRIBUTING.md`'s copy also gains a proper link to its own "Cutting a Release"
   section and fixes a stray "commit (s)" typo
+- **`CONTRIBUTING.md`:** Documentation Conventions section's intro now links to `AGENTS.md`'s specific "Documentation
+  Conventions" section anchor instead of the bare file, matching the highlights-and-link pattern every other such
+  section (Roadmap, Claude Code Skills, Cutting a Release, Architecture at a Glance) already links precisely
 
 ### 🐛 Fixed
 

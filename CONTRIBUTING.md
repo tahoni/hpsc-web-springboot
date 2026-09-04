@@ -158,8 +158,8 @@ here — but they save re-deriving the same procedure each time.
 
 ## 📚 Documentation Conventions
 
-Full conventions live in [`AGENTS.md`](AGENTS.md) — read it before writing or editing any documentation in this
-repository. Highlights:
+Full conventions live in [`AGENTS.md`'s Documentation Conventions section](AGENTS.md#-documentation-conventions) —
+read it before writing or editing any documentation in this repository. Highlights:
 
 - **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see
   `AGENTS.md`'s list of exceptions for legal boilerplate and third-party names.
