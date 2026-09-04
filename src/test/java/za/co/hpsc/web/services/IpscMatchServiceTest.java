@@ -199,6 +199,8 @@ public class IpscMatchServiceTest {
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
+        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), response.getStartTime());
+        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), response.getEndTime());
         assertTrue(response.getStages().isEmpty());
     }
 
@@ -256,7 +258,7 @@ public class IpscMatchServiceTest {
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
-                2026-09-12,Club Championship,Test Club,%s,%s,
+                2026-09-12,Club Championship,Test Club,%s,%s,,2026-09-12 08:00,2026-09-12 17:00
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
         // Act
@@ -266,6 +268,8 @@ public class IpscMatchServiceTest {
         assertEquals(1, holder.getMatches().size());
         assertEquals("Club Championship", holder.getMatches().getFirst().getMatchName());
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, holder.getMatches().getFirst().getClub());
+        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), holder.getMatches().getFirst().getStartTime());
+        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), holder.getMatches().getFirst().getEndTime());
     }
 
     @Test
@@ -782,6 +786,8 @@ public class IpscMatchServiceTest {
         replacement.setClub("Other Club");
         replacement.setMatchFirearmType(FirearmType.RIFLE.toString());
         replacement.setMatchCategory(MatchCategory.LEAGUE.toString());
+        replacement.setStartTime(LocalDateTime.of(2027, 1, 1, 10, 0));
+        replacement.setEndTime(LocalDateTime.of(2027, 1, 1, 16, 0));
 
         // Act
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(1L, replacement));
@@ -793,6 +799,8 @@ public class IpscMatchServiceTest {
         assertEquals(ClubIdentifier.SOSC, updated.getClub());
         assertEquals(FirearmType.RIFLE, updated.getMatchFirearmType());
         assertEquals(MatchCategory.LEAGUE, updated.getMatchCategory());
+        assertEquals(LocalDateTime.of(2027, 1, 1, 10, 0), updated.getStartTime());
+        assertEquals(LocalDateTime.of(2027, 1, 1, 16, 0), updated.getEndTime());
         assertSame(otherClub, existing.getClub());
         assertTrue(updated.getStages().isEmpty());
     }
@@ -802,6 +810,8 @@ public class IpscMatchServiceTest {
         MatchRequest request = new MatchRequest();
         request.setMatchName("Club Championship");
         request.setMatchDate(LocalDate.of(2026, 9, 12));
+        request.setStartTime(LocalDateTime.of(2026, 9, 12, 8, 0));
+        request.setEndTime(LocalDateTime.of(2026, 9, 12, 17, 0));
         request.setClub(club);
         request.setMatchFirearmType(FirearmType.HANDGUN.toString());
         request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());

@@ -70,6 +70,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V7_5_0__add_ipsc_match_start_end_time.sql`:** New Flyway migration — adds nullable `start_time`/`end_time`
   columns to `ipsc_match`
 
+##### Tests
+
+- **`IpscMatchServiceIntegrationTest`:** `startTime`/`endTime` now flow through `validRequest`'s fixture and are
+  asserted in `createMatch`/`getMatch`/`updateMatch`'s happy-path tests, plus a new
+  `testPatchMatch_whenStartAndEndTimeAreProvided_thenStartAndEndTimeChange` — proves the two new columns actually
+  round-trip through the real H2/Hibernate/JPA layer, not just mocked repositories
+- **`IpscMatchServiceTest`:** `startTime`/`endTime` now flow through `validRequest`'s fixture and are asserted in
+  `createMatch`'s and `updateMatch`'s happy-path tests; `testCreateMatches_whenSingleValidRow_...`'s CSV row now
+  supplies actual `StartTime`/`EndTime` values (previously left blank) with matching assertions, closing the one
+  gap where CSV import's mapping of these two fields was never verified
+
 #### 🔄 Changed
 
 ##### API
