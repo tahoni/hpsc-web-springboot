@@ -61,6 +61,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   styling/theming, layout regions and page-content zones) — kept reserved so they're never accidentally
   repurposed here for an unrelated concept, mirroring the reserved table `hpsc-web-vite`'s own `AGENTS.md`
   already keeps for this repository's icons
+- **`AGENTS.md`:** 12 more icons reserved from `hpsc-web-vite`'s registry (`✍️`, `👍`, `🌊`, `🧵`, `🧱`, `🌳`, `🏆`,
+  `🗝️`, `⏭️`, `⏳`, `🔁`, `⚖️`), claimed there for frontend-specific concepts (content strategy, layout/component
+  shape, decision trees, timeline markers, trade-off comparisons) since the reserved table was last synced —
+  keeps the two repositories' icon registries reconciled, per the "sync icons" workflow. `hpsc-web-vite`'s own
+  reserved table gains `🧬` (Data model / DTOs) in return
 - **`AGENTS.md`:** New "🗺️ Roadmap Planning" section giving `documentation/roadmap/`'s file structure and gap
   status/numbering conventions a dedicated home, promoted out of the "Documentation File Map" section where it
   was previously buried as a sub-bullet — cross-links the `update-improvement-plan-gaps`/`sync-improvement-plan-gaps`

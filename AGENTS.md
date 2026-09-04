@@ -258,6 +258,7 @@ concept in this project:
 |------|---------------------------------------|
 | 🧰   | Available scripts / tooling           |
 | 🛣️   | Routing / navigation                  |
+| ✍️   | Content strategy / documentation conventions |
 | 🎨   | Styling and theming / design          |
 | 🛠️   | Development guidelines                |
 | 🛤️   | Roadmap                               |
@@ -271,6 +272,17 @@ concept in this project:
 | 🖥️   | User interface                        |
 | ♻️   | General code improvements             |
 | 💰   | Funding / sponsorship                 |
+| 👍   | Recommendation / best practices       |
+| 🌊   | Global scope / cascading styles       |
+| 🧵   | Shared / cross-feature infrastructure |
+| 🧱   | Component/layout folder shape         |
+| 🌳   | Decision tree / quick reference       |
+| 🏆   | Most popular / prevailing convention  |
+| 🗝️   | Key principles                        |
+| ⏭️   | Next / upcoming                       |
+| ⏳   | Later / pending                       |
+| 🔁   | Ongoing / recurring                   |
+| ⚖️   | Comparison / trade-offs               |
 | 👍   | Recommendation / best practices       |
 | 🌊   | Global scope / cascading styles       |
 | 🧵   | Shared / cross-feature infrastructure |
