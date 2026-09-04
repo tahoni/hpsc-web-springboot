@@ -52,6 +52,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Domain
+
+- **`IpscMatch.startTime`, `IpscMatch.endTime`:** New nullable `LocalDateTime` columns — record when a match actually
+  started and ended, alongside the existing `scheduledDate`
+
+##### API Models
+
+- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** New nullable `startTime`/`endTime` fields, formatted per
+  `IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT` (`yyyy-MM-dd HH:mm`) on the two request DTOs
+- **`IpscMatchController`:** `createMatches`'s OpenAPI CSV example now includes the new `StartTime`/`EndTime` columns
+
+##### Database
+
+- **`V7_5_0__add_ipsc_match_start_end_time.sql`:** New Flyway migration — adds nullable `start_time`/`end_time`
+  columns to `ipsc_match`
+
+#### 🔄 Changed
+
+##### API
+
+- **CSV bulk import (`POST /matches/csv`):** The header row must now include `StartTime`/`EndTime` columns, like
+  every other `MatchRequestForCSV` property — consistent with this endpoint's existing all-columns-required header
+  validation, but existing CSV templates need updating to add them (values may be left blank)
+
+##### Services
+
+- **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `startTime`/
+  `endTime` through between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
+
 ### 🧾 [8.4.2] - 2026-09-04
 
 #### ➕ Added

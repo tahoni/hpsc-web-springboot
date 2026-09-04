@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,6 +32,12 @@ public class MatchRequest {
     @JsonProperty(required = true)
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
+    /** Time the match started; may be null. */
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
+    private LocalDateTime startTime;
+    /** Time the match ended; may be null. */
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
+    private LocalDateTime endTime;
     /** The match's name. */
     @JsonProperty(required = true)
     private String matchName;
@@ -53,6 +60,8 @@ public class MatchRequest {
      * @param matchId          the identifier of the match to update; {@code null} when creating a new match.
      * @param matchDate        the date the match was/will be shot. Must not be null.
      * @param matchName        the match's name. Must not be null or blank.
+     * @param startTime        time the match started; may be null.
+     * @param endTime          time the match ended; may be null.
      * @param club             the name of the club hosting the match; resolved against existing clubs by name.
      *                         May be null or blank, in which case the match defaults to
      *                         {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
@@ -66,12 +75,16 @@ public class MatchRequest {
     public MatchRequest(@JsonProperty("matchId") Long matchId,
                         @JsonProperty(value = "matchDate", required = true) LocalDate matchDate,
                         @JsonProperty(value = "matchName", required = true) String matchName,
+                        @JsonProperty(value = "startTime") LocalDateTime startTime,
+                        @JsonProperty(value = "endTime") LocalDateTime endTime,
                         @JsonProperty("club") String club,
                         @JsonProperty("matchFirearmType") String matchFirearmType,
                         @JsonProperty("matchCategory") String matchCategory,
                         @JsonProperty("stages") List<MatchStageRequest> stages) {
         this.matchId = matchId;
         this.matchDate = matchDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.matchName = matchName;
         this.club = club;
         this.matchFirearmType = matchFirearmType;

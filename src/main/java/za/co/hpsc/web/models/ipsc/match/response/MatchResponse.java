@@ -10,6 +10,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -32,6 +33,10 @@ public class MatchResponse {
     /** Date the match was/will be shot. */
     @NotNull
     private LocalDate matchDate;
+    /** Time the match started; may be null. */
+    private LocalDateTime startTime;
+    /** Time the match ended; may be null. */
+    private LocalDateTime endTime;
     /** The identifier of the club hosting the match. */
     private ClubIdentifier club;
     /** The firearm type this match is shot with. */

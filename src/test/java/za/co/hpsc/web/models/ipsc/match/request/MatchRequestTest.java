@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +21,7 @@ class MatchRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchStageRequest stage = new MatchStageRequest(1L, 1, "Stage 1 - The Bank Job");
         MatchRequest request = new MatchRequest(1L, LocalDate.of(2026, 4, 10), "Club Championship",
+                LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0),
                 "Test Club", "Pistol", "Level 1", List.of(stage));
 
         // Act
@@ -30,6 +32,8 @@ class MatchRequestTest {
         assertEquals(1, node.get("matchId").asInt());
         assertEquals("2026-04-10", node.get("matchDate").asText());
         assertEquals("Club Championship", node.get("matchName").asText());
+        assertEquals("2026-04-10 08:00", node.get("startTime").asText());
+        assertEquals("2026-04-10 17:00", node.get("endTime").asText());
         assertEquals("Test Club", node.get("club").asText());
         assertEquals("Pistol", node.get("matchFirearmType").asText());
         assertEquals("Level 1", node.get("matchCategory").asText());
@@ -43,7 +47,7 @@ class MatchRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequest request = new MatchRequest(
-                null, LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null);
+                null, LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null);
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -53,6 +57,8 @@ class MatchRequestTest {
         assertTrue(node.get("matchId").isNull());
         assertEquals("2026-04-10", node.get("matchDate").asText());
         assertEquals("Club Championship", node.get("matchName").asText());
+        assertTrue(node.get("startTime").isNull());
+        assertTrue(node.get("endTime").isNull());
         assertTrue(node.get("club").isNull());
         assertTrue(node.get("matchFirearmType").isNull());
         assertTrue(node.get("matchCategory").isNull());
@@ -69,6 +75,8 @@ class MatchRequestTest {
                   "matchId": 1,
                   "matchDate": "2026-04-10",
                   "matchName": "Club Championship",
+                  "startTime": "2026-04-10 08:00",
+                  "endTime": "2026-04-10 17:00",
                   "club": "Test Club",
                   "matchFirearmType": "Pistol",
                   "matchCategory": "Level 1",
@@ -86,6 +94,8 @@ class MatchRequestTest {
         assertEquals(1L, request.getMatchId());
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
         assertEquals("Club Championship", request.getMatchName());
+        assertEquals(LocalDateTime.of(2026, 4, 10, 8, 0), request.getStartTime());
+        assertEquals(LocalDateTime.of(2026, 4, 10, 17, 0), request.getEndTime());
         assertEquals("Test Club", request.getClub());
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());
@@ -114,6 +124,8 @@ class MatchRequestTest {
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
         assertEquals("Club Championship", request.getMatchName());
         assertNull(request.getMatchId());
+        assertNull(request.getStartTime());
+        assertNull(request.getEndTime());
         assertNull(request.getClub());
         assertNull(request.getStages());
     }

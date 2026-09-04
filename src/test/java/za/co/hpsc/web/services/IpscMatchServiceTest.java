@@ -26,6 +26,7 @@ import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -254,7 +255,7 @@ public class IpscMatchServiceTest {
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,Club Championship,Test Club,%s,%s,
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -275,7 +276,7 @@ public class IpscMatchServiceTest {
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         stubStageSaveAssignsIncrementingId();
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,Club Championship,Test Club,%s,%s,1-Stage One;2-Stage Two
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -298,7 +299,7 @@ public class IpscMatchServiceTest {
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,First Match,Test Club,%1$s,%2$s,
                 2026-09-19,Second Match,Test Club,%1$s,%2$s,
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
@@ -318,7 +319,7 @@ public class IpscMatchServiceTest {
         // Arrange - MatchName is present but blank, so it survives CSV parsing and instead trips
         // createMatch's own validation
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,,Test Club,%s,%s,
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -331,7 +332,7 @@ public class IpscMatchServiceTest {
         // Arrange
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,Club Championship,Test Club,Not A Firearm Type,%s,
                 """.formatted(MatchCategory.CLUB_SHOOT);
 
@@ -344,7 +345,7 @@ public class IpscMatchServiceTest {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,Club Championship,No Such Club,%s,%s,
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -356,7 +357,7 @@ public class IpscMatchServiceTest {
     void testCreateMatches_whenRowStagesEntryIsMalformed_thenThrowsValidationException() {
         // Arrange - a stages entry without a "-" separator can't be split into <stageNumber>-<stageName>
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,Club Championship,Test Club,%s,%s,StageWithoutSeparator
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -368,7 +369,7 @@ public class IpscMatchServiceTest {
     void testCreateMatches_whenRowStagesEntryHasNonNumericStageNumber_thenThrowsValidationException() {
         // Arrange
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
                 2026-09-12,Club Championship,Test Club,%s,%s,X-Stage One
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -543,6 +544,30 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertEquals(newDate, patched.getMatchDate());
+    }
+
+    @Test
+    void testPatchMatch_whenStartAndEndTimeAreProvided_thenStartAndEndTimeChange() {
+        // Arrange
+        IpscMatch existing = new IpscMatch();
+        existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+
+        LocalDateTime newStartTime = LocalDateTime.of(2026, 9, 12, 8, 0);
+        LocalDateTime newEndTime = LocalDateTime.of(2026, 9, 12, 17, 0);
+        MatchRequest patch = new MatchRequest();
+        patch.setStartTime(newStartTime);
+        patch.setEndTime(newEndTime);
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        assertEquals(newStartTime, patched.getStartTime());
+        assertEquals(newEndTime, patched.getEndTime());
     }
 
     @Test
