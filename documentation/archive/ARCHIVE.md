@@ -88,7 +88,7 @@ introduced in `4.0.0`.
 ### [Version 4.0.0](https://github.com/tahoni/hpsc-web-springboot/releases/tag/version-4.0.0) - _2026-02-11_
 
 This release includes significant refactoring of the IPSC match system, enhanced input validation, improved
-exception handling, comprehensive test coverage, and bug fixes for XML parsing.
+exception handling, comprehensive test coverage and bug fixes for XML parsing.
 
 #### Breaking Changes
 
