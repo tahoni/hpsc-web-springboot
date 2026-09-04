@@ -224,11 +224,11 @@ and `release/*` included — must never open a PR directly against `main`.
 - **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this
   repo's existing history — no squashing or rebasing) and delete the branch afterwards.
 - **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second
-  PR carrying the same commit (s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
+  PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
   description. Only delete the branch once both merges have landed, so the fix isn't lost when the next
   `release/vX.Y.Z` branch is cut.
-- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist is complete and all tests pass, with a standard
-  merge commit, and delete the branch afterwards.
+- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist is complete and all tests pass (see
+  [🚢 Cutting a Release](#-cutting-a-release) below), with a standard merge commit, and delete the branch afterwards.
 - **`develop` → `main`:** immediately after, open a second PR promoting `develop` into `main` and merge it; tag the
   resulting commit on `main` as `vX.Y.Z`.
 

@@ -441,27 +441,20 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
   `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
 - **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes
   (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see the Release Checklist below) and are opened
-  as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see Merging below).
+  as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see
+  [`CONTRIBUTING.md`'s Merging section](CONTRIBUTING.md#merging)).
 - **`hotfix/<short-description>`** — urgent fixes for a defect already in production. Branch from, and PR directly into,
   `main`, bypassing `develop` and any in-progress `release/vX.Y.Z` branch so the fix ships immediately. Also, merge/PR
   the same fix into `develop` so it isn't lost when the next release is cut.
 
 **All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even
-then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*`
-and `release/*` included — must never open a PR directly against `main`.
+then the same fix still lands on `develop` immediately afterwards (see [`CONTRIBUTING.md`'s Merging
+section](CONTRIBUTING.md#merging)). Every other branch — `feature/*` and `release/*` included — must never open a PR
+directly against `main`.
 
-### Merging
-
-- **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this
-  repo's existing history — no squashing or rebasing) and delete the branch afterwards.
-- **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second
-  PR carrying the same commit (s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
-  description. Only delete the branch once both merges have landed, so the fix isn't lost when the next
-  `release/vX.Y.Z` branch is cut.
-- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist below is complete and all tests pass, with a
-  standard merge commit, and delete the branch afterwards.
-- **`develop` → `main`:** immediately after, open a second PR promoting `develop` into `main` and merge it; tag the
-  resulting commit on `main` as `vX.Y.Z`.
+Which merge strategy each branch type uses, PR ordering, tagging `main` and branch cleanup are a human contributor's
+GitHub mechanics, not something an AI agent executes unprompted — see
+[`CONTRIBUTING.md`'s 🔀 Git & PR Workflow section](CONTRIBUTING.md#-git--pr-workflow) for the full merging procedure.
 
 ### Conventions
 
