@@ -254,46 +254,35 @@ Icons reserved from the sibling `hpsc-web-vite` repository's registry for concep
 Vite/TypeScript frontend) — not used here, kept reserved so they're never accidentally repurposed for an unrelated
 concept in this project:
 
-| Icon | Reserved for (vite)                   |
-|------|---------------------------------------|
-| 🧰   | Available scripts / tooling           |
-| 🛣️   | Routing / navigation                  |
+| Icon | Reserved for (Vite)                          |
+|------|----------------------------------------------|
+| 🧰   | Available scripts / tooling                  |
+| 🛣️   | Routing / navigation                         |
 | ✍️   | Content strategy / documentation conventions |
-| 🎨   | Styling and theming / design          |
-| 🛠️   | Development guidelines                |
-| 🛤️   | Roadmap                               |
-| ☑️   | Checklist                             |
-| 📐   | Layout structure                      |
-| 🔝   | Header                                |
-| 📄   | Body / page content                   |
-| ⬇️   | Footer                                |
-| 📱   | Responsive design                     |
-| 💻   | Technical implementation              |
-| 🖥️   | User interface                        |
-| ♻️   | General code improvements             |
-| 💰   | Funding / sponsorship                 |
-| 👍   | Recommendation / best practices       |
-| 🌊   | Global scope / cascading styles       |
-| 🧵   | Shared / cross-feature infrastructure |
-| 🧱   | Component/layout folder shape         |
-| 🌳   | Decision tree / quick reference       |
-| 🏆   | Most popular / prevailing convention  |
-| 🗝️   | Key principles                        |
-| ⏭️   | Next / upcoming                       |
-| ⏳   | Later / pending                       |
-| 🔁   | Ongoing / recurring                   |
-| ⚖️   | Comparison / trade-offs               |
-| 👍   | Recommendation / best practices       |
-| 🌊   | Global scope / cascading styles       |
-| 🧵   | Shared / cross-feature infrastructure |
-| 🧱   | Component/layout folder shape         |
-| 🌳   | Decision tree / quick reference       |
-| 🏆   | Most popular / prevailing convention  |
-| 🗝️   | Key principles                        |
-| ⏭️    | Next / upcoming                       |
-| ⏳   | Later / pending                       |
-| 🔁   | Ongoing / recurring                   |
-| ⚖️   | Comparison / trade-offs               |
+| 🎨   | Styling and theming / design                 |
+| 🛠️   | Development guidelines                       |
+| 🛤️   | Roadmap                                      |
+| ☑️   | Checklist                                    |
+| 📐   | Layout structure                             |
+| 🔝   | Header                                       |
+| 📄   | Body / page content                          |
+| ⬇️   | Footer                                       |
+| 📱   | Responsive design                            |
+| 💻   | Technical implementation                     |
+| 🖥️   | User interface                               |
+| ♻️   | General code improvements                    |
+| 💰   | Funding / sponsorship                        |
+| 👍   | Recommendation / best practices              |
+| 🌊   | Global scope / cascading styles              |
+| 🧵   | Shared / cross-feature infrastructure        |
+| 🧱   | Component/layout folder shape                |
+| 🌳   | Decision tree / quick reference              |
+| 🏆   | Most popular / prevailing convention         |
+| 🗝️   | Key principles                               |
+| ⏭️    | Next / upcoming                              |
+| ⏳   | Later / pending                              |
+| 🔁   | Ongoing / recurring                          |
+| ⚖️   | Comparison / trade-offs                      |
 
 ---
 
