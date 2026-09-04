@@ -120,7 +120,7 @@ it, Qodana static analysis is removed from the project entirely in this release.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For API Consumers
 

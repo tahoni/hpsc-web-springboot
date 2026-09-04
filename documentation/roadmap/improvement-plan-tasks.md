@@ -142,7 +142,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 
 ## 🟡 Partially Completed
 
-*No gaps are currently partially completed.* A gap moves here once at least one of its items is checked but the
+*No gaps are currently partially completed.* A gap moves here once at least one of its items is checked, but the
 block as a whole isn't fully checked off yet — matching `improvement-plan.md`'s "🟡 Partially Completed" section —
 and moves on to ✅ Completed once every item is checked and the gap's own header there carries a "✅ Closed" suffix.
 

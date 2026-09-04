@@ -95,7 +95,7 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Deployers
 

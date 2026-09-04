@@ -245,7 +245,7 @@ entities.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Developers
 

@@ -86,7 +86,7 @@ documented since v8.1.0 as the one asymmetry left between the two IPSC domains' 
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For API Consumers
 

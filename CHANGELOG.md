@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ## Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.4.0](#-840---2026-09-03) ← Current
+- [🧾 Version 8.4.1](#-841---2026-09-04) ← Current
+- [🧾 Version 8.4.0](#-840---2026-09-03)
 - [🧾 Version 8.3.1](#-831---2026-09-02)
 - [🧾 Version 8.3.0](#-830---2026-09-02)
 - [🧾 Version 8.2.0](#-820---2026-09-01)
@@ -47,6 +48,136 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ## 🧪 [Unreleased]
+
+## 🧾 [8.4.1] - 2026-09-04
+
+### ➕ Added
+
+#### Documentation
+
+- **`AGENTS.md`/`CONTRIBUTING.md`:** New "🧩 Claude Code Skills" section documenting the project-specific skills
+  under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
+  pointer to it for new contributors. New `🧩` icon added to `AGENTS.md`'s icon registry for tooling/automation
+  sections
+- **`AGENTS.md`:** New "Reserved" sub-table under "Icons in headings" listing the 26 icons from the sibling
+  `hpsc-web-vite` repository's own icon registry that aren't used here (frontend-specific concepts like routing,
+  styling/theming, layout regions and page-content zones) — kept reserved so they're never accidentally
+  repurposed here for an unrelated concept, mirroring the reserved table `hpsc-web-vite`'s own `AGENTS.md`
+  already keeps for this repository's icons
+- **`AGENTS.md`:** 12 more icons reserved from `hpsc-web-vite`'s registry (`✍️`, `👍`, `🌊`, `🧵`, `🧱`, `🌳`, `🏆`,
+  `🗝️`, `⏭️`, `⏳`, `🔁`, `⚖️`), claimed there for frontend-specific concepts (content strategy, layout/component
+  shape, decision trees, timeline markers, trade-off comparisons) since the reserved table was last synced —
+  keeps the two repositories' icon registries reconciled, per the "sync icons" workflow. `hpsc-web-vite`'s own
+  reserved table gains `🧬` (Data model / DTOs) in return
+- **`AGENTS.md`:** New "🗺️ Roadmap Planning" section giving `documentation/roadmap/`'s file structure and gap
+  status/numbering conventions a dedicated home, promoted out of the "Documentation File Map" section where it
+  was previously buried as a sub-bullet — cross-links the `update-improvement-plan-gaps`/`sync-improvement-plan-gaps`
+  skills and the Release Checklist's first step
+- **`AGENTS.md`:** 25 previously-unregistered icons added to the icon registry table, backfilling ones already in
+  real use but missing from it — `🔀` (Data flow / Git workflow), `📁` (Project / directory structure), `🏗️`
+  (Layered architecture), `🌐` (Presentation / API layer), `⚡` (Service layer), `🗄️` (Database / persistence),
+  `🧬` (Data model / DTOs), `📈` (Request-response flow), `📥` (Inbound / import flow), `🗺️` (Roadmap),
+  `🧾` (Version entry), `💬` (Support / contact), `🤝` (Contributing guidelines), `📅` (Timeline), `💡`
+  (Philosophy / rationale), `🎓` (Conclusion), `⭐` (Key highlights), `📦` (What's new / key changes), `📊`
+  (Statistics), `🧭` (Design notes), `🔮` (Future enhancements), `👥` (Contributors), `📝` (Notes), `🛡️`
+  (Robustness / validation hardening, reused across several past releases' Key Highlights) and `🔓` (Optional /
+  relaxed constraint)
+- **`AGENTS.md`:** `🟡` (Partially completed) and `⚪` (Open / not started) added to the icon registry table,
+  completing the three-way status scheme alongside the already-registered `✅`, used throughout
+  `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md`
+- **`AGENTS.md`:** `🤔` (Reasoning), `🔢` (Numbering / sequence) and `🏷️` (Naming convention) added to the icon
+  registry table, backfilling icons already used in `documentation/recommendations/flyway-migration-versioning.md`
+  and `standard-rest-conventions.md`
+- **`AGENTS.md`:** `🗂️` (Documentation file index) and `🌲` (Evergreen documentation) added to the icon registry
+  table for the "Documentation File Map" and "Evergreen Documentation" headings, which had no registry entry
+
+### 🔄 Changed
+
+#### Documentation
+
+- **`documentation/recommendations/flyway-migration-versioning.md`/`standard-rest-conventions.md`:** "Overview"
+  headings (and their Table of Contents entries) now use `📖`, already registered in `AGENTS.md`'s icon table for
+  "Introduction / overview", instead of `🌐` — which is registered for the unrelated "Presentation / API layer"
+  concept
+- **`ARCHITECTURE.md`:** "Presentation Layer" and "Model Layer" headings (and their Table of Contents entries)
+  now use dedicated `🌐`/`🧬` icons instead of `📊`/`📦`, which were already registered in `AGENTS.md`'s icon
+  table for the unrelated "Statistics" and "What's new / key changes" concepts
+- **`AGENTS.md`:** `📋`'s registered concept widened from "Prerequisites" to "Prerequisites / policy", since
+  `CHANGELOG.md`'s "Version Policy" heading reuses it for a distinct but compatible checklist-style concept
+- **`AGENTS.md`:** Reordered the icon registry table under "Icons in headings" so icons group by the doc(s) that
+  established them — `README.md`/`ARCHITECTURE.md` first, then `AGENTS.md`/`CONTRIBUTING.md`, then
+  `CHANGELOG.md`/`HISTORY.md`, then `RELEASE_NOTES.md`/PR description — rather than their prior arbitrary order
+- **`CONTRIBUTING.md`:** "Roadmap" section condensed to a short pointer at `AGENTS.md`'s new "Roadmap Planning"
+  section (matching the "Documentation Conventions" section's existing highlights-and-link pattern), instead of
+  duplicating the full file-structure and status-convention detail now maintained in one place
+- **`AGENTS.md`:** `✅`'s registered concept broadened from "Quality attributes" to "Quality attributes /
+  completed", since it's also the established icon for the "Completed" status alongside `🟡`/`⚪` throughout
+  `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`
+- **`AGENTS.md`/`CONTRIBUTING.md`:** Git Workflow's "Merging" subsection — which PR-merge strategy, tagging and
+  branch-clean-up steps each branch type gets — removed from `AGENTS.md` and consolidated as `CONTRIBUTING.md`'s
+  sole, canonical copy, since it describes a human contributor's GitHub mechanics rather than something referenced
+  by any Claude Code skill; `AGENTS.md`'s Branching Model bullets now point to `CONTRIBUTING.md`'s Merging section
+  instead of duplicating it. `CONTRIBUTING.md`'s copy also gains a proper link to its own "Cutting a Release"
+  section and fixes a stray "commit (s)" typo
+- **`CONTRIBUTING.md`:** Documentation Conventions section's intro now links to `AGENTS.md`'s specific "Documentation
+  Conventions" section anchor instead of the bare file, matching the highlights-and-link pattern every other such
+  section (Roadmap, Claude Code Skills, Cutting a Release, Architecture at a Glance) already links precisely
+- **`CONTRIBUTING.md`:** Its Documentation Conventions highlights' five remaining unlinked "see `AGENTS.md`'s X
+  rule" mentions (British English's exceptions list, Serial commas, Line wrapping, the icon registry, Javadoc) now
+  link to the specific `AGENTS.md` subsection anchor each one names, instead of plain backtick text
+- **`CONTRIBUTING.md`:** Condensed the remaining full/near-verbatim duplicates of `AGENTS.md` content into
+  highlights-and-link references, matching the pattern already used elsewhere in this file: the Branching Model
+  (GitFlow) bullets (kept in `AGENTS.md` only, since `sync-unreleased-changes`/`sync-improvement-plan-gaps` read it
+  there for hotfix-branch detection), the Git Workflow "Conventions" and Directory Tree Maintenance bullets, the
+  Exception handling bullet under Architecture at a Glance, and the CHANGELOG-same-change and Evergreen/reverse-sync
+  bullets under Documentation Conventions — each now links to the specific `AGENTS.md` anchor instead of restating
+  it. Also condensed the CI/CD & Quality Gates table into a link to `ARCHITECTURE.md`'s own table, its actual source
+  of truth (per `AGENTS.md`'s own cross-reference), since the two had drifted to slightly different wording
+- **`CONTRIBUTING.md`:** Getting Started's app-URL/Swagger-URL sentence restates `AGENTS.md`'s Project Overview
+  bullets verbatim without citing it — now links to `AGENTS.md#-project-overview`, matching the same fix just made
+  in the sibling `hpsc-web-vite` repository's `CONTRIBUTING.md` for its analogous routing bullet
+
+### 🐛 Fixed
+
+#### Documentation
+
+- **`CHANGELOG.md`:** Removed a duplicate, truncated `## 🧾 [5.0.0] - 2026-02-24` section that preceded the real,
+  complete one — the duplicate heading text meant GitHub suffixed the second heading's anchor, so the Table of
+  Contents' "Version 5.0.0" link only ever reached the incomplete copy
+- **`documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md`:** Five archived
+  sub-headings reused an already-registered icon for an unrelated concept — `📂`→`📁` (Project/directory
+  structure), `📅`→`🔢` (collided with Timeline; the heading is actually about numbering), `🔒`→`🔐`
+  (Security), `👤`→`🧬` (collided with Author; the heading is actually about a domain enum/DTO), `📈`→`🧪`
+  (collided with Request-response flow; the heading is actually about test coverage)
+- **`AGENTS.md`:** "Documentation Conventions" heading used `📝`, which is registered for the unrelated "Notes"
+  concept, and didn't match `CONTRIBUTING.md`'s equivalent heading (`📚`) for the same section — switched to `📚`
+  in both places for consistency
+- **`AGENTS.md`:** "Documentation File Map" and the new "Roadmap Planning" section both used `🎯`/`🗺️`
+  inconsistently with each other and with `CONTRIBUTING.md`'s `🗺️ Roadmap` heading — "Roadmap Planning" now uses
+  `🗺️` (matching `CONTRIBUTING.md` and the registry's "Roadmap" concept), and "Documentation File Map" switches to
+  a new dedicated `🗂️` icon instead of competing for `🗺️` within the same file's own Table of Contents
+- **`README.md`:** "API Documentation" and "Documentation" were two separate headings both using `📚` within the
+  same Table of Contents — switched "API Documentation" to `🌐`, already registered for the closely related
+  "Presentation / API layer" concept
+- **`AGENTS.md`:** `🔄`'s registered concept corrected from "Changed items / data flow" to "Changed items /
+  design patterns" — `ARCHITECTURE.md`'s actual "Data Flow" heading uses `🔀`, not `🔄`; `🔄` is really used for
+  "Key Design Patterns", which the old description never reflected
+- **`HISTORY.md`:** "Future Roadmap Implications" heading used `🚀` instead of `🗺️`, despite naming the same
+  Roadmap concept `🗺️` is registered for and used consistently everywhere else — switched to `🗺️`
+- **`RELEASE_NOTES.md`/`documentation/history/RELEASE_NOTES_v5.2.0.md`…`v8.4.0.md`:** "Migration Guide" heading
+  used `🔄` instead of `🚀`, the icon `CHANGELOG.md`'s equivalent "Upgrade Guide" heading already uses for the
+  same underlying concept — switched to `🚀` across the current file and all 17 archived releases sharing this
+  same pre-existing inconsistency, at the user's explicit request to extend the fix to the archives
+- **`AGENTS.md`:** `🐛`'s registered concept broadened from "Fixed items" to "Bugs / fixed items", since
+  `RELEASE_NOTES.md`'s "Known Issues" heading (28 of 30 archived releases) consistently reuses it for open,
+  not-yet-fixed bugs — a deliberate, long-standing pattern the narrower description didn't account for
+- **`documentation/roadmap/improvement-plan.md`:** Its own "Roadmap" heading and both inline references to
+  `HISTORY.md`'s "Future Roadmap Implications" section used `🚀` instead of `🗺️` — the same inconsistency just
+  fixed in `HISTORY.md` itself, now corrected here too, plus a pre-existing line-wrap violation nearby
+- **`AGENTS.md`/`CONTRIBUTING.md`:** Serial Commas rule's own example was broken in both files — the "e.g." phrase
+  and its "not" contrast phrase were identical (e.g. "clubs, competitors and matches", not "clubs, competitors and
+  matches"), so it never actually illustrated the rule; the "not" side now shows the Oxford-comma version it's
+  meant to contrast against
 
 ## 🧾 [8.4.0] - 2026-09-03
 
@@ -2080,55 +2211,6 @@ No security-related changes in this release.
 
 - **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact duplicate
   at the end of the file
-
-### 🔐 Security
-
----
-
-## 🧾 [5.0.0] - 2026-02-24
-
-### ➕ Added
-
-#### Domain Entity Initialisation Framework
-
-- **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database
-  lookup and fallback to new entity creation
-- **`DomainServiceImpl.initClubEntity(ClubIdentifier)`** - Initialise club entities from enumeration values for
-  predefined club references
-- **`DomainServiceImpl.initMatchEntity(MatchDto, Club)`** - Sophisticated match entity initialisation with repository
-  lookup, optional entity creation and club association
-- **`DomainServiceImpl.initCompetitorEntities(List<CompetitorDto>)`** - Batch competitor entity initialisation with UUID
-  generation and optional database persistence
-- **`DomainServiceImpl.initMatchStageEntities(List<MatchStageDto>, IpscMatch)`** - Initialise match stages with proper
-  relationship linking to parent match entities
-- **`DomainServiceImpl.initMatchCompetitorEntities(List<MatchCompetitorDto>, Map<UUID, Competitor>)`** - Establish
-  many-to-many relationships between matches and competitors
-- **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation
-  of stage-specific competitor records with score and performance data
-
-#### IPSC Match Record Generation
-
-- **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
-  comprehensive match records for external representation
-- **`IpscMatchServiceImpl.initIpscMatchResponse(IpscMatch, List<CompetitorMatchRecord>)`** - Build complete IPSC match
-  response records with embedded competitor data
-- **`IpscMatchServiceImpl.initCompetitor(Competitor, MatchCompetitorRecord, List<MatchStageCompetitorRecord>)`** -
-  Create detailed competitor match records with stage-wise performance data
-- **`IpscMatchServiceImpl.initMatchCompetitor(Competitor, List<MatchCompetitor>)`** - Extract and process match-level
-  competitor records from database entities
-- **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific
-  competitor records with individual stage scores
-
-#### Service Layer
-
-- **`IpscMatchResultServiceImpl`** - Enhanced with comprehensive null handling and processing for match results
-    - Improved edge case handling
-    - Better robustness in match result transformation
-    - Additional null-safety checks
-
-### ⚠️ Deprecated
-
-### 🗑️ Removed
 
 ### 🔐 Security
 

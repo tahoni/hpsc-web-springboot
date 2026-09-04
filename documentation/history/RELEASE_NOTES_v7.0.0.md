@@ -44,7 +44,7 @@ One row per competitor **per firearm-type entry** in a match:
 - **New unique constraint** `(match_competitor_id, match_stage_id)`.
 - All existing per-stage scoring fields (`scoreA`-`scoreD`, `points`, `misses`, `penalties`, `procedurals`, `hasDeduction`, `deductionPercentage`, `time`, `hitFactor`, `stagePoints`, `stagePercentage`, `stageRanking`, `isDisqualified`) are unchanged.
 
-### 📅 IpscMatchStage — Stage Numbering Constraint
+### 🔢 IpscMatchStage — Stage Numbering Constraint
 
 - **New unique constraint** `(match_id, stage_number)`.
 
@@ -78,7 +78,7 @@ The `repositories/` package was empty (repositories for these six entities were 
 - `spring.flyway.enabled=true` / `spring.flyway.locations=classpath:db/migration` added to `application.properties`; Flyway is explicitly disabled (`spring.flyway.enabled=false`) in the H2 `test` profile, which continues to rely on Hibernate `ddl-auto=create-drop`.
 - New `application-local.properties` profile for local MySQL development (`ddl-auto=update`, no Flyway).
 
-### 🔒 Dependency & Security Updates
+### 🔐 Dependency & Security Updates
 
 - `spring-boot-starter-parent` bumped **4.0.6 → 4.0.7**, closing several Dependabot alerts (3 critical) by picking up patched `tomcat-embed-core` (→ 11.0.22), `spring-framework` (→ 7.0.8), `spring-data-commons`, `logback-core`, and `jackson-core`.
 - Explicit `jackson-databind` pin added at **2.21.5**, since the Spring Boot 4.0.7 BOM still manages a version one patch behind the fix.
@@ -180,7 +180,7 @@ The `repositories/` package was empty (repositories for these six entities were 
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Deployers
 

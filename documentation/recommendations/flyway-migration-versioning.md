@@ -6,7 +6,7 @@ reasoning behind it and gives concrete guidance for authoring the next migration
 
 ## Table of Contents
 
-- [🌐 Overview](#-overview)
+- [📖 Overview](#-overview)
 - [🤔 Why Keep It Independent](#-why-keep-it-independent)
 - [🔢 Choosing the Next Version](#-choosing-the-next-version)
 - [🔍 Current State in This Codebase](#-current-state-in-this-codebase)
@@ -14,7 +14,7 @@ reasoning behind it and gives concrete guidance for authoring the next migration
 
 ---
 
-## 🌐 Overview
+## 📖 Overview
 
 This repository has two separate version numbers that happen to share the same `X.Y.Z` shape:
 
