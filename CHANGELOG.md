@@ -53,6 +53,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`AGENTS.md`:** British English exception for `LICENSE.md` narrowed — only the filename and the file's own
+  content stay American English "License"; every other reference to it (headings, tables, ToC entries, prose)
+  now spells it "Licence", matching the rest of the project's British English convention rather than carving out
+  an exception for it
+
 ### 🧾 [8.5.0] - 2026-09-04
 
 #### ➕ Added
