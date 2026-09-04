@@ -161,7 +161,10 @@ A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md
 
 ## 📚 Documentation
 
-This project's documentation is spread across a few files, each with a distinct purpose:
+This project's documentation is spread across a few files, each with a distinct purpose. Of these, [`AGENTS.md`](AGENTS.md)
+is the ultimate source of truth for this project's conventions — every other file's workflow/convention guidance
+(`CONTRIBUTING.md` included) points back to it rather than restating it, so it's the one to update first when a
+convention changes.
 
 | File                                   | Purpose                                                                                         |
 |----------------------------------------|-------------------------------------------------------------------------------------------------|
