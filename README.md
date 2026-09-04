@@ -161,7 +161,7 @@ A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md
 
 ## 📚 Documentation
 
-This project's documentation is spread across a few files, each with a distinct purpose:
+This project's documentation is spread across a few files, each with a distinct purpose.
 
 | File                                   | Purpose                                                                                         |
 |----------------------------------------|-------------------------------------------------------------------------------------------------|

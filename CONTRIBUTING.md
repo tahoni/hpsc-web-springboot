@@ -1,8 +1,11 @@
-# Contributing to HPSC Web
+# Contributing to HPSC Web Backend
 
 This document walks a new developer through everything needed to get the HPSC Website Backend running locally and start
 contributing. See [`README.md`](README.md) for a project overview and [`ARCHITECTURE.md`](ARCHITECTURE.md) for the
-detailed system design.
+detailed system design; for the full set of conventions AI coding agents (and, by extension, contributors) follow in
+this repository, see [`AGENTS.md`](AGENTS.md) — this file summarises the parts most relevant to opening a pull request. 
+**`AGENTS.md` is this repository's ultimate source of truth:** if anything in this file, or any other documentation, 
+ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update whichever file had fallen out of sync.
 
 ## Table of Contents
 

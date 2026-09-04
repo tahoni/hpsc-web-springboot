@@ -290,7 +290,9 @@ concept in this project:
 ## 🗂️ Documentation File Map
 
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation)
-section — README.md is the canonical version if the two ever drift):
+section — README.md is the canonical version if the two ever drift). Of these, this file is the ultimate source of
+truth for this project's conventions — every other file's workflow/convention guidance (`CONTRIBUTING.md` included)
+points back to it rather than restating it, so it's the one to update first when a convention changes:
 
 | File               | Purpose                                                                                   |
 |--------------------|-------------------------------------------------------------------------------------------|
