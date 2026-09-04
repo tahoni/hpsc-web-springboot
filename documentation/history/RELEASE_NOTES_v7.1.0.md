@@ -102,7 +102,7 @@ Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `Shoote
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Deployers
 

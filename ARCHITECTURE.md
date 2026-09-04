@@ -9,10 +9,10 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 - [📁 Project Structure](#-project-structure)
 - [🎯 System Overview](#-system-overview)
 - [🏗️ Layered Architecture](#-layered-architecture)
-    - [📊 Presentation Layer](#-1-presentation-layer-zacohpscwebcontrollers)
+    - [🌐 Presentation Layer](#-1-presentation-layer-zacohpscwebcontrollers)
     - [⚡ Service Layer](#-2-service-layer-zacohpscwebservices)
     - [🗄️ Persistence Layer](#-3-persistence-layer-zacohpscwebrepositories--zacohpscwebdomain)
-    - [📦 Model Layer](#-4-model-layer-zacohpscwebmodels)
+    - [🧬 Model Layer](#-4-model-layer-zacohpscwebmodels)
     - [🔧 Support Layers](#-5-support-layers)
     - [🛡️ Exception and Error Handling](#-6-exception-and-error-handling-zacohpscwebexceptions)
 - [🔄 Key Design Patterns](#-key-design-patterns)
@@ -129,7 +129,7 @@ HTTP Request
 
 ## 🏗️ Layered Architecture
 
-### 📊 1. Presentation Layer (`za.co.hpsc.web.controllers`)
+### 🌐 1. Presentation Layer (`za.co.hpsc.web.controllers`)
 
 Handles incoming HTTP requests. Does not contain business logic.
 
@@ -217,7 +217,7 @@ One Spring Data JPA interface per entity. Custom query methods supplement the st
 
 ---
 
-### 📦 4. Model Layer (`za.co.hpsc.web.models`)
+### 🧬 4. Model Layer (`za.co.hpsc.web.models`)
 
 DTOs and request/response models, grouped by feature domain:
 

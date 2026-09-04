@@ -101,7 +101,7 @@ manual roadmap-gap maintenance performed by hand across v8.0.0/v8.1.0.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For API Consumers
 

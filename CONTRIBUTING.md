@@ -11,6 +11,7 @@ detailed system design.
 - [🗄️ Database Profiles](#-database-profiles)
 - [🧪 Running Tests](#-running-tests)
 - [🏛️ Architecture at a Glance](#-architecture-at-a-glance)
+- [🧩 Claude Code Skills](#-claude-code-skills)
 - [📚 Documentation Conventions](#-documentation-conventions)
 - [🗺️ Roadmap](#-roadmap)
 - [🔀 Git & PR Workflow](#-git--pr-workflow)
@@ -57,7 +58,8 @@ detailed system design.
    ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
    ```
    The app starts on `http://localhost:8081/hpsc-web`. Interactive API docs are at
-   `http://localhost:8081/hpsc-web/swagger-ui/index.html`.
+   `http://localhost:8081/hpsc-web/swagger-ui/index.html` — see [`AGENTS.md`'s Project
+   Overview](AGENTS.md#-project-overview).
 
 > An `application-local.properties` profile also exists in the repository, pre-configured against a specific hand-built
 > database baseline from before Flyway was introduced. It isn't a generic onboarding path — use `dev` unless you
@@ -133,7 +135,8 @@ HTTP Request
 
 - Controllers must not contain business logic — delegate to services only.
 - All exceptions must extend `FatalException`, `NonFatalException` or `ValidationException`; `ControllerAdvice` maps
-  them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException`.
+  them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException` — see
+  [`AGENTS.md`](AGENTS.md#-architecture)'s Exception handling subsection.
 - Enum-typed entity fields use an explicit `AttributeConverter` (see `converters/`) rather than
   `@Enumerated(EnumType.STRING)`.
 - REST endpoints use plural nouns for collections and a path variable for a single resource (`/matches/{matchId}`,
@@ -144,51 +147,55 @@ HTTP Request
 
 ---
 
+## 🧩 Claude Code Skills
+
+If you're using Claude Code, this repository ships a set of project-specific skills under `.claude/skills/` (one
+`SKILL.md` per skill) that automate the workflows this document and [`AGENTS.md`](AGENTS.md) describe — generating a
+commit message, syncing `CHANGELOG.md`'s Unreleased section, scaffolding unit or integration tests or preparing a
+release. See [`AGENTS.md`'s Claude Code Skills section](AGENTS.md#-claude-code-skills) for the full list and what
+each one does. They're optional — everything they do can also be done by hand, following the conventions documented
+here — but they save re-deriving the same procedure each time.
+
+---
+
 ## 📚 Documentation Conventions
 
-Full conventions live in [`AGENTS.md`](AGENTS.md) — read it before writing or editing any documentation in this
-repository. Highlights:
+Full conventions live in [`AGENTS.md`'s Documentation Conventions section](AGENTS.md#-documentation-conventions) —
+read it before writing or editing any documentation in this repository. Highlights:
 
 - **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see
-  `AGENTS.md`'s list of exceptions for legal boilerplate and third-party names.
+  [`AGENTS.md`'s list of exceptions](AGENTS.md#british-english) for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
-  "prose, comments and Javadoc") — see `AGENTS.md`'s Serial commas rule.
+  "prose, comments, and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
-  `AGENTS.md`'s Line wrapping rule.
-- Every `##` heading gets a matching emoji, reused from the established icon registry in `AGENTS.md` rather than
-  invented fresh.
+  [`AGENTS.md`'s Line wrapping rule](AGENTS.md#line-wrapping).
+- Every `##` heading gets a matching emoji, reused from the
+  [established icon registry in `AGENTS.md`](AGENTS.md#icons-in-headings) rather than invented fresh.
 - **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't
   duplicate an interface method's Javadoc on its implementation unless the implementation adds behaviour the
-  interface doesn't already describe — see `AGENTS.md`'s Javadoc rule for the full requirements.
-- Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents — don't
-  batch changelog updates into a later PR.
+  interface doesn't already describe — see [`AGENTS.md`'s Javadoc rule](AGENTS.md#javadoc) for the full requirements.
+- Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents —
+  don't batch changelog updates into a later PR; see [`AGENTS.md`'s Git Workflow Conventions](AGENTS.md#conventions).
 - `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When
   updating `RELEASE_NOTES.md`, `HISTORY.md` or `CHANGELOG.md`, check whether `README.md`/`ARCHITECTURE.md` need the same
-  update (the "reverse sync rule").
+  update (the "reverse sync rule") — see
+  [`AGENTS.md`'s Evergreen Documentation section](AGENTS.md#-evergreen-documentation-readmemd--architecturemd).
 
 ---
 
 ## 🗺️ Roadmap
+
+Full detail lives in [`AGENTS.md`'s Roadmap Planning section](AGENTS.md#-roadmap-planning). Highlights:
 
 | File                        | Purpose                                                                                                          |
 |-----------------------------|------------------------------------------------------------------------------------------------------------------|
 | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
-Both live in `documentation/roadmap/`. `improvement-plan.md` opens with a Goals & Constraints table, then its "🔍
-Gaps & Improvement Opportunities" section groups numbered `#### N. <Title>` gap sections into three status
-subsections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — each with Evidence, Why it matters and a Proposed
-improvement, gaining an Outcome or Progress paragraph once work against it lands. That's followed by a
-Now/Next/Later/Ongoing Roadmap table (forward-looking priority, a separate concern from completion status) and a
-Success Criteria list. `improvement-plan-tasks.md` mirrors the same three status sections, breaking each gap into
-checkboxes, with each block naming its originating gap number.
-
-Unlike `README.md`/`ARCHITECTURE.md`, `improvement-plan.md` is explicitly **not evergreen** — it's a point-in-time
-reading of the project, revisited only when a gap closes, progresses or a new one is identified. A closed or
-progressed gap gains a status suffix on its header (e.g. "— ✅ Closed in vX.Y.Z" or "— 🟡 Partially completed in
-vX.Y.Z") and an Outcome/Progress paragraph, and its whole block moves into the matching status section in both
-files; the original analysis is never deleted or rewritten, and task-list items are checked off in place rather
-than removed, so the history of what was considered and why stays intact.
+Both live in `documentation/roadmap/` and track outstanding project gaps in three status sections — ✅ Completed,
+🟡 Partially Completed, ⚪ Open — each gap numbered once and never renumbered or deleted as it moves between
+sections. Unlike `README.md`/`ARCHITECTURE.md`, these files are explicitly **not evergreen** — a point-in-time
+reading of the project, revisited only when a gap closes, progresses or a new one is identified.
 
 ---
 
@@ -196,58 +203,47 @@ than removed, so the history of what was considered and why stays intact.
 
 ### Branching Model (GitFlow)
 
-This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) branching model:
+This repository follows [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) — see
+[`AGENTS.md`'s Git Workflow section](AGENTS.md#-git-workflow) for the full branching model and rationale. In short:
 
-- **`develop`** is the current development branch — all day-to-day work lands here first.
-- **`main`** is the production branch. It is only ever updated by promoting `develop` after a `release/vX.Y.Z` branch
-  has merged into it, or directly from a `hotfix/*` branch — never any other source.
-- **`feature/<short-description>`** — day-to-day feature and bug-fix work (e.g. `feature/shooter-log-power-factor`,
-  `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
-- **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes
-  (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see [🚢 Cutting a Release](#-cutting-a-release)
-  below) and are opened as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see
-  Merging below).
-- **`hotfix/<short-description>`** — urgent fixes for a defect already in production. Branch from, and PR directly into,
-  `main`, bypassing `develop` and any in-progress `release/vX.Y.Z` branch so the fix ships immediately. Also, merge/PR
-  the same fix into `develop` so it isn't lost when the next release is cut.
+- **`develop`** is the current development branch — all day-to-day work lands here first; **`main`** is the
+  production branch, updated only by promoting `develop` or directly from a `hotfix/*` branch.
+- **`feature/<short-description>`** — day-to-day work. Branch from, and PR back into, `develop`.
+- **`release/vX.Y.Z`** — cut from `develop` once ready to ship (see [🚢 Cutting a Release](#-cutting-a-release)
+  below), PR'd into `develop`; once merged, a second PR promotes `develop` into `main` (see Merging below).
+- **`hotfix/<short-description>`** — urgent production fixes. Branch from, and PR directly into, `main`; also
+  merged into `develop` afterwards so it isn't lost (see Merging below).
 
-**All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even
-then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*`
-and `release/*` included — must never open a PR directly against `main`.
+Every branch except `hotfix/*` must land on `develop` first and never open a PR directly against `main`.
 
 ### Merging
 
 - **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this
   repo's existing history — no squashing or rebasing) and delete the branch afterwards.
 - **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second
-  PR carrying the same commit (s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
+  PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
   description. Only delete the branch once both merges have landed, so the fix isn't lost when the next
   `release/vX.Y.Z` branch is cut.
-- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist is complete and all tests pass, with a standard
-  merge commit, and delete the branch afterwards.
+- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist is complete and all tests pass (see
+  [🚢 Cutting a Release](#-cutting-a-release) below), with a standard merge commit, and delete the branch afterwards.
 - **`develop` → `main`:** immediately after, open a second PR promoting `develop` into `main` and merge it; tag the
   resulting commit on `main` as `vX.Y.Z`.
 
 ### Conventions
 
-- **Commit in logical chunks.** One concern per commit — don't bundle a dependency bump, a documentation update and a
-  bug fix into a single commit.
-- **Track complex work with a todo list** so progress on multistep tasks stays visible.
-- Directory changes must stay in sync with documentation: whenever a root-level directory is added or removed, update
-  `ARCHITECTURE.md`'s Project Structure tree in the same change. Tracked tooling directories — `.claude/`,
-  `.github/` — belong in that tree; only `.gitignore`-covered directories are excluded from it. Package/directory
-  comments describe purpose generically and never list the individual classes inside — those drift too fast to keep
-  in sync.
+See [`AGENTS.md`'s Git Workflow Conventions](AGENTS.md#conventions) and
+[Directory Tree Maintenance](AGENTS.md#-directory-tree-maintenance) sections for the full rules. In short: commit in
+logical chunks (one concern per commit), track complex work with a todo list, update `CHANGELOG.md` in the same
+change, and keep `ARCHITECTURE.md`'s Project Structure tree in sync whenever a root-level directory is added or
+removed.
 
 ---
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                                                                 | Trigger                                                                                                 |
-|-----------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                                                               | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`)                       |
-| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`)                                   | Push / PR to `main` / `develop` (`.github/workflows/build.yml`); H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 97% line coverage (`check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above                                        |
+See [`ARCHITECTURE.md`'s CI/CD & Quality Gates table](ARCHITECTURE.md#-cicd--quality-gates) for the full gate/tool/
+trigger matrix (CodeQL security analysis, Maven build & tests, JaCoCo coverage) rather than duplicating it here, so
+the two never drift out of sync.
 
 ---
 

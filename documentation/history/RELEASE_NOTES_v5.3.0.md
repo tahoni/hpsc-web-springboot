@@ -287,7 +287,7 @@ a Java record construct, improving immutability and clarity throughout the mappi
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Developers
 

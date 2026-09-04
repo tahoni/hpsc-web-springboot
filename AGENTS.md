@@ -11,8 +11,10 @@ convention; no Claude-Code-specific content is split out from it.
 - [⚙️ Tech Stack](#-tech-stack)
 - [🚀 Build & Run Commands](#-build--run-commands)
 - [🏛️ Architecture](#-architecture)
-- [📝 Documentation Conventions](#-documentation-conventions)
-- [🗺️ Documentation File Map](#-documentation-file-map)
+- [📚 Documentation Conventions](#-documentation-conventions)
+- [🗂️ Documentation File Map](#-documentation-file-map)
+- [🗺️ Roadmap Planning](#-roadmap-planning)
+- [🧩 Claude Code Skills](#-claude-code-skills)
 - [🧪 Test Conventions](#-test-conventions)
 - [📁 Directory Tree Maintenance](#-directory-tree-maintenance)
 - [🔀 Git Workflow](#-git-workflow)
@@ -132,7 +134,7 @@ place; its private helpers, if any, still go after every public method.
 
 ---
 
-## 📝 Documentation Conventions
+## 📚 Documentation Conventions
 
 ### British English
 
@@ -150,8 +152,9 @@ spelling (e.g. "licence", "organisation", "colour", "initialise"), not American 
 ### Serial commas
 
 Lists of three or more items don't take a comma before the final `and`/`or` (e.g. "clubs, competitors and matches", not
-"clubs, competitors and matches") — consistent with the British English convention above. This doesn't apply to a comma
-joining two independent clauses (e.g. "the build passed, and the release was tagged"), only to the last item of a list.
+"clubs, competitors, and matches") — consistent with the British English convention above. This doesn't apply to a
+comma joining two independent clauses (e.g. "the build passed, and the release was tagged"), only to the last item of
+a list.
 
 ### Line wrapping
 
@@ -188,36 +191,103 @@ Every heading listed in a Table of Contents is prefixed with an emoji, and its T
 icon already established for a concept rather than inventing a new one; only pick a new emoji when introducing a
 genuinely new concept. Icons already established in this repository's documentation:
 
-| Icon | Concept                        |
-|------|--------------------------------|
-| 📖   | Introduction / overview        |
-| 🔗   | Repository / links             |
-| ⚙️   | Technology / configuration     |
-| ✨   | Features                       |
-| 🚀   | Instructions / getting started |
-| 🔍   | Current state / inspection     |
-| 📤   | Output                         |
-| 📋   | Prerequisites                  |
-| 🔧   | Installation / setup           |
-| 📚   | Documentation                  |
-| 🧪   | Testing                        |
-| 🏛️   | Architecture                   |
-| 📜   | License                        |
-| 👤   | Author                         |
-| 🎯   | Theme / system overview        |
-| 🔄   | Changed items / data flow      |
-| ➕   | Added items                    |
-| 🐛   | Fixed items                    |
-| ⚠️   | Deprecated items               |
-| 🗑️   | Removed items                  |
-| 🔐   | Security                       |
-| ✅   | Quality attributes             |
-| 🔬   | CI/CD & quality gates          |
-| 🚢   | Release process                |
+| Icon | Concept                           |
+|------|-----------------------------------|
+| 📖   | Introduction / overview           |
+| 🔗   | Repository / links                |
+| ⚙️   | Technology / configuration        |
+| ✨   | Features                          |
+| 🚀   | Instructions / getting started    |
+| 📋   | Prerequisites / policy            |
+| 🔧   | Installation / setup              |
+| 📚   | Documentation                     |
+| 🧪   | Testing                           |
+| 🏛️   | Architecture                      |
+| 📜   | License                           |
+| 👤   | Author                            |
+| 🎯   | Theme / system overview           |
+| 🔄   | Changed items / design patterns   |
+| ✅   | Quality attributes / completed    |
+| 🔬   | CI/CD & quality gates             |
+| 🔀   | Data flow / Git workflow          |
+| 📁   | Project / directory structure     |
+| 🏗️   | Layered architecture              |
+| 🌐   | Presentation / API layer          |
+| ⚡   | Service layer                     |
+| 🗄️   | Database / persistence            |
+| 🧬   | Data model / DTOs                 |
+| 📈   | Request-response flow             |
+| 📥   | Inbound / import flow             |
+| 🗺️   | Roadmap                           |
+| 📤   | Output                            |
+| 🚢   | Release process                   |
+| 🧩   | Tooling / automation              |
+| 🟡   | Partially completed               |
+| ⚪   | Open / not started                |
+| 🤔   | Reasoning                         |
+| 🔢   | Numbering / sequence              |
+| 🏷️   | Naming convention                 |
+| 🗂️   | Documentation file index          |
+| 🌲   | Evergreen documentation           |
+| ➕   | Added items                       |
+| 🐛   | Bugs / fixed items                |
+| ⚠️   | Deprecated items                  |
+| 🗑️   | Removed items                     |
+| 🔐   | Security                          |
+| 🧾   | Version entry                     |
+| 💬   | Support / contact                 |
+| 🤝   | Contributing guidelines           |
+| 📅   | Timeline                          |
+| 💡   | Philosophy / rationale            |
+| 🎓   | Conclusion                        |
+| 🔍   | Current state / inspection        |
+| ⭐   | Key highlights                    |
+| 📦   | What's new / key changes          |
+| 📊   | Statistics                        |
+| 🧭   | Design notes                      |
+| 🔮   | Future enhancements               |
+| 👥   | Contributors                      |
+| 📝   | Notes                             |
+| 🛡️   | Robustness / validation hardening |
+| 🔓   | Optional / relaxed constraint     |
+
+Icons reserved from the sibling `hpsc-web-vite` repository's registry for concepts specific to that project (a
+Vite/TypeScript frontend) — not used here, kept reserved so they're never accidentally repurposed for an unrelated
+concept in this project:
+
+| Icon | Reserved for (Vite)                          |
+|------|----------------------------------------------|
+| 🧰   | Available scripts / tooling                  |
+| 🛣️   | Routing / navigation                         |
+| ✍️   | Content strategy / documentation conventions |
+| 🎨   | Styling and theming / design                 |
+| 🛠️   | Development guidelines                       |
+| 🛤️   | Roadmap                                      |
+| ☑️   | Checklist                                    |
+| 📐   | Layout structure                             |
+| 🔝   | Header                                       |
+| 📄   | Body / page content                          |
+| ⬇️   | Footer                                       |
+| 📱   | Responsive design                            |
+| 💻   | Technical implementation                     |
+| 🖥️   | User interface                               |
+| ♻️   | General code improvements                    |
+| 💰   | Funding / sponsorship                        |
+| 👍   | Recommendation / best practices              |
+| 🌊   | Global scope / cascading styles              |
+| 🧵   | Shared / cross-feature infrastructure        |
+| 🧱   | Component/layout folder shape                |
+| 🌳   | Decision tree / quick reference              |
+| 🏆   | Most popular / prevailing convention         |
+| 🗝️   | Key principles                               |
+| ⏭️    | Next / upcoming                              |
+| ⏳   | Later / pending                              |
+| 🔁   | Ongoing / recurring                          |
+| ⚖️   | Comparison / trade-offs                      |
 
 ---
 
-## 🗺️ Documentation File Map
+## 🗂️ Documentation File Map
 
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation)
 section — README.md is the canonical version if the two ever drift):
@@ -247,25 +317,68 @@ Four documentation-only folders supplement these:
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
 - **`documentation/roadmap/`** holds in-progress planning documents that sit outside the standard documentation set
-  above:
-
-  | File                        | Purpose                                                                                                          |
-  |-----------------------------|------------------------------------------------------------------------------------------------------------------|
-  | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
-  | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
-
-  Both group their gaps into three status sections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — mirrored
-  identically across the two files; a gap's number is assigned once and never reused or resequenced, so it stays
-  stable even as the gap moves between sections. A gap moves to 🟡 Partially Completed once it has a documented
-  Progress note (or, in `improvement-plan-tasks.md`, at least one checked item) but hasn't reached a final Outcome,
-  and to ✅ Completed once it has (its `###`/`####` header there gains a "✅ Closed in vX.Y.Z" suffix, or "✅ Closed
-  as not applicable in vX.Y.Z" if it was resolved by removing the thing rather than delivering it). Never delete or
-  renumber a gap or delete a checked task line when moving it between sections — only relocate the whole block.
-
+  above — see [🗺️ Roadmap Planning](#-roadmap-planning) below for the file structure and conventions.
 - **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
   this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
   conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the
   Tech Stack section's Flyway note above).
+
+---
+
+## 🗺️ Roadmap Planning
+
+`documentation/roadmap/` holds two in-progress planning documents tracking outstanding project gaps, kept outside
+the standard documentation set above:
+
+| File                        | Purpose                                                                                                          |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------|
+| `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
+| `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
+
+`improvement-plan.md` opens with a Goals & Constraints table synthesised from the project's own docs and
+configuration, then its "🔍 Gaps & Improvement Opportunities" section groups numbered `#### N. <Title>` gap
+sections into three status subsections — ✅ Completed, 🟡 Partially Completed, ⚪ Open — each with Evidence,
+Why it matters and a Proposed improvement, gaining an Outcome or Progress paragraph once work against it lands.
+That's followed by a Now/Next/Later/Ongoing Roadmap table (forward-looking priority, a separate concern from
+completion status) and a Success Criteria list. `improvement-plan-tasks.md` mirrors the same three status
+sections, breaking each gap into checkboxes, with each block naming its originating gap number.
+
+A gap's number is assigned once and never reused or resequenced, so it stays stable even as the gap moves between
+sections. A gap moves to 🟡 Partially Completed once it has a documented Progress note (or, in
+`improvement-plan-tasks.md`, at least one checked item) but hasn't reached a final Outcome, and to ✅ Completed once
+it has (its `###`/`####` header gains a "— ✅ Closed in vX.Y.Z" suffix, or "— ✅ Closed as not applicable in
+vX.Y.Z" if it was resolved by removing the thing rather than delivering it). Never delete or renumber a gap or
+delete a checked task line when moving it between sections — only relocate the whole block.
+
+Unlike `README.md`/`ARCHITECTURE.md`, `improvement-plan.md` is explicitly **not evergreen** — it's a point-in-time
+reading of the project, revisited only when a gap closes, progresses or a new one is identified; the original
+analysis is never deleted or rewritten. The `update-improvement-plan-gaps` skill audits the codebase for new,
+closed or progressed gaps; `sync-improvement-plan-gaps` marks gaps a branch has already addressed — see
+[🧩 Claude Code Skills](#-claude-code-skills) below. Checking this file is also the first step of the
+[🚢 Release Checklist](#-release-checklist) below.
+
+---
+
+## 🧩 Claude Code Skills
+
+`.claude/skills/` holds this repository's project-specific Claude Code skills, one `SKILL.md` per skill. Each encodes
+a workflow described elsewhere in this file — the Git Workflow conventions, the Release Checklist or the Test
+Conventions — as a repeatable, invokable procedure, so an agent doesn't have to reconstruct it from scratch each time:
+
+| Skill                          | Purpose                                                                                      |
+|--------------------------------|----------------------------------------------------------------------------------------------|
+| `generate-commit-message`      | Generate a commit message and matching `CHANGELOG.md` entry for the working tree's changes   |
+| `sync-unreleased-changes`      | Reconcile `CHANGELOG.md`'s `## 🧪 [Unreleased]` section against the current branch's changes |
+| `sync-improvement-plan-gaps`   | Mark gaps in `improvement-plan.md` as closed/progressed once a branch has addressed them     |
+| `update-improvement-plan-gaps` | Audit the codebase against `improvement-plan.md`/`improvement-plan-tasks.md` for new gaps    |
+| `prep-version-release`         | Prepare a release's `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md` and PR description      |
+| `generate-pr-summary`          | Condense a version's PR description and release notes into a short PR summary                |
+| `scaffold-unit-tests`          | Scaffold unit tests for a service, model or exception class, per the Test Conventions below  |
+| `scaffold-integration-tests`   | Scaffold `@SpringBootTest` integration tests for a service, per the Test Conventions below   |
+
+`.claude/` is a tracked tooling directory (see Directory Tree Maintenance below) — a new skill, or a change to an
+existing one, is committed like any other project file, and `ARCHITECTURE.md`'s Project Structure tree only needs
+updating if `.claude/`'s own layout changes, not for individual skill additions.
 
 ---
 
@@ -329,27 +442,20 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
   `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
 - **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes
   (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see the Release Checklist below) and are opened
-  as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see Merging below).
+  as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see
+  [`CONTRIBUTING.md`'s Merging section](CONTRIBUTING.md#merging)).
 - **`hotfix/<short-description>`** — urgent fixes for a defect already in production. Branch from, and PR directly into,
   `main`, bypassing `develop` and any in-progress `release/vX.Y.Z` branch so the fix ships immediately. Also, merge/PR
   the same fix into `develop` so it isn't lost when the next release is cut.
 
 **All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even
-then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*`
-and `release/*` included — must never open a PR directly against `main`.
+then the same fix still lands on `develop` immediately afterwards (see [`CONTRIBUTING.md`'s Merging
+section](CONTRIBUTING.md#merging)). Every other branch — `feature/*` and `release/*` included — must never open a PR
+directly against `main`.
 
-### Merging
-
-- **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this
-  repo's existing history — no squashing or rebasing) and delete the branch afterwards.
-- **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second
-  PR carrying the same commit (s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
-  description. Only delete the branch once both merges have landed, so the fix isn't lost when the next
-  `release/vX.Y.Z` branch is cut.
-- **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist below is complete and all tests pass, with a
-  standard merge commit, and delete the branch afterwards.
-- **`develop` → `main`:** immediately after, open a second PR promoting `develop` into `main` and merge it; tag the
-  resulting commit on `main` as `vX.Y.Z`.
+Which merge strategy each branch type uses, PR ordering, tagging `main` and branch clean-up are a human contributor's
+GitHub mechanics, not something an AI agent executes unprompted — see
+[`CONTRIBUTING.md`'s 🔀 Git & PR Workflow section](CONTRIBUTING.md#-git--pr-workflow) for the full merging procedure.
 
 ### Conventions
 

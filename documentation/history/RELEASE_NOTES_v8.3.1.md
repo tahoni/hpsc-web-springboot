@@ -87,7 +87,7 @@ ambiguity), and partially progresses Gap #4 (coverage measured but not enforced)
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For API Consumers
 

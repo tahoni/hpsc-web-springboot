@@ -111,7 +111,7 @@ gaining a `@JsonCreator` constructor and comprehensive new unit test coverage.
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For API Consumers
 

@@ -54,7 +54,7 @@ Version 7.3.0 is a small, documentation-focused release. `README.md` and `ARCHIT
 
 ---
 
-## 🔄 Migration Guide
+## 🚀 Migration Guide
 
 ### For Deployers
 

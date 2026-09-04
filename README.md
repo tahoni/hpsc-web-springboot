@@ -11,7 +11,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [🚀 Instructions](#-instructions)
     - [📋 Prerequisites](#-prerequisites)
     - [🔧 Installation and Execution](#-installation-and-execution)
-- [📚 API Documentation](#-api-documentation)
+- [🌐 API Documentation](#-api-documentation)
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
 - [📚 Documentation](#-documentation)
@@ -113,7 +113,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 The application starts on `http://localhost:8081/hpsc-web`. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles) for the full profile/DDL matrix and other database options.
 
-## 📚 API Documentation
+## 🌐 API Documentation
 
 Interactive API documentation is automatically generated using SpringDoc OpenAPI and can be accessed at:
 
