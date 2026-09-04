@@ -38,7 +38,9 @@ evolution of architecture, features and design philosophy across all versions.
   JPA layer, not just mocked repositories; `IpscMatchServiceTest`'s CSV bulk-import test now supplies actual
   `StartTime`/`EndTime` values, closing the one gap where that mapping was never verified
 - `README.md`'s "License" heading/prose corrected to British English "Licence"; `CONTRIBUTING.md`'s own Serial
-  Commas rule example corrected to no longer violate the rule it illustrates
+  Commas rule example corrected to no longer violate the rule it illustrates; `AGENTS.md`'s British English
+  exception for `LICENSE.md` narrowed to just the filename and the file's own content, so every other reference
+  to it spells it "Licence" instead of carving out a wider exception
 - Project version bumped to 8.5.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 8.4.2 (September 4, 2026)

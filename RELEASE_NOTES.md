@@ -84,6 +84,13 @@ proving they persist correctly through the real database, not just mocked reposi
 - **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `startTime`/
   `endTime` through between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
 
+#### Documentation
+
+- **`AGENTS.md`:** British English exception for `LICENSE.md` narrowed — only the filename and the file's own
+  content stay American English "License"; every other reference to it (headings, tables, ToC entries, prose)
+  now spells it "Licence", matching the rest of the project's British English convention rather than carving out
+  an exception for it
+
 ### Fixed
 
 #### Documentation
@@ -107,11 +114,11 @@ proving they persist correctly through the real database, not just mocked reposi
 
 ## 📊 Statistics
 
-- **Total Commits:** 5
+- **Total Commits:** 6
 - **Files Changed:** 18
-- **Insertions:** 271 lines
-- **Deletions:** 44 lines
-- **Net Change:** +227 lines
+- **Insertions:** 221 lines
+- **Deletions:** 47 lines
+- **Net Change:** +174 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0
