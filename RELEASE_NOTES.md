@@ -14,7 +14,7 @@ highlights-and-link pattern already established elsewhere in those files — con
 Model, Conventions and Directory Tree Maintenance bullets, an unlinked Exception handling restatement, and a
 CI/CD & Quality Gates table that had drifted from its actual source of truth in `ARCHITECTURE.md`. It also
 reconciles the icon registry with the sibling `hpsc-web-vite` repository twice over, backfills 25 previously
-unregistered icons already in real use, and fixes several icon collisions and a broken example in the Serial
+unregistered icons already in real use and fixes several icon collisions and a broken example in the Serial
 Commas convention.
 
 ---
