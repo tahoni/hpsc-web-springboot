@@ -34,7 +34,7 @@ evolution of architecture, features and design philosophy across all versions.
 - CSV bulk import (`POST /matches/csv`) now requires `StartTime`/`EndTime` header columns, like every other
   `MatchRequestForCSV` property, consistent with this endpoint's existing all-columns-required header validation —
   existing CSV templates need updating to add them (values may be left blank)
-- New coverage in `IpscMatchServiceIntegrationTest` proves the two columns round-trip through the real H2/Hibernate/
+- New coverage in `IpscMatchServiceIntegrationTest` proves the two-column round-trip through the real H2/Hibernate/
   JPA layer, not just mocked repositories; `IpscMatchServiceTest`'s CSV bulk-import test now supplies actual
   `StartTime`/`EndTime` values, closing the one gap where that mapping was never verified
 - `README.md`'s "License" heading/prose corrected to British English "Licence"; `CONTRIBUTING.md`'s own Serial
