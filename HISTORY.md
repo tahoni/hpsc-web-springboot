@@ -21,6 +21,26 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.5.0 (September 4, 2026)
+
+**Theme:** Match Start/End Time Tracking
+
+**Key Focus:**
+
+- `IpscMatch` gains nullable `startTime`/`endTime` (`LocalDateTime`) columns, alongside the existing
+  `scheduledDate`, via new `V7_5_0__add_ipsc_match_start_end_time.sql`; wired end-to-end through `MatchRequest`,
+  `MatchRequestForCSV` and `MatchResponse`, and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/
+  `toResponse`
+- CSV bulk import (`POST /matches/csv`) now requires `StartTime`/`EndTime` header columns, like every other
+  `MatchRequestForCSV` property, consistent with this endpoint's existing all-columns-required header validation —
+  existing CSV templates need updating to add them (values may be left blank)
+- New coverage in `IpscMatchServiceIntegrationTest` proves the two columns round-trip through the real H2/Hibernate/
+  JPA layer, not just mocked repositories; `IpscMatchServiceTest`'s CSV bulk-import test now supplies actual
+  `StartTime`/`EndTime` values, closing the one gap where that mapping was never verified
+- `README.md`'s "License" heading/prose corrected to British English "Licence"; `CONTRIBUTING.md`'s own Serial
+  Commas rule example corrected to no longer violate the rule it illustrates
+- Project version bumped to 8.5.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.4.2 (September 4, 2026)
 
 **Theme:** Root Document Title Standardisation & Source-of-Truth Clarification
