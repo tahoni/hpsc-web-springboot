@@ -1,67 +1,64 @@
-# Release Notes – Version 8.4.0
+# Release Notes – Version 8.4.1
 
-**Release Date:** September 3, 2026 **Status:** ✨ Stable
+**Release Date:** September 4, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**Club Domain Defaults, Optional Club Numbers & Documentation Convention Hardening**
+**Documentation Cross-Reference Consolidation & Icon Registry Sync**
 
-Version 8.4.0 extends the "apply the domain default" pattern from the competitor module to the match module: a
-match's `club` is no longer a hard-required field — a missing or blank value now resolves to a new
-`ClubIdentifier.ALL` ("Eufees Clubs") constant, seeded into the database by a new Flyway migration, instead of
-failing validation. The same release relaxes competitor `clubNumber` to be required only when the competitor's home
-club is HPSC. Alongside these two domain-rule changes, the JaCoCo coverage-regression floor introduced in v8.3.1 is
-tightened from 86% to 97% — now genuinely close to the real, freshly re-measured baseline — closing
-`documentation/roadmap/improvement-plan.md`'s Gap #4 and Gap #9. The remainder of the release is documentation and
-convention hardening: a new Member ordering convention, REST naming rules promoted from recommendation to
-convention, a release-checklist backstop that keeps `ARCHITECTURE.md`'s Project Structure tree honest, the
-`improvement-plan.md`/`improvement-plan-tasks.md` restructure into ✅ Completed/🟡 Partially Completed/⚪ Open
-sections and a Tomcat security patch closing three critical CVEs.
+Version 8.4.1 is a documentation-only patch release with no source-code, schema or dependency changes. It
+consolidates `AGENTS.md`/`CONTRIBUTING.md`'s remaining full and near-verbatim content duplicates into the
+highlights-and-link pattern already established elsewhere in those files — condensing Git Workflow's Branching
+Model, Conventions and Directory Tree Maintenance bullets, an unlinked Exception handling restatement, and a
+CI/CD & Quality Gates table that had drifted from its actual source of truth in `ARCHITECTURE.md`. It also
+reconciles the icon registry with the sibling `hpsc-web-vite` repository twice over, backfills 25 previously
+unregistered icons already in real use, and fixes several icon collisions and a broken example in the Serial
+Commas convention.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 🎯 Match Club Defaulting
+### 🔀 Git Workflow Consolidation
 
-- New `ClubIdentifier.ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) represents a match hosted jointly by
-  `SOSC`/`HPSC`/`PMPSC`; new `V7_3_0__seed_club_data.sql` migration seeds the `club` table with every named
-  `ClubIdentifier` constant
-- `IpscMatchServiceImpl.resolveClub()` now defaults a missing/blank match `club` to
-  `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` instead of `validateForCreate` throwing `ValidationException`;
-  throws `NonFatalException` if even the default club is missing from the database, or a `FatalException` if the
-  constant itself is null
-- Closes Gap #9: the previously unused `DEFAULT_MATCH_CLUB_IDENTIFIER` constant is now genuinely wired in
+- `CONTRIBUTING.md`'s Branching Model (GitFlow) bullets, Git Workflow "Conventions" and Directory Tree Maintenance
+  bullets condensed into highlights-and-link references pointing at `AGENTS.md`, replacing full/near-verbatim
+  restatements
+- Git Workflow's "Merging" subsection removed from `AGENTS.md` and consolidated as `CONTRIBUTING.md`'s sole
+  canonical copy — it describes a human contributor's GitHub mechanics, not something any Claude Code skill reads
+  directly, unlike the Branching Model and Conventions subsections `sync-unreleased-changes`/
+  `sync-improvement-plan-gaps` depend on remaining in `AGENTS.md`
 
-### 🔓 Optional Competitor Club Numbers
+### 🔗 Unlinked Cross-Reference Cleanup
 
-- `IpscCompetitorServiceImpl.resolveClubNumber()` centralises a new rule: `clubNumber` is required only when the
-  competitor's home club is HPSC, and forced to `null` for every other home club, on create, update and patch
-- `Competitor.clubNumber` column relaxed to nullable via new `V7_4_0__make_club_number_nullable.sql`, which also
-  clears `club_number` on any existing non-HPSC competitor
+- `CONTRIBUTING.md`'s Exception handling bullet, CHANGELOG-same-change and Evergreen/reverse-sync bullets now link
+  to the specific `AGENTS.md` subsection each one restates, matching the pattern its sibling bullets already
+  followed
+- CI/CD & Quality Gates table condensed into a link to `ARCHITECTURE.md`'s own table — the actual source of truth
+  per `AGENTS.md`'s own cross-reference — since the two copies had drifted to slightly different column wording
 
-### 🛡️ Coverage Floor Reaches Its Real Baseline
+### 🧩 New AGENTS.md Sections
 
-- JaCoCo `LINE`/`COVEREDRATIO` minimum tightened `0.86` → `0.97`, after the 86% floor was confirmed holding cleanly
-  in CI on both the `develop` and `main` `build.yml` runs that shipped v8.3.1
-- A fresh `./mvnw verify -Pcoverage` run at this release's prep time measured 98.44%/98.98% (line/branch), 868
-  tests — up from 836 — confirming the new floor holds with a small, deliberate margin. Closes Gap #4
+- New "🧩 Claude Code Skills" and "🗺️ Roadmap Planning" sections in `AGENTS.md`, both mirrored with a short
+  pointer in `CONTRIBUTING.md`
 
-### 🔐 Tomcat Security Patch
+### 🗺️ Icon Registry Sync with hpsc-web-vite
 
-- `tomcat-embed-core`/`-el`/`-websocket` overridden `11.0.24` → `11.0.25` via a new `pom.xml` `tomcat.version`
-  property, closing three critical CVEs still transitively pinned by `spring-boot-starter-parent:4.1.1`
+- `AGENTS.md`'s icon registry backfilled with 25 previously-unregistered icons already in real use across this
+  repository's documentation
+- New "Reserved" sub-table tracking the sibling `hpsc-web-vite` repository's frontend-specific icons, synced twice
+  this release as that repository's own registry grew — `hpsc-web-vite` reciprocally reserves `🧬` (Data model /
+  DTOs) in return
+- Several icon collisions resolved across `README.md`, `ARCHITECTURE.md`, `HISTORY.md`, `RELEASE_NOTES.md` and 17
+  archived per-version release notes
 
-### 📚 Documentation & Convention Hardening
+### 🐛 Documentation Fixes
 
-- New `AGENTS.md` Member ordering convention (constructors → public → protected → private);
-  `IpscCompetitorServiceImpl`/`IpscMatchServiceImpl` reordered to match
-- REST URL-path/handler-naming rules promoted from a recommendations doc into an actual `AGENTS.md` convention
-- New Release Checklist step verifies `ARCHITECTURE.md`'s Project Structure tree against disk at every release
-- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` restructured into ✅ Completed/
-  🟡 Partially Completed/⚪ Open sections, replacing the previous flat Now/Next/Later/Ongoing phasing
+- `CHANGELOG.md`'s duplicate, truncated `[5.0.0]` section removed
+- Serial Commas convention's own example fixed — the "e.g." and "not" contrast phrases were identical in both
+  `AGENTS.md` and `CONTRIBUTING.md`, so the example never actually illustrated the rule
 
 ---
 
@@ -69,158 +66,87 @@ sections and a Tomcat security patch closing three critical CVEs.
 
 ### Added
 
-#### Database
+#### Documentation
 
-- **`V7_3_0__seed_club_data.sql`:** Seeds the `club` table with the 5 named `ClubIdentifier` constants (`SOSC`,
-  `HPSC`, `PMPSC`, `VISITOR`, `ALL`); `UNKNOWN` intentionally excluded as the enum's unmatched placeholder
-
-#### Enums
-
-- **`ClubIdentifier`:** New `ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) representing a match hosted
-  jointly by the three real clubs
+- **`AGENTS.md`/`CONTRIBUTING.md`:** New "🧩 Claude Code Skills" section documenting the project-specific skills
+  under `.claude/skills/`; new `🧩` icon registered for tooling/automation sections
+- **`AGENTS.md`:** New "Reserved" sub-table under "Icons in headings" tracking the sibling `hpsc-web-vite`
+  repository's frontend-specific icon registry, synced twice this release (38 icons reserved in total)
+- **`AGENTS.md`:** New "🗺️ Roadmap Planning" section, promoted out of "Documentation File Map" into its own home
+- **`AGENTS.md`:** 25 previously-unregistered icons backfilled into the icon registry table, plus `🟡`/`⚪` for the
+  roadmap status scheme and `🗂️`/`🌲` for the "Documentation File Map"/"Evergreen Documentation" headings
 
 ### Changed
 
-#### API
-
-- **`IpscCompetitorController`/`IpscCompetitorServiceImpl`:** `clubNumber` required only when home club is HPSC;
-  `CompetitorRequest.clubNumber` no longer a Jackson-required property
-- **`IpscMatchController`/`IpscMatchServiceImpl`:** `club` defaults to `DEFAULT_MATCH_CLUB_IDENTIFIER` instead of
-  failing validation when missing/blank; `createMatch`/`updateMatch`/`patchMatch` now declare `throws
-  FatalException` to carry the new defensive null-default check
-
-#### Configuration
-
-- **`pom.xml`:** JaCoCo `LINE`/`COVEREDRATIO` minimum raised `0.86` → `0.97`. Closes Gap #4
-
-#### Constants
-
-- **`SystemConstants`:** New `TIME_FORMAT`, `DEFAULT_DATE_FORMAT` and `DEFAULT_DATE_TIME_FORMAT` constants; unused
-  `LONG_DATE_FORMAT`/`LONG_DATE_TIME_FORMAT` dropped
-- **`SystemConstants`, `IpscConstants`:** Every constant actually referenced elsewhere gained a one-line field
-  Javadoc
-
-#### Database
-
-- **`Competitor.clubNumber`:** Column relaxed from `nullable = false` to nullable
-
 #### Documentation
 
-- **`AGENTS.md`:** New Tech Stack note on Flyway migration versioning being independent of the app version; new
-  REST conventions and Member ordering subsections; new Release Checklist step 9 (renumbering 9/10 → 10/11)
-- **`documentation/recommendations/flyway-migration-versioning.md`:** New recommendations doc
-- **`CONTRIBUTING.md`:** Matching condensed bullets for the new REST naming and member-ordering conventions
-- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Restructured into ✅ Completed/
-  🟡 Partially Completed/⚪ Open sections
-
-#### Models
-
-- **`AwardRequestForCSV`, `CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`, `MatchRequestForCSV`:**
-  `@JsonFormat` patterns repointed from the removed `HpscConstants` to `SystemConstants`/`IpscConstants` equivalents
-
-#### Services
-
-- **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Reordered to match the new Member ordering convention
-
-#### Tests
-
-- Extensive coverage added/updated across `IpscCompetitorService(Impl)?Test`, `IpscMatchService(Impl)?Test` and
-  `IpscMatchControllerTest` for the club-default and clubNumber-nullability behaviour changes, `FatalException`
-  propagation, and the `resolveClub(String, ClubIdentifier)` overload
-
-#### Tooling
-
-- **`sync-improvement-plan-gaps`, `update-improvement-plan-gaps`:** Updated for the new gap-status section structure
+- **`AGENTS.md`/`ARCHITECTURE.md`/`documentation/recommendations/*.md`:** Several icon meanings corrected or
+  widened where a heading's actual concept didn't match its registered description, or reused an icon already
+  claimed for something unrelated
+- **`AGENTS.md`:** Icon registry table reordered to group icons by the document(s) that established them
+- **`CONTRIBUTING.md`:** "Roadmap" section condensed to a pointer at `AGENTS.md`'s new "Roadmap Planning" section
+- **`AGENTS.md`/`CONTRIBUTING.md`:** Git Workflow's "Merging" subsection consolidated as `CONTRIBUTING.md`'s sole
+  canonical copy; `CONTRIBUTING.md`'s remaining full/near-verbatim duplicates of `AGENTS.md` content (Branching
+  Model, Conventions, Directory Tree Maintenance, Exception handling, CHANGELOG-same-change, Evergreen/reverse-sync,
+  CI/CD & Quality Gates) condensed into highlights-and-link references
 
 ### Fixed
 
 #### Documentation
 
-- **`ARCHITECTURE.md`:** Brought fully back in sync with disk — missing `.claude/skills/`, `documentation/
-  recommendations/` and `db/migration/` directories added; `Gender`/`GenderConverter`, `HpscConstants` removal,
-  bidirectional-entity-relationship inaccuracies, the stale 51% coverage figure and several Project Structure tree
-  drifts all corrected
-- **`README.md`:** Installation/Execution steps corrected to match the actual `MYSQL_USER`/`MYSQL_PASSWORD`
-  env-var-driven `dev` profile flow
-- **`HISTORY.md`:** Restored "Standards Adoption" wording after an earlier typo-fix pass had singularised it
-
-### Removed
-
-#### Constants
-
-- **`HpscConstants`:** Removed entirely — its sole constant was an alias for `SystemConstants.ISO_DATE_FORMAT`
-
-### Security
-
-- **`tomcat-embed-core`/`tomcat-embed-el`/`tomcat-embed-websocket`:** Overridden `11.0.24` → `11.0.25`, closing
-  [CVE-2026-68525](https://nvd.nist.gov/vuln/detail/CVE-2026-68525),
-  [CVE-2026-65905](https://nvd.nist.gov/vuln/detail/CVE-2026-65905) and
-  [CVE-2026-65182](https://nvd.nist.gov/vuln/detail/CVE-2026-65182)
+- **`CHANGELOG.md`:** Removed a duplicate, truncated `[5.0.0]` section whose heading collision had broken its
+  Table of Contents anchor
+- **`documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md`:** Five archived
+  sub-headings reusing an already-registered icon for an unrelated concept, corrected
+- **`AGENTS.md`/`README.md`/`HISTORY.md`/`documentation/roadmap/improvement-plan.md`:** Several heading icons
+  corrected for internal consistency (Documentation Conventions, Documentation File Map/Roadmap Planning, API
+  Documentation vs Documentation, Future Roadmap Implications)
+- **`RELEASE_NOTES.md`/17 archived per-version release notes:** "Migration Guide" heading switched to `🚀`, matching
+  `CHANGELOG.md`'s equivalent "Upgrade Guide" heading, at the user's explicit request to extend the fix to the
+  archives
+- **`AGENTS.md`/`CONTRIBUTING.md`:** Serial Commas rule's own example corrected — the "not" contrast phrase now
+  actually shows the Oxford-comma version it's meant to contrast against
 
 ---
 
 ## 🚀 Migration Guide
 
-### For API Consumers
-
-- **Match `club` is no longer required.** Omitting it, or sending a blank value, on `POST`/`PUT /ipsc/matches` now
-  resolves to `"Eufees Clubs"` (`ClubIdentifier.ALL`) instead of a `400 Bad Request` ("Club is required.").
-  Consumers relying on that validation error to catch a missing club should switch to checking the response for
-  the default club name instead.
-- **Competitor `clubNumber` is no longer always required.** It's now required only when `homeClub` is `"HPSC"`;
-  supplying it for any other home club (or none) is accepted but silently ignored — the stored value is always
-  `null` in that case.
-
-### For Developers
-
-- Two new Flyway migrations (`V7_3_0__seed_club_data.sql`, `V7_4_0__make_club_number_nullable.sql`) run
-  automatically against MySQL dev/prod profiles on next startup; the `test` profile's H2 `create-drop` schema
-  already reflects the current entity/column state.
-- `HpscConstants` no longer exists — any external tooling or forked code referencing it must switch to
-  `SystemConstants.DEFAULT_DATE_FORMAT` or `IpscConstants.IPSC_INPUT_DATE_FORMAT`.
-- The JaCoCo coverage floor is now 97% (up from 86%) — a genuine coverage regression that would previously have
-  passed CI between 86% and 97% will now fail the build.
+No code, schema, configuration or dependency changes in this release — nothing for API consumers or developers to
+migrate.
 
 ---
 
 ## 📊 Statistics
 
-- **Total Commits:** 52
-- **Files Changed:** 48
-- **Insertions:** 2,448 lines
-- **Deletions:** 696 lines
-- **Net Change:** +1,752 lines
+- **Total Commits:** 32
+- **Files Changed:** 31
+- **Insertions:** 439 lines
+- **Deletions:** 231 lines
+- **Net Change:** +208 lines
 - **New Source Files:** 0
-- **Deleted Files:** 1 (`HpscConstants.java`)
+- **Deleted Files:** 0
 - **New Test Files:** 0
 
 ---
 
 ## 🧭 Design Notes
 
-- **Mirror an existing pattern rather than invent a new one.** `IpscMatchServiceImpl.resolveClub()`'s
-  "default, then validate the default exists" shape directly mirrors
-  `IpscCompetitorServiceImpl.resolveHomeClub()`/`resolveClubNumber()`, so the match domain gains defaulting
-  behaviour without introducing a second convention for the same problem.
-- **Defend against the default itself being unset, even though it never is today.** `resolveClub()` throws a new
-  `FatalException` if `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is null — a deliberately defensive check for a
-  constant that's always `ClubIdentifier.ALL` in practice, matching the same "stays unit testable" pattern already
-  used for `HOME_CLUB_IDENTIFIER`.
-- **Tighten the coverage floor only after the previous threshold proves itself in CI.** The 86% → 97% jump waited
-  for confirmation that the 86% floor held cleanly across a full `develop` → `main` promotion (v8.3.1) before being
-  raised again, rather than jumping straight to the real baseline in one step.
-- **Promote a recommendation to a convention only once it's actually been followed in practice.** The REST
-  naming and member-ordering rules existed as prose recommendations before this release; both are now stated as
-  enforced `AGENTS.md` conventions, reflecting patterns already consistently applied across the codebase.
+- **Consolidate duplicated content into the file that skills actually read, not the file that reads more naturally
+  standalone.** Git Workflow's Branching Model and Conventions subsections stay in `AGENTS.md`, not
+  `CONTRIBUTING.md`, specifically because `sync-unreleased-changes`/`sync-improvement-plan-gaps` read `AGENTS.md`
+  directly for hotfix-branch detection and commit conventions — the Merging subsection, which no skill reads, moved
+  to `CONTRIBUTING.md` instead.
+- **A "highlights and link" summary is not the same failure as an unlinked duplicate.** Several sections already
+  followed the desired pattern (Roadmap, Claude Code Skills, Release Checklist); this release's fixes targeted only
+  the remaining full/near-verbatim restatements that carried no link back to their source at all.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw verify -Pcoverage` — full suite passing (868 tests, 0 failures/errors); line coverage 98.44%, branch
-  coverage 98.98% — comfortably above the new 97% floor.
-- New tests cover `resolveClub`/`resolveClubNumber`'s default-application and validation paths, `FatalException`
-  propagation through `IpscMatchController`, and the `resolveClub(String, ClubIdentifier)` overload directly.
+- `./mvnw test` — full suite passing (868 tests, 0 failures/errors), confirmed during release prep. No source
+  changes in this release to affect it.
+- No new tests added; this release makes no code changes.
 
 ---
 
@@ -254,10 +180,9 @@ Leoni Lubbinge
 
 ## 📝 Notes
 
-Version 8.4.0 extends the competitor module's "domain default" pattern to matches, closes out the coverage-floor
-work started in v8.3.1 by reaching a genuinely near-baseline 97% minimum and removes a stale `HpscConstants` class
-in favour of the shared date-format constants introduced alongside it. Closes
-`documentation/roadmap/improvement-plan.md`'s Gap #4 and Gap #9.
+Version 8.4.1 is a documentation-only patch focused entirely on internal consistency: consolidating duplicated
+`AGENTS.md`/`CONTRIBUTING.md` content into the highlights-and-link pattern the rest of those files already use, and
+reconciling the icon registry with the sibling `hpsc-web-vite` repository. No product-facing behaviour changed.
 
 ---
 

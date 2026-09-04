@@ -21,6 +21,30 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.4.1 (September 4, 2026)
+
+**Theme:** Documentation Cross-Reference Consolidation & Icon Registry Sync
+
+**Key Focus:**
+
+- `AGENTS.md`/`CONTRIBUTING.md`'s full/near-verbatim content duplicates condensed into highlights-and-link
+  references, matching the pattern already established for sections like Roadmap and Release Checklist — Git
+  Workflow's Branching Model, Conventions and Directory Tree Maintenance bullets, the Exception handling and
+  CHANGELOG-same-change/Evergreen bullets, and the CI/CD & Quality Gates table (now pointed at `ARCHITECTURE.md`,
+  its actual source of truth). Git Workflow's "Merging" subsection consolidated as `CONTRIBUTING.md`'s sole
+  canonical copy, since `sync-unreleased-changes`/`sync-improvement-plan-gaps` need only the Branching Model and
+  Conventions subsections to remain in `AGENTS.md`
+- New `AGENTS.md` "🧩 Claude Code Skills" and "🗺️ Roadmap Planning" sections, both mirrored with a short pointer
+  in `CONTRIBUTING.md`
+- `AGENTS.md`'s icon registry backfilled with 25 previously-unregistered icons already in real use, plus a new
+  "Reserved" sub-table tracking the sibling `hpsc-web-vite` repository's frontend-specific icons — synced twice
+  this release as `hpsc-web-vite`'s own registry grew, reciprocally gaining `🧬` (Data model / DTOs) in return.
+  Several icon collisions resolved across `README.md`, `ARCHITECTURE.md`, `HISTORY.md`, `RELEASE_NOTES.md` and 17
+  archived per-version release notes
+- `CHANGELOG.md`'s duplicate, truncated `[5.0.0]` section removed, and a pre-existing broken example in the Serial
+  Commas convention (identical "e.g." and "not" contrast phrases) corrected
+- Project version bumped to 8.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.4.0 (September 3, 2026)
 
 **Theme:** Club Domain Defaults, Optional Club Numbers & Documentation Convention Hardening
