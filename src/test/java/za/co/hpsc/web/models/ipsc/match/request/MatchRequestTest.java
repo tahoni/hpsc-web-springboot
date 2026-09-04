@@ -21,8 +21,8 @@ class MatchRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchStageRequest stage = new MatchStageRequest(1L, 1, "Stage 1 - The Bank Job");
         MatchRequest request = new MatchRequest(1L, LocalDate.of(2026, 4, 10), "Club Championship",
-                LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0),
-                "Test Club", "Pistol", "Level 1", List.of(stage));
+                "Test Club", "Pistol", "Level 1", List.of(stage), LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0)
+        );
 
         // Act
         String json = mapper.writeValueAsString(request);

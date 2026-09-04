@@ -193,12 +193,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 null,
                 matchRequestForCSV.getMatchDate(),
                 matchRequestForCSV.getMatchName(),
-                matchRequestForCSV.getStartTime(),
-                matchRequestForCSV.getEndTime(),
-                matchRequestForCSV.getClub(),
-                matchRequestForCSV.getMatchFirearmType(),
-                matchRequestForCSV.getMatchCategory(),
-                parseStages(matchRequestForCSV.getStages()));
+                matchRequestForCSV.getClub(), matchRequestForCSV.getMatchFirearmType(), matchRequestForCSV.getMatchCategory(), parseStages(matchRequestForCSV.getStages()), matchRequestForCSV.getStartTime(),
+                matchRequestForCSV.getEndTime()
+        );
     }
 
     /**

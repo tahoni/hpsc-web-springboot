@@ -23,8 +23,8 @@ class MatchRequestForCSVTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequestForCSV request = new MatchRequestForCSV(LocalDate.of(2026, 4, 10), "Club Championship",
-                LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0),
-                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two");
+                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two", LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0)
+        );
 
         // Act
         String json = mapper.writeValueAsString(request);
