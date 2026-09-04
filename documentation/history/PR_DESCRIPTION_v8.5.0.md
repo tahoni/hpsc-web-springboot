@@ -7,7 +7,8 @@
 - New test coverage proves the two columns round-trip through the real H2/Hibernate/JPA layer
   (`IpscMatchServiceIntegrationTest`), not just mocked repositories, and that CSV bulk import maps them correctly.
 - Includes a small, unrelated British English documentation fix (`README.md`'s "License" → "Licence",
-  `CONTRIBUTING.md`'s self-violating Serial Commas example).
+  `CONTRIBUTING.md`'s self-violating Serial Commas example, and `AGENTS.md`'s `LICENSE.md` exception narrowed to
+  just the filename/content).
 
 ## 📦 Key Changes
 
@@ -25,6 +26,8 @@
 - CSV bulk import (`POST /matches/csv`) now requires `StartTime`/`EndTime` header columns, like every other
   `MatchRequestForCSV` property — existing CSV templates need updating (values may be left blank)
 - `IpscMatchServiceImpl`'s field-mapping methods now carry `startTime`/`endTime` through
+- `AGENTS.md`'s British English exception for `LICENSE.md` narrowed to just the filename/content — every other
+  reference to it now spells it "Licence"
 
 **Fixed**
 
