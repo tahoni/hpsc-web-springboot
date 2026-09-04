@@ -59,6 +59,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatch.startTime`, `IpscMatch.endTime`:** New nullable `LocalDateTime` columns — record when a match actually
   started and ended, alongside the existing `scheduledDate`
 
+##### Documentation
+
+- **`README.md`:** "License" heading/prose corrected to British English "Licence" (the `LICENSE.md` filename itself
+  is unchanged, per `AGENTS.md`'s British English exceptions for filenames)
+
 ##### API Models
 
 - **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** New nullable `startTime`/`endTime` fields, formatted per
@@ -93,6 +98,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `startTime`/
   `endTime` through between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
+
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`CONTRIBUTING.md`:** Its own Serial Commas rule example ("prose, comments, and Javadoc") violated the rule it was
+  illustrating — corrected to "prose, comments and Javadoc"
 
 ### 🧾 [8.4.2] - 2026-09-04
 
