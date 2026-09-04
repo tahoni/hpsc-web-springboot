@@ -152,8 +152,9 @@ spelling (e.g. "licence", "organisation", "colour", "initialise"), not American 
 ### Serial commas
 
 Lists of three or more items don't take a comma before the final `and`/`or` (e.g. "clubs, competitors and matches", not
-"clubs, competitors and matches") — consistent with the British English convention above. This doesn't apply to a comma
-joining two independent clauses (e.g. "the build passed, and the release was tagged"), only to the last item of a list.
+"clubs, competitors, and matches") — consistent with the British English convention above. This doesn't apply to a
+comma joining two independent clauses (e.g. "the build passed, and the release was tagged"), only to the last item of
+a list.
 
 ### Line wrapping
 

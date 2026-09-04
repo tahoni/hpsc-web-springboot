@@ -134,7 +134,8 @@ HTTP Request
 
 - Controllers must not contain business logic — delegate to services only.
 - All exceptions must extend `FatalException`, `NonFatalException` or `ValidationException`; `ControllerAdvice` maps
-  them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException`.
+  them to standard JSON error responses. Don't catch and re-throw as a generic `RuntimeException` — see
+  [`AGENTS.md`](AGENTS.md#-architecture)'s Exception handling subsection.
 - Enum-typed entity fields use an explicit `AttributeConverter` (see `converters/`) rather than
   `@Enumerated(EnumType.STRING)`.
 - REST endpoints use plural nouns for collections and a path variable for a single resource (`/matches/{matchId}`,
@@ -164,7 +165,7 @@ read it before writing or editing any documentation in this repository. Highligh
 - **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see
   [`AGENTS.md`'s list of exceptions](AGENTS.md#british-english) for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
-  "prose, comments and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
+  "prose, comments, and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
   [`AGENTS.md`'s Line wrapping rule](AGENTS.md#line-wrapping).
 - Every `##` heading gets a matching emoji, reused from the
@@ -172,11 +173,12 @@ read it before writing or editing any documentation in this repository. Highligh
 - **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't
   duplicate an interface method's Javadoc on its implementation unless the implementation adds behaviour the
   interface doesn't already describe — see [`AGENTS.md`'s Javadoc rule](AGENTS.md#javadoc) for the full requirements.
-- Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents — don't
-  batch changelog updates into a later PR.
+- Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents —
+  don't batch changelog updates into a later PR; see [`AGENTS.md`'s Git Workflow Conventions](AGENTS.md#conventions).
 - `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When
   updating `RELEASE_NOTES.md`, `HISTORY.md` or `CHANGELOG.md`, check whether `README.md`/`ARCHITECTURE.md` need the same
-  update (the "reverse sync rule").
+  update (the "reverse sync rule") — see
+  [`AGENTS.md`'s Evergreen Documentation section](AGENTS.md#-evergreen-documentation-readmemd--architecturemd).
 
 ---
 
@@ -200,24 +202,18 @@ reading of the project, revisited only when a gap closes, progresses or a new on
 
 ### Branching Model (GitFlow)
 
-This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) branching model:
+This repository follows [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) — see
+[`AGENTS.md`'s Git Workflow section](AGENTS.md#-git-workflow) for the full branching model and rationale. In short:
 
-- **`develop`** is the current development branch — all day-to-day work lands here first.
-- **`main`** is the production branch. It is only ever updated by promoting `develop` after a `release/vX.Y.Z` branch
-  has merged into it, or directly from a `hotfix/*` branch — never any other source.
-- **`feature/<short-description>`** — day-to-day feature and bug-fix work (e.g. `feature/shooter-log-power-factor`,
-  `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
-- **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes
-  (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see [🚢 Cutting a Release](#-cutting-a-release)
-  below) and are opened as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see
-  Merging below).
-- **`hotfix/<short-description>`** — urgent fixes for a defect already in production. Branch from, and PR directly into,
-  `main`, bypassing `develop` and any in-progress `release/vX.Y.Z` branch so the fix ships immediately. Also, merge/PR
-  the same fix into `develop` so it isn't lost when the next release is cut.
+- **`develop`** is the current development branch — all day-to-day work lands here first; **`main`** is the
+  production branch, updated only by promoting `develop` or directly from a `hotfix/*` branch.
+- **`feature/<short-description>`** — day-to-day work. Branch from, and PR back into, `develop`.
+- **`release/vX.Y.Z`** — cut from `develop` once ready to ship (see [🚢 Cutting a Release](#-cutting-a-release)
+  below), PR'd into `develop`; once merged, a second PR promotes `develop` into `main` (see Merging below).
+- **`hotfix/<short-description>`** — urgent production fixes. Branch from, and PR directly into, `main`; also
+  merged into `develop` afterwards so it isn't lost (see Merging below).
 
-**All branches are committed to `develop` first, never `main`.** `hotfix/*` is the sole, deliberate exception, and even
-then the same fix still lands on `develop` immediately afterwards (see Merging below). Every other branch — `feature/*`
-and `release/*` included — must never open a PR directly against `main`.
+Every branch except `hotfix/*` must land on `develop` first and never open a PR directly against `main`.
 
 ### Merging
 
@@ -234,24 +230,19 @@ and `release/*` included — must never open a PR directly against `main`.
 
 ### Conventions
 
-- **Commit in logical chunks.** One concern per commit — don't bundle a dependency bump, a documentation update and a
-  bug fix into a single commit.
-- **Track complex work with a todo list** so progress on multistep tasks stays visible.
-- Directory changes must stay in sync with documentation: whenever a root-level directory is added or removed, update
-  `ARCHITECTURE.md`'s Project Structure tree in the same change. Tracked tooling directories — `.claude/`,
-  `.github/` — belong in that tree; only `.gitignore`-covered directories are excluded from it. Package/directory
-  comments describe purpose generically and never list the individual classes inside — those drift too fast to keep
-  in sync.
+See [`AGENTS.md`'s Git Workflow Conventions](AGENTS.md#conventions) and
+[Directory Tree Maintenance](AGENTS.md#-directory-tree-maintenance) sections for the full rules. In short: commit in
+logical chunks (one concern per commit), track complex work with a todo list, update `CHANGELOG.md` in the same
+change, and keep `ARCHITECTURE.md`'s Project Structure tree in sync whenever a root-level directory is added or
+removed.
 
 ---
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                                                                 | Trigger                                                                                                 |
-|-----------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                                                               | Push / PR to `main` / `develop`; weekly schedule (`.github/workflows/codeql.yml`)                       |
-| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`)                                   | Push / PR to `main` / `develop` (`.github/workflows/build.yml`); H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 97% line coverage (`check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above                                        |
+See [`ARCHITECTURE.md`'s CI/CD & Quality Gates table](ARCHITECTURE.md#-cicd--quality-gates) for the full gate/tool/
+trigger matrix (CodeQL security analysis, Maven build & tests, JaCoCo coverage) rather than duplicating it here, so
+the two never drift out of sync.
 
 ---
 

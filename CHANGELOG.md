@@ -122,6 +122,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CONTRIBUTING.md`:** Its Documentation Conventions highlights' five remaining unlinked "see `AGENTS.md`'s X
   rule" mentions (British English's exceptions list, Serial commas, Line wrapping, the icon registry, Javadoc) now
   link to the specific `AGENTS.md` subsection anchor each one names, instead of plain backtick text
+- **`CONTRIBUTING.md`:** Condensed the remaining full/near-verbatim duplicates of `AGENTS.md` content into
+  highlights-and-link references, matching the pattern already used elsewhere in this file: the Branching Model
+  (GitFlow) bullets (kept in `AGENTS.md` only, since `sync-unreleased-changes`/`sync-improvement-plan-gaps` read it
+  there for hotfix-branch detection), the Git Workflow "Conventions" and Directory Tree Maintenance bullets, the
+  Exception handling bullet under Architecture at a Glance, and the CHANGELOG-same-change and Evergreen/reverse-sync
+  bullets under Documentation Conventions — each now links to the specific `AGENTS.md` anchor instead of restating
+  it. Also condensed the CI/CD & Quality Gates table into a link to `ARCHITECTURE.md`'s own table, its actual source
+  of truth (per `AGENTS.md`'s own cross-reference), since the two had drifted to slightly different wording
 
 ### 🐛 Fixed
 
@@ -160,6 +168,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`documentation/roadmap/improvement-plan.md`:** Its own "Roadmap" heading and both inline references to
   `HISTORY.md`'s "Future Roadmap Implications" section used `🚀` instead of `🗺️` — the same inconsistency just
   fixed in `HISTORY.md` itself, now corrected here too, plus a pre-existing line-wrap violation nearby
+- **`AGENTS.md`/`CONTRIBUTING.md`:** Serial Commas rule's own example was broken in both files — the "e.g." phrase
+  and its "not" contrast phrase were identical (e.g. "clubs, competitors and matches", not "clubs, competitors and
+  matches"), so it never actually illustrated the rule; the "not" side now shows the Oxford-comma version it's
+  meant to contrast against
 
 ## 🧾 [8.4.0] - 2026-09-03
 
