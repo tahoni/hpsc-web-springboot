@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.4.1](#-841---2026-09-04) ← Current
+- [🧾 Version 8.4.2](#-842---2026-09-04) ← Current
+- [🧾 Version 8.4.1](#-841---2026-09-04)
 - [🧾 Version 8.4.0](#-840---2026-09-03)
 - [🧾 Version 8.3.1](#-831---2026-09-02)
 - [🧾 Version 8.3.0](#-830---2026-09-02)
@@ -51,6 +52,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [8.4.2] - 2026-09-04
+
 #### ➕ Added
 
 ##### Documentation
@@ -61,6 +64,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CONTRIBUTING.md`:** Intro now points to `AGENTS.md` for the full set of conventions AI coding agents and
   contributors follow, and states that `AGENTS.md` wins if anything else in the repository's documentation ever
   contradicts it
+
+#### 🔄 Changed
+
+##### Documentation
+
+- **`CHANGELOG.md`:** Title changed from "Changelog" to "HPSC Website Backend", with a new "🧾 Change Log"
+  second-level heading beneath it, matching `README.md`'s existing project name; every heading below it — Table of
+  Contents, each version and their Added/Changed/Fixed/Removed/Security subsections and area sub-headers — drops one
+  level to nest correctly under the new heading
+- **`CONTRIBUTING.md`/`HISTORY.md`:** H1 titles gain the same "HPSC Website Backend" prefix, for consistency with
+  `README.md` and the retitled `CHANGELOG.md`
 
 ### 🧾 [8.4.1] - 2026-09-04
 
