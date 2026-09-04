@@ -452,7 +452,7 @@ then the same fix still lands on `develop` immediately afterwards (see [`CONTRIB
 section](CONTRIBUTING.md#merging)). Every other branch — `feature/*` and `release/*` included — must never open a PR
 directly against `main`.
 
-Which merge strategy each branch type uses, PR ordering, tagging `main` and branch cleanup are a human contributor's
+Which merge strategy each branch type uses, PR ordering, tagging `main` and branch clean-up are a human contributor's
 GitHub mechanics, not something an AI agent executes unprompted — see
 [`CONTRIBUTING.md`'s 🔀 Git & PR Workflow section](CONTRIBUTING.md#-git--pr-workflow) for the full merging procedure.
 

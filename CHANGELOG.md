@@ -111,7 +111,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   completed", since it's also the established icon for the "Completed" status alongside `🟡`/`⚪` throughout
   `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`
 - **`AGENTS.md`/`CONTRIBUTING.md`:** Git Workflow's "Merging" subsection — which PR-merge strategy, tagging and
-  branch-cleanup steps each branch type gets — removed from `AGENTS.md` and consolidated as `CONTRIBUTING.md`'s
+  branch-clean-up steps each branch type gets — removed from `AGENTS.md` and consolidated as `CONTRIBUTING.md`'s
   sole, canonical copy, since it describes a human contributor's GitHub mechanics rather than something referenced
   by any Claude Code skill; `AGENTS.md`'s Branching Model bullets now point to `CONTRIBUTING.md`'s Merging section
   instead of duplicating it. `CONTRIBUTING.md`'s copy also gains a proper link to its own "Cutting a Release"
