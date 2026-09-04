@@ -1,4 +1,4 @@
-# Project History
+# HPSC Website Backend History
 
 A comprehensive historical overview of the HPSC Website Backend project from start to current release, documenting the
 evolution of architecture, features and design philosophy across all versions.
@@ -20,6 +20,22 @@ evolution of architecture, features and design philosophy across all versions.
 ---
 
 ## 📅 Historical Timeline
+
+### Version 8.4.2 (September 4, 2026)
+
+**Theme:** Root Document Title Standardisation & Source-of-Truth Clarification
+
+**Key Focus:**
+
+- `AGENTS.md` now states, right before its Documentation File Map, that it is this project's ultimate source of
+  truth for conventions — every other file's workflow/convention guidance points back to it rather than restating
+  it; `CONTRIBUTING.md`'s intro carries the matching pointer, stating `AGENTS.md` wins if anything else in the
+  repository's documentation ever contradicts it
+- `CHANGELOG.md`'s title changed from "Changelog" to "HPSC Website Backend", with a new "🧾 Change Log"
+  second-level heading beneath it, matching `README.md`'s existing project name; every heading below it — Table of
+  Contents, each version and their category/area sub-headers — demoted one level to nest correctly under the new
+  heading. `CONTRIBUTING.md`/`HISTORY.md`'s H1 titles gain the same "HPSC Website Backend" prefix for consistency
+- Project version bumped to 8.4.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 8.4.1 (September 4, 2026)
 
