@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ---
 
-## Table of Contents
+### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
 - [🧾 Version 8.4.1](#-841---2026-09-04) ← Current
@@ -49,11 +49,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ---
 
-## 🧪 [Unreleased]
+### 🧪 [Unreleased]
 
-### ➕ Added
+#### ➕ Added
 
-#### Documentation
+##### Documentation
 
 - **`AGENTS.md`:** Now states, right before its Documentation File Map, that it is this project's ultimate source of
   truth for conventions — every other file's workflow/convention guidance (`CONTRIBUTING.md` included) points back to
@@ -62,11 +62,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   contributors follow, and states that `AGENTS.md` wins if anything else in the repository's documentation ever
   contradicts it
 
-## 🧾 [8.4.1] - 2026-09-04
+### 🧾 [8.4.1] - 2026-09-04
 
-### ➕ Added
+#### ➕ Added
 
-#### Documentation
+##### Documentation
 
 - **`AGENTS.md`/`CONTRIBUTING.md`:** New "🧩 Claude Code Skills" section documenting the project-specific skills
   under `.claude/skills/` — `AGENTS.md` lists each skill and its purpose in a table; `CONTRIBUTING.md` adds a short
@@ -104,9 +104,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`:** `🗂️` (Documentation file index) and `🌲` (Evergreen documentation) added to the icon registry
   table for the "Documentation File Map" and "Evergreen Documentation" headings, which had no registry entry
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Documentation
+##### Documentation
 
 - **`documentation/recommendations/flyway-migration-versioning.md`/`standard-rest-conventions.md`:** "Overview"
   headings (and their Table of Contents entries) now use `📖`, already registered in `AGENTS.md`'s icon table for
@@ -150,9 +150,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   bullets verbatim without citing it — now links to `AGENTS.md#-project-overview`, matching the same fix just made
   in the sibling `hpsc-web-vite` repository's `CONTRIBUTING.md` for its analogous routing bullet
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Documentation
+##### Documentation
 
 - **`CHANGELOG.md`:** Removed a duplicate, truncated `## 🧾 [5.0.0] - 2026-02-24` section that preceded the real,
   complete one — the duplicate heading text meant GitHub suffixed the second heading's anchor, so the Table of
@@ -192,11 +192,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   matches"), so it never actually illustrated the rule; the "not" side now shows the Oxford-comma version it's
   meant to contrast against
 
-## 🧾 [8.4.0] - 2026-09-03
+### 🧾 [8.4.0] - 2026-09-03
 
-### ➕ Added
+#### ➕ Added
 
-#### Database
+##### Database
 
 - **`V7_3_0__seed_club_data.sql`:** New Flyway migration seeds the `club` table with the 5 named
   `ClubIdentifier` constants (`SOSC`, `HPSC`, `PMPSC`, `VISITOR`, `ALL`); `UNKNOWN` is the enum's
@@ -204,16 +204,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `abbreviation` come from `ClubIdentifier.name`/`abbreviation`, and `identifier` is set to the
   same abbreviation, matching `ClubIdentifierConverter`'s persisted representation
 
-#### Enums
+##### Enums
 
 - **`ClubIdentifier`:** New `ALL` constant (`"Eufees Clubs"` / `"All"` / `"ALL"`) alongside the
   existing club constants; class Javadoc extended to explain that `ALL` is used in the Match
   domain to indicate a match hosted jointly by the three real clubs (`SOSC`, `HPSC`, `PMPSC`)
   rather than by a single one of them
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### API
+##### API
 
 - **`IpscCompetitorController`/`IpscCompetitorServiceImpl`:** `clubNumber` is no longer unconditionally required on
   competitor create/update — it's now required only when the competitor's home club is HPSC, and forced to
@@ -236,7 +236,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscCompetitorServiceImpl.isHpscMember()` already uses for `HOME_CLUB_IDENTIFIER`. Closes
   `documentation/roadmap/improvement-plan.md`'s Gap #9
 
-#### Configuration
+##### Configuration
 
 - **`pom.xml`:** `jacoco-maven-plugin`'s `check` execution `LINE`/`COVEREDRATIO` minimum raised from `0.86` to
   `0.97`, now genuinely near the real baseline (98.16%/98.94% line/branch, 836 tests as of that pass, reconfirmed
@@ -246,7 +246,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   98.44%/98.98% line/branch, 868 tests — still comfortably clear of the new floor. Closes
   `documentation/roadmap/improvement-plan.md`'s Gap #4
 
-#### Constants
+##### Constants
 
 - **`SystemConstants`:** New `TIME_FORMAT` (`"HH:mm"`), `DEFAULT_DATE_FORMAT` (alias for `ISO_DATE_FORMAT`) and
   `DEFAULT_DATE_TIME_FORMAT` (alias for `ISO_DATE_TIME_FORMAT`) constants; `ISO_DATE_TIME_FORMAT` now composes
@@ -259,20 +259,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   anywhere outside their own declaration (e.g. `EXCLUDE_ICS_ALIAS`, `MAX_SAPSA_NUMBER`, `STAGE_POINTS_SCALE`,
   `DEFAULT_MATCH_CATEGORY`) were deliberately left undocumented rather than inventing a rationale for dead code
 
-#### Controllers
+##### Controllers
 
 - **`IpscCompetitorController`:** Javadoc's hardcoded "HPSC" mentions in each `@throws ValidationException`
   description replaced with `{@link IpscConstants#HOME_CLUB_ABBREVIATION}` links, matching the constants
   centralisation above
 
-#### Database
+##### Database
 
 - **`Competitor.clubNumber`:** Column relaxed from `nullable = false` to nullable, matching the new HPSC-only
   requirement above; the `uk_competitor_club_number` unique constraint is unchanged, since MySQL/H2 treat
   multiple `NULL`s as distinct under a `UNIQUE` constraint. New `V7_4_0__make_club_number_nullable.sql` migration
   relaxes the column and clears `club_number` on any existing competitor whose home club isn't HPSC
 
-#### Documentation
+##### Documentation
 
 - **`AGENTS.md`:** New Tech Stack note explaining that `db/migration/V<X>_<Y>_<Z>__*.sql` filenames are their own
   independent counter, baselined at `7.0.0`, and do not track `pom.xml`'s app version — prompted by
@@ -306,7 +306,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   condensed Roadmap section document the new convention; a stale `improvement-plan-tasks.md#-next` anchor left over
   from the old phasing, in Gap #1's checklist link, corrected to `#-completed`
 
-#### Models
+##### Models
 
 - **`AwardRequestForCSV`, `CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`, `MatchRequestForCSV`:**
   Each `LocalDate` field's `@JsonFormat(pattern = ...)` now points at `SystemConstants.DEFAULT_DATE_FORMAT`
@@ -317,7 +317,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   default-to-`IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` behaviour above, instead of implying the name is
   always resolved against an existing club
 
-#### Services
+##### Services
 
 - **`IpscCompetitorService`:** Same Javadoc link swap as `IpscCompetitorController` above, across
   `createCompetitor`/`createCompetitors`/`updateCompetitor`/`patchCompetitor`'s `@throws ValidationException`
@@ -327,7 +327,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   each sitting between two public methods; moved down after every public method, alongside the rest of each
   class's protected helpers. No behavioural change, purely a reorder
 
-#### Tests
+##### Tests
 
 - **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceIntegrationTest`,
   `IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Hardcoded `ClubIdentifier.HPSC` references switched to
@@ -350,20 +350,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   thrown by the service propagates through the controller, mirroring the existing `createMatches` coverage for
   the same exception type
 
-#### Tooling
+##### Tooling
 
 - **`sync-improvement-plan-gaps`, `update-improvement-plan-gaps`:** Both skills updated to read/write the new
   ✅ Completed / 🟡 Partially Completed / ⚪ Open section structure above instead of the old Now/Next/Later/Ongoing
   phase headers, including moving a gap's whole block between sections as its status changes
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Database
+##### Database
 
 - **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment
   ("infrequently-changed" → "infrequently changed")
 
-#### Documentation
+##### Documentation
 
 - **`ARCHITECTURE.md`:** Dropped `HpscConstants` from the Project Structure tree's `constants/` comment and the
   Constants support-layer subsection's class list — the class no longer exists, removed earlier this branch
@@ -422,15 +422,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Directory Tree Maintenance rule and `CONTRIBUTING.md`'s condensed mention both gained a matching bullet making the
   no-class-names rule explicit for the whole tree, not just skills
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Constants
+##### Constants
 
 - **`HpscConstants`:** Removed entirely. Its sole constant, `HPSC_INPUT_DATE_FORMAT`, was just an alias for
   `SystemConstants.ISO_DATE_FORMAT`; every former user now references `SystemConstants.DEFAULT_DATE_FORMAT` or
   `IpscConstants.IPSC_INPUT_DATE_FORMAT` directly instead (see Changed → Models above)
 
-### 🔐 Security
+#### 🔐 Security
 
 - **`tomcat-embed-core`/`tomcat-embed-el`/`tomcat-embed-websocket`:** Overridden `11.0.24` → `11.0.25` via a new
   `pom.xml` `tomcat.version` property, closing three critical GitHub-flagged advisories:
@@ -441,27 +441,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   control) — all transitive via `spring-boot-starter-tomcat`, still pinned to `11.0.24` by
   `spring-boot-starter-parent:4.1.1`'s dependency management with no newer 4.1.x release yet published
 
-## 🧾 [8.3.1] - 2026-09-02
+### 🧾 [8.3.1] - 2026-09-02
 
-### ➕ Added
+#### ➕ Added
 
-#### CI/CD
+##### CI/CD
 
 - **`.github/workflows/build.yml`:** New workflow runs `./mvnw verify -Pcoverage` on push/PR to `main`/`develop`,
   mirroring `codeql.yml`'s trigger branches — sets up JDK 25 via `actions/setup-java` (Maven-cached), builds/tests
   via `sh ./mvnw` (`mvnw` isn't tracked with the execute bit in git) and uploads the JaCoCo HTML/XML report as a
   build artefact. Closes `documentation/roadmap/improvement-plan.md`'s Gap #2
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Configuration
+##### Configuration
 
 - **`pom.xml`:** New `jacoco-maven-plugin` `check` execution in the `coverage` profile enforces a `BUNDLE`-level
   `LINE`/`COVEREDRATIO` minimum, initially `0.51` (51%) as a deliberately low regression backstop, then raised to
   `0.86` (86%) within the same branch, wired into `build.yml`'s CI gate so a coverage regression fails the build —
   still short of the ~98% real baseline. Partially progresses Gap #4
 
-#### Documentation
+##### Documentation
 
 - **`README.md`/`ARCHITECTURE.md`:** Confirmed `AwardService.createAwards()`/`ImageService.createImages()` CSV
   processing is intentionally stateless by design, not an unfinished persistence layer — closes Gap #3
@@ -472,7 +472,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (98.16%/98.94% line/branch, 836 tests) and the JaCoCo floor tightened twice within the same branch (51% → 86%);
   `HISTORY.md`'s coverage figure refresh is done, recorded in its Historical Timeline, Phase 24 and Milestone 24
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
 - **`ARCHITECTURE.md`/`documentation/roadmap/improvement-plan.md`:** Corrected stale `processCsv()` method
   references (renamed to `createAwards()`/`createImages()` in v8.0.0) in the Award/Image CSV Processing Flow
@@ -480,17 +480,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AwardControllerTest`/`ImageControllerTest`:** Corrected stale `// processCsv()` test-grouping comments to
   `// createAwards()`/`// createImages()`, matching the same v8.0.0 rename
 
-## 🧾 [8.3.0] - 2026-09-02
+### 🧾 [8.3.0] - 2026-09-02
 
-### ➕ Added
+#### ➕ Added
 
-#### Controllers
+##### Controllers
 
 - **`IpscMatchController`:** New `createMatches` endpoint (`POST /ipsc/matches/bulk`, consumes `text/csv`)
   for bulk-creating IPSC matches, together with their stages, from CSV data, following the same
   bulk-import convention as `IpscCompetitorController.createCompetitors`
 
-#### Services
+##### Services
 
 - **`IpscMatchService`/`IpscMatchServiceImpl`:** New `createMatches` method that parses CSV data into
   `MatchRequestForCSV` rows and creates each match via the existing `createMatch` validation/club/
@@ -499,7 +499,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   semicolon-separated `Stages` cell into `MatchStageRequest`s, splitting each entry on its first `-` into
   `<stageNumber>-<stageName>`
 
-#### Models
+##### Models
 
 - **`MatchRequestForCSV`:** New class-level Javadoc and `@JsonCreator` constructor, binding `MatchDate`/
   `MatchName`/`Club`/`MatchFirearmType`/`MatchCategory`/`Stages` to their `UpperCamelCase`
@@ -509,7 +509,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchResponseHolder`:** New response container (`models/ipsc/match/response/`) holding the
   `MatchResponse`s created by a bulk CSV import, mirroring `CompetitorResponseHolder`
 
-#### Tests
+##### Tests
 
 - **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON
   (de)serialization, its CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
@@ -522,17 +522,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceImplTest`:** New tests covering the impl-only `parseStages`/`readMatches`/`toRequest`
   protected helper methods
 
-## 🧾 [8.2.0] - 2026-09-01
+### 🧾 [8.2.0] - 2026-09-01
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Domain
+##### Domain
 
 - **`Competitor`:** `emailAddress` (a single, optional `String`) replaced with `emailAddresses`
   (`List<String>`), mapped via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email`
   child table — a competitor can now have zero or more email addresses
 
-#### Models
+##### Models
 
 - **`CompetitorRequest`, `CompetitorResponse`:** `emailAddress` (`String`) renamed to `emailAddresses`
   (`List<String>`)
@@ -540,24 +540,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   CSV cell, but now holding zero or more semicolon-separated email addresses (e.g.
   `"a@x.com;b@x.com"`), split into a list when mapped onto `CompetitorRequest`
 
-#### Services
+##### Services
 
 - **`IpscCompetitorServiceImpl`:** `applyFields`, `patchCompetitor`, `toRequest` and `toResponse`
   updated for `emailAddresses`; new `splitEmailAddresses` helper parses a CSV row's
   semicolon-separated email cell into a `List<String>`, trimming entries and dropping blanks
 
-#### Controllers
+##### Controllers
 
 - **`IpscCompetitorController`:** Bulk CSV endpoint's Swagger example header updated from
   `EmailAddress` to `EmailAddresses`
 
-#### Database
+##### Database
 
 - **`V7_2_0__add_competitor_emails.sql`:** New Flyway migration adding the `competitor_email` table
   (`competitor_id` FK, `email_address`), backfilling it from any existing non-blank
   `competitor.email_address` values, then dropping that column
 
-#### Constants
+##### Constants
 
 - **`SystemConstants.ARRAY_SEPARATOR`:** New shared `";"` constant, and `ImageServiceImpl`/
   `AwardServiceImpl`'s bulk CSV parsing switched from `"|"` to it, so every bulk CSV endpoint's
@@ -565,16 +565,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   convention; the `ImageController`/`AwardController` Swagger examples and their CSV parsing tests
   are updated to match
 
-#### Documentation
+##### Documentation
 
 - **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates tables' `Static Analysis` row removed
 - **`AGENTS.md`:** `CodeQL/Qodana/JaCoCo` trigger reference updated to `CodeQL/JaCoCo`
 - **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #7 (Qodana CI wiring) closed as
   not applicable, rather than delivered — see 🗑️ Removed below for why
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Services
+##### Services
 
 - **`IpscCompetitorServiceImpl`:** `applyFields`/`patchCompetitor` now defensively copy
   `request.getEmailAddresses()` into a new `ArrayList` before storing it on the entity, instead of storing the
@@ -583,27 +583,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `FatalException`/`NonFatalException`/`ValidationException` hierarchy entirely; found while adding multi-address
   test coverage for `patchCompetitor`
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### CI/CD & Configuration
+##### CI/CD & Configuration
 
 - **`.github/workflows/qodana.yml`, `qodana.yaml`:** Qodana static analysis removed. It had failed on every CI run
   since v8.1.1 added it — a missing `QODANA_TOKEN` repository secret (release-line Qodana linters require one
   since 2023.2) and an unconditional SARIF-upload step that also failed independently — so there was no working
   configuration left to preserve
 
-## 🧾 [8.1.1] - 2026-09-01
+### 🧾 [8.1.1] - 2026-09-01
 
-### ➕ Added
+#### ➕ Added
 
-#### CI/CD & Configuration
+##### CI/CD & Configuration
 
 - **`.github/workflows/qodana.yml`:** New workflow running JetBrains' `qodana-action` against the existing
   `qodana.yaml` configuration, triggered on push/PR to `develop` and `main` (mirroring `codeql.yml`'s trigger
   branches). Results upload as SARIF to GitHub code scanning alongside CodeQL, so no Qodana Cloud token or other
   secret is required
 
-#### Documentation
+##### Documentation
 
 - **`CLAUDE.md`:** New "Working on Complex Tasks" section instructing use of the TodoWrite tool for multistep or
   non-trivial tasks, matching `AGENTS.md`'s existing "Track complex work with a todo list" Git Workflow convention
@@ -613,7 +613,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Criteria) and their not-evergreen, closed-in-place maintenance convention — the only one of `README.md`/
   `AGENTS.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md` that didn't already list these files
 
-#### Tooling
+##### Tooling
 
 - **`/update-improvement-plan-gaps`:** New Claude Code skill that audits the codebase against
   `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` and records any newly identified,
@@ -626,7 +626,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   gap number itself; flags anything that looks like one for a separate `/update-improvement-plan-gaps` sweep instead.
   It also never commits on its own
 
-#### Testing
+##### Testing
 
 - **`NonFatalExceptionTest`, `FatalExceptionTest`, `ValidationExceptionTest`:** New test classes covering all
   constructor overloads of the three exception hierarchy base classes, closing a real regression — these existed as
@@ -648,9 +648,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   structurally-unreachable `IOException` catch blocks in the CSV `read*()` methods, `ImageResponse`'s dead
   null-fallback branch, the unused `IpscConstants` class, and `HpscWebApplication.main()`)
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Build & Metadata
+##### Build & Metadata
 
 - Project version bumped to **8.1.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 - **`pom.xml`:** Spring Boot parent bumped `4.1.0` → `4.1.1`. As part of this:
@@ -667,7 +667,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `spring-boot-dependencies:4.1.1`'s own managed default (also `3.1.5`) via the parent POM directly, not just an
   echoed property. Verified: full test suite (775 tests) passes with the override removed
 
-#### Documentation
+##### Documentation
 
 - **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #1 (match/competitor service and
   controller layer) and Gap #5 (`jackson-databind` version override) marked ✅ Closed — in v8.0.0 and by this
@@ -683,7 +683,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   respectively (described tool-agnostically, without naming the skill). Also fixes a stale Build & Run Commands
   pointer that named only CodeQL/JaCoCo among `ARCHITECTURE.md`'s CI/CD gates, missing Qodana
 
-#### Tooling
+##### Tooling
 
 - **`.claude/skills/generate-pr-description` renamed to `prep-version-release`:** Better reflects what the skill
   actually does (the whole release-prep checklist, not just the PR description step); its `generate-pr-summary`
@@ -697,31 +697,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   extended — the table is synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change
   there can leave it stale. `improvement-plan.md`'s own "🎯 Purpose & Scope" section states the same dependency
 
-## 🧾 [8.1.0] - 2026-09-01
+### 🧾 [8.1.0] - 2026-09-01
 
-### ➕ Added
+#### ➕ Added
 
-#### Controllers
+##### Controllers
 
 - **`IpscCompetitorController`:** New `createCompetitors` endpoint (`POST /ipsc/competitors/bulk`, consumes
   `text/csv`) for bulk-creating IPSC competitors from CSV data, following the same bulk-import convention as
   `AwardController.createAwards`/`ImageController.createImages`
 
-#### Services
+##### Services
 
 - **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New `createCompetitors` method that parses CSV data into
   `CompetitorRequestForCSV` rows and creates each competitor via the existing `createCompetitor` validation/gender/
   home-club-resolution logic — unlike `AwardService`/`ImageService`'s CSV endpoints, which only build response
   objects without persisting
 
-#### Models
+##### Models
 
 - **`CompetitorRequestForCSV`:** New CSV-mapped request model (`models/ipsc/competitor/request/`) for bulk competitor
   import, mirroring `CompetitorRequest`'s fields other than `competitorId`
 - **`CompetitorResponseHolder`:** New response container (`models/ipsc/competitor/response/`) holding the
   `CompetitorResponse`s created by a bulk CSV import
 
-#### Tests
+##### Tests
 
 - **`IpscCompetitorControllerTest`:** New tests covering `createCompetitors`'s `201` response, delegation to the
   service and propagation of `ValidationException`/`NonFatalException`/`FatalException`
@@ -750,9 +750,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   each as a `csvMapper.addMixIn(...)` mixin onto its plain counterpart — the same pattern
   `AwardServiceImpl`/`ImageServiceImpl` use for `AwardRequestForCSV`/`ImageRequestForCsv`
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Models
+##### Models
 
 - **`MatchRequest`, `MatchStageRequest`, `MatchResponse`, `MatchStageResponse`, `MatchOverallScoresRequest`,
   `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`, `MatchStageScoresRequestForCSV`:** Added `@NotNull`
@@ -801,18 +801,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   the field-level annotation already present alongside the constructor-level one on
   `CompetitorRequestForCSV`/`CompetitorRequest`
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Configuration
+##### Configuration
 
 - **`application.properties`:** `hpsc.web.app.club.filter.abbreviation` — not read anywhere in the codebase via
   `@Value`/`@ConfigurationProperties`, and not referenced by any other `application-*.properties` file
 
-## 🧾 [8.0.0] - 2026-08-31
+### 🧾 [8.0.0] - 2026-08-31
 
-### ➕ Added
+#### ➕ Added
 
-#### Controllers
+##### Controllers
 
 - **`IpscMatchController`:** Rebuilt from an empty stub into a full CRUD controller on `/ipsc/matches` — `createMatch`
   (`POST`), `updateMatch` (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update),
@@ -822,7 +822,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `createCompetitor` (`POST`), `updateCompetitor` (`PUT /{competitorId}`, full replace), `patchCompetitor`
   (`PATCH /{competitorId}`, partial update) and `getCompetitor` (`GET /{competitorId}`)
 
-#### Services
+##### Services
 
 - **`IpscMatchService`/`IpscMatchServiceImpl`:** New service backing `IpscMatchController` — resolves the request's club
   by name (404 via `NonFatalException` if not found) and its firearm type/category by name (400 via
@@ -837,7 +837,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchService`'s club, the home club (and now gender) is optional — a `null`/blank name simply leaves the field
   unset, and `updateCompetitor`'s full replace clears any previously set home club/gender that the request omits
 
-#### Models
+##### Models
 
 - **`MatchRequest`:** Gains `matchFirearmType`/`matchCategory` fields, typed as free-text `String`s resolved by name
   against `FirearmType`/`MatchCategory` in the service layer (matching how `club` is already resolved against `Club`) —
@@ -852,13 +852,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   's endpoints — mirrors `CompetitorRequest`'s fields, except `homeClub` is typed as `ClubIdentifier` rather than a
   plain club-name `String`, since a persisted competitor's home club is always resolvable
 
-#### Converters
+##### Converters
 
 - **`GenderConverter`:** New `AttributeConverter<Gender, String>`, wired onto `Competitor.gender` via `@Convert` —
   converts blank/invalid stored values to `null` instead of letting `@Enumerated(STRING)` throw, matching the
   null-safety already used by the other enum converters
 
-#### Tests
+##### Tests
 
 - **`IpscMatchControllerTest`:** New Mockito-only unit test covering `IpscMatchController`'s five endpoints
 - **`IpscMatchServiceIntegrationTest`:** New H2-backed integration test covering `IpscMatchService`'s full contract —
@@ -883,7 +883,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`GenderConverterTest`:** New unit test covering `GenderConverter`'s `convertToDatabaseColumn`/
   `convertToEntityAttribute`, including the null/blank/unrecognised-name-to-`null` fallback behaviour
 
-#### Documentation
+##### Documentation
 
 - **`documentation/recommendations/standard-rest-conventions.md`:** New reference document covering REST endpoint (URL)
   and method naming conventions, grounded in this codebase's actual controllers (`AwardController`/`ImageController`'s
@@ -893,7 +893,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   between 100 and 120 characters, excluding GFM tables, fenced code blocks, directory trees and diagrams;
   `CONTRIBUTING.md`'s Documentation Conventions summary updated to reference it
 
-#### Tooling
+##### Tooling
 
 - **`/generate-commit-message`:** Now also surfaces commits already made on the current branch (via `git merge-base`
   against `develop`/`main`), so drafted messages and CHANGELOG entries stay consistent with — and don't duplicate —
@@ -902,16 +902,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   repeated within the same `### <Category>` block and merges them into one, concatenating their bullets in original
   order — catches drift left by earlier runs or by commits that each added their own block for the same area
 
-#### CI/CD & Configuration
+##### CI/CD & Configuration
 
 - **`qodana.yaml`:** Re-added — `jetbrains/qodana-jvm:2026.2` linter on the `qodana.starter` profile, targeting JDK
   25; quality-gate thresholds left commented out. `ARCHITECTURE.md`'s Technology Stack and CI/CD & Quality Gates
   tables, and `CONTRIBUTING.md`'s own Quality Gates table, reverse-synced to list it again as running locally/via IDE
   only, since no CI workflow triggers it
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Models
+##### Models
 
 - **`MatchOverallResultRequest`/`MatchStageResultRequest`:** Renamed to `MatchOverallScoresRequest`/
   `MatchStageScoresRequest` (with their CSV variants) — each instance holds every competitor's scores for a match/stage,
@@ -935,7 +935,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ControllerResponse`, `Request`, `Response`, `AwardRequestForCSV`, `AwardCeremonyResponse`, `AwardResponse`,
   `ImageRequest`, `ImageResponse`:** Added `@since` tags to individual methods introduced later than the class itself
 
-#### Controllers
+##### Controllers
 
 - **`AwardController`, `ImageController`:** Their `createAwards`/`createImages` methods already followed this project's
   action-named REST method convention; the underlying `AwardService.processCsv`/`ImageService.processCsv` calls they
@@ -946,7 +946,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscCompetitorController.createCompetitor`'s create-endpoint convention; `@Operation` summary/description reworded
   from generic CSV processing to bulk creation
 
-#### Documentation
+##### Documentation
 
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Rewrapped to a consistent ~120-character line width — no
   content changes
@@ -982,7 +982,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CONTRIBUTING.md`:** Layered-architecture note narrowed from "the match/competitor domain's service layer" to "the
   match/competitor scoring domain's service layer", since the competitor/match CRUD service layer now exists
 
-#### Tests
+##### Tests
 
 - **`AwardServiceIntegrationTest`, `AwardServiceTest`, `ImageServiceIntegrationTest`, `ImageServiceTest`,
   `IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceIntegrationTest`,
@@ -1007,7 +1007,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `PowerFactorTest`:** Updated to call the renamed `fromName`/`fromAbbreviation`/`fromCode`/`fromAbbreviationOrName`
   factory methods, including their test method names (e.g. `testGetByAbbreviation_*` → `testFromAbbreviation_*`)
 
-#### Configs
+##### Configs
 
 - **`ControllerAdvice`:** Gains a class-level `@since 1.0.0` tag and full `@param`/`@return` Javadoc on every exception
   handler and helper method — none of it was previously documented; `@since` tags also added to the individual
@@ -1015,7 +1015,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   at `5.4.0`; `handleHttpMessageConversionException`, `handleUnhandledException`, `buildErrorResponse` and both
   `logError` overloads at `7.0.0`
 
-#### Services
+##### Services
 
 - **`ImageService`:** Added `@since 1.0.0` class-level tag
 - **`AwardService`:** Added `@since 1.1.0` class-level tag
@@ -1024,7 +1024,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   CSV-to-response transform (no persistence) and now documents the previously-undeclared `ValidationException` thrown
   for null/blank/unparseable CSV
 
-#### Utils
+##### Utils
 
 - **`ValueUtil`:** Added `@since 1.1.0` class-level tag
 - **`NumberUtil`, `StringUtil`:** Added `@since 1.1.3` class-level tags
@@ -1036,7 +1036,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`NumberUtil`, `StringUtil`, `ValueUtil`:** Added `@since` tags to individual methods introduced later than the class
   itself — e.g. `ValueUtil.nullAsDefault`/`nullAsDefaultString` at `7.0.0`, added long after the class's own `1.1.0`
 
-#### Constants
+##### Constants
 
 - **`HpscConstants`:** Added `@since 1.1.0` class-level tag
 - **`IpscConstants`, `SystemConstants`:** Added `@since 1.1.3` class-level tags
@@ -1047,7 +1047,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IPSC_*` format constants are consistent with the plain ISO formats used elsewhere in the project
 - **`SystemConstants`:** Removed `T_SEPARATED_DATE_TIME_FORMAT` — its only consumer, `IpscConstants`, no longer uses it
 
-#### Enums
+##### Enums
 
 - **`ClubIdentifier`:** Added class-level Javadoc matching the convention already used by the other enums, and corrected
   its `fromName`/`fromAbbreviation`/`fromCode` Javadoc, which still referred to a stale `ClubReference` type name and an
@@ -1067,7 +1067,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubIdentifier`, `CompetitorCategory`, `Division`, `FirearmType`, `Gender`:** Added `@since` tags to individual
   factory/lookup methods introduced later than the class itself
 
-#### Converters
+##### Converters
 
 - **`ClubIdentifierConverter`, `CompetitorCategoryConverter`, `DivisionConverter`, `FirearmTypeConverter`,
   `MatchCategoryConverter`, `PowerFactorConverter`:** Parameter names aligned to `AttributeConverter`'s own convention
@@ -1083,7 +1083,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `MatchCategoryConverter`, `PowerFactorConverter`:** Added `@since 5.3.0` class-level tags
 - **`GenderConverter`:** Added `@since 8.0.0` class-level tag, matching this in-progress, still-unreleased version
 
-#### Exceptions
+##### Exceptions
 
 - **`FatalException`, `NonFatalException`, `ValidationException`:** Trimmed constructor Javadoc that duplicated verbatim
   JDK prose (`initCause`, `getMessage()`/`getCause()` references) down to concise, project-specific wording; corrected
@@ -1091,7 +1091,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   project's own version history (`1.0.0`), the version in which all these constructors were actually introduced
 - **`FatalException`, `NonFatalException`, `ValidationException`:** Added class-level `@since 1.0.0` tags
 
-#### Tooling
+##### Tooling
 
 - **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`, `sync-unreleased-changes.md`,
   `generate-pr-summary.md`, `scaffold-unit-tests.md`, `scaffold-integration-tests.md`:** Converted from Claude Code
@@ -1102,16 +1102,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   release branches are cut from it) before renaming `[Unreleased]` into the new version's section, so the CHANGELOG is
   fully accurate before being folded into the release
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Domain
+##### Domain
 
 - **`Competitor.gender`:** Removed a stray `@Enumerated(EnumType.STRING)` left over from before `GenderConverter`
   existed — Hibernate 7 rejects a field carrying both `@Enumerated` and a custom `@Convert`, so any Spring context that
   actually initialises JPA (previously none did) failed to start. Only surfaced once `IpscMatchServiceIntegrationTest`
   became this project's first JPA-backed test
 
-#### Documentation
+##### Documentation
 
 - **`documentation/history/RELEASE_NOTES_v7.1.0.md`:** Corrected its `.claude/commands/generate-commit-message.md`
   reference to `../../.claude/commands/generate-commit-message.md` — the archived file lives two directories below the
@@ -1119,20 +1119,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`documentation/history/RELEASE_NOTES_v7.2.0.md`, `PR_DESCRIPTION_v7.2.0.md`:** Corrected stale `processCsv`
   references to `createAwards`, matching `AwardService.processCsv`'s/`ImageService.processCsv`'s rename above
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Controllers
+##### Controllers
 
 - **`IpscController`:** Deleted — its `@RequestMapping("/ipsc/competitor")` role is superseded by the new
   `IpscCompetitorController` stub as part of the IPSC module split into per-concern controllers
 
-#### Models
+##### Models
 
 - **`MatchStagesRequest`:** Deleted — this unused wrapper around `matchId` plus a `List<MatchStageRequest>` was never
   consumed by any controller; callers adding or updating stages on an existing match now just pass a plain
   `List<MatchStageRequest>` directly
 
-#### Tests
+##### Tests
 
 - **`FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`:** Deleted — every test in these files only
   exercised the JDK superclass constructor delegation (`Exception`/`RuntimeException`/`IllegalArgumentException` storing
@@ -1140,20 +1140,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ---
 
-## 🧾 [7.4.1] - 2026-08-29
+### 🧾 [7.4.1] - 2026-08-29
 
-### ➕ Added
+#### ➕ Added
 
-#### Documentation
+##### Documentation
 
 - **`HISTORY.md`:** New "Major Version Goals" subsection under Project Philosophy Evolution — summarises the driving
   goal behind each major version line (4.x, 5.x, 6.x, 7.x)
 - **`HISTORY.md`:** New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" phase entry — captures the
   test-convention, documentation-accuracy and AI-agent-tooling work spanning those three releases
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Documentation
+##### Documentation
 
 - **`AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md`,
   `RELEASE_NOTES.md`:** Rewrapped to a consistent ~120-character line width — prose, list items and table columns
@@ -1163,11 +1163,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ---
 
-## 🧾 [7.4.0] - 2026-08-29
+### 🧾 [7.4.0] - 2026-08-29
 
-### ➕ Added
+#### ➕ Added
 
-#### Documentation
+##### Documentation
 
 - **`documentation/roadmap/improvement-plan.md`:** New document synthesising the goals and constraints stated across
   this repository's documentation and configuration into a prioritised set of gaps and a roadmap
@@ -1176,7 +1176,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`README.md` / `AGENTS.md`:** Both now list `documentation/roadmap/`'s files in their own dedicated Roadmap section,
   separate from the standard documentation file map/table
 
-#### Models
+##### Models
 
 - **`za.co.hpsc.web.models.ipsc.request`:** New request DTOs for the IPSC module rebuild — `MatchRequest`/
   `MatchStageRequest`/`MatchStagesRequest` for match/stage submission, and `MatchOverallResultRequest`/
@@ -1192,9 +1192,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchStageScore`:** New DTO extending `IpscCommonScore` with `rawPoints` and `hitFactor` (`rawPoints / time`),
   the figure a single Comstock stage is ranked on
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Configuration
+##### Configuration
 
 - **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest upstream
   templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite, Sveltekit,
@@ -1208,7 +1208,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   than mirroring `.gitignore`'s `!` allowlist patterns (e.g. `.vscode/settings.json`, `.env.example`, `.yarn/patches`),
   so AI tooling stays conservative even for files git tracks
 
-#### Documentation
+##### Documentation
 
 - **`AGENTS.md`:** New Serial commas rule — lists of three or more items no longer take a comma before the final `and`/
   `or`; retroactively applied across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`,
@@ -1222,13 +1222,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** Directory structure tree now lists the new `documentation/roadmap/` folder alongside `archive/`
   and `history/`
 
-#### Testing
+##### Testing
 
 - **`RequestTest`, `ResponseTest`, `AwardRequestForCSVTest`, `ImageResponseTest`:** Test method names corrected to
   British-English spelling (`Initializes`→`Initialises`, `Recognized`→`Recognised`), per AGENTS.md's tightened
   identifier rule
 
-#### Tooling
+##### Tooling
 
 - **`/generate-pr-description`:** Step 6's `RELEASE_NOTES.md` instructions updated to match AGENTS.md's new
   Contributors-sourcing rule above
@@ -1236,28 +1236,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and fills in any
   missing entries directly in the file
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Controllers
+##### Controllers
 
 - **`AwardController`:** Route prefix changed from `/v1/awards` to `/awards` — dropped the unused `/v1` API versioning
   segment
 - **`ImageController`:** Route prefix changed from `/v1/images` to `/images` — dropped the unused `/v1` API versioning
   segment
 
-#### Documentation
+##### Documentation
 
 - **`README.md`:** Restored the missing `#` on the H1 heading, lost in an earlier commit that inverted the intended
   fix — it was rendering as plain text instead of the page title
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Configuration
+##### Configuration
 
 - **`.aiignore`:** Removed the dedicated `.claude/`/`.github/` AI-only exclusion block — those directories, including
   `.claude/commands`, are no longer hidden from AI context
 
-### 🔐 Security
+#### 🔐 Security
 
 - **`log4j-api`:** Overridden `2.25.4` → `2.25.5` via a new `pom.xml` `dependencyManagement` pin,
   closing [CVE-2026-49844](https://nvd.nist.gov/vuln/detail/CVE-2026-49844) (GHSA-qv9r-c865-cp47) — a transitive
@@ -1267,27 +1267,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ---
 
-## 🧾 [7.3.0] - 2026-08-25
+### 🧾 [7.3.0] - 2026-08-25
 
-### ➕ Added
+#### ➕ Added
 
-#### Tooling
+##### Tooling
 
 - **`/generate-pr-summary`:** New Claude Code command — condenses a version's `PR_DESCRIPTION_vX.Y.Z.md` and
   `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary (a short paragraph plus a capped bullet
   list), for pasting into a PR description without this repo's own emoji-heavy documentation style
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Tooling
+##### Tooling
 
 - **`/generate-pr-summary`:** Output instructions clarified to require the fenced block contain raw, unrendered Markdown
   source (literal `##`/`**`/`-`) rather than Claude's own rendered formatting, so pasted PR summaries preserve exact
   syntax
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Documentation
+##### Documentation
 
 - **`README.md`:** Introduction and Features sections no longer describe match management, competitor/club CRUD, WinMSS
   import or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController` CSV
@@ -1301,25 +1301,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`:** CI/CD & Quality Gates table's `Build & Tests` row no longer claims an "All PRs" GitHub Actions
   trigger — only `codeql.yml` exists; reworded to reflect it is run locally/by reviewers
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-### 🔐 Security
+#### 🔐 Security
 
 ---
 
-## 🧾 [7.2.0] - 2026-08-25
+### 🧾 [7.2.0] - 2026-08-25
 
-### ➕ Added
+#### ➕ Added
 
-#### Documentation
+##### Documentation
 
 - **`CLAUDE.md`:** New Git Workflow section stating the branching model's PR targets directly (`feature/*` → `develop`;
   `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, rather than deferring entirely to
   `AGENTS.md`
 
-#### Testing
+##### Testing
 
 - **`services/AwardServiceTest`, `services/ImageServiceTest`:** New Mockito-based unit tests for the `AwardService`/
   `ImageService` interface contract (`createAwards`), exercised through the interface type rather than the impl class
@@ -1331,7 +1331,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ControllerAdviceTest`:** Covers `logError`'s three previously untested branches — a `null` throwable, a throwable
   with a wrapped cause and a `null` `WebRequest`; JaCoCo branch coverage for this class went from 92% to 100%
 
-#### Tooling
+##### Tooling
 
 - **`/scaffold-unit-tests`:** New Claude Code command, migrated from `.github/prompts/scaffold-unit-tests.prompt.md` —
   corrects the stale `za.co.signio.apexservices` package reference and the abstract "Layer 1/2/3" interface-test pattern
@@ -1350,9 +1350,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   class's protected/private helpers, which stay the paired unit test's job. Same defer-to-loaded-docs treatment as
   `/scaffold-unit-tests`; also never commits.
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Testing
+##### Testing
 
 - **`AwardServiceImplTest`, `ImageServiceImplTest`:** Stale "TODO: sync" comments replaced with Javadoc
   cross-referencing the new interface-level tests; these two files were already in sync (14 parallel test cases each)
@@ -1375,7 +1375,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   reordering; `ValueUtilTest` in particular had its `nullAsEmptyString` tests consolidated from 9 scattered locations
   into one contiguous group. Verified via `./mvnw test`: same 492 tests, all passing, before and after
 
-#### Build & Metadata
+##### Build & Metadata
 
 - Project version bumped to **7.2.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 - **`pom.xml`:** Spring Boot parent bumped `4.0.7` → `4.1.0`. As part of this:
@@ -1394,7 +1394,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
     - Verified: full test suite (492 tests), `./mvnw verify -Pcoverage` (including the repackage step) and
       `./mvnw flyway:info` against a real local MySQL 9.5 dev database all pass clean
 
-#### Documentation
+##### Documentation
 
 - **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just
   exact version numbers, in `README.md`/`ARCHITECTURE.md`
@@ -1406,7 +1406,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   method name within each visibility (overloads by parameter count then type), `toString()` last regardless of
   visibility
 
-#### Tooling
+##### Tooling
 
 - **`.claude/commands/generate-commit-message.md`, `generate-pr-description.md`:** Section headings now carry standard
   icons (`🔍 Current state`, `🚀 Instructions`, `📤 Output`) per AGENTS.md's heading convention
@@ -1418,9 +1418,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (previously `@AGENTS.md` only), for accurate technical detail — build/test commands, package layout, database
   profiles — when describing changes
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Documentation
+##### Documentation
 
 - **`CLAUDE.md`:** Now cross-links to `AGENTS.md` for tool-agnostic conventions (git workflow, release checklist,
   documentation conventions, todo-list tracking) — previously the only project doc missing this reference
@@ -1430,11 +1430,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   is used for assertions — `assertj-core` is explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`,
   and every test in the suite uses JUnit Jupiter's `Assertions` instead
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Testing
+##### Testing
 
 - **`ControllerResponseTest.testDefaultConstructor_whenInstantiated_thenUsesFieldDefaults`:** Removed — solely exercised
   the Lombok-generated `@NoArgsConstructor` and generated getters with no accompanying logic, per AGENTS.md's Test
@@ -1443,15 +1443,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   tested directly against the impl class, is superseded by the new interface-level `services/AwardServiceTest`/
   `services/ImageServiceTest`
 
-### 🔐 Security
+#### 🔐 Security
 
 ---
 
-## 🧾 [7.1.0] - 2026-08-24
+### 🧾 [7.1.0] - 2026-08-24
 
-### ➕ Added
+#### ➕ Added
 
-#### Domain
+##### Domain
 
 - **`ShooterLog.powerFactor`:** New `PowerFactor` column (via the existing `PowerFactorConverter`, not nullable) —
   snapshots are now scoped by power factor as well as firearm type
@@ -1460,49 +1460,49 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ShooterLogCompetitor.match`:** New `@ManyToOne IpscMatch` relation (`match_id`, not nullable) — direct match
   reference alongside the existing `matchCompetitor` link
 
-#### Repositories
+##### Repositories
 
 - **`ShooterLogCompetitorRepository`:** New repository — `findAllByShooterLogId(Long)`
 
-#### Database
+##### Database
 
 - **`V7_1_0__update_shooter_log_schema.sql`:** New Flyway migration — renames `shooter_log_entry` →
   `shooter_log_competitor`, adds `shooter_log.power_factor`, `shooter_log_competitor.points` and
   `shooter_log_competitor.match_id`
 
-#### Build & Metadata
+##### Build & Metadata
 
 - Project version bumped to **7.1.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Domain
+##### Domain
 
 - **`ShooterLogEntry` renamed to `ShooterLogCompetitor`** (table `shooter_log_entry` → `shooter_log_competitor`) —
   entity gains the `points` and `match` fields above
 
-#### Repositories
+##### Repositories
 
 - **`ShooterLogRepository.findAllByCompetitorIdAndFirearmType`** renamed to **
   `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`** — now filters by `PowerFactor` as well
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Domain
+##### Domain
 
 - **`ShooterLogEntry`** — superseded by `ShooterLogCompetitor` (see Changed above)
 
-#### Repositories
+##### Repositories
 
 - **`ShooterLogEntryRepository`** — superseded by `ShooterLogCompetitorRepository`
 
 ---
 
-## 🧾 [7.0.0] - 2026-08-11
+### 🧾 [7.0.0] - 2026-08-11
 
-### ➕ Added
+#### ➕ Added
 
-#### Domain
+##### Domain
 
 - **`ShooterLog`:** New entity — persisted best-4-match shooter-log snapshot (`competitor`, `club`, `firearmType`,
   `logValue`, `calculatedDate`)
@@ -1517,19 +1517,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitor`:** New unique constraint `(competitor_id, match_id, firearm_type)`
 - **`MatchStageCompetitor`:** New unique constraint `(match_competitor_id, match_stage_id)`
 
-#### Repositories
+##### Repositories
 
 - **`ClubRepository`, `CompetitorRepository`, `IpscMatchRepository`, `IpscMatchStageRepository`,
   `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`, `ShooterLogEntryRepository`:**
   `repositories/` package rebuilt from scratch (previously emptied in preparation for this redesign)
 
-#### Build & Metadata
+##### Build & Metadata
 
 - Project version bumped to **7.0.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Domain
+##### Domain
 
 - `za.co.hpsc.web.domain.old.*` promoted to `za.co.hpsc.web.domain.*` (the `.old` package is dropped)
 - **`MatchCompetitor.matchRanking`** renamed to **`overallRanking`**
@@ -1537,17 +1537,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `division` / `firearmType` / `powerFactor` / `matchClub` fields removed — now inherited via the `matchCompetitor`
   relation
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
 - `za.co.hpsc.web.domain.old` package (all 6 files) — superseded by the promoted/extended entities above
 
 ---
 
-## 🧾 [6.0.0] - 2026-05-01
+### 🧾 [6.0.0] - 2026-05-01
 
-### ➕ Added
+#### ➕ Added
 
-#### Controllers
+##### Controllers
 
 - **`IpscMatchController`:** New dedicated match CRUD controller mapped to `/v2/ipsc/matches`
     - `POST /v2/ipsc/matches` — create a new IPSC match
@@ -1557,7 +1557,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
     - Full OpenAPI/Swagger annotations; returns `ResponseEntity<MatchOnlyResponse>`
 - **`IpscMemberController`:** Stub controller at `/ipsc/member` (placeholder for member management)
 
-#### Services
+##### Services
 
 - **`IpscMatchService` interface:** Match CRUD contract — `insertMatch`, `updateMatch`, `modifyMatch`, `getMatch`; all
   return `Optional<MatchOnlyResponse>`
@@ -1569,7 +1569,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `MatchStageCompetitorEntityServiceImpl`
 - **`TransformationService.mapMatchOnly(MatchOnlyRequest)`:** New method for the match CRUD pipeline
 
-#### Models — `models/ipsc/match/`
+##### Models — `models/ipsc/match/`
 
 - **`MatchOnlyDto`:** Lightweight match DTO (no stages); initialised from `MatchOnlyRequest` with automatic
   `FirearmType` resolution and `dateEdited` stamping
@@ -1577,20 +1577,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchOnlyResponse`:** Response envelope returned by `IpscMatchController`
 - **`MatchOnlyResultsDto`:** Internal results holder passed through the service chain
 
-#### Models — `models/ipsc/common/request/`
+##### Models — `models/ipsc/common/request/`
 
 - **`MatchSearchRequest`:** Multi-criteria search — match IDs array, name, date range
 - **`MatchSearchDateRequest`:** Date-range search — `startDate`, `endDate`, `matchName`
 - **`MatchSearchIdRequest`:** ID-array-based lookup
 
-#### Utilities
+##### Utilities
 
 - **`IpscUtil`:** New utility class (66 lines) for club and match display-string formatting
     - `clubTostring(name, abbreviation)`
     - `matchToString(name, clubName, abbreviation)`
     - `matchToString(name, ClubDto)` — convenience overload
 
-#### Test Coverage
+##### Test Coverage
 
 - **`IpscMatchControllerTest`** (49 lines) — controller unit tests
 - **`IpscMatchServiceTest`** (269 lines) — service unit tests
@@ -1601,19 +1601,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchResponseTest`** (46 lines) — common `MatchResponse` model
 - **`IpscUtilTest`** (114 lines) — string formatting edge cases
 
-#### Build & Metadata
+##### Build & Metadata
 
 - **MIT Licence** declared in `pom.xml` (`<license>`)
 - **Developer profile** populated in `pom.xml` (`tahoni / Leoni Lubbinge`)
 - **SCM connection and URL** filled in `pom.xml` for GitHub
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Controllers
+##### Controllers
 
 - **`IpscController`:** Match-related endpoints extracted to `IpscMatchController` (78 lines removed)
 
-#### Services
+##### Services
 
 - **`DomainServiceImpl`:** Replaced direct JPA repository injection with entity service injection (`ClubEntityService`,
   `CompetitorEntityService`, `MatchEntityService`, `MatchStageEntityService`, `MatchCompetitorEntityService`,
@@ -1621,14 +1621,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`TransformationService.mapMatchResults`:** Removed `throws ValidationException` from signature
 - **`TransformationServiceImpl`:** All imports updated to `models/ipsc/common/*`; `mapMatchOnly` method added
 
-#### Config & Infrastructure
+##### Config & Infrastructure
 
 - **`ControllerAdvice`:** Structured logging added to all exception handlers; `ValidationException` removed from handler
   method signatures (119 lines changed)
 - **`pom.xml`:** Spring Boot BOM upgraded `4.0.5` → `4.0.6`; Lombok exclusion plugin block reorganised
 - **`logback-spring.xml`:** Additional appender/logger configuration added
 
-#### Package Paths — All IPSC Models
+##### Package Paths — All IPSC Models
 
 All `models/ipsc/` classes moved to `models/ipsc/common/`:
 
@@ -1642,7 +1642,7 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 | `models/ipsc/request/`   | `models/ipsc/common/request/`   |
 | `models/ipsc/response/`  | `models/ipsc/common/response/`  |
 
-#### Updated Tests
+##### Updated Tests
 
 - **`TransformationServiceTest`** — +747 lines covering `mapMatchOnly` and updated signatures
 - **`DomainServiceTest`** — +247 lines covering entity-service delegation
@@ -1651,32 +1651,32 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **`IpscServiceIntegrationTest`** — +99 lines for expanded integration scenarios
 - Domain entity and DTO tests updated for `common` package import paths
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Controllers & Endpoints
+##### Controllers & Endpoints
 
 - Match CRUD endpoints removed from `IpscController` (moved to `IpscMatchController`)
 
-#### Models
+##### Models
 
 - **`models/ipsc/response/ClubResponse`** — superseded by `models/ipsc/common/response/ClubResponse`
 - **`models/ipsc/response/MatchResponse`** — superseded by `models/ipsc/common/response/MatchResponse`
 
-#### Service Internals
+##### Service Internals
 
 - Direct repository injection from `DomainServiceImpl` (replaced by entity services)
 
-#### Tests
+##### Tests
 
 - **`IpscControllerTest`** (156 lines) — replaced by `IpscMatchControllerTest`
 
 ---
 
-## 🧾 [5.4.0] - 2026-04-26
+### 🧾 [5.4.0] - 2026-04-26
 
-### ➕ Added
+#### ➕ Added
 
-#### Competitor Enrolment
+##### Competitor Enrolment
 
 - **EnrolledCompetitorDto:** New DTO (138 lines) tracking enrolled competitors through the IPSC pipeline
     - Complete field set for competitor enrolment state with comprehensive Javadoc
@@ -1686,22 +1686,22 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **MatchCompetitorOverallResultsRecord:** New record for overall match results (9 lines)
 - **MatchCompetitorStageResultRecord:** New record for stage-level result data
 
-#### Service Architecture
+##### Service Architecture
 
 - **TransformationService interface:** Replaces `IpscMatchService`; semantically describes the data-transformation role
 - **TransformationServiceImpl:** 1,098 lines replacing `IpscMatchServiceImpl`
 
-#### Enumerations
+##### Enumerations
 
 - **ClubIdentifier:** Abbreviation field added (38 lines changed); each identifier now carries a dedicated abbreviation
 
-#### Constants
+##### Constants
 
 - **HpscConstants:** 3 lines updated
 - **MatchConstants:** 3 lines updated
 - **SystemConstants:** 3 lines updated
 
-#### Test Coverage (20+ new test classes, ~7,000 lines)
+##### Test Coverage (20+ new test classes, ~7,000 lines)
 
 - **Controller tests:** `AwardControllerTest` (163), `ImageControllerTest` (163), `IpscControllerTest` (156),
   `ControllerAdviceTest` (299)
@@ -1718,16 +1718,16 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
   `DtoToEntityMappingIntegrationTest` (71)
 - **Service tests:** `TransformationServiceTest` (1,026), `MatchCompetitorDtoTest` (253)
 
-#### CI/CD & Configuration
+##### CI/CD & Configuration
 
 - **`.aiignore`:** New file for AI assistant context management
 - **Qodana JVM linter:** `qodana.yaml` configured with `jetbrains/qodana-jvm` for static analysis
 - **JaCoCo 0.8.14:** Coverage profile added to `pom.xml`; reports output to `/coverage` directory
 - **Branch patterns:** Extended in `code_quality.yml` (feature, bugfix, hotfix)
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Core Services
+##### Core Services
 
 - **TransformationServiceImpl:** 1,098 lines introduced (replaces `IpscMatchServiceImpl`)
 - **DomainServiceImpl:** 139 lines changed – enhanced competitor and match handling
@@ -1738,7 +1738,7 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **CompetitorEntityServiceImpl:** 7 lines changed
 - **ImageServiceImpl:** 2 lines changed
 
-#### Service Interfaces
+##### Service Interfaces
 
 - **TransformationService:** 27 lines (new interface replacing `IpscMatchService`)
 - **DomainService:** 37 lines changed
@@ -1747,7 +1747,7 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **TransactionService:** 8 lines changed
 - **IpscService:** 2 lines changed
 
-#### Domain Entities
+##### Domain Entities
 
 - **Club:** 15 lines changed
 - **Competitor:** 17 lines changed
@@ -1756,7 +1756,7 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **MatchCompetitor:** 16 lines changed
 - **MatchStageCompetitor:** 18 lines changed
 
-#### DTOs & Models
+##### DTOs & Models
 
 - **CompetitorDto:** 13 lines changed – SAPSA deduplication and max number validation
 - **MatchCompetitorDto:** 22 lines changed
@@ -1767,29 +1767,29 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **MatchDto:** 2 lines changed
 - **AwardRequest:** 7 lines changed
 
-#### Converters
+##### Converters
 
 - **ClubIdentifierConverter:** 4 lines changed – uses abbreviation for database persistence
 
-#### Controllers & Config
+##### Controllers & Config
 
 - **ControllerAdvice:** 35 lines changed – improved error handling
 - **IpscController:** 6 lines changed
 - **AwardController:** 2 lines changed
 - **ImageController:** 2 lines changed
 
-#### Package Moves
+##### Package Moves
 
 - `DtoMapping`, `DtoToEntityMapping`, `EntityMapping`: `ipsc/domain` → `ipsc/data`
 - `MatchResultsDto`, `MatchResultsDtoHolder`: moved to `ipsc/holders/dto`
 - `IpscRequestHolder`, `IpscResponseHolder`: moved to `ipsc/holders` sub-packages
 
-#### Repository Layer
+##### Repository Layer
 
 - **MatchCompetitorRepository:** 4 lines changed
 - **MatchStageCompetitorRepository:** 4 lines changed
 
-#### Test Suites (Updated)
+##### Test Suites (Updated)
 
 - **DomainServiceTest:** 1,428 lines changed – enhanced coverage
 - **IpscServiceIntegrationTest:** 649 lines changed – expanded integration scenarios
@@ -1799,7 +1799,7 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **DtoToEntityMappingTest:** 157 lines changed – package move updates
 - **ClubIdentifierTest:** 220 lines changed – abbreviation coverage
 
-#### Build & Configuration
+##### Build & Configuration
 
 - **pom.xml:** 85 lines changed – JaCoCo 0.8.14, Spring Framework 7.0.7 (stabilised from 7.0.8)
 - **qodana.yaml:** Configured with `jetbrains/qodana-jvm` linter
@@ -1807,61 +1807,61 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 - **codeql.yml:** 4 lines changed
 - **HpscWebApplication:** Application version bumped to 5.4.0
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Constants & Division
+##### Constants & Division
 
 - **PCC Optics division constant:** Fixed incorrect value in `IpscConstants`
 - **Division constants:** Updated competitor number and ICS alias values in `IpscConstants`
 - **Division enum:** 2 lines changed (PCC Optics fix)
 
-#### Converter
+##### Converter
 
 - **ClubIdentifierConverter:** Fixed to correctly use abbreviation for database persistence
 
-#### Error Handling
+##### Error Handling
 
 - **ControllerAdvice:** Fixed exception handler methods for improved error response management
 
-#### Match Processing
+##### Match Processing
 
 - Removed unused firearm type assignment from the match processing path
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
 None.
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Services & Implementations
+##### Services & Implementations
 
 - **`IpscMatchService` interface:** Replaced by `TransformationService`
 - **`IpscMatchServiceImpl` class:** 867 lines replaced by `TransformationServiceImpl`
 
-#### Records
+##### Records
 
 - **`MatchCompetitorRecord`:** Replaced by `CompetitorRecord`
 - **`IpscMatchRecordHolder`** (from the records' package): Moved to holders
 
-#### Configuration
+##### Configuration
 
 - **`qodana.yml`:** Duplicate removed; configuration consolidated in `qodana.yaml`
 
-#### Test Classes
+##### Test Classes
 
 - **`IpscMatchServiceTest`:** 10,076 lines removed (service renamed to `TransformationService`)
 
-### 🔐 Security
+#### 🔐 Security
 
 No security-related changes in this release.
 
 ---
 
-## 🧾 [5.3.0] - 2026-03-15
+### 🧾 [5.3.0] - 2026-03-15
 
-### ➕ Added
+#### ➕ Added
 
-#### Custom JPA Attribute Converters
+##### Custom JPA Attribute Converters
 
 - **ClubIdentifierConverter:** Type-safe `AttributeConverter` for `ClubIdentifier` enum persistence
 - **CompetitorCategoryConverter:** Type-safe `AttributeConverter` for `CompetitorCategory` enum persistence
@@ -1871,20 +1871,20 @@ No security-related changes in this release.
 - **PowerFactorConverter:** Type-safe `AttributeConverter` for `PowerFactor` enum persistence
 - All converters replace `@Enumerated(EnumType.STRING)` with explicit, testable conversion logic
 
-#### Service Enhancements
+##### Service Enhancements
 
 - **DomainService interface:** Enhanced with match result initialisation methods
 - **IpscMatchService interface:** Extended with consolidated match processing capabilities
 
-#### Test Coverage
+##### Test Coverage
 
 - **DomainServiceTest:** 787 lines added – comprehensive `initMatchEntities` test cases with Javadoc documentation
 - **IpscServiceIntegrationTest:** Comprehensive integration tests for `importWinMssCabFile` including validation and
   processing scenarios
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Core Services (Major Refactoring)
+##### Core Services (Major Refactoring)
 
 - **DomainServiceImpl:** 270 lines changed
     - Enhanced `initMatchEntities` method with detailed Javadoc
@@ -1903,7 +1903,7 @@ No security-related changes in this release.
 - **ClubEntityServiceImpl:** 24 lines changed – simplified to a single method
 - **ClubEntityService:** 27 lines changed – removed unused methods
 
-#### Domain Mapping
+##### Domain Mapping
 
 - **DtoMapping:** Converted from class to Java record construct
     - Simplified initialisation with a compact record constructor
@@ -1911,7 +1911,7 @@ No security-related changes in this release.
     - Streamlined transaction stubbing in tests
 - **DtoToEntityMapping:** 79 lines changed – enhanced with additional test cases and documentation
 
-#### Entity Models
+##### Entity Models
 
 - **IpscMatch:** 14 lines changed – `mappedBy` added to `@OneToMany` annotations; cascade type updates
 - **IpscMatchStage:** 26 lines changed – `mappedBy` added; Javadoc for `init()` added; entity mapping improvements
@@ -1920,7 +1920,7 @@ No security-related changes in this release.
 - **Competitor:** 11 lines changed – minor relationship updates
 - **Club:** 2 lines changed – minor updates
 
-#### DTOs
+##### DTOs
 
 - **MatchStageDto:** 95 lines changed – enhanced target/scoring handling
 - **MatchStageCompetitorDto:** 82 lines changed – improved initialisation
@@ -1930,14 +1930,14 @@ No security-related changes in this release.
 - **ClubDto:** 6 lines changed – minor updates
 - **MatchResultsDto:** 1 line changed – minor clean-up
 
-#### Repository Layer
+##### Repository Layer
 
 - **IpscMatchRepository:** 10 lines changed – added scheduled date to queries for uniqueness constraints
 - Competitor retrieval methods updated to use `Set` for deduplication and performance
 - Match stage competitor retrieval enhanced with improved null handling
 - Removed unnecessary fetch joins across repository methods
 
-#### Test Suites (Comprehensive Updates)
+##### Test Suites (Comprehensive Updates)
 
 - **IpscMatchServiceTest:** 3,156 lines changed – comprehensive consolidation including disabled tests, helper method
   extraction, streamlined parameter handling and object creation
@@ -1954,7 +1954,7 @@ No security-related changes in this release.
 - **ValueUtilTest:** 2 lines changed – minor updates
 - **MatchDtoTest:** 6 lines changed – minor updates
 
-#### Build & Configuration
+##### Build & Configuration
 
 - **pom.xml:** Updated Spring Boot from 4.0.3 to 4.1.0-SNAPSHOT; added Spring Snapshots repository
 - **application-dev.properties:** 13 lines changed – datasource and logging configuration updates
@@ -1963,34 +1963,34 @@ No security-related changes in this release.
 - **logback-spring.xml:** 2 lines changed – logging improvements
 - **IpscConstants:** Updated competitor number and ICS alias constant values
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Entity Relationships
+##### Entity Relationships
 
 - **`@OneToMany` `mappedBy`:** Added missing `mappedBy` declarations for all bidirectional relationships across
   `IpscMatch`, `IpscMatchStage`, `MatchCompetitor` and `MatchStageCompetitor`
 - **Cascade types:** Fixed cascade type configurations for correct entity lifecycle management
 - **Null handling:** Improved null handling in entity relationship resolution across match stage competitor retrieval
 
-#### Repository Queries
+##### Repository Queries
 
 - **Fetch joins:** Removed unnecessary fetch joins reducing query complexity and improving performance
 - **Match retrieval:** Fixed to properly include scheduled date constraint for uniqueness
 - **Club and competitor lookup:** Improved accuracy of lookup methods
 
-#### Code Quality
+##### Code Quality
 
 - **Test assertions:** Fixed to use `getFirst()` instead of index-based access for improved clarity
 - **Test duplication:** Removed duplicate code patterns in test setups
 - **Typo:** Corrected typo in `RELEASE_NOTES_HISTORY.md` competitor association section
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
 None.
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Services & Classes
+##### Services & Classes
 
 - **`IpscMatchResultService` interface:** Fully removed (31 lines); functionality consolidated into `DomainService` and
   `IpscMatchService`
@@ -1998,29 +1998,29 @@ None.
   `DomainService`
 - **`ScoreDto` class:** Fully removed (50 lines); score data now handled via `ScoreResponse` directly
 
-#### Entity Service Methods
+##### Entity Service Methods
 
 - **`ClubEntityService.findClubById()`:** Removed unused method
 - **`ClubEntityService.findClubByName()`:** Removed unused method
 - **`ClubEntityService.findClubByAbbreviation()`:** Removed unused method
 - Various unused helper methods removed from entity service implementations
 
-#### Test Classes
+##### Test Classes
 
 - **`IpscMatchResultServiceTest`:** 1,802 lines removed – service deleted, tests no longer required
 - **`ScoreDtoTest`:** 643 lines removed – `ScoreDto` deleted, tests no longer required
 
-### 🔐 Security
+#### 🔐 Security
 
 No security-related changes in this release.
 
 ---
 
-## 🧾 [5.2.0] - 2026-02-27
+### 🧾 [5.2.0] - 2026-02-27
 
-### ➕ Added
+#### ➕ Added
 
-#### Architecture & Domain Model
+##### Architecture & Domain Model
 
 - **DtoMapping class:** New comprehensive DTO mapping with map-based storage for improved data organisation
 - **EntityMapping class:** New entity-level mapping structure for clear separation of persistence concerns
@@ -2029,7 +2029,7 @@ No security-related changes in this release.
 - **MatchEntityService interface:** Contract for match entity operations
 - **MatchEntityServiceImpl:** Implementation with comprehensive initialisation logic
 
-#### Test Coverage
+##### Test Coverage
 
 - **DtoToEntityMappingTest:** 716 lines of comprehensive tests covering all mapping scenarios
     - Constructor tests (3 scenarios)
@@ -2047,16 +2047,16 @@ No security-related changes in this release.
     - Edge case handling
 - **Enhanced test coverage** across all consolidated test suites with generateIpscMatchRecordHolder output verification
 
-#### Service Enhancements
+##### Service Enhancements
 
 - **Array initialisation:** All DTO arrays initialised to empty arrays instead of null to prevent NPE
 - **Club filtering:** Enhanced club abbreviation filtering logic in match entity initialisation
 - **Optional return types:** `importWinMssCabFile()` now returns Optional for better null handling
 - **Initialisation methods:** New dedicated methods for match-related entity initialisation
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Core Services (Major Refactoring)
+##### Core Services (Major Refactoring)
 
 - **IpscMatchServiceImpl:** 246 lines changed
     - Refactored `generateIpscMatchRecordHolder()` with improved entity initialisation
@@ -2078,7 +2078,7 @@ No security-related changes in this release.
     - Enhanced filtering for match-related entities
 - **DomainServiceImpl:** Updated for new architecture
 
-#### Entity Models
+##### Entity Models
 
 - **IpscMatch:** Simplified OneToMany annotations for better JPA relationships (7 lines changed)
 - **IpscMatchStage:** Enhanced entity relationships (19 lines changed)
@@ -2087,20 +2087,20 @@ No security-related changes in this release.
 - **Club:** Minor updates (3 lines changed)
 - **Competitor:** Minor updates (2 lines changed)
 
-#### DTOs
+##### DTOs
 
 - **MatchCompetitorDto:** Array initialisation to prevent null (6 lines changed)
 - **MatchResultsDto:** Removed match entity reference (3 lines changed)
 
-#### Repository Layer
+##### Repository Layer
 
 - **IpscMatchRepository:** Updated for new entity structure (2 lines changed)
 
-#### Controllers
+##### Controllers
 
 - **IpscController:** Updated for service changes (4 lines changed)
 
-#### Test Suites (Comprehensive Consolidation)
+##### Test Suites (Comprehensive Consolidation)
 
 - **IpscMatchResultServiceImplTest:** 1,802 lines added – complete consolidation with enhanced coverage
     - Direct testing of initScores alongside indirect testing through initMatchResults
@@ -2125,61 +2125,61 @@ No security-related changes in this release.
 - **IpscServiceIntegrationTest:** 28 lines changed – removed unused DomainService
 - **MatchStageCompetitorEntityServiceImpl:** 10 lines changed
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Null Safety
+##### Null Safety
 
 - **Array initialisation:** Initialised arrays to prevent null pointer exceptions in DTOs
 - **Enhanced null checks:** Improved null safety throughout match result processing
 - **Optional handling:** Better handling of Optional return types throughout the codebase
 
-#### Test Quality
+##### Test Quality
 
 - **Duplicate removal:** Eliminated duplicate test methods across multiple test suites
 - **Disabled tests:** Removed disabled test annotations, all tests now active or properly skipped
 - **Empty/partial handling:** Corrected handling of empty and partial match results
 - **Assertion clarity:** Enhanced test assertion precision and clarity
 
-#### Code organisation
+##### Code organisation
 
 - **Unused dependencies:** Removed unused DomainService from integration tests
 - **Mock clean-up:** Removed unused domain service mocks from test code
 - **Import optimisation:** Streamlined test imports for better clarity
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
 None.
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
-#### Deprecated Code
+##### Deprecated Code
 
 - **Old MatchEntityHolder:** Replaced with new implementation
 - **Match entity in DTOs:** Removed from MatchResultsDto for cleaner separation
 
-#### Configuration & IDE Files
+##### Configuration & IDE Files
 
 - **JetBrains .idea files:** Removed all .idea configuration files from version control
 - **Updated .gitignore:** Permanently exclude JetBrains config files
 - **Unused properties:** Cleaned up application.properties
 
-#### Test Code
+##### Test Code
 
 - **Duplicate tests:** Removed across all test suites (estimated 3,000+ lines of duplicates)
 - **Unused mocks:** Removed unused DomainService mocks
 - **Old test files:** Consolidated into Impl test files
 
-### 🔐 Security
+#### 🔐 Security
 
 No security-related changes in this release.
 
 ---
 
-## 🧾 [5.1.0] - 2026-02-25
+### 🧾 [5.1.0] - 2026-02-25
 
-### ➕ Added
+#### ➕ Added
 
-#### Test Suite Enhancements
+##### Test Suite Enhancements
 
 - **Test organisation improvements** in `IpscMatchResultServiceImplTest`
     - Section-based test grouping for improved navigation and understanding
@@ -2187,15 +2187,15 @@ No security-related changes in this release.
       Fields Handling, Partial and Complete Data Scenarios, Edge Cases
     - Clear separation of concerns between test categories
 
-#### Test Quality Improvements
+##### Test Quality Improvements
 
 - **Comprehensive test coverage metrics** with detailed test categorisation
 - **23 unit tests** covering all critical scenarios for IPSC match result service
 - **Section-based documentation** for enhanced test maintainability
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Test Infrastructure
+##### Test Infrastructure
 
 - **Test organisation:** Restructured `IpscMatchResultServiceImplTest` with logical section-based grouping
     - Null Input Handling section (2 tests)
@@ -2209,31 +2209,31 @@ No security-related changes in this release.
 - **Code style:** Improved spacing and formatting for better readability
 - **Documentation:** Enhanced test section comments with clear headers and visual separators
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Test Quality
+##### Test Quality
 
 - **Duplicate test elimination:** Removed duplicate
   `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` test method
 - **Code clean-up:** Removed TODO comment about adding sections (now complete)
 - **Test file consolidation:** Ensured no redundant test coverage
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
 - **Duplicate test:** `testInitMatchResults_withMultipleStagesAndScores_thenMapsCorrectly()` - Removed exact duplicate
   at the end of the file
 
-### 🔐 Security
+#### 🔐 Security
 
 ---
 
-## 🧾 [5.0.0] - 2026-02-24
+### 🧾 [5.0.0] - 2026-02-24
 
-### ➕ Added
+#### ➕ Added
 
-#### Domain Entity Initialisation Framework
+##### Domain Entity Initialisation Framework
 
 - **`DomainServiceImpl.initClubEntity(ClubDto)`** - Initialise club entities from DTO objects with automatic database
   lookup and fallback to new entity creation
@@ -2250,7 +2250,7 @@ No security-related changes in this release.
 - **`DomainServiceImpl.initMatchStageCompetitorEntities(List<MatchStageCompetitorDto>, ...)`** - Complex initialisation
   of stage-specific competitor records with score and performance data
 
-#### IPSC Match Record Generation
+##### IPSC Match Record Generation
 
 - **`IpscMatchServiceImpl.generateIpscMatchRecordHolder(List<IpscMatch>)`** - Convert IPSC match entities to
   comprehensive match records for external representation
@@ -2263,14 +2263,14 @@ No security-related changes in this release.
 - **`IpscMatchServiceImpl.initMatchStageCompetitor(Competitor, List<MatchStageCompetitor>)`** - Generate stage-specific
   competitor records with individual stage scores
 
-#### IPSC Response Processing Pipeline
+##### IPSC Response Processing Pipeline
 
 - **`IpscMatchServiceImpl.addClubToMatch(IpscResponse, IpscRequestHolder)`** - Intelligent club association logic that
   matches clubs from request data to match response records with fallback mechanisms
 - **`IpscMatchServiceImpl.addMembersToMatch(IpscResponse, IpscRequestHolder)`** - Associate enrolled members with match
   responses based on match ID filtering
 
-#### Enhanced IPSC Result Service
+##### Enhanced IPSC Result Service
 
 - **`IpscMatchResultServiceImpl.initMatchResults(IpscResponse)`** - Complete IPSC response-to-DTO transformation
   pipeline
@@ -2283,7 +2283,7 @@ No security-related changes in this release.
 - **`IpscMatchResultServiceImpl.initScores(MatchResultsDto, IpscResponse)`** - Process and aggregate competitor scores
   across match stages
 
-#### DTO Architecture Enhancements
+##### DTO Architecture Enhancements
 
 - **`ClubDto(Club)`** - Constructor for creating DTOs from club entities
 - **`ClubDto(ClubResponse)`** - Constructor for creating DTOs from IPSC response objects
@@ -2291,15 +2291,15 @@ No security-related changes in this release.
 - **`ClubDto(Club, ClubIdentifier)`** - Constructor supporting fallback initialisation from club identifier if the
   entity is null
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Version Management
+##### Version Management
 
 - **Adopted Semantic Versioning (SemVer):** Project now follows [SemVer 2.0.0](https://semver.org/) specification
 - **Version Format:** Changed from the legacy scheme (v1.x to v4.x) to `MAJOR.MINOR.PATCH` format
 - **Release Documentation:** Structured release notes following industry-standard conventions
 
-#### Entity Initialisation Strategy
+##### Entity Initialisation Strategy
 
 - **Repository Integration:** Entity initialisation methods now query the database to check for existing entities before
   creating new ones
@@ -2307,14 +2307,14 @@ No security-related changes in this release.
 - **Transactional Consistency:** All entity creation and update operations maintain transactional integrity through
   `TransactionService`
 
-#### Data Processing Pipelines
+##### Data Processing Pipelines
 
 - **Multi-Step Processing:** IPSC responses now go through coordinated initialisation steps for clubs, matches, stages
   and competitors
 - **Error Handling:** Enhanced validation and error messages for data transformation failures
 - **Null Safety:** Comprehensive null checks throughout data processing pipelines
 
-#### Test Infrastructure (Post-Release Enhancement)
+##### Test Infrastructure (Post-Release Enhancement)
 
 - **Test Organisation:** Restructured DTO test classes with clear section headers and logical grouping
 - **Naming Standards:** Standardised test naming to `testMethod_whenCondition_thenExpectedBehavior` pattern
@@ -2324,34 +2324,34 @@ No security-related changes in this release.
 - **Edge Case Coverage:** Extensive null/empty/blank field-testing, boundary value testing
 - **Documentation:** Comprehensive test documentation and inline comments
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
-#### Entity Relationship Management
+##### Entity Relationship Management
 
 - Fixed edge cases in entity initialisation when creating stages with missing `maxPoints` values
 - Resolved mapping issues between DTOs and domain entities during update operations
 - Corrected null-safety handling in the recursive establishment of entity relationships
 
-#### Data Transformation
+##### Data Transformation
 
 - Improved handling of optional entity relationships during transformation
 - Fixed club name resolution from both entity objects and enumeration values
 - Enhanced date field handling in match entity initialisation
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
 No deprecations in this release.
 
-### 🗑️ Removed
+#### 🗑️ Removed
 
 No breaking removals in this release. All features from version 4.1.0 remain available.
 
-### 🔐 Security
+#### 🔐 Security
 
 - No security vulnerabilities were addressed in this release
 - All existing security measures from version 4.1.0 are maintained
 
-### 📚 Documentation
+#### 📚 Documentation
 
 - **New:** Comprehensive RELEASE_NOTES.md with semantic versioning transition details
 - **New:** Detailed CHANGELOG.md (this file) following Keep a Changelog format
@@ -2360,169 +2360,169 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 ---
 
-## 🧾 [4.1.0] - 2026-02-13
+### 🧾 [4.1.0] - 2026-02-13
 
-### ➕ Added
+#### ➕ Added
 
-#### CRUD Operations for IPSC Entities
+##### CRUD Operations for IPSC Entities
 
 - **`IpscMatchRepository`** - Create, Read, Update, Delete operations for IPSC match entities
 - **`IpscMatchStageRepository`** - CRUD support for match stage entities
 - **Service layer CRUD:** Implemented corresponding service methods for all CRUD operations
 - **Transactional handling:** Transaction management for all write operations
 
-#### Enhanced Input Validation
+##### Enhanced Input Validation
 
 - **DTO Validation:** Additional `@NotNull` annotations on critical DTO fields
 - **Bean Validation:** Jakarta Validation annotations integrated throughout request/response DTOs
 - **Error Messages:** Detailed validation error reporting
 
-#### Testing Improvements
+##### Testing Improvements
 
 - **Unit Tests:** Added comprehensive unit tests for CRUD endpoints
 - **Integration Tests:** Extended integration tests for service behaviour
 - Test coverage for validation failures and edge cases
 
-### 🔄 Changed
+#### 🔄 Changed
 
 - Improved request validation on create/update DTOs
 - Enhanced repository query methods with additional filtering options
 - Refined service layer contracts for better API consistency
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
 - Edge cases in entity initialisation when creating stages with missing `maxPoints`
 - Mapping issues between DTOs and domain entities during updates
 
 ---
 
-## 🧾 [4.0.0] - 2026-02-11
+### 🧾 [4.0.0] - 2026-02-11
 
-### ➕ Added
+#### ➕ Added
 
-#### Major IPSC Domain Refactoring
+##### Major IPSC Domain Refactoring
 
 - **Entity Renames:** `Match` → `IpscMatch`, `MatchStage` → `IpscMatchStage`
 - **Repository Updates:** New `IpscMatchRepository` and `IpscMatchStageRepository` interfaces
 - **Enhanced Type Safety:** Improved domain model clarity through explicit entity naming
 
-#### Improved Input Validation
+##### Improved Input Validation
 
 - **Multi-layered Validation:** Validation at controller, service and entity levels
 - **Error Mapping:** Comprehensive error response generation with detailed messages
 
-#### Exception Handling Improvements
+##### Exception Handling Improvements
 
 - **Global Exception Handler:** Centralised exception handling for consistent error responses
 - **Custom Exceptions:** Domain-specific exception types for clearer error semantics
 
-#### Comprehensive Testing
+##### Comprehensive Testing
 
 - **Unit Test Coverage:** Extensive test coverage for service implementations
 - **Integration Testing:** Full pipeline testing from controller through persistence layer
 - **Bug Fixes:** Tests added to prevent regression of known issues
 
-#### XML Parsing Bug Fixes
+##### XML Parsing Bug Fixes
 
 - Fixed edge cases in XML parsing logic
 - Improved handling of malformed XML structures
 - Enhanced validation of parsed XML data
 
-### 🔄 Changed
+#### 🔄 Changed
 
-#### Breaking Changes
+##### Breaking Changes
 
 - **Entity Renaming:** Consumers must update references from `Match` to `IpscMatch`
 - **Repository Interface Changes:** Update injection points to use `IpscMatchRepository` and `IpscMatchStageRepository`
 - **Service Method Names:** Some service method signatures updated for consistency
 
-#### Database
+##### Database
 
 - **Schema Updates:** Reflected entity renames in JPA configuration
 - **Migration Path:** Existing data remains compatible; no data loss during migration
 
-### ⚠️ Deprecated
+#### ⚠️ Deprecated
 
 - Old `MatchRepository` interface (replaced by `IpscMatchRepository`)
 - Old service method signatures (superseded by refactored versions)
 
 ---
 
-## 🧾 [3.1.0] - 2026-02-10
+### 🧾 [3.1.0] - 2026-02-10
 
-### ➕ Added
+#### ➕ Added
 
 - Enhancement to IPSC data processing pipeline
 - Improved error handling for specific match processing scenarios
 
-### 🔄 Changed
+#### 🔄 Changed
 
 - Refactored some internal service implementations
 - Updated repository query methods
 
 ---
 
-## 🧾 [3.0.0] - 2026-02-10
+### 🧾 [3.0.0] - 2026-02-10
 
-### ➕ Added
+#### ➕ Added
 
 - Major feature release for IPSC integration
 - Enhanced data processing capabilities
 
-### 🔄 Changed
+#### 🔄 Changed
 
 - Significant internal restructuring
 
 ---
 
-## 🧾 [2.0.0] - 2026-02-08
+### 🧾 [2.0.0] - 2026-02-08
 
-### ➕ Added
+#### ➕ Added
 
 - Major refactoring of core services
 - New repository patterns
 
-### 🔄 Changed
+#### 🔄 Changed
 
 - Restructured service layer
 
 ---
 
-## 🧾 [1.1.3] - 2026-01-28
+### 🧾 [1.1.3] - 2026-01-28
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
 - Bug fixes and stability improvements
 
 ---
 
-## 🧾 [1.1.2] - 2026-01-20
+### 🧾 [1.1.2] - 2026-01-20
 
-### ➕ Added
+#### ➕ Added
 
 - Minor feature enhancements
 
 ---
 
-## 🧾 [1.1.1] - 2026-01-16
+### 🧾 [1.1.1] - 2026-01-16
 
-### 🐛 Fixed
+#### 🐛 Fixed
 
 - Specific bug fixes
 
 ---
 
-## 🧾 [1.1.0] - 2026-01-14
+### 🧾 [1.1.0] - 2026-01-14
 
-### ➕ Added
+#### ➕ Added
 
 - New functionality and improvements
 
 ---
 
-## 🧾 [1.0.0] - 2026-01-04
+### 🧾 [1.0.0] - 2026-01-04
 
-### ➕ Added
+#### ➕ Added
 
 - Initial release of HPSC Website Backend
 - Core REST API for match management
@@ -2533,9 +2533,9 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 
 ---
 
-## 📋 Version Policy
+### 📋 Version Policy
 
-### Semantic Versioning (Current)
+#### Semantic Versioning (Current)
 
 As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://semver.org/):
 
@@ -2543,16 +2543,16 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 - **MINOR** version for backward-compatible functionality additions
 - **PATCH** version for backward-compatible bug fixes
 
-### Legacy Versioning (v1.x – v4.x)
+#### Legacy Versioning (v1.x – v4.x)
 
 Earlier releases used a non-semantic versioning scheme. For historical documentation,
 see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 
 ---
 
-## 🚀 Upgrade Guide
+### 🚀 Upgrade Guide
 
-### From v5.3.0 to v5.4.0
+#### From v5.3.0 to v5.4.0
 
 **Breaking Changes:** None
 
@@ -2562,7 +2562,7 @@ see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 4. Update `MatchCompetitorEntityService` call sites to handle `List<>` return types
 5. Run `./mvnw clean install` to rebuild the project
 
-### From v4.1.0 to v5.0.0
+#### From v4.1.0 to v5.0.0
 
 **Breaking Changes:** None
 
@@ -2571,13 +2571,13 @@ see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
 3. Restart the application
 4. Existing data and configurations remain compatible
 
-### From v4.0.0 to v4.1.0
+#### From v4.0.0 to v4.1.0
 
 **Breaking Changes:** None
 
 Migration: See v4.1.0 release notes
 
-### From v3.x to v4.x
+#### From v3.x to v4.x
 
 **Breaking Changes:** Yes
 
@@ -2587,7 +2587,7 @@ Migration: See v4.1.0 release notes
 
 ---
 
-## 🤝 Contributing
+### 🤝 Contributing
 
 Contributions are welcome! Please follow these guidelines:
 
@@ -2598,7 +2598,7 @@ Contributions are welcome! Please follow these guidelines:
 
 ---
 
-## 💬 Support
+### 💬 Support
 
 For issues, feature requests or questions:
 
