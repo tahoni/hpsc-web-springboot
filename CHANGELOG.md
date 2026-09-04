@@ -53,9 +53,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### Documentation
 
-- **`README.md`/`AGENTS.md`:** Both now state that `AGENTS.md` is the ultimate source of truth for this project's
-  conventions, right before their Documentation file tables — every other file's workflow/convention guidance
-  (`CONTRIBUTING.md` included) points back to it rather than restating it
+- **`AGENTS.md`:** Now states, right before its Documentation File Map, that it is this project's ultimate source of
+  truth for conventions — every other file's workflow/convention guidance (`CONTRIBUTING.md` included) points back to
+  it rather than restating it
+- **`CONTRIBUTING.md`:** Intro now points to `AGENTS.md` for the full set of conventions AI coding agents and
+  contributors follow, and states that `AGENTS.md` wins if anything else in the repository's documentation ever
+  contradicts it
 
 ## 🧾 [8.4.1] - 2026-09-04
 
