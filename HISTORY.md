@@ -1,4 +1,4 @@
-# Project History
+# HPSC Website Backend History
 
 A comprehensive historical overview of the HPSC Website Backend project from start to current release, documenting the
 evolution of architecture, features and design philosophy across all versions.

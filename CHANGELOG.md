@@ -1,4 +1,6 @@
-# Changelog
+# HPSC Website Backend
+
+## 🧾 Change Log
 
 All notable changes to the HPSC Website Backend project are documented in this file.
 

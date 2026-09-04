@@ -1,4 +1,4 @@
-# Contributing to HPSC Web
+# Contributing to HPSC Web Backend
 
 This document walks a new developer through everything needed to get the HPSC Website Backend running locally and start
 contributing. See [`README.md`](README.md) for a project overview and [`ARCHITECTURE.md`](ARCHITECTURE.md) for the
