@@ -130,6 +130,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   bullets under Documentation Conventions — each now links to the specific `AGENTS.md` anchor instead of restating
   it. Also condensed the CI/CD & Quality Gates table into a link to `ARCHITECTURE.md`'s own table, its actual source
   of truth (per `AGENTS.md`'s own cross-reference), since the two had drifted to slightly different wording
+- **`CONTRIBUTING.md`:** Getting Started's app-URL/Swagger-URL sentence restates `AGENTS.md`'s Project Overview
+  bullets verbatim without citing it — now links to `AGENTS.md#-project-overview`, matching the same fix just made
+  in the sibling `hpsc-web-vite` repository's `CONTRIBUTING.md` for its analogous routing bullet
 
 ### 🐛 Fixed
 

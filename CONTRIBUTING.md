@@ -58,7 +58,8 @@ detailed system design.
    ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
    ```
    The app starts on `http://localhost:8081/hpsc-web`. Interactive API docs are at
-   `http://localhost:8081/hpsc-web/swagger-ui/index.html`.
+   `http://localhost:8081/hpsc-web/swagger-ui/index.html` — see [`AGENTS.md`'s Project
+   Overview](AGENTS.md#-project-overview).
 
 > An `application-local.properties` profile also exists in the repository, pre-configured against a specific hand-built
 > database baseline from before Flyway was introduced. It isn't a generic onboarding path — use `dev` unless you
