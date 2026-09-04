@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,6 +32,12 @@ public class MatchRequest {
     @JsonProperty(required = true)
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
+    /** Time the match started; may be null. */
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
+    private LocalDateTime startTime;
+    /** Time the match ended; may be null. */
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
+    private LocalDateTime endTime;
     /** The match's name. */
     @JsonProperty(required = true)
     private String matchName;
@@ -61,6 +68,8 @@ public class MatchRequest {
      * @param matchCategory    the category/tier of this match; resolved against
      *                         {@link za.co.hpsc.web.enums.MatchCategory} by name.
      * @param stages           the stages that make up this match.
+     * @param startTime        time the match started; may be null.
+     * @param endTime          time the match ended; may be null.
      */
     @JsonCreator
     public MatchRequest(@JsonProperty("matchId") Long matchId,
@@ -69,9 +78,13 @@ public class MatchRequest {
                         @JsonProperty("club") String club,
                         @JsonProperty("matchFirearmType") String matchFirearmType,
                         @JsonProperty("matchCategory") String matchCategory,
-                        @JsonProperty("stages") List<MatchStageRequest> stages) {
+                        @JsonProperty("stages") List<MatchStageRequest> stages,
+                        @JsonProperty(value = "startTime") LocalDateTime startTime,
+                        @JsonProperty(value = "endTime") LocalDateTime endTime) {
         this.matchId = matchId;
         this.matchDate = matchDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.matchName = matchName;
         this.club = club;
         this.matchFirearmType = matchFirearmType;

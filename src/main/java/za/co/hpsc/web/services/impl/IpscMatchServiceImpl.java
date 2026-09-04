@@ -113,6 +113,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (request.getMatchDate() != null) {
             match.setScheduledDate(request.getMatchDate().atStartOfDay());
         }
+        if (request.getStartTime() != null) {
+            match.setStartTime(request.getStartTime());
+        }
+        if (request.getEndTime() != null) {
+            match.setEndTime(request.getEndTime());
+        }
         if (request.getMatchFirearmType() != null) {
             match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
         }
@@ -187,10 +193,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 null,
                 matchRequestForCSV.getMatchDate(),
                 matchRequestForCSV.getMatchName(),
-                matchRequestForCSV.getClub(),
-                matchRequestForCSV.getMatchFirearmType(),
-                matchRequestForCSV.getMatchCategory(),
-                parseStages(matchRequestForCSV.getStages()));
+                matchRequestForCSV.getClub(), matchRequestForCSV.getMatchFirearmType(), matchRequestForCSV.getMatchCategory(), parseStages(matchRequestForCSV.getStages()), matchRequestForCSV.getStartTime(),
+                matchRequestForCSV.getEndTime()
+        );
     }
 
     /**
@@ -246,6 +251,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         match.setClub(resolveClub(request.getClub()));
         match.setName(request.getMatchName());
         match.setScheduledDate(request.getMatchDate().atStartOfDay());
+        match.setStartTime(request.getStartTime());
+        match.setEndTime(request.getEndTime());
         match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
         match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
     }
@@ -443,6 +450,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 match.getId(),
                 match.getName(),
                 match.getScheduledDate().toLocalDate(),
+                match.getStartTime(),
+                match.getEndTime(),
                 ((match.getClub() != null) ? match.getClub().getIdentifier() : null),
                 match.getMatchFirearmType(),
                 match.getMatchCategory(),

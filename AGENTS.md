@@ -144,8 +144,9 @@ spelling (e.g. "licence", "organisation", "colour", "initialise"), not American 
 **Exceptions:**
 
 - Standard legal or licence boilerplate. The `LICENSE.md` file itself (name and content) is a fixed legal term in
-  American English and must not be altered; any other doc that names or links to it (headings, tables, ToC entries) also
-  spells it "License" for consistency.
+  American English and must not be altered. Everywhere else — headings, tables, ToC entries, prose that names or
+  links to it — spells it "Licence", per the British English convention above; only the filename and the file's own
+  content stay American English.
 - Third-party product, library and API names (e.g. "Serialization" where it is part of an external class or annotation
   name).
 
@@ -203,7 +204,7 @@ genuinely new concept. Icons already established in this repository's documentat
 | 📚   | Documentation                     |
 | 🧪   | Testing                           |
 | 🏛️   | Architecture                      |
-| 📜   | License                           |
+| 📜   | Licence                           |
 | 👤   | Author                            |
 | 🎯   | Theme / system overview           |
 | 🔄   | Changed items / design patterns   |

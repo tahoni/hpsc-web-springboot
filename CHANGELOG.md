@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.4.2](#-842---2026-09-04) ← Current
+- [🧾 Version 8.5.0](#-850---2026-09-04) ← Current
+- [🧾 Version 8.4.2](#-842---2026-09-04)
 - [🧾 Version 8.4.1](#-841---2026-09-04)
 - [🧾 Version 8.4.0](#-840---2026-09-03)
 - [🧾 Version 8.3.1](#-831---2026-09-02)
@@ -51,6 +52,69 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.5.0] - 2026-09-04
+
+#### ➕ Added
+
+##### Domain
+
+- **`IpscMatch.startTime`, `IpscMatch.endTime`:** New nullable `LocalDateTime` columns — record when a match actually
+  started and ended, alongside the existing `scheduledDate`
+
+##### Documentation
+
+- **`README.md`:** "License" heading/prose corrected to British English "Licence" (the `LICENSE.md` filename itself
+  is unchanged, per `AGENTS.md`'s British English exceptions for filenames)
+
+##### API Models
+
+- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** New nullable `startTime`/`endTime` fields, formatted per
+  `IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT` (`yyyy-MM-dd HH:mm`) on the two request DTOs
+- **`IpscMatchController`:** `createMatches`'s OpenAPI CSV example now includes the new `StartTime`/`EndTime` columns
+
+##### Database
+
+- **`V7_5_0__add_ipsc_match_start_end_time.sql`:** New Flyway migration — adds nullable `start_time`/`end_time`
+  columns to `ipsc_match`
+
+##### Tests
+
+- **`IpscMatchServiceIntegrationTest`:** `startTime`/`endTime` now flow through `validRequest`'s fixture and are
+  asserted in `createMatch`/`getMatch`/`updateMatch`'s happy-path tests, plus a new
+  `testPatchMatch_whenStartAndEndTimeAreProvided_thenStartAndEndTimeChange` — proves the two new columns actually
+  round-trip through the real H2/Hibernate/JPA layer, not just mocked repositories
+- **`IpscMatchServiceTest`:** `startTime`/`endTime` now flow through `validRequest`'s fixture and are asserted in
+  `createMatch`'s and `updateMatch`'s happy-path tests; `testCreateMatches_whenSingleValidRow_...`'s CSV row now
+  supplies actual `StartTime`/`EndTime` values (previously left blank) with matching assertions, closing the one
+  gap where CSV import's mapping of these two fields was never verified
+
+#### 🔄 Changed
+
+##### API
+
+- **CSV bulk import (`POST /matches/csv`):** The header row must now include `StartTime`/`EndTime` columns, like
+  every other `MatchRequestForCSV` property — consistent with this endpoint's existing all-columns-required header
+  validation, but existing CSV templates need updating to add them (values may be left blank)
+
+##### Services
+
+- **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `startTime`/
+  `endTime` through between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
+
+##### Documentation
+
+- **`AGENTS.md`:** British English exception for `LICENSE.md` narrowed — only the filename and the file's own
+  content stay American English "License"; every other reference to it (headings, tables, ToC entries, prose)
+  now spells it "Licence", matching the rest of the project's British English convention rather than carving out
+  an exception for it
+
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`CONTRIBUTING.md`:** Its own Serial Commas rule example ("prose, comments, and Javadoc") violated the rule it was
+  illustrating — corrected to "prose, comments and Javadoc"
 
 ### 🧾 [8.4.2] - 2026-09-04
 
