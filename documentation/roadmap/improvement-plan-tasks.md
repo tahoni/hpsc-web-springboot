@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s nine gaps, grouped by that
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s ten gaps, grouped by that
 document's completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — matching its own "🔍 Gaps &
 Improvement Opportunities" grouping. Each block names its originating gap number for traceability back to the
 evidence and reasoning there; within each section, gaps stay in ascending number order.
@@ -162,6 +162,17 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
+
+**`HISTORY.md` Phase/Milestone backfill** *(improvement-plan.md → Gap #10)*
+
+- [ ] Add "Phase 26: ..." (Evolution Overview) and "Milestone 26: ..." (Major Milestones) entries for v8.4.1
+  ("Documentation Cross-Reference Consolidation & Icon Registry Sync"), summarising its existing Historical
+  Timeline entry
+- [ ] Add "Phase 27: ..."/"Milestone 27: ..." entries for v8.4.2 ("Root Document Title Standardisation &
+  Source-of-Truth Clarification")
+- [ ] Add "Phase 28: ..."/"Milestone 28: ..." entries for v8.5.0 ("Match Start/End Time Tracking")
+- [ ] Re-check whether this release (`release/v8.6.0`) needs its own Phase/Milestone once its scope is final, per
+  `AGENTS.md`'s Release Checklist step 6
 
 ---
 

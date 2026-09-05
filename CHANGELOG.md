@@ -53,6 +53,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Documentation
+
+- **`improvement-plan.md`:** New Gap #10 — `HISTORY.md`'s "📖 Evolution Overview"/"🎯 Major Milestones" sections
+  haven't been extended past Phase 25/Milestone 25 (v8.4.0), leaving v8.4.1, v8.4.2 and v8.5.0 without a matching
+  Phase/Milestone entry despite `AGENTS.md`'s Release Checklist requiring one unconditionally for every release
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox block for Gap #10, backfilling Phase 26/27/28 and
+  Milestone 26/27/28 for v8.4.1/v8.4.2/v8.5.0
+
 #### 🔄 Changed
 
 ##### Documentation
@@ -64,6 +74,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   is now unscoped
 - **`improvement-plan.md`:** "📋 Gap Status Summary" section's #6 entry corrected to say it's the current **Now**
   roadmap focus, not **Next** — stale after the Roadmap table update above promoted it
+- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Next** row now points at Gap #10's `HISTORY.md` Phase/Milestone
+  backfill, replacing the "unscoped" placeholder
+- **`improvement-plan-tasks.md`:** Intro line's gap count updated from "nine" to "ten" to include Gap #10
 
 ### 🧾 [8.5.0] - 2026-09-04
 
