@@ -417,13 +417,6 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ---
 
-Check items off in place as work lands; don't delete a task outright. When a gap's first item gets checked, move its
-whole block from ⚪ Open into 🟡 Partially Completed; once every item under it is checked, move the block again into
-✅ Completed and mark the gap closed there (e.g. strike it through with a "✅ Closed in vX.Y.Z" note) — matching
-whatever change was made to its section in `improvement-plan.md`, per that document's Success Criteria.
-
----
-
 ## 📚 Related Documentation
 
 See `README.md`'s [📚 Documentation](/README.md#-documentation) section for the full documentation map. Most relevant to
