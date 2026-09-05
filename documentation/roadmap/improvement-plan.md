@@ -75,7 +75,7 @@ A quick-reference list of every numbered gap below, by status. Numbers are stabl
 
 **⚪ Open**
 
-6. Match scoring / shooter-log service and controller layer are not yet built — current **Next** roadmap focus
+6. Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
 
 ---
 

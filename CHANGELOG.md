@@ -62,6 +62,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`:** "🗺️ Roadmap" table's **Now** row dropped #2/#7, both already closed, and promoted #6
   (match scoring / shooter-log service and controller layer) up from **Next** as the only remaining open gap; **Next**
   is now unscoped
+- **`improvement-plan.md`:** "📋 Gap Status Summary" section's #6 entry corrected to say it's the current **Now**
+  roadmap focus, not **Next** — stale after the Roadmap table update above promoted it
 
 ### 🧾 [8.5.0] - 2026-09-04
 
