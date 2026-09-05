@@ -77,6 +77,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`:** "🗺️ Roadmap" table's **Next** row now points at Gap #10's `HISTORY.md` Phase/Milestone
   backfill, replacing the "unscoped" placeholder
 - **`improvement-plan-tasks.md`:** Intro line's gap count updated from "nine" to "ten" to include Gap #10
+- **`HISTORY.md`:** New "Phase 26"/"Milestone 26" (v8.4.1), "Phase 27"/"Milestone 27" (v8.4.2) and "Phase 28"/
+  "Milestone 28" (v8.5.0) entries backfilled into "📖 Evolution Overview"/"🎯 Major Milestones", summarising each
+  release's existing Historical Timeline content — closes `improvement-plan.md`'s Gap #10
+- **`improvement-plan.md`:** Gap #10 marked "✅ Closed in v8.6.0" with an Outcome paragraph, moved from "⚪ Open"
+  to "✅ Completed"; "📋 At a Glance", the "🗺️ Roadmap" table's **Next** row and "✅ Success Criteria" updated to
+  match
+- **`improvement-plan-tasks.md`:** Gap #10's checkbox block moved to "✅ Completed" with its first three items
+  checked off; the fourth (re-checking whether `release/v8.6.0` itself needs a Phase/Milestone) deliberately left
+  unchecked, deferred to that release's own prep pass
 
 ### 🧾 [8.5.0] - 2026-09-04
 

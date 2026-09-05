@@ -138,6 +138,18 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   `resolveClub` now resolves `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` via `clubRepository.findByIdentifier`
   when none is supplied, throwing `NonFatalException` if even that default club is missing
 
+**`HISTORY.md` Phase/Milestone backfill** *(improvement-plan.md → Gap #10)* — ✅ Closed in v8.6.0
+
+- [x] Add "Phase 26: ..." (Evolution Overview) and "Milestone 26: ..." (Major Milestones) entries for v8.4.1
+  ("Documentation Cross-Reference Consolidation & Icon Registry Sync"), summarising its existing Historical
+  Timeline entry
+- [x] Add "Phase 27: ..."/"Milestone 27: ..." entries for v8.4.2 ("Root Document Title Standardisation &
+  Source-of-Truth Clarification")
+- [x] Add "Phase 28: ..."/"Milestone 28: ..." entries for v8.5.0 ("Match Start/End Time Tracking")
+- [ ] Re-check whether this release (`release/v8.6.0`) needs its own Phase/Milestone once its scope is final, per
+  `AGENTS.md`'s Release Checklist step 6 — deliberately left unchecked: `release/v8.6.0` is still in progress, so
+  this is deferred to its own release-prep pass rather than blocking this gap's closure
+
 ---
 
 ## 🟡 Partially Completed
@@ -162,17 +174,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
-
-**`HISTORY.md` Phase/Milestone backfill** *(improvement-plan.md → Gap #10)*
-
-- [ ] Add "Phase 26: ..." (Evolution Overview) and "Milestone 26: ..." (Major Milestones) entries for v8.4.1
-  ("Documentation Cross-Reference Consolidation & Icon Registry Sync"), summarising its existing Historical
-  Timeline entry
-- [ ] Add "Phase 27: ..."/"Milestone 27: ..." entries for v8.4.2 ("Root Document Title Standardisation &
-  Source-of-Truth Clarification")
-- [ ] Add "Phase 28: ..."/"Milestone 28: ..." entries for v8.5.0 ("Match Start/End Time Tracking")
-- [ ] Re-check whether this release (`release/v8.6.0`) needs its own Phase/Milestone once its scope is final, per
-  `AGENTS.md`'s Release Checklist step 6
 
 ---
 

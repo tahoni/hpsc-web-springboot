@@ -1236,6 +1236,148 @@ coverage.
 
 ---
 
+### Phase 28: Match Start/End Time Tracking (v8.5.0)
+
+**Duration:** September 4, 2026
+
+A domain feature release: adds nullable start/end timestamps to `IpscMatch`, wired end-to-end through the request/
+response models, CSV bulk import and service layer, alongside a handful of British English documentation corrections.
+
+**Key Accomplishments:**
+
+**Match Start/End Time Tracking**
+
+- `IpscMatch` gains nullable `startTime`/`endTime` (`LocalDateTime`) columns, alongside the existing `scheduledDate`,
+  via new `V7_5_0__add_ipsc_match_start_end_time.sql`; wired end-to-end through `MatchRequest`, `MatchRequestForCSV`
+  and `MatchResponse`, and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/`toResponse`
+- CSV bulk import (`POST /matches/csv`) now requires `StartTime`/`EndTime` header columns, like every other
+  `MatchRequestForCSV` property, consistent with this endpoint's existing all-columns-required header validation —
+  existing CSV templates need updating to add them (values may be left blank)
+
+**Documentation Fixes**
+
+- `README.md`'s "License" heading/prose corrected to British English "Licence"; `CONTRIBUTING.md`'s own Serial
+  Commas rule example corrected to no longer violate the rule it illustrates; `AGENTS.md`'s British English
+  exception for `LICENSE.md` narrowed to just the filename and the file's own content, so every other reference to
+  it spells it "Licence" instead of carving out a wider exception
+
+**Build & Metadata**
+
+- Project version bumped to 8.5.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No structural architectural change — extends an existing entity (`IpscMatch`) with two new nullable columns
+  following the established request/response/service wiring pattern
+
+**Technical Focus:**
+
+- Match-timing data completeness
+- British English documentation consistency
+
+**Test Coverage:**
+
+- New coverage in `IpscMatchServiceIntegrationTest` proves the two-column round-trip through the real
+  H2/Hibernate/JPA layer, not just mocked repositories; `IpscMatchServiceTest`'s CSV bulk-import test now supplies
+  actual `StartTime`/`EndTime` values, closing the one gap where that mapping was never verified
+
+---
+
+### Phase 27: Root Document Title Standardisation & Source-of-Truth Clarification (v8.4.2)
+
+**Duration:** September 4, 2026
+
+A documentation-only patch release: clarifies `AGENTS.md` as the project's ultimate source of truth for conventions
+and standardises root document titles to a consistent project-name prefix — no domain-model, API or test-behaviour
+change.
+
+**Key Accomplishments:**
+
+**Source-of-Truth Clarification**
+
+- `AGENTS.md` now states, right before its Documentation File Map, that it is this project's ultimate source of
+  truth for conventions — every other file's workflow/convention guidance points back to it rather than restating it
+- `CONTRIBUTING.md`'s intro carries the matching pointer, stating `AGENTS.md` wins if anything else in the
+  repository's documentation ever contradicts it
+
+**Root Document Title Standardisation**
+
+- `CHANGELOG.md`'s title changed from "Changelog" to "HPSC Website Backend", with a new "🧾 Change Log"
+  second-level heading beneath it, matching `README.md`'s existing project name; every heading below it — Table of
+  Contents, each version and their category/area sub-headers — demoted one level to nest correctly under the new
+  heading
+- `CONTRIBUTING.md`/`HISTORY.md`'s H1 titles gain the same "HPSC Website Backend" prefix for consistency
+
+**Build & Metadata**
+
+- Project version bumped to 8.4.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No architectural change — this release standardises document titles and clarifies documentation precedence only
+
+**Technical Focus:**
+
+- Documentation precedence clarity (a single, explicit source of truth)
+- Root document title consistency
+
+**Test Coverage:**
+
+- No test changes — this release touches only Markdown documentation and version metadata
+
+---
+
+### Phase 26: Documentation Cross-Reference Consolidation & Icon Registry Sync (v8.4.1)
+
+**Duration:** September 4, 2026
+
+A documentation-only patch release: condenses `AGENTS.md`/`CONTRIBUTING.md`'s duplicated content into
+cross-references, backfills the icon registry, and cleans up latent `CHANGELOG.md`/`AGENTS.md` defects — no
+domain-model, API or test-behaviour change.
+
+**Key Accomplishments:**
+
+**Cross-Reference Consolidation**
+
+- `AGENTS.md`/`CONTRIBUTING.md`'s full/near-verbatim content duplicates condensed into highlights-and-link
+  references — Git Workflow's Branching Model, Conventions and Directory Tree Maintenance bullets, the Exception
+  handling and CHANGELOG-same-change/Evergreen bullets, and the CI/CD & Quality Gates table (now pointed at
+  `ARCHITECTURE.md`, its actual source of truth). Git Workflow's "Merging" subsection consolidated as
+  `CONTRIBUTING.md`'s sole canonical copy, since `sync-unreleased-changes`/`sync-improvement-plan-gaps` need only
+  the Branching Model and Conventions subsections to remain in `AGENTS.md`
+- New `AGENTS.md` "🧩 Claude Code Skills" and "🗺️ Roadmap Planning" sections, both mirrored with a short pointer
+  in `CONTRIBUTING.md`
+
+**Icon Registry Sync**
+
+- `AGENTS.md`'s icon registry backfilled with 25 previously-unregistered icons already in real use, plus a new
+  "Reserved" sub-table tracking the sibling `hpsc-web-vite` repository's frontend-specific icons — synced twice
+  this release as `hpsc-web-vite`'s own registry grew, reciprocally gaining `🧬` (Data model / DTOs) in return.
+  Several icon collisions resolved across `README.md`, `ARCHITECTURE.md`, `HISTORY.md`, `RELEASE_NOTES.md` and 17
+  archived per-version release notes
+- `CHANGELOG.md`'s duplicate, truncated `[5.0.0]` section removed, and a pre-existing broken example in the Serial
+  Commas convention (identical "e.g." and "not" contrast phrases) corrected
+
+**Build & Metadata**
+
+- Project version bumped to 8.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No architectural change — this release only restructures/cross-references existing documentation and fixes
+  latent documentation defects
+
+**Technical Focus:**
+
+- Documentation cross-reference consolidation, reducing duplicated source-of-truth content
+- Icon registry completeness and cross-repository icon consistency
+
+**Test Coverage:**
+
+- No test changes — this release touches only Markdown documentation and version metadata
+
+---
+
 ### Phase 25: Club Domain Defaults, Optional Club Numbers & Documentation Convention Hardening (v8.4.0)
 
 **Duration:** September 3, 2026
@@ -2389,6 +2531,44 @@ Focused consolidation of services, introduction of custom JPA converters and rep
 
 **Achievement:** Significant architectural improvement with cleaner separation of concerns, enhanced null safety and
 comprehensive test coverage across all services and utilities.
+
+---
+
+### Milestone 28: Match Start/End Time Tracking (v8.5.0)
+
+- `IpscMatch` gains nullable `startTime`/`endTime` columns via `V7_5_0__add_ipsc_match_start_end_time.sql`, wired
+  through `MatchRequest`/`MatchRequestForCSV`/`MatchResponse` and `IpscMatchServiceImpl`
+- CSV bulk import's header validation now requires the two new columns; `README.md`/`CONTRIBUTING.md`/`AGENTS.md`
+  gained British English corrections around "Licence"
+
+**Achievement:** Closed a real gap in match-timing data, extending the match domain's request/response/service
+wiring pattern to two new nullable timestamp fields.
+
+---
+
+### Milestone 27: Root Document Title Standardisation & Source-of-Truth Clarification (v8.4.2)
+
+- `AGENTS.md` now explicitly states it is the project's ultimate source of truth for conventions, with
+  `CONTRIBUTING.md` pointing back to it on any contradiction
+- `CHANGELOG.md`/`CONTRIBUTING.md`/`HISTORY.md` titles standardised to the "HPSC Website Backend" project name,
+  with `CHANGELOG.md`'s headings demoted one level to nest under its new title
+
+**Achievement:** Established a single, explicit source of truth for documentation conventions and brought every
+root document's title in line with the project's actual name — no domain/service/architecture or test changes.
+
+---
+
+### Milestone 26: Documentation Cross-Reference Consolidation & Icon Registry Sync (v8.4.1)
+
+- `AGENTS.md`/`CONTRIBUTING.md`'s duplicated content condensed into highlights-and-link references (Git Workflow,
+  Exception handling, CI/CD & Quality Gates); new "🧩 Claude Code Skills"/"🗺️ Roadmap Planning" sections
+- Icon registry backfilled with 25 previously-unregistered icons plus a new "Reserved" sub-table for
+  `hpsc-web-vite`'s icons, synced twice this release; several icon collisions resolved across root and archived docs
+- `CHANGELOG.md`'s duplicate `[5.0.0]` section removed; a broken Serial Commas example corrected
+
+**Achievement:** Reduced duplicated source-of-truth content across `AGENTS.md`/`CONTRIBUTING.md`, completed the icon
+registry against real usage across both sibling repositories, and cleared two latent documentation defects — no
+domain/service/architecture or test changes.
 
 ---
 
