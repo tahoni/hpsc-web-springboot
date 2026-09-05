@@ -59,6 +59,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`improvement-plan.md`:** New "📋 Gap Status Summary" section, listing every numbered gap by completion status —
   a quick-reference index ahead of the full per-gap detail in "🔍 Gaps & Improvement Opportunities"
+- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Now** row dropped #2/#7, both already closed, and promoted #6
+  (match scoring / shooter-log service and controller layer) up from **Next** as the only remaining open gap; **Next**
+  is now unscoped
 
 ### 🧾 [8.5.0] - 2026-09-04
 
