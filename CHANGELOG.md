@@ -53,6 +53,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`improvement-plan.md`:** New "📋 Gap Status Summary" section, listing every numbered gap by completion status —
+  a quick-reference index ahead of the full per-gap detail in "🔍 Gaps & Improvement Opportunities"
+
 ### 🧾 [8.5.0] - 2026-09-04
 
 #### ➕ Added

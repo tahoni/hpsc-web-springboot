@@ -9,6 +9,7 @@ should be revisited whenever a major gap it names is closed or a new one is iden
 
 - [🎯 Purpose & Scope](#-purpose--scope)
 - [⚙️ Goals & Constraints (Synthesised)](#-goals--constraints-synthesised)
+- [📋 Gap Status Summary](#-gap-status-summary)
 - [🔍 Gaps & Improvement Opportunities](#-gaps--improvement-opportunities)
 - [🗺️ Roadmap](#-roadmap)
 - [✅ Success Criteria](#-success-criteria)
@@ -49,6 +50,32 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint (see [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                    |
 | `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                     |
 | `CONTRIBUTING.md`, `application.properties`         | Three distinct runtime profiles (none/prod, `dev`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors                                                                                                                                                                                        |
+
+---
+
+## 📋 Gap Status Summary
+
+A quick-reference list of every numbered gap below, by status. Numbers are stable identifiers (see note under
+[Gaps & Improvement Opportunities](#-gaps--improvement-opportunities)) — they aren't sequential within a status group.
+
+**✅ Completed**
+
+1. Match/competitor service and controller layer — closed v8.0.0
+2. No automatic build/test gate on pull requests — closed v8.3.1
+3. Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
+4. Coverage measured but not enforced — closed v8.4.0 (JaCoCo floor raised 51% → 86% → 97%)
+5. `jackson-databind` version override is a standing manual constraint — closed v8.1.1
+7. Qodana static analysis is configured but never runs in CI — closed v8.2.0 (removed as not applicable)
+8. Match bulk CSV import remains removed pending a rebuild — closed v8.3.0
+9. `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — closed v8.4.0
+
+**🟡 Partially Completed**
+
+*None currently.*
+
+**⚪ Open**
+
+6. Match scoring / shooter-log service and controller layer are not yet built — current **Next** roadmap focus
 
 ---
 
@@ -390,6 +417,13 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ---
 
+Check items off in place as work lands; don't delete a task outright. When a gap's first item gets checked, move its
+whole block from ⚪ Open into 🟡 Partially Completed; once every item under it is checked, move the block again into
+✅ Completed and mark the gap closed there (e.g. strike it through with a "✅ Closed in vX.Y.Z" note) — matching
+whatever change was made to its section in `improvement-plan.md`, per that document's Success Criteria.
+
+---
+
 ## 📚 Related Documentation
 
 See `README.md`'s [📚 Documentation](/README.md#-documentation) section for the full documentation map. Most relevant to
@@ -399,3 +433,4 @@ this plan:
   builds on
 - [`AGENTS.md`](/AGENTS.md) — the Git Workflow and Release Checklist referenced throughout
 - [`HISTORY.md`](/HISTORY.md) — per-release "🗺️ Future Roadmap Implications" sections this plan complements
+
