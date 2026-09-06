@@ -3341,13 +3341,19 @@ AttributeConverters
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.1.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.6.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
-  Then extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
-  `@JsonProperty(required = true)` actually enforces required fields via matching `@JsonCreator` constructors.
-  Finally, close a silent test-coverage regression, complete the CI static-analysis gate and build tooling so the
-  release process keeps auditing its own roadmap documentation going forward.
+  Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
+  `@JsonProperty(required = true)` actually enforces required fields via matching `@JsonCreator` constructors, then
+  close a silent test-coverage regression and stand up the CI static-analysis gate and build tooling so the release
+  process keeps auditing its own roadmap documentation going forward. Broaden the domain surface itself —
+  multi-value competitor emails, bulk CSV import extended to matches, club requirements relaxed to
+  domain-appropriate defaults, and match start/end time tracking — while sustaining that same process discipline at
+  documentation scale: a project-wide icon-registry and cross-reference consolidation, root-document title
+  standardisation naming `AGENTS.md` as the project's single source of truth, and finally closing the release
+  checklist's own audit loop by backfilling `HISTORY.md`'s Phase/Milestone record for every release that had fallen
+  behind it.
 
 ### Initial Phase (v1.0.0)
 

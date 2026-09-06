@@ -87,6 +87,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan-tasks.md`:** Gap #10's checkbox block moved to "✅ Completed" with its first three items
   checked off; the fourth (re-checking whether `release/v8.6.0` itself needs a Phase/Milestone) deliberately left
   unchecked, deferred to that release's own prep pass
+- **`HISTORY.md`:** "Major Version Goals" subsection's Version 8.x entry extended from `v8.0.0 – v8.1.1` to
+  `v8.0.0 – v8.6.0`, adding narrative for the domain broadening (multi-value competitor emails, match bulk CSV
+  import, relaxed club-requirement defaults, match start/end time tracking) and documentation-process discipline
+  (icon-registry/cross-reference consolidation, root-document title standardisation, `HISTORY.md`'s own
+  Phase/Milestone backfill) delivered across v8.2.0 – v8.6.0
 
 ### 🧾 [8.5.0] - 2026-09-04
 
