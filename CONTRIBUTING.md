@@ -245,7 +245,7 @@ removed.
 ## 🔬 CI/CD & Quality Gates
 
 See [`ARCHITECTURE.md`'s CI/CD & Quality Gates table](ARCHITECTURE.md#-cicd--quality-gates) for the full gate/tool/
-trigger matrix (CodeQL security analysis, Maven build & tests, JaCoCo coverage) rather than duplicating it here, so
+trigger matrix (CodeQL security analysis, Maven build and tests, JaCoCo coverage) rather than duplicating it here, so
 the two never drift out of sync.
 
 ---
