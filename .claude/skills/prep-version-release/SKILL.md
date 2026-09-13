@@ -91,6 +91,9 @@ Steps:
       rather than exhaustive
     - `## 🧪 Test Plan` — checklist of what was verified (build, tests, manual checks)
     - `## 🔗 Related Documentation` — links to `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md`
+    - End the file with the standard Claude Code attribution footer (a blank line, then
+      `🤖 Generated with [Claude Code](https://claude.com/claude-code)`) — this is a PR description drafted by Claude
+      Code and should be marked as such, same as any other PR description it opens.
 
 Commit these in logical chunks per AGENTS.md's Git Workflow — the version bump, the CHANGELOG/HISTORY/RELEASE_NOTES
 documentation and the PR description are separate concerns. Do not run `git commit`, `git push` or open the PR

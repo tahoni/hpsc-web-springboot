@@ -93,6 +93,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   (icon-registry/cross-reference consolidation, root-document title standardisation, `HISTORY.md`'s own
   Phase/Milestone backfill) delivered across v8.2.0 – v8.6.0
 
+##### Tooling
+
+- **`prep-version-release`, `generate-pr-summary`:** Both skills now end their drafted PR description/summary with the
+  standard Claude Code attribution footer (`🤖 Generated with [Claude Code](https://claude.com/claude-code)`),
+  marking them as Claude-drafted like any other PR description it opens
+
 ### 🧾 [8.5.0] - 2026-09-04
 
 #### ➕ Added
