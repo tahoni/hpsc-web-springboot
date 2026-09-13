@@ -59,6 +59,22 @@ across the whole document; a number is assigned once and never reused or reseque
 identifier even after it moves between sections as its status changes (e.g. Open → Partially Completed → Completed).
 Within each section, gaps stay in ascending number order.
 
+### 📋 At a Glance
+
+- **✅ Completed (9):**
+  - #1 Match/competitor service and controller layer — closed v8.0.0
+  - #2 No automatic build/test gate on pull requests — closed v8.3.1
+  - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
+  - #4 Coverage measured but not enforced — closed v8.4.0 (JaCoCo floor raised 51% → 86% → 97%)
+  - #5 `jackson-databind` version override is a standing manual constraint — closed v8.1.1
+  - #7 Qodana static analysis is configured but never runs in CI — closed v8.2.0 (removed as not applicable)
+  - #8 Match bulk CSV import remains removed pending a rebuild — closed v8.3.0
+  - #9 `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — closed v8.4.0
+  - #10 `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — closed v8.5.1
+- **🟡 Partially Completed (0):** none currently.
+- **⚪ Open (1):**
+  - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
+
 ### ✅ Completed
 
 #### 1. Match/competitor service and controller layer is the single largest stated gap — ✅ Closed in v8.0.0
@@ -320,6 +336,43 @@ instead, mirroring `IpscCompetitorServiceImpl.resolveHomeClub`/`resolveClubNumbe
 pattern, and throwing `NonFatalException` if even the default club is missing. `MatchRequest`/`MatchRequestForCSV`'s
 `club` field Javadoc now documents the default explicitly.
 
+#### 10. `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — ✅ Closed in v8.5.1
+
+**Evidence:** `HISTORY.md`'s "📅 Historical Timeline" section has an entry for every shipped release through v8.5.0
+(the current version), but its "📖 Evolution Overview" (`### Phase N: ...`) and "🎯 Major Milestones"
+(`### Milestone N: ...`) sections both stop at "Phase 25"/"Milestone 25: Club Domain Defaults, Optional Club
+Numbers & Documentation Convention Hardening (v8.4.0)" — no Phase 26/27/28 or Milestone 26/27/28 exists for
+v8.4.1 ("Documentation Cross-Reference Consolidation & Icon Registry Sync"), v8.4.2 ("Root Document Title
+Standardisation & Source-of-Truth Clarification") or v8.5.0 ("Match Start/End Time Tracking"), even though each of
+those three has its own Historical Timeline entry.
+
+**Why it matters:** `AGENTS.md`'s Release Checklist step 6 states, unconditionally, "Add a Historical Timeline
+entry, a Phase and a Milestone for the new version" — distinct from the following sentence's *conditional*
+"if the release is significant enough" language, which applies only to threading the release through
+Architectural Evolution, Feature Timeline, Key Learnings, Future Roadmap Implications and the Conclusion/footer.
+Three consecutive releases skipped the mandatory Phase/Milestone step, including v8.5.0, which shipped a real
+schema/API/service change (`IpscMatch.startTime`/`endTime`) comparable in scope to v8.4.0's, which did get a
+Milestone. A reader following the Evolution Overview/Major Milestones narrative sees it jump straight from v8.4.0
+to nothing, understating three releases' worth of actual change.
+
+**Proposed improvement:** Add Phase 26/27/28 (Evolution Overview) and matching Milestone 26/27/28 (Major
+Milestones) entries for v8.4.1, v8.4.2 and v8.5.0, at the same narrative depth and style as the existing entries,
+summarising each release's already-written Historical Timeline content rather than researching it from scratch.
+Then re-check whether this release (currently `release/v8.5.1`) needs its own Phase/Milestone once its scope is
+final, per the Release Checklist's standing step 6.
+
+**Outcome:** Delivered exactly as proposed. `HISTORY.md`'s "📖 Evolution Overview" gained "Phase 26: Documentation
+Cross-Reference Consolidation & Icon Registry Sync (v8.4.1)", "Phase 27: Root Document Title Standardisation &
+Source-of-Truth Clarification (v8.4.2)" and "Phase 28: Match Start/End Time Tracking (v8.5.0)"; "🎯 Major
+Milestones" gained the matching Milestone 26/27/28 entries — all four summarising each release's already-written
+Historical Timeline content, at the same narrative depth as the surrounding entries. This release
+(`release/v8.5.1`) went on to need its own Phase/Milestone too: "Phase 29"/"Milestone 29" (HISTORY.md Phase/
+Milestone Backfill & Release Re-Scoping to a Patch Version) landed during this release's own prep pass, closing the
+Proposed improvement's second step. `HISTORY.md`'s "📖 Evolution Overview", "🎯 Major Milestones",
+"🏛️ Architectural Evolution" and "🗺️ Future Roadmap Implications" sections were then reordered from
+most-recent-first to ascending (oldest-first), matching "✨ Feature Timeline"/"💡 Project Philosophy Evolution"'s
+existing convention — only "📅 Historical Timeline" keeps its most-recent-first order.
+
 ### 🟡 Partially Completed
 
 *No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
@@ -353,12 +406,12 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ## 🗺️ Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                                                                                                                                 |
-|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #2 delivered in v8.3.1: `.github/workflows/build.yml` runs `./mvnw verify -Pcoverage` on push/PR to `develop`/`main`, also enforcing #4's JaCoCo line-coverage floor — raised from 51% to 86% to 97% across v8.3.1/v8.4.0, now closed. #7 is closed as not applicable: Qodana was removed in v8.2.0 rather than fixed |
-| **Next**    | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                                                                                             |
-| **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                                                                                                                                                                      |
-| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist                                                                                                                                                       |
+| Phase       | Focus                                                                                                                                                           |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
+| **Next**    | No items currently scoped — #10, this phase's previous occupant, closed in v8.5.1                                                                               |
+| **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
+| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
 ---
 
@@ -385,6 +438,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   support.
 - ✅ Met in v8.4.0: `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is now applied by `IpscMatchServiceImpl.resolveClub`
   when a match's `club` is omitted, closing Gap #9's inert-groundwork-constant gap.
+- ✅ Met in v8.5.1: `HISTORY.md`'s "📖 Evolution Overview"/"🎯 Major Milestones" sections now carry a Phase and
+  Milestone entry (26/27/28) for every shipped release through v8.5.0, closing Gap #10's backlog.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   per-version Future Roadmap notes rather than being deleted silently from here.
 
@@ -399,3 +454,4 @@ this plan:
   builds on
 - [`AGENTS.md`](/AGENTS.md) — the Git Workflow and Release Checklist referenced throughout
 - [`HISTORY.md`](/HISTORY.md) — per-release "🗺️ Future Roadmap Implications" sections this plan complements
+
