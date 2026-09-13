@@ -3341,7 +3341,7 @@ AttributeConverters
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.6.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.5.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
