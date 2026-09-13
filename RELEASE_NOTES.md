@@ -11,9 +11,11 @@
 Version 8.5.1 is a documentation-only patch release with no source-code, schema or dependency changes. It backfills
 three releases' worth of missing `HISTORY.md` "📖 Evolution Overview"/"🎯 Major Milestones" entries (v8.4.1, v8.4.2
 and v8.5.0), closing `improvement-plan.md`'s Gap #10 — the mandatory per-release Phase/Milestone step `AGENTS.md`'s
-Release Checklist requires unconditionally. Partway through drafting this release, its own diff against `main`
-turned out to be documentation/tooling-only, so it was re-scoped from the originally-planned `v8.6.0` **MINOR**
-version down to `v8.5.1` **PATCH**, matching the precedent already set by v8.4.1/v8.4.2.
+Release Checklist requires unconditionally. It also brings `HISTORY.md`'s own version-keyed sections into
+consistent ascending order and prunes a stale legacy footer from its Conclusion section. Partway through drafting
+this release, its own diff against `main` turned out to be documentation/tooling-only, so it was re-scoped from the
+originally-planned `v8.6.0` **MINOR** version down to `v8.5.1` **PATCH**, matching the precedent already set by
+v8.4.1/v8.4.2.
 
 ---
 
@@ -27,6 +29,18 @@ version down to `v8.5.1` **PATCH**, matching the precedent already set by v8.4.1
 - "Major Version Goals" Version 8.x entry extended from `v8.0.0 – v8.1.1` to `v8.0.0 – v8.5.1`, narrating the domain
   broadening (multi-value competitor emails, match bulk CSV import, relaxed club-requirement defaults, match
   start/end time tracking) and documentation-process discipline delivered across v8.2.0 – v8.5.1
+
+### 🔄 Internal Chronological Consistency
+
+- `HISTORY.md`'s "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
+  Roadmap Implications" reordered to ascending (oldest-first), matching the convention already used by
+  "✨ Feature Timeline" and "💡 Project Philosophy Evolution" — only "📅 Historical Timeline" keeps its
+  most-recent-first order. Architectural Evolution's `v5.3.0`/`v5.4.0` entries, previously stranded after `v8.0.0`
+  in a broken mixed order, are now correctly interleaved between `v5.2.0` and `v6.0.0`
+- Stale "Document Created"/"Last Updated"/"Coverage" metadata and the "Recent Updates"/"Previous Update"
+  bold-labelled update log removed from the end of `HISTORY.md`'s Conclusion section — badly out of date (stopped
+  at v8.0.0/v5.1.0) and superseded by the Historical Timeline, Evolution Overview and Major Milestones sections
+  elsewhere in the file
 
 ### 🗺️ Improvement Plan Maintenance
 
@@ -79,6 +93,10 @@ version down to `v8.5.1` **PATCH**, matching the precedent already set by v8.4.1
   moved to "✅ Completed" with every item checked, including the final re-check of this release's own Phase/
   Milestone need
 - **`HISTORY.md`:** "Major Version Goals" Version 8.x entry extended from `v8.0.0 – v8.1.1` to `v8.0.0 – v8.5.1`
+- **`HISTORY.md`:** "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
+  Roadmap Implications" reordered to ascending (oldest-first), matching the convention already used by
+  "✨ Feature Timeline" and "💡 Project Philosophy Evolution" — only "📅 Historical Timeline" keeps its
+  most-recent-first order, per standard changelog convention
 - **`CONTRIBUTING.md`:** Spells out "and" instead of "&" in its CI/CD & Quality Gates cross-reference sentence
 
 #### Configuration
@@ -91,6 +109,15 @@ version down to `v8.5.1` **PATCH**, matching the precedent already set by v8.4.1
 - **`prep-version-release`, `generate-pr-summary`:** Both skills now end their drafted PR description/summary with
   the standard Claude Code attribution footer (`🤖 Generated with [Claude Code](https://claude.com/claude-code)`)
 
+### Removed
+
+#### Documentation
+
+- **`HISTORY.md`:** Stale "Document Created"/"Last Updated"/"Coverage" metadata line and the "Recent Updates"/
+  "Previous Update" bold-labelled update log at the end of the Conclusion section, both badly out of date (stopped
+  at v8.0.0/v5.1.0) and superseded by the Historical Timeline, Evolution Overview and Major Milestones sections
+  elsewhere in the file
+
 ---
 
 ## 🚀 Migration Guide
@@ -102,11 +129,11 @@ migrate. `application-local.properties`' comment wording tweak is cosmetic only.
 
 ## 📊 Statistics
 
-- **Total Commits:** 15
-- **Files Changed:** 10
-- **Insertions:** 423 lines
-- **Deletions:** 20 lines
-- **Net Change:** +403 lines
+- **Total Commits:** 19
+- **Files Changed:** 13
+- **Insertions:** 1786 lines
+- **Deletions:** 1294 lines
+- **Net Change:** +492 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0
@@ -169,7 +196,8 @@ Leoni Lubbinge
 ## 📝 Notes
 
 Version 8.5.1 is a documentation-only patch focused entirely on closing a three-release `HISTORY.md` Phase/Milestone
-backlog and correcting this release's own Semantic Versioning classification. No product-facing behaviour changed.
+backlog, bringing `HISTORY.md`'s own sections into consistent chronological order and correcting this release's own
+Semantic Versioning classification. No product-facing behaviour changed.
 
 ---
 

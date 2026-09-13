@@ -2,6 +2,8 @@
 
 - Backfills three releases' worth of missing `HISTORY.md` Phase/Milestone entries (v8.4.1, v8.4.2, v8.5.0), closing
   `improvement-plan.md`'s Gap #10.
+- Brings `HISTORY.md`'s own version-keyed sections into consistent ascending order and prunes a stale legacy footer
+  from its Conclusion section.
 - Re-scopes this release from the originally-planned `v8.6.0` **MINOR** version down to `v8.5.1` **PATCH**, after
   confirming the branch's full diff against `main` is documentation/tooling-only — matching the precedent set by
   v8.4.1/v8.4.2.
@@ -13,11 +15,14 @@
 - **Added:** `HISTORY.md` Phase 26/27/28/29 and Milestone 26/27/28/29 entries; `improvement-plan.md`'s new "📋 At a
   Glance" gap-status index.
 - **Changed:** `improvement-plan.md`/`improvement-plan-tasks.md`'s Roadmap table and Gap #10 lifecycle brought fully
-  up to date; `HISTORY.md`'s "Major Version Goals" extended through v8.5.1; `CONTRIBUTING.md`/
-  `application-local.properties` wording tightened; `prep-version-release`/`generate-pr-summary` skills gained an
-  attribution footer.
-- No `Fixed`/`Removed`/`Deprecated`/`Security` changes this release — see `CHANGELOG.md`'s `[8.5.1]` section for the
-  full itemised list.
+  up to date; `HISTORY.md`'s "Major Version Goals" extended through v8.5.1 and its Evolution Overview/Major
+  Milestones/Architectural Evolution/Future Roadmap Implications sections reordered to ascending (oldest-first);
+  `CONTRIBUTING.md`/`application-local.properties` wording tightened; `prep-version-release`/`generate-pr-summary`
+  skills gained an attribution footer.
+- **Removed:** `HISTORY.md`'s stale legacy "Document Created"/"Last Updated"/"Coverage" metadata and "Recent
+  Updates"/"Previous Update" update log, pruned from the end of its Conclusion section.
+- No `Fixed`/`Deprecated`/`Security` changes this release — see `CHANGELOG.md`'s `[8.5.1]` section for the full
+  itemised list.
 
 ## 🧪 Test Plan
 

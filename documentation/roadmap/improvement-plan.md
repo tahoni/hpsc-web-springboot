@@ -365,10 +365,13 @@ final, per the Release Checklist's standing step 6.
 Cross-Reference Consolidation & Icon Registry Sync (v8.4.1)", "Phase 27: Root Document Title Standardisation &
 Source-of-Truth Clarification (v8.4.2)" and "Phase 28: Match Start/End Time Tracking (v8.5.0)"; "🎯 Major
 Milestones" gained the matching Milestone 26/27/28 entries — all four summarising each release's already-written
-Historical Timeline content, at the same narrative depth as the surrounding entries, inserted in the file's
-existing most-recent-first order ahead of Phase/Milestone 25. This release (`release/v8.5.1`) is still in progress,
-so whether it needs its own Phase/Milestone is left for its own release-prep pass, per the Proposed improvement's
-second step.
+Historical Timeline content, at the same narrative depth as the surrounding entries. This release
+(`release/v8.5.1`) went on to need its own Phase/Milestone too: "Phase 29"/"Milestone 29" (HISTORY.md Phase/
+Milestone Backfill & Release Re-Scoping to a Patch Version) landed during this release's own prep pass, closing the
+Proposed improvement's second step. `HISTORY.md`'s "📖 Evolution Overview", "🎯 Major Milestones",
+"🏛️ Architectural Evolution" and "🗺️ Future Roadmap Implications" sections were then reordered from
+most-recent-first to ascending (oldest-first), matching "✨ Feature Timeline"/"💡 Project Philosophy Evolution"'s
+existing convention — only "📅 Historical Timeline" keeps its most-recent-first order.
 
 ### 🟡 Partially Completed
 
