@@ -41,7 +41,8 @@ evolution of architecture, features and design philosophy across all versions.
   Claude Code attribution footer, marking them as Claude-drafted like any other PR description Claude Code opens
 - `HISTORY.md`'s "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
   Roadmap Implications" reordered to ascending (oldest-first), matching "✨ Feature Timeline"/"💡 Project
-  Philosophy Evolution"'s existing convention — only "📅 Historical Timeline" keeps its most-recent-first order
+  Philosophy Evolution"'s existing convention — only "📅 Historical Timeline" keeps its most-recent-first order;
+  stale legacy Conclusion-section metadata and update log (out of date since v8.0.0/v5.1.0) removed
 - This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
   change), so it was re-scoped from the originally-planned `v8.6.0` **MINOR** version down to `v8.5.1` **PATCH** —
   matching the precedent set by v8.4.1/v8.4.2 — with the branch and every in-flight documentation reference renamed
@@ -2487,6 +2488,9 @@ a patch — no domain-model, API or test-behaviour change.
   Evolution"'s existing convention — only "📅 Historical Timeline" keeps its most-recent-first order.
   Architectural Evolution's `v5.3.0`/`v5.4.0` entries, previously stranded in a broken mixed order after `v8.0.0`,
   are now correctly interleaved between `v5.2.0` and `v6.0.0`
+- Stale "Document Created"/"Last Updated"/"Coverage" metadata and the "Recent Updates"/"Previous Update"
+  bold-labelled update log removed from the end of the Conclusion section — badly out of date (stopped at
+  v8.0.0/v5.1.0) and superseded by this file's own proper narrative sections
 
 **Tooling & Minor Fixes**
 
@@ -2501,8 +2505,8 @@ a patch — no domain-model, API or test-behaviour change.
 
 **Architecture Highlights:**
 
-- No architectural change — this release backfills historical documentation, reorders content within
-  `HISTORY.md`, and corrects its own version scope only
+- No architectural change — this release backfills historical documentation, reorders and prunes stale content
+  within `HISTORY.md`, and corrects its own version scope only
 
 **Technical Focus:**
 
@@ -2903,7 +2907,8 @@ wiring pattern to two new nullable timestamp fields.
 - Re-scoped from a planned `v8.6.0` minor version to `v8.5.1` patch after confirming the full diff against `main`
   is documentation/tooling-only, matching the v8.4.1/v8.4.2 precedent
 - Evolution Overview, Major Milestones, Architectural Evolution and Future Roadmap Implications reordered to
-  ascending (oldest-first), matching Feature Timeline/Project Philosophy Evolution's existing convention
+  ascending (oldest-first), matching Feature Timeline/Project Philosophy Evolution's existing convention; stale
+  legacy Conclusion-section metadata and update log removed
 - `prep-version-release`/`generate-pr-summary` skills gained a standard attribution footer on their drafted output
 
 **Achievement:** Closed a three-release documentation backlog, brought this file's own sections into consistent

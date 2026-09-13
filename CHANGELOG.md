@@ -109,6 +109,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   standard Claude Code attribution footer (`🤖 Generated with [Claude Code](https://claude.com/claude-code)`),
   marking them as Claude-drafted like any other PR description it opens
 
+#### 🗑️ Removed
+
+##### Documentation
+
+- **`HISTORY.md`:** Stale "Document Created"/"Last Updated"/"Coverage" metadata line and the "Recent Updates"/
+  "Previous Update" bold-labelled update log at the end of the Conclusion section, both badly out of date (stopped
+  at v8.0.0/v5.1.0) and superseded by the Historical Timeline, Evolution Overview and Major Milestones sections
+  elsewhere in the file
+
 ### 🧾 [8.5.0] - 2026-09-04
 
 #### ➕ Added
