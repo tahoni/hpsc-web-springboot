@@ -146,9 +146,8 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Add "Phase 27: ..."/"Milestone 27: ..." entries for v8.4.2 ("Root Document Title Standardisation &
   Source-of-Truth Clarification")
 - [x] Add "Phase 28: ..."/"Milestone 28: ..." entries for v8.5.0 ("Match Start/End Time Tracking")
-- [ ] Re-check whether this release (`release/v8.5.1`) needs its own Phase/Milestone once its scope is final, per
-  `AGENTS.md`'s Release Checklist step 6 — deliberately left unchecked: `release/v8.5.1` is still in progress, so
-  this is deferred to its own release-prep pass rather than blocking this gap's closure
+- [x] Re-check whether this release (`release/v8.5.1`) needs its own Phase/Milestone once its scope is final, per
+  `AGENTS.md`'s Release Checklist step 6 — yes: added as Phase 29/Milestone 29 during this release's own prep pass
 
 ---
 
