@@ -40,10 +40,14 @@ reproduce this repo's own emoji-heavy documentation style or `RELEASE_NOTES.md`'
    the content is short enough to stand alone) — never the emoji-prefixed headings used in `RELEASE_NOTES.md`/
    `CHANGELOG.md`.
 5. **British English** spelling and grammar throughout, per AGENTS.md's Documentation Conventions.
+6. **End with the standard Claude Code attribution footer** — a blank line, then
+   `🤖 Generated with [Claude Code](https://claude.com/claude-code)`. This summary is itself a PR description drafted by
+   Claude Code and should be marked as such, same as any other PR description it opens.
 
 ## 📤 Output
 
 Output the finished PR summary as a single fenced code block (language tag `markdown`) containing the raw Markdown
 source as literal text — headings as `##`, bold as `**text**`, bullets as `-`, left unrendered so the user can copy the
-exact source, not Claude's own rendered formatting. Ready to paste directly into a Bitbucket pull request description.
-Don't write it to a file — this skill only drafts, for the user to copy.
+exact source, not Claude's own rendered formatting, including the attribution footer from step 6. Ready to paste
+directly into a Bitbucket pull request description. Don't write it to a file — this skill only drafts, for the user to
+copy.

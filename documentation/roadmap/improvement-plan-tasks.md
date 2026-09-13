@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s nine gaps, grouped by that
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s ten gaps, grouped by that
 document's completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — matching its own "🔍 Gaps &
 Improvement Opportunities" grouping. Each block names its originating gap number for traceability back to the
 evidence and reasoning there; within each section, gaps stay in ascending number order.
@@ -137,6 +137,17 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   already treat an absent optional field — `validateForCreate` no longer rejects a missing/blank `club`, and
   `resolveClub` now resolves `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` via `clubRepository.findByIdentifier`
   when none is supplied, throwing `NonFatalException` if even that default club is missing
+
+**`HISTORY.md` Phase/Milestone backfill** *(improvement-plan.md → Gap #10)* — ✅ Closed in v8.5.1
+
+- [x] Add "Phase 26: ..." (Evolution Overview) and "Milestone 26: ..." (Major Milestones) entries for v8.4.1
+  ("Documentation Cross-Reference Consolidation & Icon Registry Sync"), summarising its existing Historical
+  Timeline entry
+- [x] Add "Phase 27: ..."/"Milestone 27: ..." entries for v8.4.2 ("Root Document Title Standardisation &
+  Source-of-Truth Clarification")
+- [x] Add "Phase 28: ..."/"Milestone 28: ..." entries for v8.5.0 ("Match Start/End Time Tracking")
+- [x] Re-check whether this release (`release/v8.5.1`) needs its own Phase/Milestone once its scope is final, per
+  `AGENTS.md`'s Release Checklist step 6 — yes: added as Phase 29/Milestone 29 during this release's own prep pass
 
 ---
 

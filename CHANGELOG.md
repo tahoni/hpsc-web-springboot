@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.5.0](#-850---2026-09-04) ← Current
+- [🧾 Version 8.5.1](#-851---2026-09-13) ← Current
+- [🧾 Version 8.5.0](#-850---2026-09-04)
 - [🧾 Version 8.4.2](#-842---2026-09-04)
 - [🧾 Version 8.4.1](#-841---2026-09-04)
 - [🧾 Version 8.4.0](#-840---2026-09-03)
@@ -52,6 +53,70 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.5.1] - 2026-09-13
+
+#### ➕ Added
+
+##### Documentation
+
+- **`improvement-plan.md`:** New Gap #10 — `HISTORY.md`'s "📖 Evolution Overview"/"🎯 Major Milestones" sections
+  haven't been extended past Phase 25/Milestone 25 (v8.4.0), leaving v8.4.1, v8.4.2 and v8.5.0 without a matching
+  Phase/Milestone entry despite `AGENTS.md`'s Release Checklist requiring one unconditionally for every release
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox block for Gap #10, backfilling Phase 26/27/28 and
+  Milestone 26/27/28 for v8.4.1/v8.4.2/v8.5.0
+
+#### 🔄 Changed
+
+##### Documentation
+
+- **`improvement-plan.md`:** New "📋 At a Glance" section (originally added as "📋 Gap Status Summary", later
+  renamed), listing every numbered gap by completion status — a quick-reference index ahead of the full per-gap
+  detail in "🔍 Gaps & Improvement Opportunities"
+- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Now** row dropped #2/#7, both already closed, and promoted #6
+  (match scoring / shooter-log service and controller layer) up from **Next** as the only remaining open gap; **Next**
+  is now unscoped
+- **`improvement-plan.md`:** "📋 At a Glance" section's #6 entry corrected to say it's the current **Now** roadmap
+  focus, not **Next** — stale after the Roadmap table update above promoted it
+- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Next** row now points at Gap #10's `HISTORY.md` Phase/Milestone
+  backfill, replacing the "unscoped" placeholder
+- **`improvement-plan-tasks.md`:** Intro line's gap count updated from "nine" to "ten" to include Gap #10
+- **`HISTORY.md`:** New "Phase 26"/"Milestone 26" (v8.4.1), "Phase 27"/"Milestone 27" (v8.4.2) and "Phase 28"/
+  "Milestone 28" (v8.5.0) entries backfilled into "📖 Evolution Overview"/"🎯 Major Milestones", summarising each
+  release's existing Historical Timeline content — closes `improvement-plan.md`'s Gap #10
+- **`improvement-plan.md`:** Gap #10 marked "✅ Closed in v8.5.1" with an Outcome paragraph, moved from "⚪ Open"
+  to "✅ Completed"; "📋 At a Glance", the "🗺️ Roadmap" table's **Next** row and "✅ Success Criteria" updated to
+  match
+- **`improvement-plan-tasks.md`:** Gap #10's checkbox block moved to "✅ Completed" with its first three items
+  checked off; the fourth (re-checking whether `release/v8.5.1` itself needs a Phase/Milestone) deliberately left
+  unchecked, deferred to that release's own prep pass
+- **`HISTORY.md`:** "Major Version Goals" subsection's Version 8.x entry extended from `v8.0.0 – v8.1.1` to
+  `v8.0.0 – v8.5.1`, adding narrative for the domain broadening (multi-value competitor emails, match bulk CSV
+  import, relaxed club-requirement defaults, match start/end time tracking) and documentation-process discipline
+  (icon-registry/cross-reference consolidation, root-document title standardisation, `HISTORY.md`'s own
+  Phase/Milestone backfill) delivered across v8.2.0 – v8.5.1
+- **`HISTORY.md`:** "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and
+  "🗺️ Future Roadmap Implications" reordered to ascending (oldest-first), matching the convention already used by
+  "✨ Feature Timeline" and "💡 Project Philosophy Evolution" — only "📅 Historical Timeline" keeps its
+  most-recent-first order, per standard changelog convention. Architectural Evolution's `v5.3.0`/`v5.4.0` entries,
+  previously stranded after `v8.0.0` in a broken mixed order, are now correctly interleaved between `v5.2.0` and
+  `v6.0.0`; Future Roadmap Implications' forward-looking Short-term/Medium-term/Long-term headings are left in
+  their existing position after the reordered version blocks
+
+##### Tooling
+
+- **`prep-version-release`, `generate-pr-summary`:** Both skills now end their drafted PR description/summary with the
+  standard Claude Code attribution footer (`🤖 Generated with [Claude Code](https://claude.com/claude-code)`),
+  marking them as Claude-drafted like any other PR description it opens
+
+#### 🗑️ Removed
+
+##### Documentation
+
+- **`HISTORY.md`:** Stale "Document Created"/"Last Updated"/"Coverage" metadata line and the "Recent Updates"/
+  "Previous Update" bold-labelled update log at the end of the Conclusion section, both badly out of date (stopped
+  at v8.0.0/v5.1.0) and superseded by the Historical Timeline, Evolution Overview and Major Milestones sections
+  elsewhere in the file
 
 ### 🧾 [8.5.0] - 2026-09-04
 
