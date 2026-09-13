@@ -39,6 +39,9 @@ evolution of architecture, features and design philosophy across all versions.
   defaults, match start/end time tracking) and documentation-process discipline delivered across v8.2.0 – v8.5.1
 - `prep-version-release`/`generate-pr-summary` skills now end their drafted PR description/summary with the standard
   Claude Code attribution footer, marking them as Claude-drafted like any other PR description Claude Code opens
+- `HISTORY.md`'s "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
+  Roadmap Implications" reordered to ascending (oldest-first), matching "✨ Feature Timeline"/"💡 Project
+  Philosophy Evolution"'s existing convention — only "📅 Historical Timeline" keeps its most-recent-first order
 - This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
   change), so it was re-scoped from the originally-planned `v8.6.0` **MINOR** version down to `v8.5.1` **PATCH** —
   matching the precedent set by v8.4.1/v8.4.2 — with the branch and every in-flight documentation reference renamed
@@ -2477,6 +2480,14 @@ a patch — no domain-model, API or test-behaviour change.
   matching the precedent set by v8.4.1/v8.4.2 — with the branch and every in-flight documentation reference renamed
   to match before this release-prep pass
 
+**Chronological Consistency**
+
+- "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future Roadmap
+  Implications" reordered to ascending (oldest-first), matching "✨ Feature Timeline"/"💡 Project Philosophy
+  Evolution"'s existing convention — only "📅 Historical Timeline" keeps its most-recent-first order.
+  Architectural Evolution's `v5.3.0`/`v5.4.0` entries, previously stranded in a broken mixed order after `v8.0.0`,
+  are now correctly interleaved between `v5.2.0` and `v6.0.0`
+
 **Tooling & Minor Fixes**
 
 - `prep-version-release`/`generate-pr-summary` skills now end their drafted PR description/summary with the
@@ -2490,11 +2501,13 @@ a patch — no domain-model, API or test-behaviour change.
 
 **Architecture Highlights:**
 
-- No architectural change — this release backfills historical documentation and corrects its own version scope only
+- No architectural change — this release backfills historical documentation, reorders content within
+  `HISTORY.md`, and corrects its own version scope only
 
 **Technical Focus:**
 
 - Documentation completeness (closing a three-release Phase/Milestone backlog)
+- Internal chronological consistency across `HISTORY.md`'s own sections
 - Correct Semantic Versioning classification of documentation-only releases
 
 **Test Coverage:**
@@ -2889,10 +2902,13 @@ wiring pattern to two new nullable timestamp fields.
   `improvement-plan.md`'s Gap #10; "Major Version Goals" extended through v8.5.1
 - Re-scoped from a planned `v8.6.0` minor version to `v8.5.1` patch after confirming the full diff against `main`
   is documentation/tooling-only, matching the v8.4.1/v8.4.2 precedent
+- Evolution Overview, Major Milestones, Architectural Evolution and Future Roadmap Implications reordered to
+  ascending (oldest-first), matching Feature Timeline/Project Philosophy Evolution's existing convention
 - `prep-version-release`/`generate-pr-summary` skills gained a standard attribution footer on their drafted output
 
-**Achievement:** Closed a three-release documentation backlog and corrected this release's own Semantic Versioning
-classification before it shipped — no domain/service/architecture or test changes.
+**Achievement:** Closed a three-release documentation backlog, brought this file's own sections into consistent
+chronological order and corrected this release's own Semantic Versioning classification before it shipped — no
+domain/service/architecture or test changes.
 
 ---
 

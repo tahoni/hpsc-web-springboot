@@ -95,6 +95,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   import, relaxed club-requirement defaults, match start/end time tracking) and documentation-process discipline
   (icon-registry/cross-reference consolidation, root-document title standardisation, `HISTORY.md`'s own
   Phase/Milestone backfill) delivered across v8.2.0 – v8.5.1
+- **`HISTORY.md`:** "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and
+  "🗺️ Future Roadmap Implications" reordered to ascending (oldest-first), matching the convention already used by
+  "✨ Feature Timeline" and "💡 Project Philosophy Evolution" — only "📅 Historical Timeline" keeps its
+  most-recent-first order, per standard changelog convention. Architectural Evolution's `v5.3.0`/`v5.4.0` entries,
+  previously stranded after `v8.0.0` in a broken mixed order, are now correctly interleaved between `v5.2.0` and
+  `v6.0.0`; Future Roadmap Implications' forward-looking Short-term/Medium-term/Long-term headings are left in
+  their existing position after the reordered version blocks
 
 ##### Tooling
 
