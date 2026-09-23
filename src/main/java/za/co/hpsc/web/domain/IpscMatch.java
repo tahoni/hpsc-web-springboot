@@ -11,6 +11,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -33,10 +34,10 @@ public class IpscMatch {
     private LocalDateTime scheduledDate;
 
     @Column(name = "start_time")
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @Column(name = "end_time")
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "match_firearm_type")

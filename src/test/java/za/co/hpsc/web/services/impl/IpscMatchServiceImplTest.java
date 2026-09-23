@@ -24,7 +24,7 @@ import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,8 +74,8 @@ class IpscMatchServiceImplTest {
         assertSame(club, match.getClub());
         assertEquals("Club Championship", match.getName());
         assertEquals(LocalDate.of(2026, 9, 12).atStartOfDay(), match.getScheduledDate());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), match.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), match.getEndTime());
+        assertEquals(LocalTime.of(8, 0), match.getStartTime());
+        assertEquals(LocalTime.of(17, 0), match.getEndTime());
         assertEquals(FirearmType.HANDGUN, match.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, match.getMatchCategory());
         assertEquals("https://example.com/matches/1", match.getUrl());
@@ -477,7 +477,7 @@ class IpscMatchServiceImplTest {
         // Arrange
         MatchRequestForCSV matchRequestForCSV = new MatchRequestForCSV(
                 LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two", LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0),
+                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two", LocalTime.of(8, 0), LocalTime.of(17, 0),
                 "https://example.com/matches/1"
         );
 
@@ -488,8 +488,8 @@ class IpscMatchServiceImplTest {
         assertNull(request.getMatchId());
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
         assertEquals("Club Championship", request.getMatchName());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 8, 0), request.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 17, 0), request.getEndTime());
+        assertEquals(LocalTime.of(8, 0), request.getStartTime());
+        assertEquals(LocalTime.of(17, 0), request.getEndTime());
         assertEquals("Test Club", request.getClub());
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());
@@ -532,8 +532,8 @@ class IpscMatchServiceImplTest {
         match.setName("Club Championship");
         match.setClub(club);
         match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
-        match.setStartTime(LocalDateTime.of(2026, 9, 12, 8, 0));
-        match.setEndTime(LocalDateTime.of(2026, 9, 12, 17, 0));
+        match.setStartTime(LocalTime.of(8, 0));
+        match.setEndTime(LocalTime.of(17, 0));
         match.setMatchFirearmType(FirearmType.HANDGUN);
         match.setMatchCategory(MatchCategory.CLUB_SHOOT);
         match.setUrl("https://example.com/matches/1");
@@ -545,8 +545,8 @@ class IpscMatchServiceImplTest {
         assertEquals(1L, response.getMatchId());
         assertEquals("Club Championship", response.getMatchName());
         assertEquals(LocalDate.of(2026, 9, 12), response.getMatchDate());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), response.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), response.getEndTime());
+        assertEquals(LocalTime.of(8, 0), response.getStartTime());
+        assertEquals(LocalTime.of(17, 0), response.getEndTime());
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
@@ -723,8 +723,8 @@ class IpscMatchServiceImplTest {
         MatchRequest request = new MatchRequest();
         request.setMatchName("Club Championship");
         request.setMatchDate(LocalDate.of(2026, 9, 12));
-        request.setStartTime(LocalDateTime.of(2026, 9, 12, 8, 0));
-        request.setEndTime(LocalDateTime.of(2026, 9, 12, 17, 0));
+        request.setStartTime(LocalTime.of(8, 0));
+        request.setEndTime(LocalTime.of(17, 0));
         request.setClub(club);
         request.setMatchFirearmType(FirearmType.HANDGUN.toString());
         request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());

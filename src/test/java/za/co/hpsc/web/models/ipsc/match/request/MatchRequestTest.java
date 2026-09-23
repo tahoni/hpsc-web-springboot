@@ -7,7 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +21,7 @@ class MatchRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchStageRequest stage = new MatchStageRequest(1L, 1, "Stage 1 - The Bank Job");
         MatchRequest request = new MatchRequest(1L, LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", List.of(stage), LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0),
+                "Test Club", "Pistol", "Level 1", List.of(stage), LocalTime.of(8, 0), LocalTime.of(17, 0),
                 "https://example.com/matches/1"
         );
 
@@ -33,8 +33,8 @@ class MatchRequestTest {
         assertEquals(1, node.get("matchId").asInt());
         assertEquals("2026-04-10", node.get("matchDate").asText());
         assertEquals("Club Championship", node.get("matchName").asText());
-        assertEquals("2026-04-10 08:00", node.get("startTime").asText());
-        assertEquals("2026-04-10 17:00", node.get("endTime").asText());
+        assertEquals("08:00", node.get("startTime").asText());
+        assertEquals("17:00", node.get("endTime").asText());
         assertEquals("Test Club", node.get("club").asText());
         assertEquals("Pistol", node.get("matchFirearmType").asText());
         assertEquals("Level 1", node.get("matchCategory").asText());
@@ -78,8 +78,8 @@ class MatchRequestTest {
                   "matchId": 1,
                   "matchDate": "2026-04-10",
                   "matchName": "Club Championship",
-                  "startTime": "2026-04-10 08:00",
-                  "endTime": "2026-04-10 17:00",
+                  "startTime": "08:00",
+                  "endTime": "17:00",
                   "club": "Test Club",
                   "matchFirearmType": "Pistol",
                   "matchCategory": "Level 1",
@@ -98,8 +98,8 @@ class MatchRequestTest {
         assertEquals(1L, request.getMatchId());
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
         assertEquals("Club Championship", request.getMatchName());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 8, 0), request.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 17, 0), request.getEndTime());
+        assertEquals(LocalTime.of(8, 0), request.getStartTime());
+        assertEquals(LocalTime.of(17, 0), request.getEndTime());
         assertEquals("Test Club", request.getClub());
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());

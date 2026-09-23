@@ -22,8 +22,10 @@ public final class IpscConstants {
 
     /** Date pattern for every IPSC request DTO's date field (competitor date of birth, match date). */
     public static final String IPSC_INPUT_DATE_FORMAT = SystemConstants.ISO_DATE_FORMAT;
-    /** Date-time pattern for every IPSC request DTO's date-time fields (match start/end time). */
+    /** Date-time pattern for every IPSC request DTO's date-time fields. */
     public static final String IPSC_INPUT_DATE_TIME_FORMAT = SystemConstants.ISO_DATE_TIME_FORMAT;
+    /** Bare time-of-day pattern for every IPSC request DTO's time-only fields (match start/end time). */
+    public static final String IPSC_INPUT_TIME_FORMAT = SystemConstants.TIME_FORMAT;
 
     public static final List<String> EXCLUDE_ICS_ALIAS = List.of("15000", "16000");
     public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS = List.of(ClubIdentifier.UNKNOWN);
