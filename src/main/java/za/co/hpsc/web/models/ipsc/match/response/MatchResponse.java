@@ -43,6 +43,8 @@ public class MatchResponse {
     private FirearmType matchFirearmType;
     /** The category/tier of this match. */
     private MatchCategory matchCategory;
+    /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
+    private String url;
     /** The stages that make up this match, ordered by stage number. */
     private List<MatchStageResponse> stages;
 }

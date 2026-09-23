@@ -54,6 +54,39 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Domain
+
+- **`IpscMatch.url`:** New nullable `String` column — a URL with more information about a match (e.g. a results
+  page or event listing)
+
+##### API Models
+
+- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** New nullable `url` field
+
+##### Database
+
+- **`V7_6_0__add_ipsc_match_url.sql`:** New Flyway migration — adds a nullable `url` column to `ipsc_match`
+
+##### Tests
+
+- **`IpscMatchServiceIntegrationTest`, `IpscMatchServiceTest`, `IpscMatchServiceImplTest`, `MatchRequestTest`,
+  `MatchRequestForCSVTest`:** `url` now flows through each fixture/CSV row and is asserted in the create/patch/
+  update/get happy-path tests, proving it round-trips through JSON, CSV import and the real H2/Hibernate/JPA layer
+
+#### 🔄 Changed
+
+##### API
+
+- **CSV bulk import (`POST /matches/csv`):** The header row must now include a `Url` column, like every other
+  `MatchRequestForCSV` property — existing CSV templates need updating to add it (values may be left blank)
+
+##### Services
+
+- **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `url` through
+  between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
+
 ### 🧾 [8.5.1] - 2026-09-13
 
 #### ➕ Added

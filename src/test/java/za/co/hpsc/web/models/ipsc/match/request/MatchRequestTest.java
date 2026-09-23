@@ -21,7 +21,8 @@ class MatchRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchStageRequest stage = new MatchStageRequest(1L, 1, "Stage 1 - The Bank Job");
         MatchRequest request = new MatchRequest(1L, LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", List.of(stage), LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0)
+                "Test Club", "Pistol", "Level 1", List.of(stage), LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0),
+                "https://example.com/matches/1"
         );
 
         // Act
@@ -37,6 +38,7 @@ class MatchRequestTest {
         assertEquals("Test Club", node.get("club").asText());
         assertEquals("Pistol", node.get("matchFirearmType").asText());
         assertEquals("Level 1", node.get("matchCategory").asText());
+        assertEquals("https://example.com/matches/1", node.get("url").asText());
         assertEquals(1, node.get("stages").size());
         assertEquals(1, node.get("stages").get(0).get("stageNumber").asInt());
         assertEquals("Stage 1 - The Bank Job", node.get("stages").get(0).get("stageName").asText());
@@ -47,7 +49,7 @@ class MatchRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequest request = new MatchRequest(
-                null, LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null);
+                null, LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null, null);
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -62,6 +64,7 @@ class MatchRequestTest {
         assertTrue(node.get("club").isNull());
         assertTrue(node.get("matchFirearmType").isNull());
         assertTrue(node.get("matchCategory").isNull());
+        assertTrue(node.get("url").isNull());
         assertTrue(node.get("stages").isNull());
     }
 
@@ -80,6 +83,7 @@ class MatchRequestTest {
                   "club": "Test Club",
                   "matchFirearmType": "Pistol",
                   "matchCategory": "Level 1",
+                  "url": "https://example.com/matches/1",
                   "stages": [
                     { "stageNumber": 1, "stageName": "Stage 1 - The Bank Job" },
                     { "stageNumber": 2, "stageName": "Stage 2 - The Vault" }
@@ -99,6 +103,7 @@ class MatchRequestTest {
         assertEquals("Test Club", request.getClub());
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());
+        assertEquals("https://example.com/matches/1", request.getUrl());
         assertEquals(2, request.getStages().size());
         assertEquals(1, request.getStages().get(0).getStageNumber());
         assertEquals("Stage 1 - The Bank Job", request.getStages().get(0).getStageName());
@@ -127,6 +132,7 @@ class MatchRequestTest {
         assertNull(request.getStartTime());
         assertNull(request.getEndTime());
         assertNull(request.getClub());
+        assertNull(request.getUrl());
         assertNull(request.getStages());
     }
 

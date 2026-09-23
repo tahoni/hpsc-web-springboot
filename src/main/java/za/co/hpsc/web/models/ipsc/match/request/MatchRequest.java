@@ -51,6 +51,8 @@ public class MatchRequest {
     private String matchFirearmType;
     /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
     private String matchCategory;
+    /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
+    private String url;
     /** The stages that make up this match. */
     private List<MatchStageRequest> stages;
 
@@ -70,6 +72,7 @@ public class MatchRequest {
      * @param stages           the stages that make up this match.
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
+     * @param url              a URL with more information about this match; may be null.
      */
     @JsonCreator
     public MatchRequest(@JsonProperty("matchId") Long matchId,
@@ -80,7 +83,8 @@ public class MatchRequest {
                         @JsonProperty("matchCategory") String matchCategory,
                         @JsonProperty("stages") List<MatchStageRequest> stages,
                         @JsonProperty(value = "startTime") LocalDateTime startTime,
-                        @JsonProperty(value = "endTime") LocalDateTime endTime) {
+                        @JsonProperty(value = "endTime") LocalDateTime endTime,
+                        @JsonProperty(value = "url") String url) {
         this.matchId = matchId;
         this.matchDate = matchDate;
         this.startTime = startTime;
@@ -89,6 +93,7 @@ public class MatchRequest {
         this.club = club;
         this.matchFirearmType = matchFirearmType;
         this.matchCategory = matchCategory;
+        this.url = url;
         this.stages = stages;
     }
 }

@@ -46,6 +46,9 @@ public class IpscMatch {
     @Column(name = "match_category")
     private MatchCategory matchCategory;
 
+    @Column(name = "url")
+    private String url;
+
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
     private LocalDateTime dateCreated;

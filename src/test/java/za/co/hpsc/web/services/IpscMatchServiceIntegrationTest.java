@@ -180,6 +180,7 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
         assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), response.getStartTime());
         assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), response.getEndTime());
+        assertEquals("https://example.com/matches/1", response.getUrl());
         assertTrue(response.getStages().isEmpty());
     }
 
@@ -227,6 +228,7 @@ class IpscMatchServiceIntegrationTest {
         assertEquals("Club Championship", fetched.getMatchName());
         assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), fetched.getStartTime());
         assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), fetched.getEndTime());
+        assertEquals("https://example.com/matches/1", fetched.getUrl());
         assertEquals(1, fetched.getStages().size());
         assertEquals("Stage 1", fetched.getStages().getFirst().getStageName());
     }
@@ -312,6 +314,23 @@ class IpscMatchServiceIntegrationTest {
         // Assert
         assertEquals(newStartTime, patched.getStartTime());
         assertEquals(newEndTime, patched.getEndTime());
+        assertEquals("Club Championship", patched.getMatchName());
+    }
+
+    @Test
+    void testPatchMatch_whenUrlIsProvided_thenUrlChanges() throws FatalException {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+
+        MatchRequest patch = new MatchRequest();
+        patch.setUrl("https://example.com/matches/updated");
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
+
+        // Assert
+        assertEquals("https://example.com/matches/updated", patched.getUrl());
         assertEquals("Club Championship", patched.getMatchName());
     }
 
@@ -450,6 +469,7 @@ class IpscMatchServiceIntegrationTest {
         replacement.setMatchCategory(MatchCategory.LEAGUE.toString());
         replacement.setStartTime(LocalDateTime.of(2027, 1, 1, 10, 0));
         replacement.setEndTime(LocalDateTime.of(2027, 1, 1, 16, 0));
+        replacement.setUrl("https://example.com/matches/different");
 
         // Act
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
@@ -463,6 +483,7 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(MatchCategory.LEAGUE, updated.getMatchCategory());
         assertEquals(LocalDateTime.of(2027, 1, 1, 10, 0), updated.getStartTime());
         assertEquals(LocalDateTime.of(2027, 1, 1, 16, 0), updated.getEndTime());
+        assertEquals("https://example.com/matches/different", updated.getUrl());
     }
 
     @Test
@@ -520,6 +541,7 @@ class IpscMatchServiceIntegrationTest {
         request.setClub(club);
         request.setMatchFirearmType(FirearmType.HANDGUN.toString());
         request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
+        request.setUrl("https://example.com/matches/1");
         return request;
     }
 }
