@@ -1733,7 +1733,7 @@ both left open or partially progressed since v8.1.1/v8.3.1's coverage groundwork
 **Duration:** September 4, 2026
 
 A documentation-only patch release: condenses `AGENTS.md`/`CONTRIBUTING.md`'s duplicated content into
-cross-references, backfills the icon registry, and cleans up latent `CHANGELOG.md`/`AGENTS.md` defects — no
+cross-references, backfills the icon registry and cleans up latent `CHANGELOG.md`/`AGENTS.md` defects — no
 domain-model, API or test-behaviour change.
 
 **Key Accomplishments:**
