@@ -72,8 +72,10 @@ Within each section, gaps stay in ascending number order.
   - #9 `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — closed v8.4.0
   - #10 `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — closed v8.5.1
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (1):**
+- **⚪ Open (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
+  - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — **Next** roadmap
+    item
 
 ### ✅ Completed
 
@@ -402,6 +404,40 @@ controller layer doesn't — but for the scoring/shooter-log domain specifically
 Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
 fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
+#### 11. `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work
+
+**Evidence:** `HISTORY.md`'s "🗺️ Future Roadmap Implications" section ends with three forward-looking lists —
+"Short-term (Minor Releases)", "Medium-term (v7.x+)" and "Long-term (Future Major Versions)" — whose content was
+last substantively updated in v8.0.0 (commit `fe72b9c` added the "`homeClub` now wired via `IpscCompetitorService`"
+note); the "Medium-term (v7.x+)" heading and the club-seeding bullet date back to v7.0.0 (commit `a862701`). Three
+of their claims no longer match the code:
+
+- "Seed `Club.identifier` (HPSC, SOSC, PMPSC) and backfill `Competitor.homeClub`" is still listed as outstanding,
+  yet `V7_3_0__seed_club_data.sql` (commit `a225eab`, shipped in v8.4.0) already seeds the `club` table with every
+  named `ClubIdentifier` — `SOSC`, `HPSC`, `PMPSC`, `VISITOR` and `ALL` — and `HISTORY.md`'s own v8.4.0 Historical
+  Timeline entry and "Recently Completed (v8.4.0)" list record that migration as delivered.
+- "Wire service/controller/import support for `clubRanking`, `isVisitor`, `ShooterLog` and `ShooterLogEntry`" names
+  `ShooterLogEntry`, which was renamed to `ShooterLogCompetitor` in v7.1.0 — no `ShooterLogEntry` class exists
+  anywhere under `src/` (`domain/` holds `ShooterLog.java`/`ShooterLogCompetitor.java`), and the same file's own
+  v7.1.0 entries record the rename.
+- The "Medium-term (v7.x+)" heading still targets a major version the project has already moved past (current:
+  v8.6.x), and its "Bulk match processing capabilities" bullet overlaps v8.3.0's delivered
+  `IpscMatchController.createMatches` bulk CSV import (Gap #8), without saying whether something beyond it is meant.
+
+**Why it matters:** This plan's own "🎯 Purpose & Scope" names `HISTORY.md`'s Future Roadmap sections as one of the
+sources its "⚙️ Goals & Constraints" table is synthesised from, so stale items there can resurface as phantom goals
+in any future re-synthesis. A reader of `HISTORY.md` also sees already-shipped work (club seeding) presented as still
+outstanding, next to an entity name that no longer exists — the same kind of doc-vs-code drift Gap #10 closed for
+the Phase/Milestone sections.
+
+**Proposed improvement:** Refresh the three lists against what has actually shipped: drop (or mark delivered) the
+club-seeding bullet — keeping the `Competitor.homeClub` backfill half only if it is still genuinely wanted — rename
+`ShooterLogEntry` to `ShooterLogCompetitor`, relabel "Medium-term (v7.x+)" for the current major version, and
+either drop "Bulk match processing capabilities" as delivered by Gap #8 or reword it to name what is still missing.
+Items that overlap Gap #6 (the `ShooterLog` calculation service and scores-request wiring) can stay, since that gap
+is still open. No code change is needed — this is a `HISTORY.md`-only pass, best done during a release-prep pass per
+`AGENTS.md`'s Release Checklist.
+
 ---
 
 ## 🗺️ Roadmap
@@ -409,7 +445,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | No items currently scoped — #10, this phase's previous occupant, closed in v8.5.1                                                                               |
+| **Next**    | Refresh `HISTORY.md`'s stale Short-term/Medium-term Future Roadmap lists (#11) against what has actually shipped                                                |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -440,6 +476,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   when a match's `club` is omitted, closing Gap #9's inert-groundwork-constant gap.
 - ✅ Met in v8.5.1: `HISTORY.md`'s "📖 Evolution Overview"/"🎯 Major Milestones" sections now carry a Phase and
   Milestone entry (26/27/28) for every shipped release through v8.5.0, closing Gap #10's backlog.
+- `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists name only genuinely outstanding work under current
+  entity names and version labels, closing Gap #11's drift.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   per-version Future Roadmap notes rather than being deleted silently from here.
 

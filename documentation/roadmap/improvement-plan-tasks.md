@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s ten gaps, grouped by that
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s eleven gaps, grouped by that
 document's completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — matching its own "🔍 Gaps &
 Improvement Opportunities" grouping. Each block names its originating gap number for traceability back to the
 evidence and reasoning there; within each section, gaps stay in ascending number order.
@@ -173,6 +173,17 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
+
+**`HISTORY.md` Future Roadmap list refresh** *(improvement-plan.md → Gap #11)*
+
+- [ ] Drop (or mark delivered) the "Seed `Club.identifier` (HPSC, SOSC, PMPSC)" Short-term bullet — shipped in
+  v8.4.0 via `V7_3_0__seed_club_data.sql` — keeping the `Competitor.homeClub` backfill half only if still wanted
+- [ ] Rename `ShooterLogEntry` to `ShooterLogCompetitor` in the Short-term wiring bullet, matching v7.1.0's rename
+- [ ] Relabel the "Medium-term (v7.x+)" heading for the current major version
+- [ ] Drop "Bulk match processing capabilities" as delivered by Gap #8's v8.3.0 bulk CSV import, or reword it to
+  name what is still missing
+- [ ] Leave the items overlapping Gap #6 (`ShooterLog` calculation service, scores-request wiring) in place while
+  that gap stays open
 
 ---
 
