@@ -113,6 +113,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `url` through
   between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
 
+##### Documentation
+
+- **`AGENTS.md`:** Test Conventions section now formally documents the 3-tier service test architecture
+  (`<Service>Test`/`<Service>ImplTest`/`<Service>IntegrationTest`) already followed by all four services —
+  previously only described piecemeal across the `scaffold-unit-tests`/`scaffold-integration-tests` skills
+
 ### 🧾 [8.5.1] - 2026-09-13
 
 #### ➕ Added

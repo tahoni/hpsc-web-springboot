@@ -389,7 +389,20 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
 
 - Controller tests use Mockito (`@ExtendWith(MockitoExtension.class)`) to mock the service layer; they do not start a
   Spring context.
-- Service/repository integration tests use the `test` profile (H2 in-memory database).
+- **Service tests follow a 3-tier architecture**, split by what's being verified and how much of the stack is real:
+    1. **`<Service>Test`** (`services/`) — a Mockito unit test of the interface's own public contract (e.g.
+       `createAwards`), exercised **through the interface type**, with every repository dependency mocked. Never
+       reaches into the impl's protected/private helpers.
+    2. **`<Service>ImplTest`** (`services/impl/`) — a Mockito unit test of the impl class's own protected/private
+       helper methods that aren't declared on the interface (e.g. `applyFields`, `toResponse`), likewise with every
+       repository dependency mocked.
+    3. **`<Service>IntegrationTest`** (`services/`) — a `@SpringBootTest`/`@ActiveProfiles("test")` test exercising
+       the interface's full public contract end-to-end through a real, Spring-wired bean backed by the H2 `test`
+       profile database — no mocks.
+
+   All four services (`AwardService`, `ImageService`, `IpscCompetitorService`, `IpscMatchService`) follow this
+   split; a new service should too. See the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the
+   detailed per-tier rules (what each tier must/must not cover, Spring Boot 4 auto-configuration gotchas, etc.).
 - Test class names follow `<ClassName>Test`; test method names follow
   `test<Scenario>_when<Condition>_then<Expectation>`.
 - JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from
