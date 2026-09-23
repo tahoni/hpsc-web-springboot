@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.5.1](#-851---2026-09-13) ← Current
+- [🧾 Version 8.6.0](#-860---2026-09-23) ← Current
+- [🧾 Version 8.5.1](#-851---2026-09-13)
 - [🧾 Version 8.5.0](#-850---2026-09-04)
 - [🧾 Version 8.4.2](#-842---2026-09-04)
 - [🧾 Version 8.4.1](#-841---2026-09-04)
@@ -53,6 +54,73 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.6.0] - 2026-09-23
+
+#### ➕ Added
+
+##### Domain
+
+- **`IpscMatch.url`:** New nullable `String` column — a URL with more information about a match (e.g. a results
+  page or event listing)
+
+##### API Models
+
+- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** New nullable `url` field
+
+##### Database
+
+- **`V7_6_0__add_ipsc_match_url.sql`:** New Flyway migration — adds a nullable `url` column to `ipsc_match`
+
+##### Tests
+
+- **`IpscMatchServiceIntegrationTest`, `IpscMatchServiceTest`, `IpscMatchServiceImplTest`, `MatchRequestTest`,
+  `MatchRequestForCSVTest`:** `url` now flows through each fixture/CSV row and is asserted in the create/patch/
+  update/get happy-path tests, proving it round-trips through JSON, CSV import and the real H2/Hibernate/JPA layer
+
+#### 🔄 Changed
+
+##### Domain
+
+- **`IpscMatch.startTime`, `IpscMatch.endTime`:** Changed from `LocalDateTime` to `LocalTime` — these were always
+  time-of-day-only values alongside `scheduledDate`, so the redundant date component is dropped
+
+##### API Models
+
+- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** `startTime`/`endTime` changed from `LocalDateTime` to
+  `LocalTime`, now formatted per the new `IpscConstants.IPSC_INPUT_TIME_FORMAT` (`HH:mm`) instead of
+  `IPSC_INPUT_DATE_TIME_FORMAT` (`yyyy-MM-dd HH:mm`)
+- **`IpscMatchController`:** `createMatches`'s OpenAPI CSV example's `StartTime`/`EndTime` columns updated to the
+  bare `HH:mm` pattern
+
+##### Database
+
+- **`V7_7_0__change_ipsc_match_start_end_time_to_time.sql`:** New Flyway migration — changes `ipsc_match`'s
+  `start_time`/`end_time` columns from `DATETIME` to `TIME`
+
+##### API
+
+- **CSV bulk import (`POST /matches/csv`):** The header row must now include a `Url` column, like every other
+  `MatchRequestForCSV` property — existing CSV templates need updating to add it (values may be left blank)
+- **JSON/CSV `startTime`/`endTime`:** Now accepted/returned as bare `HH:mm` time-of-day values instead of
+  `yyyy-MM-dd HH:mm` — existing CSV templates and API clients need updating to drop the date component
+
+##### Tests
+
+- **`IpscMatchServiceIntegrationTest`, `IpscMatchServiceTest`, `IpscMatchServiceImplTest`, `MatchRequestTest`,
+  `MatchRequestForCSVTest`:** `startTime`/`endTime` fixtures, CSV rows and JSON payloads updated from
+  `LocalDateTime`/`yyyy-MM-dd HH:mm` to `LocalTime`/`HH:mm`
+
+##### Services
+
+- **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `url` through
+  between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
+
+##### Documentation
+
+- **`AGENTS.md`:** Test Conventions section now formally documents the 3-tier service test architecture
+  (`<Service>Test`/`<Service>ImplTest`/`<Service>IntegrationTest`) already followed by all four services —
+  previously only described piecemeal across the `scaffold-unit-tests`/`scaffold-integration-tests` skills
 
 ### 🧾 [8.5.1] - 2026-09-13
 

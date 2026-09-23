@@ -125,6 +125,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (request.getMatchCategory() != null) {
             match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
         }
+        if (request.getUrl() != null) {
+            match.setUrl(request.getUrl());
+        }
         match = ipscMatchRepository.save(match);
 
         List<IpscMatchStage> stages = (request.getStages() != null)
@@ -194,7 +197,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 matchRequestForCSV.getMatchDate(),
                 matchRequestForCSV.getMatchName(),
                 matchRequestForCSV.getClub(), matchRequestForCSV.getMatchFirearmType(), matchRequestForCSV.getMatchCategory(), parseStages(matchRequestForCSV.getStages()), matchRequestForCSV.getStartTime(),
-                matchRequestForCSV.getEndTime()
+                matchRequestForCSV.getEndTime(),
+                matchRequestForCSV.getUrl()
         );
     }
 
@@ -255,6 +259,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         match.setEndTime(request.getEndTime());
         match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
         match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
+        match.setUrl(request.getUrl());
     }
 
     /**
@@ -455,6 +460,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 ((match.getClub() != null) ? match.getClub().getIdentifier() : null),
                 match.getMatchFirearmType(),
                 match.getMatchCategory(),
+                match.getUrl(),
                 stageResponses);
     }
 }

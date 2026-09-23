@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +23,8 @@ class MatchRequestForCSVTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequestForCSV request = new MatchRequestForCSV(LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two", LocalDateTime.of(2026, 4, 10, 8, 0), LocalDateTime.of(2026, 4, 10, 17, 0)
+                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two", LocalTime.of(8, 0), LocalTime.of(17, 0),
+                "https://example.com/matches/1"
         );
 
         // Act
@@ -33,11 +34,12 @@ class MatchRequestForCSVTest {
         // Assert
         assertEquals("2026-04-10", node.get("MatchDate").asText());
         assertEquals("Club Championship", node.get("MatchName").asText());
-        assertEquals("2026-04-10 08:00", node.get("StartTime").asText());
-        assertEquals("2026-04-10 17:00", node.get("EndTime").asText());
+        assertEquals("08:00", node.get("StartTime").asText());
+        assertEquals("17:00", node.get("EndTime").asText());
         assertEquals("Test Club", node.get("Club").asText());
         assertEquals("Pistol", node.get("MatchFirearmType").asText());
         assertEquals("Level 1", node.get("MatchCategory").asText());
+        assertEquals("https://example.com/matches/1", node.get("Url").asText());
         assertEquals("1-Stage One;2-Stage Two", node.get("Stages").asText());
     }
 
@@ -46,7 +48,7 @@ class MatchRequestForCSVTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequestForCSV request = new MatchRequestForCSV(
-                LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null);
+                LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null, null);
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -59,6 +61,7 @@ class MatchRequestForCSVTest {
         assertTrue(node.get("Club").isNull());
         assertTrue(node.get("MatchFirearmType").isNull());
         assertTrue(node.get("MatchCategory").isNull());
+        assertTrue(node.get("Url").isNull());
         assertTrue(node.get("Stages").isNull());
     }
 
@@ -71,11 +74,12 @@ class MatchRequestForCSVTest {
                 {
                   "MatchDate": "2026-04-10",
                   "MatchName": "Club Championship",
-                  "StartTime": "2026-04-10 08:00",
-                  "EndTime": "2026-04-10 17:00",
+                  "StartTime": "08:00",
+                  "EndTime": "17:00",
                   "Club": "Test Club",
                   "MatchFirearmType": "Pistol",
                   "MatchCategory": "Level 1",
+                  "Url": "https://example.com/matches/1",
                   "Stages": "1-Stage One;2-Stage Two"
                 }
                 """;
@@ -86,11 +90,12 @@ class MatchRequestForCSVTest {
         // Assert
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
         assertEquals("Club Championship", request.getMatchName());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 8, 0), request.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 17, 0), request.getEndTime());
+        assertEquals(LocalTime.of(8, 0), request.getStartTime());
+        assertEquals(LocalTime.of(17, 0), request.getEndTime());
         assertEquals("Test Club", request.getClub());
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());
+        assertEquals("https://example.com/matches/1", request.getUrl());
         assertEquals("1-Stage One;2-Stage Two", request.getStages());
     }
 
@@ -136,6 +141,7 @@ class MatchRequestForCSVTest {
         assertNull(request.getClub());
         assertNull(request.getMatchFirearmType());
         assertNull(request.getMatchCategory());
+        assertNull(request.getUrl());
         assertNull(request.getStages());
     }
 
@@ -187,8 +193,8 @@ class MatchRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                MatchDate,MatchName,StartTime,EndTime,Club,MatchFirearmType,MatchCategory,Stages
-                2026-04-10,Club Championship,2026-04-10 08:00,2026-04-10 17:00,Test Club,Pistol,Level 1,1-Stage One;2-Stage Two
+                MatchDate,MatchName,StartTime,EndTime,Club,MatchFirearmType,MatchCategory,Url,Stages
+                2026-04-10,Club Championship,08:00,17:00,Test Club,Pistol,Level 1,https://example.com/matches/1,1-Stage One;2-Stage Two
                 """;
 
         // Act
@@ -203,11 +209,12 @@ class MatchRequestForCSVTest {
         MatchRequestForCSV row = rows.getFirst();
         assertEquals(LocalDate.of(2026, 4, 10), row.getMatchDate());
         assertEquals("Club Championship", row.getMatchName());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 8, 0), row.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 17, 0), row.getEndTime());
+        assertEquals(LocalTime.of(8, 0), row.getStartTime());
+        assertEquals(LocalTime.of(17, 0), row.getEndTime());
         assertEquals("Test Club", row.getClub());
         assertEquals("Pistol", row.getMatchFirearmType());
         assertEquals("Level 1", row.getMatchCategory());
+        assertEquals("https://example.com/matches/1", row.getUrl());
         assertEquals("1-Stage One;2-Stage Two", row.getStages());
     }
 
@@ -224,7 +231,7 @@ class MatchRequestForCSVTest {
                 .withHeader();
         String stages = "1-Stage One - The Bank Job;2-Stage Two - The Vault";
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-04-10,Club Championship,Test Club,Pistol,Level 1,%s
                 """.formatted(stages);
 
@@ -250,7 +257,7 @@ class MatchRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-04-10,Club Championship
                 """;
 
@@ -270,6 +277,7 @@ class MatchRequestForCSVTest {
         assertNull(rows.getFirst().getClub());
         assertNull(rows.getFirst().getMatchFirearmType());
         assertNull(rows.getFirst().getMatchCategory());
+        assertNull(rows.getFirst().getUrl());
         assertNull(rows.getFirst().getStages());
     }
 
@@ -283,7 +291,7 @@ class MatchRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-04-10
                 """;
 

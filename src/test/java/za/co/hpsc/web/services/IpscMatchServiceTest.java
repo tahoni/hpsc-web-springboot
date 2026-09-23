@@ -26,7 +26,7 @@ import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -199,8 +199,9 @@ public class IpscMatchServiceTest {
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), response.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), response.getEndTime());
+        assertEquals(LocalTime.of(8, 0), response.getStartTime());
+        assertEquals(LocalTime.of(17, 0), response.getEndTime());
+        assertEquals("https://example.com/matches/1", response.getUrl());
         assertTrue(response.getStages().isEmpty());
     }
 
@@ -257,8 +258,8 @@ public class IpscMatchServiceTest {
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
-                2026-09-12,Club Championship,Test Club,%s,%s,,2026-09-12 08:00,2026-09-12 17:00
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
+                2026-09-12,Club Championship,Test Club,%s,%s,,08:00,17:00,https://example.com/matches/1
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
         // Act
@@ -268,8 +269,9 @@ public class IpscMatchServiceTest {
         assertEquals(1, holder.getMatches().size());
         assertEquals("Club Championship", holder.getMatches().getFirst().getMatchName());
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, holder.getMatches().getFirst().getClub());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), holder.getMatches().getFirst().getStartTime());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), holder.getMatches().getFirst().getEndTime());
+        assertEquals(LocalTime.of(8, 0), holder.getMatches().getFirst().getStartTime());
+        assertEquals(LocalTime.of(17, 0), holder.getMatches().getFirst().getEndTime());
+        assertEquals("https://example.com/matches/1", holder.getMatches().getFirst().getUrl());
     }
 
     @Test
@@ -280,7 +282,7 @@ public class IpscMatchServiceTest {
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         stubStageSaveAssignsIncrementingId();
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,Club Championship,Test Club,%s,%s,1-Stage One;2-Stage Two
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -303,7 +305,7 @@ public class IpscMatchServiceTest {
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,First Match,Test Club,%1$s,%2$s,
                 2026-09-19,Second Match,Test Club,%1$s,%2$s,
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
@@ -323,7 +325,7 @@ public class IpscMatchServiceTest {
         // Arrange - MatchName is present but blank, so it survives CSV parsing and instead trips
         // createMatch's own validation
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,,Test Club,%s,%s,
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -336,7 +338,7 @@ public class IpscMatchServiceTest {
         // Arrange
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,Club Championship,Test Club,Not A Firearm Type,%s,
                 """.formatted(MatchCategory.CLUB_SHOOT);
 
@@ -349,7 +351,7 @@ public class IpscMatchServiceTest {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,Club Championship,No Such Club,%s,%s,
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -361,7 +363,7 @@ public class IpscMatchServiceTest {
     void testCreateMatches_whenRowStagesEntryIsMalformed_thenThrowsValidationException() {
         // Arrange - a stages entry without a "-" separator can't be split into <stageNumber>-<stageName>
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,Club Championship,Test Club,%s,%s,StageWithoutSeparator
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -373,7 +375,7 @@ public class IpscMatchServiceTest {
     void testCreateMatches_whenRowStagesEntryHasNonNumericStageNumber_thenThrowsValidationException() {
         // Arrange
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,Club Championship,Test Club,%s,%s,X-Stage One
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
@@ -560,8 +562,8 @@ public class IpscMatchServiceTest {
         stubMatchSaveReturnsSameEntity();
         when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
-        LocalDateTime newStartTime = LocalDateTime.of(2026, 9, 12, 8, 0);
-        LocalDateTime newEndTime = LocalDateTime.of(2026, 9, 12, 17, 0);
+        LocalTime newStartTime = LocalTime.of(8, 0);
+        LocalTime newEndTime = LocalTime.of(17, 0);
         MatchRequest patch = new MatchRequest();
         patch.setStartTime(newStartTime);
         patch.setEndTime(newEndTime);
@@ -572,6 +574,26 @@ public class IpscMatchServiceTest {
         // Assert
         assertEquals(newStartTime, patched.getStartTime());
         assertEquals(newEndTime, patched.getEndTime());
+    }
+
+    @Test
+    void testPatchMatch_whenUrlIsProvided_thenUrlChanges() {
+        // Arrange
+        IpscMatch existing = new IpscMatch();
+        existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(existing));
+        stubMatchSaveReturnsSameEntity();
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+
+        MatchRequest patch = new MatchRequest();
+        patch.setUrl("https://example.com/matches/1");
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        assertEquals("https://example.com/matches/1", patched.getUrl());
     }
 
     @Test
@@ -786,8 +808,9 @@ public class IpscMatchServiceTest {
         replacement.setClub("Other Club");
         replacement.setMatchFirearmType(FirearmType.RIFLE.toString());
         replacement.setMatchCategory(MatchCategory.LEAGUE.toString());
-        replacement.setStartTime(LocalDateTime.of(2027, 1, 1, 10, 0));
-        replacement.setEndTime(LocalDateTime.of(2027, 1, 1, 16, 0));
+        replacement.setStartTime(LocalTime.of(10, 0));
+        replacement.setEndTime(LocalTime.of(16, 0));
+        replacement.setUrl("https://example.com/matches/different");
 
         // Act
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(1L, replacement));
@@ -799,8 +822,9 @@ public class IpscMatchServiceTest {
         assertEquals(ClubIdentifier.SOSC, updated.getClub());
         assertEquals(FirearmType.RIFLE, updated.getMatchFirearmType());
         assertEquals(MatchCategory.LEAGUE, updated.getMatchCategory());
-        assertEquals(LocalDateTime.of(2027, 1, 1, 10, 0), updated.getStartTime());
-        assertEquals(LocalDateTime.of(2027, 1, 1, 16, 0), updated.getEndTime());
+        assertEquals(LocalTime.of(10, 0), updated.getStartTime());
+        assertEquals(LocalTime.of(16, 0), updated.getEndTime());
+        assertEquals("https://example.com/matches/different", updated.getUrl());
         assertSame(otherClub, existing.getClub());
         assertTrue(updated.getStages().isEmpty());
     }
@@ -810,11 +834,12 @@ public class IpscMatchServiceTest {
         MatchRequest request = new MatchRequest();
         request.setMatchName("Club Championship");
         request.setMatchDate(LocalDate.of(2026, 9, 12));
-        request.setStartTime(LocalDateTime.of(2026, 9, 12, 8, 0));
-        request.setEndTime(LocalDateTime.of(2026, 9, 12, 17, 0));
+        request.setStartTime(LocalTime.of(8, 0));
+        request.setEndTime(LocalTime.of(17, 0));
         request.setClub(club);
         request.setMatchFirearmType(FirearmType.HANDGUN.toString());
         request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
+        request.setUrl("https://example.com/matches/1");
         return request;
     }
 

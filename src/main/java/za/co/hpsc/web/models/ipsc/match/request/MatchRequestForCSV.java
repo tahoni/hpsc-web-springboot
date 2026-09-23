@@ -11,7 +11,7 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * Request model for bulk-importing IPSC matches from CSV data.
@@ -43,13 +43,13 @@ public class MatchRequestForCSV {
     /**
      * Time the match started; may be null.
      */
-    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
-    private LocalDateTime startTime;
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT)
+    private LocalTime startTime;
     /**
      * Time the match ended; may be null.
      */
-    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
-    private LocalDateTime endTime;
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT)
+    private LocalTime endTime;
     /**
      * The match's name.
      */
@@ -69,6 +69,11 @@ public class MatchRequestForCSV {
      * The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name.
      */
     private String matchCategory;
+    /**
+     * A URL with more information about this match (e.g. a results page or event listing); may
+     * be null.
+     */
+    private String url;
     /**
      * The stages that make up this match, as a single semicolon-separated CSV cell of
      * {@code <stageNumber>-<stageName>} entries (e.g. {@code "1-Stage 1;2-Stage 2"}).
@@ -98,6 +103,7 @@ public class MatchRequestForCSV {
      *                         CSV cell of {@code <stageNumber>-<stageName>} entries.
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
+     * @param url              a URL with more information about this match; may be null.
      */
     @JsonCreator
     public MatchRequestForCSV(@JsonProperty(value = "MatchDate", required = true) LocalDate matchDate,
@@ -106,8 +112,9 @@ public class MatchRequestForCSV {
                               @JsonProperty("MatchFirearmType") String matchFirearmType,
                               @JsonProperty("MatchCategory") String matchCategory,
                               @JsonProperty("Stages") String stages,
-                              @JsonProperty(value = "StartTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT) LocalDateTime startTime,
-                              @JsonProperty(value = "EndTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT) LocalDateTime endTime) {
+                              @JsonProperty(value = "StartTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT) LocalTime startTime,
+                              @JsonProperty(value = "EndTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT) LocalTime endTime,
+                              @JsonProperty(value = "Url") String url) {
         this.matchDate = matchDate;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -115,6 +122,7 @@ public class MatchRequestForCSV {
         this.club = club;
         this.matchFirearmType = matchFirearmType;
         this.matchCategory = matchCategory;
+        this.url = url;
         this.stages = stages;
     }
 }
