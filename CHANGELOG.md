@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.6.0](#-860---2026-09-23) ← Current
+- [🧾 Version 8.6.1](#-861---2026-09-23) ← Current
+- [🧾 Version 8.6.0](#-860---2026-09-23)
 - [🧾 Version 8.5.1](#-851---2026-09-13)
 - [🧾 Version 8.5.0](#-850---2026-09-04)
 - [🧾 Version 8.4.2](#-842---2026-09-04)
@@ -54,6 +55,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.6.1] - 2026-09-23
+
+#### 🔄 Changed
+
+##### Documentation
+
+- **`HISTORY.md`:** "📖 Evolution Overview" section (the Phase-by-phase narrative) split out into new
+  `documentation/history/EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s 4,095 lines,
+  making the file unwieldy. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its
+  Table of Contents entry still resolves; "📅 Historical Timeline", "🎯 Major Milestones" and every other section
+  stay in `HISTORY.md` unchanged
+- **`AGENTS.md`, `README.md`:** Documentation File Map/Documentation tables updated to list
+  `EVOLUTION_OVERVIEW.md` as a standing exception in `documentation/history/` — a single living file rather than
+  a per-version archive
+- **`AGENTS.md`'s Release Checklist, `prep-version-release` skill:** The "Extend `HISTORY.md`" step now specifies
+  that the Phase entry lands in `documentation/history/EVOLUTION_OVERVIEW.md` while the Historical Timeline entry
+  and Milestone stay in `HISTORY.md` — one paired entry per release, split across two files
+- **`documentation/history/`:** All 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files
+  regrouped from a flat directory into `v1/` – `v8/` subdirectories by major version (e.g.
+  `documentation/history/v8/RELEASE_NOTES_v8.6.0.md`), moved with `git mv` to preserve history.
+  `EVOLUTION_OVERVIEW.md` is unaffected — it's a standing living file, not a per-version archive
+- **`AGENTS.md`, `README.md`:** Documentation File Map/Documentation tables updated to describe the new
+  `documentation/history/vN/` subdirectory grouping
+- **`prep-version-release`, `generate-pr-summary`, `update-improvement-plan-gaps` skills:** Updated to read/write
+  archived release docs at `documentation/history/v<major>/...` instead of the old flat path, deriving `<major>`
+  from the version's leading number before the first `.`
 
 ### 🧾 [8.6.0] - 2026-09-23
 

@@ -61,9 +61,12 @@ Steps:
    into a new `## 🧾 [$VERSION] - YYYY-MM-DD` section, using only the categories that apply (`➕ Added`, `🔄 Changed`,
    `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security`). Update the Table of Contents and move the "← Current" marker
    to the new version, then start a fresh empty `## 🧪 [Unreleased]` section above it.
-7. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase and a Milestone for `$VERSION`, at the same
-   narrative depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
-   reverse chronological order. If the release is significant enough to have shifted the project's trajectory, also
+7. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for `$VERSION`, at the same narrative
+   depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
+   reverse chronological order, plus a matching Phase entry at the end of
+   `documentation/history/EVOLUTION_OVERVIEW.md` (that file is `HISTORY.md`'s Evolution Overview section, split out
+   once it grew to roughly half of `HISTORY.md`'s size — one paired Phase/Milestone entry still lands per release,
+   just in two files now). If the release is significant enough to have shifted the project's trajectory, also
    thread it through the other version-by-version sections (Architectural Evolution, Feature Timeline, Key Learnings,
    Future Roadmap, Conclusion/footer), using the immediately preceding version's treatment as the template. Then
    check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching
@@ -83,8 +86,11 @@ Steps:
 10. **Update `CONTRIBUTING.md`** only if this version's changes affect developer setup, database profiles, workflow or
     testing conventions documented there.
 11. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
-    `documentation/history/RELEASE_NOTES_v$VERSION.md`.
-12. **Write `documentation/history/PR_DESCRIPTION_v$VERSION.md`** — the body text for the release pull request. Keep it
+    `documentation/history/v<major>/RELEASE_NOTES_v$VERSION.md`, where `<major>` is `$VERSION`'s leading number
+    before the first `.` (e.g. `7.2.0` → `v7`) — create that `v<major>/` directory first if this is the first
+    release of a new major version.
+12. **Write `documentation/history/v<major>/PR_DESCRIPTION_v$VERSION.md`** (same `v<major>/` subdirectory as
+    step 11) — the body text for the release pull request. Keep it
     small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only. Structure:
     - `## 🎯 Summary` — two to four bullets on what the release is and why
     - `## 📦 Key Changes` — condensed from the CHANGELOG entry's categories (Added/Changed/Fixed/Removed), high-level
@@ -103,7 +109,7 @@ yourself — draft the files and stop for review.
 
 Once all files above are written, tell the user the release branch (`release/v$VERSION`) is ready to open as a PR
 against `develop` (per the GitFlow branching model in AGENTS.md), using
-`documentation/history/PR_DESCRIPTION_v$VERSION.md` as the PR body. Once that PR merges, remind them a second PR
+`documentation/history/v<major>/PR_DESCRIPTION_v$VERSION.md` as the PR body. Once that PR merges, remind them a second PR
 promoting `develop` into `main` is still needed to actually ship the release — tag the resulting commit on `main` as
 `v$VERSION`.
 
