@@ -310,12 +310,14 @@ points back to it rather than restating it, so it's the one to update first when
 
 Four documentation-only folders supplement these:
 
-- **`documentation/history/`** holds one of each of the following files per released version:
+- **`documentation/history/`** holds one of each of the following files per released version, plus one standing
+  exception — `EVOLUTION_OVERVIEW.md`, a single living file rather than a per-version archive:
 
-  | File                       | Purpose                                                    |
-  |----------------------------|------------------------------------------------------------|
-  | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time    |
-  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
+  | File                       | Purpose                                                                        |
+  |----------------------------|---------------------------------------------------------------------------------|
+  | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time                       |
+  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version                    |
+  | `EVOLUTION_OVERVIEW.md`    | `HISTORY.md`'s companion — the full Phase-by-phase narrative, split out to keep `HISTORY.md` a manageable size |
 
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
@@ -502,14 +504,16 @@ anything downstream references them:
 5. **Add a `CHANGELOG.md` entry.** New `## 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog categories
    that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit any that are
    empty). Update the Table of Contents and move the "← Current" marker to the new version.
-6. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase and a Milestone for the new version, at the same
-   narrative depth and in the same style as the existing entries. If the release is significant enough to have shifted
-   the project's trajectory, also thread it through the other sections that already track version-by-version state
-   (Architectural Evolution, Feature Timeline, Key Learnings, Future Roadmap, Conclusion/footer). Use how the
-   immediately preceding version was woven into those sections as the template. Then check whether
-   `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
-   synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that
-   table stale.
+6. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for the new version, at the same
+   narrative depth and in the same style as the existing entries, plus a matching Phase entry in
+   `documentation/history/EVOLUTION_OVERVIEW.md` — `HISTORY.md`'s Evolution Overview section was split out into that
+   file once it grew to roughly half of `HISTORY.md`'s size, but the two still gain one paired entry per release. If
+   the release is significant enough to have shifted the project's trajectory, also thread it through the other
+   sections that already track version-by-version state (Architectural Evolution, Feature Timeline, Key Learnings,
+   Future Roadmap, Conclusion/footer). Use how the immediately preceding version was woven into those sections as the
+   template. Then check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a
+   matching update — it's synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change
+   here can leave that table stale.
 7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent

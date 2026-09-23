@@ -55,6 +55,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`HISTORY.md`:** "📖 Evolution Overview" section (the Phase-by-phase narrative) split out into new
+  `documentation/history/EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s 4,095 lines,
+  making the file unwieldy. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its
+  Table of Contents entry still resolves; "📅 Historical Timeline", "🎯 Major Milestones" and every other section
+  stay in `HISTORY.md` unchanged
+- **`AGENTS.md`, `README.md`:** Documentation File Map/Documentation tables updated to list
+  `EVOLUTION_OVERVIEW.md` as a standing exception in `documentation/history/` — a single living file rather than
+  a per-version archive
+- **`AGENTS.md`'s Release Checklist, `prep-version-release` skill:** The "Extend `HISTORY.md`" step now specifies
+  that the Phase entry lands in `documentation/history/EVOLUTION_OVERVIEW.md` while the Historical Timeline entry
+  and Milestone stay in `HISTORY.md` — one paired entry per release, split across two files
+
 ### 🧾 [8.6.0] - 2026-09-23
 
 #### ➕ Added

@@ -61,9 +61,12 @@ Steps:
    into a new `## 🧾 [$VERSION] - YYYY-MM-DD` section, using only the categories that apply (`➕ Added`, `🔄 Changed`,
    `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security`). Update the Table of Contents and move the "← Current" marker
    to the new version, then start a fresh empty `## 🧪 [Unreleased]` section above it.
-7. **Extend `HISTORY.md`.** Add a Historical Timeline entry, a Phase and a Milestone for `$VERSION`, at the same
-   narrative depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
-   reverse chronological order. If the release is significant enough to have shifted the project's trajectory, also
+7. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for `$VERSION`, at the same narrative
+   depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
+   reverse chronological order, plus a matching Phase entry at the end of
+   `documentation/history/EVOLUTION_OVERVIEW.md` (that file is `HISTORY.md`'s Evolution Overview section, split out
+   once it grew to roughly half of `HISTORY.md`'s size — one paired Phase/Milestone entry still lands per release,
+   just in two files now). If the release is significant enough to have shifted the project's trajectory, also
    thread it through the other version-by-version sections (Architectural Evolution, Feature Timeline, Key Learnings,
    Future Roadmap, Conclusion/footer), using the immediately preceding version's treatment as the template. Then
    check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching
