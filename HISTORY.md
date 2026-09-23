@@ -21,6 +21,27 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.6.2 (September 24, 2026)
+
+**Theme:** `CHANGELOG.md` Heading-Depth Convention Correction
+
+**Key Focus:**
+
+- `AGENTS.md`, `CONTRIBUTING.md` and five Claude Code skills (`generate-commit-message`, `prep-version-release`,
+  `scaffold-unit-tests`, `scaffold-integration-tests`, `sync-unreleased-changes`) described `CHANGELOG.md` as
+  `## 🧪 [Unreleased]` → `### <category>` → `#### <Area>` — one level shallower than the `###`/`####`/`#####`
+  depth the file has actually used — so every reference was corrected to match
+- `AGENTS.md`'s Git Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, reuse of
+  existing Area names and the bold-lead-in bullet style, instead of leaving them implicit;
+  `generate-commit-message` also notes that security-relevant fixes belong under `#### 🔐 Security`
+- The correction was reverse-synced from the shared project template, which had already fixed the same drift in its
+  own copy of these conventions
+- Minor table column realignment in `AGENTS.md`'s skills table and `README.md`'s Documentation table
+- This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
+  behaviour change), so it was scoped as `v8.6.2` **PATCH**, matching the precedent set by v8.4.1/v8.4.2/v8.5.1/
+  v8.6.1
+- Project version bumped to 8.6.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.6.1 (September 23, 2026)
 
 **Theme:** `documentation/history/` Reorganization & Evolution Overview Split
@@ -1063,6 +1084,18 @@ in v8.5.0, while formalising an already-established test convention in the proje
 
 **Achievement:** Kept the project's fastest-growing documentation files navigable as the release history keeps
 accumulating, without losing any historical content or `git` history.
+
+---
+
+### Milestone 32: CHANGELOG.md Heading-Depth Convention Correction (v8.6.2)
+
+- `AGENTS.md`, `CONTRIBUTING.md` and five Claude Code skills corrected to describe `CHANGELOG.md`'s actual
+  `### 🧪 [Unreleased]` → `#### <category>` → `##### <Area>` heading depth, one level deeper than previously stated
+- `AGENTS.md`'s Git Workflow Conventions extended to spell out Area reuse and the bold-lead-in bullet style,
+  reverse-synced from the shared project template
+
+**Achievement:** Brought the project's written `CHANGELOG.md` conventions back in line with the file itself, so any
+agent or contributor following `AGENTS.md` or the skills produces correctly nested entries.
 
 ---
 

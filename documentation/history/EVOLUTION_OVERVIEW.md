@@ -2048,4 +2048,56 @@ paths — no domain-model, API or test-behaviour change.
 
 ---
 
+### Phase 32: CHANGELOG.md Heading-Depth Convention Correction (v8.6.2)
+
+**Duration:** September 24, 2026
+
+A documentation-only patch release: corrects how the project's own conventions describe `CHANGELOG.md`'s heading
+structure, which had drifted one level shallower than the file itself — no domain-model, API or test-behaviour
+change.
+
+**Key Accomplishments:**
+
+**CHANGELOG.md Convention Correction**
+
+- `AGENTS.md`, `CONTRIBUTING.md` and the `generate-commit-message`, `prep-version-release`, `scaffold-unit-tests`,
+  `scaffold-integration-tests` and `sync-unreleased-changes` skills described `CHANGELOG.md` as
+  `## 🧪 [Unreleased]` → `### <category>` → `#### <Area>`, while the file has actually used `###`/`####`/`#####`;
+  every reference was corrected to match
+- `AGENTS.md`'s Git Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, reuse of
+  existing Area names and the bold-lead-in bullet style; `generate-commit-message` also notes that security-relevant
+  fixes belong under `#### 🔐 Security`
+- Reverse-synced from the shared project template, which had already corrected the same drift in its own copy of
+  these conventions — keeping this project's Conventional Commits prefixes and bold-lead-in bullet style rather than
+  adopting the template's generic defaults
+
+**Formatting**
+
+- Table column padding realigned in `AGENTS.md`'s skills table and `README.md`'s Documentation table
+
+**Release Scoping**
+
+- This release's entire diff against `main` proved documentation/tooling-only, so it was scoped as `v8.6.2`
+  **PATCH**, matching the precedent set by v8.4.1/v8.4.2/v8.5.1/v8.6.1
+
+**Build & Metadata**
+
+- Project version bumped to 8.6.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No architectural change — this release corrects documented conventions only
+
+**Technical Focus:**
+
+- Keeping written conventions (`AGENTS.md`, skills) consistent with the files they describe
+- Reverse-syncing generic improvements from the shared project template while preserving project-specific choices
+
+**Test Coverage:**
+
+- No test changes — this release touches only Markdown documentation, five Claude Code skill files and version
+  metadata
+
+---
+
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
