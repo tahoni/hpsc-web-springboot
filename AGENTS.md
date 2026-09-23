@@ -313,10 +313,10 @@ Four documentation-only folders supplement these:
 - **`documentation/history/`** holds one of each of the following files per released version, plus one standing
   exception — `EVOLUTION_OVERVIEW.md`, a single living file rather than a per-version archive:
 
-  | File                       | Purpose                                                                        |
-  |----------------------------|---------------------------------------------------------------------------------|
-  | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time                       |
-  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version                    |
+  | File                       | Purpose                                                                                                        |
+  |----------------------------|----------------------------------------------------------------------------------------------------------------|
+  | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time                                                        |
+  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version                                                     |
   | `EVOLUTION_OVERVIEW.md`    | `HISTORY.md`'s companion — the full Phase-by-phase narrative, split out to keep `HISTORY.md` a manageable size |
 
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,

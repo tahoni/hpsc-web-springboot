@@ -970,7 +970,7 @@ floor's climb to its real baseline and hardened the project's own documentation/
 - `CHANGELOG.md`'s duplicate `[5.0.0]` section removed; a broken Serial Commas example corrected
 
 **Achievement:** Reduced duplicated source-of-truth content across `AGENTS.md`/`CONTRIBUTING.md`, completed the icon
-registry against real usage across both sibling repositories, and cleared two latent documentation defects — no
+registry against real usage across both sibling repositories and cleared two latent documentation defects — no
 domain/service/architecture or test changes.
 
 ---
