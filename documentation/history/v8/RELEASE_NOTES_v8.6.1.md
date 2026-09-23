@@ -72,8 +72,8 @@ bottom of every archived release-notes file is unaffected.
 
 ## 📊 Statistics
 
-- **Total Commits:** 10 (7 feature commits across the two source branches this release combines, plus this
-  release's version bump, documentation and PR description commits)
+- **Total Commits:** 11 (7 feature commits across the two source branches this release combines, plus this
+  release's version bump, documentation, PR description and an evergreen-documentation fix commit)
 - **Files Changed:** 65
 - **Insertions:** 2,675 lines
 - **Deletions:** 2,373 lines
