@@ -21,6 +21,28 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.6.1 (September 23, 2026)
+
+**Theme:** `documentation/history/` Reorganization & Evolution Overview Split
+
+**Key Focus:**
+
+- `HISTORY.md`'s "📖 Evolution Overview" section (the Phase-by-phase narrative) split out into new
+  `documentation/history/EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s 4,095 lines,
+  making the file unwieldy. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its
+  Table of Contents entry still resolves; every other section stays in `HISTORY.md` unchanged
+- All 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files regrouped from a flat
+  `documentation/history/` directory into `v1/` – `v8/` subdirectories by major version, moved with `git mv` to
+  preserve history; `EVOLUTION_OVERVIEW.md` is unaffected, staying directly in `documentation/history/`
+- `AGENTS.md`'s Documentation File Map and Release Checklist (both copies of the archive-path references),
+  `README.md`'s Documentation table, and the `prep-version-release`/`generate-pr-summary`/
+  `update-improvement-plan-gaps` skills all updated to read/write the new `documentation/history/v<major>/...`
+  paths, deriving `<major>` from a version's leading number before the first `.`
+- This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
+  change), so it was scoped as `v8.6.1` **PATCH** rather than a new minor version — matching the precedent set by
+  v8.4.1/v8.4.2/v8.5.1
+- Project version bumped to 8.6.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.6.0 (September 23, 2026)
 
 **Theme:** Match URL Field, Start/End Time Precision Fix & Test Architecture Formalisation
@@ -1028,6 +1050,19 @@ domain/service/architecture or test changes.
 
 **Achievement:** Extended the match domain with a new metadata field and corrected a data-type mismatch introduced
 in v8.5.0, while formalising an already-established test convention in the project's own documentation.
+
+---
+
+### Milestone 31: documentation/history/ Reorganization & Evolution Overview Split (v8.6.1)
+
+- `HISTORY.md`'s "📖 Evolution Overview" section split out into new `documentation/history/EVOLUTION_OVERVIEW.md`,
+  roughly halving `HISTORY.md`'s size; `HISTORY.md` keeps a short pointer under the same heading/anchor
+- All 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files regrouped into `v1/` – `v8/`
+  subdirectories by major version via `git mv`; `AGENTS.md`, `README.md` and the three release-prep skills updated
+  to match
+
+**Achievement:** Kept the project's fastest-growing documentation files navigable as the release history keeps
+accumulating, without losing any historical content or `git` history.
 
 ---
 

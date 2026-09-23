@@ -1996,4 +1996,56 @@ A domain correction release: adds a nullable `url` field to `IpscMatch`, correct
 
 ---
 
+### Phase 31: documentation/history/ Reorganization & Evolution Overview Split (v8.6.1)
+
+**Duration:** September 23, 2026
+
+A documentation-only patch release: splits `HISTORY.md`'s largest section out into this file, regroups the
+per-version archive into major-version subdirectories, and updates every tool/doc that reads or writes those
+paths — no domain-model, API or test-behaviour change.
+
+**Key Accomplishments:**
+
+**Evolution Overview Split**
+
+- `HISTORY.md`'s "📖 Evolution Overview" section (the Phase-by-phase narrative you are reading now) split out into
+  this file, `documentation/history/EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s
+  4,095 lines. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its Table of Contents
+  entry still resolves; every other section stays in `HISTORY.md` unchanged
+
+**documentation/history/ Reorganization**
+
+- All 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files regrouped from a flat
+  `documentation/history/` directory into `v1/` – `v8/` subdirectories by major version, moved with `git mv` to
+  preserve history; this file is unaffected, staying directly in `documentation/history/`
+- `AGENTS.md`'s Documentation File Map and Release Checklist (two independent copies of the archive-path
+  references), `README.md`'s Documentation table, and the `prep-version-release`/`generate-pr-summary`/
+  `update-improvement-plan-gaps` skills all updated to read/write `documentation/history/v<major>/...` paths,
+  deriving `<major>` from a version's leading number before the first `.`
+
+**Release Scoping**
+
+- This release's entire diff against `main` proved documentation/tooling-only, so it was scoped as `v8.6.1`
+  **PATCH** rather than a new minor version, matching the precedent set by v8.4.1/v8.4.2/v8.5.1
+
+**Build & Metadata**
+
+- Project version bumped to 8.6.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No architectural change — this release reorganizes documentation structure only
+
+**Technical Focus:**
+
+- Documentation file-size and directory-scale management
+- Keeping tooling (skills) and doc-structure descriptions (`AGENTS.md`/`README.md`) in sync with the new layout
+
+**Test Coverage:**
+
+- No test changes — this release touches only Markdown documentation, three Claude Code skill files and version
+  metadata
+
+---
+
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
