@@ -177,13 +177,15 @@ This project's documentation is spread across a few files, each with a distinct 
 | [`HELP.md`](HELP.md)                   | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version, so past
-releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version, plus
-one standing exception — `EVOLUTION_OVERVIEW.md`, a single living file rather than a per-version archive:
+releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version,
+grouped into `v1/` – `v8/` subdirectories by major version (e.g. `documentation/history/v8/RELEASE_NOTES_v8.6.0.md`),
+plus one standing exception living directly in `documentation/history/` — `EVOLUTION_OVERVIEW.md`, a single file
+rather than a per-version archive:
 
 | File                                                                   | Purpose                                                                                                        |
 |------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | `RELEASE_NOTES_vX.Y.Z.md`                                              | Archived snapshot of `RELEASE_NOTES.md` at release time                                                        |
-| `PR_DESCRIPTION_vX.Y.Z.md`                                             | The release pull request's body, archived for that version                                                     |
+| `PR_DESCRIPTION_vX.Y.Z.md`                                             | The release pull request's body, archived for that version, from v7.0.0 onward only                           |
 | [`EVOLUTION_OVERVIEW.md`](documentation/history/EVOLUTION_OVERVIEW.md) | `HISTORY.md`'s companion — the full Phase-by-phase narrative, split out to keep `HISTORY.md` a manageable size |
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases

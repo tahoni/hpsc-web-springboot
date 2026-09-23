@@ -310,13 +310,15 @@ points back to it rather than restating it, so it's the one to update first when
 
 Four documentation-only folders supplement these:
 
-- **`documentation/history/`** holds one of each of the following files per released version, plus one standing
-  exception — `EVOLUTION_OVERVIEW.md`, a single living file rather than a per-version archive:
+- **`documentation/history/`** holds one of each of the following files per released version, grouped into
+  `v1/` – `v8/` subdirectories by major version (e.g. `documentation/history/v8/RELEASE_NOTES_v8.6.0.md`), plus one
+  standing exception living directly in `documentation/history/` — `EVOLUTION_OVERVIEW.md`, a single file rather
+  than a per-version archive:
 
   | File                       | Purpose                                                                                                        |
   |----------------------------|----------------------------------------------------------------------------------------------------------------|
   | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time                                                        |
-  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version                                                     |
+  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version, from v7.0.0 onward only                           |
   | `EVOLUTION_OVERVIEW.md`    | `HISTORY.md`'s companion — the full Phase-by-phase narrative, split out to keep `HISTORY.md` a manageable size |
 
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
@@ -529,8 +531,11 @@ anything downstream references them:
    actual repository structure and correct any directory that's missing, renamed or gone stale, including tracked
    tooling directories (`.claude/`, `.github/`) — not just `src/`.
 10. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
-    `documentation/history/RELEASE_NOTES_vX.Y.Z.md`.
-11. **Write `documentation/history/PR_DESCRIPTION_vX.Y.Z.md`.** The body text for the release pull request. Keep it
+    `documentation/history/v<major>/RELEASE_NOTES_vX.Y.Z.md`, where `<major>` is the leading number of `X.Y.Z`
+    before the first `.` (e.g. `7.2.0` → `v7`) — create that `v<major>/` directory first if this is the first
+    release of a new major version.
+11. **Write `documentation/history/v<major>/PR_DESCRIPTION_vX.Y.Z.md`** (same `v<major>/` subdirectory as step 10).
+    The body text for the release pull request. Keep it
     small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only, no line-by-line
     detail. Structure:
     - `## 🎯 Summary` — two to four bullets on what the release is and why
