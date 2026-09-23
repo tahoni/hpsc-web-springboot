@@ -91,9 +91,9 @@ contradict its rules.
    ./mvnw test -Dtest=<NewTestClass1>,<NewTestClass2>
    ./mvnw test
    ```
-9. **Update `CHANGELOG.md`** under `## 🧪 [Unreleased]` in the same change, per AGENTS.md's Git Workflow conventions —
-   one entry per target if their scope differs, or a single combined entry if they're closely related — only if the
-   change is notable enough to warrant an entry.
+9. **Update `CHANGELOG.md`** under `### 🧪 [Unreleased]` in the same change, per AGENTS.md's Git Workflow
+   Conventions (`#### <category>` → `##### <Area>`) — one entry per target if their scope differs, or a single
+   combined entry if they're closely related — only if the change is notable enough to warrant an entry.
 10. **Do not run `git add`, `git commit` or `git push` yourself** — this skill only scaffolds and verifies; leave the
     new/changed files for the user to review and commit.
 

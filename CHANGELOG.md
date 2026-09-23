@@ -56,6 +56,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`:** `CHANGELOG.md` heading references corrected from `## 🧪 [Unreleased]`/
+  `## 🧾 [X.Y.Z]` to the `### 🧪 [Unreleased]`/`### 🧾 [X.Y.Z]` depth the file actually uses. `AGENTS.md`'s Git
+  Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
+  bold-lead-in bullet style — reverse-synced from the shared project template
+
+##### Tooling
+
+- **`generate-commit-message`, `prep-version-release`, `scaffold-unit-tests`, `scaffold-integration-tests`,
+  `sync-unreleased-changes` skills:** Category and Area heading depths corrected from `###`/`####` to the
+  `####`/`#####` levels `CHANGELOG.md` actually uses; `generate-commit-message` also notes that security-relevant
+  fixes belong under `#### 🔐 Security`
+
 ### 🧾 [8.6.1] - 2026-09-23
 
 #### 🔄 Changed

@@ -177,7 +177,7 @@ read it before writing or editing any documentation in this repository. Highligh
 - **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't
   duplicate an interface method's Javadoc on its implementation unless the implementation adds behaviour the
   interface doesn't already describe — see [`AGENTS.md`'s Javadoc rule](AGENTS.md#javadoc) for the full requirements.
-- Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents —
+- Update `CHANGELOG.md`'s `### 🧪 [Unreleased]` section in the **same change** that makes the change it documents —
   don't batch changelog updates into a later PR; see [`AGENTS.md`'s Git Workflow Conventions](AGENTS.md#conventions).
 - `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When
   updating `RELEASE_NOTES.md`, `HISTORY.md` or `CHANGELOG.md`, check whether `README.md`/`ARCHITECTURE.md` need the same

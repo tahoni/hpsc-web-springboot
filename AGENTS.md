@@ -372,16 +372,16 @@ closed or progressed gaps; `sync-improvement-plan-gaps` marks gaps a branch has 
 a workflow described elsewhere in this file — the Git Workflow conventions, the Release Checklist or the Test
 Conventions — as a repeatable, invokable procedure, so an agent doesn't have to reconstruct it from scratch each time:
 
-| Skill                          | Purpose                                                                                      |
-|--------------------------------|----------------------------------------------------------------------------------------------|
-| `generate-commit-message`      | Generate a commit message and matching `CHANGELOG.md` entry for the working tree's changes   |
-| `sync-unreleased-changes`      | Reconcile `CHANGELOG.md`'s `## 🧪 [Unreleased]` section against the current branch's changes |
-| `sync-improvement-plan-gaps`   | Mark gaps in `improvement-plan.md` as closed/progressed once a branch has addressed them     |
-| `update-improvement-plan-gaps` | Audit the codebase against `improvement-plan.md`/`improvement-plan-tasks.md` for new gaps    |
-| `prep-version-release`         | Prepare a release's `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md` and PR description      |
-| `generate-pr-summary`          | Condense a version's PR description and release notes into a short PR summary                |
-| `scaffold-unit-tests`          | Scaffold unit tests for a service, model or exception class, per the Test Conventions below  |
-| `scaffold-integration-tests`   | Scaffold `@SpringBootTest` integration tests for a service, per the Test Conventions below   |
+| Skill                          | Purpose                                                                                       |
+|--------------------------------|-----------------------------------------------------------------------------------------------|
+| `generate-commit-message`      | Generate a commit message and matching `CHANGELOG.md` entry for the working tree's changes    |
+| `sync-unreleased-changes`      | Reconcile `CHANGELOG.md`'s `### 🧪 [Unreleased]` section against the current branch's changes |
+| `sync-improvement-plan-gaps`   | Mark gaps in `improvement-plan.md` as closed/progressed once a branch has addressed them      |
+| `update-improvement-plan-gaps` | Audit the codebase against `improvement-plan.md`/`improvement-plan-tasks.md` for new gaps     |
+| `prep-version-release`         | Prepare a release's `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md` and PR description       |
+| `generate-pr-summary`          | Condense a version's PR description and release notes into a short PR summary                 |
+| `scaffold-unit-tests`          | Scaffold unit tests for a service, model or exception class, per the Test Conventions below   |
+| `scaffold-integration-tests`   | Scaffold `@SpringBootTest` integration tests for a service, per the Test Conventions below    |
 
 `.claude/` is a tracked tooling directory (see Directory Tree Maintenance below) — a new skill, or a change to an
 existing one, is committed like any other project file, and `ARCHITECTURE.md`'s Project Structure tree only needs
@@ -483,8 +483,14 @@ GitHub mechanics, not something an AI agent executes unprompted — see
   documentation update and a bug fix) into a single commit.
 - **Track complex work with a todo list.** For multistep or non-trivial tasks, maintain a tracked todo list and keep it
   updated as work progresses, so progress stays visible and the work stays on track.
-- **Update `CHANGELOG.md` in the same change.** Every notable change gets an entry under `## 🧪 [Unreleased]` as part of
-  the change that makes it — don't batch changelog updates into a later, separate change.
+- **Update `CHANGELOG.md` in the same change.** Every notable change gets an entry under `### 🧪 [Unreleased]`, nested
+  one level deeper under the matching Keep a Changelog category heading (`#### ➕ Added`, `#### 🔄 Changed`,
+  `#### 🐛 Fixed`, `#### ⚠️ Deprecated`, `#### 🗑️ Removed`, `#### 🔐 Security` — only the ones that apply), and one
+  level deeper again under a `##### <Area>` sub-heading grouping related entries (reuse an existing Area from the
+  file's recent entries where one fits, rather than inventing a near-duplicate) — as part of the change that makes
+  it, not batched into a later, separate change. Each bullet bolds the backticked class/method/file/entity name,
+  followed by a colon and a concise description of what changed and why — e.g.
+  `` - **`IpscMatch.url`:** New nullable `String` column — a URL with more information about a match ``.
 
 ---
 
@@ -499,13 +505,13 @@ anything downstream references them:
 2. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`.
 3. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
    match.
-4. **Verify `CHANGELOG.md`'s `## 🧪 [Unreleased]` section is complete.** Cross-check every commit and any uncommitted
+4. **Verify `CHANGELOG.md`'s `### 🧪 [Unreleased]` section is complete.** Cross-check every commit and any uncommitted
    diff on the release branch against its entries before renaming it in the next step — don't assume it's already
    accurate just because entries were added along the way; fill in anything missing and resolve any drifted entries
    with the author first.
-5. **Add a `CHANGELOG.md` entry.** New `## 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog categories
-   that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit any that are
-   empty). Update the Table of Contents and move the "← Current" marker to the new version.
+5. **Add a `CHANGELOG.md` entry.** New `### 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog
+   categories that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit
+   any that are empty). Update the Table of Contents and move the "← Current" marker to the new version.
 6. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for the new version, at the same
    narrative depth and in the same style as the existing entries, plus a matching Phase entry in
    `documentation/history/EVOLUTION_OVERVIEW.md` — `HISTORY.md`'s Evolution Overview section was split out into that

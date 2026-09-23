@@ -53,14 +53,15 @@ Steps:
 5. **Run the `sync-unreleased-changes` skill before touching CHANGELOG.md.** Release branches are cut from `develop`
    (per AGENTS.md's Branching Model), so invoke it with its default base (`develop`) — never skip this even if
    `[Unreleased]` looks complete: it cross-checks every commit and any uncommitted diff against the actual
-   `[Unreleased]` entries, fills in anything missing, flags drifted entries and consolidates duplicate `#### <Area>`
+   `[Unreleased]` entries, fills in anything missing, flags drifted entries and consolidates duplicate `##### <Area>`
    sub-headers. The next step renames `[Unreleased]` wholesale, so it must be fully accurate first. If it flags any
    entries as drifted, resolve those with the user before continuing — don't fold a flagged entry into the new version
    section unresolved.
-6. **Add a `CHANGELOG.md` entry.** Rename `## 🧪 [Unreleased]`'s accumulated entries (now synced in the previous step)
-   into a new `## 🧾 [$VERSION] - YYYY-MM-DD` section, using only the categories that apply (`➕ Added`, `🔄 Changed`,
-   `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security`). Update the Table of Contents and move the "← Current" marker
-   to the new version, then start a fresh empty `## 🧪 [Unreleased]` section above it.
+6. **Add a `CHANGELOG.md` entry.** Rename `### 🧪 [Unreleased]`'s accumulated entries (now synced in the previous
+   step) into a new `### 🧾 [$VERSION] - YYYY-MM-DD` section, keeping only the `#### <category>` headings that apply
+   (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security`) and their `##### <Area>`
+   sub-headings. Update the Table of Contents and move the "← Current" marker to the new version, then start a fresh
+   empty `### 🧪 [Unreleased]` section above it.
 7. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for `$VERSION`, at the same narrative
    depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
    reverse chronological order, plus a matching Phase entry at the end of
