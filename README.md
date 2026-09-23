@@ -185,7 +185,7 @@ rather than a per-version archive:
 | File                                                                   | Purpose                                                                                                        |
 |------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | `RELEASE_NOTES_vX.Y.Z.md`                                              | Archived snapshot of `RELEASE_NOTES.md` at release time                                                        |
-| `PR_DESCRIPTION_vX.Y.Z.md`                                             | The release pull request's body, archived for that version, from v7.0.0 onward only                           |
+| `PR_DESCRIPTION_vX.Y.Z.md`                                             | The release pull request's body, archived for that version, from v7.0.0 onward only                            |
 | [`EVOLUTION_OVERVIEW.md`](documentation/history/EVOLUTION_OVERVIEW.md) | `HISTORY.md`'s companion — the full Phase-by-phase narrative, split out to keep `HISTORY.md` a manageable size |
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases
