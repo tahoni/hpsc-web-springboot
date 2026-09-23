@@ -21,7 +21,7 @@ import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -178,8 +178,9 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getClub());
         assertEquals(FirearmType.HANDGUN, response.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, response.getMatchCategory());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), response.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), response.getEndTime());
+        assertEquals(LocalTime.of(8, 0), response.getStartTime());
+        assertEquals(LocalTime.of(17, 0), response.getEndTime());
+        assertEquals("https://example.com/matches/1", response.getUrl());
         assertTrue(response.getStages().isEmpty());
     }
 
@@ -225,8 +226,9 @@ class IpscMatchServiceIntegrationTest {
         // Assert
         assertEquals(created.getMatchId(), fetched.getMatchId());
         assertEquals("Club Championship", fetched.getMatchName());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 8, 0), fetched.getStartTime());
-        assertEquals(LocalDateTime.of(2026, 9, 12, 17, 0), fetched.getEndTime());
+        assertEquals(LocalTime.of(8, 0), fetched.getStartTime());
+        assertEquals(LocalTime.of(17, 0), fetched.getEndTime());
+        assertEquals("https://example.com/matches/1", fetched.getUrl());
         assertEquals(1, fetched.getStages().size());
         assertEquals("Stage 1", fetched.getStages().getFirst().getStageName());
     }
@@ -300,8 +302,8 @@ class IpscMatchServiceIntegrationTest {
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
-        LocalDateTime newStartTime = LocalDateTime.of(2026, 9, 12, 9, 30);
-        LocalDateTime newEndTime = LocalDateTime.of(2026, 9, 12, 18, 30);
+        LocalTime newStartTime = LocalTime.of(9, 30);
+        LocalTime newEndTime = LocalTime.of(18, 30);
         MatchRequest patch = new MatchRequest();
         patch.setStartTime(newStartTime);
         patch.setEndTime(newEndTime);
@@ -312,6 +314,23 @@ class IpscMatchServiceIntegrationTest {
         // Assert
         assertEquals(newStartTime, patched.getStartTime());
         assertEquals(newEndTime, patched.getEndTime());
+        assertEquals("Club Championship", patched.getMatchName());
+    }
+
+    @Test
+    void testPatchMatch_whenUrlIsProvided_thenUrlChanges() throws FatalException {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+
+        MatchRequest patch = new MatchRequest();
+        patch.setUrl("https://example.com/matches/updated");
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
+
+        // Assert
+        assertEquals("https://example.com/matches/updated", patched.getUrl());
         assertEquals("Club Championship", patched.getMatchName());
     }
 
@@ -448,8 +467,9 @@ class IpscMatchServiceIntegrationTest {
         replacement.setClub("Other Club");
         replacement.setMatchFirearmType(FirearmType.RIFLE.toString());
         replacement.setMatchCategory(MatchCategory.LEAGUE.toString());
-        replacement.setStartTime(LocalDateTime.of(2027, 1, 1, 10, 0));
-        replacement.setEndTime(LocalDateTime.of(2027, 1, 1, 16, 0));
+        replacement.setStartTime(LocalTime.of(10, 0));
+        replacement.setEndTime(LocalTime.of(16, 0));
+        replacement.setUrl("https://example.com/matches/different");
 
         // Act
         MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
@@ -461,8 +481,9 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(ClubIdentifier.SOSC, updated.getClub());
         assertEquals(FirearmType.RIFLE, updated.getMatchFirearmType());
         assertEquals(MatchCategory.LEAGUE, updated.getMatchCategory());
-        assertEquals(LocalDateTime.of(2027, 1, 1, 10, 0), updated.getStartTime());
-        assertEquals(LocalDateTime.of(2027, 1, 1, 16, 0), updated.getEndTime());
+        assertEquals(LocalTime.of(10, 0), updated.getStartTime());
+        assertEquals(LocalTime.of(16, 0), updated.getEndTime());
+        assertEquals("https://example.com/matches/different", updated.getUrl());
     }
 
     @Test
@@ -515,11 +536,12 @@ class IpscMatchServiceIntegrationTest {
         MatchRequest request = new MatchRequest();
         request.setMatchName("Club Championship");
         request.setMatchDate(LocalDate.of(2026, 9, 12));
-        request.setStartTime(LocalDateTime.of(2026, 9, 12, 8, 0));
-        request.setEndTime(LocalDateTime.of(2026, 9, 12, 17, 0));
+        request.setStartTime(LocalTime.of(8, 0));
+        request.setEndTime(LocalTime.of(17, 0));
         request.setClub(club);
         request.setMatchFirearmType(FirearmType.HANDGUN.toString());
         request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
+        request.setUrl("https://example.com/matches/1");
         return request;
     }
 }

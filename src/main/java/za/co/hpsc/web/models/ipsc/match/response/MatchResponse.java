@@ -10,7 +10,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -34,15 +34,17 @@ public class MatchResponse {
     @NotNull
     private LocalDate matchDate;
     /** Time the match started; may be null. */
-    private LocalDateTime startTime;
+    private LocalTime startTime;
     /** Time the match ended; may be null. */
-    private LocalDateTime endTime;
+    private LocalTime endTime;
     /** The identifier of the club hosting the match. */
     private ClubIdentifier club;
     /** The firearm type this match is shot with. */
     private FirearmType matchFirearmType;
     /** The category/tier of this match. */
     private MatchCategory matchCategory;
+    /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
+    private String url;
     /** The stages that make up this match, ordered by stage number. */
     private List<MatchStageResponse> stages;
 }

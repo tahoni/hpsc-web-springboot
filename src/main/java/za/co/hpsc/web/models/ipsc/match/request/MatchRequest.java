@@ -9,7 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -33,11 +33,11 @@ public class MatchRequest {
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
     /** Time the match started; may be null. */
-    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
-    private LocalDateTime startTime;
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT)
+    private LocalTime startTime;
     /** Time the match ended; may be null. */
-    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT)
-    private LocalDateTime endTime;
+    @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT)
+    private LocalTime endTime;
     /** The match's name. */
     @JsonProperty(required = true)
     private String matchName;
@@ -51,6 +51,8 @@ public class MatchRequest {
     private String matchFirearmType;
     /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
     private String matchCategory;
+    /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
+    private String url;
     /** The stages that make up this match. */
     private List<MatchStageRequest> stages;
 
@@ -70,6 +72,7 @@ public class MatchRequest {
      * @param stages           the stages that make up this match.
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
+     * @param url              a URL with more information about this match; may be null.
      */
     @JsonCreator
     public MatchRequest(@JsonProperty("matchId") Long matchId,
@@ -79,8 +82,9 @@ public class MatchRequest {
                         @JsonProperty("matchFirearmType") String matchFirearmType,
                         @JsonProperty("matchCategory") String matchCategory,
                         @JsonProperty("stages") List<MatchStageRequest> stages,
-                        @JsonProperty(value = "startTime") LocalDateTime startTime,
-                        @JsonProperty(value = "endTime") LocalDateTime endTime) {
+                        @JsonProperty(value = "startTime") LocalTime startTime,
+                        @JsonProperty(value = "endTime") LocalTime endTime,
+                        @JsonProperty(value = "url") String url) {
         this.matchId = matchId;
         this.matchDate = matchDate;
         this.startTime = startTime;
@@ -89,6 +93,7 @@ public class MatchRequest {
         this.club = club;
         this.matchFirearmType = matchFirearmType;
         this.matchCategory = matchCategory;
+        this.url = url;
         this.stages = stages;
     }
 }

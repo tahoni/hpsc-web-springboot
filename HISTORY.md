@@ -21,6 +21,28 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.6.0 (September 23, 2026)
+
+**Theme:** Match URL Field, Start/End Time Precision Fix & Test Architecture Formalisation
+
+**Key Focus:**
+
+- `IpscMatch` gains a new nullable `url` column via `V7_6_0__add_ipsc_match_url.sql` — a URL with more information
+  about a match (e.g. a results page or event listing) — wired end-to-end through `MatchRequest`,
+  `MatchRequestForCSV`, `MatchResponse` and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/
+  `toResponse`; `IpscMatchController`'s CSV bulk import header gains a matching `Url` column
+- `IpscMatch.startTime`/`endTime` corrected from `LocalDateTime` to `LocalTime` via
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` — these were always time-of-day-only values alongside
+  `scheduledDate`, so the redundant date component v8.5.0 introduced is dropped. New
+  `IpscConstants.IPSC_INPUT_TIME_FORMAT` (`HH:mm`) constant replaces `IPSC_INPUT_DATE_TIME_FORMAT` on both fields;
+  JSON/CSV `startTime`/`endTime` values are now bare `HH:mm` instead of `yyyy-MM-dd HH:mm` — existing CSV templates
+  and API clients need updating to drop the date component
+- `AGENTS.md`'s Test Conventions section now formally documents the 3-tier service test architecture
+  (`<Service>Test`/`<Service>ImplTest`/`<Service>IntegrationTest`) already followed by all four services, replacing
+  a one-line pointer that previously only described the pattern piecemeal across the `scaffold-unit-tests`/
+  `scaffold-integration-tests` skills
+- Project version bumped to 8.6.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.5.1 (September 13, 2026)
 
 **Theme:** `HISTORY.md` Phase/Milestone Backfill & Release Re-Scoping to a Patch Version
@@ -2521,6 +2543,61 @@ a patch — no domain-model, API or test-behaviour change.
 
 ---
 
+### Phase 30: Match URL Field, Start/End Time Precision Fix & Test Architecture Formalisation (v8.6.0)
+
+**Duration:** September 23, 2026
+
+A domain correction release: adds a nullable `url` field to `IpscMatch`, corrects `startTime`/`endTime` from
+`LocalDateTime` to `LocalTime`, and formally documents the already-established 3-tier service test architecture.
+
+**Key Accomplishments:**
+
+**Match URL Field**
+
+- `IpscMatch` gains a new nullable `url` column via `V7_6_0__add_ipsc_match_url.sql` — a URL with more information
+  about a match (e.g. a results page or event listing); wired end-to-end through `MatchRequest`,
+  `MatchRequestForCSV`, `MatchResponse` and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/
+  `toResponse`, with a matching `Url` column added to the CSV bulk import header
+
+**Start/End Time Precision Fix**
+
+- `IpscMatch.startTime`/`endTime` corrected from `LocalDateTime` to `LocalTime` via
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` — these were always time-of-day-only values alongside
+  `scheduledDate`, so the redundant date component v8.5.0 introduced is dropped. New
+  `IpscConstants.IPSC_INPUT_TIME_FORMAT` (`HH:mm`) constant replaces `IPSC_INPUT_DATE_TIME_FORMAT` on both fields;
+  JSON/CSV values are now bare `HH:mm` instead of `yyyy-MM-dd HH:mm` — existing CSV templates and API clients need
+  updating to drop the date component
+
+**Test Architecture Formalisation**
+
+- `AGENTS.md`'s Test Conventions section now formally documents the 3-tier service test architecture
+  (`<Service>Test`/`<Service>ImplTest`/`<Service>IntegrationTest`) already followed by all four services, replacing
+  a one-line pointer that previously only described the pattern piecemeal across the `scaffold-unit-tests`/
+  `scaffold-integration-tests` skills
+
+**Build & Metadata**
+
+- Project version bumped to 8.6.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No structural architectural change — extends `IpscMatch` with one new nullable column and corrects the Java type
+  of two existing ones, following the established request/response/service wiring pattern
+
+**Technical Focus:**
+
+- Match-metadata completeness (`url`)
+- Data-type correctness (time-of-day values no longer carry a redundant date component)
+- Test convention documentation completeness
+
+**Test Coverage:**
+
+- `IpscMatchServiceIntegrationTest`, `IpscMatchServiceTest`, `IpscMatchServiceImplTest`, `MatchRequestTest` and
+  `MatchRequestForCSVTest` updated so `url` round-trips through JSON, CSV import and the real H2/Hibernate/JPA
+  layer, and `startTime`/`endTime` fixtures/CSV rows/JSON payloads reflect the new `LocalTime`/`HH:mm` shape
+
+---
+
 ## 🎯 Major Milestones
 
 ### Milestone 1: Project Foundation (v1.0.0)
@@ -2914,6 +2991,21 @@ wiring pattern to two new nullable timestamp fields.
 **Achievement:** Closed a three-release documentation backlog, brought this file's own sections into consistent
 chronological order and corrected this release's own Semantic Versioning classification before it shipped — no
 domain/service/architecture or test changes.
+
+---
+
+### Milestone 30: Match URL Field, Start/End Time Precision Fix & Test Architecture Formalisation (v8.6.0)
+
+- `IpscMatch` gains a nullable `url` column via `V7_6_0__add_ipsc_match_url.sql`, wired through `MatchRequest`/
+  `MatchRequestForCSV`/`MatchResponse` and `IpscMatchServiceImpl`, with a matching CSV bulk import `Url` column
+- `startTime`/`endTime` corrected from `LocalDateTime` to `LocalTime` via
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql`, with a new `IpscConstants.IPSC_INPUT_TIME_FORMAT`
+  (`HH:mm`) constant replacing the date-carrying format previously used
+- `AGENTS.md`'s Test Conventions section formally documents the 3-tier service test architecture already followed
+  by all four services
+
+**Achievement:** Extended the match domain with a new metadata field and corrected a data-type mismatch introduced
+in v8.5.0, while formalising an already-established test convention in the project's own documentation.
 
 ---
 

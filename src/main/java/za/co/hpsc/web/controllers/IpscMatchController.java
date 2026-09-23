@@ -115,8 +115,8 @@ public class IpscMatchController {
                     content = @Content(mediaType = "text/csv",
                             schema = @Schema(implementation = MatchRequestForCSV.class),
                             examples = @ExampleObject("""
-                                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime
-                                    yyyy-MM-dd,string,string,string,string,1-Stage 1;2-Stage 2,yyyy-MM-dd HH:mm,yyyy-MM-dd HH:mm
+                                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
+                                    yyyy-MM-dd,string,string,string,string,1-Stage 1;2-Stage 2,HH:mm,HH:mm,string
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, NonFatalException, FatalException {
