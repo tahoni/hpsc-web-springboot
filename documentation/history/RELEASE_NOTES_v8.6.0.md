@@ -128,11 +128,12 @@ already followed by all four services, closing a gap between the project's actua
 
 ## 📊 Statistics
 
-- **Total Commits:** 3
-- **Files Changed:** 16
-- **Insertions:** 278 lines
-- **Deletions:** 100 lines
-- **Net Change:** +178 lines
+- **Total Commits:** 6 (3 feature commits, plus this release's version bump, documentation and PR description
+  commits)
+- **Files Changed:** 22
+- **Insertions:** 743 lines
+- **Deletions:** 215 lines
+- **Net Change:** +528 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0
@@ -196,7 +197,7 @@ Leoni Lubbinge
 ## 📝 Notes
 
 Version 8.6.0 is a focused domain-correctness release: one new optional field, one data-type fix for a mistake
-introduced in the immediately preceding release and a documentation formalisation of an already-established test
+introduced in the immediately preceding release, and a documentation formalisation of an already-established test
 convention. The `startTime`/`endTime` format change is the one breaking change in this release — existing API
 clients and CSV templates that populate those fields need updating.
 
