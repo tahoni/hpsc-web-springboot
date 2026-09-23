@@ -37,7 +37,9 @@ Read these fully before drafting anything — you cannot tell what's *new* witho
 3. `AGENTS.md`, `README.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md` — the same sources
    `improvement-plan.md`'s own "🎯 Purpose & Scope" section says it draws from.
 4. `HISTORY.md`'s most recent "🚀 Future Roadmap Implications" entries, and the most recent
-   `documentation/history/RELEASE_NOTES_v*.md`'s "Known Issues" and "Future Enhancements" sections.
+   `documentation/history/v*/RELEASE_NOTES_v*.md`'s "Known Issues" and "Future Enhancements" sections — "most
+   recent" means the highest semantic version found across all `vN/` subdirectories, not simply the file inside
+   the highest-numbered `vN/` folder.
 5. `.github/workflows/`, `pom.xml`, `application*.properties` — config that a doc's claims might have drifted from.
 
 ## 🚀 Instructions
