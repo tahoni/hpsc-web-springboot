@@ -203,14 +203,14 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Parses a CSV cell of semicolon-separated {@code <stageNumber>-<stageName>} entries into a
+     * Parses a CSV cell of semicolon-separated {@code <stageNumber>:<stageName>} entries into a
      * list of {@link MatchStageRequest}s.
      *
-     * @param rawStages the raw CSV cell value (e.g. {@code "1-Stage One;2-Stage Two"}); may be
+     * @param rawStages the raw CSV cell value (e.g. {@code "1:Stage One;2:Stage Two"}); may be
      *                  null or blank, in which case an empty list is returned.
      * @return the individual stages, in the order given.
      * @throws ValidationException if an entry doesn't start with a numeric stage number followed
-     *                             by a {@code "-"}.
+     *                             by a {@code ":"}.
      */
     protected List<MatchStageRequest> parseStages(String rawStages) {
         if ((rawStages == null) || rawStages.isBlank()) {
@@ -223,9 +223,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 continue;
             }
 
-            int separatorIndex = entry.indexOf('-');
+            int separatorIndex = entry.indexOf(':');
             if (separatorIndex < 0) {
-                throw new ValidationException("Invalid stage entry (expected <stageNumber>-<stageName>): " + entry);
+                throw new ValidationException("Invalid stage entry (expected <stageNumber>:<stageName>): " + entry);
             }
 
             String stageNumber = entry.substring(0, separatorIndex).trim();

@@ -7,6 +7,8 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 
+import java.util.List;
+
 /**
  * The {@code IpscCompetitorService} interface provides methods for creating, updating and
  * retrieving IPSC competitors. Implementations are responsible for validating input data,
@@ -103,4 +105,11 @@ public interface IpscCompetitorService {
      * @throws NonFatalException if no competitor with {@code competitorId} exists.
      */
     CompetitorResponse getCompetitor(Long competitorId) throws NonFatalException;
+
+    /**
+     * Retrieves every IPSC competitor.
+     *
+     * @return all persisted competitors; empty if there are none.
+     */
+    List<CompetitorResponse> getAllCompetitors();
 }

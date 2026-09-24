@@ -23,7 +23,7 @@ class MatchRequestForCSVTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequestForCSV request = new MatchRequestForCSV(LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two", LocalTime.of(8, 0), LocalTime.of(17, 0),
+                "Test Club", "Pistol", "Level 1", "1:Stage One;2:Stage Two", LocalTime.of(8, 0), LocalTime.of(17, 0),
                 "https://example.com/matches/1"
         );
 
@@ -40,7 +40,7 @@ class MatchRequestForCSVTest {
         assertEquals("Pistol", node.get("MatchFirearmType").asText());
         assertEquals("Level 1", node.get("MatchCategory").asText());
         assertEquals("https://example.com/matches/1", node.get("Url").asText());
-        assertEquals("1-Stage One;2-Stage Two", node.get("Stages").asText());
+        assertEquals("1:Stage One;2:Stage Two", node.get("Stages").asText());
     }
 
     @Test
@@ -80,7 +80,7 @@ class MatchRequestForCSVTest {
                   "MatchFirearmType": "Pistol",
                   "MatchCategory": "Level 1",
                   "Url": "https://example.com/matches/1",
-                  "Stages": "1-Stage One;2-Stage Two"
+                  "Stages": "1:Stage One;2:Stage Two"
                 }
                 """;
 
@@ -96,19 +96,19 @@ class MatchRequestForCSVTest {
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());
         assertEquals("https://example.com/matches/1", request.getUrl());
-        assertEquals("1-Stage One;2-Stage Two", request.getStages());
+        assertEquals("1:Stage One;2:Stage Two", request.getStages());
     }
 
     @Test
     void testJsonDeserialization_whenStagesIsSingleEntryWithNoSeparator_thenPreservesRawValue() throws Exception {
-        // Arrange - a single stage has no ";" separator between entries, only the "-" between its
+        // Arrange - a single stage has no ";" separator between entries, only the ":" between its
         // number and name
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String json = """
                 {
                   "MatchDate": "2026-04-10",
                   "MatchName": "Club Championship",
-                  "Stages": "1-Stage One"
+                  "Stages": "1:Stage One"
                 }
                 """;
 
@@ -116,7 +116,7 @@ class MatchRequestForCSVTest {
         MatchRequestForCSV request = mapper.readValue(json, MatchRequestForCSV.class);
 
         // Assert
-        assertEquals("1-Stage One", request.getStages());
+        assertEquals("1:Stage One", request.getStages());
     }
 
     @Test
@@ -194,7 +194,7 @@ class MatchRequestForCSVTest {
                 .withHeader();
         String csvData = """
                 MatchDate,MatchName,StartTime,EndTime,Club,MatchFirearmType,MatchCategory,Url,Stages
-                2026-04-10,Club Championship,08:00,17:00,Test Club,Pistol,Level 1,https://example.com/matches/1,1-Stage One;2-Stage Two
+                2026-04-10,Club Championship,08:00,17:00,Test Club,Pistol,Level 1,https://example.com/matches/1,1:Stage One;2:Stage Two
                 """;
 
         // Act
@@ -215,21 +215,21 @@ class MatchRequestForCSVTest {
         assertEquals("Pistol", row.getMatchFirearmType());
         assertEquals("Level 1", row.getMatchCategory());
         assertEquals("https://example.com/matches/1", row.getUrl());
-        assertEquals("1-Stage One;2-Stage Two", row.getStages());
+        assertEquals("1:Stage One;2:Stage Two", row.getStages());
     }
 
     @Test
-    void testCsvDeserialization_whenStagesContainsEmbeddedHyphensAcrossMultipleEntries_thenPreservesRawDelimitedValue()
+    void testCsvDeserialization_whenStagesContainsEmbeddedColonsAcrossMultipleEntries_thenPreservesRawDelimitedValue()
             throws Exception {
-        // Arrange - stage names may themselves contain a "-" (e.g. "Stage One - The Bank Job"); since
+        // Arrange - stage names may themselves contain a ":" (e.g. "Stage One: The Bank Job"); since
         // `stages` is a plain, unparsed String column, the whole cell must round-trip untouched
-        // regardless of how many "-"/";" characters it already contains
+        // regardless of how many ":"/";" characters it already contains
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
         CsvSchema csvSchema = csvMapper.schemaFor(MatchRequestForCSV.class)
                 .withColumnReordering(true)
                 .withHeader();
-        String stages = "1-Stage One - The Bank Job;2-Stage Two - The Vault";
+        String stages = "1:Stage One: The Bank Job;2:Stage Two: The Vault";
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-04-10,Club Championship,Test Club,Pistol,Level 1,%s

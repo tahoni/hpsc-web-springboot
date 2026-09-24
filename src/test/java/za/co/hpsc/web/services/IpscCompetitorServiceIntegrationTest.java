@@ -307,6 +307,36 @@ class IpscCompetitorServiceIntegrationTest {
         assertNotEquals(competitors.get(0).getCompetitorId(), competitors.get(1).getCompetitorId());
     }
 
+    // getAllCompetitors()
+    @Test
+    void testGetAllCompetitors_whenNoCompetitorsExist_thenReturnsEmptyList() {
+        // Act
+        List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
+
+        // Assert
+        assertTrue(competitors.isEmpty());
+    }
+
+    @Test
+    void testGetAllCompetitors_whenCompetitorsExist_thenReturnsAll() {
+        // Arrange
+        CompetitorResponse first = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
+        CompetitorRequest secondRequest = validRequest("HPSC-002");
+        secondRequest.setFirstName("John");
+        CompetitorResponse second = ipscCompetitorService.createCompetitor(secondRequest);
+
+        // Act
+        List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
+
+        // Assert
+        assertEquals(2, competitors.size());
+        assertTrue(competitors.stream().anyMatch(competitor ->
+                competitor.getCompetitorId().equals(first.getCompetitorId())));
+        assertTrue(competitors.stream().anyMatch(competitor ->
+                competitor.getCompetitorId().equals(second.getCompetitorId())
+                        && "John".equals(competitor.getFirstName())));
+    }
+
     // getCompetitor()
     @Test
     void testGetCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {

@@ -41,10 +41,10 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
 | API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
 | Validation        | Hibernate Validator, Jakarta Validation                             |
-| Testing           | JUnit, Mockito, Spring Test, Spring REST Docs                       |
+| Testing           | JUnit, Mockito, Spring Test                                         |
 | Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
 | Code generation   | Lombok                                                              |
-| Port / context    | `8081` / `/hpsc-web`                                                |
+| Port / context    | `8080` / `/hpsc-web`                                                |
 
 ---
 
@@ -58,9 +58,9 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
-│   ├───history/                # Per-version release notes (RELEASE_NOTES_vX.Y.Z.md)
+│   ├───history/                # Archived release notes/PR descriptions by major version, plus EVOLUTION_OVERVIEW.md
 │   ├───recommendations/        # Fuller rationale/examples behind condensed AGENTS.md conventions
-│   └───roadmap/                # Concrete task-list breakdown of improvement-plan.md's gaps
+│   └───roadmap/                # improvement-plan.md and its checkbox-level task breakdown
 ├───src/
 │   ├───main/java/za/co/hpsc/web/
 │   │   ├───configs/            # Spring configuration (ControllerAdvice)
@@ -88,6 +88,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   └───main/resources/
 │       ├───db/migration/       # Flyway migration scripts (V<X>_<Y>_<Z>__description.sql)
 │       ├───logback-spring.xml  # Logging configuration
+│       ├───banner.txt          # Startup banner
 │       └───application*.properties
 └───src/test/java/za/co/hpsc/web/
     ├───configs/                # ControllerAdvice tests
@@ -96,8 +97,8 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
     ├───models/                 # DTO / model unit tests
-    ├───services/               # Service integration tests (H2)
-    │   └───impl/               # Service unit tests (Mockito)
+    ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
+    │   └───impl/               # Service impl helper unit tests (Mockito)
     └───utils/                  # Utility unit tests
 ```
 

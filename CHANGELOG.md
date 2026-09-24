@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.6.2](#-862---2026-09-24) ← Current
+- [🧾 Version 8.7.0](#-870---2026-09-24) ← Current
+- [🧾 Version 8.6.2](#-862---2026-09-24)
 - [🧾 Version 8.6.1](#-861---2026-09-23)
 - [🧾 Version 8.6.0](#-860---2026-09-23)
 - [🧾 Version 8.5.1](#-851---2026-09-13)
@@ -56,6 +57,89 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.7.0] - 2026-09-24
+
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscCompetitorController.getAllCompetitors`:** New `GET /ipsc/competitors` endpoint returning every IPSC
+  competitor as a JSON array of `CompetitorResponse`s — the collection counterpart to `GET /{competitorId}`,
+  mirroring `IpscMatchController.getAllMatches`
+
+##### Services
+
+- **`IpscCompetitorService.getAllCompetitors`:** Returns every persisted competitor mapped to a
+  `CompetitorResponse`, or an empty list when there are none
+
+##### Documentation
+
+- **`improvement-plan.md`:** New Gap #12 — `README.md`/`ARCHITECTURE.md` describe competitors and matches as "full
+  CRUD", yet neither `IpscCompetitorController`/`IpscMatchController` nor their services expose a delete operation;
+  `standard-rest-conventions.md`'s current-state examples also omit `getAllMatches`/`IpscCompetitorController`
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox block for Gap #12 — decide on a delete operation (with
+  explicit handling of dependent rows) or reword the "CRUD" claims, then refresh the REST conventions examples
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscMatchServiceImpl.parseStages`:** A match CSV's `Stages` cell now separates each entry's stage number from
+  its name with `:` instead of `-` (e.g. `"1:Stage One;2:Stage Two"`); only the first `:` splits, so stage names may
+  still contain one. Entries in the old `1-Stage One` form are now rejected with a `ValidationException`
+
+##### Documentation
+
+- **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
+  Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
+- **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's
+  **Next** row points at it instead of the "no items currently scoped" placeholder and "☑️ Success Criteria" gains
+  a matching bullet
+
+##### Domain
+
+- **`Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`,
+  `ShooterLogCompetitor`:** Every `@ManyToOne` association switched from `FetchType.LAZY` to `FetchType.EAGER`, so
+  the referenced entity is loaded along with its owner rather than on first access
+
+##### Build & Metadata
+
+- Project version bumped to **8.7.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+- **`springdoc-openapi-starter-webmvc-ui`:** Bumped from `2.8.5` to `3.1.0`, the springdoc line built for Spring
+  Boot 4
+- **`pom.xml`:** springdoc's version now comes from an imported `springdoc-openapi-bom` in a new
+  `<dependencyManagement>` section, since Spring Boot's parent doesn't manage it, so the
+  `springdoc-openapi-starter-webmvc-ui` dependency no longer declares its own version
+
+##### Configuration
+
+- **`application.properties`:** `server.port=8081` override removed, so the app now starts on Spring Boot's default
+  port `8080`; the port and Swagger/OpenAPI URLs in `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and
+  `CONTRIBUTING.md` updated to match
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
+  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
+- **`HELP.md`:** Spring REST Docs reference link dropped, following the `spring-restdocs-mockmvc` removal above
+
+#### 🐛 Fixed
+
+##### Controllers
+
+- **`IpscMatchController.getAllMatches`:** Swagger's `200` response schema now documents an array of
+  `MatchResponse`s via `@ArraySchema`, rather than a single `MatchResponse` object, matching the `List` the
+  endpoint actually returns
+
+##### Documentation
+
+- **`ARCHITECTURE.md`'s Project Structure tree:** Stale comments corrected against disk — `documentation/history/`
+  now describes its per-major-version subdirectories and `EVOLUTION_OVERVIEW.md`, `documentation/roadmap/` names
+  `improvement-plan.md` alongside its task breakdown, the test `services/`/`services/impl/` comments match the
+  3-tier service test split, and the previously missing `banner.txt` is listed
 
 ### 🧾 [8.6.2] - 2026-09-24
 
@@ -455,7 +539,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   complete one — the duplicate heading text meant GitHub suffixed the second heading's anchor, so the Table of
   Contents' "Version 5.0.0" link only ever reached the incomplete copy
 - **`documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md`:** Five archived
-  sub-headings reused an already-registered icon for an unrelated concept — `📂`→`📁` (Project/directory
+  subheadings reused an already-registered icon for an unrelated concept — `📂`→`📁` (Project/directory
   structure), `📅`→`🔢` (collided with Timeline; the heading is actually about numbering), `🔒`→`🔐`
   (Security), `👤`→`🧬` (collided with Author; the heading is actually about a domain enum/DTO), `📈`→`🧪`
   (collided with Request-response flow; the heading is actually about test coverage)

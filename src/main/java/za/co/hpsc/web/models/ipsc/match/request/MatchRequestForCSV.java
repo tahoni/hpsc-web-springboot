@@ -20,8 +20,8 @@ import java.time.LocalTime;
  * Mirrors {@link MatchRequest}'s fields, other than {@code matchId} — CSV bulk import only ever
  * creates new matches, so no identifier is accepted. {@link MatchRequest}'s nested
  * {@code stages} list is instead represented here as {@link #stages}, a single
- * semicolon-separated CSV cell of {@code <stageNumber>-<stageName>} entries (e.g.
- * {@code "1-Stage 1;2-Stage 2"}). Column headers are matched using
+ * semicolon-separated CSV cell of {@code <stageNumber>:<stageName>} entries (e.g.
+ * {@code "1:Stage 1;2:Stage 2"}). Column headers are matched using
  * {@link PropertyNamingStrategies.UpperCamelCaseStrategy}, so a CSV header of {@code MatchName}
  * maps onto the {@code matchName} field, and so on.
  * </p>
@@ -76,7 +76,7 @@ public class MatchRequestForCSV {
     private String url;
     /**
      * The stages that make up this match, as a single semicolon-separated CSV cell of
-     * {@code <stageNumber>-<stageName>} entries (e.g. {@code "1-Stage 1;2-Stage 2"}).
+     * {@code <stageNumber>:<stageName>} entries (e.g. {@code "1:Stage 1;2:Stage 2"}).
      */
     private String stages;
 
@@ -100,7 +100,7 @@ public class MatchRequestForCSV {
      * @param matchCategory    the category/tier of this match; resolved against
      *                         {@link za.co.hpsc.web.enums.MatchCategory} by name.
      * @param stages           the stages that make up this match, as a single semicolon-separated
-     *                         CSV cell of {@code <stageNumber>-<stageName>} entries.
+     *                         CSV cell of {@code <stageNumber>:<stageName>} entries.
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
      * @param url              a URL with more information about this match; may be null.
