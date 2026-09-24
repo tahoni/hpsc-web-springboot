@@ -130,6 +130,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `MatchResponse`s via `@ArraySchema`, rather than a single `MatchResponse` object, matching the `List` the
   endpoint actually returns
 
+##### Documentation
+
+- **`ARCHITECTURE.md`'s Project Structure tree:** Stale comments corrected against disk — `documentation/history/`
+  now describes its per-major-version subdirectories and `EVOLUTION_OVERVIEW.md`, `documentation/roadmap/` names
+  `improvement-plan.md` alongside its task breakdown, the test `services/`/`services/impl/` comments match the
+  3-tier service test split, and the previously missing `banner.txt` is listed
+
 ### 🧾 [8.6.2] - 2026-09-24
 
 #### 🔄 Changed
