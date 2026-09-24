@@ -47,7 +47,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   new JaCoCo `check` execution (see Gap #4 below) also fails it on a coverage regression, not just a test failure
 - [x] Once live, update `ARCHITECTURE.md`'s CI/CD & Quality Gates table to drop the "locally / by reviewers" caveat on
   the `Build & Tests` row — `CONTRIBUTING.md`'s matching table updated too
-
+  
 **CSV persistence clarification** *(improvement-plan.md → Gap #3)* — ✅ Closed in v8.3.1
 
 - [x] If persistence is intended: scope it as its own roadmap item once the service layer exists — done for the
@@ -137,7 +137,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   already treat an absent optional field — `validateForCreate` no longer rejects a missing/blank `club`, and
   `resolveClub` now resolves `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` via `clubRepository.findByIdentifier`
   when none is supplied, throwing `NonFatalException` if even that default club is missing
-
+  
 **`HISTORY.md` Phase/Milestone backfill** *(improvement-plan.md → Gap #10)* — ✅ Closed in v8.5.1
 
 - [x] Add "Phase 26: ..." (Evolution Overview) and "Milestone 26: ..." (Major Milestones) entries for v8.4.1
@@ -159,6 +159,21 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   name what is still missing
 - [x] Leave the items overlapping Gap #6 (`ShooterLog` calculation service, scores-request wiring) in place while
   that gap stays open
+
+**Competitor/match delete operation** *(improvement-plan.md → Gap #12)* — ✅ Closed in v8.8.0
+
+- [x] Decide whether competitors and matches should be deletable through the API at all — yes, but only while
+  nothing references them
+- [x] If yes: add `deleteCompetitor`/`deleteMatch` to `IpscCompetitorService`/`IpscMatchService` and
+  `DELETE /{competitorId}`/`DELETE /{matchId}` to their controllers, with explicit reject-or-cascade handling of
+  dependent `MatchCompetitor`/`ShooterLog`/`IpscMatchStage`/`ShooterLogCompetitor` rows — done as reject:
+  referenced records get a `ValidationException` (`400`), also covering `MatchStageCompetitor`; a match's own
+  `IpscMatchStage` rows and a competitor's emails are deleted with it rather than blocking it
+- [x] If yes: add Mockito controller/service tests and `@SpringBootTest` integration tests for the new operations
+- [x] ~~If no: reword the "CRUD" claims in `README.md`/`ARCHITECTURE.md` to "create, read and update"~~ — not
+  needed, since deletes were added and the "CRUD" claims are now accurate
+- [x] Refresh `standard-rest-conventions.md`'s "🔍 Current State in This Codebase" examples to name
+  `getAllMatches`/`getAllCompetitors` and `IpscCompetitorController`
 
 ---
 
@@ -184,17 +199,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
-
-**Competitor/match delete operation** *(improvement-plan.md → Gap #12)*
-
-- [ ] Decide whether competitors and matches should be deletable through the API at all
-- [ ] If yes: add `deleteCompetitor`/`deleteMatch` to `IpscCompetitorService`/`IpscMatchService` and
-  `DELETE /{competitorId}`/`DELETE /{matchId}` to their controllers, with explicit reject-or-cascade handling of
-  dependent `MatchCompetitor`/`ShooterLog`/`IpscMatchStage`/`ShooterLogCompetitor` rows
-- [ ] If yes: add Mockito controller/service tests and `@SpringBootTest` integration tests for the new operations
-- [ ] If no: reword the "CRUD" claims in `README.md`/`ARCHITECTURE.md` to "create, read and update"
-- [ ] Refresh `standard-rest-conventions.md`'s "🔍 Current State in This Codebase" examples to name
-  `getAllMatches`/`getAllCompetitors` and `IpscCompetitorController`
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

@@ -88,6 +88,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   removed with it, but a record still referenced by scoring or shooter-log rows is refused rather than cascaded
 - **`standard-rest-conventions.md`:** "🔍 Current State in This Codebase" now names `IpscCompetitorController`
   alongside `IpscMatchController` as full-pattern examples, covering every verb including `getAll` and `delete`
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #12 closed in v8.8.0 by the new delete operations and
+  moved to ✅ Completed; "🌳 At a Glance", the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria" updated
+  to match
 
 ### 🧾 [8.7.0] - 2026-09-24
 
