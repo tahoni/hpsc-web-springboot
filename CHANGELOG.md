@@ -120,6 +120,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
   mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
+- **`HELP.md`:** Spring REST Docs reference link dropped, following the `spring-restdocs-mockmvc` removal above
 
 #### 🐛 Fixed
 

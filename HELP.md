@@ -10,7 +10,6 @@ For further reference, please consider the following sections:
 * [Spring Configuration Processor](https://docs.spring.io/spring-boot/4.0.1/specification/configuration-metadata/annotation-processor.html)
 * [Spring Web](https://docs.spring.io/spring-boot/4.0.1/reference/web/servlet.html)
 * [Validation](https://docs.spring.io/spring-boot/4.0.1/reference/io/validation.html)
-* [Spring REST Docs](https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/)
 
 ### Guides
 The following guides illustrate how to use some features concretely:
