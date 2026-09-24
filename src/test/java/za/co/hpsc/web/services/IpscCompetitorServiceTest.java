@@ -365,6 +365,45 @@ public class IpscCompetitorServiceTest {
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.createCompetitors(csvData));
     }
 
+    // getAllCompetitors()
+    @Test
+    void testGetAllCompetitors_whenNoCompetitorsExist_thenReturnsEmptyList() {
+        // Arrange
+        when(competitorRepository.findAll()).thenReturn(List.of());
+
+        // Act
+        List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
+
+        // Assert
+        assertTrue(competitors.isEmpty());
+    }
+
+    @Test
+    void testGetAllCompetitors_whenCompetitorsExist_thenReturnsAllMapped() {
+        // Arrange
+        Competitor first = new Competitor();
+        first.setId(1L);
+        first.setFirstName("Jane");
+        first.setLastName("Doe");
+
+        Competitor second = new Competitor();
+        second.setId(2L);
+        second.setFirstName("John");
+        second.setLastName("Smith");
+
+        when(competitorRepository.findAll()).thenReturn(List.of(first, second));
+
+        // Act
+        List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
+
+        // Assert
+        assertEquals(2, competitors.size());
+        assertTrue(competitors.stream().anyMatch(competitor ->
+                competitor.getCompetitorId().equals(1L) && "Jane".equals(competitor.getFirstName())));
+        assertTrue(competitors.stream().anyMatch(competitor ->
+                competitor.getCompetitorId().equals(2L) && "John".equals(competitor.getFirstName())));
+    }
+
     // getCompetitor()
     @Test
     void testGetCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {

@@ -57,6 +57,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscCompetitorController.getAllCompetitors`:** New `GET /ipsc/competitors` endpoint returning every IPSC
+  competitor as a JSON array of `CompetitorResponse`s — the collection counterpart to `GET /{competitorId}`,
+  mirroring `IpscMatchController.getAllMatches`
+
+##### Services
+
+- **`IpscCompetitorService.getAllCompetitors`:** Returns every persisted competitor mapped to a
+  `CompetitorResponse`, or an empty list when there are none
+
 #### 🔄 Changed
 
 ##### Services
