@@ -1,4 +1,4 @@
-# Improvement Plan
+# HPSC Website Backend Improvement Plan
 
 This document synthesises the goals and constraints stated across this repository's documentation and configuration into
 a single set of prioritised improvement opportunities. Unlike [`README.md`](/README.md) and 
@@ -10,9 +10,9 @@ should be revisited whenever a major gap it names is closed or a new one is iden
 - [🎯 Purpose & Scope](#-purpose--scope)
 - [⚙️ Goals & Constraints (Synthesised)](#-goals--constraints-synthesised)
 - [🔍 Gaps & Improvement Opportunities](#-gaps--improvement-opportunities)
-- [🗺️ Roadmap](#-roadmap)
-- [✅ Success Criteria](#-success-criteria)
-- [📚 Related Documentation](#-related-documentation)
+- [🛤️ Roadmap](#-roadmap)
+- [☑️ Success Criteria](#-success-criteria)
+- [🔗 Related Documentation](#-related-documentation)
 
 ---
 
@@ -23,7 +23,7 @@ This plan draws only on what the repository already states about itself — `REA
 `.github/workflows` — rather than introducing new goals. Where the documentation and the configuration disagree, or
 where a stated goal has no corresponding work item yet, that gap is called out below as an improvement opportunity.
 
-It complements, rather than duplicates, `HISTORY.md`'s per-release "🗺️ Future Roadmap Implications" section: that
+It complements, rather than duplicates, `HISTORY.md`'s per-release "🛤️ Future Roadmap Implications" section: that
 section tracks what changed release-to-release, while this document tracks the standing, cross-release gaps
 between the project's stated intent and its current state.
 
@@ -59,9 +59,12 @@ across the whole document; a number is assigned once and never reused or reseque
 identifier even after it moves between sections as its status changes (e.g. Open → Partially Completed → Completed).
 Within each section, gaps stay in ascending number order.
 
-### 📋 At a Glance
+Each gap looks for one of four things: a stated-but-unbuilt goal, a doc-vs-doc or doc-vs-code disagreement, a stale
+number or a newly met precondition on an existing gap — see the `update-improvement-plan-gaps` skill.
 
-- **✅ Completed (9):**
+### 🌳 At a Glance
+
+- **✅ Completed (10):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -71,6 +74,7 @@ Within each section, gaps stay in ascending number order.
   - #8 Match bulk CSV import remains removed pending a rebuild — closed v8.3.0
   - #9 `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — closed v8.4.0
   - #10 `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — closed v8.5.1
+  - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — closed v8.6.2
 - **🟡 Partially Completed (0):** none currently.
 - **⚪ Open (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
@@ -373,6 +377,48 @@ Proposed improvement's second step. `HISTORY.md`'s "📖 Evolution Overview", "�
 most-recent-first to ascending (oldest-first), matching "✨ Feature Timeline"/"💡 Project Philosophy Evolution"'s
 existing convention — only "📅 Historical Timeline" keeps its most-recent-first order.
 
+#### 11. `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — ✅ Closed in v8.6.2
+
+**Evidence:** `HISTORY.md`'s "🗺️ Future Roadmap Implications" section ends with three forward-looking lists —
+"Short-term (Minor Releases)", "Medium-term (v7.x+)" and "Long-term (Future Major Versions)" — whose content was
+last substantively updated in v8.0.0 (commit `fe72b9c` added the "`homeClub` now wired via `IpscCompetitorService`"
+note); the "Medium-term (v7.x+)" heading and the club-seeding bullet date back to v7.0.0 (commit `a862701`). Three
+of their claims no longer match the code:
+
+- "Seed `Club.identifier` (HPSC, SOSC, PMPSC) and backfill `Competitor.homeClub`" is still listed as outstanding,
+  yet `V7_3_0__seed_club_data.sql` (commit `a225eab`, shipped in v8.4.0) already seeds the `club` table with every
+  named `ClubIdentifier` — `SOSC`, `HPSC`, `PMPSC`, `VISITOR` and `ALL` — and `HISTORY.md`'s own v8.4.0 Historical
+  Timeline entry and "Recently Completed (v8.4.0)" list record that migration as delivered.
+- "Wire service/controller/import support for `clubRanking`, `isVisitor`, `ShooterLog` and `ShooterLogEntry`" names
+  `ShooterLogEntry`, which was renamed to `ShooterLogCompetitor` in v7.1.0 — no `ShooterLogEntry` class exists
+  anywhere under `src/` (`domain/` holds `ShooterLog.java`/`ShooterLogCompetitor.java`), and the same file's own
+  v7.1.0 entries record the rename.
+- The "Medium-term (v7.x+)" heading still targets a major version the project has already moved past (current:
+  v8.6.x), and its "Bulk match processing capabilities" bullet overlaps v8.3.0's delivered
+  `IpscMatchController.createMatches` bulk CSV import (Gap #8), without saying whether something beyond it is meant.
+
+**Why it matters:** This plan's own "🎯 Purpose & Scope" names `HISTORY.md`'s Future Roadmap sections as one of the
+sources its "⚙️ Goals & Constraints" table is synthesised from, so stale items there can resurface as phantom goals
+in any future re-synthesis. A reader of `HISTORY.md` also sees already-shipped work (club seeding) presented as still
+outstanding, next to an entity name that no longer exists — the same kind of doc-vs-code drift Gap #10 closed for
+the Phase/Milestone sections.
+
+**Proposed improvement:** Refresh the three lists against what has actually shipped: drop (or mark delivered) the
+club-seeding bullet — keeping the `Competitor.homeClub` backfill half only if it is still genuinely wanted — rename
+`ShooterLogEntry` to `ShooterLogCompetitor`, relabel "Medium-term (v7.x+)" for the current major version, and
+either drop "Bulk match processing capabilities" as delivered by Gap #8 or reword it to name what is still missing.
+Items that overlap Gap #6 (the `ShooterLog` calculation service and scores-request wiring) can stay, since that gap
+is still open. No code change is needed — this is a `HISTORY.md`-only pass, best done during a release-prep pass per
+`AGENTS.md`'s Release Checklist.
+
+**Outcome:** Delivered as proposed, in `HISTORY.md` only. The club-seeding bullet was reduced to its still-outstanding
+half — "Backfill `Competitor.homeClub` for existing competitors", now noting that the `club` table itself was
+already seeded in v8.4.0 via `V7_3_0__seed_club_data.sql` — since no migration or service backfills `homeClub` for
+pre-existing competitors yet. `ShooterLogEntry` was renamed to `ShooterLogCompetitor` in the Short-term wiring
+bullet, "Medium-term (v7.x+)" was relabelled "Medium-term (Later v8.x Releases)", and "Bulk match processing
+capabilities" was dropped as delivered by Gap #8's v8.3.0 bulk CSV import. The items overlapping Gap #6 (the
+`ShooterLogService` calculation service and scores-request wiring) were left in place, since that gap is still open.
+
 ### 🟡 Partially Completed
 
 *No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
@@ -404,18 +450,18 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ---
 
-## 🗺️ Roadmap
+## 🛤️ Roadmap
 
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | No items currently scoped — #10, this phase's previous occupant, closed in v8.5.1                                                                               |
+| **Next**    | No items currently scoped — #11, this phase's previous occupant, closed in v8.6.2                                                                               |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
 ---
 
-## ✅ Success Criteria
+## ☑️ Success Criteria
 
 - ✅ Met in v8.0.0: `IpscCompetitorController`/`IpscMatchController` expose real, tested endpoints backed by the
   existing entity/repository layer, closing the gap named identically in `README.md`, `ARCHITECTURE.md` and
@@ -440,18 +486,25 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   when a match's `club` is omitted, closing Gap #9's inert-groundwork-constant gap.
 - ✅ Met in v8.5.1: `HISTORY.md`'s "📖 Evolution Overview"/"🎯 Major Milestones" sections now carry a Phase and
   Milestone entry (26/27/28) for every shipped release through v8.5.0, closing Gap #10's backlog.
+- ✅ Met in v8.6.2: `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists name only genuinely outstanding work
+  under current entity names and version labels, closing Gap #11's drift.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
-  per-version Future Roadmap notes rather than being deleted silently from here.
+  Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
+  here.
 
 ---
 
-## 📚 Related Documentation
+## 🔗 Related Documentation
 
 See `README.md`'s [📚 Documentation](/README.md#-documentation) section for the full documentation map. Most relevant to
 this plan:
 
 - [`ARCHITECTURE.md`](/ARCHITECTURE.md) — the CI/CD & Quality Gates table and layered-architecture rules this plan
   builds on
-- [`AGENTS.md`](/AGENTS.md) — the Git Workflow and Release Checklist referenced throughout
-- [`HISTORY.md`](/HISTORY.md) — per-release "🗺️ Future Roadmap Implications" sections this plan complements
+- [`AGENTS.md`](/AGENTS.md) — the Git Workflow, Release Checklist and Roadmap Planning conventions referenced
+  throughout
+- [`HISTORY.md`](/HISTORY.md) — the "🛤️ Future Roadmap Implications" section this plan complements
+- [`CONTRIBUTING.md`](/CONTRIBUTING.md) — contributor-facing setup and pull request checklist
+- [`improvement-plan-tasks.md`](improvement-plan-tasks.md) — the checkbox-level task breakdown derived from this
+  plan's gaps
 

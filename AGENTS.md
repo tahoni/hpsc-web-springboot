@@ -11,9 +11,9 @@ convention; no Claude-Code-specific content is split out from it.
 - [⚙️ Tech Stack](#-tech-stack)
 - [🚀 Build & Run Commands](#-build--run-commands)
 - [🏛️ Architecture](#-architecture)
-- [📚 Documentation Conventions](#-documentation-conventions)
-- [🗂️ Documentation File Map](#-documentation-file-map)
-- [🗺️ Roadmap Planning](#-roadmap-planning)
+- [✍️ Documentation Conventions](#-documentation-conventions)
+- [🗺️ Documentation File Map](#-documentation-file-map)
+- [🛤️ Roadmap Planning](#-roadmap-planning)
 - [🧩 Claude Code Skills](#-claude-code-skills)
 - [🧪 Test Conventions](#-test-conventions)
 - [📁 Directory Tree Maintenance](#-directory-tree-maintenance)
@@ -134,7 +134,7 @@ place; its private helpers, if any, still go after every public method.
 
 ---
 
-## 📚 Documentation Conventions
+## ✍️ Documentation Conventions
 
 ### British English
 
@@ -190,105 +190,112 @@ Every documentation file in this repository follows the same shape:
 
 Every heading listed in a Table of Contents is prefixed with an emoji, and its ToC entry uses the same emoji. Reuse an
 icon already established for a concept rather than inventing a new one; only pick a new emoji when introducing a
-genuinely new concept. Icons already established in this repository's documentation:
+genuinely new concept. This registry is kept in sync with the shared project template's; its core icons apply to any
+project:
 
-| Icon | Concept                           |
-|------|-----------------------------------|
-| 📖   | Introduction / overview           |
-| 🔗   | Repository / links                |
-| ⚙️   | Technology / configuration        |
-| ✨   | Features                          |
-| 🚀   | Instructions / getting started    |
-| 📋   | Prerequisites / policy            |
-| 🔧   | Installation / setup              |
-| 📚   | Documentation                     |
-| 🧪   | Testing                           |
-| 🏛️   | Architecture                      |
-| 📜   | Licence                           |
-| 👤   | Author                            |
-| 🎯   | Theme / system overview           |
-| 🔄   | Changed items / design patterns   |
-| ✅   | Quality attributes / completed    |
-| 🔬   | CI/CD & quality gates             |
-| 🔀   | Data flow / Git workflow          |
-| 📁   | Project / directory structure     |
-| 🏗️   | Layered architecture              |
-| 🌐   | Presentation / API layer          |
-| ⚡   | Service layer                     |
-| 🗄️   | Database / persistence            |
-| 🧬   | Data model / DTOs                 |
-| 📈   | Request-response flow             |
-| 📥   | Inbound / import flow             |
-| 🗺️   | Roadmap                           |
-| 📤   | Output                            |
-| 🚢   | Release process                   |
-| 🧩   | Tooling / automation              |
-| 🟡   | Partially completed               |
-| ⚪   | Open / not started                |
-| 🤔   | Reasoning                         |
-| 🔢   | Numbering / sequence              |
-| 🏷️   | Naming convention                 |
-| 🗂️   | Documentation file index          |
-| 🌲   | Evergreen documentation           |
-| ➕   | Added items                       |
-| 🐛   | Bugs / fixed items                |
-| ⚠️   | Deprecated items                  |
-| 🗑️   | Removed items                     |
-| 🔐   | Security                          |
-| 🧾   | Version entry                     |
-| 💬   | Support / contact                 |
-| 🤝   | Contributing guidelines           |
-| 📅   | Timeline                          |
-| 💡   | Philosophy / rationale            |
-| 🎓   | Conclusion                        |
-| 🔍   | Current state / inspection        |
-| ⭐   | Key highlights                    |
-| 📦   | What's new / key changes          |
-| 📊   | Statistics                        |
-| 🧭   | Design notes                      |
-| 🔮   | Future enhancements               |
-| 👥   | Contributors                      |
-| 📝   | Notes                             |
-| 🛡️   | Robustness / validation hardening |
-| 🔓   | Optional / relaxed constraint     |
+| Icon | Concept                                             |
+|------|-----------------------------------------------------|
+| 📖   | Introduction / overview                             |
+| 🔗   | Repository / links                                  |
+| ⚙️   | Technology / configuration                          |
+| 🚀   | Instructions / getting started                      |
+| 🔧   | Installation / setup / technical change             |
+| 📋   | Prerequisites / policy                              |
+| 📁   | Project / directory structure                       |
+| 🎯   | Core concepts / theme overview                      |
+| ✍️   | Content strategy / documentation conventions        |
+| 🛠️   | Development guidelines                              |
+| 👤   | Author / changes by                                 |
+| 🗺️   | Documentation file map                              |
+| 🛤️   | Roadmap                                             |
+| 📚   | Documentation / key learnings                       |
+| 🏛️   | Architecture                                        |
+| 🧪   | Testing / unreleased changes                        |
+| 🔀   | Git workflow                                        |
+| 🔃   | Data flow                                           |
+| 🚢   | Release process                                     |
+| 🌲   | Evergreen documentation                             |
+| 🔍   | Current state / inspection                          |
+| 🔬   | CI/CD & quality gates                               |
+| ☑️   | Checklist                                           |
+| 💬   | Support                                             |
+| ✨   | Features / enhancements                             |
+| 🧾   | Change log / release notes                          |
+| 🐛   | Bug fixes / known issues                            |
+| ➕   | Added items                                         |
+| 🔄   | Changed items                                       |
+| ⚠️   | Deprecated items                                    |
+| 🗑️   | Removed items                                       |
+| 🔐   | Security                                            |
+| 🤝   | Contributing                                        |
+| 📅   | Historical timeline / dates                         |
+| 💡   | Philosophy / insight                                |
+| 🎓   | Conclusion / retrospective                          |
+| 📦   | Dependencies / what's new                           |
+| ⭐   | Key highlights                                      |
+| 📊   | Statistics                                          |
+| 🔮   | Future enhancements                                 |
+| 👥   | Contributors                                        |
+| 📝   | Notes                                               |
+| 🧩   | Tooling / automation                                |
+| 📜   | Licence and documentation                           |
+| ♻️   | General code improvements                           |
+| 💰   | Funding / sponsorship                               |
+| 📤   | Output                                              |
+| 👍   | Recommendation / best practices                     |
+| ✅   | Quality attributes / completed (roadmap gap status) |
+| 🟡   | Partially completed (roadmap gap status)            |
+| ⚪   | Open / not started (roadmap gap status)             |
+| 🧭   | Design notes / design patterns                      |
+| 🌳   | Decision tree / quick reference                     |
+| 🏆   | Most popular / prevailing convention                |
+| 🗝️   | Key principles                                      |
+| ⏭️    | Next / upcoming                                     |
+| ⏳   | Later / pending                                     |
+| 🔁   | Ongoing / recurring                                 |
+| 🏷️   | Naming conventions                                  |
+| ⚖️   | Comparison / trade-offs                             |
+| 🤔   | Reasoning                                           |
 
-Icons reserved from the sibling `hpsc-web-vite` repository's registry for concepts specific to that project (a
-Vite/TypeScript frontend) — not used here, kept reserved so they're never accidentally repurposed for an unrelated
-concept in this project:
+The template also defines two optional extension sets for common project shapes. This project is a backend / API
+service, so it uses the first set as established icons of its own:
 
-| Icon | Reserved for (Vite)                          |
-|------|----------------------------------------------|
-| 🧰   | Available scripts / tooling                  |
-| 🛣️   | Routing / navigation                         |
-| ✍️   | Content strategy / documentation conventions |
-| 🎨   | Styling and theming / design                 |
-| 🛠️   | Development guidelines                       |
-| 🛤️   | Roadmap                                      |
-| ☑️   | Checklist                                    |
-| 📐   | Layout structure                             |
-| 🔝   | Header                                       |
-| 📄   | Body / page content                          |
-| ⬇️   | Footer                                       |
-| 📱   | Responsive design                            |
-| 💻   | Technical implementation                     |
-| 🖥️   | User interface                               |
-| ♻️   | General code improvements                    |
-| 💰   | Funding / sponsorship                        |
-| 👍   | Recommendation / best practices              |
-| 🌊   | Global scope / cascading styles              |
-| 🧵   | Shared / cross-feature infrastructure        |
-| 🧱   | Component/layout folder shape                |
-| 🌳   | Decision tree / quick reference              |
-| 🏆   | Most popular / prevailing convention         |
-| 🗝️   | Key principles                               |
-| ⏭️    | Next / upcoming                              |
-| ⏳   | Later / pending                              |
-| 🔁   | Ongoing / recurring                          |
-| ⚖️   | Comparison / trade-offs                      |
+| Icon | Backend / API service (in use here)  |
+|------|--------------------------------------|
+| ⚡   | Service layer                        |
+| 📈   | Request-response flow                |
+| 📥   | Inbound / import flow                |
+| 🔓   | Optional / relaxed constraint        |
+| 🔢   | Numbering / sequence                 |
+| 🗄️   | Database / persistence               |
+| 🛡️   | Robustness / validation hardening    |
+| 🌐   | Presentation / API layer             |
+| 🏗️   | Layered architecture                 |
+| 🧬   | Data model / DTOs                    |
+
+The second set belongs to component-based frontends such as the sibling `hpsc-web-vite` repository — not used here,
+but kept reserved so its icons are never repurposed for an unrelated concept in this project:
+
+| Icon | Reserved for (component-based frontend) |
+|------|-----------------------------------------|
+| 🧰   | Available scripts / tooling             |
+| 🛣️   | Routing / navigation                    |
+| 🗂️   | Feature-based organisation              |
+| 🎨   | Styling and theming / design            |
+| 📐   | Layout structure                        |
+| 🔝   | Header                                  |
+| 📄   | Body / page content                     |
+| ⬇️   | Footer                                  |
+| 📱   | Responsive design                       |
+| 💻   | Technical implementation                |
+| 🖥️   | User interface                          |
+| 🌊   | Global scope / cascading styles         |
+| 🧵   | Shared / cross-feature infrastructure   |
+| 🧱   | Component/layout folder shape           |
 
 ---
 
-## 🗂️ Documentation File Map
+## 🗺️ Documentation File Map
 
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation)
 section — README.md is the canonical version if the two ever drift). Of these, this file is the ultimate source of
@@ -324,7 +331,7 @@ Four documentation-only folders supplement these:
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
 - **`documentation/roadmap/`** holds in-progress planning documents that sit outside the standard documentation set
-  above — see [🗺️ Roadmap Planning](#-roadmap-planning) below for the file structure and conventions.
+  above — see [🛤️ Roadmap Planning](#-roadmap-planning) below for the file structure and conventions.
 - **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
   this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
   conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the
@@ -332,7 +339,7 @@ Four documentation-only folders supplement these:
 
 ---
 
-## 🗺️ Roadmap Planning
+## 🛤️ Roadmap Planning
 
 `documentation/roadmap/` holds two in-progress planning documents tracking outstanding project gaps, kept outside
 the standard documentation set above:
@@ -372,16 +379,16 @@ closed or progressed gaps; `sync-improvement-plan-gaps` marks gaps a branch has 
 a workflow described elsewhere in this file — the Git Workflow conventions, the Release Checklist or the Test
 Conventions — as a repeatable, invokable procedure, so an agent doesn't have to reconstruct it from scratch each time:
 
-| Skill                          | Purpose                                                                                      |
-|--------------------------------|----------------------------------------------------------------------------------------------|
-| `generate-commit-message`      | Generate a commit message and matching `CHANGELOG.md` entry for the working tree's changes   |
-| `sync-unreleased-changes`      | Reconcile `CHANGELOG.md`'s `## 🧪 [Unreleased]` section against the current branch's changes |
-| `sync-improvement-plan-gaps`   | Mark gaps in `improvement-plan.md` as closed/progressed once a branch has addressed them     |
-| `update-improvement-plan-gaps` | Audit the codebase against `improvement-plan.md`/`improvement-plan-tasks.md` for new gaps    |
-| `prep-version-release`         | Prepare a release's `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md` and PR description      |
-| `generate-pr-summary`          | Condense a version's PR description and release notes into a short PR summary                |
-| `scaffold-unit-tests`          | Scaffold unit tests for a service, model or exception class, per the Test Conventions below  |
-| `scaffold-integration-tests`   | Scaffold `@SpringBootTest` integration tests for a service, per the Test Conventions below   |
+| Skill                          | Purpose                                                                                       |
+|--------------------------------|-----------------------------------------------------------------------------------------------|
+| `generate-commit-message`      | Generate a commit message and matching `CHANGELOG.md` entry for the working tree's changes    |
+| `sync-unreleased-changes`      | Reconcile `CHANGELOG.md`'s `### 🧪 [Unreleased]` section against the current branch's changes |
+| `sync-improvement-plan-gaps`   | Mark gaps in `improvement-plan.md` as closed/progressed once a branch has addressed them      |
+| `update-improvement-plan-gaps` | Audit the codebase against `improvement-plan.md`/`improvement-plan-tasks.md` for new gaps     |
+| `prep-version-release`         | Prepare a release's `RELEASE_NOTES.md`, `CHANGELOG.md`, `HISTORY.md` and PR description       |
+| `generate-pr-summary`          | Condense a version's PR description and release notes into a short PR summary                 |
+| `scaffold-unit-tests`          | Scaffold unit tests for a service, model or exception class, per the Test Conventions below   |
+| `scaffold-integration-tests`   | Scaffold `@SpringBootTest` integration tests for a service, per the Test Conventions below    |
 
 `.claude/` is a tracked tooling directory (see Directory Tree Maintenance below) — a new skill, or a change to an
 existing one, is committed like any other project file, and `ARCHITECTURE.md`'s Project Structure tree only needs
@@ -483,8 +490,14 @@ GitHub mechanics, not something an AI agent executes unprompted — see
   documentation update and a bug fix) into a single commit.
 - **Track complex work with a todo list.** For multistep or non-trivial tasks, maintain a tracked todo list and keep it
   updated as work progresses, so progress stays visible and the work stays on track.
-- **Update `CHANGELOG.md` in the same change.** Every notable change gets an entry under `## 🧪 [Unreleased]` as part of
-  the change that makes it — don't batch changelog updates into a later, separate change.
+- **Update `CHANGELOG.md` in the same change.** Every notable change gets an entry under `### 🧪 [Unreleased]`, nested
+  one level deeper under the matching Keep a Changelog category heading (`#### ➕ Added`, `#### 🔄 Changed`,
+  `#### 🐛 Fixed`, `#### ⚠️ Deprecated`, `#### 🗑️ Removed`, `#### 🔐 Security` — only the ones that apply), and one
+  level deeper again under a `##### <Area>` sub-heading grouping related entries (reuse an existing Area from the
+  file's recent entries where one fits, rather than inventing a near-duplicate) — as part of the change that makes
+  it, not batched into a later, separate change. Each bullet bolds the backticked class/method/file/entity name,
+  followed by a colon and a concise description of what changed and why — e.g.
+  `` - **`IpscMatch.url`:** New nullable `String` column — a URL with more information about a match ``.
 
 ---
 
@@ -499,13 +512,13 @@ anything downstream references them:
 2. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`.
 3. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
    match.
-4. **Verify `CHANGELOG.md`'s `## 🧪 [Unreleased]` section is complete.** Cross-check every commit and any uncommitted
+4. **Verify `CHANGELOG.md`'s `### 🧪 [Unreleased]` section is complete.** Cross-check every commit and any uncommitted
    diff on the release branch against its entries before renaming it in the next step — don't assume it's already
    accurate just because entries were added along the way; fill in anything missing and resolve any drifted entries
    with the author first.
-5. **Add a `CHANGELOG.md` entry.** New `## 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog categories
-   that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit any that are
-   empty). Update the Table of Contents and move the "← Current" marker to the new version.
+5. **Add a `CHANGELOG.md` entry.** New `### 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog
+   categories that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit
+   any that are empty). Update the Table of Contents and move the "← Current" marker to the new version.
 6. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for the new version, at the same
    narrative depth and in the same style as the existing entries, plus a matching Phase entry in
    `documentation/history/EVOLUTION_OVERVIEW.md` — `HISTORY.md`'s Evolution Overview section was split out into that

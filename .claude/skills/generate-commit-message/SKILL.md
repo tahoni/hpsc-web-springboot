@@ -64,12 +64,13 @@ CHANGELOG entry, flag it to the user and point them at the `sync-unreleased-chan
       bullet should state *what* changed and *why*, not restate the file list.
     - If the change closes a GitHub issue, add a trailer line `Closes #<issue>` — only when there genuinely is one;
       don't invent a reference.
-3. **Draft `CHANGELOG.md` entries** for the notable changes, to go under `## 🧪 [Unreleased]`. Per AGENTS.md's
-   Documentation Conventions and the existing `[Unreleased]` entries in the file as a style reference:
-    - Place entries under the matching standard subheading (`### ➕ Added`, `### 🔄 Changed`, `### 🐛 Fixed`,
-      `### ⚠️ Deprecated`, `### 🗑️ Removed`, `### 🔐 Security`) — only the ones that apply.
-    - Within each subheading, group related entries under a `#### <Area>` sub-header (e.g. `#### Domain`,
-      `#### Repositories`, `#### Database`), matching the existing style in the file.
+3. **Draft `CHANGELOG.md` entries** for the notable changes, to go under `### 🧪 [Unreleased]`. Per AGENTS.md's
+   Git Workflow Conventions and the existing `[Unreleased]` entries in the file as a style reference:
+    - Place entries under the matching standard subheading (`#### ➕ Added`, `#### 🔄 Changed`, `#### 🐛 Fixed`,
+      `#### ⚠️ Deprecated`, `#### 🗑️ Removed`, `#### 🔐 Security`) — only the ones that apply. A security-relevant
+      fix goes under `#### 🔐 Security`, not `#### 🔄 Changed`.
+    - Within each subheading, group related entries under a `##### <Area>` sub-header (e.g. `##### Domain`,
+      `##### Repositories`, `##### Database`), matching the existing style in the file.
     - Each bullet: bold the backticked class/method/entity name, followed by a colon and a concise em-dash-separated
       description of what changed and why — e.g.
       `` - **`ShooterLog.powerFactor`:** New `PowerFactor` column — snapshots are now scoped by power factor as well as firearm type ``.
@@ -86,9 +87,9 @@ CHANGELOG entry, flag it to the user and point them at the `sync-unreleased-chan
 Do **not** run `git add` or `git commit` yourself — this skill only drafts, for the user to review and run.
 
 1. The final commit message(s) as fenced code blocks, each followed by a ready-to-run `git commit` command
-2. Any **CHANGELOG.md additions** in a separate fenced code block under the `## 🧪 [Unreleased]` section (the exact text
-   to add, so the user can copy it directly into CHANGELOG.md — per AGENTS.md's rule, this update belongs in the same
-   commit as the change it documents)
+2. Any **CHANGELOG.md additions** in a separate fenced code block under the `### 🧪 [Unreleased]` section (the exact
+   text to add, so the user can copy it directly into CHANGELOG.md — per AGENTS.md's rule, this update belongs in the
+   same commit as the change it documents)
 3. If proposing multiple commits, output one message block and one commit command per commit, in the order they should
    be made, followed by a single consolidated CHANGELOG.md block with all entries
 
@@ -108,9 +109,9 @@ git commit -m "docs: add commit message skill" ...
 **CHANGELOG.md entries:**
 
 ```markdown
-### ➕ Added
+#### ➕ Added
 
-#### Tooling
+##### Tooling
 
 - **`generate-commit-message` skill:** Drafts commit messages and matching CHANGELOG.md entries from the working tree
   diff
