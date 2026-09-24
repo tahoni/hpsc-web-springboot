@@ -116,7 +116,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Introduce `MatchRequestForCSV`/`MatchResponseHolder` (`models/ipsc/match/request/`,
   `models/ipsc/match/response/`), mirroring `CompetitorRequestForCSV`/`CompetitorResponseHolder`'s `UpperCamelCase`
   CSV/JSON `@JsonCreator` pattern — with stages represented as a single semicolon-separated
-  `<stageNumber>-<stageName>` cell, since CSV has no native nested-row representation
+  `<stageNumber>:<stageName>` cell, since CSV has no native nested-row representation
 - [x] Add `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) and
   `IpscMatchService`/`IpscMatchServiceImpl.createMatches`, mirroring `IpscCompetitorController`/
   `IpscCompetitorServiceImpl.createCompetitors`'s `readMatches`/`toRequest` shape, persisting each row via the

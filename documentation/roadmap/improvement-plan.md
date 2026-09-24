@@ -301,7 +301,7 @@ no new cross-entity orchestration, per the discipline Gap #1 established.
 
 **Outcome:** Delivered in v8.3.0. `MatchRequestForCSV` (`models/ipsc/match/request/`) mirrors
 `CompetitorRequestForCSV`'s `UpperCamelCase` CSV/JSON `@JsonCreator` pattern, with its stages represented as a single
-semicolon-separated `<stageNumber>-<stageName>` cell rather than a nested list (CSV has no native nested-row
+semicolon-separated `<stageNumber>:<stageName>` cell rather than a nested list (CSV has no native nested-row
 representation). `MatchResponseHolder` mirrors `CompetitorResponseHolder`. `IpscMatchController.createMatches`
 (`POST /ipsc/matches/bulk`, consumes `text/csv`) and `IpscMatchService`/`IpscMatchServiceImpl.createMatches` mirror
 `IpscCompetitorController`/`IpscCompetitorServiceImpl`'s `createCompetitors` shape exactly: a `readMatches` CSV-parsing

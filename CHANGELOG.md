@@ -57,6 +57,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscMatchServiceImpl.parseStages`:** A match CSV's `Stages` cell now separates each entry's stage number from
+  its name with `:` instead of `-` (e.g. `"1:Stage One;2:Stage Two"`); only the first `:` splits, so stage names may
+  still contain one. Entries in the old `1-Stage One` form are now rejected with a `ValidationException`
+
+##### Documentation
+
+- **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
+  Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
+
 ### 🧾 [8.6.2] - 2026-09-24
 
 #### 🔄 Changed

@@ -155,7 +155,7 @@ class IpscMatchServiceImplTest {
     @Test
     void testParseStages_whenSingleEntry_thenReturnsSingletonList() {
         // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1-Stage One");
+        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One");
 
         // Assert
         assertEquals(1, stages.size());
@@ -166,7 +166,7 @@ class IpscMatchServiceImplTest {
     @Test
     void testParseStages_whenMultipleEntries_thenReturnsAllInOrder() {
         // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1-Stage One;2-Stage Two");
+        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One;2:Stage Two");
 
         // Assert
         assertEquals(2, stages.size());
@@ -177,20 +177,20 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testParseStages_whenStageNameContainsHyphens_thenOnlyFirstHyphenSplitsNumberFromName() {
+    void testParseStages_whenStageNameContainsColons_thenOnlyFirstColonSplitsNumberFromName() {
         // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1-Stage One - The Bank Job");
+        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One: The Bank Job");
 
         // Assert
         assertEquals(1, stages.size());
         assertEquals(1, stages.getFirst().getStageNumber());
-        assertEquals("Stage One - The Bank Job", stages.getFirst().getStageName());
+        assertEquals("Stage One: The Bank Job", stages.getFirst().getStageName());
     }
 
     @Test
     void testParseStages_whenEntryHasSurroundingWhitespace_thenTrimsNumberAndName() {
         // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages(" 1 - Stage One ");
+        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages(" 1 : Stage One ");
 
         // Assert
         assertEquals(1, stages.getFirst().getStageNumber());
@@ -200,7 +200,7 @@ class IpscMatchServiceImplTest {
     @Test
     void testParseStages_whenContainsBlankEntries_thenExcludesThem() {
         // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1-Stage One;;  ");
+        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One;;  ");
 
         // Assert
         assertEquals(1, stages.size());
@@ -216,7 +216,7 @@ class IpscMatchServiceImplTest {
     @Test
     void testParseStages_whenStageNumberIsNonNumeric_thenThrowsValidationException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.parseStages("X-Stage One"));
+        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.parseStages("X:Stage One"));
     }
 
     // readMatches()
@@ -225,7 +225,7 @@ class IpscMatchServiceImplTest {
         // Arrange
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                2026-04-10,Club Championship,Test Club,Pistol,Level 1,1-Stage One;2-Stage Two
+                2026-04-10,Club Championship,Test Club,Pistol,Level 1,1:Stage One;2:Stage Two
                 2026-04-17,Second Match
                 """;
 
@@ -241,7 +241,7 @@ class IpscMatchServiceImplTest {
         assertEquals("Test Club", first.getClub());
         assertEquals("Pistol", first.getMatchFirearmType());
         assertEquals("Level 1", first.getMatchCategory());
-        assertEquals("1-Stage One;2-Stage Two", first.getStages());
+        assertEquals("1:Stage One;2:Stage Two", first.getStages());
 
         MatchRequestForCSV second = rows.get(1);
         assertEquals("Second Match", second.getMatchName());
@@ -477,7 +477,7 @@ class IpscMatchServiceImplTest {
         // Arrange
         MatchRequestForCSV matchRequestForCSV = new MatchRequestForCSV(
                 LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", "1-Stage One;2-Stage Two", LocalTime.of(8, 0), LocalTime.of(17, 0),
+                "Test Club", "Pistol", "Level 1", "1:Stage One;2:Stage Two", LocalTime.of(8, 0), LocalTime.of(17, 0),
                 "https://example.com/matches/1"
         );
 
