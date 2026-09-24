@@ -185,6 +185,17 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
 
+**Competitor/match delete operation** *(improvement-plan.md → Gap #12)*
+
+- [ ] Decide whether competitors and matches should be deletable through the API at all
+- [ ] If yes: add `deleteCompetitor`/`deleteMatch` to `IpscCompetitorService`/`IpscMatchService` and
+  `DELETE /{competitorId}`/`DELETE /{matchId}` to their controllers, with explicit reject-or-cascade handling of
+  dependent `MatchCompetitor`/`ShooterLog`/`IpscMatchStage`/`ShooterLogCompetitor` rows
+- [ ] If yes: add Mockito controller/service tests and `@SpringBootTest` integration tests for the new operations
+- [ ] If no: reword the "CRUD" claims in `README.md`/`ARCHITECTURE.md` to "create, read and update"
+- [ ] Refresh `standard-rest-conventions.md`'s "🔍 Current State in This Codebase" examples to name
+  `getAllMatches`/`getAllCompetitors` and `IpscCompetitorController`
+
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
 

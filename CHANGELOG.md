@@ -70,6 +70,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorService.getAllCompetitors`:** Returns every persisted competitor mapped to a
   `CompetitorResponse`, or an empty list when there are none
 
+##### Documentation
+
+- **`improvement-plan.md`:** New Gap #12 — `README.md`/`ARCHITECTURE.md` describe competitors and matches as "full
+  CRUD", yet neither `IpscCompetitorController`/`IpscMatchController` nor their services expose a delete operation;
+  `standard-rest-conventions.md`'s current-state examples also omit `getAllMatches`/`IpscCompetitorController`
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox block for Gap #12 — decide on a delete operation (with
+  explicit handling of dependent rows) or reword the "CRUD" claims, then refresh the REST conventions examples
+
 #### 🔄 Changed
 
 ##### Services
@@ -82,6 +90,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
   Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
+- **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's
+  **Next** row points at it instead of the "no items currently scoped" placeholder, and "☑️ Success Criteria" gains
+  a matching bullet
 
 ##### Domain
 
