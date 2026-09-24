@@ -2048,13 +2048,14 @@ paths — no domain-model, API or test-behaviour change.
 
 ---
 
-### Phase 32: CHANGELOG.md Heading-Depth Convention Correction & Future Roadmap Refresh (v8.6.2)
+### Phase 32: CHANGELOG.md Heading-Depth Correction, Future Roadmap Refresh & Icon Registry Sync (v8.6.2)
 
 **Duration:** September 24, 2026
 
 A documentation-only patch release: corrects how the project's own conventions describe `CHANGELOG.md`'s heading
-structure, which had drifted one level shallower than the file itself, and refreshes `HISTORY.md`'s stale
-forward-looking roadmap lists — no domain-model, API or test-behaviour change.
+structure, which had drifted one level shallower than the file itself, refreshes `HISTORY.md`'s stale
+forward-looking roadmap lists and syncs heading icons with the shared project template — no domain-model, API or
+test-behaviour change.
 
 **Key Accomplishments:**
 
@@ -2120,7 +2121,7 @@ forward-looking roadmap lists — no domain-model, API or test-behaviour change.
 
 **Test Coverage:**
 
-- No test changes — this release touches only Markdown documentation, five Claude Code skill files and version
+- No test changes — this release touches only Markdown documentation, seven Claude Code skill files and version
   metadata
 
 ---

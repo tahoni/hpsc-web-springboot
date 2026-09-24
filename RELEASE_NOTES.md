@@ -6,17 +6,17 @@
 
 ## 🎯 Theme
 
-**`CHANGELOG.md` Heading-Depth Convention Correction & Future Roadmap Refresh**
+**`CHANGELOG.md` Heading-Depth Correction, Future Roadmap Refresh & Icon Registry Sync**
 
-Version 8.6.2 is a documentation-only patch release with no source-code, schema or dependency changes. It corrects
-how the project's own written conventions describe `CHANGELOG.md`'s heading structure: `AGENTS.md`,
-`CONTRIBUTING.md` and five Claude Code skills all described the file as `## 🧪 [Unreleased]` → `### <category>` →
-`#### <Area>`, one level shallower than the `###`/`####`/`#####` depth the file has actually used. The fix was
-reverse-synced from the shared project template, which had already corrected the same drift in its own copy of these
-conventions. It also refreshes `HISTORY.md`'s forward-looking Future Roadmap lists, which still named already
-delivered and renamed work — recorded as Gap #11 by this release's own improvement-plan audit and closed within the
-same release. As with v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this as a **PATCH**
-version.
+Version 8.6.2 is a documentation-only patch release with no source-code, schema or dependency changes. It corrects how
+the project's own written conventions describe `CHANGELOG.md`'s heading structure: `AGENTS.md`, `CONTRIBUTING.md` and
+five Claude Code skills all described the file as `## 🧪 [Unreleased]` → `### <category>` → `#### <Area>`, one level
+shallower than the `###`/`####`/`#####` depth the file has actually used. The fix was reverse-synced from the shared
+project template, which had already corrected the same drift in its own copy of these conventions. It also refreshes
+`HISTORY.md`'s forward-looking Future Roadmap lists, which still named already delivered and renamed work — recorded as
+Gap #11 by this release's own improvement-plan audit and closed within the same release. Finally, `AGENTS.md`'s
+heading-icon registry is restructured to mirror the template's, with every live heading realigned to it. As with
+v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this as a **PATCH** version.
 
 ---
 
@@ -105,13 +105,13 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 
 ## 📊 Statistics
 
-- **Total Commits:** 11 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
-  documentation, PR description, serial-comma fix, commit-count update, Gap #11 fix, roadmap icon sync and icon
-  registry sync commits)
+- **Total Commits:** 12 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
+  documentation, PR description, serial-comma fix, commit-count update, Gap #11 fix, roadmap icon sync, icon
+  registry sync and release-doc re-verification commits)
 - **Files Changed:** 23
-- **Insertions:** 788 lines
+- **Insertions:** 801 lines
 - **Deletions:** 270 lines
-- **Net Change:** +518 lines
+- **Net Change:** +531 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0
@@ -131,6 +131,9 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 - **Spell out conventions agents rely on.** Heading depth and bullet style were previously only implied by the
   file's existing entries; stating them in `AGENTS.md` means an agent following the conventions can't reproduce the
   old off-by-one drift.
+- **Realign live headings, not history.** Every current heading now follows the synced icon registry, but earlier
+  `CHANGELOG.md` entries, `HISTORY.md`/`EVOLUTION_OVERVIEW.md` narrative and gap Evidence/Outcome text keep the
+  icons they were written with — consistent with this project's convention of never rewriting historical records.
 
 ---
 
@@ -175,7 +178,8 @@ Leoni Lubbinge
 ## 📝 Notes
 
 Version 8.6.2 is a documentation-only patch that brings the project's written `CHANGELOG.md` conventions back in
-line with the file itself. No product-facing behaviour changed.
+line with the file itself, clears delivered work out of `HISTORY.md`'s roadmap and aligns heading icons with the
+shared project template. No product-facing behaviour changed.
 
 ---
 

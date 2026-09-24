@@ -6,7 +6,8 @@
 - `AGENTS.md`'s Git Workflow Conventions now spell out the full category/Area nesting, Area reuse and the
   bold-lead-in bullet style.
 - Reverse-synced from the shared project template, keeping this project's own Conventional Commits prefixes and
-  bullet style.
+  bullet style; `AGENTS.md`'s heading-icon registry now mirrors the template's too, with every live heading
+  realigned to it.
 - Refreshes `HISTORY.md`'s stale Future Roadmap lists (already delivered club seeding and bulk match import, the
   renamed `ShooterLogEntry`, an outdated "v7.x+" label) — recorded and closed as Gap #11 within this release.
 - Docs/tooling-only diff against `main`, so this scopes as `v8.6.2` **PATCH**, matching the precedent set by

@@ -23,7 +23,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ### Version 8.6.2 (September 24, 2026)
 
-**Theme:** `CHANGELOG.md` Heading-Depth Convention Correction & Future Roadmap Refresh
+**Theme:** `CHANGELOG.md` Heading-Depth Correction, Future Roadmap Refresh & Icon Registry Sync
 
 **Key Focus:**
 
@@ -1099,7 +1099,7 @@ accumulating, without losing any historical content or `git` history.
 
 ---
 
-### Milestone 32: CHANGELOG.md Heading-Depth Convention Correction & Future Roadmap Refresh (v8.6.2)
+### Milestone 32: CHANGELOG.md Heading-Depth Correction, Future Roadmap Refresh & Icon Registry Sync (v8.6.2)
 
 - `AGENTS.md`, `CONTRIBUTING.md` and five Claude Code skills corrected to describe `CHANGELOG.md`'s actual
   `### 🧪 [Unreleased]` → `#### <category>` → `##### <Area>` heading depth, one level deeper than previously stated
@@ -1107,10 +1107,13 @@ accumulating, without losing any historical content or `git` history.
   reverse-synced from the shared project template
 - This file's Future Roadmap Short-term/Medium-term lists refreshed to name only genuinely outstanding work under
   current entity names and version labels, closing the newly recorded Gap #11
+- `AGENTS.md`'s heading-icon registry restructured to mirror the shared project template's, with every live
+  heading realigned to it
 
 **Achievement:** Brought the project's written `CHANGELOG.md` conventions back in line with the file itself, so any
 agent or contributor following `AGENTS.md` or the skills produces correctly nested entries, and cleared already
-delivered work out of this file's forward-looking roadmap.
+delivered work out of this file's forward-looking roadmap, while keeping heading icons consistent with sibling
+projects built from the same template.
 
 ---
 
