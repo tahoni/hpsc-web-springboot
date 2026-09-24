@@ -110,6 +110,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
   mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
 
+#### 🐛 Fixed
+
+##### Controllers
+
+- **`IpscMatchController.getAllMatches`:** Swagger's `200` response schema now documents an array of
+  `MatchResponse`s via `@ArraySchema`, rather than a single `MatchResponse` object, matching the `List` the
+  endpoint actually returns
+
 ### 🧾 [8.6.2] - 2026-09-24
 
 #### 🔄 Changed
