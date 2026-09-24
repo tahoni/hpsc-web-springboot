@@ -75,6 +75,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`springdoc-openapi-starter-webmvc-ui`:** Bumped from `2.8.5` to `3.1.0`, the springdoc line built for Spring
   Boot 4
 
+##### Configuration
+
+- **`application.properties`:** `server.port=8081` override removed, so the app now starts on Spring Boot's default
+  port `8080`; the port and Swagger/OpenAPI URLs in `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and
+  `CONTRIBUTING.md` updated to match
+
 #### 🗑️ Removed
 
 ##### Build & Metadata

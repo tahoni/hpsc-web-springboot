@@ -110,15 +110,15 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
    ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
    ```
 
-The application starts on `http://localhost:8081/hpsc-web`. See
+The application starts on `http://localhost:8080/hpsc-web`. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles) for the full profile/DDL matrix and other database options.
 
 ## 🌐 API Documentation
 
 Interactive API documentation is automatically generated using SpringDoc OpenAPI and can be accessed at:
 
-- **Swagger UI**: `http://localhost:8081/hpsc-web/swagger-ui/index.html`
-- **OpenAPI JSON**: `http://localhost:8081/hpsc-web/v3/api-docs`
+- **Swagger UI**: `http://localhost:8080/hpsc-web/swagger-ui/index.html`
+- **OpenAPI JSON**: `http://localhost:8080/hpsc-web/v3/api-docs`
 
 The Swagger UI provides a comprehensive, interactive interface for exploring and testing all available REST endpoints.
 

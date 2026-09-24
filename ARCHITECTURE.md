@@ -44,7 +44,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Testing           | JUnit, Mockito, Spring Test                                         |
 | Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
 | Code generation   | Lombok                                                              |
-| Port / context    | `8081` / `/hpsc-web`                                                |
+| Port / context    | `8080` / `/hpsc-web`                                                |
 
 ---
 
