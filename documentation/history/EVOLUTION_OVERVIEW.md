@@ -2225,6 +2225,8 @@ domains' CRUD set, with a deletion rule that refuses records still referenced by
   `MatchStageCompetitor` or `ShooterLogCompetitor` rows, is refused with a `ValidationException` naming the reason
 - What a record owns is deleted with it: a competitor's `competitor_email` rows via its `@ElementCollection`, and a
   match's `IpscMatchStage` rows, removed as managed entities before the match itself so the flush deletes them first
+- Each delete is flushed inside the service method and a `DataIntegrityViolationException` rethrown as a
+  `ValidationException`, closing the race window between the checks and the delete
 - New `existsByCompetitorId`/`existsByMatchId`/`existsByMatchStageMatchId` queries on `MatchCompetitorRepository`,
   `MatchStageCompetitorRepository`, `ShooterLogRepository` and `ShooterLogCompetitorRepository` back the checks
 
@@ -2256,10 +2258,10 @@ domains' CRUD set, with a deletion rule that refuses records still referenced by
 
 **Test Coverage:**
 
-- 23 new tests across the controller, service-contract and integration test tiers —
+- 25 new tests across the controller, service-contract and integration test tiers —
   `IpscCompetitorControllerTest`, `IpscMatchControllerTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceTest`,
   `IpscCompetitorServiceIntegrationTest` and `IpscMatchServiceIntegrationTest` — covering the delete, not-found and
-  reject paths, including H2-backed integration tests
+  reject paths (including a reference added before the flush), with H2-backed integration tests
 
 ---
 

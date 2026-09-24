@@ -35,6 +35,8 @@ evolution of architecture, features and design philosophy across all versions.
   or a match still referenced by `MatchCompetitor`, `MatchStageCompetitor` or `ShooterLogCompetitor` rows, is
   refused with a `ValidationException` (`400`), so scoring history is never deleted as a side effect
 - What a record owns goes with it — a competitor's email addresses and a match's stages are removed alongside it
+- Each delete is flushed inside the service method, so a reference added by another request between the checks and
+  the delete is still reported as a `400`, not a `500`
 - New `existsBy…` queries on `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`
   and `ShooterLogCompetitorRepository` back the dependent-row checks
 - `ARCHITECTURE.md` documents the reject-not-cascade rule, and `standard-rest-conventions.md`'s current-state
