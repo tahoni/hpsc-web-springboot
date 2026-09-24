@@ -246,7 +246,7 @@ project:
 | ✅   | Quality attributes / completed (roadmap gap status) |
 | 🟡   | Partially completed (roadmap gap status)            |
 | ⚪   | Open / not started (roadmap gap status)             |
-| 🧭   | Design notes                                        |
+| 🧭   | Design notes / design patterns                      |
 | 🌳   | Decision tree / quick reference                     |
 | 🏆   | Most popular / prevailing convention                |
 | 🗝️   | Key principles                                      |

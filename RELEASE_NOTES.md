@@ -55,7 +55,7 @@ v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this 
 
 - **`AGENTS.md`'s icon registry:** Restructured to match the shared project template's — its core table verbatim,
   its backend / API service set as this project's own icons and its frontend set kept reserved. `🛤️` now marks
-  Roadmap, `☑️` Checklist, `🗺️` the Documentation file map, `🔃` Data flow and `🧭` design patterns
+  Roadmap, `☑️` Checklist, `🗺️` the Documentation file map, `🔃` Data flow and `🧭` design notes / design patterns
 - **`AGENTS.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `improvement-plan.md`, `documentation/recommendations/`:**
   Documentation Conventions (`✍️`), Documentation File Map (`🗺️`), Key Design Patterns (`🧭`), Data Flow (`🔃`),
   Development Guidelines (`🛠️`), Getting Started (`🚀`), At a Glance (`🌳`) and Related Documentation (`🔗`)
@@ -86,6 +86,9 @@ v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this 
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
   this same release, with "🌳 At a Glance", the "🛤️ Roadmap" table and "☑️ Success Criteria" updated to match
 
+- **`CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form instead of
+  showing the forbidden "prose, comments, and Javadoc"
+
 #### Tooling
 
 - **`generate-commit-message`, `prep-version-release`, `scaffold-unit-tests`, `scaffold-integration-tests`,
@@ -105,13 +108,13 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 
 ## 📊 Statistics
 
-- **Total Commits:** 12 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
+- **Total Commits:** 13 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
   documentation, PR description, serial-comma fix, commit-count update, Gap #11 fix, roadmap icon sync, icon
-  registry sync and release-doc re-verification commits)
+  registry sync, release-doc re-verification and `CONTRIBUTING.md`/registry wording fix commits)
 - **Files Changed:** 23
-- **Insertions:** 801 lines
-- **Deletions:** 270 lines
-- **Net Change:** +531 lines
+- **Insertions:** 811 lines
+- **Deletions:** 271 lines
+- **Net Change:** +540 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0
