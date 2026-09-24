@@ -58,6 +58,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscCompetitorController.deleteCompetitor`, `IpscMatchController.deleteMatch`:** New
+  `DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints, returning
+  `204 No Content` — `400` when the record is still referenced, `404` when it doesn't exist
+
+##### Services
+
+- **`IpscCompetitorService.deleteCompetitor`:** Deletes a competitor together with their email addresses, refusing
+  with a `ValidationException` while any `MatchCompetitor` (match result) or `ShooterLog` row still references them
+- **`IpscMatchService.deleteMatch`:** Deletes a match together with its stages, refusing with a
+  `ValidationException` while any `MatchCompetitor`, `MatchStageCompetitor` or `ShooterLogCompetitor` row still
+  references it — so scoring history is never deleted as a side effect
+
+##### Repositories
+
+- **`MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`,
+  `ShooterLogCompetitorRepository`:** New `existsByCompetitorId`/`existsByMatchId`/`existsByMatchStageMatchId`
+  queries backing the delete operations' dependent-row checks
+
 ### 🧾 [8.7.0] - 2026-09-24
 
 #### ➕ Added

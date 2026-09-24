@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MatchStageCompetitorRepository extends JpaRepository<MatchStageCompetitor, Long> {
     List<MatchStageCompetitor> findAllByMatchCompetitorId(Long matchCompetitorId);
+
+    boolean existsByMatchStageMatchId(Long matchId);
 }

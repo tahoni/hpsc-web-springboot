@@ -10,8 +10,8 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import java.util.List;
 
 /**
- * The {@code IpscCompetitorService} interface provides methods for creating, updating and
- * retrieving IPSC competitors. Implementations are responsible for validating input data,
+ * The {@code IpscCompetitorService} interface provides methods for creating, updating,
+ * retrieving and deleting IPSC competitors. Implementations are responsible for validating input data,
  * resolving the competitor's home club and mapping to and from the persisted domain model.
  *
  * @since 8.0.0
@@ -112,4 +112,18 @@ public interface IpscCompetitorService {
      * @return all persisted competitors; empty if there are none.
      */
     List<CompetitorResponse> getAllCompetitors();
+
+    /**
+     * Deletes an existing IPSC competitor, together with their email addresses.
+     *
+     * <p>
+     * A competitor is only deleted while nothing else references them: one with recorded
+     * match results or shooter logs is refused rather than deleted along with that history.
+     * </p>
+     *
+     * @param competitorId the identifier of the competitor to delete.
+     * @throws ValidationException if the competitor still has match results or shooter logs.
+     * @throws NonFatalException   if no competitor with {@code competitorId} exists.
+     */
+    void deleteCompetitor(Long competitorId) throws ValidationException, NonFatalException;
 }

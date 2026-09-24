@@ -30,8 +30,8 @@ import java.util.List;
  * Controller responsible for handling IPSC match CRUD API endpoints.
  *
  * <p>
- * Provides endpoints for creating, fully or partially updating and retrieving IPSC matches
- * together with their stages.
+ * Provides endpoints for creating, fully or partially updating, retrieving and deleting IPSC
+ * matches together with their stages.
  * </p>
  *
  * @since 8.0.0
@@ -234,5 +234,34 @@ public class IpscMatchController {
     })
     ResponseEntity<List<MatchResponse>> getAllMatches() {
         return ResponseEntity.ok(ipscMatchService.getAllMatches());
+    }
+
+    /**
+     * Deletes an existing IPSC match, together with its stages.
+     *
+     * @param matchId the identifier of the match to delete.
+     * @return an empty {@code 204 No Content} response.
+     * @throws ValidationException if the match still has competitor results, stage results or
+     *                             shooter-log entries.
+     * @throws NonFatalException   if no match with {@code matchId} exists.
+     */
+    @DeleteMapping(value = "/{matchId}")
+    @Operation(summary = "Delete match", description = "Delete an IPSC match by ID, together with its stages. A "
+            + "match with recorded competitor results, stage results or shooter-log entries can't be deleted.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Match deleted."),
+            @ApiResponse(responseCode = "400", description = "The match has recorded competitor results, stage "
+                    + "results or shooter-log entries.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No match with this ID could be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<Void> deleteMatch(
+            @Parameter(description = "Identifier of the match to delete.") @PathVariable Long matchId)
+            throws ValidationException, NonFatalException {
+        ipscMatchService.deleteMatch(matchId);
+        return ResponseEntity.noContent().build();
     }
 }

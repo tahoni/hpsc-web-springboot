@@ -12,4 +12,8 @@ public interface MatchCompetitorRepository extends JpaRepository<MatchCompetitor
     List<MatchCompetitor> findAllByMatchIdAndFirearmType(Long matchId, FirearmType firearmType);
 
     List<MatchCompetitor> findAllByCompetitorIdAndFirearmTypeAndIsVisitorFalse(Long competitorId, FirearmType firearmType);
+
+    boolean existsByCompetitorId(Long competitorId);
+
+    boolean existsByMatchId(Long matchId);
 }

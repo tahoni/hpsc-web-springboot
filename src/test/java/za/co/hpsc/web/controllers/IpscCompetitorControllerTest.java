@@ -164,6 +164,47 @@ class IpscCompetitorControllerTest {
         assertThrows(FatalException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
     }
 
+    // deleteCompetitor()
+    @Test
+    void testDeleteCompetitor_whenServiceSucceeds_thenReturns204() throws ValidationException, NonFatalException {
+        // Act
+        ResponseEntity<Void> result = ipscCompetitorController.deleteCompetitor(1L);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+        assertNull(result.getBody());
+    }
+
+    @Test
+    void testDeleteCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
+        // Act
+        ipscCompetitorController.deleteCompetitor(1L);
+
+        // Assert
+        verify(ipscCompetitorService).deleteCompetitor(1L);
+        verifyNoMoreInteractions(ipscCompetitorService);
+    }
+
+    @Test
+    void testDeleteCompetitor_whenServiceThrowsValidationException_thenExceptionPropagates()
+            throws ValidationException, NonFatalException {
+        // Arrange
+        doThrow(new ValidationException("has match results")).when(ipscCompetitorService).deleteCompetitor(1L);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorController.deleteCompetitor(1L));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenServiceThrowsNonFatalException_thenExceptionPropagates()
+            throws ValidationException, NonFatalException {
+        // Arrange
+        doThrow(new NonFatalException("not found")).when(ipscCompetitorService).deleteCompetitor(999L);
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscCompetitorController.deleteCompetitor(999L));
+    }
+
     // getAllCompetitors()
     @Test
     void testGetAllCompetitors_whenServiceSucceeds_thenReturns200() {
