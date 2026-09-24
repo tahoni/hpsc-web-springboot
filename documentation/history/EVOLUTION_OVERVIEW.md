@@ -2203,4 +2203,64 @@ Spring Boot's default port and brings springdoc onto its Spring Boot 4 line.
 
 ---
 
+### Phase 34: Competitor & Match Delete Endpoints (v8.8.0)
+
+**Duration:** September 24, 2026
+
+A minor feature release: adds delete endpoints for competitors and matches, closing the last missing verb in both
+domains' CRUD set, with a deletion rule that refuses records still referenced by scoring or shooter-log rows.
+
+**Key Accomplishments:**
+
+**Delete Endpoints**
+
+- New `IpscCompetitorController.deleteCompetitor` (`DELETE /ipsc/competitors/{competitorId}`) and
+  `IpscMatchController.deleteMatch` (`DELETE /ipsc/matches/{matchId}`), each returning `204 No Content`, `400` when
+  the record is still referenced and `404` when it doesn't exist
+- Backed by new `IpscCompetitorService.deleteCompetitor`/`IpscMatchService.deleteMatch`, both `@Transactional`
+
+**Reject-Not-Cascade Deletion Rule**
+
+- A competitor with `MatchCompetitor` (match result) or `ShooterLog` rows, or a match with `MatchCompetitor`,
+  `MatchStageCompetitor` or `ShooterLogCompetitor` rows, is refused with a `ValidationException` naming the reason
+- What a record owns is deleted with it: a competitor's `competitor_email` rows via its `@ElementCollection`, and a
+  match's `IpscMatchStage` rows, removed as managed entities before the match itself so the flush deletes them first
+- New `existsByCompetitorId`/`existsByMatchId`/`existsByMatchStageMatchId` queries on `MatchCompetitorRepository`,
+  `MatchStageCompetitorRepository`, `ShooterLogRepository` and `ShooterLogCompetitorRepository` back the checks
+
+**Documentation**
+
+- `ARCHITECTURE.md` gained a Service Layer note on the deletion rule
+- `standard-rest-conventions.md`'s "🔍 Current State in This Codebase" now names `IpscCompetitorController`
+  alongside `IpscMatchController`, covering every verb including `getAll` and `delete`
+
+**Roadmap**
+
+- Gap #12 (competitor/match "full CRUD" claims without a delete operation) closed and moved to ✅ Completed
+- New Gap #13 recorded: `claude.yml` and `claude-code-review.yml` are live but missing from `ARCHITECTURE.md`'s
+  CI/CD & Quality Gates table — now the roadmap's **Next** item
+
+**Build & Metadata**
+
+- Project version bumped to 8.8.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No structural architectural change and no schema migration — the new endpoints follow the existing
+  Controller → Service → Repository pattern, with the dependent-row checks kept in the service layer
+
+**Technical Focus:**
+
+- API completeness for the competitor and match domains
+- Protecting scoring and shooter-log history from accidental deletion
+
+**Test Coverage:**
+
+- 23 new tests across the controller, service-contract and integration test tiers —
+  `IpscCompetitorControllerTest`, `IpscMatchControllerTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceTest`,
+  `IpscCompetitorServiceIntegrationTest` and `IpscMatchServiceIntegrationTest` — covering the delete, not-found and
+  reject paths, including H2-backed integration tests
+
+---
+
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

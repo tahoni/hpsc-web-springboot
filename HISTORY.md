@@ -21,6 +21,30 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.8.0 (September 24, 2026)
+
+**Theme:** Competitor & Match Delete Endpoints
+
+**Key Focus:**
+
+- New `DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints
+  (`IpscCompetitorController.deleteCompetitor`/`IpscMatchController.deleteMatch`, backed by
+  `IpscCompetitorService.deleteCompetitor`/`IpscMatchService.deleteMatch`), each returning `204 No Content`, or
+  `404` when the record doesn't exist
+- Deletion rejects rather than cascades: a competitor still referenced by `MatchCompetitor` or `ShooterLog` rows,
+  or a match still referenced by `MatchCompetitor`, `MatchStageCompetitor` or `ShooterLogCompetitor` rows, is
+  refused with a `ValidationException` (`400`), so scoring history is never deleted as a side effect
+- What a record owns goes with it — a competitor's email addresses and a match's stages are removed alongside it
+- New `existsBy…` queries on `MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`
+  and `ShooterLogCompetitorRepository` back the dependent-row checks
+- `ARCHITECTURE.md` documents the reject-not-cascade rule, and `standard-rest-conventions.md`'s current-state
+  examples now cover both controllers' full `getAll`/`get`/`create`/`update`/`patch`/`delete` sets
+- Closed Gap #12 in `documentation/roadmap/improvement-plan.md`, making the "CRUD" claims in `README.md`/
+  `ARCHITECTURE.md` accurate; this release's own improvement-plan audit recorded new Gap #13 — the Claude Code
+  review/assistant GitHub workflows are missing from the CI/CD & Quality Gates documentation
+- Scoped as `v8.8.0` **MINOR** for the two new endpoints — purely additive, with no schema change
+- Project version bumped to 8.8.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.7.0 (September 24, 2026)
 
 **Theme:** Competitor Listing Endpoint, Stage Delimiter Change & Dependency Clean-up
@@ -1156,6 +1180,19 @@ projects built from the same template.
 **Achievement:** Closed the competitor domain's missing collection endpoint and tidied the build's documentation
 dependencies onto the Spring Boot 4-compatible springdoc line, while recording the next API gap (no delete
 operation) for a later release.
+
+---
+
+### Milestone 34: Competitor & Match Delete Endpoints (v8.8.0)
+
+- New `DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints complete the
+  competitor and match domains' create, read, update and delete set
+- Records still referenced by match results, stage results or shooter logs are refused with a `400` rather than
+  cascaded, while a competitor's emails and a match's stages are deleted with them
+- Gap #12 closed; new Gap #13 recorded for the undocumented Claude Code GitHub workflows
+
+**Achievement:** Made the long-standing "full CRUD" description of the competitor and match APIs true, with a
+deletion rule that protects scoring history rather than silently destroying it.
 
 ---
 
