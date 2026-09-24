@@ -80,6 +80,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `ShooterLogCompetitorRepository`:** New `existsByCompetitorId`/`existsByMatchId`/`existsByMatchStageMatchId`
   queries backing the delete operations' dependent-row checks
 
+##### Documentation
+
+- **`improvement-plan.md`:** New Gap #13 — `.github/workflows/`' `claude.yml` (`@claude` assistant) and
+  `claude-code-review.yml` (automated review on every PR) are live but missing from `ARCHITECTURE.md`'s CI/CD &
+  Quality Gates table, its Project Structure tree comment and `CONTRIBUTING.md`'s summary of that table; the
+  "🌳 At a Glance" list, "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox block for Gap #13 — document both workflows and the
+  `CLAUDE_CODE_OAUTH_TOKEN` secret they rely on, and optionally tidy the review workflow's template `paths:` comment
+
 #### 🔄 Changed
 
 ##### Documentation

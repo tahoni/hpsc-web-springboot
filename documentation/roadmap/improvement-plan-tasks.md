@@ -200,6 +200,15 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
 
+**Claude Code workflows in the CI/CD documentation** *(improvement-plan.md → Gap #13)*
+
+- [ ] Add `claude-code-review.yml` (every PR, advisory) and `claude.yml` (on `@claude` mention) rows to
+  `ARCHITECTURE.md`'s CI/CD & Quality Gates table, noting the `CLAUDE_CODE_OAUTH_TOKEN` secret both rely on
+- [ ] Widen `ARCHITECTURE.md`'s Project Structure tree comment for `.github/workflows/` generically, without listing
+  individual workflow files
+- [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
+- [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
+
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
 

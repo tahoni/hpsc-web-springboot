@@ -77,8 +77,9 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — closed v8.6.2
   - #12 Competitor/match "full CRUD" claims have no delete operation behind them — closed v8.8.0
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (1):**
+- **⚪ Open (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
+  - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — **Next**
 
 ### ✅ Completed
 
@@ -492,6 +493,32 @@ controller layer doesn't — but for the scoring/shooter-log domain specifically
 Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
 fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
+#### 13. Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation
+
+**Evidence:** `.github/workflows/` holds four workflows — `build.yml`, `codeql.yml`, `claude.yml` and
+`claude-code-review.yml` — but `ARCHITECTURE.md`'s "🔬 CI/CD & Quality Gates" table lists only CodeQL (Security
+Analysis) and `build.yml` (Build & Tests, plus the JaCoCo check it enforces), and `CONTRIBUTING.md`'s own CI/CD
+section summarises that table's scope as "CodeQL security analysis, Maven build and tests, JaCoCo coverage".
+`claude-code-review.yml` (added in commit `33de202`) runs `anthropics/claude-code-action` on every pull request
+(`opened`, `synchronize`, `ready_for_review`, `reopened`), and `claude.yml` (commit `e62888b`) responds to `@claude`
+mentions in issues, PR comments and reviews; both authenticate with a `CLAUDE_CODE_OAUTH_TOKEN` repository secret.
+Unlike the Qodana gate Gap #7 removed, both are live — `gh run list --workflow=claude-code-review.yml` shows every
+recent release PR's review run succeeding. `ARCHITECTURE.md`'s Project Structure tree still describes
+`.github/workflows/` as "GitHub Actions — CI/CD, CodeQL".
+
+**Why it matters:** A contributor reading `ARCHITECTURE.md`/`CONTRIBUTING.md` doesn't learn that every pull request
+gets an automated AI review, that `@claude` can be invoked on issues and PRs, or that both depend on a repository
+secret that must stay provisioned — the same kind of doc-vs-code drift Gap #2 and Gap #7 closed for the build and
+static-analysis gates. The review workflow's commented-out `paths:` filter also still names TypeScript/JavaScript
+globs from its template, a hint it was added as-is rather than tailored to this Java project.
+
+**Proposed improvement:** Add the two workflows to `ARCHITECTURE.md`'s CI/CD & Quality Gates table — e.g. an
+"Automated Code Review" row for `claude-code-review.yml` (every PR, advisory rather than merge-blocking) and an
+"AI Assistant" row for `claude.yml` (on `@claude` mention) — noting the `CLAUDE_CODE_OAUTH_TOKEN` secret they rely
+on, and widen the Project Structure tree's `.github/workflows/` comment generically (e.g. "GitHub Actions — CI/CD,
+security analysis and automated review"). `CONTRIBUTING.md`'s summary line then only needs its parenthetical scope
+list extended to match. Optionally drop or tailor the review workflow's leftover template `paths:` comment.
+
 ---
 
 ## 🛤️ Roadmap
@@ -499,7 +526,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | No items currently scoped — #12, this phase's previous occupant, closed in v8.8.0                                                                               |
+| **Next**    | Document the Claude Code workflows in `ARCHITECTURE.md`'s CI/CD & Quality Gates table (#13) — #12, the previous occupant, closed in v8.8.0                      |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -535,6 +562,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 - ✅ Met in v8.8.0: `IpscCompetitorController`/`IpscMatchController` expose tested `DELETE` endpoints that
   refuse records still referenced by scoring or shooter-log rows, making the "CRUD" claims in
   `README.md`/`ARCHITECTURE.md` accurate and closing Gap #12.
+- `ARCHITECTURE.md`'s CI/CD & Quality Gates table (and `CONTRIBUTING.md`'s summary of it) lists every workflow in
+  `.github/workflows/`, including the Claude Code review and assistant workflows, closing Gap #13.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
