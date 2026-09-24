@@ -70,6 +70,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
   Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
 
+##### Build & Metadata
+
+- **`springdoc-openapi-starter-webmvc-ui`:** Bumped from `2.8.5` to `3.1.0`, the springdoc line built for Spring
+  Boot 4
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
+  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
+
 ### 🧾 [8.6.2] - 2026-09-24
 
 #### 🔄 Changed

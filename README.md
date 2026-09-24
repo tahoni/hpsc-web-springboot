@@ -57,7 +57,7 @@ This is a Spring Boot application built with:
 - **Data Processing**: Jackson (JSON, CSV, XML), Apache Commons Lang3
 - **API Documentation**: SpringDoc OpenAPI (Swagger UI)
 - **Validation**: Hibernate Validator with Jakarta Validation
-- **Testing**: JUnit, Mockito, Spring Test, Spring REST Docs
+- **Testing**: JUnit, Mockito, Spring Test
 
 Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
