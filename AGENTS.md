@@ -13,7 +13,7 @@ convention; no Claude-Code-specific content is split out from it.
 - [🏛️ Architecture](#-architecture)
 - [📚 Documentation Conventions](#-documentation-conventions)
 - [🗂️ Documentation File Map](#-documentation-file-map)
-- [🗺️ Roadmap Planning](#-roadmap-planning)
+- [🛤️ Roadmap Planning](#-roadmap-planning)
 - [🧩 Claude Code Skills](#-claude-code-skills)
 - [🧪 Test Conventions](#-test-conventions)
 - [📁 Directory Tree Maintenance](#-directory-tree-maintenance)
@@ -219,7 +219,8 @@ genuinely new concept. Icons already established in this repository's documentat
 | 🧬   | Data model / DTOs                 |
 | 📈   | Request-response flow             |
 | 📥   | Inbound / import flow             |
-| 🗺️   | Roadmap                           |
+| 🛤️   | Roadmap                           |
+| ☑️   | Checklist / success criteria      |
 | 📤   | Output                            |
 | 🚢   | Release process                   |
 | 🧩   | Tooling / automation              |
@@ -263,8 +264,6 @@ concept in this project:
 | ✍️   | Content strategy / documentation conventions |
 | 🎨   | Styling and theming / design                 |
 | 🛠️   | Development guidelines                       |
-| 🛤️   | Roadmap                                      |
-| ☑️   | Checklist                                    |
 | 📐   | Layout structure                             |
 | 🔝   | Header                                       |
 | 📄   | Body / page content                          |
@@ -324,7 +323,7 @@ Four documentation-only folders supplement these:
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
 - **`documentation/roadmap/`** holds in-progress planning documents that sit outside the standard documentation set
-  above — see [🗺️ Roadmap Planning](#-roadmap-planning) below for the file structure and conventions.
+  above — see [🛤️ Roadmap Planning](#-roadmap-planning) below for the file structure and conventions.
 - **`documentation/recommendations/`** holds the fuller rationale and current-codebase examples behind conventions
   this file states only as a condensed rule elsewhere — e.g. `standard-rest-conventions.md` (behind the REST
   conventions subsection of [🏛️ Architecture](#-architecture)) and `flyway-migration-versioning.md` (behind the
@@ -332,7 +331,7 @@ Four documentation-only folders supplement these:
 
 ---
 
-## 🗺️ Roadmap Planning
+## 🛤️ Roadmap Planning
 
 `documentation/roadmap/` holds two in-progress planning documents tracking outstanding project gaps, kept outside
 the standard documentation set above:

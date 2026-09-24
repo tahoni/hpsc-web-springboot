@@ -2073,13 +2073,23 @@ forward-looking roadmap lists — no domain-model, API or test-behaviour change.
 
 **Future Roadmap Refresh**
 
-- `HISTORY.md`'s "🗺️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has actually
+- `HISTORY.md`'s "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has actually
   shipped: the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half (the `club`
   table was already seeded in v8.4.0 via `V7_3_0__seed_club_data.sql`), `ShooterLogEntry` renamed to
   `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x Releases)" and "Bulk match
   processing capabilities" dropped as delivered by v8.3.0's bulk CSV import
 - Recorded as Gap #11 in `documentation/roadmap/improvement-plan.md` by this release's own improvement-plan audit,
   then closed within the same release; items overlapping the still-open Gap #6 were left in place
+
+**Roadmap Icon & Structure Sync**
+
+- `🛤️` now marks Roadmap (replacing `🗺️`) and `☑️` marks Checklist / success criteria in `AGENTS.md`'s icon
+  registry, both moved out of the icons reserved for `hpsc-web-vite`; every live Roadmap, Future Roadmap
+  Implications and Success Criteria heading switched to match, as did the two improvement-plan skills' stale `🚀`/`✅`
+  references
+- `improvement-plan.md`/`improvement-plan-tasks.md` synced with the shared project template's structure: project
+  title, a note on the four kinds of gap an audit looks for, a fuller Related Documentation list, a note on
+  annotating checked task items, and no more hard-coded gap count in the tasks file's intro
 
 **Formatting**
 

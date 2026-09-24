@@ -16,7 +16,7 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 - [🏛️ Architecture at a Glance](#-architecture-at-a-glance)
 - [🧩 Claude Code Skills](#-claude-code-skills)
 - [📚 Documentation Conventions](#-documentation-conventions)
-- [🗺️ Roadmap](#-roadmap)
+- [🛤️ Roadmap](#-roadmap)
 - [🔀 Git & PR Workflow](#-git--pr-workflow)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [🚢 Cutting a Release](#-cutting-a-release)
@@ -186,7 +186,7 @@ read it before writing or editing any documentation in this repository. Highligh
 
 ---
 
-## 🗺️ Roadmap
+## 🛤️ Roadmap
 
 Full detail lives in [`AGENTS.md`'s Roadmap Planning section](AGENTS.md#-roadmap-planning). Highlights:
 

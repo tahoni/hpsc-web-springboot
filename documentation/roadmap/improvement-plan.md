@@ -1,4 +1,4 @@
-# Improvement Plan
+# HPSC Website Backend Improvement Plan
 
 This document synthesises the goals and constraints stated across this repository's documentation and configuration into
 a single set of prioritised improvement opportunities. Unlike [`README.md`](/README.md) and 
@@ -10,8 +10,8 @@ should be revisited whenever a major gap it names is closed or a new one is iden
 - [🎯 Purpose & Scope](#-purpose--scope)
 - [⚙️ Goals & Constraints (Synthesised)](#-goals--constraints-synthesised)
 - [🔍 Gaps & Improvement Opportunities](#-gaps--improvement-opportunities)
-- [🗺️ Roadmap](#-roadmap)
-- [✅ Success Criteria](#-success-criteria)
+- [🛤️ Roadmap](#-roadmap)
+- [☑️ Success Criteria](#-success-criteria)
 - [📚 Related Documentation](#-related-documentation)
 
 ---
@@ -23,7 +23,7 @@ This plan draws only on what the repository already states about itself — `REA
 `.github/workflows` — rather than introducing new goals. Where the documentation and the configuration disagree, or
 where a stated goal has no corresponding work item yet, that gap is called out below as an improvement opportunity.
 
-It complements, rather than duplicates, `HISTORY.md`'s per-release "🗺️ Future Roadmap Implications" section: that
+It complements, rather than duplicates, `HISTORY.md`'s per-release "🛤️ Future Roadmap Implications" section: that
 section tracks what changed release-to-release, while this document tracks the standing, cross-release gaps
 between the project's stated intent and its current state.
 
@@ -58,6 +58,9 @@ Gaps are grouped by completion status — ✅ Completed, 🟡 Partially Complete
 across the whole document; a number is assigned once and never reused or resequenced, so it stays a gap's stable
 identifier even after it moves between sections as its status changes (e.g. Open → Partially Completed → Completed).
 Within each section, gaps stay in ascending number order.
+
+Each gap looks for one of four things: a stated-but-unbuilt goal, a doc-vs-doc or doc-vs-code disagreement, a stale
+number or a newly met precondition on an existing gap — see the `update-improvement-plan-gaps` skill.
 
 ### 📋 At a Glance
 
@@ -447,7 +450,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ---
 
-## 🗺️ Roadmap
+## 🛤️ Roadmap
 
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -458,7 +461,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ---
 
-## ✅ Success Criteria
+## ☑️ Success Criteria
 
 - ✅ Met in v8.0.0: `IpscCompetitorController`/`IpscMatchController` expose real, tested endpoints backed by the
   existing entity/repository layer, closing the gap named identically in `README.md`, `ARCHITECTURE.md` and
@@ -486,7 +489,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 - ✅ Met in v8.6.2: `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists name only genuinely outstanding work
   under current entity names and version labels, closing Gap #11's drift.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
-  per-version Future Roadmap notes rather than being deleted silently from here.
+  Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
+  here.
 
 ---
 
@@ -497,6 +501,10 @@ this plan:
 
 - [`ARCHITECTURE.md`](/ARCHITECTURE.md) — the CI/CD & Quality Gates table and layered-architecture rules this plan
   builds on
-- [`AGENTS.md`](/AGENTS.md) — the Git Workflow and Release Checklist referenced throughout
-- [`HISTORY.md`](/HISTORY.md) — per-release "🗺️ Future Roadmap Implications" sections this plan complements
+- [`AGENTS.md`](/AGENTS.md) — the Git Workflow, Release Checklist and Roadmap Planning conventions referenced
+  throughout
+- [`HISTORY.md`](/HISTORY.md) — the "🛤️ Future Roadmap Implications" section this plan complements
+- [`CONTRIBUTING.md`](/CONTRIBUTING.md) — contributor-facing setup and pull request checklist
+- [`improvement-plan-tasks.md`](improvement-plan-tasks.md) — the checkbox-level task breakdown derived from this
+  plan's gaps
 

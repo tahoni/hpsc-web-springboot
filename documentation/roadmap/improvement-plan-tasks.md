@@ -1,6 +1,6 @@
 # Roadmap Task List
 
-A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s eleven gaps, grouped by that
+A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s gaps, grouped by that
 document's completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — matching its own "🔍 Gaps &
 Improvement Opportunities" grouping. Each block names its originating gap number for traceability back to the
 evidence and reasoning there; within each section, gaps stay in ascending number order.
@@ -184,6 +184,9 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
+
+When checking an item off, add a short note after it if it was fulfilled differently from its original wording
+(e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
 
 ---
 

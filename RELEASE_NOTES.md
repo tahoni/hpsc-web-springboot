@@ -30,7 +30,7 @@ version.
 - `AGENTS.md`'s Git Workflow Conventions now spell out the full category/Area nesting, reuse of existing Area names
   and the bold-lead-in bullet style, instead of leaving them implicit
 
-### 🗺️ Future Roadmap Refresh (Gap #11)
+### 🛤️ Future Roadmap Refresh (Gap #11)
 
 - `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists now name only genuinely outstanding work: club seeding
   (shipped in v8.4.0) and bulk match import (shipped in v8.3.0) dropped, `ShooterLogEntry` renamed to
@@ -40,12 +40,31 @@ version.
 
 ### 🔁 Template Reverse Sync
 
-- Only the template's generic correction was brought back — this project keeps its own Conventional Commits prefixes
+- Roadmap and Success Criteria headings now use the template's `🛤️`/`☑️` icons, and the roadmap files pick up the
+  template's generic structure notes
+- Only the template's generic changes were brought back — this project keeps its own Conventional Commits prefixes
   and bold-lead-in bullet style rather than adopting the template's plain-imperative defaults
 
 ---
 
 ## 📦 What's New
+
+### Changed
+
+#### Documentation
+
+- **`AGENTS.md`'s icon registry:** `🛤️` now marks Roadmap (replacing `🗺️`) and `☑️` marks Checklist / success
+  criteria, both moved out of the icons reserved for `hpsc-web-vite` — synced with the shared project template
+- **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `HISTORY.md`, `improvement-plan.md`:** Roadmap, Future Roadmap
+  Implications and Success Criteria headings switched to `🛤️`/`☑️` to match
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Synced with the template's roadmap structure — project
+  title, a note on the four kinds of gap an audit looks for, a fuller Related Documentation list and a note on
+  annotating checked task items; the tasks file's intro no longer states a drifting gap count
+
+#### Tooling
+
+- **`sync-improvement-plan-gaps`, `update-improvement-plan-gaps` skills:** Stale `🚀`/`✅` roadmap and success
+  criteria references updated to `🛤️`/`☑️`
 
 ### Fixed
 
@@ -55,12 +74,12 @@ version.
   `## 🧾 [X.Y.Z]` to the `### 🧪 [Unreleased]`/`### 🧾 [X.Y.Z]` depth the file actually uses. `AGENTS.md`'s Git
   Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
   bold-lead-in bullet style — reverse-synced from the shared project template
-- **`HISTORY.md`:** "🗺️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
+- **`HISTORY.md`:** "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
   actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half,
   `ShooterLogEntry` renamed to `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x
   Releases)" and "Bulk match processing capabilities" dropped as delivered by v8.3.0's bulk CSV import
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
-  this same release, with "📋 At a Glance", the "🗺️ Roadmap" table and "✅ Success Criteria" updated to match
+  this same release, with "📋 At a Glance", the "🛤️ Roadmap" table and "☑️ Success Criteria" updated to match
 
 #### Tooling
 
@@ -81,12 +100,12 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 
 ## 📊 Statistics
 
-- **Total Commits:** 9 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
-  documentation, PR description, serial-comma fix, commit-count update and Gap #11 fix commits)
-- **Files Changed:** 18
-- **Insertions:** 529 lines
-- **Deletions:** 132 lines
-- **Net Change:** +397 lines
+- **Total Commits:** 10 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
+  documentation, PR description, serial-comma fix, commit-count update, Gap #11 fix and roadmap icon sync commits)
+- **Files Changed:** 20
+- **Insertions:** 637 lines
+- **Deletions:** 157 lines
+- **Net Change:** +480 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0

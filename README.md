@@ -15,7 +15,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
 - [📚 Documentation](#-documentation)
-    - [🗺️ Roadmap](#-roadmap)
+    - [🛤️ Roadmap](#-roadmap)
 - [📜 Licence](#-licence)
 - [👤 Author](#-author)
 
@@ -192,7 +192,7 @@ archive:
 from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version
 history). It's a historical record only and isn't maintained going forward.
 
-### 🗺️ Roadmap
+### 🛤️ Roadmap
 
 [`documentation/roadmap/`](documentation/roadmap) holds in-progress planning documents — not part of the standard
 documentation set above, and not required reading to work in this repository:

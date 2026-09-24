@@ -36,7 +36,7 @@ Read these fully before drafting anything — you cannot tell what's *new* witho
    **not** closed in whatever version `HISTORY.md`'s most recent entry already covers).
 3. `AGENTS.md`, `README.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md` — the same sources
    `improvement-plan.md`'s own "🎯 Purpose & Scope" section says it draws from.
-4. `HISTORY.md`'s most recent "🚀 Future Roadmap Implications" entries, and the most recent
+4. `HISTORY.md`'s most recent "🛤️ Future Roadmap Implications" entries, and the most recent
    `documentation/history/v*/RELEASE_NOTES_v*.md`'s "Known Issues" and "Future Enhancements" sections — "most
    recent" means the highest semantic version found across all `vN/` subdirectories, not simply the file inside
    the highest-numbered `vN/` folder.
@@ -68,19 +68,19 @@ existing gap sections first and match their shape and tone, not just their headi
   **Proposed improvement:** paragraphs, citing the exact files/lines that back it up.
 - **Newly closed gap:** append a `— ✅ Closed in vX.Y.Z` suffix to that gap's `####` header (per step 2 above for
   the version) and add an **Outcome:** paragraph, then move the whole `#### N. ...` block into the "✅ Completed"
-  subsection — never delete or rewrite the original analysis, per the plan's own "✅ Success Criteria" instruction
+  subsection — never delete or rewrite the original analysis, per the plan's own "☑️ Success Criteria" instruction
   to move closed items into `HISTORY.md` rather than erasing them here.
 - **Newly progressed (not yet closed) gap:** add a `— 🟡 Partially completed in vX.Y.Z`-style suffix and a
   **Progress:** paragraph describing what changed and what's still open, then move the whole block into the
   "🟡 Partially Completed" subsection (replacing its "*No gaps are currently partially completed*" placeholder text
   if it's currently empty).
-- Update the "⚙️ Goals & Constraints" table, the "🚀 Roadmap" table, and the "✅ Success Criteria" list to match
+- Update the "⚙️ Goals & Constraints" table, the "🛤️ Roadmap" table and the "☑️ Success Criteria" list to match
   every change made above — these three sections drift out of sync with the gap list if touched inconsistently.
 
 Then mirror every change into `improvement-plan-tasks.md`, under the same ✅ Completed / 🟡 Partially Completed /
 ⚪ Open sections:
 
-- A new gap gets a new checkbox block under "⚪ Open" (match the phrasing style of the "🚀 Roadmap" table entry you
+- A new gap gets a new checkbox block under "⚪ Open" (match the phrasing style of the "🛤️ Roadmap" table entry you
   just wrote in `improvement-plan.md`).
 - Check off items in place for closed/progressed work — **never delete a task line**, per the file's own closing
   instruction. Add a short note after a checked item explaining how it was actually fulfilled if that differs from

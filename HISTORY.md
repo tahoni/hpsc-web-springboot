@@ -14,7 +14,7 @@ evolution of architecture, features and design philosophy across all versions.
 - [✨ Feature Timeline](#-feature-timeline)
 - [💡 Project Philosophy Evolution](#-project-philosophy-evolution)
 - [📚 Key Learnings](#-key-learnings)
-- [🗺️ Future Roadmap](#-future-roadmap-implications)
+- [🛤️ Future Roadmap](#-future-roadmap-implications)
 - [🎓 Conclusion](#-conclusion)
 
 ---
@@ -36,11 +36,14 @@ evolution of architecture, features and design philosophy across all versions.
   `generate-commit-message` also notes that security-relevant fixes belong under `#### 🔐 Security`
 - The correction was reverse-synced from the shared project template, which had already fixed the same drift in its
   own copy of these conventions
-- This file's own "🗺️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has actually
+- This file's own "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has actually
   shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half,
   `ShooterLogEntry` renamed to `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x
   Releases)" and "Bulk match processing capabilities" dropped as delivered by v8.3.0 — recorded and closed as Gap #11
   in `documentation/roadmap/improvement-plan.md` within this same release
+- Roadmap icons synced with the shared project template: `🛤️` now marks Roadmap (replacing `🗺️`) and `☑️` marks
+  Success Criteria across `AGENTS.md`'s registry and every live Roadmap heading, and `improvement-plan.md`/
+  `improvement-plan-tasks.md` pick up the template's generic structure notes
 - Minor table column realignment in `AGENTS.md`'s skills table and `README.md`'s Documentation table
 - This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
   behaviour change), so it was scoped as `v8.6.2` **PATCH**, matching the precedent set by v8.4.1/v8.4.2/v8.5.1/
@@ -1913,7 +1916,7 @@ IpscCompetitorService          IpscMatchService
 
 ---
 
-## 🗺️ Future Roadmap Implications
+## 🛤️ Future Roadmap Implications
 
 Based on the evolution to v8.4.0, the following areas are identified for future enhancement:
 
