@@ -175,6 +175,47 @@ class IpscMatchControllerTest {
         assertThrows(FatalException.class, () -> ipscMatchController.createMatches(VALID_CSV));
     }
 
+    // deleteMatch()
+    @Test
+    void testDeleteMatch_whenServiceSucceeds_thenReturns204() throws ValidationException, NonFatalException {
+        // Act
+        ResponseEntity<Void> result = ipscMatchController.deleteMatch(1L);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+        assertNull(result.getBody());
+    }
+
+    @Test
+    void testDeleteMatch_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
+        // Act
+        ipscMatchController.deleteMatch(1L);
+
+        // Assert
+        verify(ipscMatchService).deleteMatch(1L);
+        verifyNoMoreInteractions(ipscMatchService);
+    }
+
+    @Test
+    void testDeleteMatch_whenServiceThrowsValidationException_thenExceptionPropagates()
+            throws ValidationException, NonFatalException {
+        // Arrange
+        doThrow(new ValidationException("has results")).when(ipscMatchService).deleteMatch(1L);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchController.deleteMatch(1L));
+    }
+
+    @Test
+    void testDeleteMatch_whenServiceThrowsNonFatalException_thenExceptionPropagates()
+            throws ValidationException, NonFatalException {
+        // Arrange
+        doThrow(new NonFatalException("not found")).when(ipscMatchService).deleteMatch(999L);
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchController.deleteMatch(999L));
+    }
+
     // getMatch()
     @Test
     void testGetMatch_whenServiceSucceeds_thenReturns200() throws NonFatalException {

@@ -10,4 +10,6 @@ import java.util.List;
 public interface ShooterLogRepository extends JpaRepository<ShooterLog, Long> {
     List<ShooterLog> findAllByCompetitorIdAndFirearmTypeAndPowerFactor(
             Long competitorId, FirearmType firearmType, PowerFactor powerFactor);
+
+    boolean existsByCompetitorId(Long competitorId);
 }

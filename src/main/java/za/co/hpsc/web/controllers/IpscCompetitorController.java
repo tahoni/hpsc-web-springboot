@@ -30,8 +30,8 @@ import java.util.List;
  * Controller responsible for handling IPSC competitor CRUD API endpoints.
  *
  * <p>
- * Provides endpoints for creating, fully or partially updating and retrieving IPSC competitors,
- * individually or all at once.
+ * Provides endpoints for creating, fully or partially updating, retrieving (individually or all
+ * at once) and deleting IPSC competitors.
  * </p>
  *
  * @since 8.0.0
@@ -235,5 +235,33 @@ public class IpscCompetitorController {
     })
     ResponseEntity<List<CompetitorResponse>> getAllCompetitors() {
         return ResponseEntity.ok(ipscCompetitorService.getAllCompetitors());
+    }
+
+    /**
+     * Deletes an existing IPSC competitor, together with their email addresses.
+     *
+     * @param competitorId the identifier of the competitor to delete.
+     * @return an empty {@code 204 No Content} response.
+     * @throws ValidationException if the competitor still has match results or shooter logs.
+     * @throws NonFatalException   if no competitor with {@code competitorId} exists.
+     */
+    @DeleteMapping(value = "/{competitorId}")
+    @Operation(summary = "Delete competitor", description = "Delete an IPSC competitor by ID, together with their "
+            + "email addresses. A competitor with recorded match results or shooter logs can't be deleted.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Competitor deleted."),
+            @ApiResponse(responseCode = "400", description = "The competitor has recorded match results or "
+                    + "shooter logs.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No competitor with this ID could be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<Void> deleteCompetitor(
+            @Parameter(description = "Identifier of the competitor to delete.") @PathVariable Long competitorId)
+            throws ValidationException, NonFatalException {
+        ipscCompetitorService.deleteCompetitor(competitorId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.7.0](#-870---2026-09-24) ← Current
+- [🧾 Version 8.8.0](#-880---2026-09-24) ← Current
+- [🧾 Version 8.7.0](#-870---2026-09-24)
 - [🧾 Version 8.6.2](#-862---2026-09-24)
 - [🧾 Version 8.6.1](#-861---2026-09-23)
 - [🧾 Version 8.6.0](#-860---2026-09-23)
@@ -57,6 +58,55 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.8.0] - 2026-09-24
+
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscCompetitorController.deleteCompetitor`, `IpscMatchController.deleteMatch`:** New
+  `DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints, returning
+  `204 No Content` — `400` when the record is still referenced, `404` when it doesn't exist
+
+##### Services
+
+- **`IpscCompetitorService.deleteCompetitor`:** Deletes a competitor together with their email addresses, refusing
+  with a `ValidationException` while any `MatchCompetitor` (match result) or `ShooterLog` row still references them
+- **`IpscMatchService.deleteMatch`:** Deletes a match together with its stages, refusing with a
+  `ValidationException` while any `MatchCompetitor`, `MatchStageCompetitor` or `ShooterLogCompetitor` row still
+  references it — so scoring history is never deleted as a side effect
+
+##### Repositories
+
+- **`MatchCompetitorRepository`, `MatchStageCompetitorRepository`, `ShooterLogRepository`,
+  `ShooterLogCompetitorRepository`:** New `existsByCompetitorId`/`existsByMatchId`/`existsByMatchStageMatchId`
+  queries backing the delete operations' dependent-row checks
+
+##### Documentation
+
+- **`improvement-plan.md`:** New Gap #13 — `.github/workflows/`' `claude.yml` (`@claude` assistant) and
+  `claude-code-review.yml` (automated review on every PR) are live but missing from `ARCHITECTURE.md`'s CI/CD &
+  Quality Gates table, its Project Structure tree comment and `CONTRIBUTING.md`'s summary of that table; the
+  "🌳 At a Glance" list, "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox block for Gap #13 — document both workflows and the
+  `CLAUDE_CODE_OAUTH_TOKEN` secret they rely on, and optionally tidy the review workflow's template `paths:` comment
+
+#### 🔄 Changed
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** New Service Layer note on the delete rule — a competitor's emails and a match's stages are
+  removed with it, but a record still referenced by scoring or shooter-log rows is refused rather than cascaded
+- **`standard-rest-conventions.md`:** "🔍 Current State in This Codebase" now names `IpscCompetitorController`
+  alongside `IpscMatchController` as full-pattern examples, covering every verb including `getAll` and `delete`
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #12 closed in v8.8.0 by the new delete operations and
+  moved to ✅ Completed; "🌳 At a Glance", the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria" updated
+  to match
+
+##### Build & Metadata
+
+- Project version bumped to **8.8.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### 🧾 [8.7.0] - 2026-09-24
 

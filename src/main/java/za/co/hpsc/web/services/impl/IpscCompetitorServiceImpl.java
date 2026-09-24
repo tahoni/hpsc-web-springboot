@@ -26,6 +26,8 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
 import java.io.IOException;
@@ -39,10 +41,16 @@ import java.util.stream.Collectors;
 public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final CompetitorRepository competitorRepository;
     private final ClubRepository clubRepository;
+    private final MatchCompetitorRepository matchCompetitorRepository;
+    private final ShooterLogRepository shooterLogRepository;
 
-    public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository) {
+    public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
+                                     MatchCompetitorRepository matchCompetitorRepository,
+                                     ShooterLogRepository shooterLogRepository) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
+        this.matchCompetitorRepository = matchCompetitorRepository;
+        this.shooterLogRepository = shooterLogRepository;
     }
 
     @Override
@@ -149,6 +157,23 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         return competitorRepository.findAll().stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteCompetitor(Long competitorId) {
+        Competitor competitor = findCompetitorOrThrow(competitorId);
+
+        if (matchCompetitorRepository.existsByCompetitorId(competitorId)) {
+            throw new ValidationException("Competitor with ID " + competitorId
+                    + " cannot be deleted: they have recorded match results.");
+        }
+        if (shooterLogRepository.existsByCompetitorId(competitorId)) {
+            throw new ValidationException("Competitor with ID " + competitorId
+                    + " cannot be deleted: they have shooter logs.");
+        }
+
+        competitorRepository.delete(competitor);
     }
 
     /**

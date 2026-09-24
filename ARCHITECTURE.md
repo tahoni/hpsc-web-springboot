@@ -174,6 +174,10 @@ Contains all business logic.
 > (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses a `Stages` CSV cell into
 > `MatchStageRequest`s via `parseStages`.
 
+> Deleting a competitor or match only removes what it owns — a competitor's email addresses, a match's stages. A
+> record that match results, stage results or shooter logs still reference is refused with a `ValidationException`
+> (`400`) rather than deleted along with that scoring history.
+
 ---
 
 ### 🗄️ 3. Persistence Layer (`za.co.hpsc.web.repositories` & `za.co.hpsc.web.domain`)

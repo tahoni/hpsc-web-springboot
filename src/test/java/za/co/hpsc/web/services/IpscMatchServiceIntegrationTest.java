@@ -9,6 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
+import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
@@ -19,6 +21,10 @@ import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchStageRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
+import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.repositories.IpscMatchStageRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -44,6 +50,18 @@ class IpscMatchServiceIntegrationTest {
 
     @Autowired
     private ClubRepository clubRepository;
+
+    @Autowired
+    private CompetitorRepository competitorRepository;
+
+    @Autowired
+    private IpscMatchRepository ipscMatchRepository;
+
+    @Autowired
+    private IpscMatchStageRepository ipscMatchStageRepository;
+
+    @Autowired
+    private MatchCompetitorRepository matchCompetitorRepository;
 
     // createMatch()
     @Test
@@ -203,6 +221,43 @@ class IpscMatchServiceIntegrationTest {
         assertEquals("Stage 1 - The Bank Job", response.getStages().getFirst().getStageName());
         assertEquals(2, response.getStages().get(1).getStageNumber());
         assertEquals("Stage 2 - The Getaway", response.getStages().get(1).getStageName());
+    }
+
+    // deleteMatch()
+    @Test
+    void testDeleteMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchService.deleteMatch(999L));
+    }
+
+    @Test
+    void testDeleteMatch_whenMatchHasNoDependents_thenDeletesMatchAndStages() throws FatalException {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchRequest request = validRequest("Test Club");
+        request.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1"), new MatchStageRequest(null, 2, "Stage 2")));
+        MatchResponse created = ipscMatchService.createMatch(request);
+
+        // Act
+        assertDoesNotThrow(() -> ipscMatchService.deleteMatch(created.getMatchId()));
+
+        // Assert
+        assertFalse(ipscMatchRepository.existsById(created.getMatchId()));
+        assertTrue(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(created.getMatchId()).isEmpty());
+        assertThrows(NonFatalException.class, () -> ipscMatchService.getMatch(created.getMatchId()));
+    }
+
+    @Test
+    void testDeleteMatch_whenMatchHasCompetitorResults_thenThrowsValidationExceptionAndKeepsMatch()
+            throws FatalException {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+        recordCompetitorResult(created.getMatchId());
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(created.getMatchId()));
+        assertTrue(ipscMatchRepository.existsById(created.getMatchId()));
     }
 
     // getMatch()
@@ -543,5 +598,18 @@ class IpscMatchServiceIntegrationTest {
         request.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
         request.setUrl("https://example.com/matches/1");
         return request;
+    }
+
+    private void recordCompetitorResult(Long matchId) {
+        Competitor competitor = new Competitor();
+        competitor.setFirstName("Jane");
+        competitor.setLastName("Doe");
+        competitor = competitorRepository.save(competitor);
+
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(competitor);
+        matchCompetitor.setMatch(ipscMatchRepository.findById(matchId).orElseThrow());
+        matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitorRepository.save(matchCompetitor);
     }
 }
