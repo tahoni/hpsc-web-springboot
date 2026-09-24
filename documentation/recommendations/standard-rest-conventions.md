@@ -70,9 +70,13 @@ its default), while `PATCH` applies only the fields the client actually sent, le
 - **`AwardController`** (`/awards`) and **`ImageController`** (`/images`): each exposes a single `POST` endpoint,
   `createAwards`/`createImages`, that bulk-imports CSV data rather than performing classic single-resource CRUD — the
   action-named convention above still applies even though the semantics differ from a typical `POST`.
-- **`IpscMatchController`** (`/ipsc/matches`) is this codebase's clearest example of the full pattern: `createMatch`
-  (`POST`), `updateMatch` (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update) and
-  `getMatch` (`GET /{matchId}`).
+- **`IpscMatchController`** (`/ipsc/matches`) and **`IpscCompetitorController`** (`/ipsc/competitors`) are this
+  codebase's clearest examples of the full pattern, each covering every row of the table above. For matches:
+  `getAllMatches` (`GET`, collection), `getMatch` (`GET /{matchId}`), `createMatch` (`POST`), `updateMatch`
+  (`PUT /{matchId}`, full replace), `patchMatch` (`PATCH /{matchId}`, partial update) and `deleteMatch`
+  (`DELETE /{matchId}`). `IpscCompetitorController` mirrors it name for name (`getAllCompetitors`, `getCompetitor`,
+  `createCompetitor`, `updateCompetitor`, `patchCompetitor`, `deleteCompetitor`). Both also add a `POST /bulk` CSV
+  import (`createMatches`/`createCompetitors`), named with the plural resource since it creates many at once.
 
 ---
 

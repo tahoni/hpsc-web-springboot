@@ -80,6 +80,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `ShooterLogCompetitorRepository`:** New `existsByCompetitorId`/`existsByMatchId`/`existsByMatchStageMatchId`
   queries backing the delete operations' dependent-row checks
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** New Service Layer note on the delete rule — a competitor's emails and a match's stages are
+  removed with it, but a record still referenced by scoring or shooter-log rows is refused rather than cascaded
+- **`standard-rest-conventions.md`:** "🔍 Current State in This Codebase" now names `IpscCompetitorController`
+  alongside `IpscMatchController` as full-pattern examples, covering every verb including `getAll` and `delete`
+
 ### 🧾 [8.7.0] - 2026-09-24
 
 #### ➕ Added
