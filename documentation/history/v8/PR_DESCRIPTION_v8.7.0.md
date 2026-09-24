@@ -41,8 +41,8 @@
 - [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
 - [x] `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — a full sweep recorded new
       Gap #12; the branch-diff sync found no closed or progressed gaps
-- [ ] Swagger UI opened at `http://localhost:8080/hpsc-web/swagger-ui/index.html` to confirm springdoc 3.1.0
-      renders and both "get all" endpoints show array responses
+- [x] App started on port `8080` (H2 `test` profile): Swagger UI renders under springdoc 3.1.0, `/v3/api-docs`
+      reports `8.7.0` with array schemas for both "get all" endpoints, and `GET /ipsc/competitors` returns `[]`
 
 ## 🔗 Related Documentation
 
