@@ -21,6 +21,33 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.7.0 (September 24, 2026)
+
+**Theme:** Competitor Listing Endpoint, Stage Delimiter Change & Dependency Clean-up
+
+**Key Focus:**
+
+- New `GET /ipsc/competitors` endpoint (`IpscCompetitorController.getAllCompetitors`, backed by
+  `IpscCompetitorService.getAllCompetitors`) returns every competitor as a JSON array — the collection counterpart
+  to `GET /{competitorId}`, mirroring `IpscMatchController.getAllMatches`
+- A match CSV's `Stages` cell now separates each stage number from its name with `:` instead of `-` (e.g.
+  `"1:Stage One;2:Stage Two"`); only the first `:` splits, and entries in the old `1-Stage One` form are now
+  rejected with a `ValidationException` — existing CSV templates need updating
+- Every `@ManyToOne` association on the seven domain entities switched from `FetchType.LAZY` to `FetchType.EAGER`,
+  so referenced entities load together with their owner
+- The `server.port=8081` override removed, so the app now runs on Spring Boot's default port `8080`; every
+  documented app, Swagger UI and OpenAPI URL updated to match
+- `springdoc-openapi-starter-webmvc-ui` bumped from `2.8.5` to `3.1.0` — the line built for Spring Boot 4 — with
+  its version now managed by an imported `springdoc-openapi-bom`; the unused `spring-restdocs-mockmvc` test
+  dependency and its documentation mentions removed
+- `IpscMatchController.getAllMatches`' Swagger `200` response corrected to document an array of `MatchResponse`s
+  rather than a single object
+- This release's own improvement-plan audit recorded new Gap #12: competitors and matches are documented as "full
+  CRUD", yet no delete operation exists for either
+- Scoped as `v8.7.0` **MINOR** for the new endpoint, with the stage-delimiter and port changes called out as
+  client-facing migrations
+- Project version bumped to 8.7.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.6.2 (September 24, 2026)
 
 **Theme:** `CHANGELOG.md` Heading-Depth Correction, Future Roadmap Refresh & Icon Registry Sync
@@ -1114,6 +1141,21 @@ accumulating, without losing any historical content or `git` history.
 agent or contributor following `AGENTS.md` or the skills produces correctly nested entries, and cleared already
 delivered work out of this file's forward-looking roadmap, while keeping heading icons consistent with sibling
 projects built from the same template.
+
+---
+
+### Milestone 33: Competitor Listing Endpoint, Stage Delimiter Change & Dependency Clean-up (v8.7.0)
+
+- New `GET /ipsc/competitors` endpoint returns every competitor, giving the competitor domain the same collection
+  read that `IpscMatchController.getAllMatches` already gave matches
+- Match CSV stage entries now use `<stageNumber>:<stageName>`, replacing the `-` delimiter
+- Domain `@ManyToOne` associations switched to eager fetching; the app moves to Spring Boot's default port `8080`
+- springdoc upgraded to its Spring Boot 4 line (`3.1.0`) via an imported BOM, and the unused Spring REST Docs
+  dependency removed
+
+**Achievement:** Closed the competitor domain's missing collection endpoint and tidied the build's documentation
+dependencies onto the Spring Boot 4-compatible springdoc line, while recording the next API gap (no delete
+operation) for a later release.
 
 ---
 
