@@ -40,8 +40,8 @@ version.
 
 ### 🔁 Template Reverse Sync
 
-- Roadmap and Success Criteria headings now use the template's `🛤️`/`☑️` icons, and the roadmap files pick up the
-  template's generic structure notes
+- The icon registry now mirrors the template's (core icons plus its backend set), every live heading is realigned
+  with it, and the roadmap files pick up the template's generic structure notes
 - Only the template's generic changes were brought back — this project keeps its own Conventional Commits prefixes
   and bold-lead-in bullet style rather than adopting the template's plain-imperative defaults
 
@@ -53,8 +53,13 @@ version.
 
 #### Documentation
 
-- **`AGENTS.md`'s icon registry:** `🛤️` now marks Roadmap (replacing `🗺️`) and `☑️` marks Checklist / success
-  criteria, both moved out of the icons reserved for `hpsc-web-vite` — synced with the shared project template
+- **`AGENTS.md`'s icon registry:** Restructured to match the shared project template's — its core table verbatim,
+  its backend / API service set as this project's own icons and its frontend set kept reserved. `🛤️` now marks
+  Roadmap, `☑️` Checklist, `🗺️` the Documentation file map, `🔃` Data flow and `🧭` design patterns
+- **`AGENTS.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `improvement-plan.md`, `documentation/recommendations/`:**
+  Documentation Conventions (`✍️`), Documentation File Map (`🗺️`), Key Design Patterns (`🧭`), Data Flow (`🔃`),
+  Development Guidelines (`🛠️`), Getting Started (`🚀`), At a Glance (`🌳`) and Related Documentation (`🔗`)
+  headings realigned with the new registry
 - **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `HISTORY.md`, `improvement-plan.md`:** Roadmap, Future Roadmap
   Implications and Success Criteria headings switched to `🛤️`/`☑️` to match
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Synced with the template's roadmap structure — project
@@ -79,7 +84,7 @@ version.
   `ShooterLogEntry` renamed to `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x
   Releases)" and "Bulk match processing capabilities" dropped as delivered by v8.3.0's bulk CSV import
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
-  this same release, with "📋 At a Glance", the "🛤️ Roadmap" table and "☑️ Success Criteria" updated to match
+  this same release, with "🌳 At a Glance", the "🛤️ Roadmap" table and "☑️ Success Criteria" updated to match
 
 #### Tooling
 
@@ -100,12 +105,13 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 
 ## 📊 Statistics
 
-- **Total Commits:** 10 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
-  documentation, PR description, serial-comma fix, commit-count update, Gap #11 fix and roadmap icon sync commits)
-- **Files Changed:** 20
-- **Insertions:** 637 lines
-- **Deletions:** 157 lines
-- **Net Change:** +480 lines
+- **Total Commits:** 11 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
+  documentation, PR description, serial-comma fix, commit-count update, Gap #11 fix, roadmap icon sync and icon
+  registry sync commits)
+- **Files Changed:** 23
+- **Insertions:** 788 lines
+- **Deletions:** 270 lines
+- **Net Change:** +518 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0

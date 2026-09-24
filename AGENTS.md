@@ -11,8 +11,8 @@ convention; no Claude-Code-specific content is split out from it.
 - [⚙️ Tech Stack](#-tech-stack)
 - [🚀 Build & Run Commands](#-build--run-commands)
 - [🏛️ Architecture](#-architecture)
-- [📚 Documentation Conventions](#-documentation-conventions)
-- [🗂️ Documentation File Map](#-documentation-file-map)
+- [✍️ Documentation Conventions](#-documentation-conventions)
+- [🗺️ Documentation File Map](#-documentation-file-map)
 - [🛤️ Roadmap Planning](#-roadmap-planning)
 - [🧩 Claude Code Skills](#-claude-code-skills)
 - [🧪 Test Conventions](#-test-conventions)
@@ -134,7 +134,7 @@ place; its private helpers, if any, still go after every public method.
 
 ---
 
-## 📚 Documentation Conventions
+## ✍️ Documentation Conventions
 
 ### British English
 
@@ -190,104 +190,112 @@ Every documentation file in this repository follows the same shape:
 
 Every heading listed in a Table of Contents is prefixed with an emoji, and its ToC entry uses the same emoji. Reuse an
 icon already established for a concept rather than inventing a new one; only pick a new emoji when introducing a
-genuinely new concept. Icons already established in this repository's documentation:
+genuinely new concept. This registry is kept in sync with the shared project template's; its core icons apply to any
+project:
 
-| Icon | Concept                           |
-|------|-----------------------------------|
-| 📖   | Introduction / overview           |
-| 🔗   | Repository / links                |
-| ⚙️   | Technology / configuration        |
-| ✨   | Features                          |
-| 🚀   | Instructions / getting started    |
-| 📋   | Prerequisites / policy            |
-| 🔧   | Installation / setup              |
-| 📚   | Documentation                     |
-| 🧪   | Testing                           |
-| 🏛️   | Architecture                      |
-| 📜   | Licence                           |
-| 👤   | Author                            |
-| 🎯   | Theme / system overview           |
-| 🔄   | Changed items / design patterns   |
-| ✅   | Quality attributes / completed    |
-| 🔬   | CI/CD & quality gates             |
-| 🔀   | Data flow / Git workflow          |
-| 📁   | Project / directory structure     |
-| 🏗️   | Layered architecture              |
-| 🌐   | Presentation / API layer          |
-| ⚡   | Service layer                     |
-| 🗄️   | Database / persistence            |
-| 🧬   | Data model / DTOs                 |
-| 📈   | Request-response flow             |
-| 📥   | Inbound / import flow             |
-| 🛤️   | Roadmap                           |
-| ☑️   | Checklist / success criteria      |
-| 📤   | Output                            |
-| 🚢   | Release process                   |
-| 🧩   | Tooling / automation              |
-| 🟡   | Partially completed               |
-| ⚪   | Open / not started                |
-| 🤔   | Reasoning                         |
-| 🔢   | Numbering / sequence              |
-| 🏷️   | Naming convention                 |
-| 🗂️   | Documentation file index          |
-| 🌲   | Evergreen documentation           |
-| ➕   | Added items                       |
-| 🐛   | Bugs / fixed items                |
-| ⚠️   | Deprecated items                  |
-| 🗑️   | Removed items                     |
-| 🔐   | Security                          |
-| 🧾   | Version entry                     |
-| 💬   | Support / contact                 |
-| 🤝   | Contributing guidelines           |
-| 📅   | Timeline                          |
-| 💡   | Philosophy / rationale            |
-| 🎓   | Conclusion                        |
-| 🔍   | Current state / inspection        |
-| ⭐   | Key highlights                    |
-| 📦   | What's new / key changes          |
-| 📊   | Statistics                        |
-| 🧭   | Design notes                      |
-| 🔮   | Future enhancements               |
-| 👥   | Contributors                      |
-| 📝   | Notes                             |
-| 🛡️   | Robustness / validation hardening |
-| 🔓   | Optional / relaxed constraint     |
+| Icon | Concept                                             |
+|------|-----------------------------------------------------|
+| 📖   | Introduction / overview                             |
+| 🔗   | Repository / links                                  |
+| ⚙️   | Technology / configuration                          |
+| 🚀   | Instructions / getting started                      |
+| 🔧   | Installation / setup / technical change             |
+| 📋   | Prerequisites / policy                              |
+| 📁   | Project / directory structure                       |
+| 🎯   | Core concepts / theme overview                      |
+| ✍️   | Content strategy / documentation conventions        |
+| 🛠️   | Development guidelines                              |
+| 👤   | Author / changes by                                 |
+| 🗺️   | Documentation file map                              |
+| 🛤️   | Roadmap                                             |
+| 📚   | Documentation / key learnings                       |
+| 🏛️   | Architecture                                        |
+| 🧪   | Testing / unreleased changes                        |
+| 🔀   | Git workflow                                        |
+| 🔃   | Data flow                                           |
+| 🚢   | Release process                                     |
+| 🌲   | Evergreen documentation                             |
+| 🔍   | Current state / inspection                          |
+| 🔬   | CI/CD & quality gates                               |
+| ☑️   | Checklist                                           |
+| 💬   | Support                                             |
+| ✨   | Features / enhancements                             |
+| 🧾   | Change log / release notes                          |
+| 🐛   | Bug fixes / known issues                            |
+| ➕   | Added items                                         |
+| 🔄   | Changed items                                       |
+| ⚠️   | Deprecated items                                    |
+| 🗑️   | Removed items                                       |
+| 🔐   | Security                                            |
+| 🤝   | Contributing                                        |
+| 📅   | Historical timeline / dates                         |
+| 💡   | Philosophy / insight                                |
+| 🎓   | Conclusion / retrospective                          |
+| 📦   | Dependencies / what's new                           |
+| ⭐   | Key highlights                                      |
+| 📊   | Statistics                                          |
+| 🔮   | Future enhancements                                 |
+| 👥   | Contributors                                        |
+| 📝   | Notes                                               |
+| 🧩   | Tooling / automation                                |
+| 📜   | Licence and documentation                           |
+| ♻️   | General code improvements                           |
+| 💰   | Funding / sponsorship                               |
+| 📤   | Output                                              |
+| 👍   | Recommendation / best practices                     |
+| ✅   | Quality attributes / completed (roadmap gap status) |
+| 🟡   | Partially completed (roadmap gap status)            |
+| ⚪   | Open / not started (roadmap gap status)             |
+| 🧭   | Design notes                                        |
+| 🌳   | Decision tree / quick reference                     |
+| 🏆   | Most popular / prevailing convention                |
+| 🗝️   | Key principles                                      |
+| ⏭️    | Next / upcoming                                     |
+| ⏳   | Later / pending                                     |
+| 🔁   | Ongoing / recurring                                 |
+| 🏷️   | Naming conventions                                  |
+| ⚖️   | Comparison / trade-offs                             |
+| 🤔   | Reasoning                                           |
 
-Icons reserved from the sibling `hpsc-web-vite` repository's registry for concepts specific to that project (a
-Vite/TypeScript frontend) — not used here, kept reserved so they're never accidentally repurposed for an unrelated
-concept in this project:
+The template also defines two optional extension sets for common project shapes. This project is a backend / API
+service, so it uses the first set as established icons of its own:
 
-| Icon | Reserved for (Vite)                          |
-|------|----------------------------------------------|
-| 🧰   | Available scripts / tooling                  |
-| 🛣️   | Routing / navigation                         |
-| ✍️   | Content strategy / documentation conventions |
-| 🎨   | Styling and theming / design                 |
-| 🛠️   | Development guidelines                       |
-| 📐   | Layout structure                             |
-| 🔝   | Header                                       |
-| 📄   | Body / page content                          |
-| ⬇️   | Footer                                       |
-| 📱   | Responsive design                            |
-| 💻   | Technical implementation                     |
-| 🖥️   | User interface                               |
-| ♻️   | General code improvements                    |
-| 💰   | Funding / sponsorship                        |
-| 👍   | Recommendation / best practices              |
-| 🌊   | Global scope / cascading styles              |
-| 🧵   | Shared / cross-feature infrastructure        |
-| 🧱   | Component/layout folder shape                |
-| 🌳   | Decision tree / quick reference              |
-| 🏆   | Most popular / prevailing convention         |
-| 🗝️   | Key principles                               |
-| ⏭️    | Next / upcoming                              |
-| ⏳   | Later / pending                              |
-| 🔁   | Ongoing / recurring                          |
-| ⚖️   | Comparison / trade-offs                      |
+| Icon | Backend / API service (in use here)  |
+|------|--------------------------------------|
+| ⚡   | Service layer                        |
+| 📈   | Request-response flow                |
+| 📥   | Inbound / import flow                |
+| 🔓   | Optional / relaxed constraint        |
+| 🔢   | Numbering / sequence                 |
+| 🗄️   | Database / persistence               |
+| 🛡️   | Robustness / validation hardening    |
+| 🌐   | Presentation / API layer             |
+| 🏗️   | Layered architecture                 |
+| 🧬   | Data model / DTOs                    |
+
+The second set belongs to component-based frontends such as the sibling `hpsc-web-vite` repository — not used here,
+but kept reserved so its icons are never repurposed for an unrelated concept in this project:
+
+| Icon | Reserved for (component-based frontend) |
+|------|-----------------------------------------|
+| 🧰   | Available scripts / tooling             |
+| 🛣️   | Routing / navigation                    |
+| 🗂️   | Feature-based organisation              |
+| 🎨   | Styling and theming / design            |
+| 📐   | Layout structure                        |
+| 🔝   | Header                                  |
+| 📄   | Body / page content                     |
+| ⬇️   | Footer                                  |
+| 📱   | Responsive design                       |
+| 💻   | Technical implementation                |
+| 🖥️   | User interface                          |
+| 🌊   | Global scope / cascading styles         |
+| 🧵   | Shared / cross-feature infrastructure   |
+| 🧱   | Component/layout folder shape           |
 
 ---
 
-## 🗂️ Documentation File Map
+## 🗺️ Documentation File Map
 
 Root-level documentation, and the goal of each file (see README.md's own [📚 Documentation](README.md#-documentation)
 section — README.md is the canonical version if the two ever drift). Of these, this file is the ultimate source of

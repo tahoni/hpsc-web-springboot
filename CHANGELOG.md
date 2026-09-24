@@ -73,7 +73,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x Releases)" and "Bulk match processing capabilities"
   dropped as delivered by v8.3.0's bulk CSV import
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
-  this same release — "📋 At a Glance" counts, the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria"
+  this same release — "🌳 At a Glance" counts, the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria"
   updated to match; the tasks file's intro gap count raised from "ten" to "eleven"
 
 ##### Tooling
@@ -87,9 +87,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
-- **`AGENTS.md`'s icon registry:** `🛤️` now marks Roadmap (replacing `🗺️`) and `☑️` marks Checklist / success
-  criteria, both moved out of the table of icons reserved for `hpsc-web-vite` — synced with the shared project
-  template, which standardised on them so `✅` stays reserved for completed status
+- **`AGENTS.md`'s icon registry:** Restructured to match the shared project template's — its core icon table
+  verbatim, then the template's backend / API service extension set as this project's own established icons and
+  its component-based frontend set kept reserved (as used by `hpsc-web-vite`). Notable moves: `🛤️` now marks
+  Roadmap (replacing `🗺️`, which now marks the Documentation file map) and `☑️` marks Checklist, so `✅` stays
+  reserved for completed status; `🔃` splits Data flow off `🔀` (now Git workflow only); `🧭` takes design patterns
+  off `🔄` (now changed items only); `✍️`/`🛠️`/`♻️`/`💰`/`👍`/`🌳`/`🏆`/`🗝️`/`⏭️`/`⏳`/`🔁`/`⚖️` move from reserved to
+  core; `🗂️` moves from "Documentation file index" to reserved (frontend feature-based organisation)
+- **`AGENTS.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `improvement-plan.md`, `documentation/recommendations/`:**
+  Headings realigned with the new registry — Documentation Conventions `📚` → `✍️`, Documentation File Map
+  `🗂️` → `🗺️`, Key Design Patterns `🔄` → `🧭`, Data Flow `🔀` → `🔃`, Development Guidelines `📚` → `🛠️`, Getting
+  Started `🔧` → `🚀`, At a Glance `📋` → `🌳` and Related Documentation `📚` → `🔗`
 - **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `HISTORY.md`, `improvement-plan.md`:** "Roadmap Planning",
   "Roadmap", "Future Roadmap Implications" and "Success Criteria" headings and their Table of Contents entries
   switched to `🛤️`/`☑️` to match; earlier `CHANGELOG.md`/history entries keep the icons they were written with

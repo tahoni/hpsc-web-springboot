@@ -10,12 +10,12 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 ## Table of Contents
 
 - [📋 Prerequisites](#-prerequisites)
-- [🔧 Getting Started](#-getting-started)
+- [🚀 Getting Started](#-getting-started)
 - [🗄️ Database Profiles](#-database-profiles)
 - [🧪 Running Tests](#-running-tests)
 - [🏛️ Architecture at a Glance](#-architecture-at-a-glance)
 - [🧩 Claude Code Skills](#-claude-code-skills)
-- [📚 Documentation Conventions](#-documentation-conventions)
+- [✍️ Documentation Conventions](#-documentation-conventions)
 - [🛤️ Roadmap](#-roadmap)
 - [🔀 Git & PR Workflow](#-git--pr-workflow)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
@@ -34,7 +34,7 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 
 ---
 
-## 🔧 Getting Started
+## 🚀 Getting Started
 
 1. **Clone the repository**:
    ```bash
@@ -161,7 +161,7 @@ here — but they save re-deriving the same procedure each time.
 
 ---
 
-## 📚 Documentation Conventions
+## ✍️ Documentation Conventions
 
 Full conventions live in [`AGENTS.md`'s Documentation Conventions section](AGENTS.md#-documentation-conventions) —
 read it before writing or editing any documentation in this repository. Highlights:

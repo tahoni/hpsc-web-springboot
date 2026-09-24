@@ -44,6 +44,10 @@ evolution of architecture, features and design philosophy across all versions.
 - Roadmap icons synced with the shared project template: `🛤️` now marks Roadmap (replacing `🗺️`) and `☑️` marks
   Success Criteria across `AGENTS.md`'s registry and every live Roadmap heading, and `improvement-plan.md`/
   `improvement-plan-tasks.md` pick up the template's generic structure notes
+- `AGENTS.md`'s whole icon registry restructured to mirror the template's — its core icons, its backend / API
+  service set as this project's own and its frontend set kept reserved — with every live heading realigned to
+  match (Documentation Conventions `✍️`, Documentation File Map `🗺️`, Key Design Patterns `🧭`, Data Flow `🔃`,
+  Development Guidelines `🛠️`, Getting Started `🚀`, At a Glance `🌳`, Related Documentation `🔗`)
 - Minor table column realignment in `AGENTS.md`'s skills table and `README.md`'s Documentation table
 - This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
   behaviour change), so it was scoped as `v8.6.2` **PATCH**, matching the precedent set by v8.4.1/v8.4.2/v8.5.1/

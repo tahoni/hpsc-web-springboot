@@ -2090,6 +2090,11 @@ forward-looking roadmap lists — no domain-model, API or test-behaviour change.
 - `improvement-plan.md`/`improvement-plan-tasks.md` synced with the shared project template's structure: project
   title, a note on the four kinds of gap an audit looks for, a fuller Related Documentation list, a note on
   annotating checked task items, and no more hard-coded gap count in the tasks file's intro
+- The rest of `AGENTS.md`'s icon registry then followed: restructured to mirror the template's core table, with
+  its backend / API service extension set adopted as this project's own and its component-based frontend set kept
+  reserved, and every live heading realigned to match — Documentation Conventions (`✍️`), Documentation File Map
+  (`🗺️`), Key Design Patterns (`🧭`), Data Flow (`🔃`), Development Guidelines (`🛠️`), Getting Started (`🚀`), At a
+  Glance (`🌳`) and Related Documentation (`🔗`)
 
 **Formatting**
 

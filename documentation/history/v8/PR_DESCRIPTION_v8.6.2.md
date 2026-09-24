@@ -19,8 +19,9 @@
   `sync-unreleased-changes` skills; `generate-commit-message` also notes that security fixes belong under
   `#### 🔐 Security`. `HISTORY.md`'s Future Roadmap lists refreshed and Gap #11 recorded/closed in
   `improvement-plan.md`/`improvement-plan-tasks.md`.
-- **Changed:** Roadmap and Success Criteria headings switched to `🛤️`/`☑️` across `AGENTS.md`'s icon registry, the
-  live docs and the two improvement-plan skills, and the roadmap files synced with the template's structure.
+- **Changed:** `AGENTS.md`'s icon registry restructured to mirror the template's (core icons plus its backend set,
+  frontend set reserved) and every live heading realigned with it — including Roadmap/Success Criteria (`🛤️`/`☑️`)
+  across the docs and the two improvement-plan skills; the roadmap files synced with the template's structure.
 - No `Added`/`Deprecated`/`Removed`/`Security` changes this release — see `CHANGELOG.md`'s `[8.6.2]`
   section for the full itemised list.
 

@@ -12,7 +12,7 @@ should be revisited whenever a major gap it names is closed or a new one is iden
 - [🔍 Gaps & Improvement Opportunities](#-gaps--improvement-opportunities)
 - [🛤️ Roadmap](#-roadmap)
 - [☑️ Success Criteria](#-success-criteria)
-- [📚 Related Documentation](#-related-documentation)
+- [🔗 Related Documentation](#-related-documentation)
 
 ---
 
@@ -62,7 +62,7 @@ Within each section, gaps stay in ascending number order.
 Each gap looks for one of four things: a stated-but-unbuilt goal, a doc-vs-doc or doc-vs-code disagreement, a stale
 number or a newly met precondition on an existing gap — see the `update-improvement-plan-gaps` skill.
 
-### 📋 At a Glance
+### 🌳 At a Glance
 
 - **✅ Completed (10):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
@@ -494,7 +494,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ---
 
-## 📚 Related Documentation
+## 🔗 Related Documentation
 
 See `README.md`'s [📚 Documentation](/README.md#-documentation) section for the full documentation map. Most relevant to
 this plan:
