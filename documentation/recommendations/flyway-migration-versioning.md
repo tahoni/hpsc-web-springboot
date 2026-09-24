@@ -10,7 +10,7 @@ reasoning behind it and gives concrete guidance for authoring the next migration
 - [🤔 Why Keep It Independent](#-why-keep-it-independent)
 - [🔢 Choosing the Next Version](#-choosing-the-next-version)
 - [🔍 Current State in This Codebase](#-current-state-in-this-codebase)
-- [📚 Related Documentation](#-related-documentation)
+- [🔗 Related Documentation](#-related-documentation)
 
 ---
 
@@ -70,7 +70,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 
 ---
 
-## 📚 Related Documentation
+## 🔗 Related Documentation
 
 - [`AGENTS.md`](/AGENTS.md) — the Tech Stack section's short factual note on this convention, and the Release
   Checklist these migrations ship alongside.

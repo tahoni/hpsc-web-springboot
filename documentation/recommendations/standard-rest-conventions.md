@@ -11,7 +11,7 @@ controllers converge on one consistent style rather than each reinventing it.
 - [🔗 Endpoint (URL) Naming](#-endpoint-url-naming)
 - [🏷️ Method Naming](#-method-naming)
 - [🔍 Current State in This Codebase](#-current-state-in-this-codebase)
-- [📚 Related Documentation](#-related-documentation)
+- [🔗 Related Documentation](#-related-documentation)
 
 ---
 
@@ -76,7 +76,7 @@ its default), while `PATCH` applies only the fields the client actually sent, le
 
 ---
 
-## 📚 Related Documentation
+## 🔗 Related Documentation
 
 - [`AGENTS.md`](/AGENTS.md) — cross-tool conventions (documentation, git workflow, testing) this document sits
   alongside but doesn't duplicate.

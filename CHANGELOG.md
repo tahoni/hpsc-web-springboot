@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.6.1](#-861---2026-09-23) ← Current
+- [🧾 Version 8.6.2](#-862---2026-09-24) ← Current
+- [🧾 Version 8.6.1](#-861---2026-09-23)
 - [🧾 Version 8.6.0](#-860---2026-09-23)
 - [🧾 Version 8.5.1](#-851---2026-09-13)
 - [🧾 Version 8.5.0](#-850---2026-09-04)
@@ -55,6 +56,63 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.6.2] - 2026-09-24
+
+#### 🔄 Changed
+
+##### Documentation
+
+- **`AGENTS.md`'s icon registry:** Restructured to match the shared project template's — its core icon table
+  verbatim, then the template's backend / API service extension set as this project's own established icons and
+  its component-based frontend set kept reserved (as used by `hpsc-web-vite`). Notable moves: `🛤️` now marks
+  Roadmap (replacing `🗺️`, which now marks the Documentation file map) and `☑️` marks Checklist, so `✅` stays
+  reserved for completed status; `🔃` splits Data flow off `🔀` (now Git workflow only); `🧭` takes design patterns
+  off `🔄` (now changed items only); `✍️`/`🛠️`/`♻️`/`💰`/`👍`/`🌳`/`🏆`/`🗝️`/`⏭️`/`⏳`/`🔁`/`⚖️` move from reserved to
+  core; `🗂️` moves from "Documentation file index" to reserved (frontend feature-based organisation); `🧭`'s
+  concept widened to "Design notes / design patterns" to name its Key Design Patterns use
+- **`AGENTS.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `improvement-plan.md`, `documentation/recommendations/`:**
+  Headings realigned with the new registry — Documentation Conventions `📚` → `✍️`, Documentation File Map
+  `🗂️` → `🗺️`, Key Design Patterns `🔄` → `🧭`, Data Flow `🔀` → `🔃`, Development Guidelines `📚` → `🛠️`, Getting
+  Started `🔧` → `🚀`, At a Glance `📋` → `🌳` and Related Documentation `📚` → `🔗`
+- **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `HISTORY.md`, `improvement-plan.md`:** "Roadmap Planning",
+  "Roadmap", "Future Roadmap Implications" and "Success Criteria" headings and their Table of Contents entries
+  switched to `🛤️`/`☑️` to match; earlier `CHANGELOG.md`/history entries keep the icons they were written with
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Synced with the template's roadmap structure — title
+  now "HPSC Website Backend Improvement Plan", a new note on the four kinds of gap an audit looks for, a fuller
+  Related Documentation list (adding `CONTRIBUTING.md` and `improvement-plan-tasks.md`), and a note on annotating
+  checked task items; the tasks file's intro no longer states a gap count that drifts with every new gap
+
+##### Tooling
+
+- **`sync-improvement-plan-gaps`, `update-improvement-plan-gaps` skills:** Stale `🚀 Roadmap`/`🚀 Future Roadmap
+  Implications`/`✅ Success Criteria` references updated to `🛤️`/`☑️`
+
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`:** `CHANGELOG.md` heading references corrected from `## 🧪 [Unreleased]`/
+  `## 🧾 [X.Y.Z]` to the `### 🧪 [Unreleased]`/`### 🧾 [X.Y.Z]` depth the file actually uses. `AGENTS.md`'s Git
+  Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
+  bold-lead-in bullet style — reverse-synced from the shared project template
+- **`HISTORY.md`:** "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
+  actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half
+  (the `club` table was already seeded in v8.4.0), `ShooterLogEntry` renamed to `ShooterLogCompetitor`,
+  "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x Releases)" and "Bulk match processing capabilities"
+  dropped as delivered by v8.3.0's bulk CSV import
+- **`CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form
+  ("prose, comments and Javadoc") instead of showing the forbidden one ("prose, comments, and Javadoc")
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
+  this same release — "🌳 At a Glance" counts, the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria"
+  updated to match
+
+##### Tooling
+
+- **`generate-commit-message`, `prep-version-release`, `scaffold-unit-tests`, `scaffold-integration-tests`,
+  `sync-unreleased-changes` skills:** Category and Area heading depths corrected from `###`/`####` to the
+  `####`/`#####` levels `CHANGELOG.md` actually uses; `generate-commit-message` also notes that security-relevant
+  fixes belong under `#### 🔐 Security`
 
 ### 🧾 [8.6.1] - 2026-09-23
 

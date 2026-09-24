@@ -15,15 +15,15 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     - [🧬 Model Layer](#-4-model-layer-zacohpscwebmodels)
     - [🔧 Support Layers](#-5-support-layers)
     - [🛡️ Exception and Error Handling](#-6-exception-and-error-handling-zacohpscwebexceptions)
-- [🔄 Key Design Patterns](#-key-design-patterns)
-- [🔀 Data Flow](#-data-flow)
+- [🧭 Key Design Patterns](#-key-design-patterns)
+- [🔃 Data Flow](#-data-flow)
     - [📈 Typical Request-Response Flow](#-typical-request-response-flow)
     - [📥 Award / Image CSV Processing Flow](#-award--image-csv-processing-flow)
     - [📥 Competitor Bulk CSV Import Flow](#-competitor-bulk-csv-import-flow)
     - [📥 Match Bulk CSV Import Flow](#-match-bulk-csv-import-flow)
 - [✅ Quality Attributes](#-quality-attributes)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
-- [📚 Development Guidelines](#-development-guidelines)
+- [🛠️ Development Guidelines](#-development-guidelines)
 
 ---
 
@@ -287,7 +287,7 @@ response. Structured logging is applied in every handler — do not catch and re
 
 ---
 
-## 🔄 Key Design Patterns
+## 🧭 Key Design Patterns
 
 | Pattern                   | Where Used                                                                                          |
 |---------------------------|-----------------------------------------------------------------------------------------------------|
@@ -301,7 +301,7 @@ response. Structured logging is applied in every handler — do not catch and re
 
 ---
 
-## 🔀 Data Flow
+## 🔃 Data Flow
 
 ### 📈 Typical Request-Response Flow
 
@@ -394,7 +394,7 @@ Client uploads CSV (Content-Type: text/csv)
 
 ---
 
-## 📚 Development Guidelines
+## 🛠️ Development Guidelines
 
 Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
 commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section

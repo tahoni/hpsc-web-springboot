@@ -72,7 +72,7 @@ Before drafting, run these yourself and read their output:
    header and a **Progress:** paragraph describing what changed and what's still outstanding — matching the tone of
    this plan's existing Progress/Outcome notes — then move the whole block into "🟡 Partially Completed" (replacing
    its "*No gaps are currently partially completed*" placeholder text if it's currently empty).
-6. **Update the "⚙️ Goals & Constraints" table, the "🚀 Roadmap" table, and the "✅ Success Criteria" list** in
+6. **Update the "⚙️ Goals & Constraints" table, the "🛤️ Roadmap" table and the "☑️ Success Criteria" list** in
    `improvement-plan.md` wherever a status change above affects them (e.g. a gap moving out of the Now/Next phase, or
    a Success Criteria bullet becoming met); these drift out of sync with the gap list if touched inconsistently.
 7. **Never add a new gap number.** If the diff reveals something that looks like a genuinely new, previously untracked

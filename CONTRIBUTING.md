@@ -10,13 +10,13 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 ## Table of Contents
 
 - [📋 Prerequisites](#-prerequisites)
-- [🔧 Getting Started](#-getting-started)
+- [🚀 Getting Started](#-getting-started)
 - [🗄️ Database Profiles](#-database-profiles)
 - [🧪 Running Tests](#-running-tests)
 - [🏛️ Architecture at a Glance](#-architecture-at-a-glance)
 - [🧩 Claude Code Skills](#-claude-code-skills)
-- [📚 Documentation Conventions](#-documentation-conventions)
-- [🗺️ Roadmap](#-roadmap)
+- [✍️ Documentation Conventions](#-documentation-conventions)
+- [🛤️ Roadmap](#-roadmap)
 - [🔀 Git & PR Workflow](#-git--pr-workflow)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [🚢 Cutting a Release](#-cutting-a-release)
@@ -34,7 +34,7 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 
 ---
 
-## 🔧 Getting Started
+## 🚀 Getting Started
 
 1. **Clone the repository**:
    ```bash
@@ -161,7 +161,7 @@ here — but they save re-deriving the same procedure each time.
 
 ---
 
-## 📚 Documentation Conventions
+## ✍️ Documentation Conventions
 
 Full conventions live in [`AGENTS.md`'s Documentation Conventions section](AGENTS.md#-documentation-conventions) —
 read it before writing or editing any documentation in this repository. Highlights:
@@ -169,7 +169,7 @@ read it before writing or editing any documentation in this repository. Highligh
 - **British English** spelling throughout prose, comments and Javadoc (e.g. "licence", "colour", "initialise") — see
   [`AGENTS.md`'s list of exceptions](AGENTS.md#british-english) for legal boilerplate and third-party names.
 - **No comma before the final `and`/`or`** in a list of three or more items (e.g. "prose, comments and Javadoc", not
-  "prose, comments and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
+  "prose, comments, and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
   [`AGENTS.md`'s Line wrapping rule](AGENTS.md#line-wrapping).
 - Every `##` heading gets a matching emoji, reused from the
@@ -177,7 +177,7 @@ read it before writing or editing any documentation in this repository. Highligh
 - **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't
   duplicate an interface method's Javadoc on its implementation unless the implementation adds behaviour the
   interface doesn't already describe — see [`AGENTS.md`'s Javadoc rule](AGENTS.md#javadoc) for the full requirements.
-- Update `CHANGELOG.md`'s `## 🧪 [Unreleased]` section in the **same change** that makes the change it documents —
+- Update `CHANGELOG.md`'s `### 🧪 [Unreleased]` section in the **same change** that makes the change it documents —
   don't batch changelog updates into a later PR; see [`AGENTS.md`'s Git Workflow Conventions](AGENTS.md#conventions).
 - `README.md` and `ARCHITECTURE.md` are evergreen — no version numbers, no counts that drift as the codebase grows. When
   updating `RELEASE_NOTES.md`, `HISTORY.md` or `CHANGELOG.md`, check whether `README.md`/`ARCHITECTURE.md` need the same
@@ -186,7 +186,7 @@ read it before writing or editing any documentation in this repository. Highligh
 
 ---
 
-## 🗺️ Roadmap
+## 🛤️ Roadmap
 
 Full detail lives in [`AGENTS.md`'s Roadmap Planning section](AGENTS.md#-roadmap-planning). Highlights:
 
