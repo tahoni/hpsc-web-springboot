@@ -119,10 +119,12 @@ public interface IpscCompetitorService {
      * <p>
      * A competitor is only deleted while nothing else references them: one with recorded
      * match results or shooter logs is refused rather than deleted along with that history.
+     * This also holds if another request adds such a reference while the delete is in progress.
      * </p>
      *
      * @param competitorId the identifier of the competitor to delete.
-     * @throws ValidationException if the competitor still has match results or shooter logs.
+     * @throws ValidationException if the competitor still has match results or shooter logs, or
+     *                             is otherwise still referenced when the delete is flushed.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists.
      */
     void deleteCompetitor(Long competitorId) throws ValidationException, NonFatalException;

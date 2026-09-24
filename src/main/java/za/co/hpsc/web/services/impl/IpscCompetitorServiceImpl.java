@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -173,7 +174,15 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                     + " cannot be deleted: they have shooter logs.");
         }
 
-        competitorRepository.delete(competitor);
+        // Flushed here rather than at commit, so a reference added by another transaction since
+        // the checks above surfaces inside this method and is reported as a 400, not a 500.
+        try {
+            competitorRepository.delete(competitor);
+            competitorRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException("Competitor with ID " + competitorId
+                    + " cannot be deleted: it is referenced by other records.", e);
+        }
     }
 
     /**

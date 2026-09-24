@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
@@ -420,6 +421,21 @@ public class IpscCompetitorServiceTest {
 
         // Assert
         verify(competitorRepository).delete(competitor);
+        verify(competitorRepository).flush();
+    }
+
+    @Test
+    void testDeleteCompetitor_whenReferenceAddedBeforeFlush_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(false);
+        doThrow(new DataIntegrityViolationException("FK violation")).when(competitorRepository).flush();
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscCompetitorService.deleteCompetitor(1L));
+        assertInstanceOf(DataIntegrityViolationException.class, exception.getCause());
     }
 
     // getAllCompetitors()
