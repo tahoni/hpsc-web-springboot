@@ -1996,7 +1996,7 @@ A domain correction release: adds a nullable `url` field to `IpscMatch`, correct
 
 ---
 
-### Phase 31: documentation/history/ Reorganization & Evolution Overview Split (v8.6.1)
+### Phase 31: documentation/history/ Reorganisation & Evolution Overview Split (v8.6.1)
 
 **Duration:** September 23, 2026
 
@@ -2013,7 +2013,7 @@ paths — no domain-model, API or test-behaviour change.
   4,095 lines. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its Table of Contents
   entry still resolves; every other section stays in `HISTORY.md` unchanged
 
-**documentation/history/ Reorganization**
+**documentation/history/ Reorganisation**
 
 - All 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files regrouped from a flat
   `documentation/history/` directory into `v1/` – `v8/` subdirectories by major version, moved with `git mv` to

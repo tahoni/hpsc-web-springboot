@@ -83,7 +83,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ### Version 8.6.1 (September 23, 2026)
 
-**Theme:** `documentation/history/` Reorganization & Evolution Overview Split
+**Theme:** `documentation/history/` Reorganisation & Evolution Overview Split
 
 **Key Focus:**
 
