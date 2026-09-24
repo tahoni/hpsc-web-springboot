@@ -65,8 +65,8 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 
 ## 📊 Statistics
 
-- **Total Commits:** 6 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
-  documentation and PR description commits)
+- **Total Commits:** 8 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
+  documentation, PR description, serial-comma fix and commit-count update commits)
 - **Files Changed:** 18
 - **Insertions:** 461 lines
 - **Deletions:** 128 lines
