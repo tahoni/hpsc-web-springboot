@@ -147,7 +147,7 @@ To keep `8081`, set `server.port=8081` in an environment-specific properties fil
 ## 📊 Statistics
 
 - **Total Commits:** 13 (7 feature commits — stage delimiter, springdoc/REST Docs, port, eager fetching,
-  springdoc BOM, competitor listing endpoint and `getAllMatches` schema fix — plus this release's Gap #12,
+  springdoc BOM, competitor-listing endpoint and `getAllMatches` schema fix — plus this release's Gap #12,
   `HELP.md`, `ARCHITECTURE.md` tree, version bump, release documentation and PR description commits)
 - **Files Changed:** 36
 - **Insertions:** 893 lines

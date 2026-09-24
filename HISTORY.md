@@ -1113,7 +1113,7 @@ in v8.5.0, while formalising an already-established test convention in the proje
 
 ---
 
-### Milestone 31: documentation/history/ Reorganization & Evolution Overview Split (v8.6.1)
+### Milestone 31: documentation/history/ Reorganisation & Evolution Overview Split (v8.6.1)
 
 - `HISTORY.md`'s "📖 Evolution Overview" section split out into new `documentation/history/EVOLUTION_OVERVIEW.md`,
   roughly halving `HISTORY.md`'s size; `HISTORY.md` keeps a short pointer under the same heading/anchor

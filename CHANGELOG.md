@@ -94,7 +94,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
   Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
 - **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's
-  **Next** row points at it instead of the "no items currently scoped" placeholder, and "☑️ Success Criteria" gains
+  **Next** row points at it instead of the "no items currently scoped" placeholder and "☑️ Success Criteria" gains
   a matching bullet
 
 ##### Domain
@@ -539,7 +539,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   complete one — the duplicate heading text meant GitHub suffixed the second heading's anchor, so the Table of
   Contents' "Version 5.0.0" link only ever reached the incomplete copy
 - **`documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md`:** Five archived
-  sub-headings reused an already-registered icon for an unrelated concept — `📂`→`📁` (Project/directory
+  subheadings reused an already-registered icon for an unrelated concept — `📂`→`📁` (Project/directory
   structure), `📅`→`🔢` (collided with Timeline; the heading is actually about numbering), `🔒`→`🔐`
   (Security), `👤`→`🧬` (collided with Author; the heading is actually about a domain enum/DTO), `📈`→`🧪`
   (collided with Request-response flow; the heading is actually about test coverage)

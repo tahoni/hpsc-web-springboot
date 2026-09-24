@@ -464,7 +464,7 @@ existing `getAllMatches` collection endpoint and not mentioning `IpscCompetitorC
 `getAllCompetitors`) now follows the same pattern.
 
 **Why it matters:** A client reading `README.md` or `ARCHITECTURE.md` expects to be able to remove a competitor
-or match created by mistake, for example a bad bulk CSV import row, and there is no API path to do so short of
+or match created by mistake, for example, a bad bulk CSV import row, and there is no API path to do so short of
 editing the database directly. The REST conventions document is meant to be the worked
 example for new controllers, so an incomplete "full pattern" there spreads to whatever controller is built next
 (Gap #6's scoring/shooter-log layer).
