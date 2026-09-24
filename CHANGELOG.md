@@ -101,6 +101,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   moved to ✅ Completed; "🌳 At a Glance", the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria" updated
   to match
 
+##### Build & Metadata
+
+- Project version bumped to **8.8.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
 ### 🧾 [8.7.0] - 2026-09-24
 
 #### ➕ Added
