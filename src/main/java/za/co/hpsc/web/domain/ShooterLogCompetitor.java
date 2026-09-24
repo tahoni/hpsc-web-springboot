@@ -20,15 +20,15 @@ public class ShooterLogCompetitor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shooter_log_id", nullable = false)
     private ShooterLog shooterLog;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "match_competitor_id", nullable = false)
     private MatchCompetitor matchCompetitor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "match_id", nullable = false)
     private IpscMatch match;
 

@@ -2,6 +2,7 @@ package za.co.hpsc.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -116,7 +117,7 @@ public class IpscMatchController {
                             schema = @Schema(implementation = MatchRequestForCSV.class),
                             examples = @ExampleObject("""
                                     MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                                    yyyy-MM-dd,string,string,string,string,1-Stage 1;2-Stage 2,HH:mm,HH:mm,string
+                                    yyyy-MM-dd,string,string,string,string,1:Stage 1;2:Stage 2,HH:mm,HH:mm,string
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, NonFatalException, FatalException {
@@ -229,7 +230,7 @@ public class IpscMatchController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Matches retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = MatchResponse.class)))
+                            array = @ArraySchema(schema = @Schema(implementation = MatchResponse.class))))
     })
     ResponseEntity<List<MatchResponse>> getAllMatches() {
         return ResponseEntity.ok(ipscMatchService.getAllMatches());

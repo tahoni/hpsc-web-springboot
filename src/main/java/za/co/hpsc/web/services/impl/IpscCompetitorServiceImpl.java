@@ -144,6 +144,13 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         return toResponse(findCompetitorOrThrow(competitorId));
     }
 
+    @Override
+    public List<CompetitorResponse> getAllCompetitors() {
+        return competitorRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     /**
      * Reads competitor data from a CSV-formatted string and converts it into a list of
      * {@link CompetitorRequestForCSV} objects.

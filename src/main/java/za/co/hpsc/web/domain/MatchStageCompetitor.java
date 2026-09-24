@@ -20,11 +20,11 @@ public class MatchStageCompetitor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "match_competitor_id", nullable = false)
     private MatchCompetitor matchCompetitor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "match_stage_id", nullable = false)
     private IpscMatchStage matchStage;
 

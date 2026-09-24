@@ -283,7 +283,7 @@ public class IpscMatchServiceTest {
         stubStageSaveAssignsIncrementingId();
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                2026-09-12,Club Championship,Test Club,%s,%s,1-Stage One;2-Stage Two
+                2026-09-12,Club Championship,Test Club,%s,%s,1:Stage One;2:Stage Two
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
         // Act
@@ -361,7 +361,7 @@ public class IpscMatchServiceTest {
 
     @Test
     void testCreateMatches_whenRowStagesEntryIsMalformed_thenThrowsValidationException() {
-        // Arrange - a stages entry without a "-" separator can't be split into <stageNumber>-<stageName>
+        // Arrange - a stages entry without a ":" separator can't be split into <stageNumber>:<stageName>
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,Club Championship,Test Club,%s,%s,StageWithoutSeparator
@@ -376,7 +376,7 @@ public class IpscMatchServiceTest {
         // Arrange
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                2026-09-12,Club Championship,Test Club,%s,%s,X-Stage One
+                2026-09-12,Club Championship,Test Club,%s,%s,X:Stage One
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
         // Act & Assert

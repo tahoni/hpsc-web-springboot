@@ -29,8 +29,8 @@ HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shootin
 match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this is a pure API
 server.
 
-- **Port / context path:** `8081` / `/hpsc-web`
-- **API docs:** Swagger UI at `http://localhost:8081/hpsc-web/swagger-ui/index.html`
+- **Port / context path:** `8080` / `/hpsc-web`
+- **API docs:** Swagger UI at `http://localhost:8080/hpsc-web/swagger-ui/index.html`
 
 ---
 

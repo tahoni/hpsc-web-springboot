@@ -1996,7 +1996,7 @@ A domain correction release: adds a nullable `url` field to `IpscMatch`, correct
 
 ---
 
-### Phase 31: documentation/history/ Reorganization & Evolution Overview Split (v8.6.1)
+### Phase 31: documentation/history/ Reorganisation & Evolution Overview Split (v8.6.1)
 
 **Duration:** September 23, 2026
 
@@ -2013,7 +2013,7 @@ paths — no domain-model, API or test-behaviour change.
   4,095 lines. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its Table of Contents
   entry still resolves; every other section stays in `HISTORY.md` unchanged
 
-**documentation/history/ Reorganization**
+**documentation/history/ Reorganisation**
 
 - All 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files regrouped from a flat
   `documentation/history/` directory into `v1/` – `v8/` subdirectories by major version, moved with `git mv` to
@@ -2123,6 +2123,83 @@ test-behaviour change.
 
 - No test changes — this release touches only Markdown documentation, seven Claude Code skill files and version
   metadata
+
+---
+
+### Phase 33: Competitor Listing Endpoint, Stage Delimiter Change & Dependency Clean-up (v8.7.0)
+
+**Duration:** September 24, 2026
+
+A minor feature release: adds a collection endpoint listing every competitor, changes the match CSV's stage
+delimiter from `-` to `:`, switches the domain's `@ManyToOne` associations to eager fetching, moves the app to
+Spring Boot's default port and brings springdoc onto its Spring Boot 4 line.
+
+**Key Accomplishments:**
+
+**Competitor Listing Endpoint**
+
+- New `IpscCompetitorController.getAllCompetitors` (`GET /ipsc/competitors`), backed by
+  `IpscCompetitorService.getAllCompetitors`, returns every competitor as a JSON array of `CompetitorResponse`s,
+  or an empty array when there are none — the collection counterpart to `GET /{competitorId}`, mirroring
+  `IpscMatchController.getAllMatches`
+- Its Swagger `200` response is documented as an array via `@ArraySchema`; `getAllMatches`' response, which
+  described a single `MatchResponse`, was corrected the same way
+
+**Stage Delimiter Change**
+
+- `IpscMatchServiceImpl.parseStages` now splits each `Stages` entry on its first `:` instead of `-` (e.g.
+  `"1:Stage One;2:Stage Two"`), so stage names may still contain a `:`; entries in the old `1-Stage One` form are
+  rejected with a `ValidationException` — existing CSV templates and API clients need updating
+- `IpscMatchController`'s bulk CSV Swagger example, `MatchRequestForCSV`'s Javadoc and the roadmap documents
+  updated to the `<stageNumber>:<stageName>` format
+
+**Eager Association Fetching**
+
+- Every `@ManyToOne` on `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`,
+  `ShooterLog` and `ShooterLogCompetitor` switched from `FetchType.LAZY` to `FetchType.EAGER`, so referenced
+  entities load together with their owner rather than on first access
+
+**Configuration**
+
+- `server.port=8081` removed from `application.properties`, so the app now runs on Spring Boot's default port
+  `8080`; `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` updated to the new app, Swagger UI and
+  OpenAPI URLs
+
+**Dependency Clean-up**
+
+- `springdoc-openapi-starter-webmvc-ui` bumped from `2.8.5` to `3.1.0`, with its version now managed by an
+  imported `springdoc-openapi-bom` in a new `<dependencyManagement>` section, since Spring Boot's parent doesn't
+  manage springdoc
+- The unused `spring-restdocs-mockmvc` test dependency removed, together with the Spring REST Docs mentions in
+  `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists and `HELP.md`'s reference links
+
+**Roadmap**
+
+- New Gap #12 recorded in `documentation/roadmap/improvement-plan.md`: competitors and matches are documented as
+  "full CRUD", yet neither domain has a delete operation — now the roadmap's **Next** item
+- `ARCHITECTURE.md`'s Project Structure tree re-verified against disk per the Release Checklist, correcting stale
+  `documentation/history/`, `documentation/roadmap/` and test-tier comments and adding the missing `banner.txt`
+
+**Build & Metadata**
+
+- Project version bumped to 8.7.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- No structural architectural change — the new endpoint follows the existing Controller → Service → Repository
+  pattern, and the fetch-type switch changes only when referenced entities are loaded
+
+**Technical Focus:**
+
+- API completeness for the competitor domain's read operations
+- Accurate OpenAPI documentation of collection responses
+- Keeping documentation-tooling dependencies on lines built for the current Spring Boot major version
+
+**Test Coverage:**
+
+- New `getAllCompetitors` tests across `IpscCompetitorControllerTest`, `IpscCompetitorServiceTest` and
+  `IpscCompetitorServiceIntegrationTest`; `IpscMatchServiceImplTest`, `IpscMatchServiceTest`,
+  `MatchRequestForCSVTest` and `IpscMatchControllerTest` fixtures moved to the `:` stage delimiter
 
 ---
 

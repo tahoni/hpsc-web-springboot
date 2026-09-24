@@ -2,6 +2,7 @@ package za.co.hpsc.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,11 +24,14 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
+import java.util.List;
+
 /**
  * Controller responsible for handling IPSC competitor CRUD API endpoints.
  *
  * <p>
- * Provides endpoints for creating, fully or partially updating and retrieving IPSC competitors.
+ * Provides endpoints for creating, fully or partially updating and retrieving IPSC competitors,
+ * individually or all at once.
  * </p>
  *
  * @since 8.0.0
@@ -215,5 +219,21 @@ public class IpscCompetitorController {
             @Parameter(description = "Identifier of the competitor to retrieve.") @PathVariable Long competitorId)
             throws NonFatalException {
         return ResponseEntity.ok(ipscCompetitorService.getCompetitor(competitorId));
+    }
+
+    /**
+     * Retrieves every IPSC competitor.
+     *
+     * @return the list of {@link CompetitorResponse}.
+     */
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get all competitors", description = "Retrieve every IPSC competitor.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Competitors retrieved.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = CompetitorResponse.class))))
+    })
+    ResponseEntity<List<CompetitorResponse>> getAllCompetitors() {
+        return ResponseEntity.ok(ipscCompetitorService.getAllCompetitors());
     }
 }

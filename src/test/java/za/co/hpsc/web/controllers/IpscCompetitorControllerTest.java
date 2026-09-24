@@ -164,6 +164,34 @@ class IpscCompetitorControllerTest {
         assertThrows(FatalException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
     }
 
+    // getAllCompetitors()
+    @Test
+    void testGetAllCompetitors_whenServiceSucceeds_thenReturns200() {
+        // Arrange
+        List<CompetitorResponse> response = List.of(new CompetitorResponse());
+        when(ipscCompetitorService.getAllCompetitors()).thenReturn(response);
+
+        // Act
+        ResponseEntity<List<CompetitorResponse>> result = ipscCompetitorController.getAllCompetitors();
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertSame(response, result.getBody());
+    }
+
+    @Test
+    void testGetAllCompetitors_whenServiceSucceeds_thenDelegatesToService() {
+        // Arrange
+        when(ipscCompetitorService.getAllCompetitors()).thenReturn(List.of());
+
+        // Act
+        ipscCompetitorController.getAllCompetitors();
+
+        // Assert
+        verify(ipscCompetitorService).getAllCompetitors();
+        verifyNoMoreInteractions(ipscCompetitorService);
+    }
+
     // getCompetitor()
     @Test
     void testGetCompetitor_whenServiceSucceeds_thenReturns200() throws NonFatalException {

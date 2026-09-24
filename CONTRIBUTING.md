@@ -60,8 +60,8 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
    ```bash
    ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
    ```
-   The app starts on `http://localhost:8081/hpsc-web`. Interactive API docs are at
-   `http://localhost:8081/hpsc-web/swagger-ui/index.html` — see [`AGENTS.md`'s Project
+   The app starts on `http://localhost:8080/hpsc-web`. Interactive API docs are at
+   `http://localhost:8080/hpsc-web/swagger-ui/index.html` — see [`AGENTS.md`'s Project
    Overview](AGENTS.md#-project-overview).
 
 > An `application-local.properties` profile also exists in the repository, pre-configured against a specific hand-built
