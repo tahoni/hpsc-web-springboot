@@ -80,6 +80,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`springdoc-openapi-starter-webmvc-ui`:** Bumped from `2.8.5` to `3.1.0`, the springdoc line built for Spring
   Boot 4
+- **`pom.xml`:** springdoc's version now comes from an imported `springdoc-openapi-bom` in a new
+  `<dependencyManagement>` section, since Spring Boot's parent doesn't manage it, so the
+  `springdoc-openapi-starter-webmvc-ui` dependency no longer declares its own version
 
 ##### Configuration
 
