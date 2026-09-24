@@ -85,7 +85,7 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 - **Reverse-sync selectively.** The shared project template also moved its root documentation files into
   `documentation/current/`, switched to plain-imperative commit messages and trimmed its skills down to pointers at
   `AGENTS.md`. None of those were brought back: the first is template-specific, the second contradicts this
-  project's established Conventional Commits history, and the third would drop Spring/Maven-specific detail these
+  project's established Conventional Commits history and the third would drop Spring/Maven-specific detail these
   skills deliberately carry.
 - **Spell out conventions agents rely on.** Heading depth and bullet style were previously only implied by the
   file's existing entries; stating them in `AGENTS.md` means an agent following the conventions can't reproduce the
