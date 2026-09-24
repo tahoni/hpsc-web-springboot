@@ -149,6 +149,17 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Re-check whether this release (`release/v8.5.1`) needs its own Phase/Milestone once its scope is final, per
   `AGENTS.md`'s Release Checklist step 6 — yes: added as Phase 29/Milestone 29 during this release's own prep pass
 
+**`HISTORY.md` Future Roadmap list refresh** *(improvement-plan.md → Gap #11)* — ✅ Closed in v8.6.2
+
+- [x] Drop (or mark delivered) the "Seed `Club.identifier` (HPSC, SOSC, PMPSC)" Short-term bullet — shipped in
+  v8.4.0 via `V7_3_0__seed_club_data.sql` — keeping the `Competitor.homeClub` backfill half only if still wanted
+- [x] Rename `ShooterLogEntry` to `ShooterLogCompetitor` in the Short-term wiring bullet, matching v7.1.0's rename
+- [x] Relabel the "Medium-term (v7.x+)" heading for the current major version
+- [x] Drop "Bulk match processing capabilities" as delivered by Gap #8's v8.3.0 bulk CSV import, or reword it to
+  name what is still missing
+- [x] Leave the items overlapping Gap #6 (`ShooterLog` calculation service, scores-request wiring) in place while
+  that gap stays open
+
 ---
 
 ## 🟡 Partially Completed
@@ -173,17 +184,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
-
-**`HISTORY.md` Future Roadmap list refresh** *(improvement-plan.md → Gap #11)*
-
-- [ ] Drop (or mark delivered) the "Seed `Club.identifier` (HPSC, SOSC, PMPSC)" Short-term bullet — shipped in
-  v8.4.0 via `V7_3_0__seed_club_data.sql` — keeping the `Competitor.homeClub` backfill half only if still wanted
-- [ ] Rename `ShooterLogEntry` to `ShooterLogCompetitor` in the Short-term wiring bullet, matching v7.1.0's rename
-- [ ] Relabel the "Medium-term (v7.x+)" heading for the current major version
-- [ ] Drop "Bulk match processing capabilities" as delivered by Gap #8's v8.3.0 bulk CSV import, or reword it to
-  name what is still missing
-- [ ] Leave the items overlapping Gap #6 (`ShooterLog` calculation service, scores-request wiring) in place while
-  that gap stays open
 
 ---
 

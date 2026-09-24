@@ -6,14 +6,16 @@
 
 ## 🎯 Theme
 
-**`CHANGELOG.md` Heading-Depth Convention Correction**
+**`CHANGELOG.md` Heading-Depth Convention Correction & Future Roadmap Refresh**
 
 Version 8.6.2 is a documentation-only patch release with no source-code, schema or dependency changes. It corrects
 how the project's own written conventions describe `CHANGELOG.md`'s heading structure: `AGENTS.md`,
 `CONTRIBUTING.md` and five Claude Code skills all described the file as `## 🧪 [Unreleased]` → `### <category>` →
 `#### <Area>`, one level shallower than the `###`/`####`/`#####` depth the file has actually used. The fix was
 reverse-synced from the shared project template, which had already corrected the same drift in its own copy of these
-conventions. As with v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this as a **PATCH**
+conventions. It also refreshes `HISTORY.md`'s forward-looking Future Roadmap lists, which still named already
+delivered and renamed work — recorded as Gap #11 by this release's own improvement-plan audit and closed within the
+same release. As with v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this as a **PATCH**
 version.
 
 ---
@@ -27,6 +29,14 @@ version.
   now matches the file's actual `### 🧪 [Unreleased]` → `#### <category>` → `##### <Area>` nesting
 - `AGENTS.md`'s Git Workflow Conventions now spell out the full category/Area nesting, reuse of existing Area names
   and the bold-lead-in bullet style, instead of leaving them implicit
+
+### 🗺️ Future Roadmap Refresh (Gap #11)
+
+- `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists now name only genuinely outstanding work: club seeding
+  (shipped in v8.4.0) and bulk match import (shipped in v8.3.0) dropped, `ShooterLogEntry` renamed to
+  `ShooterLogCompetitor`, and "Medium-term (v7.x+)" relabelled for the current major version
+- Gap #11 recorded and closed in `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`, leaving
+  Gap #6 as the only open gap
 
 ### 🔁 Template Reverse Sync
 
@@ -45,6 +55,12 @@ version.
   `## 🧾 [X.Y.Z]` to the `### 🧪 [Unreleased]`/`### 🧾 [X.Y.Z]` depth the file actually uses. `AGENTS.md`'s Git
   Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
   bold-lead-in bullet style — reverse-synced from the shared project template
+- **`HISTORY.md`:** "🗺️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
+  actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half,
+  `ShooterLogEntry` renamed to `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x
+  Releases)" and "Bulk match processing capabilities" dropped as delivered by v8.3.0's bulk CSV import
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
+  this same release, with "📋 At a Glance", the "🗺️ Roadmap" table and "✅ Success Criteria" updated to match
 
 #### Tooling
 
@@ -65,12 +81,12 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
 
 ## 📊 Statistics
 
-- **Total Commits:** 8 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
-  documentation, PR description, serial-comma fix and commit-count update commits)
+- **Total Commits:** 9 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
+  documentation, PR description, serial-comma fix, commit-count update and Gap #11 fix commits)
 - **Files Changed:** 18
-- **Insertions:** 461 lines
-- **Deletions:** 128 lines
-- **Net Change:** +333 lines
+- **Insertions:** 529 lines
+- **Deletions:** 132 lines
+- **Net Change:** +397 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0
@@ -111,8 +127,6 @@ drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills
   over from v7.0.0 – v7.1.0).
 - The `BRANCH` coverage counter is still not separately enforced by the JaCoCo `check` execution — only `LINE` is,
   as established when the gate was first added in v8.3.1.
-- `HISTORY.md`'s "🗺️ Future Roadmap Implications" Short-term/Medium-term lists still name delivered or renamed work
-  (club seeding, `ShooterLogEntry`) — newly tracked as Gap #11 in `documentation/roadmap/improvement-plan.md`.
 
 ---
 

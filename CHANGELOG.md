@@ -67,6 +67,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `## 🧾 [X.Y.Z]` to the `### 🧪 [Unreleased]`/`### 🧾 [X.Y.Z]` depth the file actually uses. `AGENTS.md`'s Git
   Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
   bold-lead-in bullet style — reverse-synced from the shared project template
+- **`HISTORY.md`:** "🗺️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
+  actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half
+  (the `club` table was already seeded in v8.4.0), `ShooterLogEntry` renamed to `ShooterLogCompetitor`,
+  "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x Releases)" and "Bulk match processing capabilities"
+  dropped as delivered by v8.3.0's bulk CSV import
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
+  this same release — "📋 At a Glance" counts, the "🗺️ Roadmap" table's **Next** row and "✅ Success Criteria"
+  updated to match; the tasks file's intro gap count raised from "ten" to "eleven"
 
 ##### Tooling
 

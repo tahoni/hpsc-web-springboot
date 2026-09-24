@@ -61,7 +61,7 @@ Within each section, gaps stay in ascending number order.
 
 ### 📋 At a Glance
 
-- **✅ Completed (9):**
+- **✅ Completed (10):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -71,11 +71,10 @@ Within each section, gaps stay in ascending number order.
   - #8 Match bulk CSV import remains removed pending a rebuild — closed v8.3.0
   - #9 `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — closed v8.4.0
   - #10 `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — closed v8.5.1
+  - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — closed v8.6.2
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (2):**
+- **⚪ Open (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
-  - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — **Next** roadmap
-    item
 
 ### ✅ Completed
 
@@ -375,36 +374,7 @@ Proposed improvement's second step. `HISTORY.md`'s "📖 Evolution Overview", "�
 most-recent-first to ascending (oldest-first), matching "✨ Feature Timeline"/"💡 Project Philosophy Evolution"'s
 existing convention — only "📅 Historical Timeline" keeps its most-recent-first order.
 
-### 🟡 Partially Completed
-
-*No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
-`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
-but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
-
-### ⚪ Open
-
-#### 6. Match scoring / shooter-log service and controller layer are not yet built
-
-**Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
-match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
-built"; its `repositories/` package comment marks `MatchCompetitor`/`MatchStageCompetitor`/`ShooterLog*` as "not yet
-wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScoresRequest` "groundwork only — not yet
-consumed by any controller". `README.md` and `CONTRIBUTING.md` independently restate the same gap, and
-`documentation/history/RELEASE_NOTES_v8.1.0.md`'s Known Issues/Future Enhancements carry it forward from v8.0.0,
-explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
-"ready" for wiring.
-
-**Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
-controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
-"known gap" across the project's own documentation, yet was not separately tracked here.
-
-**Proposed improvement:** Apply the same phased pattern that closed Gap #1: introduce `MatchScoreService`/
-`ShooterLogService` (interface + `impl/` split) over the existing repositories, add controller endpoints backed by
-`@SpringBootTest` integration tests, and only then consider cross-entity orchestration (e.g. importing a full
-Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
-fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
-
-#### 11. `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work
+#### 11. `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — ✅ Closed in v8.6.2
 
 **Evidence:** `HISTORY.md`'s "🗺️ Future Roadmap Implications" section ends with three forward-looking lists —
 "Short-term (Minor Releases)", "Medium-term (v7.x+)" and "Long-term (Future Major Versions)" — whose content was
@@ -438,6 +408,43 @@ Items that overlap Gap #6 (the `ShooterLog` calculation service and scores-reque
 is still open. No code change is needed — this is a `HISTORY.md`-only pass, best done during a release-prep pass per
 `AGENTS.md`'s Release Checklist.
 
+**Outcome:** Delivered as proposed, in `HISTORY.md` only. The club-seeding bullet was reduced to its still-outstanding
+half — "Backfill `Competitor.homeClub` for existing competitors", now noting that the `club` table itself was
+already seeded in v8.4.0 via `V7_3_0__seed_club_data.sql` — since no migration or service backfills `homeClub` for
+pre-existing competitors yet. `ShooterLogEntry` was renamed to `ShooterLogCompetitor` in the Short-term wiring
+bullet, "Medium-term (v7.x+)" was relabelled "Medium-term (Later v8.x Releases)", and "Bulk match processing
+capabilities" was dropped as delivered by Gap #8's v8.3.0 bulk CSV import. The items overlapping Gap #6 (the
+`ShooterLogService` calculation service and scores-request wiring) were left in place, since that gap is still open.
+
+### 🟡 Partially Completed
+
+*No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
+`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
+but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+### ⚪ Open
+
+#### 6. Match scoring / shooter-log service and controller layer are not yet built
+
+**Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
+match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
+built"; its `repositories/` package comment marks `MatchCompetitor`/`MatchStageCompetitor`/`ShooterLog*` as "not yet
+wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScoresRequest` "groundwork only — not yet
+consumed by any controller". `README.md` and `CONTRIBUTING.md` independently restate the same gap, and
+`documentation/history/RELEASE_NOTES_v8.1.0.md`'s Known Issues/Future Enhancements carry it forward from v8.0.0,
+explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
+"ready" for wiring.
+
+**Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
+controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
+"known gap" across the project's own documentation, yet was not separately tracked here.
+
+**Proposed improvement:** Apply the same phased pattern that closed Gap #1: introduce `MatchScoreService`/
+`ShooterLogService` (interface + `impl/` split) over the existing repositories, add controller endpoints backed by
+`@SpringBootTest` integration tests, and only then consider cross-entity orchestration (e.g. importing a full
+Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
+fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
+
 ---
 
 ## 🗺️ Roadmap
@@ -445,7 +452,7 @@ is still open. No code change is needed — this is a `HISTORY.md`-only pass, be
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | Refresh `HISTORY.md`'s stale Short-term/Medium-term Future Roadmap lists (#11) against what has actually shipped                                                |
+| **Next**    | No items currently scoped — #11, this phase's previous occupant, closed in v8.6.2                                                                               |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -476,8 +483,8 @@ is still open. No code change is needed — this is a `HISTORY.md`-only pass, be
   when a match's `club` is omitted, closing Gap #9's inert-groundwork-constant gap.
 - ✅ Met in v8.5.1: `HISTORY.md`'s "📖 Evolution Overview"/"🎯 Major Milestones" sections now carry a Phase and
   Milestone entry (26/27/28) for every shipped release through v8.5.0, closing Gap #10's backlog.
-- `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists name only genuinely outstanding work under current
-  entity names and version labels, closing Gap #11's drift.
+- ✅ Met in v8.6.2: `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists name only genuinely outstanding work
+  under current entity names and version labels, closing Gap #11's drift.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   per-version Future Roadmap notes rather than being deleted silently from here.
 

@@ -2048,13 +2048,13 @@ paths — no domain-model, API or test-behaviour change.
 
 ---
 
-### Phase 32: CHANGELOG.md Heading-Depth Convention Correction (v8.6.2)
+### Phase 32: CHANGELOG.md Heading-Depth Convention Correction & Future Roadmap Refresh (v8.6.2)
 
 **Duration:** September 24, 2026
 
 A documentation-only patch release: corrects how the project's own conventions describe `CHANGELOG.md`'s heading
-structure, which had drifted one level shallower than the file itself — no domain-model, API or test-behaviour
-change.
+structure, which had drifted one level shallower than the file itself, and refreshes `HISTORY.md`'s stale
+forward-looking roadmap lists — no domain-model, API or test-behaviour change.
 
 **Key Accomplishments:**
 
@@ -2070,6 +2070,16 @@ change.
 - Reverse-synced from the shared project template, which had already corrected the same drift in its own copy of
   these conventions — keeping this project's Conventional Commits prefixes and bold-lead-in bullet style rather than
   adopting the template's generic defaults
+
+**Future Roadmap Refresh**
+
+- `HISTORY.md`'s "🗺️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has actually
+  shipped: the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half (the `club`
+  table was already seeded in v8.4.0 via `V7_3_0__seed_club_data.sql`), `ShooterLogEntry` renamed to
+  `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x Releases)" and "Bulk match
+  processing capabilities" dropped as delivered by v8.3.0's bulk CSV import
+- Recorded as Gap #11 in `documentation/roadmap/improvement-plan.md` by this release's own improvement-plan audit,
+  then closed within the same release; items overlapping the still-open Gap #6 were left in place
 
 **Formatting**
 

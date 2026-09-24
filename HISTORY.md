@@ -23,7 +23,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ### Version 8.6.2 (September 24, 2026)
 
-**Theme:** `CHANGELOG.md` Heading-Depth Convention Correction
+**Theme:** `CHANGELOG.md` Heading-Depth Convention Correction & Future Roadmap Refresh
 
 **Key Focus:**
 
@@ -36,6 +36,11 @@ evolution of architecture, features and design philosophy across all versions.
   `generate-commit-message` also notes that security-relevant fixes belong under `#### 🔐 Security`
 - The correction was reverse-synced from the shared project template, which had already fixed the same drift in its
   own copy of these conventions
+- This file's own "🗺️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has actually
+  shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half,
+  `ShooterLogEntry` renamed to `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x
+  Releases)" and "Bulk match processing capabilities" dropped as delivered by v8.3.0 — recorded and closed as Gap #11
+  in `documentation/roadmap/improvement-plan.md` within this same release
 - Minor table column realignment in `AGENTS.md`'s skills table and `README.md`'s Documentation table
 - This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
   behaviour change), so it was scoped as `v8.6.2` **PATCH**, matching the precedent set by v8.4.1/v8.4.2/v8.5.1/
@@ -1087,15 +1092,18 @@ accumulating, without losing any historical content or `git` history.
 
 ---
 
-### Milestone 32: CHANGELOG.md Heading-Depth Convention Correction (v8.6.2)
+### Milestone 32: CHANGELOG.md Heading-Depth Convention Correction & Future Roadmap Refresh (v8.6.2)
 
 - `AGENTS.md`, `CONTRIBUTING.md` and five Claude Code skills corrected to describe `CHANGELOG.md`'s actual
   `### 🧪 [Unreleased]` → `#### <category>` → `##### <Area>` heading depth, one level deeper than previously stated
 - `AGENTS.md`'s Git Workflow Conventions extended to spell out Area reuse and the bold-lead-in bullet style,
   reverse-synced from the shared project template
+- This file's Future Roadmap Short-term/Medium-term lists refreshed to name only genuinely outstanding work under
+  current entity names and version labels, closing the newly recorded Gap #11
 
 **Achievement:** Brought the project's written `CHANGELOG.md` conventions back in line with the file itself, so any
-agent or contributor following `AGENTS.md` or the skills produces correctly nested entries.
+agent or contributor following `AGENTS.md` or the skills produces correctly nested entries, and cleared already
+delivered work out of this file's forward-looking roadmap.
 
 ---
 
@@ -2064,22 +2072,22 @@ Based on the evolution to v8.4.0, the following areas are identified for future 
 
 ### Short-term (Minor Releases)
 
-- Wire service/controller/import support for `clubRanking`, `isVisitor`, `ShooterLog` and `ShooterLogEntry` —
+- Wire service/controller/import support for `clubRanking`, `isVisitor`, `ShooterLog` and `ShooterLogCompetitor` —
   currently schema-only (`homeClub` now wired via `IpscCompetitorService`)
 - Build a `ShooterLogService` to calculate and persist best-4-match snapshots — no calculation job/service exists yet
 - Populate `overallRanking`, `clubRanking` and `isVisitor` during match-result import
-- Seed `Club.identifier` (HPSC, SOSC, PMPSC) and backfill `Competitor.homeClub`
+- Backfill `Competitor.homeClub` for existing competitors — the `club` table itself is already seeded (v8.4.0,
+  `V7_3_0__seed_club_data.sql`)
 - Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) to an endpoint — still
   groundwork, not yet consumed by any controller
 - Add entity, repository and integration test coverage for the promoted/extended domain model
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
 
-### Medium-term (v7.x+)
+### Medium-term (Later v8.x Releases)
 
 - REST API endpoints for enrolled competitor management
 - Additional IPSC data format support
-- Bulk match processing capabilities
 - Enhanced error reporting and recovery
 - Performance metrics and monitoring
 - Advanced query optimisation
