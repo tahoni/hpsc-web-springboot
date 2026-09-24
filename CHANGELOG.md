@@ -70,6 +70,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
   Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
 
+##### Domain
+
+- **`Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`,
+  `ShooterLogCompetitor`:** Every `@ManyToOne` association switched from `FetchType.LAZY` to `FetchType.EAGER`, so
+  the referenced entity is loaded along with its owner rather than on first access
+
 ##### Build & Metadata
 
 - **`springdoc-openapi-starter-webmvc-ui`:** Bumped from `2.8.5` to `3.1.0`, the springdoc line built for Spring

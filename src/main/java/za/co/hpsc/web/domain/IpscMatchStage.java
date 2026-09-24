@@ -18,7 +18,7 @@ public class IpscMatchStage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "match_id", nullable = false)
     private IpscMatch match;
 
