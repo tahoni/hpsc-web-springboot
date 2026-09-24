@@ -9,7 +9,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
+import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -17,6 +20,9 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
+import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,6 +46,15 @@ class IpscCompetitorServiceIntegrationTest {
 
     @Autowired
     private ClubRepository clubRepository;
+
+    @Autowired
+    private CompetitorRepository competitorRepository;
+
+    @Autowired
+    private IpscMatchRepository ipscMatchRepository;
+
+    @Autowired
+    private MatchCompetitorRepository matchCompetitorRepository;
 
     // createCompetitor()
     @Test
@@ -305,6 +320,39 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("John", competitors.get(1).getFirstName());
         assertEquals("HPSC-002", competitors.get(1).getClubNumber());
         assertNotEquals(competitors.get(0).getCompetitorId(), competitors.get(1).getCompetitorId());
+    }
+
+    // deleteCompetitor()
+    @Test
+    void testDeleteCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscCompetitorService.deleteCompetitor(999L));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenCompetitorHasNoDependents_thenDeletesCompetitorAndEmails() {
+        // Arrange
+        CompetitorRequest request = validRequest("HPSC-001");
+        request.setEmailAddresses(List.of("jane@example.com", "jane.doe@example.com"));
+        CompetitorResponse created = ipscCompetitorService.createCompetitor(request);
+
+        // Act
+        assertDoesNotThrow(() -> ipscCompetitorService.deleteCompetitor(created.getCompetitorId()));
+
+        // Assert
+        assertFalse(competitorRepository.existsById(created.getCompetitorId()));
+        assertThrows(NonFatalException.class, () -> ipscCompetitorService.getCompetitor(created.getCompetitorId()));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenCompetitorHasMatchResults_thenThrowsValidationExceptionAndKeepsCompetitor() {
+        // Arrange
+        CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
+        recordMatchResult(created.getCompetitorId());
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.deleteCompetitor(created.getCompetitorId()));
+        assertTrue(competitorRepository.existsById(created.getCompetitorId()));
     }
 
     // getAllCompetitors()
@@ -591,5 +639,18 @@ class IpscCompetitorServiceIntegrationTest {
         request.setLastName("Doe");
         request.setClubNumber(clubNumber);
         return request;
+    }
+
+    private void recordMatchResult(Long competitorId) {
+        IpscMatch match = new IpscMatch();
+        match.setName("Club Championship");
+        match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        match = ipscMatchRepository.save(match);
+
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(competitorRepository.findById(competitorId).orElseThrow());
+        matchCompetitor.setMatch(match);
+        matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitorRepository.save(matchCompetitor);
     }
 }

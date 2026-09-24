@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -23,6 +24,9 @@ import za.co.hpsc.web.models.ipsc.match.response.MatchStageResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 
 import java.time.LocalDate;
@@ -51,6 +55,15 @@ public class IpscMatchServiceTest {
 
     @Mock
     private ClubRepository clubRepository;
+
+    @Mock
+    private MatchCompetitorRepository matchCompetitorRepository;
+
+    @Mock
+    private MatchStageCompetitorRepository matchStageCompetitorRepository;
+
+    @Mock
+    private ShooterLogCompetitorRepository shooterLogCompetitorRepository;
 
     @InjectMocks
     private IpscMatchServiceImpl ipscMatchServiceImpl;
@@ -381,6 +394,91 @@ public class IpscMatchServiceTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+    }
+
+    // deleteMatch()
+    @Test
+    void testDeleteMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(ipscMatchRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchService.deleteMatch(999L));
+        verify(ipscMatchRepository, never()).delete(any(IpscMatch.class));
+    }
+
+    @Test
+    void testDeleteMatch_whenMatchHasCompetitorResults_thenThrowsValidationException() {
+        // Arrange
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(newMatch(1L)));
+        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(1L));
+        verify(ipscMatchRepository, never()).delete(any(IpscMatch.class));
+    }
+
+    @Test
+    void testDeleteMatch_whenMatchHasStageResults_thenThrowsValidationException() {
+        // Arrange
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(newMatch(1L)));
+        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(matchStageCompetitorRepository.existsByMatchStageMatchId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(1L));
+        verify(ipscMatchRepository, never()).delete(any(IpscMatch.class));
+    }
+
+    @Test
+    void testDeleteMatch_whenMatchHasShooterLogEntries_thenThrowsValidationException() {
+        // Arrange
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(newMatch(1L)));
+        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(matchStageCompetitorRepository.existsByMatchStageMatchId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByMatchId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(1L));
+        verify(ipscMatchRepository, never()).delete(any(IpscMatch.class));
+    }
+
+    @Test
+    void testDeleteMatch_whenMatchHasNoDependents_thenDeletesMatchAndStages() {
+        // Arrange
+        IpscMatch match = newMatch(1L);
+        IpscMatchStage stage = new IpscMatchStage();
+        stage.setId(100L);
+        stage.setMatch(match);
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(matchStageCompetitorRepository.existsByMatchStageMatchId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of(stage));
+
+        // Act
+        assertDoesNotThrow(() -> ipscMatchService.deleteMatch(1L));
+
+        // Assert
+        verify(ipscMatchStageRepository).deleteAll(List.of(stage));
+        verify(ipscMatchRepository).delete(match);
+        verify(ipscMatchRepository).flush();
+    }
+
+    @Test
+    void testDeleteMatch_whenReferenceAddedBeforeFlush_thenThrowsValidationException() {
+        // Arrange
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(newMatch(1L)));
+        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(matchStageCompetitorRepository.existsByMatchStageMatchId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+        doThrow(new DataIntegrityViolationException("FK violation")).when(ipscMatchRepository).flush();
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchService.deleteMatch(1L));
+        assertInstanceOf(DataIntegrityViolationException.class, exception.getCause());
     }
 
     // getAllMatches()
@@ -878,5 +976,13 @@ public class IpscMatchServiceTest {
             stage.setId(idCounter.getAndIncrement());
             return stage;
         });
+    }
+
+    private IpscMatch newMatch(Long id) {
+        IpscMatch match = new IpscMatch();
+        match.setId(id);
+        match.setName("Club Championship");
+        match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        return match;
     }
 }

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -26,6 +27,8 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
 import java.io.IOException;
@@ -39,10 +42,16 @@ import java.util.stream.Collectors;
 public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final CompetitorRepository competitorRepository;
     private final ClubRepository clubRepository;
+    private final MatchCompetitorRepository matchCompetitorRepository;
+    private final ShooterLogRepository shooterLogRepository;
 
-    public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository) {
+    public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
+                                     MatchCompetitorRepository matchCompetitorRepository,
+                                     ShooterLogRepository shooterLogRepository) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
+        this.matchCompetitorRepository = matchCompetitorRepository;
+        this.shooterLogRepository = shooterLogRepository;
     }
 
     @Override
@@ -149,6 +158,31 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         return competitorRepository.findAll().stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteCompetitor(Long competitorId) {
+        Competitor competitor = findCompetitorOrThrow(competitorId);
+
+        if (matchCompetitorRepository.existsByCompetitorId(competitorId)) {
+            throw new ValidationException("Competitor with ID " + competitorId
+                    + " cannot be deleted: they have recorded match results.");
+        }
+        if (shooterLogRepository.existsByCompetitorId(competitorId)) {
+            throw new ValidationException("Competitor with ID " + competitorId
+                    + " cannot be deleted: they have shooter logs.");
+        }
+
+        // Flushed here rather than at commit, so a reference added by another transaction since
+        // the checks above surfaces inside this method and is reported as a 400, not a 500.
+        try {
+            competitorRepository.delete(competitor);
+            competitorRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException("Competitor with ID " + competitorId
+                    + " cannot be deleted: it is referenced by other records.", e);
+        }
     }
 
     /**

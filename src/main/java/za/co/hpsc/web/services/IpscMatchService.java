@@ -10,8 +10,8 @@ import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 import java.util.List;
 
 /**
- * The {@code IpscMatchService} interface provides methods for creating, updating and
- * retrieving IPSC matches and their stages. Implementations are responsible for validating
+ * The {@code IpscMatchService} interface provides methods for creating, updating, retrieving
+ * and deleting IPSC matches and their stages. Implementations are responsible for validating
  * input data, resolving the hosting club and mapping to and from the persisted domain model.
  *
  * @since 8.0.0
@@ -128,4 +128,22 @@ public interface IpscMatchService {
      * @return all persisted matches, including their stages.
      */
     List<MatchResponse> getAllMatches();
+
+    /**
+     * Deletes an existing IPSC match, together with its stages.
+     *
+     * <p>
+     * A match is only deleted while nothing else references it: one with recorded competitor
+     * results, stage results or shooter-log entries is refused rather than deleted along with
+     * that history. This also holds if another request adds such a reference while the delete
+     * is in progress.
+     * </p>
+     *
+     * @param matchId the identifier of the match to delete.
+     * @throws ValidationException if the match still has competitor results, stage results or
+     *                             shooter-log entries, or is otherwise still referenced when the
+     *                             delete is flushed.
+     * @throws NonFatalException   if no match with {@code matchId} exists.
+     */
+    void deleteMatch(Long matchId) throws ValidationException, NonFatalException;
 }

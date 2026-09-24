@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
@@ -18,6 +19,8 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
 
 import java.time.LocalDate;
@@ -41,6 +44,12 @@ public class IpscCompetitorServiceTest {
 
     @Mock
     private ClubRepository clubRepository;
+
+    @Mock
+    private MatchCompetitorRepository matchCompetitorRepository;
+
+    @Mock
+    private ShooterLogRepository shooterLogRepository;
 
     @InjectMocks
     private IpscCompetitorServiceImpl ipscCompetitorServiceImpl;
@@ -363,6 +372,70 @@ public class IpscCompetitorServiceTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.createCompetitors(csvData));
+    }
+
+    // deleteCompetitor()
+    @Test
+    void testDeleteCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscCompetitorService.deleteCompetitor(999L));
+        verify(competitorRepository, never()).delete(any(Competitor.class));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenCompetitorHasMatchResults_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.deleteCompetitor(1L));
+        verify(competitorRepository, never()).delete(any(Competitor.class));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenCompetitorHasShooterLogs_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.deleteCompetitor(1L));
+        verify(competitorRepository, never()).delete(any(Competitor.class));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenCompetitorHasNoDependents_thenDeletesCompetitor() {
+        // Arrange
+        Competitor competitor = newCompetitor(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(false);
+
+        // Act
+        assertDoesNotThrow(() -> ipscCompetitorService.deleteCompetitor(1L));
+
+        // Assert
+        verify(competitorRepository).delete(competitor);
+        verify(competitorRepository).flush();
+    }
+
+    @Test
+    void testDeleteCompetitor_whenReferenceAddedBeforeFlush_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(false);
+        doThrow(new DataIntegrityViolationException("FK violation")).when(competitorRepository).flush();
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscCompetitorService.deleteCompetitor(1L));
+        assertInstanceOf(DataIntegrityViolationException.class, exception.getCause());
     }
 
     // getAllCompetitors()
@@ -833,5 +906,13 @@ public class IpscCompetitorServiceTest {
             competitor.setId(1L);
             return competitor;
         });
+    }
+
+    private Competitor newCompetitor(Long id) {
+        Competitor competitor = new Competitor();
+        competitor.setId(id);
+        competitor.setFirstName("Jane");
+        competitor.setLastName("Doe");
+        return competitor;
     }
 }

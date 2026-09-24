@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (10):**
+- **✅ Completed (11):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -75,10 +75,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #9 `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` is declared but never applied — closed v8.4.0
   - #10 `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — closed v8.5.1
   - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — closed v8.6.2
+  - #12 Competitor/match "full CRUD" claims have no delete operation behind them — closed v8.8.0
 - **🟡 Partially Completed (0):** none currently.
 - **⚪ Open (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
-  - #12 Competitor/match "full CRUD" claims have no delete operation behind them — current **Next** roadmap focus
+  - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — **Next**
 
 ### ✅ Completed
 
@@ -420,6 +421,49 @@ bullet, "Medium-term (v7.x+)" was relabelled "Medium-term (Later v8.x Releases)"
 capabilities" was dropped as delivered by Gap #8's v8.3.0 bulk CSV import. The items overlapping Gap #6 (the
 `ShooterLogService` calculation service and scores-request wiring) were left in place, since that gap is still open.
 
+#### 12. Competitor/match "full CRUD" claims have no delete operation behind them — ✅ Closed in v8.8.0
+
+**Evidence:** `README.md` (lines 30–31 and 68) and `ARCHITECTURE.md` (the Feature Support table's "IPSC
+Competitors & Matches" row, plus the Controllers and Services tables) describe `IpscCompetitorController`/
+`IpscMatchController` and their services as "Full CRUD" / "CRUD" for competitors and matches (with stages), and
+`documentation/recommendations/standard-rest-conventions.md`'s "🔍 Current State in This Codebase" calls
+`IpscMatchController` "this codebase's clearest example of the full pattern". Yet neither controller declares a
+`@DeleteMapping` handler, and neither `IpscCompetitorService` nor `IpscMatchService` declares a `delete*` method —
+grepping `controllers/` and `services/` for `DeleteMapping`/`delete` finds nothing. The only deletion anywhere is
+`IpscMatchServiceImpl.replaceStages` removing a match's existing stages as part of a `PUT`/`PATCH`. The same
+recommendations section also lists only `createMatch`/`updateMatch`/`patchMatch`/`getMatch`, leaving out the
+existing `getAllMatches` collection endpoint and not mentioning `IpscCompetitorController`, which (as of
+`getAllCompetitors`) now follows the same pattern.
+
+**Why it matters:** A client reading `README.md` or `ARCHITECTURE.md` expects to be able to remove a competitor
+or match created by mistake, for example, a bad bulk CSV import row, and there is no API path to do so short of
+editing the database directly. The REST conventions document is meant to be the worked
+example for new controllers, so an incomplete "full pattern" there spreads to whatever controller is built next
+(Gap #6's scoring/shooter-log layer).
+
+**Proposed improvement:** Either (a) add `deleteCompetitor`/`deleteMatch` (`DELETE /{competitorId}`,
+`DELETE /{matchId}`) through the service layer, deciding up front how deletion interacts with dependent rows
+(`MatchCompetitor` and `ShooterLog` referencing a competitor; `IpscMatchStage`, `MatchCompetitor` and
+`ShooterLogCompetitor` referencing a match), rejecting or cascading explicitly rather than surfacing a raw
+foreign-key violation; or (b) if records are intentionally never deleted through the API, reword the "CRUD"
+claims in `README.md`/`ARCHITECTURE.md` to "create, read and update" and say so. Either way, refresh
+`standard-rest-conventions.md`'s current-state examples to name `getAllMatches`/`getAllCompetitors` and
+`IpscCompetitorController`.
+
+**Outcome:** Delivered option (a). `IpscCompetitorService.deleteCompetitor`/`IpscMatchService.deleteMatch` back new
+`DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints
+(`IpscCompetitorController.deleteCompetitor`/`IpscMatchController.deleteMatch`), each returning `204 No Content`.
+Dependent rows are handled by rejecting, not cascading: a competitor still referenced by `MatchCompetitor` or
+`ShooterLog` rows, or a match still referenced by `MatchCompetitor`, `MatchStageCompetitor` or
+`ShooterLogCompetitor` rows, is refused with a `ValidationException` (`400`) via new `existsBy…` repository
+queries, so scoring history is never silently destroyed. What a record owns goes with it — a competitor's
+`competitor_email` rows through its `@ElementCollection`, a match's `IpscMatchStage` rows removed as managed
+entities before the match itself. Covered at all three test tiers, including H2-backed integration tests for the
+reject and delete paths. The "CRUD" wording in `README.md`/`ARCHITECTURE.md` is therefore now accurate and was
+left as is; `ARCHITECTURE.md` gained a note on the reject-not-cascade rule, and
+`standard-rest-conventions.md`'s current-state examples now cover both controllers' full `getAll`/`get`/`create`/
+`update`/`patch`/`delete` sets.
+
 ### 🟡 Partially Completed
 
 *No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
@@ -449,34 +493,31 @@ controller layer doesn't — but for the scoring/shooter-log domain specifically
 Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
 fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
-#### 12. Competitor/match "full CRUD" claims have no delete operation behind them
+#### 13. Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation
 
-**Evidence:** `README.md` (lines 30–31 and 68) and `ARCHITECTURE.md` (the Feature Support table's "IPSC
-Competitors & Matches" row, plus the Controllers and Services tables) describe `IpscCompetitorController`/
-`IpscMatchController` and their services as "Full CRUD" / "CRUD" for competitors and matches (with stages), and
-`documentation/recommendations/standard-rest-conventions.md`'s "🔍 Current State in This Codebase" calls
-`IpscMatchController` "this codebase's clearest example of the full pattern". Yet neither controller declares a
-`@DeleteMapping` handler, and neither `IpscCompetitorService` nor `IpscMatchService` declares a `delete*` method —
-grepping `controllers/` and `services/` for `DeleteMapping`/`delete` finds nothing. The only deletion anywhere is
-`IpscMatchServiceImpl.replaceStages` removing a match's existing stages as part of a `PUT`/`PATCH`. The same
-recommendations section also lists only `createMatch`/`updateMatch`/`patchMatch`/`getMatch`, leaving out the
-existing `getAllMatches` collection endpoint and not mentioning `IpscCompetitorController`, which (as of
-`getAllCompetitors`) now follows the same pattern.
+**Evidence:** `.github/workflows/` holds four workflows — `build.yml`, `codeql.yml`, `claude.yml` and
+`claude-code-review.yml` — but `ARCHITECTURE.md`'s "🔬 CI/CD & Quality Gates" table lists only CodeQL (Security
+Analysis) and `build.yml` (Build & Tests, plus the JaCoCo check it enforces), and `CONTRIBUTING.md`'s own CI/CD
+section summarises that table's scope as "CodeQL security analysis, Maven build and tests, JaCoCo coverage".
+`claude-code-review.yml` (added in commit `33de202`) runs `anthropics/claude-code-action` on every pull request
+(`opened`, `synchronize`, `ready_for_review`, `reopened`), and `claude.yml` (commit `e62888b`) responds to `@claude`
+mentions in issues, PR comments and reviews; both authenticate with a `CLAUDE_CODE_OAUTH_TOKEN` repository secret.
+Unlike the Qodana gate Gap #7 removed, both are live — `gh run list --workflow=claude-code-review.yml` shows every
+recent release PR's review run succeeding. `ARCHITECTURE.md`'s Project Structure tree still describes
+`.github/workflows/` as "GitHub Actions — CI/CD, CodeQL".
 
-**Why it matters:** A client reading `README.md` or `ARCHITECTURE.md` expects to be able to remove a competitor
-or match created by mistake, for example, a bad bulk CSV import row, and there is no API path to do so short of
-editing the database directly. The REST conventions document is meant to be the worked
-example for new controllers, so an incomplete "full pattern" there spreads to whatever controller is built next
-(Gap #6's scoring/shooter-log layer).
+**Why it matters:** A contributor reading `ARCHITECTURE.md`/`CONTRIBUTING.md` doesn't learn that every pull request
+gets an automated AI review, that `@claude` can be invoked on issues and PRs, or that both depend on a repository
+secret that must stay provisioned — the same kind of doc-vs-code drift Gap #2 and Gap #7 closed for the build and
+static-analysis gates. The review workflow's commented-out `paths:` filter also still names TypeScript/JavaScript
+globs from its template, a hint it was added as-is rather than tailored to this Java project.
 
-**Proposed improvement:** Either (a) add `deleteCompetitor`/`deleteMatch` (`DELETE /{competitorId}`,
-`DELETE /{matchId}`) through the service layer, deciding up front how deletion interacts with dependent rows
-(`MatchCompetitor` and `ShooterLog` referencing a competitor; `IpscMatchStage`, `MatchCompetitor` and
-`ShooterLogCompetitor` referencing a match), rejecting or cascading explicitly rather than surfacing a raw
-foreign-key violation; or (b) if records are intentionally never deleted through the API, reword the "CRUD"
-claims in `README.md`/`ARCHITECTURE.md` to "create, read and update" and say so. Either way, refresh
-`standard-rest-conventions.md`'s current-state examples to name `getAllMatches`/`getAllCompetitors` and
-`IpscCompetitorController`.
+**Proposed improvement:** Add the two workflows to `ARCHITECTURE.md`'s CI/CD & Quality Gates table — e.g. an
+"Automated Code Review" row for `claude-code-review.yml` (every PR, advisory rather than merge-blocking) and an
+"AI Assistant" row for `claude.yml` (on `@claude` mention) — noting the `CLAUDE_CODE_OAUTH_TOKEN` secret they rely
+on, and widen the Project Structure tree's `.github/workflows/` comment generically (e.g. "GitHub Actions — CI/CD,
+security analysis and automated review"). `CONTRIBUTING.md`'s summary line then only needs its parenthetical scope
+list extended to match. Optionally drop or tailor the review workflow's leftover template `paths:` comment.
 
 ---
 
@@ -485,7 +526,7 @@ claims in `README.md`/`ARCHITECTURE.md` to "create, read and update" and say so.
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | Add a real competitor/match delete operation, or stop calling them "CRUD" (#12), before #6 copies the incomplete pattern                                        |
+| **Next**    | Document the Claude Code workflows in `ARCHITECTURE.md`'s CI/CD & Quality Gates table (#13) — #12, the previous occupant, closed in v8.8.0                      |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -518,8 +559,11 @@ claims in `README.md`/`ARCHITECTURE.md` to "create, read and update" and say so.
   Milestone entry (26/27/28) for every shipped release through v8.5.0, closing Gap #10's backlog.
 - ✅ Met in v8.6.2: `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists name only genuinely outstanding work
   under current entity names and version labels, closing Gap #11's drift.
-- `IpscCompetitorController`/`IpscMatchController` either expose a tested `DELETE` endpoint with explicit handling of
-  dependent rows, or `README.md`/`ARCHITECTURE.md` no longer call them "CRUD", closing Gap #12.
+- ✅ Met in v8.8.0: `IpscCompetitorController`/`IpscMatchController` expose tested `DELETE` endpoints that
+  refuse records still referenced by scoring or shooter-log rows, making the "CRUD" claims in
+  `README.md`/`ARCHITECTURE.md` accurate and closing Gap #12.
+- `ARCHITECTURE.md`'s CI/CD & Quality Gates table (and `CONTRIBUTING.md`'s summary of it) lists every workflow in
+  `.github/workflows/`, including the Claude Code review and assistant workflows, closing Gap #13.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ShooterLogCompetitorRepository extends JpaRepository<ShooterLogCompetitor, Long> {
     List<ShooterLogCompetitor> findAllByShooterLogId(Long shooterLogId);
+
+    boolean existsByMatchId(Long matchId);
 }

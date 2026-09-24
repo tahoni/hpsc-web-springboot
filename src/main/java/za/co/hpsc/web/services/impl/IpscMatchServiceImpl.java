@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -31,6 +32,9 @@ import za.co.hpsc.web.models.ipsc.match.response.MatchStageResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.io.IOException;
@@ -46,13 +50,22 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     private final IpscMatchRepository ipscMatchRepository;
     private final IpscMatchStageRepository ipscMatchStageRepository;
     private final ClubRepository clubRepository;
+    private final MatchCompetitorRepository matchCompetitorRepository;
+    private final MatchStageCompetitorRepository matchStageCompetitorRepository;
+    private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
 
     public IpscMatchServiceImpl(IpscMatchRepository ipscMatchRepository,
                                  IpscMatchStageRepository ipscMatchStageRepository,
-                                 ClubRepository clubRepository) {
+                                 ClubRepository clubRepository,
+                                 MatchCompetitorRepository matchCompetitorRepository,
+                                 MatchStageCompetitorRepository matchStageCompetitorRepository,
+                                 ShooterLogCompetitorRepository shooterLogCompetitorRepository) {
         this.ipscMatchRepository = ipscMatchRepository;
         this.ipscMatchStageRepository = ipscMatchStageRepository;
         this.clubRepository = clubRepository;
+        this.matchCompetitorRepository = matchCompetitorRepository;
+        this.matchStageCompetitorRepository = matchStageCompetitorRepository;
+        this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
     }
 
     @Override
@@ -149,6 +162,35 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 .map(match -> toResponse(match,
                         ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId())))
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteMatch(Long matchId) {
+        IpscMatch match = findMatchOrThrow(matchId);
+
+        if (matchCompetitorRepository.existsByMatchId(matchId)
+                || matchStageCompetitorRepository.existsByMatchStageMatchId(matchId)) {
+            throw new ValidationException("Match with ID " + matchId
+                    + " cannot be deleted: it has recorded competitor results.");
+        }
+        if (shooterLogCompetitorRepository.existsByMatchId(matchId)) {
+            throw new ValidationException("Match with ID " + matchId
+                    + " cannot be deleted: it is referenced by shooter logs.");
+        }
+
+        // Stages are removed as managed entities (not deleteAllInBatch's bulk query), so they leave
+        // the persistence context before their match does and the flush deletes them first. Flushed
+        // here rather than at commit, so a reference added by another transaction since the checks
+        // above surfaces inside this method and is reported as a 400, not a 500.
+        try {
+            ipscMatchStageRepository.deleteAll(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId));
+            ipscMatchRepository.delete(match);
+            ipscMatchRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException("Match with ID " + matchId
+                    + " cannot be deleted: it is referenced by other records.", e);
+        }
     }
 
     /**
