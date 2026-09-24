@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -461,6 +462,23 @@ public class IpscMatchServiceTest {
         // Assert
         verify(ipscMatchStageRepository).deleteAll(List.of(stage));
         verify(ipscMatchRepository).delete(match);
+        verify(ipscMatchRepository).flush();
+    }
+
+    @Test
+    void testDeleteMatch_whenReferenceAddedBeforeFlush_thenThrowsValidationException() {
+        // Arrange
+        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(newMatch(1L)));
+        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(matchStageCompetitorRepository.existsByMatchStageMatchId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
+        doThrow(new DataIntegrityViolationException("FK violation")).when(ipscMatchRepository).flush();
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchService.deleteMatch(1L));
+        assertInstanceOf(DataIntegrityViolationException.class, exception.getCause());
     }
 
     // getAllMatches()

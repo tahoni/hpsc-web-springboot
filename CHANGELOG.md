@@ -76,6 +76,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchService.deleteMatch`:** Deletes a match together with its stages, refusing with a
   `ValidationException` while any `MatchCompetitor`, `MatchStageCompetitor` or `ShooterLogCompetitor` row still
   references it — so scoring history is never deleted as a side effect
+- **`IpscCompetitorServiceImpl.deleteCompetitor`, `IpscMatchServiceImpl.deleteMatch`:** The delete is flushed inside
+  the method and a `DataIntegrityViolationException` rethrown as a `ValidationException`, so a reference added by
+  another request between the dependent-row checks and the delete still returns `400` rather than `500`
 
 ##### Repositories
 

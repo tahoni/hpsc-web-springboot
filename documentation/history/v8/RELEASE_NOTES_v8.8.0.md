@@ -59,6 +59,9 @@ workflows run on this repository but aren't listed in the CI/CD documentation.
 - **`IpscMatchService.deleteMatch`:** Deletes a match together with its stages, refusing with a
   `ValidationException` while any `MatchCompetitor`, `MatchStageCompetitor` or `ShooterLogCompetitor` row still
   references it — so scoring history is never deleted as a side effect
+- **`IpscCompetitorServiceImpl.deleteCompetitor`, `IpscMatchServiceImpl.deleteMatch`:** The delete is flushed inside
+  the method and a `DataIntegrityViolationException` rethrown as a `ValidationException`, so a reference added by
+  another request between the dependent-row checks and the delete still returns `400` rather than `500`
 
 #### Repositories
 
@@ -75,7 +78,7 @@ workflows run on this repository but aren't listed in the CI/CD documentation.
 
 ### Changed
 
-#### Documentation
+#### Documentation Updates
 
 - **`ARCHITECTURE.md`:** New Service Layer note on the delete rule — owned emails and stages are removed with their
   record, but a record still referenced by scoring or shooter-log rows is refused rather than cascaded
@@ -110,12 +113,13 @@ a referenced record can't currently be deleted through the API at all.
 
 ## 📊 Statistics
 
-- **Total Commits:** 7 (the delete-endpoint feature commit, its REST-conventions and Gap #12 documentation commits,
-  plus this release's Gap #13, version bump, release documentation and PR description commits)
+- **Total Commits:** 9 (the delete-endpoint feature commit, its REST-conventions and Gap #12 documentation commits,
+  plus this release's Gap #13, version bump, release documentation, PR description, delete race-window fix and
+  release documentation refresh commits)
 - **Files Changed:** 28
-- **Insertions:** 1,119 lines
-- **Deletions:** 190 lines
-- **Net Change:** +929 lines
+- **Insertions:** 1,201 lines
+- **Deletions:** 191 lines
+- **Net Change:** +1,010 lines
 - **New Source Files:** 0
 - **Deleted Files:** 0
 - **New Test Files:** 0
@@ -133,6 +137,10 @@ a referenced record can't currently be deleted through the API at all.
   deleted as managed entities before the match, not with a bulk query, so the flush removes them first.
 - **Check existence, not counts.** The dependent-row checks use Spring Data `existsBy…` queries, which stop at the
   first matching row rather than loading or counting them.
+- **Close the race window.** The `existsBy…` checks and the delete aren't atomic, so another request could add a
+  result in between. Each delete is therefore flushed inside the service method, where a foreign-key violation is
+  caught and rethrown as the same `400` the checks give. Left to commit, it would surface only after the method
+  had returned, as a `500`.
 - **Look up first, then check.** Each delete resolves the record before checking references, so a missing ID is a
   `404` rather than a misleading "still referenced" `400`.
 
@@ -140,11 +148,12 @@ a referenced record can't currently be deleted through the API at all.
 
 ## 🧪 Testing
 
-- `./mvnw test` — full suite passing (901 tests, 0 failures/errors), up from 878 in v8.7.0.
-- `./mvnw verify -Pcoverage` — 98.69% line / 99.03% branch coverage, JaCoCo gate passing.
-- 23 new tests for the delete operations: `IpscCompetitorControllerTest`/`IpscMatchControllerTest` (`204` response,
+- `./mvnw test` — full suite passing (903 tests, 0 failures/errors), up from 878 in v8.7.0.
+- `./mvnw verify -Pcoverage` — 98.70% line / 99.03% branch coverage, JaCoCo gate passing.
+- 25 new tests for the delete operations: `IpscCompetitorControllerTest`/`IpscMatchControllerTest` (`204` response,
   delegation and propagated `ValidationException`/`NonFatalException`), `IpscCompetitorServiceTest`/
-  `IpscMatchServiceTest` (delete, not found and each rejecting reference, mocked) and
+  `IpscMatchServiceTest` (delete, not found, each rejecting reference and a reference added before the flush,
+  mocked) and
   `IpscCompetitorServiceIntegrationTest`/`IpscMatchServiceIntegrationTest` (not found, a real delete of the record
   with its emails or stages, and a referenced record being refused and kept, against H2).
 
