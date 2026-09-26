@@ -2388,6 +2388,55 @@ brought in line with what actually exists.
 - 4 new tests (966 → 970): `IpscMatchTest` guards `IpscMatch.stages`' exclusion from Lombok's
   `toString`/`equals`/`hashCode`; coverage unchanged at 98.77%/99.09% line/branch
 
+
+### Phase 37: Explicit Dependency Submission & Dependabot Configuration (v8.10.1)
+
+**Duration:** September 26, 2026
+
+A patch release, CI and documentation only: the one GitHub check with no workflow file behind it is replaced by an
+explicit workflow, Dependabot version updates are configured, and Dependabot's security PRs are fitted into the
+GitFlow branching model.
+
+**Key Accomplishments:**
+
+**CI/CD**
+
+- New `.github/workflows/dependency-submission.yml` submits the Maven dependency graph with
+  `advanced-security/maven-dependency-submission-action`, on push to `main`/`develop` or manual dispatch, using the
+  project's own JDK 25 and Maven wrapper (made executable first, since `mvnw` is committed without its executable
+  bit); it replaces GitHub's built-in automatic dependency submission, which ran on JDK 21 without the wrapper
+- New `.github/dependabot.yml`: weekly Maven and GitHub Actions version updates targeting `develop`, with Maven
+  minor/patch bumps and all Actions bumps each grouped into one PR
+
+**Branching Model**
+
+- Dependabot security-update PRs always target the default branch, `main`, whatever `target-branch` says; they are
+  now handled as hotfixes — merged into `main`, then carried into `develop` by merging `main` back into it, since
+  Dependabot deletes its branch after merging
+- `AGENTS.md`'s Branching Model gains a `dependabot/*` entry, and `CONTRIBUTING.md`'s Merging section a matching rule
+
+**Documentation**
+
+- `ARCHITECTURE.md`'s CI/CD & Quality Gates table gains a Dependency Submission row, and its Project Structure tree
+  lists `.github/dependabot.yml`; `CONTRIBUTING.md`'s CI summary names the new workflow
+
+**Roadmap**
+
+- Gap #29 (Dependabot security PRs bypassing the GitFlow rule for `main`) recorded and closed — Gap #6 remains open,
+  and #26 still waits on a Spring Boot release
+
+**Build & Metadata**
+
+- Project version bumped to 8.10.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Keeping every CI check and dependency-update rule in version control, and inside the branching model
+
+**Test Coverage:**
+
+- No test changes (970 tests); coverage unchanged at 98.77%/99.09% line/branch
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

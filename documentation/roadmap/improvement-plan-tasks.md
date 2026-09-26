@@ -293,6 +293,13 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   `application-staging.properties`, a `staging` row in `CONTRIBUTING.md`'s Database Profiles table and matching
   mentions wherever `prod` is documented — removed the block
 
+**Dependabot security PRs and GitFlow** *(improvement-plan.md → Gap #29)* — ✅ Closed in v8.10.1
+
+- [x] Decide how Dependabot security-update PRs, which target `main`, fit the branching model — treat as hotfixes,
+  retarget to `develop`, or make `develop` the default branch — treated as hotfixes
+- [x] Document the decision in `AGENTS.md`'s Branching Model and `CONTRIBUTING.md`'s Merging section — also in
+  `CONTRIBUTING.md`'s Branching Model summary and `.github/dependabot.yml`'s header comment
+
 ---
 
 ## 🟡 Partially Completed

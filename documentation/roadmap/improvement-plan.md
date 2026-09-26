@@ -43,7 +43,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                                               |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                                      |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real baseline in v8.4.0 (Gap #4 closed; 98.77% line as of v8.9.0); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
-| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), strict Semantic Versioning (classified from `[Unreleased]`, validated at release time) and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                          |
+| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` and Dependabot security PRs direct to `main`), strict Semantic Versioning (classified from `[Unreleased]`, validated at release time) and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs              |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                                             |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                |
 | `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                  |
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (26):**
+- **✅ Completed (27):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -98,6 +98,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     new `prod` profile)
   - #28 `logback-spring.xml` configures a `staging` profile that exists nowhere else — closed v8.10.0 (block
     removed)
+  - #29 Dependabot security-update PRs bypass the GitFlow rule that only `develop` and `hotfix/*` reach `main` —
+    closed v8.10.1 (handled as hotfixes)
 - **🟡 Partially Completed (1):**
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
@@ -865,6 +867,38 @@ its `logs/application-staging.log` appender) is gone from `logback-spring.xml`. 
 `dev`, `local`, `prod` and `test` — now each match a profile documented in `CONTRIBUTING.md`'s Database Profiles
 table (`default` being the no-profile run), so no properties file or doc change was needed.
 
+#### 29. Dependabot security-update PRs bypass the GitFlow rule that only `develop` and `hotfix/*` reach `main` — ✅ Closed in v8.10.1
+
+**Evidence:** `AGENTS.md:475` says `main` "is only ever updated by promoting `develop` after a `release/vX.Y.Z`
+branch has merged into it, or directly from a `hotfix/*` branch — never any other source", and `AGENTS.md:486`
+repeats that every branch goes to `develop` first, with `hotfix/*` "the sole, deliberate exception". But the
+repository has Dependabot security updates enabled (`security_and_analysis.dependabot_security_updates` is
+`enabled`), and those PRs open against the default branch — `main`. The new `.github/dependabot.yml` sets
+`target-branch: "develop"`, but that only governs version updates; GitHub ignores it for security updates, as the
+file's own header comment notes. No doc says how a Dependabot security PR should be handled.
+
+**Why it matters:** The first security advisory against a dependency will produce a PR straight into `main` from a
+`dependabot/*` branch — exactly the source `AGENTS.md` forbids — and nothing tells a reviewer (or an AI agent
+following `AGENTS.md`) whether to merge it there, retarget it, or treat it as a hotfix. Merged into `main` alone,
+the fix is also lost from `develop` at the next release, the failure mode `CONTRIBUTING.md`'s hotfix merge rule
+exists to prevent.
+
+**Proposed improvement:** Decide how Dependabot security PRs fit the branching model, then document it in
+`AGENTS.md`'s Branching Model and `CONTRIBUTING.md`'s Merging section. Either treat them as hotfixes — merge into
+`main`, then carry the same change into `develop`, as for `hotfix/*` — and name `dependabot/*` as a second
+exception; or retarget each one to `develop` before merging; or make `develop` the repository's default branch so
+security PRs target it directly (which also changes where Dependabot reads its configuration from).
+
+**Outcome:** Dependabot security-update PRs are now handled as hotfixes. `AGENTS.md`'s Branching Model names
+them, alongside `hotfix/*`, as the only sources besides `develop` that may update `main`, and a new `dependabot/*`
+bullet separates version-update PRs (target `develop`, treated like `feature/*`) from security-update PRs (target
+`main`, merged there so the fix ships at once, then carried into `develop`). Because Dependabot deletes its branch
+once the PR merges, `CONTRIBUTING.md`'s new Merging rule carries the fix across by merging `main` back into
+`develop`, rather than by a second PR from the Dependabot branch as for `hotfix/*`. `CONTRIBUTING.md`'s Branching
+Model summary and `.github/dependabot.yml`'s header comment point at the same rule. Neither of the other options was
+taken: retargeting each PR to `develop` would delay security fixes to the next release, and making `develop` the
+default branch would also move where Dependabot reads its configuration from.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -929,7 +963,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
-| **Next**    | No items currently scoped — #25, #27 and #28 closed in v8.10.0                                                                                                                                                                                     |
+| **Next**    | No items currently scoped — #29 closed in v8.10.1                                                                                                                                                                                                  |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -997,6 +1031,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   Gap #27.
 - ✅ Met in v8.10.0: every `<springProfile>` in `logback-spring.xml` matches a documented profile — `staging`
   either removed or backed by its own properties file and `CONTRIBUTING.md` row, closing Gap #28.
+- ✅ Met in v8.10.1: `AGENTS.md` and `CONTRIBUTING.md` say how Dependabot security-update PRs are merged, and
+  following that keeps every fix on both `main` and `develop`, closing Gap #29.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
