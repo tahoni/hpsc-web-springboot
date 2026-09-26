@@ -140,6 +140,12 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getCellphoneNumber() != null) {
             competitor.setCellphoneNumber(request.getCellphoneNumber());
         }
+        if (request.getPaidUpSapsa() != null) {
+            competitor.setPaidUpSapsa(request.getPaidUpSapsa());
+        }
+        if (request.getPaidUpClub() != null) {
+            competitor.setPaidUpClub(request.getPaidUpClub());
+        }
         if (request.getEmailAddresses() != null) {
             competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
         }
@@ -240,6 +246,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitorRequestForCSV.getClubNumber(),
                 competitorRequestForCSV.getIdNumber(),
                 competitorRequestForCSV.getCellphoneNumber(),
+                competitorRequestForCSV.getPaidUpSapsa(),
+                competitorRequestForCSV.getPaidUpClub(),
                 splitEmailAddresses(competitorRequestForCSV.getEmailAddresses()));
     }
 
@@ -263,7 +271,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
-     * gender and named home club in the process.
+     * gender and named home club in the process. An omitted {@code paidUpSapsa} or
+     * {@code paidUpClub} is treated as {@code false}.
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
@@ -286,6 +295,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setClubNumber(resolveClubNumber(homeClub, request.getClubNumber()));
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
+        competitor.setPaidUpSapsa(request.getPaidUpSapsa());
+        competitor.setPaidUpClub(request.getPaidUpClub());
         competitor.setEmailAddresses(
                 (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
     }
@@ -429,6 +440,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getClubNumber(),
                 competitor.getIdNumber(),
                 competitor.getCellphoneNumber(),
+                competitor.getPaidUpSapsa(),
+                competitor.getPaidUpClub(),
                 competitor.getEmailAddresses());
     }
 }

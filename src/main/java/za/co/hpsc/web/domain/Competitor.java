@@ -59,6 +59,12 @@ public class Competitor {
     @Column(name = "cellphone_number")
     private String cellphoneNumber;
 
+    @Column(name = "paid_up_sapsa")
+    private Boolean paidUpSapsa;
+
+    @Column(name = "paid_up_club")
+    private Boolean paidUpClub;
+
     @ElementCollection
     @CollectionTable(name = "competitor_email", joinColumns = @JoinColumn(name = "competitor_id"))
     @Column(name = "email_address", nullable = false)

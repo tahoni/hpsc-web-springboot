@@ -156,6 +156,8 @@ class IpscCompetitorServiceIntegrationTest {
         request.setCompetitorNumber("C-1");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
+        request.setPaidUpSapsa(true);
+        request.setPaidUpClub(true);
         request.setEmailAddresses(List.of("jane.doe@example.com"));
 
         // Act
@@ -175,7 +177,24 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, response.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, response.getPaidUpClub());
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
+    }
+
+    @Test
+    void testCreateCompetitor_whenPaidUpFlagsAreOmitted_thenPersistsThemAsNull() {
+        // Arrange
+        CompetitorRequest request = validRequest("HPSC-001");
+
+        // Act
+        CompetitorResponse response = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitor(request));
+        CompetitorResponse fetched = assertDoesNotThrow(
+                () -> ipscCompetitorService.getCompetitor(response.getCompetitorId()));
+
+        // Assert
+        assertNull(fetched.getPaidUpSapsa());
+        assertNull(fetched.getPaidUpClub());
     }
 
     @Test
@@ -196,7 +215,7 @@ class IpscCompetitorServiceIntegrationTest {
 
     // createCompetitors()
     private static final String CSV_HEADER =
-            "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses\n";
+            "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
 
     @Test
     void testCreateCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
@@ -265,6 +284,22 @@ class IpscCompetitorServiceIntegrationTest {
         // Assert
         assertNotNull(holder);
         assertTrue(holder.getCompetitors().isEmpty());
+    }
+
+    @Test
+    void testCreateCompetitors_whenPaidUpColumnsProvided_thenPersistsPaidUpFlags() {
+        // Arrange
+        String csvData = CSV_HEADER + "Jane,Doe,,,,,,,,HPSC-001,,,,true,false\n";
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, holder.getCompetitors().size());
+        CompetitorResponse fetched = assertDoesNotThrow(
+                () -> ipscCompetitorService.getCompetitor(holder.getCompetitors().getFirst().getCompetitorId()));
+        assertEquals(Boolean.TRUE, fetched.getPaidUpSapsa());
+        assertEquals(Boolean.FALSE, fetched.getPaidUpClub());
     }
 
     @Test

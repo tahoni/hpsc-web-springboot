@@ -61,9 +61,36 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Domain
+
+- **`Competitor.paidUpSapsa`, `Competitor.paidUpClub`:** New nullable `Boolean` columns — whether a competitor's
+  SAPSA and club memberships are paid up
+
+##### API Models
+
+- **`CompetitorRequest`, `CompetitorRequestForCSV`, `CompetitorResponse`:** New `paidUpSapsa`/`paidUpClub` fields;
+  an omitted flag is stored as `null` on create/update and left unchanged on patch
+
+##### Database
+
+- **`V7_8_0__add_competitor_paid_up_flags.sql`:** New Flyway migration — adds nullable `paid_up_sapsa` and
+  `paid_up_club` `BOOLEAN` columns to `competitor`
+
 ##### Build & Metadata
 
 - **`commons-text`:** New `org.apache.commons:commons-text` 1.15.0 dependency
+
+##### Tests
+
+- **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceImplTest`,
+  `CompetitorRequestTest`, `CompetitorRequestForCSVTest`:** Cover the new paid-up flags
+
+#### 🔄 Changed
+
+##### Controllers
+
+- **`IpscCompetitorController.createCompetitors`:** The competitor CSV header now requires trailing `PaidUpSapsa` and
+  `PaidUpClub` columns (a row may leave them empty); existing CSV files need the two header columns added
 
 ### 🧾 [8.8.0] - 2026-09-24
 

@@ -286,7 +286,7 @@ public class IpscCompetitorServiceTest {
         when(clubRepository.findByName("HPSC")).thenReturn(Optional.of(club));
         stubSaveReturnsSameEntity();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,,,,,HPSC,,,HPSC-001,,,
                 """;
 
@@ -305,7 +305,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         stubSaveReturnsSameEntity();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,,,,,,,,HPSC-001,,,jane.doe@example.com;jane2.doe@example.com
                 """;
 
@@ -322,7 +322,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         stubSaveReturnsSameEntity();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,,,,,,,,HPSC-001,,,
                 John,Smith,,,,,,,,HPSC-002,,,
                 """;
@@ -341,7 +341,7 @@ public class IpscCompetitorServiceTest {
     void testCreateCompetitors_whenRowIsMissingRequiredField_thenThrowsValidationException() {
         // Arrange
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 ,Doe,,,,,,,,,,,
                 """;
 
@@ -353,7 +353,7 @@ public class IpscCompetitorServiceTest {
     void testCreateCompetitors_whenRowHasUnrecognisedGender_thenThrowsValidationException() {
         // Arrange
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,,,,Not A Gender,,,,HPSC-001,,,
                 """;
 
@@ -366,7 +366,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,,,,,No Such Club,,,HPSC-001,,,
                 """;
 
@@ -759,6 +759,8 @@ public class IpscCompetitorServiceTest {
         patch.setCompetitorNumber("C-001");
         patch.setIdNumber("8001015800083");
         patch.setCellphoneNumber("0821234567");
+        patch.setPaidUpSapsa(true);
+        patch.setPaidUpClub(true);
         patch.setEmailAddresses(List.of("jane@example.com"));
 
         // Act
@@ -773,6 +775,8 @@ public class IpscCompetitorServiceTest {
         assertEquals("C-001", patched.getCompetitorNumber());
         assertEquals("8001015800083", patched.getIdNumber());
         assertEquals("0821234567", patched.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, patched.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, patched.getPaidUpClub());
         assertEquals(List.of("jane@example.com"), patched.getEmailAddresses());
     }
 

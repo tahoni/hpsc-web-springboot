@@ -61,6 +61,10 @@ public class CompetitorRequestForCSV {
     private String idNumber;
     /** The competitor's cellphone number. */
     private String cellphoneNumber;
+    /** Whether the competitor's SAPSA membership is paid up; treated as {@code false} when omitted. */
+    private Boolean paidUpSapsa;
+    /** Whether the competitor's club membership is paid up; treated as {@code false} when omitted. */
+    private Boolean paidUpClub;
     /** The competitor's email addresses, if any, as a single semicolon-separated CSV cell (e.g. {@code "a@x.com;b@x.com"}). */
     private String emailAddresses;
 
@@ -87,6 +91,10 @@ public class CompetitorRequestForCSV {
      *                         Required when {@code homeClub} is HPSC, ignored (forced to {@code null}) otherwise.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
+     * @param paidUpSapsa      whether the competitor's SAPSA membership is paid up; treated as {@code false} when
+     *                         omitted.
+     * @param paidUpClub       whether the competitor's club membership is paid up; treated as {@code false} when
+     *                         omitted.
      * @param emailAddresses   the competitor's email addresses, if any, as a single
      *                         semicolon-separated CSV cell (e.g. {@code "a@x.com;b@x.com"}).
      */
@@ -103,6 +111,8 @@ public class CompetitorRequestForCSV {
                                    @JsonProperty("ClubNumber") String clubNumber,
                                    @JsonProperty("IdNumber") String idNumber,
                                    @JsonProperty("CellphoneNumber") String cellphoneNumber,
+                                   @JsonProperty("PaidUpSapsa") Boolean paidUpSapsa,
+                                   @JsonProperty("PaidUpClub") Boolean paidUpClub,
                                    @JsonProperty("EmailAddresses") String emailAddresses) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -116,6 +126,8 @@ public class CompetitorRequestForCSV {
         this.clubNumber = clubNumber;
         this.idNumber = idNumber;
         this.cellphoneNumber = cellphoneNumber;
+        this.paidUpSapsa = paidUpSapsa;
+        this.paidUpClub = paidUpClub;
         this.emailAddresses = emailAddresses;
     }
 }
