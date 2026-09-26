@@ -175,6 +175,95 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Refresh `standard-rest-conventions.md`'s "🔍 Current State in This Codebase" examples to name
   `getAllMatches`/`getAllCompetitors` and `IpscCompetitorController`
 
+**Claude Code workflows in the CI/CD documentation** *(improvement-plan.md → Gap #13)* — ✅ Closed in v8.9.0
+
+- [x] Add `claude-code-review.yml` (every PR, advisory) and `claude.yml` (on `@claude` mention) rows to
+  `ARCHITECTURE.md`'s CI/CD & Quality Gates table, noting the `CLAUDE_CODE_OAUTH_TOKEN` secret both rely on
+- [x] Widen `ARCHITECTURE.md`'s Project Structure tree comment for `.github/workflows/` generically, without listing
+  individual workflow files
+- [x] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
+- [x] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
+  — tailored to `src/**/*.java`, `src/main/resources/**` and `pom.xml`, still commented out
+
+**Flyway migration table refresh** *(improvement-plan.md → Gap #14)* — ✅ Closed in v8.9.0
+
+- [x] Add rows to `flyway-migration-versioning.md`'s Current State table for `V7_4_0__make_club_number_nullable.sql`
+  (v8.4.0), `V7_5_0__add_ipsc_match_start_end_time.sql` (v8.5.0), `V7_6_0__add_ipsc_match_url.sql` (v8.6.0),
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` (v8.6.0) and `V7_8_0__add_competitor_paid_up_flags.sql`
+  (listed as "Unreleased" — confirm actual shipping version when this lands)
+- [x] ~~Fold this table refresh into a recurring release-prep check~~ — done differently: added as step 5 of
+  `flyway-migration-versioning.md`'s own "🔢 Choosing the Next Version" section instead, so whoever adds the next
+  migration updates the table in the same change rather than relying on a separate release-time check
+
+**ARCHITECTURE.md cascade/mappedBy self-contradiction** *(improvement-plan.md → Gap #15)* — ✅ Closed in v8.9.0
+
+- [x] ~~Correct the Quality Attributes table's "Data Integrity" row (line 387) to match the Persistence Layer
+  section's "no cascade or `mappedBy`" description (line 201)~~ — done the other way round: `IpscMatch` gained a
+  cascaded `@OneToMany(mappedBy = "match")` `stages` collection, and the Persistence Layer section, entity table and
+  "Data Integrity" row were all rewritten to describe it as the domain model's one cascaded relationship
+- [x] Correct the Development Guidelines cross-reference (line 405) to point at `CONTRIBUTING.md`, not `README.md`,
+  for database profiles documentation
+
+**CONTRIBUTING.md dead test-method example** *(improvement-plan.md → Gap #16)* — ✅ Closed in v8.9.0
+
+- [x] Replace `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200` (line 101) with an existing test
+  method, e.g. `AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`
+
+**HISTORY.md Future Roadmap Implications log refresh** *(improvement-plan.md → Gap #17)* — ✅ Closed in v8.9.0
+
+- [x] Rename the current final `### Recently Completed (v8.4.0)` entry to `### Previously Completed (v8.4.0)`
+- [x] Add a `### Recently Completed (vX.Y.Z)` entry for each of v8.4.1, v8.4.2, v8.5.0, v8.5.1, v8.6.0, v8.6.1,
+  v8.6.2, v8.7.0 and v8.8.0, summarising each release's already-written Historical Timeline/`CHANGELOG.md` content
+- [x] Update the section's opening sentence from "Based on the evolution to v8.4.0" to the current version
+- [x] Fold this refresh into the Release Checklist alongside Gap #10's Phase/Milestone step — done by making
+  the existing step 6 (and `prep-version-release`'s matching step) update this log unconditionally, instead of
+  only "if the release is significant enough"
+
+**Tech-stack docs vs unused dependencies** *(improvement-plan.md → Gap #18)* — ✅ Closed in v8.9.0
+
+- [x] Decide per dependency (`jackson-dataformat-xml`, `commons-lang3`, `commons-text`) whether to drop it or keep it
+  as documented groundwork
+- [x] Remove the dropped ones from `pom.xml`, including `commons-text`'s manual version pin
+- [x] Correct the tech-stack lines in `README.md`, `ARCHITECTURE.md` and `AGENTS.md` to match
+
+**ARCHITECTURE.md Strategy Pattern rows** *(improvement-plan.md → Gap #19)* — ✅ Closed in v8.9.0
+
+- [x] Remove or reword the Key Design Patterns table's "Strategy Pattern" row — replaced with a "Transaction
+  Boundary" row describing `TransactionService`
+- [x] Replace "strategy-pattern converters" in the Quality Attributes table's Extensibility row
+
+**AGENTS.md 3-tier test rule and TransactionService** *(improvement-plan.md → Gap #20)* — ✅ Closed in v8.9.0
+
+- [x] Either add `TransactionServiceTest`/`TransactionServiceIntegrationTest`, or record `TransactionService` as a
+  deliberate exception in `AGENTS.md`'s Test Conventions
+- [x] Correct the rule's "All four services" count and list
+
+**ARCHITECTURE.md data flows and repositories** *(improvement-plan.md → Gap #21)* — ✅ Closed in v8.9.0
+
+- [x] Redraw the System Overview and Typical Request-Response Flow diagrams through `TransactionService`
+- [x] Reword both bulk-import flows to "builds each row, then saves all rows in one transaction"
+- [x] Remove the stale "removed pending a rebuild" CRUD-flows note
+- [x] Update the Project Structure tree's `repositories/` comment and the Repositories section's example queries
+- [x] Refresh Gap #6's Evidence, which quotes the old "not yet wired" comment — added a note rather than
+  rewriting the original analysis
+
+**AGENTS.md club name** *(improvement-plan.md → Gap #22)* — ✅ Closed in v8.9.0
+
+- [x] Correct `AGENTS.md`'s "Handgun and Practical Shooting Club" to "Hartbeespoortdam Practical Shooting Club"
+
+**Competitor.homeClub backfill** *(improvement-plan.md → Gap #23)* — ✅ Closed as not applicable in v8.9.0
+
+- [x] Decide whether existing competitors' `homeClub` should still be backfilled
+- [x] If so, add a data migration or one-off service operation deriving `home_club_id`; if not, drop the bullet from
+  `HISTORY.md`'s Short-term list — not wanted: no column reliably identifies a home club, so the bullet was dropped
+
+**Entity and repository tests** *(improvement-plan.md → Gap #24)* — ✅ Closed in v8.9.0
+
+- [x] Add repository/entity tests for `IpscMatch.stages`' cascade and orphan removal, the fetch-join queries and the
+  `existsBy…` checks
+- [x] Or reword `README.md`'s Testing section to describe the coverage that actually exists — done as well, since
+  there are still no entity-level unit tests
+
 ---
 
 ## 🟡 Partially Completed
@@ -199,15 +288,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
-
-**Claude Code workflows in the CI/CD documentation** *(improvement-plan.md → Gap #13)*
-
-- [ ] Add `claude-code-review.yml` (every PR, advisory) and `claude.yml` (on `@claude` mention) rows to
-  `ARCHITECTURE.md`'s CI/CD & Quality Gates table, noting the `CLAUDE_CODE_OAUTH_TOKEN` secret both rely on
-- [ ] Widen `ARCHITECTURE.md`'s Project Structure tree comment for `.github/workflows/` generically, without listing
-  individual workflow files
-- [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
-- [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

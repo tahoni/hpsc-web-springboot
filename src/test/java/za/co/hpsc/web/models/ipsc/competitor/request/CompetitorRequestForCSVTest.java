@@ -23,7 +23,8 @@ class CompetitorRequestForCSVTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequestForCSV request = new CompetitorRequestForCSV(
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com;jane2.doe@example.com");
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
+                "jane.doe@example.com;jane2.doe@example.com");
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -42,6 +43,8 @@ class CompetitorRequestForCSVTest {
         assertEquals("HPSC-001", node.get("ClubNumber").asText());
         assertEquals("9001015800083", node.get("IdNumber").asText());
         assertEquals("0821234567", node.get("CellphoneNumber").asText());
+        assertTrue(node.get("PaidUpSapsa").asBoolean());
+        assertFalse(node.get("PaidUpClub").asBoolean());
         assertEquals("jane.doe@example.com;jane2.doe@example.com", node.get("EmailAddresses").asText());
     }
 
@@ -50,7 +53,7 @@ class CompetitorRequestForCSVTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequestForCSV request = new CompetitorRequestForCSV(
-                "Jane", "Doe", null, null, null, null, null, null, null, null, null, null, null);
+                "Jane", "Doe", null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -83,6 +86,8 @@ class CompetitorRequestForCSVTest {
                   "ClubNumber": "HPSC-001",
                   "IdNumber": "9001015800083",
                   "CellphoneNumber": "0821234567",
+                  "PaidUpSapsa": true,
+                  "PaidUpClub": false,
                   "EmailAddresses": "jane.doe@example.com;jane2.doe@example.com"
                 }
                 """;
@@ -103,6 +108,8 @@ class CompetitorRequestForCSVTest {
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
+        assertEquals(Boolean.FALSE, request.getPaidUpClub());
         assertEquals("jane.doe@example.com;jane2.doe@example.com", request.getEmailAddresses());
     }
 
@@ -176,7 +183,7 @@ class CompetitorRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com
                 """;
 
@@ -206,7 +213,7 @@ class CompetitorRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe
                 """;
 
@@ -234,7 +241,7 @@ class CompetitorRequestForCSVTest {
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane
                 """;
 

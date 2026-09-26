@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
@@ -577,6 +578,73 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(1, updated.getStages().size());
         assertNotEquals(originalStageId, updated.getStages().getFirst().getStageId());
         assertEquals("Replacement Stage", updated.getStages().getFirst().getStageName());
+    }
+
+    // Without a surrounding transaction
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void testMatchLifecycle_whenNoTransactionIsActive_thenEachWriteIsCommittedAndReadableAfterwards()
+            throws FatalException {
+        // Each service call below runs without this test's usual rolled-back transaction, so every
+        // write must be committed by TransactionService and every read must work on its own.
+        Long matchId = null;
+        try {
+            // Arrange
+            createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+            MatchRequest request = validRequest("Test Club");
+            request.setStages(List.of(new MatchStageRequest(null, 2, "Stage 2"), new MatchStageRequest(null, 1, "Stage 1")));
+
+            // Act & Assert - create, then read back in a separate call
+            matchId = ipscMatchService.createMatch(request).getMatchId();
+            MatchResponse fetched = ipscMatchService.getMatch(matchId);
+            assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, fetched.getClub());
+            assertEquals(List.of("Stage 1", "Stage 2"),
+                    fetched.getStages().stream().map(stage -> stage.getStageName()).toList());
+
+            // Act & Assert - replace, reusing a stage number
+            MatchRequest update = validRequest("Test Club");
+            update.setStages(List.of(new MatchStageRequest(null, 1, "Replacement Stage")));
+            ipscMatchService.updateMatch(matchId, update);
+            assertEquals(List.of("Replacement Stage"),
+                    ipscMatchService.getMatch(matchId).getStages().stream().map(stage -> stage.getStageName()).toList());
+
+            // Act & Assert - upsert a new stage alongside the existing one
+            MatchRequest patch = new MatchRequest();
+            patch.setStages(List.of(new MatchStageRequest(null, 2, "Added Stage")));
+            ipscMatchService.patchMatch(matchId, patch);
+            assertEquals(List.of("Replacement Stage", "Added Stage"),
+                    ipscMatchService.getMatch(matchId).getStages().stream().map(stage -> stage.getStageName()).toList());
+
+            // Act & Assert - delete
+            ipscMatchService.deleteMatch(matchId);
+            assertFalse(ipscMatchRepository.existsById(matchId));
+            matchId = null;
+        } finally {
+            if (matchId != null) {
+                ipscMatchService.deleteMatch(matchId);
+            }
+            clubRepository.findByName("Test Club").ifPresent(clubRepository::delete);
+        }
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void testCreateMatches_whenNoTransactionIsActiveAndARowIsInvalid_thenNoRowIsCommitted() {
+        try {
+            // Arrange
+            createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+            String csvData = """
+                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
+                    2026-09-12,First Match,Test Club,%1$s,%2$s,,,,
+                    2026-09-13,Second Match,No Such Club,%1$s,%2$s,,,,
+                    """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+            // Act & Assert
+            assertThrows(NonFatalException.class, () -> ipscMatchService.createMatches(csvData));
+            assertTrue(ipscMatchService.getAllMatches().isEmpty());
+        } finally {
+            clubRepository.findByName("Test Club").ifPresent(clubRepository::delete);
+        }
     }
 
     // Helpers
