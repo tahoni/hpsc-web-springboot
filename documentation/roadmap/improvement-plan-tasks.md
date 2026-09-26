@@ -264,13 +264,50 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Or reword `README.md`'s Testing section to describe the coverage that actually exists — done as well, since
   there are still no entity-level unit tests
 
+**Entity-level unit tests** *(improvement-plan.md → Gap #25)* — ✅ Closed in v8.10.0
+
+- [x] Decide whether entity-level unit tests are still wanted, given the entities hold no hand-written behaviour and
+  their persistence behaviour is covered by the repository integration tests — decided per entity: only `IpscMatch`
+  has behaviour worth a unit test (its `stages` exclusion from Lombok's `toString`/`equals`/`hashCode`)
+- [x] If so, add unit tests for the entity behaviour that warrants it (e.g. empty-collection defaults); if not, drop
+  the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
+  — did both halves: added `IpscMatchTest` and dropped the `HISTORY.md` bullet
+
+**Database-profile docs** *(improvement-plan.md → Gap #27)* — ✅ Closed in v8.10.0
+
+- [x] Document that the no-profile (production) run needs its datasource URL supplied externally (e.g.
+  `SPRING_DATASOURCE_URL`) in `AGENTS.md`'s run command and `CONTRIBUTING.md`'s `(none / prod)` row — or add a
+  `${MYSQL_URL}`-style placeholder to `application.properties` and document that variable instead — documented the
+  external URL rather than adding a required placeholder (a breaking configuration change), and added a separate
+  `application-prod.properties` profile (`hpsc_prod`) with its own `CONTRIBUTING.md` row and `AGENTS.md` run
+  command
+- [x] Qualify `README.md`'s/`CONTRIBUTING.md`'s "regardless of profile" credentials wording to exclude `local` as well
+  as `test`
+- [x] Add a `local` row to `CONTRIBUTING.md`'s Database Profiles table, or name its `hpsc_dev` user and
+  `MYSQL_LOCAL_PASSWORD` variable in the existing note — did both
+
+**`staging` logging profile** *(improvement-plan.md → Gap #28)* — ✅ Closed in v8.10.0
+
+- [x] Decide whether a staging environment is wanted — not wanted
+- [x] If not, remove the `staging` `<springProfile>` block from `logback-spring.xml`; if so, add
+  `application-staging.properties`, a `staging` row in `CONTRIBUTING.md`'s Database Profiles table and matching
+  mentions wherever `prod` is documented — removed the block
+
 ---
 
 ## 🟡 Partially Completed
 
-*No gaps are currently partially completed.* A gap moves here once at least one of its items is checked, but the
-block as a whole isn't fully checked off yet — matching `improvement-plan.md`'s "🟡 Partially Completed" section —
-and moves on to ✅ Completed once every item is checked and the gap's own header there carries a "✅ Closed" suffix.
+A gap moves here once at least one of its items is checked, but the block as a whole isn't fully checked off yet —
+matching `improvement-plan.md`'s "🟡 Partially Completed" section — and moves on to ✅ Completed once every item is
+checked and the gap's own header there carries a "✅ Closed" suffix.
+
+**`tomcat.version` override** *(improvement-plan.md → Gap #26)* — 🟡 Partially completed in v8.10.0
+
+- [x] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later —
+  made a standing step instead: `AGENTS.md`'s Release Checklist step 2 and `prep-version-release` now re-check every
+  manual `pom.xml` override against the parent's own `spring-boot-dependencies` POM
+- [ ] Once it has, drop the `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
+  bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
 
 ---
 

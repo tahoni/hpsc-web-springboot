@@ -32,22 +32,37 @@ Before drafting, run these yourself and read their output:
 ## 🚀 Instructions
 
 Read and strictly follow **all conventions defined in AGENTS.md** (loaded above) — in particular its **Release
-Checklist**, **Documentation Conventions**, **Git Workflow** (Branching Model), **Evergreen Documentation** (reverse
-sync rule), **Build & Run Commands** and **Architecture** sections for accurate technical detail (build/test commands,
-package layout, database profiles) when writing `RELEASE_NOTES.md`/the PR description. Treat it as the single source of
-truth; do not reinterpret or contradict its rules. Follow the Release Checklist steps **in order** — the version number
-and date must be final before anything downstream references them.
+Checklist**, **Documentation Conventions**, **Git Workflow** (Branching Model, Semantic Versioning), **Evergreen
+Documentation** (reverse sync rule), **Build & Run Commands** and **Architecture** sections for accurate technical
+detail (build/test commands, package layout, database profiles) when writing `RELEASE_NOTES.md`/the PR description.
+Treat it as the single source of truth; do not reinterpret or contradict its rules. Follow the Release Checklist steps
+**in order** — the version number and date must be final before anything downstream references them.
 
 Steps:
 
 1. **Confirm the diff against `main`** (gathered above) covers everything that changed for this release — re-run
    `git log main..HEAD` / `git diff --stat main...HEAD` yourself if the branch has moved on since this skill started.
+   Then **validate `$VERSION` against AGENTS.md's Semantic Versioning rules** before anything references it: find the
+   latest released version (the top `### 🧾 [X.Y.Z]` heading in `CHANGELOG.md`), classify this release from
+   `### 🧪 [Unreleased]` and the diff as MAJOR, MINOR or PATCH (highest-ranking change wins — any breaking change is
+   MAJOR; any externally visible addition or deprecation is MINOR; otherwise PATCH), and check that `$VERSION` is
+   exactly the one-step increment that classification implies, in plain `X.Y.Z` form. If it isn't — wrong level,
+   skipped or reused number, or a `v` prefix/suffix — stop and tell the user which version SemVer calls for and why,
+   citing the deciding changes; only continue once they confirm a version. If any change's backward compatibility is
+   unclear, ask rather than guessing downward.
 2. **Run the `update-improvement-plan-gaps` skill, then the `sync-improvement-plan-gaps` skill, in that order.** The
    first does a full codebase sweep for brand-new gaps against `documentation/roadmap/improvement-plan.md`/
    `improvement-plan-tasks.md`; the second then checks whether this branch's own diff has closed or progressed any of
    the gaps already tracked there (its own diff-gathering step needs the plan to already reflect anything new the
    first skill just found). Neither commits on its own — review their draft edits with the user before continuing.
-3. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to `$VERSION`.
+3. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to `$VERSION`. In the
+   same pass, re-check every manual version override in `pom.xml` per AGENTS.md's Release Checklist step 2: for each
+   `<properties>` entry or hand-pinned `<version>` overriding something the Spring Boot parent manages (e.g.
+   `tomcat.version`), read the version the parent's own `spring-boot-dependencies` POM manages — from the local Maven
+   repository (`~/.m2/repository/org/springframework/boot/spring-boot-dependencies/<parent version>/`), not the
+   effective POM, which just echoes the override back — and drop any override the parent has caught up with or passed,
+   adding a `CHANGELOG.md` entry for the removal. List each override you kept, and why, in your final output. If an
+   override is tracked by an `improvement-plan.md` gap (e.g. Gap #26 for `tomcat.version`), update that gap too.
 4. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
    match.
 5. **Run the `sync-unreleased-changes` skill before touching CHANGELOG.md.** Release branches are cut from `develop`
@@ -56,7 +71,9 @@ Steps:
    `[Unreleased]` entries, fills in anything missing, flags drifted entries and consolidates duplicate `##### <Area>`
    sub-headers. The next step renames `[Unreleased]` wholesale, so it must be fully accurate first. If it flags any
    entries as drifted, resolve those with the user before continuing — don't fold a flagged entry into the new version
-   section unresolved.
+   section unresolved. Re-run step 1's Semantic Versioning classification against the synced `[Unreleased]` section;
+   if a newly surfaced entry changes it (e.g. an unflagged breaking change), stop, agree the corrected version with the
+   user, and redo steps 3 and 4 with it before continuing.
 6. **Add a `CHANGELOG.md` entry.** Rename `### 🧪 [Unreleased]`'s accumulated entries (now synced in the previous
    step) into a new `### 🧾 [$VERSION] - YYYY-MM-DD` section, keeping only the `#### <category>` headings that apply
    (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security`) and their `##### <Area>`

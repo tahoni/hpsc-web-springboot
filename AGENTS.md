@@ -69,11 +69,15 @@ unrelated app release literally named v7.2.0.
 # Build
 ./mvnw clean install
 
-# Run (uses application.properties; requires MYSQL_USER and MYSQL_PASSWORD env vars)
+# Run (uses application.properties; requires MYSQL_USER and MYSQL_PASSWORD env vars, plus the datasource URL
+# supplied externally, e.g. SPRING_DATASOURCE_URL, since application.properties sets none)
 ./mvnw spring-boot:run
 
-# Run with dev profile (local MySQL at localhost:3306/hpsc_dev)
+# Run with dev profile (local MySQL at localhost:3306/hpsc_dev; still reads MYSQL_USER and MYSQL_PASSWORD)
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Run with prod profile (MySQL at localhost:3306/hpsc_prod; still reads MYSQL_USER and MYSQL_PASSWORD)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
 
 # All tests (uses H2 in-memory — no external DB needed)
 ./mvnw test
@@ -488,6 +492,43 @@ Which merge strategy each branch type uses, PR ordering, tagging `main` and bran
 GitHub mechanics, not something an AI agent executes unprompted — see
 [`CONTRIBUTING.md`'s 🔀 Git & PR Workflow section](CONTRIBUTING.md#-git--pr-workflow) for the full merging procedure.
 
+### Semantic Versioning
+
+Every release **must** follow [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html) strictly. The version
+number is not a judgement call about how big or important a release feels — it is dictated by the most significant
+change it contains, relative to the previous release:
+
+- **MAJOR** (`X` → `X+1`, resetting `Y.Z` to `0.0`) — any backward-incompatible change to the public API: a REST
+  endpoint removed or renamed, its path, HTTP method, request or response contract changed incompatibly (a field
+  removed, renamed, retyped or made required), an accepted import format (CSV/JSON) no longer accepted, or a
+  configuration property/environment variable renamed or removed so an existing deployment breaks without changes.
+- **MINOR** (`Y` → `Y+1`, resetting `Z` to `0`) — backward-compatible new functionality: a new endpoint, a new
+  optional request field or new response field, a new import format, a new optional configuration property, or
+  anything newly marked deprecated (deprecations are announced in a MINOR release and only removed in a later MAJOR).
+- **PATCH** (`Z` → `Z+1`) — backward-compatible fixes only: bug fixes, security fixes that don't break the API, and
+  changes with no externally visible behaviour change (internal refactors, tests, documentation, tooling, dependency
+  bumps).
+
+Rules:
+
+- **Classify from `CHANGELOG.md`'s `### 🧪 [Unreleased]` section.** Anything breaking forces MAJOR; otherwise any
+  `➕ Added` or `⚠️ Deprecated` entry that is externally visible forces MINOR; otherwise the release is a PATCH. A
+  `🗑️ Removed` entry of anything that was part of the public API is breaking by definition, and so is MAJOR.
+- **The highest-ranking change wins.** A release with one breaking change and twenty bug fixes is still MAJOR.
+- **Flag breaking changes as they land,** not at release time — a `CHANGELOG.md` entry for a backward-incompatible
+  change says so explicitly (e.g. prefix its description with `**Breaking:**`), so the classification is visible
+  before anyone cuts the release.
+- **Increment by exactly one step** from the latest released version — no skipped numbers, no reused numbers, and a
+  released version's contents are never changed; a fix after the fact is a new PATCH release.
+- **Versions are plain `X.Y.Z`** — no leading `v` in `pom.xml`, the OpenAPI version or `CHANGELOG.md` headings (the `v`
+  prefix belongs only in branch names, tags and file names such as `release/vX.Y.Z`/`RELEASE_NOTES_vX.Y.Z.md`), and no
+  pre-release or build-metadata suffix unless one is explicitly agreed for that release.
+- **Flyway migration versions are out of scope** — they follow their own counter (see
+  [⚙️ Tech Stack](#-tech-stack)), and a schema migration alone does not decide the app version; what it changes in the
+  API does.
+- **When in doubt, go higher, and ask.** If a change's compatibility is unclear, raise it with the author before the
+  version is fixed rather than guessing downward.
+
 ### Conventions
 
 - **Commit in logical chunks.** One concern per commit — do not bundle unrelated changes (e.g. a dependency bump, a
@@ -513,13 +554,23 @@ anything downstream references them:
 1. **Check `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`.** Before starting any
    version-specific work, check whether this release has closed, progressed or newly revealed any of the gaps
    tracked there, and update them accordingly.
-2. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`.
+2. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`,
+   which must be the correct next version under [Semantic Versioning](#semantic-versioning) — classify the release
+   from the `### 🧪 [Unreleased]` section first, and don't bump until the MAJOR/MINOR/PATCH choice is confirmed.
+   In the same pass, re-check every manual version override in `pom.xml` — a `<properties>` entry overriding a
+   version the Spring Boot parent manages (e.g. `tomcat.version`), or a hand-pinned `<version>` on a dependency the
+   parent already manages. Compare each against the version the parent's own `spring-boot-dependencies` POM manages
+   (read that POM directly — the effective POM just echoes the override back), and drop any override the parent has
+   caught up with or passed. Tools, plugins and BOMs the parent doesn't manage at all (e.g. `jacoco.version`,
+   `springdoc-openapi-bom`) aren't overrides and stay.
 3. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
    match.
 4. **Verify `CHANGELOG.md`'s `### 🧪 [Unreleased]` section is complete.** Cross-check every commit and any uncommitted
    diff on the release branch against its entries before renaming it in the next step — don't assume it's already
    accurate just because entries were added along the way; fill in anything missing and resolve any drifted entries
-   with the author first.
+   with the author first. If an entry added here changes the release's Semantic Versioning classification (e.g. a
+   breaking change surfaces in what was meant to be a MINOR release), go back and redo steps 2 and 3 with the
+   corrected version before continuing.
 5. **Add a `CHANGELOG.md` entry.** New `### 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog
    categories that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit
    any that are empty). Update the Table of Contents and move the "← Current" marker to the new version.

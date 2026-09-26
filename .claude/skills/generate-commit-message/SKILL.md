@@ -75,6 +75,12 @@ CHANGELOG entry, flag it to the user and point them at the `sync-unreleased-chan
       description of what changed and why — e.g.
       `` - **`ShooterLog.powerFactor`:** New `PowerFactor` column — snapshots are now scoped by power factor as well as firearm type ``.
     - Be specific: name the actual class/file/behaviour, not vague statements like "improved tests".
+    - **Flag breaking changes**, per AGENTS.md's Semantic Versioning rules: if a change is backward-incompatible for the
+      public API (a REST endpoint, request/response contract, accepted import format or configuration
+      property/environment variable changed or removed so existing callers or deployments break), start that bullet's
+      description with `**Breaking:**` — e.g. `` - **`IpscMatchController`:** **Breaking:** `GET /ipsc/matches/{id}`
+      removed — ... ``. Removing anything that was part of the public API is always breaking. If you can't tell
+      whether a change is backward-compatible, ask the user rather than leaving the flag off.
 4. **Group unrelated work**: if the diff contains clearly unrelated changes, propose separate commits with a message and
    separate CHANGELOG entries for each rather than forcing one message.
 5. **British English** spelling, grammar and punctuation throughout (e.g. "licence", "colour", "initialise"), per
@@ -92,6 +98,8 @@ Do **not** run `git add` or `git commit` yourself — this skill only drafts, fo
    same commit as the change it documents)
 3. If proposing multiple commits, output one message block and one commit command per commit, in the order they should
    be made, followed by a single consolidated CHANGELOG.md block with all entries
+4. If any entry is flagged `**Breaking:**`, say so in one line after the CHANGELOG block — it means the next release
+   must be a MAJOR version under AGENTS.md's Semantic Versioning rules
 
 Example output structure:
 

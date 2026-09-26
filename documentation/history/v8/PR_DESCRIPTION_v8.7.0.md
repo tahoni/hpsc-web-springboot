@@ -21,14 +21,14 @@
 - All domain `@ManyToOne` associations `LAZY` → `EAGER`
 - springdoc `2.8.5` → `3.1.0`, versioned through `springdoc-openapi-bom`; project version bumped to 8.7.0
 
-**Removed**
-
-- `spring-restdocs-mockmvc` test dependency and its documentation mentions
-
 **Fixed**
 
 - `getAllMatches`' Swagger response now documented as an array rather than a single `MatchResponse`
 - `ARCHITECTURE.md`'s Project Structure tree comments corrected against disk
+
+**Removed**
+
+- `spring-restdocs-mockmvc` test dependency and its documentation mentions
 
 ## 🧪 Test Plan
 

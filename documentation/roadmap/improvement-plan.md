@@ -36,19 +36,19 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 
 ## ⚙️ Goals & Constraints (Synthesised)
 
-| Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                                                                         |
-|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                                                                      |
-| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                                                                                |
-| `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                            |
-| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                   |
-| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real ~98.4% baseline in v8.4.0 (Gap #4 closed); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
-| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), Semantic Versioning and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                                                                          |
-| `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                          |
-| `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                             |
-| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint (see [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                    |
-| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                     |
-| `CONTRIBUTING.md`, `application.properties`         | Three distinct runtime profiles (none/prod, `dev`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors                                                                                                                                                                                        |
+| Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                                                                                            |
+|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                                                                                         |
+| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                                                                                                   |
+| `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                                               |
+| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                                      |
+| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real baseline in v8.4.0 (Gap #4 closed; 98.77% line as of v8.9.0); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
+| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` direct to `main`), strict Semantic Versioning (classified from `[Unreleased]`, validated at release time) and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                          |
+| `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                                             |
+| `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                |
+| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                  |
+| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                                        |
+| `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                |
 
 ---
 
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (23):**
+- **✅ Completed (26):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -93,7 +93,14 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #23 The `Competitor.homeClub` backfill is a stated goal with no gap tracking it — closed v8.9.0 (not
     applicable)
   - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
-- **🟡 Partially Completed (0):** none currently.
+  - #25 Entity-level unit tests are a stated goal with no gap tracking it — closed v8.10.0 (`IpscMatchTest` only)
+  - #27 Database-profile docs promise a setup the properties files don't provide — closed v8.10.0 (docs plus a
+    new `prod` profile)
+  - #28 `logback-spring.xml` configures a `staging` profile that exists nowhere else — closed v8.10.0 (block
+    removed)
+- **🟡 Partially Completed (1):**
+  - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
+    re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
 - **⚪ Open (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
 
@@ -770,11 +777,125 @@ collection's delete, and every `existsBy…` query behind the reject-not-cascade
 as it is, without claiming domain-entity unit tests, and `HISTORY.md`'s Short-term roadmap narrows the remaining
 work to entity-level unit tests.
 
+#### 25. Entity-level unit tests are a stated goal with no gap tracking it — ✅ Closed in v8.10.0
+
+**Evidence:** `HISTORY.md:2370`'s Short-term list plans to "Add entity-level unit tests for the promoted/extended
+domain model", and `documentation/history/v8/RELEASE_NOTES_v8.9.0.md` carries the same item under both Known Issues
+("The domain model has repository integration tests but no entity-level unit tests") and Future Enhancements. Gap #24
+closed only the repository half of the original claim, and its Outcome records that `HISTORY.md` merely "narrows the
+remaining work to entity-level unit tests" — nothing here tracks that remainder. There is still no
+`src/test/java/za/co/hpsc/web/domain/` directory. The eight entities under `src/main/java/za/co/hpsc/web/domain/` are
+Lombok field holders with no hand-written methods of their own; their cascade, orphan-removal and element-collection
+behaviour is already exercised by the repository integration tests Gap #24 added.
+
+**Why it matters:** A stated-but-unbuilt goal repeated in two places, yet untracked here, so it will keep being
+carried forward from release to release with nobody deciding whether it's wanted. With no behaviour on the entities
+beyond what Lombok generates and what the repository tests already cover, unit tests may add nothing but maintenance
+load — but that is a decision to record, not an assumption to leave implicit.
+
+**Proposed improvement:** Decide whether entity-level unit tests are still wanted. If so, add them for whatever
+entity behaviour warrants it (e.g. collection defaults such as `IpscMatch.stages`/`Competitor.emailAddresses` being
+initialised to an empty list). If not, drop the bullet from `HISTORY.md`'s Short-term list and the item from the next
+release's Known Issues/Future Enhancements, as Gap #23 did for the `homeClub` backfill.
+
+**Outcome:** Decided per entity rather than all or nothing, following `AGENTS.md`'s rule against testing
+Lombok-generated behaviour. Only `IpscMatch` has behaviour of its own worth a unit test: its `stages` list is
+excluded from Lombok's `toString`/`equals`/`hashCode` because `IpscMatchStage.match` points straight back, and
+dropping either exclusion makes both methods recurse into a `StackOverflowError`. A new `IpscMatchTest` covers that
+(`toString`/`hashCode` on a match with a linked stage, and `equals` ignoring `stages`) plus the `stages` list being
+initialised empty and mutable; removing the exclusions was confirmed to fail three of its four tests. The other
+seven entities have no hand-written behaviour and are left to the repository integration tests from Gap #24. The
+bullet was dropped from `HISTORY.md`'s Short-term list, `ARCHITECTURE.md`'s test tree gained a `domain/` entry
+and `README.md`'s unit-test categories now include entities.
+
+#### 27. Database-profile docs promise a setup the properties files don't provide — ✅ Closed in v8.10.0
+
+**Evidence:** `AGENTS.md:72`'s Build & Run Commands say the no-profile run "uses application.properties; requires
+MYSQL_USER and MYSQL_PASSWORD env vars", and `CONTRIBUTING.md:77`'s Database Profiles table gives the `(none / prod)`
+profile as "MySQL — env vars `MYSQL_USER` / `MYSQL_PASSWORD`". But `application.properties` sets no
+`spring.datasource.url` at all, so a run with no profile can't connect unless a URL is supplied some other way (e.g.
+`SPRING_DATASOURCE_URL`), which no doc mentions. `CHANGELOG.md`'s 8.4.0 entry already recorded this ("has no
+`spring.datasource.url` outside a profile"), but only fixed `README.md`'s steps by switching them to `dev`. Separately,
+`README.md:98` and `CONTRIBUTING.md:48` say credentials come from `MYSQL_USER`/`MYSQL_PASSWORD` "regardless of
+profile", yet `application-local.properties` hard-codes `spring.datasource.username=hpsc_dev` and reads
+`${MYSQL_LOCAL_PASSWORD}` instead. `CONTRIBUTING.md:67`'s note acknowledges the `local` profile but not its different
+credentials, and the Database Profiles table has no `local` row.
+
+**Why it matters:** The no-profile row is the one that describes production, and following it as written produces a
+startup failure rather than a running app. The "regardless of profile" claim is harmless for `dev`, but a contributor
+who does need `local` will set the wrong variables.
+
+**Proposed improvement:** State in `AGENTS.md`'s run command and `CONTRIBUTING.md`'s `(none / prod)` row that the
+datasource URL must be supplied externally (e.g. `SPRING_DATASOURCE_URL`), or add a `${MYSQL_URL}`-style placeholder to
+`application.properties` and document that variable instead. Qualify the "regardless of profile" wording in
+`README.md`/`CONTRIBUTING.md` (except `test` and `local`), and either add a `local` row to the Database Profiles table
+or mention its `hpsc_dev` user and `MYSQL_LOCAL_PASSWORD` variable in the existing note.
+
+**Outcome:** Fixed in the docs, plus a new `prod` profile. Adding a required `${MYSQL_URL}` placeholder to
+`application.properties` would change what an existing no-profile deployment must supply — a breaking configuration
+change under `AGENTS.md`'s Semantic Versioning rules — so the no-profile run keeps taking its URL from outside
+(e.g. `SPRING_DATASOURCE_URL`), and `AGENTS.md`'s run command now says so. Alongside it, a new
+`application-prod.properties` gives production its own profile (`localhost:3306/hpsc_prod`, still reading
+`MYSQL_USER`/`MYSQL_PASSWORD`), with a matching run command in `AGENTS.md` and `ARCHITECTURE.md`'s Database (prod) row
+now naming it. `CONTRIBUTING.md`'s Database Profiles table lists every profile's connection settings, splitting
+`(none / prod)` into `(none)` and `prod` rows and adding a `local` row (user `hpsc_dev`, `MYSQL_LOCAL_PASSWORD`), which
+its `local` note repeats. `README.md`'s and `CONTRIBUTING.md`'s credentials wording now excludes `local` as well as
+`test`.
+
+#### 28. `logback-spring.xml` configures a `staging` profile that exists nowhere else — ✅ Closed in v8.10.0
+
+**Evidence:** `src/main/resources/logback-spring.xml` (lines 82–105) has a `<springProfile name="staging">` block
+writing to `logs/application-staging.log`, present since the file's early history. No
+`application-staging.properties` exists, and no doc mentions a `staging` profile: `CONTRIBUTING.md`'s Database
+Profiles table (as corrected by Gap #27) lists only `(none)`, `prod`, `dev`, `local` and `test`, and `README.md`,
+`ARCHITECTURE.md` and `AGENTS.md` name no `staging` either. The other five logback blocks (`default`, `dev`,
+`local`, `prod`, `test`) each match a documented profile.
+
+**Why it matters:** The same category of drift Gap #27 just closed for the properties files, one file over. A
+contributor reading `logback-spring.xml` would reasonably expect a staging environment exists, but activating
+`staging` gives no datasource URL — the same startup failure Gap #27 documented for the no-profile run — so the
+block is either dead configuration or an environment nobody has documented.
+
+**Proposed improvement:** Decide whether a staging environment is wanted. If not, remove the `staging` block from
+`logback-spring.xml`. If so, add an `application-staging.properties` alongside `application-prod.properties` and a
+`staging` row to `CONTRIBUTING.md`'s Database Profiles table, and mention it wherever `prod` is documented.
+
+**Outcome:** Resolved by removal: no staging environment is wanted, so the `staging` `<springProfile>` block (and
+its `logs/application-staging.log` appender) is gone from `logback-spring.xml`. Its remaining blocks — `default`,
+`dev`, `local`, `prod` and `test` — now each match a profile documented in `CONTRIBUTING.md`'s Database Profiles
+table (`default` being the no-profile run), so no properties file or doc change was needed.
+
 ### 🟡 Partially Completed
 
-*No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
+A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+#### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
+
+**Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
+spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
+GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25" — added in v8.3.1 (commit `28af4d1`). Boot 4.1.1 is
+still the latest 4.1.x release on Maven Central, and its `spring-boot-dependencies` POM still manages `tomcat.version`
+at `11.0.24`, so the override is still needed. Yet this plan's "🛤️ Roadmap" Ongoing row says "#5's overrides are
+gone as of v8.1.1", and the "⚙️ Goals & Constraints" `pom.xml` row mentions no override at all.
+
+**Why it matters:** This is exactly the shape of Gap #5 — a manually tracked, easy-to-forget pin that nothing flags
+once the upstream BOM catches up — but the plan currently reads as though no such override remains, so the Ongoing
+check has nothing concrete pointing it at this one.
+
+**Proposed improvement:** No code change needed now. Record the override in the Ongoing roadmap row and the
+Goals & Constraints table, and at each release check whether the parent's managed `tomcat.version` has reached
+`11.0.25` or later; drop the override in the same pass the parent is bumped, as Gap #5 did for `jackson-databind`.
+
+**Progress:** The tracking half is done. The plan now records the override in its Ongoing roadmap row and
+Goals & Constraints table, and the root cause behind it being missed is fixed: the Ongoing row said overrides were
+re-checked "per the Release Checklist", but no checklist step actually did so. `AGENTS.md`'s Release Checklist
+step 2 and the `prep-version-release` skill's matching step now re-check every manual `pom.xml` override against
+the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
+The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
+milestone) and still manages Tomcat `11.0.24`. The gap closes once a Spring Boot GA release manages `11.0.25` or
+later and the override is dropped.
 
 ### ⚪ Open
 
@@ -805,12 +926,12 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 
 ## 🛤️ Roadmap
 
-| Phase       | Focus                                                                                                                                                           |
-|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | No items currently scoped — #13 to #22, this phase's previous occupants, closed in v8.9.0                                                                       |
-| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                       |
-| **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
+| Phase       | Focus                                                                                                                                                                                                                                              |
+|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
+| **Next**    | No items currently scoped — #25, #27 and #28 closed in v8.10.0                                                                                                                                                                                     |
+| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
+| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
 ---
 
@@ -869,6 +990,15 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   `HISTORY.md`'s roadmap, closing Gap #23.
 - ✅ Met in v8.9.0: the domain model's cascade, fetch-join queries and `existsBy…` checks have direct repository/entity
   tests, or `README.md` no longer claims them, closing Gap #24.
+- ✅ Met in v8.10.0: entity-level unit tests exist for the domain model's own behaviour (`IpscMatchTest`), and the
+  goal is dropped from `HISTORY.md`'s roadmap, closing Gap #25.
+- ✅ Met in v8.10.0: `AGENTS.md`, `README.md` and `CONTRIBUTING.md` describe every database profile's connection
+  settings as the properties files actually configure them, so the documented no-profile run starts, closing
+  Gap #27.
+- ✅ Met in v8.10.0: every `<springProfile>` in `logback-spring.xml` matches a documented profile — `staging`
+  either removed or backed by its own properties file and `CONTRIBUTING.md` row, closing Gap #28.
+- `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
+  closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
