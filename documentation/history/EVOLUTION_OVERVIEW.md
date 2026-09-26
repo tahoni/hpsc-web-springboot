@@ -2331,6 +2331,63 @@ associations are loaded through fetch-join queries and every competitor/match wr
 - 63 new tests (903 → 966): `TransactionService`'s full 3-tier split, six repository integration test classes and
   service integration tests run without a surrounding transaction; coverage 98.77%/99.09% line/branch
 
+
+### Phase 36: Strict Semantic Versioning & Production Profile (v8.10.0)
+
+**Duration:** September 26, 2026
+
+A minor release: Semantic Versioning becomes a strict rule that the release process checks rather than a matter of
+precedent, production gains its own `prod` profile, and the database-profile and logging configuration docs are
+brought in line with what actually exists.
+
+**Key Accomplishments:**
+
+**Semantic Versioning**
+
+- New Semantic Versioning subsection in `AGENTS.md`'s Git Workflow, defining MAJOR/MINOR/PATCH for this project's
+  public API (REST contracts, import formats, configuration properties and environment variables)
+- Releases are classified from `CHANGELOG.md`'s `[Unreleased]` section, highest-ranking change first, with
+  backward-incompatible entries flagged `**Breaking:**` as they land
+- `prep-version-release` validates the requested version before bumping and re-checks it after syncing
+  `[Unreleased]`; `generate-commit-message` and `sync-unreleased-changes` apply and audit the `**Breaking:**` prefix
+
+**Configuration**
+
+- New `application-prod.properties` (`localhost:3306/hpsc_prod`, reading `MYSQL_USER`/`MYSQL_PASSWORD`)
+- `logback-spring.xml`'s `staging` profile, backed by no properties file or documentation, removed
+
+**Documentation & Tooling**
+
+- The database-profile docs in `AGENTS.md`, `CONTRIBUTING.md`, `README.md` and `ARCHITECTURE.md` now match the
+  properties files: the no-profile run's externally supplied datasource URL, the new `prod` profile and the `local`
+  profile's own user and password variable
+- The Release Checklist re-checks every manual `pom.xml` dependency-version override against the Spring Boot parent's
+  own `spring-boot-dependencies` POM
+- `CHANGELOG.md`, `RELEASE_NOTES.md` and the archived v8.7.0/v8.9.0 release documents list Removed after Fixed
+
+**Roadmap**
+
+- Gaps #25–#28 recorded by three improvement-plan sweeps: #25 (entity-level unit tests), #27 (database-profile docs)
+  and #28 (`staging` logging profile) closed; #26 (`tomcat.version` override) progressed and waiting on a Spring Boot
+  release — Gap #6 remains open
+
+**Build & Metadata**
+
+- Project version bumped to 8.10.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- A version number now follows from the change set itself, checked at release time
+
+**Technical Focus:**
+
+- Making release versioning, runtime profiles and dependency overrides explicit and checkable
+
+**Test Coverage:**
+
+- 4 new tests (966 → 970): `IpscMatchTest` guards `IpscMatch.stages`' exclusion from Lombok's
+  `toString`/`equals`/`hashCode`; coverage unchanged at 98.77%/99.09% line/branch
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

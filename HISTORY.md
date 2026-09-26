@@ -21,6 +21,35 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.10.0 (September 26, 2026)
+
+**Theme:** Strict Semantic Versioning, Production Profile & Roadmap Gap Closure
+
+**Key Focus:**
+
+- `AGENTS.md` makes Semantic Versioning a strict rule: a new Semantic Versioning subsection defines what counts as a
+  MAJOR, MINOR or PATCH change for this project, how a release is classified from `CHANGELOG.md`'s `[Unreleased]`
+  section, and that backward-incompatible entries are flagged `**Breaking:**` as they land
+- The `prep-version-release` skill validates the requested version against those rules before bumping and re-checks
+  it after syncing `[Unreleased]`; `generate-commit-message` and `sync-unreleased-changes` apply and audit the
+  `**Breaking:**` prefix, and the latter reports the release level `[Unreleased]` implies
+- The Release Checklist's `pom.xml` step now re-checks every manual dependency-version override against the Spring
+  Boot parent's own `spring-boot-dependencies` POM — a check the improvement plan had assumed existed but no step
+  performed
+- New `application-prod.properties` gives production its own `prod` profile (`localhost:3306/hpsc_prod`); the
+  database-profile docs now match what the properties files configure, including the no-profile run's externally
+  supplied datasource URL and the `local` profile's own credentials
+- `logback-spring.xml`'s undocumented `staging` profile removed
+- New `IpscMatchTest` guards `IpscMatch.stages`' exclusion from Lombok's `toString`/`equals`/`hashCode`, which
+  otherwise recurse through `IpscMatchStage.match`; 966 → 970 tests
+- Three `update-improvement-plan-gaps` sweeps recorded Gaps #25–#28: #25, #27 and #28 closed, and #26 (the
+  `tomcat.version` override) progressed until a Spring Boot release manages Tomcat `11.0.25` — Gap #6 remains open
+- `CHANGELOG.md`, `RELEASE_NOTES.md` and the archived v8.7.0/v8.9.0 release documents now list Removed after Fixed,
+  matching `AGENTS.md`'s category order
+- Scoped as `v8.10.0` **MINOR** under the new rules for the optional `prod` profile — the first release classified by
+  them rather than by precedent
+- Project version bumped to 8.10.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.9.0 (September 26, 2026)
 
 **Theme:** Competitor Paid-Up Flags, Explicit Transaction Boundary & Lazy Loading
@@ -1243,6 +1272,17 @@ deletion rule that protects scoring history rather than silently destroying it.
 **Achievement:** Made the persistence layer's transaction and loading behaviour explicit and tested at every tier,
 while clearing the improvement plan of every documentation-accuracy gap.
 
+### Milestone 36: Strict Semantic Versioning & Production Profile (v8.10.0)
+
+- Semantic Versioning becomes a strict, documented rule, enforced by the release skill and flagged in the CHANGELOG as
+  breaking changes land
+- Production gets its own `prod` profile, and the profile documentation matches the properties files
+- Manual dependency-version overrides are re-checked at every release
+- Gaps #25, #27 and #28 closed and #26 progressed, leaving Gap #6 the only open gap
+
+**Achievement:** Turned the project's version numbers from a matter of precedent into a rule the release process
+checks, and made the documented runtime profiles match the ones that actually exist.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1817,7 +1857,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.9.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.10.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1837,7 +1877,9 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   structure, and correcting `CHANGELOG.md` heading-depth drift across every convention document and skill. Finally,
   make the persistence layer's behaviour explicit — competitor paid-up flags, every write committed by a dedicated
   `TransactionService` and lazy associations loaded through fetch-join queries — while clearing every
-  documentation-accuracy gap the improvement plan tracked.
+  documentation-accuracy gap the improvement plan tracked. Then turn Semantic Versioning from precedent into a rule
+  the release process enforces, give production its own profile and make every documented runtime profile match the
+  configuration behind it.
 
 ### Initial Phase (v1.0.0)
 
@@ -2101,7 +2143,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.9.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.10.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2345,7 +2387,7 @@ Based on the evolution to v8.9.0, the following areas are identified for future 
 - Gap #12 closed; Gap #13 recorded (Claude Code workflows missing from the CI/CD documentation)
 - Project version bumped to 8.8.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.9.0)
+### Previously Completed (v8.9.0)
 
 - New nullable `Competitor.paidUpSapsa`/`paidUpClub` columns via `V7_8_0__add_competitor_paid_up_flags.sql`; the
   competitor CSV now requires `PaidUpSapsa`/`PaidUpClub` header columns
@@ -2358,6 +2400,17 @@ Based on the evolution to v8.9.0, the following areas are identified for future 
 - New repository integration tests and `TransactionService` test tiers; 903 → 966 tests
 - Gaps #13–#24 closed, leaving only Gap #6 open
 - Project version bumped to 8.9.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.10.0)
+
+- New Semantic Versioning subsection in `AGENTS.md`; `prep-version-release` validates each release's version against
+  it, and `**Breaking:**` CHANGELOG entries are flagged as they land
+- The Release Checklist re-checks every manual `pom.xml` dependency-version override at each release
+- New `prod` profile (`application-prod.properties`); database-profile docs corrected; unused `staging` logging
+  profile removed
+- New `IpscMatchTest` guarding the `IpscMatch.stages` Lombok exclusions; 966 → 970 tests
+- Gaps #25, #27 and #28 closed and #26 progressed, leaving only Gap #6 open
+- Project version bumped to 8.10.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 

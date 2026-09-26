@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.9.0](#-890---2026-09-26) ← Current
+- [🧾 Version 8.10.0](#-8100---2026-09-26) ← Current
+- [🧾 Version 8.9.0](#-890---2026-09-26)
 - [🧾 Version 8.8.0](#-880---2026-09-24)
 - [🧾 Version 8.7.0](#-870---2026-09-24)
 - [🧾 Version 8.6.2](#-862---2026-09-24)
@@ -59,6 +60,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.10.0] - 2026-09-26
 
 #### ➕ Added
 
@@ -116,6 +119,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   categories now include entities
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.10.0 and moved to ✅ Completed, with
   "🌳 At a Glance", the "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+
+- **`README.md`, `CHANGELOG.md`:** The Semantic Versioning note and the Version Policy section now point at
+  `AGENTS.md`'s Semantic Versioning section as the definition of each release level, rather than calling the
+  Version Policy the full policy
+
+##### Build & Metadata
+
+- Project version bumped to **8.10.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 #### 🐛 Fixed
 
@@ -3241,6 +3252,10 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 - **MAJOR** version for incompatible API changes
 - **MINOR** version for backward-compatible functionality additions
 - **PATCH** version for backward-compatible bug fixes
+
+Every release must follow these rules strictly — see [`AGENTS.md`'s Semantic Versioning
+section](/AGENTS.md#semantic-versioning) for what counts as a MAJOR, MINOR or PATCH change in this project and how
+each release is classified from the `[Unreleased]` section.
 
 #### Legacy Versioning (v1.x – v4.x)
 
