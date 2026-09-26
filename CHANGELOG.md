@@ -134,8 +134,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`logback-spring.xml`:** Removed the `staging` `<springProfile>` block and its `logs/application-staging.log`
   appender — no staging environment exists, there was no `application-staging.properties` behind it and no doc
-  mentioned it, so activating `staging` could never start the app. The remaining blocks (`default`, `dev`, `local`,
-  `prod`, `test`) each match a documented profile; closes `improvement-plan.md`'s Gap #28
+  mentioned it, so `staging` had no datasource URL of its own and couldn't start without one supplied externally.
+  The remaining blocks (`default`, `dev`, `local`, `prod`, `test`) each match a documented profile; closes
+  `improvement-plan.md`'s Gap #28
 
 ### 🧾 [8.9.0] - 2026-09-26
 
