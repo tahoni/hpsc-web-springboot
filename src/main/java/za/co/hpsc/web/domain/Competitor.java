@@ -67,7 +67,7 @@ public class Competitor {
 
     @ElementCollection
     @CollectionTable(name = "competitor_email", joinColumns = @JoinColumn(name = "competitor_id"))
-    @Column(name = "email_address", nullable = false)
+    @Column(name = "email_address")
     private List<String> emailAddresses = new ArrayList<>();
 
     @CreationTimestamp

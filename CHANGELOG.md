@@ -92,6 +92,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorController.createCompetitors`:** The competitor CSV header now requires trailing `PaidUpSapsa` and
   `PaidUpClub` columns (a row may leave them empty); existing CSV files need the two header columns added
 
+##### Domain
+
+- **`Competitor.emailAddresses`:** The `email_address` element column mapping no longer declares `nullable = false`
+
 ### 🧾 [8.8.0] - 2026-09-24
 
 #### ➕ Added
