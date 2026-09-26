@@ -21,6 +21,42 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.9.0 (September 26, 2026)
+
+**Theme:** Competitor Paid-Up Flags, Explicit Transaction Boundary & Lazy Loading
+
+**Key Focus:**
+
+- `Competitor` gains nullable `paidUpSapsa`/`paidUpClub` flags via `V7_8_0__add_competitor_paid_up_flags.sql`,
+  wired through `CompetitorRequest`, `CompetitorRequestForCSV` and `CompetitorResponse`; the competitor CSV bulk
+  import now requires trailing `PaidUpSapsa`/`PaidUpClub` header columns (values may be blank) — existing CSV files
+  need the two columns added
+- Every `@ManyToOne` association switched back from `FetchType.EAGER` to `FetchType.LAZY`, reversing v8.7.0; since
+  `spring.jpa.open-in-view` is disabled, new `left join fetch` repository queries
+  (`IpscMatchRepository.findByIdWithClub`/`findAllWithClub`,
+  `CompetitorRepository.findByIdWithHomeClubAndEmailAddresses`/`findAllWithHomeClubAndEmailAddresses`) load what
+  each response reads
+- New `TransactionService`/`TransactionServiceImpl` commits every competitor and match write in its own explicit
+  `TransactionTemplate` transaction; `IpscCompetitorServiceImpl`/`IpscMatchServiceImpl` drop `@Transactional`,
+  validating and building entities outside any transaction. Bulk CSV imports now build every row before saving any,
+  then save all rows in one transaction
+- `IpscMatch` gains a cascaded, orphan-removing `@OneToMany(mappedBy = "match")` `stages` collection — the domain
+  model's only bidirectional relationship — so deleting a match removes its stages by cascade
+- Create/update/patch match responses now list stages ordered by stage number, matching `getMatch`
+- Unused `jackson-dataformat-xml`/`commons-lang3` dependencies removed
+- 63 new tests (903 → 966): `TransactionService`'s full 3-tier split, a new `repositories/` package of repository
+  integration tests (fetch-join queries, the stage cascade, every `existsBy…` check) and service integration tests
+  run without a surrounding transaction to prove each write really commits; coverage 98.77%/99.09% line/branch
+- Closed `improvement-plan.md`'s Gaps #13–#17 (documentation drift) and, from this release's own audit, Gaps #18–#24
+  (unused dependencies, stale `ARCHITECTURE.md` patterns/data flows/repository descriptions, the 3-tier test rule,
+  `AGENTS.md`'s club name, the `homeClub` backfill as not applicable, and missing repository tests) — only Gap #6
+  remains open
+- `AGENTS.md`'s Release Checklist now makes the Future Roadmap Implications log and "Major Version Goals" mandatory
+  per release; both were backfilled through v8.8.0
+- Scoped as `v8.9.0` **MINOR** for the new competitor fields, with the competitor CSV's two new required header
+  columns called out as a client-facing migration — matching the v8.5.0/v8.7.0 precedent
+- Project version bumped to 8.9.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.8.0 (September 24, 2026)
 
 **Theme:** Competitor & Match Delete Endpoints
@@ -1196,6 +1232,17 @@ operation) for a later release.
 **Achievement:** Made the long-standing "full CRUD" description of the competitor and match APIs true, with a
 deletion rule that protects scoring history rather than silently destroying it.
 
+### Milestone 35: Competitor Paid-Up Flags & Explicit Transaction Boundary (v8.9.0)
+
+- Competitors record whether their SAPSA and club memberships are paid up, through the API and CSV import alike
+- Competitor and match writes are committed only by `TransactionService`, in explicit transactions, with bulk
+  imports all-or-nothing
+- Lazy association loading paired with fetch-join queries, so responses never depend on an open session
+- Gaps #13–#24 closed, leaving only the scoring/shooter-log layer (Gap #6) open
+
+**Achievement:** Made the persistence layer's transaction and loading behaviour explicit and tested at every tier,
+while clearing the improvement plan of every documentation-accuracy gap.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1572,6 +1619,32 @@ IpscCompetitorService          IpscMatchService
 
 ---
 
+### v8.9.0: Explicit Transaction Boundary & Lazy Persistence
+
+```
+IpscCompetitorController           IpscMatchController
+        ↓                                  ↓
+IpscCompetitorService              IpscMatchService
+   (validate, build — no transaction)      (validate, build — no transaction)
+        ↓ reads                            ↓ reads
+CompetitorRepository               IpscMatchRepository / IpscMatchStageRepository
+   (fetch-join queries)               (fetch-join queries)
+        ↓ writes                           ↓ writes
+                 TransactionService
+        (explicit TransactionTemplate transactions)
+```
+
+**Characteristics:**
+
+- One class, `TransactionService`, owns every competitor/match commit; the IPSC services no longer declare
+  `@Transactional` at all
+- Every `@ManyToOne` is `LAZY`, and reads that feed a response load their associations up front through
+  `left join fetch` queries, since `spring.jpa.open-in-view` stays disabled
+- `IpscMatch.stages` is the domain model's single bidirectional, cascaded relationship — composition, since a stage
+  can't exist without its match — while every other relationship stays unidirectional and reject-not-cascade
+
+---
+
 ## ✨ Feature Timeline
 
 ### Data Processing Features
@@ -1697,6 +1770,10 @@ IpscCompetitorService          IpscMatchService
 - **v8.0.0:** New unit and integration test coverage for `IpscCompetitorController`/`Service`/`ServiceImpl` and
   `IpscMatchController`/`Service`/`ServiceImpl`; new `GenderTest`/`GenderConverterTest`; mechanical test updates for the
   `fromX` enum-factory rename — the largest single-release test expansion since v5.4.0
+- **v8.9.0:** New `TransactionServiceTest`/`TransactionServiceImplTest`/`TransactionServiceIntegrationTest` 3-tier
+  split; a new `repositories/` package of repository integration tests covering the fetch-join queries, the stage
+  cascade and every `existsBy…` check; service integration tests run without a surrounding transaction; 903 → 966
+  tests, 98.77%/99.09% line/branch coverage
 
 ### Documentation Quality
 
@@ -1740,7 +1817,7 @@ IpscCompetitorService          IpscMatchService
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.8.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.9.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1757,7 +1834,10 @@ IpscCompetitorService          IpscMatchService
   history, making the long-standing "full CRUD" claim true — while tidying the platform underneath (Spring Boot's
   default port, a Spring Boot 4 springdoc line) and keeping the documentation honest at scale: formalising the 3-tier
   service test architecture, splitting `HISTORY.md`'s Evolution Overview and archived release notes into their own
-  structure, and correcting `CHANGELOG.md` heading-depth drift across every convention document and skill.
+  structure, and correcting `CHANGELOG.md` heading-depth drift across every convention document and skill. Finally,
+  make the persistence layer's behaviour explicit — competitor paid-up flags, lazy associations loaded through
+  fetch-join queries, and every write committed by a dedicated `TransactionService` — while clearing every
+  documentation-accuracy gap the improvement plan tracked.
 
 ### Initial Phase (v1.0.0)
 
@@ -2007,11 +2087,20 @@ IpscCompetitorService          IpscMatchService
     - Caught a genuine validation mismatch along the way: `CompetitorRequest`'s Jackson-required field was
       `competitorNumber`, not the actually-validated `clubNumber`
 
+
+16. **Explicit Transaction Boundary (v8.9.0):** With `spring.jpa.open-in-view` disabled and associations lazy,
+    where a transaction starts and ends decides what a response can read
+    - Moving every competitor/match write into `TransactionService`'s explicit `TransactionTemplate` transactions made
+      the boundary visible in one class instead of spread across `@Transactional` service methods
+    - `orphanRemoval` only sees removals relative to a collection's last-flushed snapshot, so replacing stages still
+      deletes them explicitly and flushes before inserting reused stage numbers
+    - Integration tests that are themselves `@Transactional` absorb the code's own transactions and hide commit and
+      lazy-loading bugs — so the new tests that prove commits run without a surrounding transaction
 ---
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.8.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.9.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2244,7 +2333,7 @@ Based on the evolution to v8.8.0, the following areas are identified for future 
 - Gap #12 recorded: competitors and matches documented as "full CRUD" with no delete operation
 - Project version bumped to 8.7.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.8.0)
+### Previously Completed (v8.8.0)
 
 - New `DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints, returning `204`,
   `400` when still referenced or `404` when missing
@@ -2254,6 +2343,20 @@ Based on the evolution to v8.8.0, the following areas are identified for future 
 - New `existsBy…` repository queries back the dependent-row checks
 - Gap #12 closed; Gap #13 recorded (Claude Code workflows missing from the CI/CD documentation)
 - Project version bumped to 8.8.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.9.0)
+
+- New nullable `Competitor.paidUpSapsa`/`paidUpClub` columns via `V7_8_0__add_competitor_paid_up_flags.sql`; the
+  competitor CSV now requires `PaidUpSapsa`/`PaidUpClub` header columns
+- `@ManyToOne` associations switched to `FetchType.LAZY`, with fetch-join repository queries loading what responses
+  read
+- New `TransactionService` commits every competitor/match write in an explicit transaction; bulk imports save all
+  rows in one transaction
+- `IpscMatch.stages` becomes a cascaded `@OneToMany`, the domain model's only bidirectional relationship
+- Unused `jackson-dataformat-xml`/`commons-lang3` dependencies removed
+- New repository integration tests and `TransactionService` test tiers; 903 → 966 tests
+- Gaps #13–#24 closed, leaving only Gap #6 open
+- Project version bumped to 8.9.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 

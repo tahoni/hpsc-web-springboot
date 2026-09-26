@@ -27,7 +27,8 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **Award Ceremonies**: Award data and ceremony grouping, processed from CSV — a stateless transform by design,
   not persisted
 - **Image Gallery**: Image metadata processing from CSV — a stateless transform by design, not persisted
-- **IPSC Competitors**: Competitor record CRUD, including optional home club and gender, plus bulk CSV import
+- **IPSC Competitors**: Competitor record CRUD, including optional home club, gender and SAPSA/club paid-up status,
+  plus bulk CSV import
 - **IPSC Matches**: Match and match-stage CRUD, including firearm type and match category resolution, plus bulk CSV
   import
 

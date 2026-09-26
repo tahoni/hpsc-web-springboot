@@ -208,8 +208,9 @@ The JPA entities map to database tables:
 | `ShooterLog`           | `shooter_log`            | Many-to-one → `Competitor`, `Club`                                                   |
 | `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `MatchCompetitor`, `IpscMatch`                           |
 
-Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`. Only one is bidirectional:
-`IpscMatch.stages` is a `@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)`
+Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, all `FetchType.LAZY` — the queries that
+build responses load what they need with `left join fetch` (see Repositories below). Only one relationship is
+bidirectional: `IpscMatch.stages` is a `@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)`
 collection, since a stage can't exist without its match — so deleting a match cascades to its stages. Every other
 relationship is unidirectional, with no back-referencing collection and no cascade, so a record still referenced by
 results or shooter logs is refused on delete rather than cascaded (see the note above).

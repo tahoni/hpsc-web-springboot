@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.8.0](#-880---2026-09-24) ← Current
+- [🧾 Version 8.9.0](#-890---2026-09-26) ← Current
+- [🧾 Version 8.8.0](#-880---2026-09-24)
 - [🧾 Version 8.7.0](#-870---2026-09-24)
 - [🧾 Version 8.6.2](#-862---2026-09-24)
 - [🧾 Version 8.6.1](#-861---2026-09-23)
@@ -59,6 +60,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [8.9.0] - 2026-09-26
+
 #### ➕ Added
 
 ##### Domain
@@ -97,8 +100,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceImplTest`,
   `CompetitorRequestTest`, `CompetitorRequestForCSVTest`:** Cover the new paid-up flags
-- **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** Cover the new fetch-join queries,
-  clearing the persistence context first so `Hibernate.isInitialized` proves each association really was fetched
 - **`TransactionServiceImplTest`:** New unit tests for every commit method, including rollback on failure, and the
   stage replace/upsert logic moved from `IpscMatchServiceImplTest`
 - **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** New tests run with no surrounding
@@ -151,23 +152,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `findCompetitorOrThrow`/`getAllCompetitors` now load through the new fetch-join queries, so `toResponse` can read
   the club, home club and email addresses outside a transaction — `spring.jpa.open-in-view` is disabled, so a
   lazily-loaded association would otherwise throw `LazyInitializationException`
-- **`IpscMatchServiceImpl.deleteMatch`:** A match's stages are now deleted by `IpscMatch.stages`' cascade rather than
-  explicitly; the reject-not-cascade checks for results and shooter logs are unchanged
-- **`IpscMatchServiceImpl.replaceStages`, `upsertStages`:** Keep `IpscMatch.stages` in step with the stages they
-  persist; `replaceStages` removes the old stages as managed entities and flushes, instead of
-  `deleteAllInBatch`'s bulk query
+- **`IpscMatchServiceImpl.deleteMatch`:** Now commits the delete through `TransactionService.deleteMatch`, with the
+  match's stages removed by `IpscMatch.stages`' cascade rather than explicitly; the reject-not-cascade checks for
+  results and shooter logs are unchanged
+- **`TransactionServiceImpl.replaceStages`, `upsertStages`:** Moved from `IpscMatchServiceImpl`, and now work on the
+  managed match's `IpscMatch.stages` collection; `replaceStages` removes the old stages as managed entities and
+  flushes before inserting the replacements, instead of `deleteAllInBatch`'s bulk query
 
 ##### Tests
 
 - **`TransactionServiceImplTest`:** Now covers only the impl's protected helpers (`loadAssociations`, `replaceStages`,
   `upsertStages`); its public-contract tests moved to the new `TransactionServiceTest`
-- **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** Their fetch-join query tests moved to
-  the new repository integration tests
 - **`IpscMatchServiceTest`, `IpscCompetitorServiceTest`:** Build their service with a real `TransactionServiceImpl`
   over the same repository mocks and a mocked `PlatformTransactionManager`; match tests now seed existing stages on
   the match's `stages` collection instead of stubbing `findAllByMatchIdOrderByStageNumber`
-- **`IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Updated for cascade-based stage deletion, dropping stubs
-  for the no-longer-queried stage lookup
 
 ##### CI/CD & Configuration
 
@@ -185,6 +183,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`, `AGENTS.md`, `CONTRIBUTING.md`, `IpscMatchService`, `IpscCompetitorService`:** Describe
   `TransactionService` as where writes are committed, replacing the `@Transactional` services, and the bulk imports'
   validate-everything-then-save-in-one-transaction behaviour
+
+##### Build & Metadata
+
+- Project version bumped to **8.9.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 #### 🗑️ Removed
 
@@ -208,25 +210,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   live Claude Code workflows — `ARCHITECTURE.md`'s table gains "Automated Code Review" (`claude-code-review.yml`, every
   PR, advisory) and "AI Assistant" (`claude.yml`, on `@claude` mention) rows plus a note on the
   `CLAUDE_CODE_OAUTH_TOKEN` secret, its Project Structure tree's `.github/workflows/` comment is widened, and the other
-  two files' summaries match, closing `improvement-plan.md`'s Gap #13 (version pending — delivered on this feature
-  branch)
+  two files' summaries match, closing `improvement-plan.md`'s Gap #13
 - **`flyway-migration-versioning.md`:** Current State table extended with the five migrations missing since v8.4.0
   (`V7_4_0` through `V7_8_0`); a new step 5 in "🔢 Choosing the Next Version" now has the next migration's author add
-  its own row, closing `improvement-plan.md`'s Gap #14 (version pending — delivered on this feature branch)
+  its own row, closing `improvement-plan.md`'s Gap #14
 - **`ARCHITECTURE.md`:** The Quality Attributes table's "Data Integrity" row claimed JPA cascade rules and
   bidirectional `mappedBy` declarations the domain model didn't have, contradicting the Persistence Layer section —
   both now describe `IpscMatch.stages` as the one cascaded relationship, and the Development Guidelines paragraph
   points at `CONTRIBUTING.md`, not `README.md`, for database profiles, closing `improvement-plan.md`'s Gap #15
-  (version pending — delivered on this feature branch)
 - **`CONTRIBUTING.md`:** The Running Tests single-method example named
   `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`, which was renamed away — now
-  `testCreateAwards_whenValidCsvData_thenReturns200`, closing `improvement-plan.md`'s Gap #16 (version pending —
-  delivered on this feature branch)
+  `testCreateAwards_whenValidCsvData_thenReturns200`, closing `improvement-plan.md`'s Gap #16
 - **`HISTORY.md`:** "Major Version Goals"' Version 8.x entry stopped at v8.5.1 — its range now runs to v8.8.0, and
   its narrative covers v8.6.0–v8.8.0's match/competitor API completion, platform tidy-up and documentation work
 - **`HISTORY.md`:** The Future Roadmap Implications "Recently Completed" log stopped at v8.4.0 — added entries for
   v8.4.1 through v8.8.0 and updated the section's opening sentence to v8.8.0, closing `improvement-plan.md`'s Gap #17
-  (version pending — delivered on this feature branch)
 - **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `HISTORY.md` step now updates the Future Roadmap
   Implications log for every release, rather than only "if the release is significant enough" — the condition that
   let it fall nine releases behind
