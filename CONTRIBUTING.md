@@ -214,14 +214,19 @@ This repository follows [GitFlow](https://nvie.com/posts/a-successful-git-branch
 [`AGENTS.md`'s Git Workflow section](AGENTS.md#-git-workflow) for the full branching model and rationale. In short:
 
 - **`develop`** is the current development branch — all day-to-day work lands here first; **`main`** is the
-  production branch, updated only by promoting `develop` or directly from a `hotfix/*` branch.
+  production branch, updated only by promoting `develop`, or directly from a `hotfix/*` branch or a Dependabot
+  security-update PR.
 - **`feature/<short-description>`** — day-to-day work. Branch from, and PR back into, `develop`.
 - **`release/vX.Y.Z`** — cut from `develop` once ready to ship (see [🚢 Cutting a Release](#-cutting-a-release)
   below), PR'd into `develop`; once merged, a second PR promotes `develop` into `main` (see Merging below).
 - **`hotfix/<short-description>`** — urgent production fixes. Branch from, and PR directly into, `main`; also
   merged into `develop` afterwards so it isn't lost (see Merging below).
 
-Every branch except `hotfix/*` must land on `develop` first and never open a PR directly against `main`.
+- **`dependabot/*`** — opened by Dependabot. Version-update PRs target `develop`; security-update PRs always target
+  `main` and are handled as hotfixes (see Merging below).
+
+Every branch except `hotfix/*` and Dependabot security-update PRs must land on `develop` first and never open a PR
+directly against `main`.
 
 ### Merging
 
@@ -231,6 +236,10 @@ Every branch except `hotfix/*` must land on `develop` first and never open a PR 
   PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
   description. Only delete the branch once both merges have landed, so the fix isn't lost when the next
   `release/vX.Y.Z` branch is cut.
+- **Dependabot security update → `main` and `develop`:** review and merge the PR into `main` like a `hotfix/*`, so the
+  fix ships immediately. Dependabot then deletes its branch, so carry the fix into `develop` with a PR from `main`
+  into `develop` (a "Merge branch 'main' into develop" merge commit). Dependabot version-update PRs already target
+  `develop` and merge like any `feature/*` PR.
 - **`release/vX.Y.Z` → `develop`:** merge once the Release Checklist is complete and all tests pass (see
   [🚢 Cutting a Release](#-cutting-a-release) below), with a standard merge commit, and delete the branch afterwards.
 - **`develop` → `main`:** immediately after, open a second PR promoting `develop` into `main` and merge it; tag the
@@ -249,8 +258,9 @@ removed.
 ## 🔬 CI/CD & Quality Gates
 
 See [`ARCHITECTURE.md`'s CI/CD & Quality Gates table](ARCHITECTURE.md#-cicd--quality-gates) for the full gate/tool/
-trigger matrix (CodeQL security analysis, Maven build and tests, JaCoCo coverage, Claude Code automated review and the
-`@claude` assistant) rather than duplicating it here, so the two never drift out of sync.
+trigger matrix (CodeQL security analysis, Maven build and tests, JaCoCo coverage, Maven dependency submission, Claude
+Code automated review and the `@claude` assistant) rather than duplicating it here, so the two never drift out of
+sync.
 
 ---
 

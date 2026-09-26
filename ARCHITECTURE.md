@@ -54,7 +54,8 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.claude/
 │   └───skills/                 # Claude Code skill definitions, one SKILL.md per skill
 ├───.github/
-│   └───workflows/              # GitHub Actions — CI/CD, security analysis and automated review
+│   ├───dependabot.yml          # Dependabot version updates (Maven, GitHub Actions) targeting develop
+│   └───workflows/              # GitHub Actions — CI/CD, security analysis, dependency submission and automated review
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
@@ -411,17 +412,23 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                      | Tool                                                                                         | Trigger                                                                 |
-|---------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| **Security Analysis**     | CodeQL                                                                                       | Push / PR to `main` / `develop`; weekly schedule                        |
-| **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                        | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
-| **Code Coverage**         | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
-| **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`           | Every PR opened, updated, marked ready or reopened; advisory only       |
-| **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                              | An `@claude` mention in an issue, PR comment or PR review               |
+| Gate                      | Tool                                                                                                      | Trigger                                                                 |
+|---------------------------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| **Security Analysis**     | CodeQL                                                                                                    | Push / PR to `main` / `develop`; weekly schedule                        |
+| **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                                     | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
+| **Code Coverage**         | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)              | Enforced automatically as part of the `Build & Tests` gate above        |
+| **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to `main` / `develop`; manual dispatch                             |
+| **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`                        | Every PR opened, updated, marked ready or reopened; advisory only       |
+| **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                                           | An `@claude` mention in an issue, PR comment or PR review               |
 
 Both Claude Code workflows run `anthropics/claude-code-action` and authenticate with the `CLAUDE_CODE_OAUTH_TOKEN`
 repository secret, which must stay provisioned for them to run. The review posts inline comments on the PR but
 doesn't block merging.
+
+The Dependency Submission workflow feeds the Maven dependency tree, resolved with the project's own JDK and Maven
+wrapper, into GitHub's dependency graph, where Dependabot alerts read it. It replaces GitHub's built-in automatic
+dependency submission, which must stay turned off in the repository's Code security settings so snapshots aren't
+submitted twice. It reports rather than gates: nothing fails when a vulnerable dependency is found.
 
 ---
 

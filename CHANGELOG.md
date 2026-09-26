@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.10.0](#-8100---2026-09-26) ← Current
+- [🧾 Version 8.10.1](#-8101---2026-09-26) ← Current
+- [🧾 Version 8.10.0](#-8100---2026-09-26)
 - [🧾 Version 8.9.0](#-890---2026-09-26)
 - [🧾 Version 8.8.0](#-880---2026-09-24)
 - [🧾 Version 8.7.0](#-870---2026-09-24)
@@ -60,6 +61,43 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.10.1] - 2026-09-26
+
+#### ➕ Added
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/dependency-submission.yml`:** New explicit Maven dependency-submission workflow, replacing
+  GitHub's built-in "Automatic Dependency Submission (Maven)" — the one check on `develop`→`main` PRs with no
+  workflow file behind it. It resolves the dependency graph with the project's own JDK 25 and Maven wrapper (the
+  built-in one used JDK 21 and ignored the wrapper) on push to `main`/`develop` or manual dispatch; the built-in
+  submission must be turned off in the repository's Code security settings. Documented in `ARCHITECTURE.md`'s CI/CD
+  & Quality Gates table and `CONTRIBUTING.md`
+- **`.github/dependabot.yml`:** New Dependabot version-update configuration — weekly Maven and GitHub Actions
+  updates, opened against `develop` per the GitFlow branching model, with Maven minor/patch bumps and all Actions
+  bumps each grouped into one PR. Security updates are configured separately and still target `main`. Added to
+  `ARCHITECTURE.md`'s Project Structure tree
+
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #29 from an `update-improvement-plan-gaps` sweep —
+  Dependabot security-update PRs target `main`, bypassing the GitFlow rule that only `develop` and `hotfix/*` reach
+  it — closed within this release (see Changed)
+
+#### 🔄 Changed
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`, `.github/dependabot.yml`:** Dependabot security-update PRs, which always target
+  `main`, are now handled as hotfixes — merged into `main` so the fix ships at once, then carried into `develop` by
+  merging `main` back into it, since Dependabot deletes its branch after merging. `AGENTS.md`'s Branching Model names
+  them as the only exception besides `hotfix/*`, and a new `dependabot/*` entry separates them from version-update
+  PRs, which target `develop` like any `feature/*` PR. Closes `improvement-plan.md`'s Gap #29
+
+##### Build & Metadata
+
+- Project version bumped to **8.10.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### 🧾 [8.10.0] - 2026-09-26
 
