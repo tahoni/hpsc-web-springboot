@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (13):**
+- **✅ Completed (14):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -80,11 +80,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
     pending)
   - #15 `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA
     cascade/`mappedBy` — closed (version pending)
+  - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — closed (version pending)
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (4):**
+- **⚪ Open (3):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
   - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — **Next**
-  - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — **Next**
   - #17 `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 —
     **Next**
 
@@ -533,6 +533,25 @@ all describe exactly that, and its Development Guidelines paragraph points at `C
 profiles. No Flyway migration was needed, since `mappedBy` adds no column. Delivered on a
 `feature/competitor-paid-up` branch, so the closing version is filled in at the next release-prep pass.
 
+#### 16. `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — ✅ Closed (version pending)
+
+**Evidence:** `CONTRIBUTING.md:101`'s single-test example reads
+`./mvnw test -Dtest=AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`. `AwardControllerTest.java`
+has no `testProcessCsv_*` method — every method was renamed to `testCreateAwards_*` (e.g.
+`testCreateAwards_whenValidCsvData_thenReturns200`) when `AwardService.processCsv`/`AwardController` were renamed to
+`createAwards`. A repo-wide grep for `testProcessCsv_whenValidCsvData_thenReturns200` finds only this one line.
+
+**Why it matters:** This is `CONTRIBUTING.md`'s worked example for running a single test — a new contributor
+copy-pasting it gets a "no tests found" failure, undermining the exact onboarding step it's meant to demonstrate.
+
+**Proposed improvement:** Update the example to name an existing test, e.g.
+`AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`.
+
+**Outcome:** Delivered as proposed: the single-test example now reads
+`./mvnw test -Dtest=AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`, confirmed to run the one
+existing test. Delivered on a `feature/competitor-paid-up` branch, so the closing version is filled in at the next
+release-prep pass.
+
 ### 🟡 Partially Completed
 
 *No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
@@ -588,20 +607,6 @@ on, and widen the Project Structure tree's `.github/workflows/` comment generica
 security analysis and automated review"). `CONTRIBUTING.md`'s summary line then only needs its parenthetical scope
 list extended to match. Optionally drop or tailor the review workflow's leftover template `paths:` comment.
 
-#### 16. `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists
-
-**Evidence:** `CONTRIBUTING.md:101`'s single-test example reads
-`./mvnw test -Dtest=AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`. `AwardControllerTest.java`
-has no `testProcessCsv_*` method — every method was renamed to `testCreateAwards_*` (e.g.
-`testCreateAwards_whenValidCsvData_thenReturns200`) when `AwardService.processCsv`/`AwardController` were renamed to
-`createAwards`. A repo-wide grep for `testProcessCsv_whenValidCsvData_thenReturns200` finds only this one line.
-
-**Why it matters:** This is `CONTRIBUTING.md`'s worked example for running a single test — a new contributor
-copy-pasting it gets a "no tests found" failure, undermining the exact onboarding step it's meant to demonstrate.
-
-**Proposed improvement:** Update the example to name an existing test, e.g.
-`AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`.
-
 #### 17. `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0
 
 **Evidence:** `HISTORY.md:2007`'s "🛤️ Future Roadmap Implications" section opens "Based on the evolution to v8.4.0,
@@ -631,7 +636,7 @@ again.
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | Document the Claude Code workflows (#13) and clear two remaining small documentation-accuracy gaps found in the same pass: `CONTRIBUTING.md`'s dead test-method example (#16) and `HISTORY.md`'s stalled Future Roadmap Implications log (#17) — #14 and #15, this phase's previous occupants, closed (version pending) |
+| **Next**    | Document the Claude Code workflows (#13) and clear the one remaining small documentation-accuracy gap found in the same pass: `HISTORY.md`'s stalled Future Roadmap Implications log (#17) — #14, #15 and #16, this phase's previous occupants, closed (version pending) |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -674,7 +679,8 @@ again.
 - ✅ Met (version pending): `ARCHITECTURE.md`'s Quality Attributes table and its Persistence Layer section agree on
   cascade/`mappedBy` — both now describe `IpscMatch.stages` as the one cascaded, bidirectional relationship — and its
   database-profiles cross-reference points at `CONTRIBUTING.md`, closing Gap #15.
-- `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing Gap #16.
+- ✅ Met (version pending): `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing
+  Gap #16.
 - `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log has an entry for every shipped release,
   closing Gap #17.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s

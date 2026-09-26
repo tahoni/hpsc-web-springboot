@@ -194,6 +194,11 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Correct the Development Guidelines cross-reference (line 405) to point at `CONTRIBUTING.md`, not `README.md`,
   for database profiles documentation
 
+**CONTRIBUTING.md dead test-method example** *(improvement-plan.md → Gap #16)* — ✅ Closed (version pending)
+
+- [x] Replace `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200` (line 101) with an existing test
+  method, e.g. `AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`
+
 ---
 
 ## 🟡 Partially Completed
@@ -227,11 +232,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   individual workflow files
 - [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
 - [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
-
-**CONTRIBUTING.md dead test-method example** *(improvement-plan.md → Gap #16)*
-
-- [ ] Replace `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200` (line 101) with an existing test
-  method, e.g. `AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`
 
 **HISTORY.md Future Roadmap Implications log refresh** *(improvement-plan.md → Gap #17)*
 

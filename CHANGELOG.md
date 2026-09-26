@@ -141,6 +141,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   both now describe `IpscMatch.stages` as the one cascaded relationship, and the Development Guidelines paragraph
   points at `CONTRIBUTING.md`, not `README.md`, for database profiles, closing `improvement-plan.md`'s Gap #15
   (version pending — delivered on this feature branch)
+- **`CONTRIBUTING.md`:** The Running Tests single-method example named
+  `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`, which was renamed away — now
+  `testCreateAwards_whenValidCsvData_thenReturns200`, closing `improvement-plan.md`'s Gap #16 (version pending —
+  delivered on this feature branch)
 
 ### 🧾 [8.8.0] - 2026-09-24
 

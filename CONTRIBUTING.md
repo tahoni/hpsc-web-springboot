@@ -98,7 +98,7 @@ Tests activate the `test` profile automatically — no database setup is require
 ./mvnw test -Dtest=AwardControllerTest
 
 # Single test method
-./mvnw test -Dtest=AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200
+./mvnw test -Dtest=AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200
 
 # Tests + JaCoCo coverage report (target/site/jacoco/)
 ./mvnw verify -Pcoverage
