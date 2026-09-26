@@ -56,17 +56,25 @@ current at the time it's authored. Treat any resemblance between the two as coin
 4. Give the file a descriptive `__snake_case` suffix naming what it does, matching the existing files' style (e.g.
    `__add_competitor_emails`, `__seed_club_data`) — this suffix is what makes the migration searchable and traceable,
    not the version number.
+5. Add a row for the new migration to the [Current State](#-current-state-in-this-codebase) table below, following
+   the existing rows' shape — the table has drifted behind by several migrations before precisely because this step
+   was missing.
 
 ---
 
 ## 🔍 Current State in This Codebase
 
-| Migration                               | Shipped in app version | Notes                                                                                                                                                                       |
-|-----------------------------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `V7_0_0__create_schema.sql`             | v7.0.0                 | The Flyway baseline (`spring.flyway.baseline-version=7.0.0`) — chosen to match the app version the hand-built schema was frozen at, not a rule for every migration after it |
-| `V7_1_0__update_shooter_log_schema.sql` | (schema-only change)   | —                                                                                                                                                                           |
-| `V7_2_0__add_competitor_emails.sql`     | **v8.2.0**             | The clearest evidence the two counters diverge: there is also a wholly unrelated app release literally named v7.2.0, a hygiene-only pass with no schema change              |
-| `V7_3_0__seed_club_data.sql`            | v8.4.0                 | —                                                                                                                                                                           |
+| Migration                                              | Shipped in app version | Notes                                                                                                                                                                         |
+|---------------------------------------------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `V7_0_0__create_schema.sql`                            | v7.0.0                 | The Flyway baseline (`spring.flyway.baseline-version=7.0.0`) — chosen to match the app version the hand-built schema was frozen at, not a rule for every migration after it   |
+| `V7_1_0__update_shooter_log_schema.sql`                | (schema-only change)   | —                                                                                                                                                                             |
+| `V7_2_0__add_competitor_emails.sql`                    | **v8.2.0**             | The clearest evidence the two counters diverge: there is also a wholly unrelated app release literally named v7.2.0, a hygiene-only pass with no schema change                |
+| `V7_3_0__seed_club_data.sql`                           | v8.4.0                 | —                                                                                                                                                                             |
+| `V7_4_0__make_club_number_nullable.sql`                | v8.4.0                 | Relaxes `club_number` to nullable and backfills existing non-HPSC-home-club rows to `NULL`, since `IpscCompetitorServiceImpl` only requires it for HPSC home-club competitors |
+| `V7_5_0__add_ipsc_match_start_end_time.sql`            | v8.5.0                 | —                                                                                                                                                                             |
+| `V7_6_0__add_ipsc_match_url.sql`                       | v8.6.0                 | —                                                                                                                                                                             |
+| `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` | v8.6.0                 | Narrows `start_time`/`end_time` (added in `V7_5_0`) from `DATETIME` to `TIME` — these were always time-of-day-only values                                                     |
+| `V7_8_0__add_competitor_paid_up_flags.sql`             | Unreleased             | —                                                                                                                                                                             |
 
 ---
 

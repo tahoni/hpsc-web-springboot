@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (11):**
+- **✅ Completed (12):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -76,11 +76,12 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #10 `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — closed v8.5.1
   - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — closed v8.6.2
   - #12 Competitor/match "full CRUD" claims have no delete operation behind them — closed v8.8.0
+  - #14 `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — closed (version
+    pending)
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (6):**
+- **⚪ Open (5):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
   - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — **Next**
-  - #14 `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — **Next**
   - #15 `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA
     cascade/`mappedBy` — **Next**
   - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — **Next**
@@ -470,6 +471,34 @@ left as is; `ARCHITECTURE.md` gained a note on the reject-not-cascade rule, and
 `standard-rest-conventions.md`'s current-state examples now cover both controllers' full `getAll`/`get`/`create`/
 `update`/`patch`/`delete` sets.
 
+#### 14. `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — ✅ Closed (version pending)
+
+**Evidence:** `documentation/recommendations/flyway-migration-versioning.md`'s "🔍 Current State in This Codebase"
+table lists only `V7_0_0__create_schema.sql` through `V7_3_0__seed_club_data.sql`. `src/main/resources/db/migration/`
+now holds five more: `V7_4_0__make_club_number_nullable.sql` (shipped v8.4.0),
+`V7_5_0__add_ipsc_match_start_end_time.sql` (v8.5.0), `V7_6_0__add_ipsc_match_url.sql` and
+`V7_7_0__change_ipsc_match_start_end_time_to_time.sql` (both v8.6.0), and
+`V7_8_0__add_competitor_paid_up_flags.sql` (this branch, still under `CHANGELOG.md`'s `### 🧪 [Unreleased]`).
+
+**Why it matters:** This is the document that explains and demonstrates the project's Flyway-versioning convention —
+referenced from `AGENTS.md`'s Tech Stack section and `CONTRIBUTING.md`'s Database Profiles section — so a table that
+stops five migrations short of the real history undersells its own "the two counters diverge" argument, missing
+exactly the rows a reader would want to check against.
+
+**Proposed improvement:** Add a row per missing migration (`V7_4_0` through `V7_8_0`), following the existing
+table's "Shipped in app version"/"Notes" shape — most need no more than the version and a `—`, the way `V7_1_0`'s
+row already does for a schema-only change. Fold this refresh into a recurring release-prep check (alongside
+`AGENTS.md`'s Release Checklist step verifying `ARCHITECTURE.md`'s Project Structure tree), so it doesn't drift
+five versions behind again.
+
+**Outcome:** Delivered differently from the exact proposal: rather than relying on a Release Checklist step, a new
+step 5 was added directly to this document's own "🔢 Choosing the Next Version" section, instructing whoever adds
+the next migration to also add its row to the Current State table — the table drifted five migrations behind
+precisely because no step told an author to update it. The five missing rows (`V7_4_0` through `V7_8_0`) were added
+now, with `V7_8_0__add_competitor_paid_up_flags.sql` listed as "Unreleased" since it hasn't shipped yet. Delivered on
+a `feature/competitor-paid-up` branch, not a `release/*` branch, so the closing version is filled in at the next
+release-prep pass rather than guessed here.
+
 ### 🟡 Partially Completed
 
 *No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
@@ -524,26 +553,6 @@ globs from its template, a hint it was added as-is rather than tailored to this 
 on, and widen the Project Structure tree's `.github/workflows/` comment generically (e.g. "GitHub Actions — CI/CD,
 security analysis and automated review"). `CONTRIBUTING.md`'s summary line then only needs its parenthetical scope
 list extended to match. Optionally drop or tailor the review workflow's leftover template `paths:` comment.
-
-#### 14. `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0
-
-**Evidence:** `documentation/recommendations/flyway-migration-versioning.md`'s "🔍 Current State in This Codebase"
-table lists only `V7_0_0__create_schema.sql` through `V7_3_0__seed_club_data.sql`. `src/main/resources/db/migration/`
-now holds five more: `V7_4_0__make_club_number_nullable.sql` (shipped v8.4.0),
-`V7_5_0__add_ipsc_match_start_end_time.sql` (v8.5.0), `V7_6_0__add_ipsc_match_url.sql` and
-`V7_7_0__change_ipsc_match_start_end_time_to_time.sql` (both v8.6.0), and
-`V7_8_0__add_competitor_paid_up_flags.sql` (this branch, still under `CHANGELOG.md`'s `### 🧪 [Unreleased]`).
-
-**Why it matters:** This is the document that explains and demonstrates the project's Flyway-versioning convention —
-referenced from `AGENTS.md`'s Tech Stack section and `CONTRIBUTING.md`'s Database Profiles section — so a table that
-stops five migrations short of the real history undersells its own "the two counters diverge" argument, missing
-exactly the rows a reader would want to check against.
-
-**Proposed improvement:** Add a row per missing migration (`V7_4_0` through `V7_8_0`), following the existing
-table's "Shipped in app version"/"Notes" shape — most need no more than the version and a `—`, the way `V7_1_0`'s
-row already does for a schema-only change. Fold this refresh into a recurring release-prep check (alongside
-`AGENTS.md`'s Release Checklist step verifying `ARCHITECTURE.md`'s Project Structure tree), so it doesn't drift
-five versions behind again.
 
 #### 15. `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy`
 
@@ -610,7 +619,7 @@ again.
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | Document the Claude Code workflows (#13) and clear four small documentation-accuracy gaps found in the same pass: the stale Flyway migration table (#14), `ARCHITECTURE.md`'s cascade/`mappedBy` self-contradiction (#15), `CONTRIBUTING.md`'s dead test-method example (#16), and `HISTORY.md`'s stalled Future Roadmap Implications log (#17) |
+| **Next**    | Document the Claude Code workflows (#13) and clear three remaining small documentation-accuracy gaps found in the same pass: `ARCHITECTURE.md`'s cascade/`mappedBy` self-contradiction (#15), `CONTRIBUTING.md`'s dead test-method example (#16), and `HISTORY.md`'s stalled Future Roadmap Implications log (#17) — #14, this phase's previous occupant, closed (version pending) |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -648,8 +657,8 @@ again.
   `README.md`/`ARCHITECTURE.md` accurate and closing Gap #12.
 - `ARCHITECTURE.md`'s CI/CD & Quality Gates table (and `CONTRIBUTING.md`'s summary of it) lists every workflow in
   `.github/workflows/`, including the Claude Code review and assistant workflows, closing Gap #13.
-- `flyway-migration-versioning.md`'s Current State table lists every migration through the highest one that exists
-  on disk, closing Gap #14.
+- ✅ Met (version pending): `flyway-migration-versioning.md`'s Current State table lists every migration through
+  `V7_8_0`, and a new step in "🔢 Choosing the Next Version" keeps it from drifting again, closing Gap #14.
 - `ARCHITECTURE.md`'s Quality Attributes table and its Persistence Layer section agree on whether cascade/`mappedBy`
   exist, and its database-profiles cross-reference points at `CONTRIBUTING.md`, closing Gap #15.
 - `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing Gap #16.

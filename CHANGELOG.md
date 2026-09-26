@@ -117,6 +117,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`:** Reverted "low-regression backstop" to "low regression backstop" — the hyphen bound "low"
   to "regression" instead of the intended "low [threshold], regression backstop" reading, nearly inverting the
   meaning
+- **`flyway-migration-versioning.md`:** Current State table extended with the five migrations missing since v8.4.0
+  (`V7_4_0` through `V7_8_0`); a new step 5 in "🔢 Choosing the Next Version" now has the next migration's author add
+  its own row, closing `improvement-plan.md`'s Gap #14 (version pending — delivered on this feature branch)
 
 ### 🧾 [8.8.0] - 2026-09-24
 

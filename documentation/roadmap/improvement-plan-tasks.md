@@ -175,6 +175,16 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Refresh `standard-rest-conventions.md`'s "🔍 Current State in This Codebase" examples to name
   `getAllMatches`/`getAllCompetitors` and `IpscCompetitorController`
 
+**Flyway migration table refresh** *(improvement-plan.md → Gap #14)* — ✅ Closed (version pending)
+
+- [x] Add rows to `flyway-migration-versioning.md`'s Current State table for `V7_4_0__make_club_number_nullable.sql`
+  (v8.4.0), `V7_5_0__add_ipsc_match_start_end_time.sql` (v8.5.0), `V7_6_0__add_ipsc_match_url.sql` (v8.6.0),
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` (v8.6.0) and `V7_8_0__add_competitor_paid_up_flags.sql`
+  (listed as "Unreleased" — confirm actual shipping version when this lands)
+- [x] ~~Fold this table refresh into a recurring release-prep check~~ — done differently: added as step 5 of
+  `flyway-migration-versioning.md`'s own "🔢 Choosing the Next Version" section instead, so whoever adds the next
+  migration updates the table in the same change rather than relying on a separate release-time check
+
 ---
 
 ## 🟡 Partially Completed
@@ -208,14 +218,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   individual workflow files
 - [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
 - [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
-
-**Flyway migration table refresh** *(improvement-plan.md → Gap #14)*
-
-- [ ] Add rows to `flyway-migration-versioning.md`'s Current State table for `V7_4_0__make_club_number_nullable.sql`
-  (v8.4.0), `V7_5_0__add_ipsc_match_start_end_time.sql` (v8.5.0), `V7_6_0__add_ipsc_match_url.sql` (v8.6.0),
-  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` (v8.6.0) and `V7_8_0__add_competitor_paid_up_flags.sql`
-  (Unreleased at time of writing — confirm actual shipping version when this lands)
-- [ ] Fold this table refresh into a recurring release-prep check so it doesn't fall behind again
 
 **ARCHITECTURE.md cascade/mappedBy self-contradiction** *(improvement-plan.md → Gap #15)*
 
