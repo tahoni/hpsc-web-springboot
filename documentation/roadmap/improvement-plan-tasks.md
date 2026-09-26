@@ -286,6 +286,13 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Add a `local` row to `CONTRIBUTING.md`'s Database Profiles table, or name its `hpsc_dev` user and
   `MYSQL_LOCAL_PASSWORD` variable in the existing note — did both
 
+**`staging` logging profile** *(improvement-plan.md → Gap #28)* — ✅ Closed in v8.10.0
+
+- [x] Decide whether a staging environment is wanted — not wanted
+- [x] If not, remove the `staging` `<springProfile>` block from `logback-spring.xml`; if so, add
+  `application-staging.properties`, a `staging` row in `CONTRIBUTING.md`'s Database Profiles table and matching
+  mentions wherever `prod` is documented — removed the block
+
 ---
 
 ## 🟡 Partially Completed

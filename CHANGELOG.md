@@ -86,6 +86,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #27 from a second `update-improvement-plan-gaps`
   sweep — the database-profile docs promised a setup the properties files don't provide — closed within this release
   (see Fixed)
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #28 from a third `update-improvement-plan-gaps`
+  sweep — `logback-spring.xml` configured a `staging` profile that existed nowhere else — closed within this release
+  (see Removed)
 
 #### 🔄 Changed
 
@@ -113,6 +116,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   categories now include entities
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.10.0 and moved to ✅ Completed, with
   "🌳 At a Glance", the "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+
+#### 🗑️ Removed
+
+##### Configuration
+
+- **`logback-spring.xml`:** Removed the `staging` `<springProfile>` block and its `logs/application-staging.log`
+  appender — no staging environment exists, there was no `application-staging.properties` behind it and no doc
+  mentioned it, so activating `staging` could never start the app. The remaining blocks (`default`, `dev`, `local`,
+  `prod`, `test`) each match a documented profile; closes `improvement-plan.md`'s Gap #28
 
 #### 🐛 Fixed
 

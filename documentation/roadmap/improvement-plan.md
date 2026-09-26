@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (25):**
+- **✅ Completed (26):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -96,6 +96,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #25 Entity-level unit tests are a stated goal with no gap tracking it — closed v8.10.0 (`IpscMatchTest` only)
   - #27 Database-profile docs promise a setup the properties files don't provide — closed v8.10.0 (docs plus a
     new `prod` profile)
+  - #28 `logback-spring.xml` configures a `staging` profile that exists nowhere else — closed v8.10.0 (block
+    removed)
 - **🟡 Partially Completed (1):**
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
@@ -840,6 +842,29 @@ now naming it. `CONTRIBUTING.md`'s Database Profiles table lists every profile's
 its `local` note repeats. `README.md`'s and `CONTRIBUTING.md`'s credentials wording now excludes `local` as well as
 `test`.
 
+#### 28. `logback-spring.xml` configures a `staging` profile that exists nowhere else — ✅ Closed in v8.10.0
+
+**Evidence:** `src/main/resources/logback-spring.xml` (lines 82–105) has a `<springProfile name="staging">` block
+writing to `logs/application-staging.log`, present since the file's early history. No
+`application-staging.properties` exists, and no doc mentions a `staging` profile: `CONTRIBUTING.md`'s Database
+Profiles table (as corrected by Gap #27) lists only `(none)`, `prod`, `dev`, `local` and `test`, and `README.md`,
+`ARCHITECTURE.md` and `AGENTS.md` name no `staging` either. The other five logback blocks (`default`, `dev`,
+`local`, `prod`, `test`) each match a documented profile.
+
+**Why it matters:** The same category of drift Gap #27 just closed for the properties files, one file over. A
+contributor reading `logback-spring.xml` would reasonably expect a staging environment exists, but activating
+`staging` gives no datasource URL — the same startup failure Gap #27 documented for the no-profile run — so the
+block is either dead configuration or an environment nobody has documented.
+
+**Proposed improvement:** Decide whether a staging environment is wanted. If not, remove the `staging` block from
+`logback-spring.xml`. If so, add an `application-staging.properties` alongside `application-prod.properties` and a
+`staging` row to `CONTRIBUTING.md`'s Database Profiles table, and mention it wherever `prod` is documented.
+
+**Outcome:** Resolved by removal: no staging environment is wanted, so the `staging` `<springProfile>` block (and
+its `logs/application-staging.log` appender) is gone from `logback-spring.xml`. Its remaining blocks — `default`,
+`dev`, `local`, `prod` and `test` — now each match a profile documented in `CONTRIBUTING.md`'s Database Profiles
+table (`default` being the no-profile run), so no properties file or doc change was needed.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -904,7 +929,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
-| **Next**    | No items currently scoped — #25 and #27 closed in v8.10.0                                                                                                                                                                                          |
+| **Next**    | No items currently scoped — #25, #27 and #28 closed in v8.10.0                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -970,6 +995,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 - ✅ Met in v8.10.0: `AGENTS.md`, `README.md` and `CONTRIBUTING.md` describe every database profile's connection
   settings as the properties files actually configure them, so the documented no-profile run starts, closing
   Gap #27.
+- ✅ Met in v8.10.0: every `<springProfile>` in `logback-spring.xml` matches a documented profile — `staging`
+  either removed or backed by its own properties file and `CONTRIBUTING.md` row, closing Gap #28.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
