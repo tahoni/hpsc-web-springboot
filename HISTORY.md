@@ -21,6 +21,25 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.10.3 (September 26, 2026)
+
+**Theme:** Dependabot's First Updates & Flyway Plugin Version Fix
+
+**Key Focus:**
+
+- Dependabot's first three PRs: GitHub Actions `checkout` `v7`, `setup-java` `v6` and `upload-artifact` `v7` (#140);
+  springdoc `3.1.1`, JaCoCo `0.8.15` and Maven `3.9.16` through a regenerated wrapper (#138); and `flyway-mysql`
+  `13.7.0` (#139) — #138 and #139 reached `main` through #142 ahead of any release notes, so this release documents
+  them
+- `flyway-mysql` 13.7.0 sat beside Spring Boot's 12.4.0 `flyway-maven-plugin`, mixing two Flyway majors on the
+  plugin's classpath; the plugin dependency now uses `${flyway.version}`, inherited from the parent, so it can't
+  drift again — replacing the hand-kept sync `pom.xml`'s own comment had warned about
+- `mvnw` is now committed as executable, so `dependency-submission.yml`'s `chmod` step is dropped; `mvnw.cmd`'s line
+  endings renormalised per `.gitattributes`
+- Scoped as `v8.10.3` **PATCH**: dependency patch updates, CI changes and a build fix, with no change to the API,
+  configuration or schema
+- Project version bumped to 8.10.3 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.10.2 (September 26, 2026)
 
 **Theme:** Claude Code Review for Dependabot PRs
@@ -1337,6 +1356,14 @@ model, rather than leaving it to GitHub's defaults.
 **Achievement:** Gave Dependabot's PRs — including those that bypass `develop` — the same automated review as
 everyone else's.
 
+### Milestone 39: Dependabot's First Updates & Flyway Plugin Version Fix (v8.10.3)
+
+- Dependabot's first GitHub Actions and Maven updates absorbed and documented
+- The one update that broke a hand-kept version sync (`flyway-mysql`) fixed by deriving the version from Spring Boot
+
+**Achievement:** Showed why automated updates still need review, and removed the hand-kept pin that let one of them
+break the build tooling.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1911,7 +1938,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.10.2):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.10.3):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1934,7 +1961,8 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   documentation-accuracy gap the improvement plan tracked. Then turn Semantic Versioning from precedent into a rule
   the release process enforces, give production its own profile and make every documented runtime profile match the
   configuration behind it, then bring the repository's dependency tooling — dependency submission and Dependabot —
-  under version control and into the branching model, and extend the automated code review to Dependabot's PRs.
+  under version control and into the branching model, extend the automated code review to Dependabot's PRs, and
+  absorb its first updates — deriving the Flyway plugin's version from Spring Boot where a hand-kept pin broke.
 
 ### Initial Phase (v1.0.0)
 
@@ -2198,7 +2226,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.10.2, the following areas are identified for future enhancement:
+Based on the evolution to v8.10.3, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2476,11 +2504,19 @@ Based on the evolution to v8.10.2, the following areas are identified for future
 - Gap #29 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.10.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.10.2)
+### Previously Completed (v8.10.2)
 
 - The Claude code review runs on Dependabot's PRs (`allowed_bots: 'dependabot'`), with `CLAUDE_CODE_OAUTH_TOKEN`
   also needed as a Dependabot secret
 - Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.10.3)
+
+- Dependabot's first updates: GitHub Actions to `checkout@v7`/`setup-java@v6`/`upload-artifact@v7`, springdoc
+  `3.1.1`, JaCoCo `0.8.15`, Maven `3.9.16`
+- `flyway-mysql` in the Flyway plugin now follows `${flyway.version}`, fixing Dependabot's mismatched `13.7.0` bump
+- `dependency-submission.yml`'s `chmod` step dropped; `mvnw.cmd` line endings renormalised
+- Project version bumped to 8.10.3 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 
