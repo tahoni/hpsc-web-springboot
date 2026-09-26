@@ -144,6 +144,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`claude-code-review.yml`:** The commented-out `paths:` filter example still named its template's TypeScript/
   JavaScript globs — now `src/**/*.java`, `src/main/resources/**` and `pom.xml`, still left commented out
 
+##### Tooling
+
+- **`prep-version-release`, `AGENTS.md`:** The Release Checklist's `HISTORY.md` step now makes updating "Major
+  Version Goals" mandatory for every release — extending the current major version's range and narrative, or adding
+  a new entry for a new major version — rather than leaving it unmentioned
+
 #### 🐛 Fixed
 
 ##### Documentation

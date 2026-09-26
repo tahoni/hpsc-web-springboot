@@ -73,7 +73,10 @@ Steps:
    significance, always rename the Future Roadmap Implications section's current `### Recently Completed (vX.Y.Z)`
    entry to `### Previously Completed (vX.Y.Z)`, add a `### Recently Completed ($VERSION)` entry summarising this
    release at the same depth as the existing entries, and update the section's "Based on the evolution to vX.Y.Z"
-   opening sentence to `$VERSION`. Then check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals &
+   opening sentence to `$VERSION`. Also always update the "Major Version Goals" subsection under Project Philosophy
+   Evolution: extend the current major version's `Version N.x (vN.0.0 – vX.Y.Z)` range to end at `$VERSION` and
+   weave this release's driving goal into that entry's narrative, or, for a new major version, add a new
+   `Version N.x ($VERSION)` entry. Then check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals &
    Constraints" table needs a matching update — it's synthesised partly from `HISTORY.md`'s Future Roadmap
    Implications sections, so a change here can leave that table stale.
 8. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
