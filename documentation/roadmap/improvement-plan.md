@@ -92,12 +92,13 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #22 `AGENTS.md` names the club differently from every other source — closed v8.9.0
   - #23 The `Competitor.homeClub` backfill is a stated goal with no gap tracking it — closed v8.9.0 (not
     applicable)
-  - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
-- **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (3):**
+    - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
+- **🟡 Partially Completed (1):**
+  - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.9.1 (now
+    re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
+- **⚪ Open (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
   - #25 Entity-level unit tests are a stated goal with no gap tracking it
-  - #26 The `tomcat.version` override is an untracked standing manual constraint
 
 ### ✅ Completed
 
@@ -774,9 +775,35 @@ work to entity-level unit tests.
 
 ### 🟡 Partially Completed
 
-*No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
+A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+#### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.9.1
+
+**Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
+spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
+GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25" — added in v8.3.1 (commit `28af4d1`). Boot 4.1.1 is
+still the latest 4.1.x release on Maven Central, and its `spring-boot-dependencies` POM still manages `tomcat.version`
+at `11.0.24`, so the override is still needed. Yet this plan's "🛤️ Roadmap" Ongoing row says "#5's overrides are
+gone as of v8.1.1", and the "⚙️ Goals & Constraints" `pom.xml` row mentions no override at all.
+
+**Why it matters:** This is exactly the shape of Gap #5 — a manually tracked, easy-to-forget pin that nothing flags
+once the upstream BOM catches up — but the plan currently reads as though no such override remains, so the Ongoing
+check has nothing concrete pointing it at this one.
+
+**Proposed improvement:** No code change needed now. Record the override in the Ongoing roadmap row and the
+Goals & Constraints table, and at each release check whether the parent's managed `tomcat.version` has reached
+`11.0.25` or later; drop the override in the same pass the parent is bumped, as Gap #5 did for `jackson-databind`.
+
+**Progress:** The tracking half is done. The plan now records the override in its Ongoing roadmap row and
+Goals & Constraints table, and the root cause behind it being missed is fixed: the Ongoing row said overrides were
+re-checked "per the Release Checklist", but no checklist step actually did so. `AGENTS.md`'s Release Checklist
+step 2 and the `prep-version-release` skill's matching step now re-check every manual `pom.xml` override against
+the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
+The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
+milestone) and still manages Tomcat `11.0.24`. The gap closes once a Spring Boot GA release manages `11.0.25` or
+later and the override is dropped.
 
 ### ⚪ Open
 
@@ -823,23 +850,6 @@ load — but that is a decision to record, not an assumption to leave implicit.
 entity behaviour warrants it (e.g. collection defaults such as `IpscMatch.stages`/`Competitor.emailAddresses` being
 initialised to an empty list). If not, drop the bullet from `HISTORY.md`'s Short-term list and the item from the next
 release's Known Issues/Future Enhancements, as Gap #23 did for the `homeClub` backfill.
-
-#### 26. The `tomcat.version` override is an untracked standing manual constraint
-
-**Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
-spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
-GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25" — added in v8.3.1 (commit `28af4d1`). Boot 4.1.1 is
-still the latest 4.1.x release on Maven Central, and its `spring-boot-dependencies` POM still manages `tomcat.version`
-at `11.0.24`, so the override is still needed. Yet this plan's "🛤️ Roadmap" Ongoing row says "#5's overrides are
-gone as of v8.1.1", and the "⚙️ Goals & Constraints" `pom.xml` row mentions no override at all.
-
-**Why it matters:** This is exactly the shape of Gap #5 — a manually tracked, easy-to-forget pin that nothing flags
-once the upstream BOM catches up — but the plan currently reads as though no such override remains, so the Ongoing
-check has nothing concrete pointing it at this one.
-
-**Proposed improvement:** No code change needed now. Record the override in the Ongoing roadmap row and the
-Goals & Constraints table, and at each release check whether the parent's managed `tomcat.version` has reached
-`11.0.25` or later; drop the override in the same pass the parent is bumped, as Gap #5 did for `jackson-databind`.
 
 ---
 

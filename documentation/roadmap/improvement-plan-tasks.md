@@ -268,9 +268,17 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 
 ## 🟡 Partially Completed
 
-*No gaps are currently partially completed.* A gap moves here once at least one of its items is checked, but the
-block as a whole isn't fully checked off yet — matching `improvement-plan.md`'s "🟡 Partially Completed" section —
-and moves on to ✅ Completed once every item is checked and the gap's own header there carries a "✅ Closed" suffix.
+A gap moves here once at least one of its items is checked, but the block as a whole isn't fully checked off yet —
+matching `improvement-plan.md`'s "🟡 Partially Completed" section — and moves on to ✅ Completed once every item is
+checked and the gap's own header there carries a "✅ Closed" suffix.
+
+**`tomcat.version` override** *(improvement-plan.md → Gap #26)* — 🟡 Partially completed in v8.9.1
+
+- [x] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later —
+  made a standing step instead: `AGENTS.md`'s Release Checklist step 2 and `prep-version-release` now re-check every
+  manual `pom.xml` override against the parent's own `spring-boot-dependencies` POM
+- [ ] Once it has, drop the `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
+  bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
 
 ---
 
@@ -295,12 +303,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   their persistence behaviour is covered by the repository integration tests
 - [ ] If so, add unit tests for the entity behaviour that warrants it (e.g. empty-collection defaults); if not, drop
   the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
-
-**`tomcat.version` override** *(improvement-plan.md → Gap #26)*
-
-- [ ] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later
-- [ ] Once it has, drop the `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
-  bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

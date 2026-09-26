@@ -553,6 +553,12 @@ anything downstream references them:
 2. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to the new `X.Y.Z`,
    which must be the correct next version under [Semantic Versioning](#semantic-versioning) — classify the release
    from the `### 🧪 [Unreleased]` section first, and don't bump until the MAJOR/MINOR/PATCH choice is confirmed.
+   In the same pass, re-check every manual version override in `pom.xml` — a `<properties>` entry overriding a
+   version the Spring Boot parent manages (e.g. `tomcat.version`), or a hand-pinned `<version>` on a dependency the
+   parent already manages. Compare each against the version the parent's own `spring-boot-dependencies` POM manages
+   (read that POM directly — the effective POM just echoes the override back), and drop any override the parent has
+   caught up with or passed. Tools, plugins and BOMs the parent doesn't manage at all (e.g. `jacoco.version`,
+   `springdoc-openapi-bom`) aren't overrides and stay.
 3. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
    match.
 4. **Verify `CHANGELOG.md`'s `### 🧪 [Unreleased]` section is complete.** Cross-check every commit and any uncommitted

@@ -55,7 +55,14 @@ Steps:
    `improvement-plan-tasks.md`; the second then checks whether this branch's own diff has closed or progressed any of
    the gaps already tracked there (its own diff-gathering step needs the plan to already reflect anything new the
    first skill just found). Neither commits on its own — review their draft edits with the user before continuing.
-3. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to `$VERSION`.
+3. **Bump `pom.xml`.** Update the `<version>` under `<project>` (not the parent POM's version) to `$VERSION`. In the
+   same pass, re-check every manual version override in `pom.xml` per AGENTS.md's Release Checklist step 2: for each
+   `<properties>` entry or hand-pinned `<version>` overriding something the Spring Boot parent manages (e.g.
+   `tomcat.version`), read the version the parent's own `spring-boot-dependencies` POM manages — from the local Maven
+   repository (`~/.m2/repository/org/springframework/boot/spring-boot-dependencies/<parent version>/`), not the
+   effective POM, which just echoes the override back — and drop any override the parent has caught up with or passed,
+   adding a `CHANGELOG.md` entry for the removal. List each override you kept, and why, in your final output. If an
+   override is tracked by an `improvement-plan.md` gap (e.g. Gap #26 for `tomcat.version`), update that gap too.
 4. **Bump the OpenAPI version.** Update the `version` attribute of `@OpenAPIDefinition` in `HpscWebApplication.java` to
    match.
 5. **Run the `sync-unreleased-changes` skill before touching CHANGELOG.md.** Release branches are cut from `develop`

@@ -84,6 +84,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   prefix to CHANGELOG entries for backward-incompatible changes — `sync-unreleased-changes` also flags existing
   entries whose prefix is missing or wrong as drifted, and reports the release level the synced `[Unreleased]` section
   implies
+- **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `pom.xml` bump step now re-checks every manual
+  dependency-version override against the version the Spring Boot parent's own `spring-boot-dependencies` POM manages,
+  and drops any the parent has caught up with — the plan had said this happened "per the Release Checklist", but no
+  step did it. Progresses `improvement-plan.md`'s Gap #26: the `tomcat.version` override stays until a Spring Boot GA
+  release manages Tomcat `11.0.25` or later
 
 ### 🧾 [8.9.0] - 2026-09-26
 
