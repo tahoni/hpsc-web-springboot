@@ -54,9 +54,9 @@ public class CompetitorRequest {
     private String idNumber;
     /** The competitor's cellphone number. */
     private String cellphoneNumber;
-    /** Whether the competitor's SAPSA membership is paid up; treated as {@code false} when omitted. */
+    /** Whether the competitor's SAPSA membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpSapsa;
-    /** Whether the competitor's club membership is paid up; treated as {@code false} when omitted. */
+    /** Whether the competitor's club membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpClub;
     /** The competitor's email addresses, if any. */
     private List<String> emailAddresses;
@@ -78,9 +78,9 @@ public class CompetitorRequest {
      *                         Required when {@code homeClub} is HPSC, ignored (forced to {@code null}) otherwise.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
-     * @param paidUpSapsa      whether the competitor's SAPSA membership is paid up; treated as {@code false} when
+     * @param paidUpSapsa      whether the competitor's SAPSA membership is paid up; stored as {@code null} when
      *                         omitted.
-     * @param paidUpClub       whether the competitor's club membership is paid up; treated as {@code false} when
+     * @param paidUpClub       whether the competitor's club membership is paid up; stored as {@code null} when
      *                         omitted.
      * @param emailAddresses   the competitor's email addresses, if any.
      */
