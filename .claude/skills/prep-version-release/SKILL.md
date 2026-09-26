@@ -69,10 +69,13 @@ Steps:
    once it grew to roughly half of `HISTORY.md`'s size — one paired Phase/Milestone entry still lands per release,
    just in two files now). If the release is significant enough to have shifted the project's trajectory, also
    thread it through the other version-by-version sections (Architectural Evolution, Feature Timeline, Key Learnings,
-   Future Roadmap, Conclusion/footer), using the immediately preceding version's treatment as the template. Then
-   check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching
-   update — it's synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can
-   leave that table stale.
+   Conclusion/footer), using the immediately preceding version's treatment as the template. Regardless of
+   significance, always rename the Future Roadmap Implications section's current `### Recently Completed (vX.Y.Z)`
+   entry to `### Previously Completed (vX.Y.Z)`, add a `### Recently Completed ($VERSION)` entry summarising this
+   release at the same depth as the existing entries, and update the section's "Based on the evolution to vX.Y.Z"
+   opening sentence to `$VERSION`. Then check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals &
+   Constraints" table needs a matching update — it's synthesised partly from `HISTORY.md`'s Future Roadmap
+   Implications sections, so a change here can leave that table stale.
 8. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent

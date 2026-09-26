@@ -525,10 +525,14 @@ anything downstream references them:
    file once it grew to roughly half of `HISTORY.md`'s size, but the two still gain one paired entry per release. If
    the release is significant enough to have shifted the project's trajectory, also thread it through the other
    sections that already track version-by-version state (Architectural Evolution, Feature Timeline, Key Learnings,
-   Future Roadmap, Conclusion/footer). Use how the immediately preceding version was woven into those sections as the
-   template. Then check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a
-   matching update — it's synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change
-   here can leave that table stale.
+   Conclusion/footer). Use how the immediately preceding version was woven into those sections as the template.
+   Regardless of significance, always rename the Future Roadmap Implications section's current `### Recently
+   Completed (vX.Y.Z)` entry to `### Previously Completed (vX.Y.Z)`, add a `### Recently Completed` entry for the new
+   version and update the section's "Based on the evolution to vX.Y.Z" opening sentence — that log is meant to cover
+   every release, and fell nine releases behind while it was treated as optional. Then check whether
+   `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
+   synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that table
+   stale.
 7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent

@@ -145,6 +145,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`, which was renamed away — now
   `testCreateAwards_whenValidCsvData_thenReturns200`, closing `improvement-plan.md`'s Gap #16 (version pending —
   delivered on this feature branch)
+- **`HISTORY.md`:** The Future Roadmap Implications "Recently Completed" log stopped at v8.4.0 — added entries for
+  v8.4.1 through v8.8.0 and updated the section's opening sentence to v8.8.0, closing `improvement-plan.md`'s Gap #17
+  (version pending — delivered on this feature branch)
+- **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `HISTORY.md` step now updates the Future Roadmap
+  Implications log for every release, rather than only "if the release is significant enough" — the condition that
+  let it fall nine releases behind
 
 ### 🧾 [8.8.0] - 2026-09-24
 

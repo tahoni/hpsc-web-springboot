@@ -199,6 +199,16 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Replace `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200` (line 101) with an existing test
   method, e.g. `AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`
 
+**HISTORY.md Future Roadmap Implications log refresh** *(improvement-plan.md → Gap #17)* — ✅ Closed (version pending)
+
+- [x] Rename the current final `### Recently Completed (v8.4.0)` entry to `### Previously Completed (v8.4.0)`
+- [x] Add a `### Recently Completed (vX.Y.Z)` entry for each of v8.4.1, v8.4.2, v8.5.0, v8.5.1, v8.6.0, v8.6.1,
+  v8.6.2, v8.7.0 and v8.8.0, summarising each release's already-written Historical Timeline/`CHANGELOG.md` content
+- [x] Update the section's opening sentence from "Based on the evolution to v8.4.0" to the current version
+- [x] Fold this refresh into the Release Checklist alongside Gap #10's Phase/Milestone step — done by making
+  the existing step 6 (and `prep-version-release`'s matching step) update this log unconditionally, instead of
+  only "if the release is significant enough"
+
 ---
 
 ## 🟡 Partially Completed
@@ -232,14 +242,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   individual workflow files
 - [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
 - [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
-
-**HISTORY.md Future Roadmap Implications log refresh** *(improvement-plan.md → Gap #17)*
-
-- [ ] Rename the current final `### Recently Completed (v8.4.0)` entry to `### Previously Completed (v8.4.0)`
-- [ ] Add a `### Recently Completed (vX.Y.Z)` entry for each of v8.4.1, v8.4.2, v8.5.0, v8.5.1, v8.6.0, v8.6.1,
-  v8.6.2, v8.7.0 and v8.8.0, summarising each release's already-written Historical Timeline/`CHANGELOG.md` content
-- [ ] Update the section's opening sentence from "Based on the evolution to v8.4.0" to the current version
-- [ ] Fold this refresh into the Release Checklist alongside Gap #10's Phase/Milestone step
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

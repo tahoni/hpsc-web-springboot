@@ -2006,7 +2006,7 @@ IpscCompetitorService          IpscMatchService
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.4.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.8.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2147,7 +2147,7 @@ Based on the evolution to v8.4.0, the following areas are identified for future 
 - `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
 - Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.4.0)
+### Previously Completed (v8.4.0)
 
 - New `ClubIdentifier.ALL`, seeded via `V7_3_0__seed_club_data.sql`; `IpscMatchServiceImpl.resolveClub()` now
   defaults a missing/blank match `club` to it instead of failing validation, closing Gap #9
@@ -2160,6 +2160,95 @@ Based on the evolution to v8.4.0, the following areas are identified for future 
 - `AGENTS.md` gained Member ordering and REST naming conventions, plus a Release Checklist step verifying
   `ARCHITECTURE.md`'s Project Structure tree against disk
 - Project version bumped to 8.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.4.1)
+
+- `AGENTS.md`/`CONTRIBUTING.md`'s near-verbatim duplicates condensed into highlights-and-link references, with
+  `CONTRIBUTING.md` kept as the sole canonical copy of Git Workflow's "Merging" subsection
+- New `AGENTS.md` "🧩 Claude Code Skills" and "🗺️ Roadmap Planning" sections, each mirrored by a short pointer in
+  `CONTRIBUTING.md`
+- `AGENTS.md`'s icon registry backfilled with 25 icons already in use, plus a "Reserved" sub-table for the sibling
+  `hpsc-web-vite` repository's frontend icons; icon collisions resolved across the root documents and 17 archived
+  release notes
+- `CHANGELOG.md`'s duplicate, truncated `[5.0.0]` section removed
+- Project version bumped to 8.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.4.2)
+
+- `AGENTS.md` declared this project's ultimate source of truth for conventions, with `CONTRIBUTING.md`'s intro
+  pointing back to it
+- `CHANGELOG.md` retitled "HPSC Website Backend" under a new "🧾 Change Log" heading, every heading beneath it
+  demoted one level; `CONTRIBUTING.md`/`HISTORY.md`'s titles gain the same prefix
+- Project version bumped to 8.4.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.5.0)
+
+- `IpscMatch` gains nullable `startTime`/`endTime` columns via `V7_5_0__add_ipsc_match_start_end_time.sql`, wired
+  through `MatchRequest`, `MatchRequestForCSV`, `MatchResponse` and `IpscMatchServiceImpl`
+- Match CSV bulk import now requires `StartTime`/`EndTime` header columns (values may be left blank)
+- New `IpscMatchServiceIntegrationTest` coverage proves the round-trip through the real H2/Hibernate layer
+- British English "Licence" applied everywhere except `LICENSE.md`'s own filename and content
+- Project version bumped to 8.5.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.5.1)
+
+- `HISTORY.md` backfilled with Phase/Milestone 26–28 for v8.4.1, v8.4.2 and v8.5.0, closing Gap #10
+- `improvement-plan.md` gains an "At a Glance" gap-status index; its Roadmap's **Now**/**Next** rows refreshed
+- `HISTORY.md`'s narrative sections reordered oldest-first (only the Historical Timeline stays newest-first), and
+  stale Conclusion-section metadata removed
+- Re-scoped from `v8.6.0` **MINOR** to `v8.5.1` **PATCH**, since the whole diff proved documentation/tooling-only
+- Project version bumped to 8.5.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.6.0)
+
+- New nullable `IpscMatch.url` column via `V7_6_0__add_ipsc_match_url.sql`, wired end-to-end with a matching `Url`
+  CSV column
+- `IpscMatch.startTime`/`endTime` corrected from `LocalDateTime` to `LocalTime` via
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql`; JSON/CSV values are now bare `HH:mm`, per the new
+  `IpscConstants.IPSC_INPUT_TIME_FORMAT`
+- `AGENTS.md`'s Test Conventions formally document the 3-tier `<Service>Test`/`<Service>ImplTest`/
+  `<Service>IntegrationTest` architecture
+- Project version bumped to 8.6.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.6.1)
+
+- `HISTORY.md`'s Evolution Overview split out into `documentation/history/EVOLUTION_OVERVIEW.md`
+- All 52 archived release notes/PR descriptions regrouped into `documentation/history/v1/`–`v8/` by major version,
+  with `AGENTS.md`, `README.md` and the affected skills updated to the new paths
+- Scoped as a **PATCH**, since the whole diff proved documentation/tooling-only
+- Project version bumped to 8.6.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.6.2)
+
+- `CHANGELOG.md` heading-depth references corrected to `###`/`####`/`#####` across `AGENTS.md`,
+  `CONTRIBUTING.md` and five skills, with `AGENTS.md` now spelling out the full nesting
+- This section's Short-term/Medium-term lists refreshed against what had actually shipped, closing Gap #11
+- `AGENTS.md`'s icon registry restructured to mirror the shared project template (`🛤️` Roadmap, `☑️` Success
+  Criteria), with every live heading realigned
+- Scoped as a **PATCH**, since the whole diff proved documentation/tooling-only
+- Project version bumped to 8.6.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.7.0)
+
+- New `GET /ipsc/competitors` endpoint (`IpscCompetitorController.getAllCompetitors`), mirroring `getAllMatches`
+- A match CSV's `Stages` cell now separates stage number from name with `:` instead of `-`; the old form is rejected
+- Every `@ManyToOne` association switched from `FetchType.LAZY` to `FetchType.EAGER`
+- The `server.port=8081` override removed, so the app runs on Spring Boot's default port `8080`
+- `springdoc-openapi-starter-webmvc-ui` bumped `2.8.5` → `3.1.0` via an imported BOM; unused
+  `spring-restdocs-mockmvc` removed
+- Gap #12 recorded: competitors and matches documented as "full CRUD" with no delete operation
+- Project version bumped to 8.7.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.8.0)
+
+- New `DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints, returning `204`,
+  `400` when still referenced or `404` when missing
+- Deletes reject rather than cascade: a record still referenced by match results, stage results or shooter logs is
+  refused, while what it owns (a competitor's emails, a match's stages) goes with it
+- Each delete is flushed inside the service method, so a reference added concurrently still surfaces as a `400`
+- New `existsBy…` repository queries back the dependent-row checks
+- Gap #12 closed; Gap #13 recorded (Claude Code workflows missing from the CI/CD documentation)
+- Project version bumped to 8.8.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 

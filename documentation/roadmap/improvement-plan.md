@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (14):**
+- **✅ Completed (15):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -81,12 +81,12 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #15 `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA
     cascade/`mappedBy` — closed (version pending)
   - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — closed (version pending)
+  - #17 `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 —
+    closed (version pending)
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (3):**
+- **⚪ Open (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
   - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — **Next**
-  - #17 `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 —
-    **Next**
 
 ### ✅ Completed
 
@@ -552,6 +552,36 @@ copy-pasting it gets a "no tests found" failure, undermining the exact onboardin
 existing test. Delivered on a `feature/competitor-paid-up` branch, so the closing version is filled in at the next
 release-prep pass.
 
+#### 17. `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 — ✅ Closed (version pending)
+
+**Evidence:** `HISTORY.md:2007`'s "🛤️ Future Roadmap Implications" section opens "Based on the evolution to v8.4.0,
+the following areas are identified for future enhancement," and its rolling per-release `### Previously Completed
+(vX.Y.Z)` / `### Recently Completed (vX.Y.Z)` log stops at `### Recently Completed (v8.4.0)`. Nine shipped releases
+are missing from this log: v8.4.1, v8.4.2, v8.5.0, v8.5.1, v8.6.0, v8.6.1, v8.6.2, v8.7.0 and v8.8.0. This is
+distinct from Gap #10 (which extended the separate "📖 Evolution Overview"/"🎯 Major Milestones" sections, and does
+correctly reach "Milestone 34: ... (v8.8.0)") and from Gap #11 (which only reworded three stale bullets inside the
+Short-term/Medium-term/Long-term forward-looking lists that follow this log, not the log itself or its intro
+sentence).
+
+**Why it matters:** The same category of drift Gap #10 closed for Evolution Overview/Major Milestones, now found in
+a different subsection under the same "🛤️ Future Roadmap Implications" heading — a reader following this log
+specifically sees it stop at v8.4.0 even though four Milestones and nine point releases have shipped since.
+
+**Proposed improvement:** Rename the current final entry to `### Previously Completed (v8.4.0)` and add a
+`### Recently Completed (vX.Y.Z)` entry for each of the nine missing releases, summarising each release's
+already-written Historical Timeline/`CHANGELOG.md` content at the same depth as the existing entries, and update
+the section's opening sentence from "Based on the evolution to v8.4.0" to the current version. Apply this as a
+recurring Release Checklist check alongside Gap #10's Phase/Milestone step, so this subsection doesn't fall behind
+again.
+
+**Outcome:** Delivered as proposed. `### Recently Completed (v8.4.0)` became `### Previously Completed (v8.4.0)`,
+new entries were added for v8.4.1 through v8.7.0 (as Previously Completed) and v8.8.0 (as Recently Completed), each
+summarising that release's Historical Timeline entry, and the opening sentence now reads "Based on the evolution to
+v8.8.0". Rather than a separate Release Checklist step, the root cause was fixed in place: `AGENTS.md`'s Release
+Checklist step 6 and the `prep-version-release` skill's matching step had listed the Future Roadmap among the
+sections to update only "if the release is significant enough", so both now make this log update unconditional.
+Delivered on a `feature/competitor-paid-up` branch, so the closing version is filled in at the next release-prep pass.
+
 ### 🟡 Partially Completed
 
 *No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
@@ -607,28 +637,6 @@ on, and widen the Project Structure tree's `.github/workflows/` comment generica
 security analysis and automated review"). `CONTRIBUTING.md`'s summary line then only needs its parenthetical scope
 list extended to match. Optionally drop or tailor the review workflow's leftover template `paths:` comment.
 
-#### 17. `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0
-
-**Evidence:** `HISTORY.md:2007`'s "🛤️ Future Roadmap Implications" section opens "Based on the evolution to v8.4.0,
-the following areas are identified for future enhancement," and its rolling per-release `### Previously Completed
-(vX.Y.Z)` / `### Recently Completed (vX.Y.Z)` log stops at `### Recently Completed (v8.4.0)`. Nine shipped releases
-are missing from this log: v8.4.1, v8.4.2, v8.5.0, v8.5.1, v8.6.0, v8.6.1, v8.6.2, v8.7.0 and v8.8.0. This is
-distinct from Gap #10 (which extended the separate "📖 Evolution Overview"/"🎯 Major Milestones" sections, and does
-correctly reach "Milestone 34: ... (v8.8.0)") and from Gap #11 (which only reworded three stale bullets inside the
-Short-term/Medium-term/Long-term forward-looking lists that follow this log, not the log itself or its intro
-sentence).
-
-**Why it matters:** The same category of drift Gap #10 closed for Evolution Overview/Major Milestones, now found in
-a different subsection under the same "🛤️ Future Roadmap Implications" heading — a reader following this log
-specifically sees it stop at v8.4.0 even though four Milestones and nine point releases have shipped since.
-
-**Proposed improvement:** Rename the current final entry to `### Previously Completed (v8.4.0)` and add a
-`### Recently Completed (vX.Y.Z)` entry for each of the nine missing releases, summarising each release's
-already-written Historical Timeline/`CHANGELOG.md` content at the same depth as the existing entries, and update
-the section's opening sentence from "Based on the evolution to v8.4.0" to the current version. Apply this as a
-recurring Release Checklist check alongside Gap #10's Phase/Milestone step, so this subsection doesn't fall behind
-again.
-
 ---
 
 ## 🛤️ Roadmap
@@ -636,7 +644,7 @@ again.
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | Document the Claude Code workflows (#13) and clear the one remaining small documentation-accuracy gap found in the same pass: `HISTORY.md`'s stalled Future Roadmap Implications log (#17) — #14, #15 and #16, this phase's previous occupants, closed (version pending) |
+| **Next**    | Document the Claude Code workflows (#13) — #14 to #17, the small documentation-accuracy gaps found in the same pass, all closed (version pending)               |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -681,8 +689,8 @@ again.
   database-profiles cross-reference points at `CONTRIBUTING.md`, closing Gap #15.
 - ✅ Met (version pending): `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing
   Gap #16.
-- `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log has an entry for every shipped release,
-  closing Gap #17.
+- ✅ Met (version pending): `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log has an entry for
+  every shipped release, and the Release Checklist now updates it unconditionally, closing Gap #17.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
