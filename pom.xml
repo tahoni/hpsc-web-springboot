@@ -185,15 +185,15 @@
                     <baselineVersion>7.0.0</baselineVersion>
                     <baselineDescription>v7.0.0 schema (built by hand via ddl-auto=update, pre-Flyway)</baselineDescription>
                 </configuration>
-                <!-- Plugin-scoped dependencies don't inherit Spring Boot's dependencyManagement,
-                     so this must be kept in sync by hand with the flyway.version Spring Boot
-                     manages (spring-boot-dependencies:4.1.1 -> flyway.version 12.4.0) whenever
-                     the parent is bumped. -->
+                <!-- Plugin-scoped dependencies don't inherit Spring Boot's dependencyManagement, but
+                     the parent's properties do, so ${flyway.version} keeps this in step with the
+                     flyway-maven-plugin Spring Boot manages. A hand-pinned version drifts: Dependabot
+                     bumped it to 13.7.0 against the 12.4.0 plugin, mixing two Flyway majors. -->
                 <dependencies>
                     <dependency>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-mysql</artifactId>
-                        <version>13.7.0</version>
+                        <version>${flyway.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
