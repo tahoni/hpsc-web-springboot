@@ -69,6 +69,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   collection — the domain model's only bidirectional, cascaded relationship, since a stage can't exist without its
   match; no schema change
 
+##### Repositories
+
+- **`IpscMatchRepository.findByIdWithClub`, `findAllWithClub`:** New `left join fetch` queries loading a match's
+  `club` with it
+- **`CompetitorRepository.findByIdWithHomeClubAndEmailAddresses`, `findAllWithHomeClubAndEmailAddresses`:** New
+  `left join fetch` queries loading a competitor's `homeClub` and `emailAddresses` with it
+
 ##### API Models
 
 - **`CompetitorRequest`, `CompetitorRequestForCSV`, `CompetitorResponse`:** New `paidUpSapsa`/`paidUpClub` fields;
@@ -87,6 +94,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceImplTest`,
   `CompetitorRequestTest`, `CompetitorRequestForCSVTest`:** Cover the new paid-up flags
+- **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** Cover the new fetch-join queries,
+  clearing the persistence context first so `Hibernate.isInitialized` proves each association really was fetched
 
 ##### Documentation
 
@@ -115,6 +124,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** `findMatchOrThrow`/`getAllMatches` and
+  `findCompetitorOrThrow`/`getAllCompetitors` now load through the new fetch-join queries, so `toResponse` can read
+  the club, home club and email addresses outside a transaction — `spring.jpa.open-in-view` is disabled, so a
+  lazily-loaded association would otherwise throw `LazyInitializationException`
 - **`IpscMatchServiceImpl.deleteMatch`:** A match's stages are now deleted by `IpscMatch.stages`' cascade rather than
   explicitly; the reject-not-cascade checks for results and shooter logs are unchanged
 - **`IpscMatchServiceImpl.replaceStages`, `upsertStages`:** Keep `IpscMatch.stages` in step with the stages they

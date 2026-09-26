@@ -161,7 +161,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     @Override
     public List<CompetitorResponse> getAllCompetitors() {
-        return competitorRepository.findAll().stream()
+        return competitorRepository.findAllWithHomeClubAndEmailAddresses().stream()
                 .map(this::toResponse)
                 .toList();
     }
@@ -309,7 +309,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws NonFatalException if no competitor with {@code competitorId} exists.
      */
     protected Competitor findCompetitorOrThrow(Long competitorId) {
-        return competitorRepository.findById(competitorId)
+        return competitorRepository.findByIdWithHomeClubAndEmailAddresses(competitorId)
                 .orElseThrow(() -> new NonFatalException("No competitor found with ID " + competitorId));
     }
 

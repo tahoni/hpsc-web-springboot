@@ -1,6 +1,8 @@
 package za.co.hpsc.web.services;
 
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
@@ -62,6 +65,9 @@ class IpscMatchServiceIntegrationTest {
 
     @Autowired
     private MatchCompetitorRepository matchCompetitorRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     // createMatch()
     @Test
@@ -577,6 +583,43 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(1, updated.getStages().size());
         assertNotEquals(originalStageId, updated.getStages().getFirst().getStageId());
         assertEquals("Replacement Stage", updated.getStages().getFirst().getStageName());
+    }
+
+    // IpscMatchRepository.findByIdWithClub()
+    @Test
+    void testFindByIdWithClub_whenMatchExists_thenClubIsFetchedWithMatch() throws FatalException {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+        entityManager.flush();
+        entityManager.clear();
+
+        // Act
+        IpscMatch match = ipscMatchRepository.findByIdWithClub(created.getMatchId()).orElseThrow();
+
+        // Assert
+        assertTrue(Hibernate.isInitialized(match.getClub()));
+        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, match.getClub().getIdentifier());
+    }
+
+    // IpscMatchRepository.findAllWithClub()
+    @Test
+    void testFindAllWithClub_whenMatchesExist_thenEachClubIsFetchedWithItsMatch() throws FatalException {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        ipscMatchService.createMatch(validRequest("Test Club"));
+        MatchRequest secondRequest = validRequest("Test Club");
+        secondRequest.setMatchName("Second Match");
+        ipscMatchService.createMatch(secondRequest);
+        entityManager.flush();
+        entityManager.clear();
+
+        // Act
+        List<IpscMatch> matches = ipscMatchRepository.findAllWithClub();
+
+        // Assert
+        assertEquals(2, matches.size());
+        assertTrue(matches.stream().allMatch(match -> Hibernate.isInitialized(match.getClub())));
     }
 
     // Helpers

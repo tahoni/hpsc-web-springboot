@@ -158,7 +158,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     @Override
     public List<MatchResponse> getAllMatches() {
-        return ipscMatchRepository.findAll().stream()
+        return ipscMatchRepository.findAllWithClub().stream()
                 .map(match -> toResponse(match,
                         ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId())))
                 .toList();
@@ -384,7 +384,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @throws NonFatalException if no match with {@code matchId} exists.
      */
     protected IpscMatch findMatchOrThrow(Long matchId) {
-        return ipscMatchRepository.findById(matchId)
+        return ipscMatchRepository.findByIdWithClub(matchId)
                 .orElseThrow(() -> new NonFatalException("No IPSC match found with ID " + matchId));
     }
 

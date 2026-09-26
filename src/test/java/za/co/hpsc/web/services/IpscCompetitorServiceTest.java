@@ -378,7 +378,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testDeleteCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.deleteCompetitor(999L));
@@ -388,7 +388,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testDeleteCompetitor_whenCompetitorHasMatchResults_thenThrowsValidationException() {
         // Arrange
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(true);
 
         // Act & Assert
@@ -399,7 +399,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testDeleteCompetitor_whenCompetitorHasShooterLogs_thenThrowsValidationException() {
         // Arrange
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
         when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(true);
 
@@ -412,7 +412,7 @@ public class IpscCompetitorServiceTest {
     void testDeleteCompetitor_whenCompetitorHasNoDependents_thenDeletesCompetitor() {
         // Arrange
         Competitor competitor = newCompetitor(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(competitor));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
         when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(false);
 
@@ -427,7 +427,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testDeleteCompetitor_whenReferenceAddedBeforeFlush_thenThrowsValidationException() {
         // Arrange
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
         when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(false);
         doThrow(new DataIntegrityViolationException("FK violation")).when(competitorRepository).flush();
@@ -442,7 +442,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testGetAllCompetitors_whenNoCompetitorsExist_thenReturnsEmptyList() {
         // Arrange
-        when(competitorRepository.findAll()).thenReturn(List.of());
+        when(competitorRepository.findAllWithHomeClubAndEmailAddresses()).thenReturn(List.of());
 
         // Act
         List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
@@ -464,7 +464,7 @@ public class IpscCompetitorServiceTest {
         second.setFirstName("John");
         second.setLastName("Smith");
 
-        when(competitorRepository.findAll()).thenReturn(List.of(first, second));
+        when(competitorRepository.findAllWithHomeClubAndEmailAddresses()).thenReturn(List.of(first, second));
 
         // Act
         List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
@@ -481,7 +481,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testGetCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorService.getCompetitor(999L));
@@ -495,7 +495,7 @@ public class IpscCompetitorServiceTest {
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
         competitor.setClubNumber("HPSC-001");
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(competitor));
 
         // Act
         CompetitorResponse response = assertDoesNotThrow(() -> ipscCompetitorService.getCompetitor(1L));
@@ -510,7 +510,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testPatchCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L)).thenReturn(Optional.empty());
         CompetitorRequest request = new CompetitorRequest();
         request.setFirstName("Renamed");
 
@@ -526,7 +526,7 @@ public class IpscCompetitorServiceTest {
         Competitor existing = new Competitor();
         existing.setId(1L);
         existing.setHomeClub(club);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
         CompetitorRequest patch = new CompetitorRequest();
         patch.setClubNumber("  ");
@@ -541,7 +541,7 @@ public class IpscCompetitorServiceTest {
         Competitor existing = new Competitor();
         existing.setId(1L);
         existing.setClubNumber("HPSC-001");
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -564,7 +564,7 @@ public class IpscCompetitorServiceTest {
         existing.setId(1L);
         existing.setHomeClub(existingClub);
         existing.setClubNumber("HPSC-001");
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
         Club otherClub = new Club();
         otherClub.setName("Other Club");
@@ -587,7 +587,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
         Club club = new Club();
         club.setName("HPSC");
@@ -606,7 +606,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
         CompetitorRequest patch = new CompetitorRequest();
         patch.setGender("Not A Gender");
@@ -620,7 +620,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -638,7 +638,7 @@ public class IpscCompetitorServiceTest {
         existing.setFirstName("Jane");
         existing.setLastName("Doe");
         existing.setClubNumber("HPSC-001");
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -659,7 +659,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         Club club = new Club();
         club.setId(10L);
         club.setName("Test Club");
@@ -684,7 +684,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -706,7 +706,7 @@ public class IpscCompetitorServiceTest {
         existing.setId(1L);
         existing.setHomeClub(club);
         existing.setClubNumber("HPSC-001");
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -727,7 +727,7 @@ public class IpscCompetitorServiceTest {
         Competitor existing = new Competitor();
         existing.setId(1L);
         existing.setHomeClub(club);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -746,7 +746,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
@@ -785,7 +785,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
         CompetitorRequest patch = new CompetitorRequest();
@@ -802,7 +802,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testUpdateCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class,
@@ -824,7 +824,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         Competitor existing = new Competitor();
         existing.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
         CompetitorRequest request = validRequest("HPSC-001");
@@ -842,7 +842,7 @@ public class IpscCompetitorServiceTest {
         existing.setFirstName("Jane");
         existing.setLastName("Doe");
         existing.setClubNumber("HPSC-001");
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
         Club otherClub = new Club();
         otherClub.setId(20L);
@@ -875,7 +875,7 @@ public class IpscCompetitorServiceTest {
         Competitor existing = new Competitor();
         existing.setId(1L);
         existing.setClubNumber("HPSC-001");
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
         Club otherClub = new Club();
         otherClub.setName("Other Club");

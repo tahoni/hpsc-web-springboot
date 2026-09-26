@@ -182,7 +182,7 @@ class IpscCompetitorServiceImplTest {
     @Test
     void testFindCompetitorOrThrow_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorServiceImpl.findCompetitorOrThrow(999L));
@@ -193,7 +193,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(competitor));
 
         // Act
         Competitor found = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.findCompetitorOrThrow(1L));

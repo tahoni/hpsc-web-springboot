@@ -121,7 +121,7 @@ class IpscMatchServiceImplTest {
     @Test
     void testFindMatchOrThrow_whenMatchDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        when(ipscMatchRepository.findById(999L)).thenReturn(Optional.empty());
+        when(ipscMatchRepository.findByIdWithClub(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.findMatchOrThrow(999L));
@@ -132,7 +132,7 @@ class IpscMatchServiceImplTest {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
-        when(ipscMatchRepository.findById(1L)).thenReturn(Optional.of(match));
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(match));
 
         // Act
         IpscMatch found = assertDoesNotThrow(() -> ipscMatchServiceImpl.findMatchOrThrow(1L));
