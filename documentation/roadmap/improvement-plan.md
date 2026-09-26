@@ -93,10 +93,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #23 The `Competitor.homeClub` backfill is a stated goal with no gap tracking it — closed v8.9.0 (not
     applicable)
   - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
-  - #25 Entity-level unit tests are a stated goal with no gap tracking it — closed v8.9.1 (`IpscMatchTest` only)
-  - #27 Database-profile docs promise a setup the properties files don't provide — closed v8.9.1 (docs only)
+  - #25 Entity-level unit tests are a stated goal with no gap tracking it — closed v8.10.0 (`IpscMatchTest` only)
+  - #27 Database-profile docs promise a setup the properties files don't provide — closed v8.10.0 (docs plus a
+    new `prod` profile)
 - **🟡 Partially Completed (1):**
-  - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.9.1 (now
+  - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
 - **⚪ Open (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
@@ -774,7 +775,7 @@ collection's delete, and every `existsBy…` query behind the reject-not-cascade
 as it is, without claiming domain-entity unit tests, and `HISTORY.md`'s Short-term roadmap narrows the remaining
 work to entity-level unit tests.
 
-#### 25. Entity-level unit tests are a stated goal with no gap tracking it — ✅ Closed in v8.9.1
+#### 25. Entity-level unit tests are a stated goal with no gap tracking it — ✅ Closed in v8.10.0
 
 **Evidence:** `HISTORY.md:2370`'s Short-term list plans to "Add entity-level unit tests for the promoted/extended
 domain model", and `documentation/history/v8/RELEASE_NOTES_v8.9.0.md` carries the same item under both Known Issues
@@ -805,7 +806,7 @@ seven entities have no hand-written behaviour and are left to the repository int
 bullet was dropped from `HISTORY.md`'s Short-term list, `ARCHITECTURE.md`'s test tree gained a `domain/` entry
 and `README.md`'s unit-test categories now include entities.
 
-#### 27. Database-profile docs promise a setup the properties files don't provide — ✅ Closed in v8.9.1
+#### 27. Database-profile docs promise a setup the properties files don't provide — ✅ Closed in v8.10.0
 
 **Evidence:** `AGENTS.md:72`'s Build & Run Commands say the no-profile run "uses application.properties; requires
 MYSQL_USER and MYSQL_PASSWORD env vars", and `CONTRIBUTING.md:77`'s Database Profiles table gives the `(none / prod)`
@@ -845,7 +846,7 @@ A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
 
-#### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.9.1
+#### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
 
 **Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
 spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
@@ -903,7 +904,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
-| **Next**    | No items currently scoped — #25 and #27 closed in v8.9.1                                                                                                                                                                                           |
+| **Next**    | No items currently scoped — #25 and #27 closed in v8.10.0                                                                                                                                                                                          |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -964,9 +965,9 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   `HISTORY.md`'s roadmap, closing Gap #23.
 - ✅ Met in v8.9.0: the domain model's cascade, fetch-join queries and `existsBy…` checks have direct repository/entity
   tests, or `README.md` no longer claims them, closing Gap #24.
-- ✅ Met in v8.9.1: entity-level unit tests exist for the domain model's own behaviour (`IpscMatchTest`), and the
+- ✅ Met in v8.10.0: entity-level unit tests exist for the domain model's own behaviour (`IpscMatchTest`), and the
   goal is dropped from `HISTORY.md`'s roadmap, closing Gap #25.
-- ✅ Met in v8.9.1: `AGENTS.md`, `README.md` and `CONTRIBUTING.md` describe every database profile's connection
+- ✅ Met in v8.10.0: `AGENTS.md`, `README.md` and `CONTRIBUTING.md` describe every database profile's connection
   settings as the properties files actually configure them, so the documented no-profile run starts, closing
   Gap #27.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,

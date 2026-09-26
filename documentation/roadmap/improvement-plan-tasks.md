@@ -264,7 +264,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Or reword `README.md`'s Testing section to describe the coverage that actually exists — done as well, since
   there are still no entity-level unit tests
 
-**Entity-level unit tests** *(improvement-plan.md → Gap #25)* — ✅ Closed in v8.9.1
+**Entity-level unit tests** *(improvement-plan.md → Gap #25)* — ✅ Closed in v8.10.0
 
 - [x] Decide whether entity-level unit tests are still wanted, given the entities hold no hand-written behaviour and
   their persistence behaviour is covered by the repository integration tests — decided per entity: only `IpscMatch`
@@ -273,7 +273,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
   — did both halves: added `IpscMatchTest` and dropped the `HISTORY.md` bullet
 
-**Database-profile docs** *(improvement-plan.md → Gap #27)* — ✅ Closed in v8.9.1
+**Database-profile docs** *(improvement-plan.md → Gap #27)* — ✅ Closed in v8.10.0
 
 - [x] Document that the no-profile (production) run needs its datasource URL supplied externally (e.g.
   `SPRING_DATASOURCE_URL`) in `AGENTS.md`'s run command and `CONTRIBUTING.md`'s `(none / prod)` row — or add a
@@ -294,7 +294,7 @@ A gap moves here once at least one of its items is checked, but the block as a w
 matching `improvement-plan.md`'s "🟡 Partially Completed" section — and moves on to ✅ Completed once every item is
 checked and the gap's own header there carries a "✅ Closed" suffix.
 
-**`tomcat.version` override** *(improvement-plan.md → Gap #26)* — 🟡 Partially completed in v8.9.1
+**`tomcat.version` override** *(improvement-plan.md → Gap #26)* — 🟡 Partially completed in v8.10.0
 
 - [x] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later —
   made a standing step instead: `AGENTS.md`'s Release Checklist step 2 and `prep-version-release` now re-check every

@@ -111,7 +111,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`HISTORY.md`, `ARCHITECTURE.md`, `README.md`:** The Short-term roadmap no longer plans entity-level unit tests
   for the whole domain model; `ARCHITECTURE.md`'s test tree gains a `domain/` entry and `README.md`'s unit-test
   categories now include entities
-- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.9.1 and moved to ✅ Completed, with
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.10.0 and moved to ✅ Completed, with
   "🌳 At a Glance", the "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
 
 #### 🐛 Fixed
