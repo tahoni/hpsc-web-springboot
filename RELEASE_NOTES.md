@@ -108,12 +108,12 @@ release's own audit, leaving only Gap #6 — the scoring/shooter-log layer — o
 - **`IpscCompetitorController.createCompetitors`:** The competitor CSV header now requires trailing `PaidUpSapsa`
   and `PaidUpClub` columns
 
-#### Domain
+#### Domain Changes
 
 - **All seven entities with a `@ManyToOne`:** Now `FetchType.LAZY` instead of `FetchType.EAGER`, reversing v8.7.0
 - **`Competitor.emailAddresses`:** The `email_address` element column mapping no longer declares `nullable = false`
 
-#### Services
+#### Service Changes
 
 - **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** No longer `@Transactional` — they commit through
   `TransactionService`; bulk imports save all rows in one transaction, and match create/update/patch responses list
@@ -125,7 +125,7 @@ release's own audit, leaving only Gap #6 — the scoring/shooter-log layer — o
 - **`TransactionServiceImpl.replaceStages`, `upsertStages`:** Moved from `IpscMatchServiceImpl`, now working on the
   managed `IpscMatch.stages` collection
 
-#### Tests
+#### Test Changes
 
 - **`IpscMatchServiceTest`, `IpscCompetitorServiceTest`:** Built with a real `TransactionServiceImpl` over the same
   repository mocks and a mocked `PlatformTransactionManager`
@@ -151,14 +151,14 @@ release's own audit, leaving only Gap #6 — the scoring/shooter-log layer — o
 
 ### Removed
 
-#### Build & Metadata
+#### Dependencies
 
 - **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing produced or consumed XML or
   used Apache Commons
 
 ### Fixed
 
-#### Documentation
+#### Documentation Fixes
 
 - **`ARCHITECTURE.md`:** CI/CD & Quality Gates table lists the Claude Code review and assistant workflows (Gap #13);
   the Quality Attributes and Persistence Layer sections agree on cascade/`mappedBy` (Gap #15); the non-existent
@@ -204,9 +204,9 @@ No endpoint was added or removed, and no JSON field was removed or made required
 
 ## 📊 Statistics
 
-- **Total Commits:** 24 (the paid-up flags feature and its follow-ups, Gaps #13–#17, lazy loading, fetch-join queries,
+- **Total Commits:** 25 (the paid-up flags feature and its follow-ups, Gaps #13–#17, lazy loading, fetch-join queries,
   `TransactionService`, the HISTORY.md checklist changes, plus this release's version bump, Gaps #18–#24, release
-  documentation, PR description and documentation tidy-up commits)
+  documentation, PR description, documentation tidy-up and Codacy fix commits)
 - **Files Changed:** 57
 - **Insertions:** 3,998 lines
 - **Deletions:** 704 lines
