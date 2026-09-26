@@ -2367,7 +2367,6 @@ Based on the evolution to v8.9.0, the following areas are identified for future 
 - Populate `overallRanking`, `clubRanking` and `isVisitor` during match-result import
 - Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) to an endpoint — still
   groundwork, not yet consumed by any controller
-- Add entity-level unit tests for the promoted/extended domain model — repository integration tests exist as of v8.9.0
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
 

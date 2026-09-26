@@ -264,6 +264,15 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Or reword `README.md`'s Testing section to describe the coverage that actually exists — done as well, since
   there are still no entity-level unit tests
 
+**Entity-level unit tests** *(improvement-plan.md → Gap #25)* — ✅ Closed in v8.9.1
+
+- [x] Decide whether entity-level unit tests are still wanted, given the entities hold no hand-written behaviour and
+  their persistence behaviour is covered by the repository integration tests — decided per entity: only `IpscMatch`
+  has behaviour worth a unit test (its `stages` exclusion from Lombok's `toString`/`equals`/`hashCode`)
+- [x] If so, add unit tests for the entity behaviour that warrants it (e.g. empty-collection defaults); if not, drop
+  the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
+  — did both halves: added `IpscMatchTest` and dropped the `HISTORY.md` bullet
+
 ---
 
 ## 🟡 Partially Completed
@@ -296,13 +305,6 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
-
-**Entity-level unit tests** *(improvement-plan.md → Gap #25)*
-
-- [ ] Decide whether entity-level unit tests are still wanted, given the entities hold no hand-written behaviour and
-  their persistence behaviour is covered by the repository integration tests
-- [ ] If so, add unit tests for the entity behaviour that warrants it (e.g. empty-collection defaults); if not, drop
-  the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

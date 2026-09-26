@@ -143,7 +143,7 @@ The report is written to `target/site/jacoco/`.
 
 **Test Categories**:
 
-- **Unit Tests**: DTOs, enums, converters, exceptions, utilities, controllers and service logic
+- **Unit Tests**: DTOs, entities, enums, converters, exceptions, utilities, controllers and service logic
 - **Integration Tests**: Services and repositories, against an in-memory H2 database
 - **Test Frameworks**: JUnit, Mockito, Spring Test
 

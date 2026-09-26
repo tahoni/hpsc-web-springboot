@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (23):**
+- **✅ Completed (24):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -92,13 +92,13 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #22 `AGENTS.md` names the club differently from every other source — closed v8.9.0
   - #23 The `Competitor.homeClub` backfill is a stated goal with no gap tracking it — closed v8.9.0 (not
     applicable)
-    - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
+  - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
+  - #25 Entity-level unit tests are a stated goal with no gap tracking it — closed v8.9.1 (`IpscMatchTest` only)
 - **🟡 Partially Completed (1):**
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.9.1 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
-- **⚪ Open (2):**
+- **⚪ Open (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
-  - #25 Entity-level unit tests are a stated goal with no gap tracking it
 
 ### ✅ Completed
 
@@ -773,6 +773,37 @@ collection's delete, and every `existsBy…` query behind the reject-not-cascade
 as it is, without claiming domain-entity unit tests, and `HISTORY.md`'s Short-term roadmap narrows the remaining
 work to entity-level unit tests.
 
+#### 25. Entity-level unit tests are a stated goal with no gap tracking it — ✅ Closed in v8.9.1
+
+**Evidence:** `HISTORY.md:2370`'s Short-term list plans to "Add entity-level unit tests for the promoted/extended
+domain model", and `documentation/history/v8/RELEASE_NOTES_v8.9.0.md` carries the same item under both Known Issues
+("The domain model has repository integration tests but no entity-level unit tests") and Future Enhancements. Gap #24
+closed only the repository half of the original claim, and its Outcome records that `HISTORY.md` merely "narrows the
+remaining work to entity-level unit tests" — nothing here tracks that remainder. There is still no
+`src/test/java/za/co/hpsc/web/domain/` directory. The eight entities under `src/main/java/za/co/hpsc/web/domain/` are
+Lombok field holders with no hand-written methods of their own; their cascade, orphan-removal and element-collection
+behaviour is already exercised by the repository integration tests Gap #24 added.
+
+**Why it matters:** A stated-but-unbuilt goal repeated in two places, yet untracked here, so it will keep being
+carried forward from release to release with nobody deciding whether it's wanted. With no behaviour on the entities
+beyond what Lombok generates and what the repository tests already cover, unit tests may add nothing but maintenance
+load — but that is a decision to record, not an assumption to leave implicit.
+
+**Proposed improvement:** Decide whether entity-level unit tests are still wanted. If so, add them for whatever
+entity behaviour warrants it (e.g. collection defaults such as `IpscMatch.stages`/`Competitor.emailAddresses` being
+initialised to an empty list). If not, drop the bullet from `HISTORY.md`'s Short-term list and the item from the next
+release's Known Issues/Future Enhancements, as Gap #23 did for the `homeClub` backfill.
+
+**Outcome:** Decided per entity rather than all or nothing, following `AGENTS.md`'s rule against testing
+Lombok-generated behaviour. Only `IpscMatch` has behaviour of its own worth a unit test: its `stages` list is
+excluded from Lombok's `toString`/`equals`/`hashCode` because `IpscMatchStage.match` points straight back, and
+dropping either exclusion makes both methods recurse into a `StackOverflowError`. A new `IpscMatchTest` covers that
+(`toString`/`hashCode` on a match with a linked stage, and `equals` ignoring `stages`) plus the `stages` list being
+initialised empty and mutable; removing the exclusions was confirmed to fail three of its four tests. The other
+seven entities have no hand-written behaviour and are left to the repository integration tests from Gap #24. The
+bullet was dropped from `HISTORY.md`'s Short-term list, `ARCHITECTURE.md`'s test tree gained a `domain/` entry
+and `README.md`'s unit-test categories now include entities.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -830,27 +861,6 @@ controller layer doesn't — but for the scoring/shooter-log domain specifically
 Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
 fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
-#### 25. Entity-level unit tests are a stated goal with no gap tracking it
-
-**Evidence:** `HISTORY.md:2370`'s Short-term list plans to "Add entity-level unit tests for the promoted/extended
-domain model", and `documentation/history/v8/RELEASE_NOTES_v8.9.0.md` carries the same item under both Known Issues
-("The domain model has repository integration tests but no entity-level unit tests") and Future Enhancements. Gap #24
-closed only the repository half of the original claim, and its Outcome records that `HISTORY.md` merely "narrows the
-remaining work to entity-level unit tests" — nothing here tracks that remainder. There is still no
-`src/test/java/za/co/hpsc/web/domain/` directory. The eight entities under `src/main/java/za/co/hpsc/web/domain/` are
-Lombok field holders with no hand-written methods of their own; their cascade, orphan-removal and element-collection
-behaviour is already exercised by the repository integration tests Gap #24 added.
-
-**Why it matters:** A stated-but-unbuilt goal repeated in two places, yet untracked here, so it will keep being
-carried forward from release to release with nobody deciding whether it's wanted. With no behaviour on the entities
-beyond what Lombok generates and what the repository tests already cover, unit tests may add nothing but maintenance
-load — but that is a decision to record, not an assumption to leave implicit.
-
-**Proposed improvement:** Decide whether entity-level unit tests are still wanted. If so, add them for whatever
-entity behaviour warrants it (e.g. collection defaults such as `IpscMatch.stages`/`Competitor.emailAddresses` being
-initialised to an empty list). If not, drop the bullet from `HISTORY.md`'s Short-term list and the item from the next
-release's Known Issues/Future Enhancements, as Gap #23 did for the `homeClub` backfill.
-
 ---
 
 ## 🛤️ Roadmap
@@ -858,7 +868,7 @@ release's Known Issues/Future Enhancements, as Gap #23 did for the `homeClub` ba
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
-| **Next**    | Decide whether entity-level unit tests are still wanted, then add them or drop the goal from `HISTORY.md` (#25)                                                                                                                                    |
+| **Next**    | No items currently scoped — #25 closed in v8.9.1                                                                                                                                                                                                   |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -919,8 +929,8 @@ release's Known Issues/Future Enhancements, as Gap #23 did for the `homeClub` ba
   `HISTORY.md`'s roadmap, closing Gap #23.
 - ✅ Met in v8.9.0: the domain model's cascade, fetch-join queries and `existsBy…` checks have direct repository/entity
   tests, or `README.md` no longer claims them, closing Gap #24.
-- Entity-level unit tests either exist for the domain model's own behaviour, or the goal is explicitly dropped from
-  `HISTORY.md`'s roadmap and the release notes' Known Issues/Future Enhancements, closing Gap #25.
+- ✅ Met in v8.9.1: entity-level unit tests exist for the domain model's own behaviour (`IpscMatchTest`), and the
+  goal is dropped from `HISTORY.md`'s roadmap, closing Gap #25.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s

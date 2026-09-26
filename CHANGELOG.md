@@ -62,6 +62,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Tests
+
+- **`IpscMatchTest`:** New entity unit test guarding `IpscMatch.stages`' exclusion from Lombok's `toString`/`equals`/
+  `hashCode` — `IpscMatchStage.match` points straight back, so dropping either exclusion makes both recurse into a
+  `StackOverflowError` — plus `stages` initialising empty and mutable. The other seven entities have no hand-written
+  behaviour, so get no unit tests of their own; closes `improvement-plan.md`'s Gap #25
+
 ##### Documentation
 
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gaps #25–#26 from an
@@ -89,6 +96,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   and drops any the parent has caught up with — the plan had said this happened "per the Release Checklist", but no
   step did it. Progresses `improvement-plan.md`'s Gap #26: the `tomcat.version` override stays until a Spring Boot GA
   release manages Tomcat `11.0.25` or later
+
+##### Documentation
+
+- **`HISTORY.md`, `ARCHITECTURE.md`, `README.md`:** The Short-term roadmap no longer plans entity-level unit tests
+  for the whole domain model; `ARCHITECTURE.md`'s test tree gains a `domain/` entry and `README.md`'s unit-test
+  categories now include entities
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.9.1 and moved to ✅ Completed, with
+  "🌳 At a Glance", the "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
 
 ### 🧾 [8.9.0] - 2026-09-26
 

@@ -94,6 +94,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───configs/                # ControllerAdvice tests
     ├───controllers/            # Controller unit tests (Mockito, no Spring context)
     ├───converters/             # AttributeConverter unit tests
+    ├───domain/                 # Entity unit tests (bidirectional toString/equals/hashCode safety)
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
     ├───models/                 # DTO / model unit tests
