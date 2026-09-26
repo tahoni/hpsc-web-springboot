@@ -76,6 +76,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   bumps each grouped into one PR. Security updates are configured separately and still target `main`. Added to
   `ARCHITECTURE.md`'s Project Structure tree
 
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #29 from an `update-improvement-plan-gaps` sweep —
+  Dependabot security-update PRs target `main`, bypassing the GitFlow rule that only `develop` and `hotfix/*` reach
+  it — closed within this release (see Changed)
+
+#### 🔄 Changed
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`, `.github/dependabot.yml`:** Dependabot security-update PRs, which always target
+  `main`, are now handled as hotfixes — merged into `main` so the fix ships at once, then carried into `develop` by
+  merging `main` back into it, since Dependabot deletes its branch after merging. `AGENTS.md`'s Branching Model names
+  them as the only exception besides `hotfix/*`, and a new `dependabot/*` entry separates them from version-update
+  PRs, which target `develop` like any `feature/*` PR. Closes `improvement-plan.md`'s Gap #29
+
 ### 🧾 [8.10.0] - 2026-09-26
 
 #### ➕ Added

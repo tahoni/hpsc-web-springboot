@@ -1,5 +1,6 @@
 # Dependabot version updates. Security updates are enabled separately in the repository's Code security settings
-# and ignore target-branch, so those PRs still open against the default branch (main).
+# and ignore target-branch, so those PRs still open against the default branch (main) — they're handled as hotfixes
+# (merge into main, then merge main back into develop); see AGENTS.md's Branching Model.
 version: 2
 
 updates:
