@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
@@ -36,13 +35,13 @@ import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.services.IpscMatchService;
+import za.co.hpsc.web.services.TransactionService;
+import za.co.hpsc.web.services.TransactionService.StageSaveMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -53,36 +52,30 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final MatchStageCompetitorRepository matchStageCompetitorRepository;
     private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
+    private final TransactionService transactionService;
 
     public IpscMatchServiceImpl(IpscMatchRepository ipscMatchRepository,
                                  IpscMatchStageRepository ipscMatchStageRepository,
                                  ClubRepository clubRepository,
                                  MatchCompetitorRepository matchCompetitorRepository,
                                  MatchStageCompetitorRepository matchStageCompetitorRepository,
-                                 ShooterLogCompetitorRepository shooterLogCompetitorRepository) {
+                                 ShooterLogCompetitorRepository shooterLogCompetitorRepository,
+                                 TransactionService transactionService) {
         this.ipscMatchRepository = ipscMatchRepository;
         this.ipscMatchStageRepository = ipscMatchStageRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.matchStageCompetitorRepository = matchStageCompetitorRepository;
         this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
+        this.transactionService = transactionService;
     }
 
     @Override
-    @Transactional
     public MatchResponse createMatch(MatchRequest request) throws FatalException {
-        validateForCreate(request);
-
-        IpscMatch match = new IpscMatch();
-        applyFields(match, request);
-        match = ipscMatchRepository.save(match);
-
-        List<IpscMatchStage> stages = replaceStages(match, request.getStages());
-        return toResponse(match, stages);
+        return toResponse(transactionService.saveMatch(newMatch(request)));
     }
 
     @Override
-    @Transactional
     public MatchResponseHolder createMatches(String csvData) throws FatalException {
         if (csvData == null || csvData.isBlank()) {
             log.error("The provided csv data is null or empty.");
@@ -91,29 +84,29 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<MatchRequestForCSV> matchRequestForCSVList = readMatches(csvData);
 
-        List<MatchResponse> matchResponseList = new ArrayList<>();
+        // Every row is validated and built before any is saved, then all are saved in one
+        // transaction, so a bad row leaves none of them persisted.
+        List<IpscMatch> matches = new ArrayList<>();
         for (MatchRequestForCSV matchRequestForCSV : matchRequestForCSVList) {
-            matchResponseList.add(createMatch(toRequest(matchRequestForCSV)));
+            matches.add(newMatch(toRequest(matchRequestForCSV)));
         }
 
-        return new MatchResponseHolder(matchResponseList);
+        List<MatchResponse> matchResponseList = transactionService.saveMatches(matches).stream()
+                .map(this::toResponse)
+                .toList();
+        return new MatchResponseHolder(new ArrayList<>(matchResponseList));
     }
 
     @Override
-    @Transactional
     public MatchResponse updateMatch(Long matchId, MatchRequest request) throws FatalException {
         validateForCreate(request);
         IpscMatch match = findMatchOrThrow(matchId);
 
         applyFields(match, request);
-        match = ipscMatchRepository.save(match);
-
-        List<IpscMatchStage> stages = replaceStages(match, request.getStages());
-        return toResponse(match, stages);
+        return toResponse(transactionService.saveMatch(match, toStages(request.getStages()), StageSaveMode.REPLACE));
     }
 
     @Override
-    @Transactional
     public MatchResponse patchMatch(Long matchId, MatchRequest request) throws FatalException {
         IpscMatch match = findMatchOrThrow(matchId);
 
@@ -141,12 +134,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (request.getUrl() != null) {
             match.setUrl(request.getUrl());
         }
-        match = ipscMatchRepository.save(match);
 
-        List<IpscMatchStage> stages = (request.getStages() != null)
-                ? upsertStages(match, request.getStages())
-                : ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId);
-        return toResponse(match, stages);
+        IpscMatch saved = (request.getStages() != null)
+                ? transactionService.saveMatch(match, toStages(request.getStages()), StageSaveMode.UPSERT)
+                : transactionService.saveMatch(match);
+        return toResponse(saved);
     }
 
     @Override
@@ -165,7 +157,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    @Transactional
     public void deleteMatch(Long matchId) {
         IpscMatch match = findMatchOrThrow(matchId);
 
@@ -179,17 +170,65 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     + " cannot be deleted: it is referenced by shooter logs.");
         }
 
-        // The match's stages are removed by IpscMatch.stages' cascade, which deletes them before
-        // their match within the same flush. Flushed here rather than at commit, so a reference
-        // added by another transaction since the checks above surfaces inside this method and is
-        // reported as a 400, not a 500.
+        // TransactionService flushes the delete, stages included, before committing, so a reference
+        // added by another transaction since the checks above surfaces here and is reported as a
+        // 400, not a 500.
         try {
-            ipscMatchRepository.delete(match);
-            ipscMatchRepository.flush();
+            transactionService.deleteMatch(match);
         } catch (DataIntegrityViolationException e) {
             throw new ValidationException("Match with ID " + matchId
                     + " cannot be deleted: it is referenced by other records.", e);
         }
+    }
+
+    /**
+     * Validates a request and builds the new, not yet persisted, match it describes, with the
+     * request's stages on its {@link IpscMatch#getStages() stages} collection.
+     *
+     * @param request the match to build. Must carry a match name, date and firearm
+     *                type/category.
+     * @return the new match, with a {@code null} ID.
+     * @throws ValidationException if a required field is missing, or the firearm type/category
+     *                             doesn't match a known {@link FirearmType}/{@link MatchCategory}.
+     * @throws NonFatalException   if the request's club name doesn't match an existing club, or no
+     *                             club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
+     * @throws FatalException      if {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
+     */
+    protected IpscMatch newMatch(MatchRequest request) throws FatalException {
+        validateForCreate(request);
+
+        IpscMatch match = new IpscMatch();
+        applyFields(match, request);
+        List<IpscMatchStage> stages = toStages(request.getStages());
+        if (stages != null) {
+            for (IpscMatchStage stage : stages) {
+                stage.setMatch(match);
+                match.getStages().add(stage);
+            }
+        }
+        return match;
+    }
+
+    /**
+     * Maps a request's stages onto new, not yet persisted, {@link IpscMatchStage}s.
+     *
+     * @param stageRequests the stages to map; may be null.
+     * @return the equivalent stages, in the order given, or {@code null} if {@code stageRequests}
+     * is null.
+     */
+    protected List<IpscMatchStage> toStages(List<MatchStageRequest> stageRequests) {
+        if (stageRequests == null) {
+            return null;
+        }
+
+        return stageRequests.stream()
+                .map(stageRequest -> {
+                    IpscMatchStage stage = new IpscMatchStage();
+                    stage.setStageNumber(stageRequest.getStageNumber());
+                    stage.setStageName(stageRequest.getStageName());
+                    return stage;
+                })
+                .toList();
     }
 
     /**
@@ -304,79 +343,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Replaces all of a match's persisted stages with those on the given list.
-     *
-     * <p>
-     * Any stages the match previously had are removed from its {@link IpscMatch#getStages() stages}
-     * collection, and so deleted, first, so this is only appropriate for
-     * a full create/replace — see {@link #upsertStages} for partial updates.
-     * </p>
-     *
-     * @param match         the match the stages belong to; must not be null and must already
-     *                      be persisted.
-     * @param stageRequests the stages to persist; may be null or empty, in which case the
-     *                      match is simply left with no stages.
-     * @return the newly persisted stages, in the order given.
-     */
-    protected List<IpscMatchStage> replaceStages(@NotNull IpscMatch match, List<MatchStageRequest> stageRequests) {
-        // The old stages are removed explicitly rather than left to IpscMatch.stages' orphanRemoval,
-        // which only sees removals relative to the collection's last-flushed snapshot and so would
-        // miss stages added since. Flushed immediately so the deletes are applied before any
-        // replacement stages are inserted — otherwise Hibernate would order the inserts first,
-        // tripping the (match_id, stage_number) unique constraint on a reused stage number.
-        ipscMatchStageRepository.deleteAll(List.copyOf(match.getStages()));
-        match.getStages().clear();
-        ipscMatchRepository.flush();
-
-        if (stageRequests == null) {
-            return List.of();
-        }
-
-        return stageRequests.stream()
-                .map(stageRequest -> {
-                    IpscMatchStage stage = new IpscMatchStage();
-                    stage.setMatch(match);
-                    stage.setStageNumber(stageRequest.getStageNumber());
-                    stage.setStageName(stageRequest.getStageName());
-                    match.getStages().add(stage);
-                    return ipscMatchStageRepository.save(stage);
-                })
-                .toList();
-    }
-
-    /**
-     * Updates or adds stages on a match, matching each request to an existing stage by its
-     * stage number. Stages already on the match that aren't mentioned in {@code stageRequests}
-     * are left untouched.
-     *
-     * @param match         the match the stages belong to; must not be null and must already
-     *                      be persisted.
-     * @param stageRequests the stages to upsert; must not be null.
-     * @return all the match's stages after the upsert, ordered by stage number.
-     */
-    protected List<IpscMatchStage> upsertStages(@NotNull IpscMatch match, @NotNull List<MatchStageRequest> stageRequests) {
-        Map<Integer, IpscMatchStage> existingByNumber =
-                ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId()).stream()
-                        .collect(Collectors.toMap(IpscMatchStage::getStageNumber, Function.identity()));
-
-        for (MatchStageRequest stageRequest : stageRequests) {
-            IpscMatchStage stage = existingByNumber.get(stageRequest.getStageNumber());
-            if (stage == null) {
-                stage = new IpscMatchStage();
-                match.getStages().add(stage);
-            }
-            stage.setMatch(match);
-            stage.setStageNumber(stageRequest.getStageNumber());
-            if (stageRequest.getStageName() != null) {
-                stage.setStageName(stageRequest.getStageName());
-            }
-            ipscMatchStageRepository.save(stage);
-        }
-
-        return ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId());
-    }
-
-    /**
      * Retrieves an existing match or throws if none exists with the given ID.
      *
      * @param matchId the identifier to look up.
@@ -487,6 +453,19 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if ((request.getMatchCategory() == null) || request.getMatchCategory().isBlank()) {
             throw new ValidationException("Match category is required.");
         }
+    }
+
+    /**
+     * Maps a saved match, together with the stages on its {@link IpscMatch#getStages() stages}
+     * collection, to the response shape returned by the controller.
+     *
+     * @param match the match to map; its stages must already be loaded.
+     * @return the mapped {@link MatchResponse}, with its stages ordered by stage number.
+     */
+    protected MatchResponse toResponse(IpscMatch match) {
+        return toResponse(match, match.getStages().stream()
+                .sorted(Comparator.comparing(IpscMatchStage::getStageNumber))
+                .toList());
     }
 
     /**

@@ -2,7 +2,6 @@ package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,10 +32,12 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link IpscMatchServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findMatchOrThrow}, {@code parseStages}, {@code readMatches},
- * {@code replaceStages}, {@code resolveClub}, {@code resolveFirearmType},
- * {@code resolveMatchCategory}, {@code toRequest}, {@code toResponse}, {@code upsertStages},
+ * ({@code applyFields}, {@code findMatchOrThrow}, {@code newMatch}, {@code parseStages},
+ * {@code readMatches}, {@code resolveClub}, {@code resolveFirearmType},
+ * {@code resolveMatchCategory}, {@code toRequest}, {@code toResponse}, {@code toStages},
  * {@code validateForCreate}) - not declared on {@link za.co.hpsc.web.services.IpscMatchService}.
+ * Stage replacement/upsert now lives in {@link TransactionServiceImpl}, covered by
+ * {@link TransactionServiceImplTest}.
  * The interface's create/update/patch/get/get-all contract is covered by
  * {@link za.co.hpsc.web.services.IpscMatchServiceTest}.
  */
@@ -139,6 +140,51 @@ class IpscMatchServiceImplTest {
 
         // Assert
         assertSame(match, found);
+    }
+
+    // newMatch()
+    @Test
+    void testNewMatch_whenRequestHasStages_thenBuildsMatchWithStagesOnItsCollection() {
+        // Arrange
+        Club club = new Club();
+        club.setName("Test Club");
+        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+        MatchRequest request = validRequest("Test Club");
+        request.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1"), new MatchStageRequest(null, 2, "Stage 2")));
+
+        // Act
+        IpscMatch match = assertDoesNotThrow(() -> ipscMatchServiceImpl.newMatch(request));
+
+        // Assert
+        assertNull(match.getId());
+        assertSame(club, match.getClub());
+        assertEquals("Club Championship", match.getName());
+        assertEquals(2, match.getStages().size());
+        assertTrue(match.getStages().stream().allMatch(stage -> stage.getMatch() == match));
+        assertEquals("Stage 2", match.getStages().get(1).getStageName());
+    }
+
+    @Test
+    void testNewMatch_whenRequestHasNoStages_thenBuildsMatchWithNoStages() {
+        // Arrange
+        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(new Club()));
+
+        // Act
+        IpscMatch match = assertDoesNotThrow(() -> ipscMatchServiceImpl.newMatch(validRequest("Test Club")));
+
+        // Assert
+        assertTrue(match.getStages().isEmpty());
+    }
+
+    @Test
+    void testNewMatch_whenRequestIsInvalid_thenThrowsValidationExceptionWithoutResolvingClub() {
+        // Arrange
+        MatchRequest request = validRequest("Test Club");
+        request.setMatchName(null);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.newMatch(request));
+        verifyNoInteractions(clubRepository);
     }
 
     // parseStages()
@@ -300,62 +346,6 @@ class IpscMatchServiceImplTest {
     void testReadMatches_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.readMatches(null));
-    }
-
-    // replaceStages()
-    @Test
-    void testReplaceStages_whenStageRequestsIsNull_thenDeletesExistingAndReturnsEmptyList() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-        IpscMatchStage existingStage = new IpscMatchStage();
-        existingStage.setId(100L);
-        match.getStages().add(existingStage);
-
-        // Act
-        List<IpscMatchStage> result = ipscMatchServiceImpl.replaceStages(match, null);
-
-        // Assert
-        assertTrue(result.isEmpty());
-        assertTrue(match.getStages().isEmpty());
-        verify(ipscMatchStageRepository).deleteAll(List.of(existingStage));
-        verify(ipscMatchRepository).flush();
-    }
-
-    @Test
-    void testReplaceStages_whenStageRequestsIsEmpty_thenReturnsEmptyListWithoutSaving() {
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-
-        List<IpscMatchStage> result = ipscMatchServiceImpl.replaceStages(match, List.of());
-
-        assertTrue(result.isEmpty());
-        verify(ipscMatchStageRepository, never()).save(any(IpscMatchStage.class));
-    }
-
-    @Test
-    void testReplaceStages_whenStageRequestsProvided_thenPersistsEachAndReturnsInOrder() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-        when(ipscMatchStageRepository.save(any(IpscMatchStage.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        List<MatchStageRequest> stageRequests = List.of(
-                new MatchStageRequest(null, 1, "Stage 1"),
-                new MatchStageRequest(null, 2, "Stage 2"));
-
-        // Act
-        List<IpscMatchStage> result = ipscMatchServiceImpl.replaceStages(match, stageRequests);
-
-        // Assert
-        assertEquals(2, result.size());
-        assertSame(match, result.getFirst().getMatch());
-        assertEquals(1, result.get(0).getStageNumber());
-        assertEquals("Stage 1", result.get(0).getStageName());
-        assertEquals(2, result.get(1).getStageNumber());
-        assertEquals("Stage 2", result.get(1).getStageName());
-        assertEquals(result, match.getStages());
-        verify(ipscMatchStageRepository, times(2)).save(any(IpscMatchStage.class));
     }
 
     // resolveClub()
@@ -565,6 +555,27 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
+    void testToResponse_whenOnlyMatchIsGiven_thenMapsItsStagesOrderedByStageNumber() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        for (int stageNumber : new int[]{2, 1}) {
+            IpscMatchStage stage = new IpscMatchStage();
+            stage.setStageNumber(stageNumber);
+            stage.setStageName("Stage " + stageNumber);
+            match.getStages().add(stage);
+        }
+
+        // Act
+        MatchResponse response = ipscMatchServiceImpl.toResponse(match);
+
+        // Assert
+        assertEquals(2, response.getStages().size());
+        assertEquals("Stage 1", response.getStages().get(0).getStageName());
+        assertEquals("Stage 2", response.getStages().get(1).getStageName());
+    }
+
+    @Test
     void testToResponse_whenStagesProvided_thenMapsStagesInOrder() {
         // Arrange
         IpscMatch match = new IpscMatch();
@@ -590,74 +601,26 @@ class IpscMatchServiceImplTest {
         assertEquals("Stage 2", response.getStages().get(1).getStageName());
     }
 
-    // upsertStages()
+    // toStages()
     @Test
-    void testUpsertStages_whenStageNumberMatchesExisting_thenUpdatesThatStageInPlace() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-        IpscMatchStage existingStage = new IpscMatchStage();
-        existingStage.setId(100L);
-        existingStage.setStageNumber(1);
-        existingStage.setStageName("Original Name");
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L))
-                .thenReturn(List.of(existingStage));
-        when(ipscMatchStageRepository.save(any(IpscMatchStage.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Act
-        List<IpscMatchStage> result = ipscMatchServiceImpl.upsertStages(match,
-                List.of(new MatchStageRequest(null, 1, "Updated Name")));
-
-        // Assert
-        assertEquals(1, result.size());
-        assertSame(existingStage, result.getFirst());
-        assertEquals("Updated Name", existingStage.getStageName());
-        verify(ipscMatchStageRepository).save(existingStage);
+    void testToStages_whenStageRequestsIsNull_thenReturnsNull() {
+        // Act & Assert
+        assertNull(ipscMatchServiceImpl.toStages(null));
     }
 
     @Test
-    void testUpsertStages_whenStageNumberIsNew_thenAddsStageWithoutRemovingExisting() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-        IpscMatchStage existingStage = new IpscMatchStage();
-        existingStage.setId(100L);
-        existingStage.setStageNumber(1);
-        existingStage.setStageName("Stage 1");
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L))
-                .thenReturn(List.of(existingStage));
-        ArgumentCaptor<IpscMatchStage> savedStageCaptor = ArgumentCaptor.forClass(IpscMatchStage.class);
-        when(ipscMatchStageRepository.save(savedStageCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
-
+    void testToStages_whenStageRequestsProvided_thenMapsEachInOrderWithoutAMatch() {
         // Act
-        ipscMatchServiceImpl.upsertStages(match, List.of(new MatchStageRequest(null, 2, "Stage 2")));
+        List<IpscMatchStage> stages = ipscMatchServiceImpl.toStages(
+                List.of(new MatchStageRequest(null, 2, "Stage 2"), new MatchStageRequest(null, 1, "Stage 1")));
 
         // Assert
-        assertEquals("Stage 1", existingStage.getStageName());
-        IpscMatchStage savedStage = savedStageCaptor.getValue();
-        assertSame(match, savedStage.getMatch());
-        assertEquals(2, savedStage.getStageNumber());
-        assertEquals("Stage 2", savedStage.getStageName());
-    }
-
-    @Test
-    void testUpsertStages_whenStageNameIsNullOnRequest_thenExistingStageNameIsUnchanged() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-        IpscMatchStage existingStage = new IpscMatchStage();
-        existingStage.setId(100L);
-        existingStage.setStageNumber(1);
-        existingStage.setStageName("Original Name");
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L))
-                .thenReturn(List.of(existingStage));
-        when(ipscMatchStageRepository.save(any(IpscMatchStage.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Act
-        ipscMatchServiceImpl.upsertStages(match, List.of(new MatchStageRequest(null, 1, null)));
-
-        // Assert
-        assertEquals("Original Name", existingStage.getStageName());
+        assertEquals(2, stages.size());
+        assertEquals(2, stages.get(0).getStageNumber());
+        assertEquals("Stage 2", stages.get(0).getStageName());
+        assertEquals(1, stages.get(1).getStageNumber());
+        assertNull(stages.get(0).getMatch());
+        assertNull(stages.get(0).getId());
     }
 
     // validateForCreate()

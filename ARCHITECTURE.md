@@ -163,16 +163,22 @@ Contains all business logic.
 | `ImageService`          | `ImageServiceImpl`          | Image CSV processing (deliberately stateless — see below)    |
 | `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages, + bulk CSV import |
 | `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
+| `TransactionService`    | `TransactionServiceImpl`    | Commits competitor/match writes, each in its own transaction |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
 > rather than an import. See the Award/Image CSV Processing Flow below.
 
-> Both IPSC domains support bulk CSV import, each persisting every row via the same validation/resolution logic
-> as its single-item `create` endpoint: `IpscCompetitorController.createCompetitors`
-> (`IpscCompetitorService`/`IpscCompetitorServiceImpl`) and `IpscMatchController.createMatches`
-> (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses a `Stages` CSV cell into
-> `MatchStageRequest`s via `parseStages`.
+> Both IPSC domains support bulk CSV import, each building every row via the same validation/resolution logic
+> as its single-item `create` endpoint, then saving all rows in one transaction so a bad row leaves none
+> persisted: `IpscCompetitorController.createCompetitors` (`IpscCompetitorService`/`IpscCompetitorServiceImpl`)
+> and `IpscMatchController.createMatches` (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses
+> a `Stages` CSV cell into `MatchStageRequest`s via `parseStages`.
+
+> `IpscMatchService`/`IpscCompetitorService` declare no `@Transactional`: they validate requests and build or modify
+> entities outside any transaction, then hand them to `TransactionService`, which commits each write (and each bulk
+> import as a whole) in its own explicit `TransactionTemplate` transaction. Everything it returns has the associations
+> a response reads already loaded, since `spring.jpa.open-in-view` is disabled.
 
 > Deleting a competitor or match only removes what it owns — a competitor's email addresses, a match's stages. A
 > record that match results, stage results or shooter logs still reference is refused with a `ValidationException`
@@ -387,7 +393,7 @@ Client uploads CSV (Content-Type: text/csv)
 | **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
 | **Extensibility**   | Firearm-type enums + division mappings, strategy-pattern converters                                                                   |
-| **Data Integrity**  | Cascade limited to `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `@Transactional` services, attribute converters |
+| **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters    |
 | **Type Safety**     | Custom `AttributeConverter` implementations for all enum-typed columns replace `@Enumerated(EnumType.STRING)`                         |
 
 ---

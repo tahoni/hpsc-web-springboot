@@ -3,9 +3,9 @@ package za.co.hpsc.web.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
@@ -19,9 +19,12 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
+import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,7 +35,9 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the {@link IpscCompetitorService} contract, exercised entirely through the
- * interface type, with {@link CompetitorRepository}/{@link ClubRepository} mocked. See
+ * interface type, with {@link CompetitorRepository}/{@link ClubRepository} mocked, and a real
+ * {@link TransactionServiceImpl} committing through those mocks under a mocked
+ * {@link PlatformTransactionManager}. See
  * {@link IpscCompetitorServiceIntegrationTest} for the same contract exercised against a real
  * H2-backed Spring context.
  */
@@ -51,14 +56,23 @@ public class IpscCompetitorServiceTest {
     @Mock
     private ShooterLogRepository shooterLogRepository;
 
-    @InjectMocks
-    private IpscCompetitorServiceImpl ipscCompetitorServiceImpl;
+    @Mock
+    private IpscMatchRepository ipscMatchRepository;
+
+    @Mock
+    private IpscMatchStageRepository ipscMatchStageRepository;
+
+    @Mock
+    private PlatformTransactionManager transactionManager;
 
     private IpscCompetitorService ipscCompetitorService;
 
     @BeforeEach
     void setUp() {
-        ipscCompetitorService = ipscCompetitorServiceImpl;
+        TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
+                ipscMatchRepository, ipscMatchStageRepository, transactionManager);
+        ipscCompetitorService = new IpscCompetitorServiceImpl(competitorRepository, clubRepository,
+                matchCompetitorRepository, shooterLogRepository, transactionService);
     }
 
     // createCompetitor()

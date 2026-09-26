@@ -28,7 +28,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code readCompetitors},
+ * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code newCompetitor},
+ * {@code readCompetitors},
  * {@code resolveClubNumber}, {@code resolveGender}, {@code resolveHomeClub},
  * {@code splitEmailAddresses}, {@code toRequest}, {@code toResponse}, {@code validateForCreate}) -
  * not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
@@ -248,6 +249,36 @@ class IpscCompetitorServiceImplTest {
 
         // Act & Assert
         assertTrue(ipscCompetitorServiceImpl.isHpscMember(club, ClubIdentifier.HPSC));
+    }
+
+    // newCompetitor()
+    @Test
+    void testNewCompetitor_whenRequestIsValid_thenBuildsUnsavedCompetitor() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setEmailAddresses(List.of("jane.doe@example.com"));
+
+        // Act
+        Competitor competitor = ipscCompetitorServiceImpl.newCompetitor(request);
+
+        // Assert
+        assertNull(competitor.getId());
+        assertEquals("Jane", competitor.getFirstName());
+        assertEquals("Doe", competitor.getLastName());
+        assertEquals(List.of("jane.doe@example.com"), competitor.getEmailAddresses());
+        verifyNoInteractions(competitorRepository);
+    }
+
+    @Test
+    void testNewCompetitor_whenRequestIsInvalid_thenThrowsValidationException() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setLastName("Doe");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.newCompetitor(request));
     }
 
     // readCompetitors()

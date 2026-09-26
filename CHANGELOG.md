@@ -76,6 +76,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorRepository.findByIdWithHomeClubAndEmailAddresses`, `findAllWithHomeClubAndEmailAddresses`:** New
   `left join fetch` queries loading a competitor's `homeClub` and `emailAddresses` with it
 
+##### Services
+
+- **`TransactionService`, `TransactionServiceImpl`:** New service that commits competitor and match writes —
+  `saveCompetitor`/`saveCompetitors`/`deleteCompetitor` and `saveMatch`/`saveMatches`/`deleteMatch`, plus a
+  `saveMatch` overload that replaces or upserts an existing match's stages — each in its own explicit
+  `TransactionTemplate` transaction, returning entities with the associations their responses read already loaded
+
 ##### API Models
 
 - **`CompetitorRequest`, `CompetitorRequestForCSV`, `CompetitorResponse`:** New `paidUpSapsa`/`paidUpClub` fields;
@@ -96,6 +103,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `CompetitorRequestTest`, `CompetitorRequestForCSVTest`:** Cover the new paid-up flags
 - **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** Cover the new fetch-join queries,
   clearing the persistence context first so `Hibernate.isInitialized` proves each association really was fetched
+- **`TransactionServiceImplTest`:** New unit tests for every commit method, including rollback on failure, and the
+  stage replace/upsert logic moved from `IpscMatchServiceImplTest`
+- **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** New tests run with no surrounding
+  transaction, so each create/update/patch/delete must really commit and be readable by the next call, plus a check
+  that a bulk match import with one bad row commits nothing
 
 ##### Documentation
 
@@ -124,6 +136,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** No longer `@Transactional` — they validate requests and
+  build or modify entities outside any transaction, then commit through `TransactionService`. Their bulk CSV imports
+  now validate and build every row before saving any, then save all rows in one transaction, so they stay
+  all-or-nothing. Stage replace/upsert logic moved into `TransactionServiceImpl`, and create/update/patch responses
+  now list stages ordered by stage number, matching `getMatch`
 - **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** `findMatchOrThrow`/`getAllMatches` and
   `findCompetitorOrThrow`/`getAllCompetitors` now load through the new fetch-join queries, so `toResponse` can read
   the club, home club and email addresses outside a transaction — `spring.jpa.open-in-view` is disabled, so a
@@ -136,6 +153,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **`IpscMatchServiceTest`, `IpscCompetitorServiceTest`:** Build their service with a real `TransactionServiceImpl`
+  over the same repository mocks and a mocked `PlatformTransactionManager`; match tests now seed existing stages on
+  the match's `stages` collection instead of stubbing `findAllByMatchIdOrderByStageNumber`
 - **`IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Updated for cascade-based stage deletion, dropping stubs
   for the no-longer-queried stage lookup
 
@@ -149,6 +169,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`prep-version-release`, `AGENTS.md`:** The Release Checklist's `HISTORY.md` step now makes updating "Major
   Version Goals" mandatory for every release — extending the current major version's range and narrative, or adding
   a new entry for a new major version — rather than leaving it unmentioned
+
+##### Documentation
+
+- **`ARCHITECTURE.md`, `AGENTS.md`, `CONTRIBUTING.md`, `IpscMatchService`, `IpscCompetitorService`:** Describe
+  `TransactionService` as where writes are committed, replacing the `@Transactional` services, and the bulk imports'
+  validate-everything-then-save-in-one-transaction behaviour
 
 #### 🐛 Fixed
 

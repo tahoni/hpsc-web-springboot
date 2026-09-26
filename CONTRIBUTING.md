@@ -126,7 +126,7 @@ The application follows a strict layered architecture — see [`ARCHITECTURE.md`
 ```
 HTTP Request
     → Controller  (REST endpoint, DTO validation)
-        → Service     (business logic, `@Transactional`)
+        → Service     (business logic; writes committed via `TransactionService`)
             → Repository     (Spring Data JPA)
                 → MySQL / H2
 ```

@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
@@ -30,6 +29,7 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
+import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,30 +44,25 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final ClubRepository clubRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final ShooterLogRepository shooterLogRepository;
+    private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
-                                     ShooterLogRepository shooterLogRepository) {
+                                     ShooterLogRepository shooterLogRepository,
+                                     TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterLogRepository = shooterLogRepository;
+        this.transactionService = transactionService;
     }
 
     @Override
-    @Transactional
     public CompetitorResponse createCompetitor(CompetitorRequest request) {
-        validateForCreate(request);
-
-        Competitor competitor = new Competitor();
-        applyFields(competitor, request);
-        competitor = competitorRepository.save(competitor);
-
-        return toResponse(competitor);
+        return toResponse(transactionService.saveCompetitor(newCompetitor(request)));
     }
 
     @Override
-    @Transactional
     public CompetitorResponseHolder createCompetitors(String csvData)
             throws FatalException {
 
@@ -78,28 +73,29 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
         List<CompetitorRequestForCSV> competitorRequestForCSVList = readCompetitors(csvData);
 
-        List<CompetitorResponse> competitorResponseList = new ArrayList<>();
+        // Every row is validated and built before any is saved, then all are saved in one
+        // transaction, so a bad row leaves none of them persisted.
+        List<Competitor> competitors = new ArrayList<>();
         for (CompetitorRequestForCSV competitorRequestForCSV : competitorRequestForCSVList) {
-            competitorResponseList.add(createCompetitor(toRequest(competitorRequestForCSV)));
+            competitors.add(newCompetitor(toRequest(competitorRequestForCSV)));
         }
 
-        return new CompetitorResponseHolder(competitorResponseList);
+        List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
+                .map(this::toResponse)
+                .toList();
+        return new CompetitorResponseHolder(new ArrayList<>(competitorResponseList));
     }
 
     @Override
-    @Transactional
     public CompetitorResponse updateCompetitor(Long competitorId, CompetitorRequest request) {
         validateForCreate(request);
         Competitor competitor = findCompetitorOrThrow(competitorId);
 
         applyFields(competitor, request);
-        competitor = competitorRepository.save(competitor);
-
-        return toResponse(competitor);
+        return toResponse(transactionService.saveCompetitor(competitor));
     }
 
     @Override
-    @Transactional
     public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
         Competitor competitor = findCompetitorOrThrow(competitorId);
 
@@ -149,9 +145,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getEmailAddresses() != null) {
             competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
         }
-        competitor = competitorRepository.save(competitor);
 
-        return toResponse(competitor);
+        return toResponse(transactionService.saveCompetitor(competitor));
     }
 
     @Override
@@ -167,7 +162,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     @Override
-    @Transactional
     public void deleteCompetitor(Long competitorId) {
         Competitor competitor = findCompetitorOrThrow(competitorId);
 
@@ -180,15 +174,31 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                     + " cannot be deleted: they have shooter logs.");
         }
 
-        // Flushed here rather than at commit, so a reference added by another transaction since
-        // the checks above surfaces inside this method and is reported as a 400, not a 500.
+        // TransactionService flushes the delete before committing, so a reference added by another
+        // transaction since the checks above surfaces here and is reported as a 400, not a 500.
         try {
-            competitorRepository.delete(competitor);
-            competitorRepository.flush();
+            transactionService.deleteCompetitor(competitor);
         } catch (DataIntegrityViolationException e) {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: it is referenced by other records.", e);
         }
+    }
+
+    /**
+     * Validates a request and builds the new, not yet persisted, competitor it describes.
+     *
+     * @param request the competitor to build. Must carry a first and last name.
+     * @return the new competitor, with a {@code null} ID.
+     * @throws ValidationException if a required field is missing or invalid (see
+     *                             {@link #applyFields}).
+     * @throws NonFatalException   if the request's home club name doesn't match an existing club.
+     */
+    protected Competitor newCompetitor(CompetitorRequest request) {
+        validateForCreate(request);
+
+        Competitor competitor = new Competitor();
+        applyFields(competitor, request);
+        return competitor;
     }
 
     /**

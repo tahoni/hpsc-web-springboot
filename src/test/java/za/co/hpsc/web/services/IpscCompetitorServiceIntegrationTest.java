@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
@@ -664,6 +665,45 @@ class IpscCompetitorServiceIntegrationTest {
 
         // Assert
         assertNull(updated.getHomeClub());
+    }
+
+    // Without a surrounding transaction
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void testCompetitorLifecycle_whenNoTransactionIsActive_thenEachWriteIsCommittedAndReadableAfterwards() {
+        // Each service call below runs without this test's usual rolled-back transaction, so every
+        // write must be committed by TransactionService and every read must work on its own.
+        Long competitorId = null;
+        try {
+            // Arrange
+            createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+            CompetitorRequest request = validRequest("HPSC-001");
+            request.setHomeClub("Test Club");
+            request.setEmailAddresses(List.of("jane.doe@example.com"));
+
+            // Act & Assert - create, then read back in a separate call
+            competitorId = ipscCompetitorService.createCompetitor(request).getCompetitorId();
+            CompetitorResponse fetched = ipscCompetitorService.getCompetitor(competitorId);
+            assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, fetched.getHomeClub());
+            assertEquals(List.of("jane.doe@example.com"), fetched.getEmailAddresses());
+
+            // Act & Assert - patch the email addresses
+            CompetitorRequest patch = new CompetitorRequest();
+            patch.setEmailAddresses(List.of("jane@example.org", "j.doe@example.net"));
+            ipscCompetitorService.patchCompetitor(competitorId, patch);
+            assertEquals(List.of("jane@example.org", "j.doe@example.net"),
+                    ipscCompetitorService.getCompetitor(competitorId).getEmailAddresses());
+
+            // Act & Assert - delete
+            ipscCompetitorService.deleteCompetitor(competitorId);
+            assertFalse(competitorRepository.existsById(competitorId));
+            competitorId = null;
+        } finally {
+            if (competitorId != null) {
+                ipscCompetitorService.deleteCompetitor(competitorId);
+            }
+            clubRepository.findByName("Test Club").ifPresent(clubRepository::delete);
+        }
     }
 
     // CompetitorRepository.findByIdWithHomeClubAndEmailAddresses()

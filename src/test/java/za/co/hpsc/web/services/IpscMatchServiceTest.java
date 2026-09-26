@@ -3,10 +3,10 @@ package za.co.hpsc.web.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -22,12 +22,14 @@ import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 import za.co.hpsc.web.models.ipsc.match.response.MatchStageResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
+import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
+import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -41,7 +43,8 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for the {@link IpscMatchService} contract, exercised entirely through the
  * interface type, with {@link IpscMatchRepository}/{@link IpscMatchStageRepository}/
- * {@link ClubRepository} mocked. See {@link IpscMatchServiceIntegrationTest} for the same
+ * {@link ClubRepository} mocked, and a real {@link TransactionServiceImpl} committing through
+ * those mocks under a mocked {@link PlatformTransactionManager}. See {@link IpscMatchServiceIntegrationTest} for the same
  * contract exercised against a real H2-backed Spring context.
  */
 @ExtendWith(MockitoExtension.class)
@@ -65,14 +68,21 @@ public class IpscMatchServiceTest {
     @Mock
     private ShooterLogCompetitorRepository shooterLogCompetitorRepository;
 
-    @InjectMocks
-    private IpscMatchServiceImpl ipscMatchServiceImpl;
+    @Mock
+    private CompetitorRepository competitorRepository;
+
+    @Mock
+    private PlatformTransactionManager transactionManager;
 
     private IpscMatchService ipscMatchService;
 
     @BeforeEach
     void setUp() {
-        ipscMatchService = ipscMatchServiceImpl;
+        TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
+                ipscMatchRepository, ipscMatchStageRepository, transactionManager);
+        ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository, ipscMatchStageRepository, clubRepository,
+                matchCompetitorRepository, matchStageCompetitorRepository, shooterLogCompetitorRepository,
+                transactionService);
     }
 
     // createMatch()
@@ -220,7 +230,6 @@ public class IpscMatchServiceTest {
         // Arrange
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
-        stubStageSaveAssignsIncrementingId();
         MatchRequest request = validRequest("Test Club");
         request.setStages(List.of(
                 new MatchStageRequest(null, 1, "Stage 1 - The Bank Job"),
@@ -287,7 +296,6 @@ public class IpscMatchServiceTest {
         // Arrange
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
-        stubStageSaveAssignsIncrementingId();
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
                 2026-09-12,Club Championship,Test Club,%s,%s,1:Stage One;2:Stage Two
@@ -606,7 +614,6 @@ public class IpscMatchServiceTest {
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
         MatchRequest patch = new MatchRequest();
         patch.setClub("Test Club");
@@ -625,7 +632,6 @@ public class IpscMatchServiceTest {
         existing.setId(1L);
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
         LocalDate newDate = LocalDate.of(2027, 3, 20);
         MatchRequest patch = new MatchRequest();
@@ -646,7 +652,6 @@ public class IpscMatchServiceTest {
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
         LocalTime newStartTime = LocalTime.of(8, 0);
         LocalTime newEndTime = LocalTime.of(17, 0);
@@ -670,7 +675,6 @@ public class IpscMatchServiceTest {
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
         MatchRequest patch = new MatchRequest();
         patch.setUrl("https://example.com/matches/1");
@@ -690,7 +694,6 @@ public class IpscMatchServiceTest {
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
         MatchRequest patch = new MatchRequest();
         patch.setMatchFirearmType(FirearmType.RIFLE.toString());
@@ -710,7 +713,6 @@ public class IpscMatchServiceTest {
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
         MatchRequest patch = new MatchRequest();
         patch.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
@@ -754,7 +756,7 @@ public class IpscMatchServiceTest {
         stage.setId(100L);
         stage.setStageNumber(1);
         stage.setStageName("Stage 1");
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of(stage));
+        existing.getStages().add(stage);
 
         MatchRequest patch = new MatchRequest();
         patch.setMatchName("Renamed Championship");
@@ -784,10 +786,7 @@ public class IpscMatchServiceTest {
         existingStage.setMatch(existing);
         existingStage.setStageNumber(1);
         existingStage.setStageName("Original Name");
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L))
-                .thenReturn(List.of(existingStage))
-                .thenReturn(List.of(existingStage));
-        when(ipscMatchStageRepository.save(any(IpscMatchStage.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        existing.getStages().add(existingStage);
 
         MatchRequest patch = new MatchRequest();
         patch.setStages(List.of(new MatchStageRequest(null, 1, "Updated Name")));
@@ -815,16 +814,8 @@ public class IpscMatchServiceTest {
         existingStage.setMatch(existing);
         existingStage.setStageNumber(1);
         existingStage.setStageName("Stage 1");
+        existing.getStages().add(existingStage);
 
-        IpscMatchStage newStage = new IpscMatchStage();
-        newStage.setId(101L);
-        newStage.setMatch(existing);
-        newStage.setStageNumber(2);
-        newStage.setStageName("Stage 2");
-
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L))
-                .thenReturn(List.of(existingStage))
-                .thenReturn(List.of(existingStage, newStage));
         when(ipscMatchStageRepository.save(any(IpscMatchStage.class))).thenAnswer(invocation -> {
             IpscMatchStage stage = invocation.getArgument(0);
             if (stage.getId() == null) {
@@ -843,6 +834,7 @@ public class IpscMatchServiceTest {
         assertEquals(2, patched.getStages().size());
         assertEquals("Stage 1", patched.getStages().get(0).getStageName());
         assertEquals("Stage 2", patched.getStages().get(1).getStageName());
+        assertEquals(101L, patched.getStages().get(1).getStageId());
     }
 
     // updateMatch()
@@ -949,9 +941,14 @@ public class IpscMatchServiceTest {
     }
 
     private void stubMatchSaveReturnsSameEntity() {
+        AtomicLong stageIdCounter = new AtomicLong(1);
         when(ipscMatchRepository.save(any(IpscMatch.class))).thenAnswer(invocation -> {
             IpscMatch match = invocation.getArgument(0);
             match.setId(1L);
+            // A new match's stages are persisted by cascade with it, so assign their IDs too.
+            match.getStages().stream()
+                    .filter(stage -> stage.getId() == null)
+                    .forEach(stage -> stage.setId(stageIdCounter.getAndIncrement()));
             return match;
         });
     }
