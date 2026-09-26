@@ -96,6 +96,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Competitor.emailAddresses`:** The `email_address` element column mapping no longer declares `nullable = false`
 
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`flyway-migration-versioning.md`:** Related Documentation pointed to `ARCHITECTURE.md` for content that actually
+  lives in `CONTRIBUTING.md`'s Database Profiles section — removed the incorrect bullet and folded its claim into the
+  `CONTRIBUTING.md` entry
+- **`improvement-plan.md`:** Reverted "low-regression backstop" to "low regression backstop" — the hyphen bound "low"
+  to "regression" instead of the intended "low [threshold], regression backstop" reading, nearly inverting the
+  meaning
+
 ### 🧾 [8.8.0] - 2026-09-24
 
 #### ➕ Added

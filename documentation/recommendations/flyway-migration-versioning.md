@@ -74,7 +74,6 @@ current at the time it's authored. Treat any resemblance between the two as coin
 
 - [`AGENTS.md`](/AGENTS.md) — the Tech Stack section's short factual note on this convention, and the Release
   Checklist these migrations ship alongside.
-- [`ARCHITECTURE.md`](/ARCHITECTURE.md) — where Flyway sits in the layered architecture (schema source of truth for
-  MySQL prod/dev; bypassed entirely by the `test` profile's H2 `create-drop`).
-- [`CONTRIBUTING.md`](/CONTRIBUTING.md) — the Database Profiles section covering how each runtime profile applies (or
-  skips) these migrations.
+- [`CONTRIBUTING.md`](/CONTRIBUTING.md) — the Database Profiles section covering where Flyway sits (schema source of
+  truth for MySQL prod/dev; bypassed entirely by the `test` profile's H2 `create-drop`) and how each runtime profile
+  applies (or skips) these migrations.

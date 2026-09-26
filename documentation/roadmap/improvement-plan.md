@@ -191,7 +191,7 @@ embedded server). `HISTORY.md`'s coverage figure still needs refreshing to this 
 **Further progress:** A `check` execution was added to the `coverage` profile's `jacoco-maven-plugin` (`BUNDLE`-level,
 `LINE`/`COVEREDRATIO` minimum `0.51`), wired into #2's new `build.yml` gate — a regression now fails the build rather
 than only surfacing in the next `HISTORY.md` entry, closing the CI-enforcement half of this gap's proposed
-improvement. The chosen 51% floor is deliberately a low-regression backstop, not "near the current baseline"
+improvement. The chosen 51% floor is deliberately a low regression backstop, not "near the current baseline"
 (~98%) as originally proposed here; tightening it closer to the real baseline is left as a deliberate follow-up
 once the gate has run cleanly for a few releases, rather than risking a strict threshold blocking merges on day
 one. Not marked fully closed for that reason. This lands in v8.3.1; `HISTORY.md`'s coverage figure refresh for the
