@@ -1740,7 +1740,7 @@ IpscCompetitorService          IpscMatchService
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.5.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.8.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1752,7 +1752,12 @@ IpscCompetitorService          IpscMatchService
   documentation scale: a project-wide icon-registry and cross-reference consolidation, root-document title
   standardisation naming `AGENTS.md` as the project's single source of truth, and finally closing the release
   checklist's own audit loop by backfilling `HISTORY.md`'s Phase/Milestone record for every release that had fallen
-  behind it.
+  behind it. Then round out the match and competitor APIs — a match URL, start/end times corrected to time-of-day
+  values, a competitor listing endpoint and finally delete endpoints that refuse rather than cascade over scoring
+  history, making the long-standing "full CRUD" claim true — while tidying the platform underneath (Spring Boot's
+  default port, a Spring Boot 4 springdoc line) and keeping the documentation honest at scale: formalising the 3-tier
+  service test architecture, splitting `HISTORY.md`'s Evolution Overview and archived release notes into their own
+  structure, and correcting `CHANGELOG.md` heading-depth drift across every convention document and skill.
 
 ### Initial Phase (v1.0.0)
 

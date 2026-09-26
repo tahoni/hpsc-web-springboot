@@ -178,6 +178,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`, which was renamed away — now
   `testCreateAwards_whenValidCsvData_thenReturns200`, closing `improvement-plan.md`'s Gap #16 (version pending —
   delivered on this feature branch)
+- **`HISTORY.md`:** "Major Version Goals"' Version 8.x entry stopped at v8.5.1 — its range now runs to v8.8.0, and
+  its narrative covers v8.6.0–v8.8.0's match/competitor API completion, platform tidy-up and documentation work
 - **`HISTORY.md`:** The Future Roadmap Implications "Recently Completed" log stopped at v8.4.0 — added entries for
   v8.4.1 through v8.8.0 and updated the section's opening sentence to v8.8.0, closing `improvement-plan.md`'s Gap #17
   (version pending — delivered on this feature branch)
