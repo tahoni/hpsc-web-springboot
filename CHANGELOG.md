@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.10.1](#-8101---2026-09-26) ← Current
+- [🧾 Version 8.10.2](#-8102---2026-09-26) ← Current
+- [🧾 Version 8.10.1](#-8101---2026-09-26)
 - [🧾 Version 8.10.0](#-8100---2026-09-26)
 - [🧾 Version 8.9.0](#-890---2026-09-26)
 - [🧾 Version 8.8.0](#-880---2026-09-24)
@@ -61,6 +62,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.10.2] - 2026-09-26
+
+#### 🔄 Changed
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/claude-code-review.yml`:** The Claude code review now also runs on Dependabot's PRs
+  (`allowed_bots: 'dependabot'`), which it previously skipped as bot-authored. Dependabot-triggered runs can only read
+  Dependabot secrets, so `CLAUDE_CODE_OAUTH_TOKEN` must also be stored as a Dependabot secret for these reviews to
+  run; documented in `ARCHITECTURE.md`'s CI/CD & Quality Gates section
+
+##### Build & Metadata
+
+- Project version bumped to **8.10.2** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### 🧾 [8.10.1] - 2026-09-26
 

@@ -412,18 +412,20 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                      | Tool                                                                                                      | Trigger                                                                 |
-|---------------------------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| **Security Analysis**     | CodeQL                                                                                                    | Push / PR to `main` / `develop`; weekly schedule                        |
-| **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                                     | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
-| **Code Coverage**         | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)              | Enforced automatically as part of the `Build & Tests` gate above        |
-| **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to `main` / `develop`; manual dispatch                             |
-| **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`                        | Every PR opened, updated, marked ready or reopened; advisory only       |
-| **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                                           | An `@claude` mention in an issue, PR comment or PR review               |
+| Gate                      | Tool                                                                                                      | Trigger                                                                                  |
+|---------------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| **Security Analysis**     | CodeQL                                                                                                    | Push / PR to `main` / `develop`; weekly schedule                                         |
+| **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                                     | Push / PR to `main` / `develop`; H2 in-memory — no external DB required                  |
+| **Code Coverage**         | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)              | Enforced automatically as part of the `Build & Tests` gate above                         |
+| **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to `main` / `develop`; manual dispatch                                              |
+| **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`                        | Every PR opened, updated, marked ready or reopened, Dependabot's included; advisory only |
+| **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                                           | An `@claude` mention in an issue, PR comment or PR review                                |
 
 Both Claude Code workflows run `anthropics/claude-code-action` and authenticate with the `CLAUDE_CODE_OAUTH_TOKEN`
 repository secret, which must stay provisioned for them to run. The review posts inline comments on the PR but
-doesn't block merging.
+doesn't block merging. It also reviews Dependabot's PRs (`allowed_bots: 'dependabot'`); since Dependabot-triggered
+runs can only read Dependabot secrets, the same token must also be stored as a Dependabot secret for those reviews to
+run.
 
 The Dependency Submission workflow feeds the Maven dependency tree, resolved with the project's own JDK and Maven
 wrapper, into GitHub's dependency graph, where Dependabot alerts read it. It replaces GitHub's built-in automatic

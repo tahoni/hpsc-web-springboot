@@ -2437,6 +2437,35 @@ GitFlow branching model.
 
 - No test changes (970 tests); coverage unchanged at 98.77%/99.09% line/branch
 
+
+### Phase 38: Claude Code Review for Dependabot PRs (v8.10.2)
+
+**Duration:** September 26, 2026
+
+A patch release, CI only: the automated Claude code review, which skipped every bot-authored PR, now reviews
+Dependabot's too — shipped as its own release because v8.10.1 had already reached `main`.
+
+**Key Accomplishments:**
+
+**CI/CD**
+
+- `.github/workflows/claude-code-review.yml` gains `allowed_bots: 'dependabot'` — narrower than `'*'`, which would
+  admit every bot — so Dependabot's version-update PRs into `develop` and security-update PRs into `main` are reviewed
+- Dependabot-triggered workflow runs can only read Dependabot secrets, so `CLAUDE_CODE_OAUTH_TOKEN` must be stored as
+  a Dependabot secret as well as an Actions secret; `ARCHITECTURE.md`'s CI/CD & Quality Gates section says so
+
+**Build & Metadata**
+
+- Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Applying the same review to every PR, bot-authored or not, and never rewriting a shipped release
+
+**Test Coverage:**
+
+- No test changes (970 tests); coverage unchanged at 98.77%/99.09% line/branch
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
