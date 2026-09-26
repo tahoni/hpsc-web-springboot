@@ -62,6 +62,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/claude-code-review.yml`:** The Claude code review now also runs on Dependabot's PRs
+  (`allowed_bots: 'dependabot'`), which it previously skipped as bot-authored. Dependabot-triggered runs can only read
+  Dependabot secrets, so `CLAUDE_CODE_OAUTH_TOKEN` must also be stored as a Dependabot secret for these reviews to
+  run; documented in `ARCHITECTURE.md`'s CI/CD & Quality Gates section
+
 ### 🧾 [8.10.1] - 2026-09-26
 
 #### ➕ Added
