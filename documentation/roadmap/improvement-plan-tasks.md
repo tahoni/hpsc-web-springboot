@@ -175,6 +175,16 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Refresh `standard-rest-conventions.md`'s "🔍 Current State in This Codebase" examples to name
   `getAllMatches`/`getAllCompetitors` and `IpscCompetitorController`
 
+**Claude Code workflows in the CI/CD documentation** *(improvement-plan.md → Gap #13)* — ✅ Closed (version pending)
+
+- [x] Add `claude-code-review.yml` (every PR, advisory) and `claude.yml` (on `@claude` mention) rows to
+  `ARCHITECTURE.md`'s CI/CD & Quality Gates table, noting the `CLAUDE_CODE_OAUTH_TOKEN` secret both rely on
+- [x] Widen `ARCHITECTURE.md`'s Project Structure tree comment for `.github/workflows/` generically, without listing
+  individual workflow files
+- [x] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
+- [x] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
+  — tailored to `src/**/*.java`, `src/main/resources/**` and `pom.xml`, still commented out
+
 **Flyway migration table refresh** *(improvement-plan.md → Gap #14)* — ✅ Closed (version pending)
 
 - [x] Add rows to `flyway-migration-versioning.md`'s Current State table for `V7_4_0__make_club_number_nullable.sql`
@@ -233,15 +243,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
-
-**Claude Code workflows in the CI/CD documentation** *(improvement-plan.md → Gap #13)*
-
-- [ ] Add `claude-code-review.yml` (every PR, advisory) and `claude.yml` (on `@claude` mention) rows to
-  `ARCHITECTURE.md`'s CI/CD & Quality Gates table, noting the `CLAUDE_CODE_OAUTH_TOKEN` secret both rely on
-- [ ] Widen `ARCHITECTURE.md`'s Project Structure tree comment for `.github/workflows/` generically, without listing
-  individual workflow files
-- [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
-- [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

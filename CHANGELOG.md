@@ -123,6 +123,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Updated for cascade-based stage deletion, dropping stubs
   for the no-longer-queried stage lookup
 
+##### CI/CD & Configuration
+
+- **`claude-code-review.yml`:** The commented-out `paths:` filter example still named its template's TypeScript/
+  JavaScript globs — now `src/**/*.java`, `src/main/resources/**` and `pom.xml`, still left commented out
+
 #### 🐛 Fixed
 
 ##### Documentation
@@ -133,6 +138,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`:** Reverted "low-regression backstop" to "low regression backstop" — the hyphen bound "low"
   to "regression" instead of the intended "low [threshold], regression backstop" reading, nearly inverting the
   meaning
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md`:** The CI/CD & Quality Gates documentation left out the two
+  live Claude Code workflows — `ARCHITECTURE.md`'s table gains "Automated Code Review" (`claude-code-review.yml`, every
+  PR, advisory) and "AI Assistant" (`claude.yml`, on `@claude` mention) rows plus a note on the
+  `CLAUDE_CODE_OAUTH_TOKEN` secret, its Project Structure tree's `.github/workflows/` comment is widened, and the other
+  two files' summaries match, closing `improvement-plan.md`'s Gap #13 (version pending — delivered on this feature
+  branch)
 - **`flyway-migration-versioning.md`:** Current State table extended with the five migrations missing since v8.4.0
   (`V7_4_0` through `V7_8_0`); a new step 5 in "🔢 Choosing the Next Version" now has the next migration's author add
   its own row, closing `improvement-plan.md`'s Gap #14 (version pending — delivered on this feature branch)

@@ -54,7 +54,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.claude/
 │   └───skills/                 # Claude Code skill definitions, one SKILL.md per skill
 ├───.github/
-│   └───workflows/              # GitHub Actions — CI/CD, CodeQL
+│   └───workflows/              # GitHub Actions — CI/CD, security analysis and automated review
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
@@ -394,11 +394,17 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                                                                                         | Trigger                                                                 |
-|-----------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                                                                                       | Push / PR to `main` / `develop`; weekly schedule                        |
-| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                        | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
+| Gate                      | Tool                                                                                         | Trigger                                                                 |
+|---------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| **Security Analysis**     | CodeQL                                                                                       | Push / PR to `main` / `develop`; weekly schedule                        |
+| **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                        | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
+| **Code Coverage**         | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
+| **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`           | Every PR opened, updated, marked ready or reopened; advisory only       |
+| **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                              | An `@claude` mention in an issue, PR comment or PR review               |
+
+Both Claude Code workflows run `anthropics/claude-code-action` and authenticate with the `CLAUDE_CODE_OAUTH_TOKEN`
+repository secret, which must stay provisioned for them to run. The review posts inline comments on the PR but
+doesn't block merging.
 
 ---
 
