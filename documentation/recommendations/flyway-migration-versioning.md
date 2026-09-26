@@ -74,7 +74,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V7_5_0__add_ipsc_match_start_end_time.sql`            | v8.5.0                 | —                                                                                                                                                                             |
 | `V7_6_0__add_ipsc_match_url.sql`                       | v8.6.0                 | —                                                                                                                                                                             |
 | `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` | v8.6.0                 | Narrows `start_time`/`end_time` (added in `V7_5_0`) from `DATETIME` to `TIME` — these were always time-of-day-only values                                                     |
-| `V7_8_0__add_competitor_paid_up_flags.sql`             | Unreleased             | —                                                                                                                                                                             |
+| `V7_8_0__add_competitor_paid_up_flags.sql`             | v8.9.0                 | —                                                                                                                                                                             |
 
 ---
 

@@ -2261,11 +2261,9 @@ Based on the evolution to v8.8.0, the following areas are identified for future 
   currently schema-only (`homeClub` now wired via `IpscCompetitorService`)
 - Build a `ShooterLogService` to calculate and persist best-4-match snapshots — no calculation job/service exists yet
 - Populate `overallRanking`, `clubRanking` and `isVisitor` during match-result import
-- Backfill `Competitor.homeClub` for existing competitors — the `club` table itself is already seeded (v8.4.0,
-  `V7_3_0__seed_club_data.sql`)
 - Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) to an endpoint — still
   groundwork, not yet consumed by any controller
-- Add entity, repository and integration test coverage for the promoted/extended domain model
+- Add entity-level unit tests for the promoted/extended domain model — repository integration tests exist as of v8.9.0
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
 

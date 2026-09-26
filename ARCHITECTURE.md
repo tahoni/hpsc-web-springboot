@@ -38,7 +38,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
 | ORM               | Spring Data JPA, Hibernate                                          |
 | Schema migrations | Flyway (`src/main/resources/db/migration/`)                         |
-| Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
+| Data processing   | Jackson (JSON/CSV)                                                  |
 | API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
 | Validation        | Hibernate Validator, Jakarta Validation                             |
 | Testing           | JUnit, Mockito, Spring Test                                         |
@@ -81,7 +81,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
 │   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
 │   │   │   └───(root)          # Top-level request/response wrapper models
-│   │   ├───repositories/       # Spring Data JPA interfaces — IPSC ones wired to services, the rest not yet wired
+│   │   ├───repositories/       # Spring Data JPA interfaces, one per entity
 │   │   ├───services/           # Service interfaces
 │   │   │   └───impl/           # Service implementations
 │   │   └───utils/              # Utility classes
@@ -97,6 +97,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
     ├───models/                 # DTO / model unit tests
+    ├───repositories/           # Repository query and JPA mapping integration tests (H2)
     ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
     │   └───impl/               # Service impl helper unit tests (Mockito)
     └───utils/                  # Utility unit tests
@@ -122,9 +123,13 @@ The application follows a strict **N-Tier Layered Architecture** with unidirecti
 HTTP Request
     → Controller
         → Service
-            → Repository
-                → Database
+            → TransactionService (competitor/match writes only)
+                → Repository
+                    → Database
 ```
+
+Reads go from a service straight to its repositories; only writes pass through `TransactionService` (see the Service
+Layer notes below).
 
 ---
 
@@ -226,8 +231,11 @@ All enum-typed entity fields use explicit `AttributeConverter` implementations r
 
 #### Repositories (`za.co.hpsc.web.repositories`)
 
-One Spring Data JPA interface per entity. Custom query methods supplement the standard CRUD operations (e.g.,
-`IpscMatchRepository.findAllByClubId`, `ShooterLogRepository.findAllByCompetitorIdAndFirearmTypeAndPowerFactor`).
+One Spring Data JPA interface per entity, each injected into the service layer. Custom query methods supplement the
+standard CRUD operations — the `left join fetch` queries that load everything a response reads, since
+`spring.jpa.open-in-view` is disabled (e.g. `IpscMatchRepository.findByIdWithClub`,
+`CompetitorRepository.findByIdWithHomeClubAndEmailAddresses`), and the `existsBy…` checks behind the
+reject-not-cascade deletes (e.g. `MatchCompetitorRepository.existsByMatchId`).
 
 ---
 
@@ -309,7 +317,7 @@ response. Structured logging is applied in every handler — do not catch and re
 | **Repository Pattern**    | Spring Data JPA repos abstract all DB access                                                        |
 | **Service Layer Pattern** | All business logic lives in service classes; controllers and repos are kept thin                    |
 | **DTO Pattern**           | `models/` DTOs decouple external API contracts from JPA entities                                    |
-| **Strategy Pattern**      | CSV/XML converters (`converters/` package) handle format variants behind a common interface         |
+| **Transaction Boundary**  | `TransactionService` alone commits competitor/match writes, each in an explicit transaction         |
 | **Custom JPA Converters** | `AttributeConverter` implementations replace `@Enumerated` for type-safe, testable enum persistence |
 | **Global Error Handling** | `ControllerAdvice` translates domain exceptions to HTTP responses with structured logging           |
 
@@ -323,10 +331,12 @@ response. Structured logging is applied in every handler — do not catch and re
 Client → HTTP Request
     → Controller (validate input, extract body/path vars)
         → Service (business logic)
-            → Repository (Spring Data JPA query, where applicable)
-                → Database
-            ← Domain model / DTO
-        ← Service result
+            → Repository (reads, via fetch-join queries where the response needs associations)
+            → TransactionService (writes, each committed in its own explicit transaction)
+                → Repository
+                    → Database
+            ← Domain model
+        ← Service result (response DTO)
     ← Controller wraps in ResponseEntity<T>
 ← HTTP Response (JSON)
 ```
@@ -348,14 +358,16 @@ Client uploads CSV (Content-Type: text/csv)
 
 ### 📥 Competitor Bulk CSV Import Flow
 
-Handled by `IpscCompetitorController` — unlike the Award/Image flow above, each row is actually persisted:
+Handled by `IpscCompetitorController` — unlike the Award/Image flow above, the rows are actually persisted:
 
 ```
 Client uploads CSV (Content-Type: text/csv)
     → IpscCompetitorController.createCompetitors
         → IpscCompetitorService.createCompetitors
-            (parses CSV via Jackson CsvMapper into CompetitorRequestForCSV rows, then persists each via the same
-             createCompetitor validation/gender/home-club-resolution logic the single-competitor endpoint uses)
+            (parses CSV via Jackson CsvMapper into CompetitorRequestForCSV rows, then builds each row with the same
+             validation/gender/home-club-resolution logic the single-competitor endpoint uses)
+            → TransactionService.saveCompetitors
+                (saves every row in one transaction — a bad row fails before anything is saved)
         ← CompetitorResponseHolder
     ← ResponseEntity<...>
 ← JSON response
@@ -363,24 +375,21 @@ Client uploads CSV (Content-Type: text/csv)
 
 ### 📥 Match Bulk CSV Import Flow
 
-Handled by `IpscMatchController` — same shape as the Competitor flow above, each row is actually persisted:
+Handled by `IpscMatchController` — same shape as the Competitor flow above:
 
 ```
 Client uploads CSV (Content-Type: text/csv)
     → IpscMatchController.createMatches
         → IpscMatchService.createMatches
             (parses CSV via Jackson CsvMapper into MatchRequestForCSV rows, splits each row's semicolon-separated
-             Stages cell into MatchStageRequests via parseStages, then persists each row via the same createMatch
-             validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
+             Stages cell into MatchStageRequests via parseStages, then builds each row, stages included, with the
+             same validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
+            → TransactionService.saveMatches
+                (saves every row in one transaction — a bad row fails before anything is saved)
         ← MatchResponseHolder
     ← ResponseEntity<...>
 ← JSON response
 ```
-
-> The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`,
-> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer. The
-> competitor and match bulk CSV import flows above are new, unrelated implementations, not a restoration of that
-> removed flow.
 
 ---
 
@@ -392,7 +401,7 @@ Client uploads CSV (Content-Type: text/csv)
 | **Maintainability** | Strict layering, package-by-feature model structure, Javadoc and CLAUDE.md guidance                                                   |
 | **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
-| **Extensibility**   | Firearm-type enums + division mappings, strategy-pattern converters                                                                   |
+| **Extensibility**   | Firearm-type enums + division mappings, enum `AttributeConverter`s with `fromX` lookups                                               |
 | **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters    |
 | **Type Safety**     | Custom `AttributeConverter` implementations for all enum-typed columns replace `@Enumerated(EnumType.STRING)`                         |
 

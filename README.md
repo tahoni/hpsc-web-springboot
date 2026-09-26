@@ -54,7 +54,7 @@ This is a Spring Boot application built with:
 - **Build Tool**: [Maven](https://maven.apache.org/) (or the provided `./mvnw` wrapper)
 - **Database**: MySQL with Spring Data JPA and Hibernate
 - **Schema Migrations**: Flyway
-- **Data Processing**: Jackson (JSON, CSV, XML), Apache Commons Lang3
+- **Data Processing**: Jackson (JSON, CSV)
 - **API Documentation**: SpringDoc OpenAPI (Swagger UI)
 - **Validation**: Hibernate Validator with Jakarta Validation
 - **Testing**: JUnit, Mockito, Spring Test
@@ -142,17 +142,16 @@ The report is written to `target/site/jacoco/`.
 
 **Test Categories**:
 
-- **Unit Tests**: Domain entities, DTOs, enums, utilities and service logic
-- **Integration Tests**: Service implementations and data access layers
+- **Unit Tests**: DTOs, enums, converters, exceptions, utilities, controllers and service logic
+- **Integration Tests**: Services and repositories, against an in-memory H2 database
 - **Test Frameworks**: JUnit, Mockito, Spring Test
 
 Test coverage includes:
 
-- Domain entities and JPA relationships
+- JPA relationships, cascades and repository queries
 - DTO initialisation and mapping logic
 - Enum validations and lookups
 - Service layer business logic
-- Repository operations
 - Utility methods and helpers
 
 ## 🏛️ Architecture

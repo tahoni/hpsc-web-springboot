@@ -25,9 +25,9 @@ convention; no Claude-Code-specific content is split out from it.
 
 ## 📖 Project Overview
 
-HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shooting Club (HPSC) platform. It manages IPSC
-match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this is a pure API
-server.
+HPSC Web is a Spring Boot REST API backend for the Hartbeespoortdam Practical Shooting Club (HPSC) platform. It
+manages IPSC match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this
+is a pure API server.
 
 - **Port / context path:** `8080` / `/hpsc-web`
 - **API docs:** Swagger UI at `http://localhost:8080/hpsc-web/swagger-ui/index.html`
@@ -42,7 +42,7 @@ server.
 - **Persistence:** Spring Data JPA, Hibernate
 - **Databases:** MySQL (production/dev), H2 in-memory (test)
 - **Schema migrations:** Flyway
-- **Data processing:** Jackson (JSON/CSV/XML)
+- **Data processing:** Jackson (JSON/CSV)
 - **API documentation:** SpringDoc OpenAPI (Swagger UI)
 - **Validation:** Hibernate Validator, Jakarta Validation
 - **Testing:** JUnit, Mockito, Spring Test
@@ -412,9 +412,12 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
        the interface's full public contract end-to-end through a real, Spring-wired bean backed by the H2 `test`
        profile database — no mocks.
 
-   All four services (`AwardService`, `ImageService`, `IpscCompetitorService`, `IpscMatchService`) follow this
-   split; a new service should too. See the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the
-   detailed per-tier rules (what each tier must/must not cover, Spring Boot 4 auto-configuration gotchas, etc.).
+   All five services (`AwardService`, `ImageService`, `IpscCompetitorService`, `IpscMatchService`,
+   `TransactionService`) follow this split; a new service should too. `TransactionServiceIntegrationTest` is the one
+   integration test deliberately not `@Transactional`, since a surrounding test transaction would hide whether
+   `TransactionService` really commits or rolls back; it deletes its committed data after each test instead. See
+   the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the detailed per-tier rules (what each tier
+   must/must not cover, Spring Boot 4 auto-configuration gotchas, etc.).
 - Test class names follow `<ClassName>Test`; test method names follow
   `test<Scenario>_when<Condition>_then<Expectation>`.
 - JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from

@@ -93,10 +93,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V7_8_0__add_competitor_paid_up_flags.sql`:** New Flyway migration — adds nullable `paid_up_sapsa` and
   `paid_up_club` `BOOLEAN` columns to `competitor`
 
-##### Build & Metadata
-
-- **`commons-text`:** New `org.apache.commons:commons-text` 1.15.0 dependency
-
 ##### Tests
 
 - **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceImplTest`,
@@ -108,6 +104,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** New tests run with no surrounding
   transaction, so each create/update/patch/delete must really commit and be readable by the next call, plus a check
   that a bulk match import with one bad row commits nothing
+- **`TransactionServiceTest`, `TransactionServiceIntegrationTest`:** Complete `TransactionService`'s 3-tier test
+  split — the contract through the interface, and real H2 commits/rollbacks in an integration test that is
+  deliberately not `@Transactional`, so a surrounding test transaction can't hide whether each write commits
+- **`IpscMatchRepositoryIntegrationTest`, `CompetitorRepositoryIntegrationTest`,
+  `MatchCompetitorRepositoryIntegrationTest`, `MatchStageCompetitorRepositoryIntegrationTest`,
+  `ShooterLogRepositoryIntegrationTest`, `ShooterLogCompetitorRepositoryIntegrationTest`:** New repository tests for the fetch-join queries,
+  `IpscMatch.stages`' cascade persist/orphan removal/cascade delete, the email collection's delete and every
+  `existsBy…` check behind the reject-not-cascade deletes, with a shared `ScoringFixtures` helper
 
 ##### Documentation
 
@@ -119,6 +123,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Completed" log hasn't been extended since v8.4.0, missing nine shipped releases (#17). "🌳 At a Glance", "🛤️
   Roadmap" **Next** row and "☑️ Success Criteria" updated to match
 - **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox blocks for Gaps #14–#17
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gaps #18–#24 from the v8.9.0 release-prep
+  `update-improvement-plan-gaps` sweep, all closed within this release (see Fixed and Removed)
 
 #### 🔄 Changed
 
@@ -153,6 +159,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **`TransactionServiceImplTest`:** Now covers only the impl's protected helpers (`loadAssociations`, `replaceStages`,
+  `upsertStages`); its public-contract tests moved to the new `TransactionServiceTest`
+- **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** Their fetch-join query tests moved to
+  the new repository integration tests
 - **`IpscMatchServiceTest`, `IpscCompetitorServiceTest`:** Build their service with a real `TransactionServiceImpl`
   over the same repository mocks and a mocked `PlatformTransactionManager`; match tests now seed existing stages on
   the match's `stages` collection instead of stubbing `findAllByMatchIdOrderByStageNumber`
@@ -175,6 +185,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`, `AGENTS.md`, `CONTRIBUTING.md`, `IpscMatchService`, `IpscCompetitorService`:** Describe
   `TransactionService` as where writes are committed, replacing the `@Transactional` services, and the bulk imports'
   validate-everything-then-save-in-one-transaction behaviour
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing in `src/` produced or consumed
+  XML or used Apache Commons, so dropping `jackson-dataformat-xml` only removes Spring MVC's unused XML content
+  negotiation; closes `improvement-plan.md`'s Gap #18
 
 #### 🐛 Fixed
 
@@ -212,6 +230,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `HISTORY.md` step now updates the Future Roadmap
   Implications log for every release, rather than only "if the release is significant enough" — the condition that
   let it fall nine releases behind
+- **`README.md`, `ARCHITECTURE.md`, `AGENTS.md`:** Tech-stack lines no longer claim XML processing or Apache Commons
+  (Gap #18)
+- **`ARCHITECTURE.md`:** The Key Design Patterns table's "Strategy Pattern" row described CSV/XML converters that
+  never existed — replaced with a "Transaction Boundary" row for `TransactionService`, and the Extensibility row now
+  credits the enum `AttributeConverter`s (Gap #19)
+- **`AGENTS.md`:** The 3-tier test rule named four services — it now names all five, including `TransactionService`,
+  and records its integration test's deliberate lack of `@Transactional` (Gap #20)
+- **`ARCHITECTURE.md`:** The overview and request-flow diagrams now route writes through `TransactionService`, the
+  bulk-import flows describe saving every row in one transaction, the stale "removed pending a rebuild" note is gone,
+  and the repositories' tree comment and examples match their real wiring and queries (Gap #21)
+- **`AGENTS.md`:** Expanded HPSC as "Handgun and Practical Shooting Club" — now "Hartbeespoortdam Practical Shooting
+  Club", matching every other source (Gap #22)
+- **`HISTORY.md`:** Dropped the Short-term roadmap's `Competitor.homeClub` backfill — no column reliably identifies a
+  competitor's home club, so it's closed as not applicable (Gap #23) — and narrowed the test-coverage bullet to the
+  entity-level unit tests still missing
+- **`README.md`:** The Testing section claimed domain-entity unit tests and repository tests that didn't exist — it
+  now describes the suite as it is, including the new repository integration tests (Gap #24)
 
 ### 🧾 [8.8.0] - 2026-09-24
 

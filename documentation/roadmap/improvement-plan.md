@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (16):**
+- **✅ Completed (23):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -77,14 +77,22 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — closed v8.6.2
   - #12 Competitor/match "full CRUD" claims have no delete operation behind them — closed v8.8.0
   - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — closed
-    (version pending)
-  - #14 `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — closed (version
-    pending)
+    v8.9.0
+  - #14 `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — closed v8.9.0
   - #15 `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA
-    cascade/`mappedBy` — closed (version pending)
-  - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — closed (version pending)
+    cascade/`mappedBy` — closed v8.9.0
+  - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — closed v8.9.0
   - #17 `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 —
-    closed (version pending)
+    closed v8.9.0
+  - #18 Tech-stack docs advertise XML and Apache Commons support the code never uses — closed v8.9.0
+  - #19 `ARCHITECTURE.md`'s "Strategy Pattern" rows describe converters that don't exist — closed v8.9.0
+  - #20 `AGENTS.md`'s 3-tier service test rule hasn't caught up with `TransactionService` — closed v8.9.0
+  - #21 `ARCHITECTURE.md`'s data-flow and repository descriptions predate `TransactionService` and the delete
+    work — closed v8.9.0
+  - #22 `AGENTS.md` names the club differently from every other source — closed v8.9.0
+  - #23 The `Competitor.homeClub` backfill is a stated goal with no gap tracking it — closed v8.9.0 (not
+    applicable)
+  - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
 - **🟡 Partially Completed (0):** none currently.
 - **⚪ Open (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
@@ -472,7 +480,7 @@ left as is; `ARCHITECTURE.md` gained a note on the reject-not-cascade rule, and
 `standard-rest-conventions.md`'s current-state examples now cover both controllers' full `getAll`/`get`/`create`/
 `update`/`patch`/`delete` sets.
 
-#### 13. Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — ✅ Closed (version pending)
+#### 13. Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — ✅ Closed in v8.9.0
 
 **Evidence:** `.github/workflows/` holds four workflows — `build.yml`, `codeql.yml`, `claude.yml` and
 `claude-code-review.yml` — but `ARCHITECTURE.md`'s "🔬 CI/CD & Quality Gates" table lists only CodeQL (Security
@@ -504,10 +512,9 @@ Review" row for `claude-code-review.yml` (every PR, advisory only) and an "AI As
 Structure tree now describes `.github/workflows/` as "CI/CD, security analysis and automated review".
 `CONTRIBUTING.md`'s summary line and `AGENTS.md`'s pointer to the table were extended to match. The review
 workflow's leftover TypeScript/JavaScript `paths:` template comment was tailored to Java globs rather than dropped,
-keeping the opt-in filter available. Delivered on a `feature/competitor-paid-up` branch, so the closing version is
-filled in at the next release-prep pass.
+keeping the opt-in filter available. Shipped in v8.9.0.
 
-#### 14. `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — ✅ Closed (version pending)
+#### 14. `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — ✅ Closed in v8.9.0
 
 **Evidence:** `documentation/recommendations/flyway-migration-versioning.md`'s "🔍 Current State in This Codebase"
 table lists only `V7_0_0__create_schema.sql` through `V7_3_0__seed_club_data.sql`. `src/main/resources/db/migration/`
@@ -531,11 +538,10 @@ five versions behind again.
 step 5 was added directly to this document's own "🔢 Choosing the Next Version" section, instructing whoever adds
 the next migration to also add its row to the Current State table — the table drifted five migrations behind
 precisely because no step told an author to update it. The five missing rows (`V7_4_0` through `V7_8_0`) were added
-now, with `V7_8_0__add_competitor_paid_up_flags.sql` listed as "Unreleased" since it hasn't shipped yet. Delivered on
-a `feature/competitor-paid-up` branch, not a `release/*` branch, so the closing version is filled in at the next
-release-prep pass rather than guessed here.
+now, with `V7_8_0__add_competitor_paid_up_flags.sql`'s row updated to v8.9.0 at release-prep time. Shipped in
+v8.9.0.
 
-#### 15. `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy` — ✅ Closed (version pending)
+#### 15. `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy` — ✅ Closed in v8.9.0
 
 **Evidence:** `ARCHITECTURE.md:387`'s Quality Attributes table states, under "Data Integrity": "JPA cascade rules,
 bidirectional `mappedBy` declarations, `@Transactional` service methods, custom attribute converters." Two
@@ -566,10 +572,9 @@ and `replaceStages`/`upsertStages` keep the collection in step with the stages t
 stays unidirectional and uncascaded, keeping Gap #12's reject-not-cascade rule for records still referenced by
 results or shooter logs. `ARCHITECTURE.md`'s Persistence Layer paragraph, entity table and "Data Integrity" row now
 all describe exactly that, and its Development Guidelines paragraph points at `CONTRIBUTING.md` for database
-profiles. No Flyway migration was needed, since `mappedBy` adds no column. Delivered on a
-`feature/competitor-paid-up` branch, so the closing version is filled in at the next release-prep pass.
+profiles. No Flyway migration was needed, since `mappedBy` adds no column. Shipped in v8.9.0.
 
-#### 16. `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — ✅ Closed (version pending)
+#### 16. `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — ✅ Closed in v8.9.0
 
 **Evidence:** `CONTRIBUTING.md:101`'s single-test example reads
 `./mvnw test -Dtest=AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`. `AwardControllerTest.java`
@@ -585,10 +590,9 @@ copy-pasting it gets a "no tests found" failure, undermining the exact onboardin
 
 **Outcome:** Delivered as proposed: the single-test example now reads
 `./mvnw test -Dtest=AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`, confirmed to run the one
-existing test. Delivered on a `feature/competitor-paid-up` branch, so the closing version is filled in at the next
-release-prep pass.
+existing test. Shipped in v8.9.0.
 
-#### 17. `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 — ✅ Closed (version pending)
+#### 17. `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 — ✅ Closed in v8.9.0
 
 **Evidence:** `HISTORY.md:2007`'s "🛤️ Future Roadmap Implications" section opens "Based on the evolution to v8.4.0,
 the following areas are identified for future enhancement," and its rolling per-release `### Previously Completed
@@ -616,7 +620,155 @@ summarising that release's Historical Timeline entry, and the opening sentence n
 v8.8.0". Rather than a separate Release Checklist step, the root cause was fixed in place: `AGENTS.md`'s Release
 Checklist step 6 and the `prep-version-release` skill's matching step had listed the Future Roadmap among the
 sections to update only "if the release is significant enough", so both now make this log update unconditional.
-Delivered on a `feature/competitor-paid-up` branch, so the closing version is filled in at the next release-prep pass.
+Shipped in v8.9.0.
+
+#### 18. Tech-stack docs advertise XML and Apache Commons support the code never uses — ✅ Closed in v8.9.0
+
+**Evidence:** `README.md:57` and `ARCHITECTURE.md:41` list "Jackson (JSON, CSV, XML), Apache Commons Lang3" in the
+tech stack, and `AGENTS.md:45` lists "Jackson (JSON/CSV/XML)". `pom.xml` (lines 128–141) declares
+`jackson-dataformat-xml`, `commons-lang3` and `commons-text` — the last hand-pinned to `1.15.0`, added on the
+v8.9.0 branch (commit `8b1d57c`). A grep of `src/` for `org.apache.commons` or `XmlMapper` finds nothing: no class
+imports any of the three.
+
+**Why it matters:** Three unused dependencies widen the attack surface and dependency-update load for nothing — and
+`commons-text`'s manual version pin is exactly the kind of standing override Gap #5 cleared out — while the docs
+describe XML handling and Commons utilities the code doesn't have. `jackson-dataformat-xml` also silently enables
+Spring MVC's XML content negotiation, an undocumented side effect of a dependency nothing uses deliberately.
+
+**Proposed improvement:** Either drop the three dependencies and correct the three tech-stack lines, or — if
+`commons-text` is groundwork for upcoming work — record why each is kept so the next audit doesn't re-flag it.
+
+**Outcome:** Delivered as proposed, dropping all three: `jackson-dataformat-xml`, `commons-lang3` and
+`commons-text` (with its `1.15.0` pin) are gone from `pom.xml`, and the tech-stack lines in `README.md`,
+`ARCHITECTURE.md` and `AGENTS.md` now list Jackson for JSON/CSV only. Nothing in `src/` produced or consumed XML, so
+dropping `jackson-dataformat-xml` removes only the unused XML content negotiation.
+
+#### 19. `ARCHITECTURE.md`'s "Strategy Pattern" rows describe converters that don't exist — ✅ Closed in v8.9.0
+
+**Evidence:** `ARCHITECTURE.md:312`'s Key Design Patterns table reads "Strategy Pattern | CSV/XML converters
+(`converters/` package) handle format variants behind a common interface", and the Quality Attributes table's
+Extensibility row (`:395`) credits "strategy-pattern converters". But the same file's Project Structure tree (`:69`)
+and Custom JPA Attribute Converters table — and the code — show `converters/` holds only seven enum
+`AttributeConverter<…, String>` classes (e.g. `ClubIdentifierConverter`); no CSV/XML converter exists.
+
+**Why it matters:** A reader looking for the "common interface" behind CSV/XML format variants won't find one, and
+the claim contradicts the Custom JPA Converters row directly beneath it, which already describes the package
+accurately.
+
+**Proposed improvement:** Remove the Strategy Pattern row (or reword it to something real) and replace
+"strategy-pattern converters" in the Extensibility row with an accurate description.
+
+**Outcome:** Delivered by replacement rather than rewording: the Key Design Patterns table's "Strategy Pattern"
+row is now a "Transaction Boundary" row describing `TransactionService` — a pattern the code really has — and the
+Extensibility row credits the enum `AttributeConverter`s and their `fromX` lookups instead of "strategy-pattern
+converters".
+
+#### 20. `AGENTS.md`'s 3-tier service test rule hasn't caught up with `TransactionService` — ✅ Closed in v8.9.0
+
+**Evidence:** `AGENTS.md:415`'s Test Conventions state "All four services (`AwardService`, `ImageService`,
+`IpscCompetitorService`, `IpscMatchService`) follow this split; a new service should too." v8.9.0 added a fifth,
+`TransactionService`, tested only by `TransactionServiceImplTest` — there is no `TransactionServiceTest` or
+`TransactionServiceIntegrationTest`, though the IPSC services' integration tests (including new tests run without a
+surrounding transaction) exercise it end to end.
+
+**Why it matters:** The rule's own count is now wrong, and it leaves unclear whether `TransactionService` is a
+deliberate exception or an unfinished split — the next service author can't tell which to follow.
+
+**Proposed improvement:** Either add the missing tiers, or record `TransactionService` as a deliberate exception (a
+commit-only service whose contract is covered through the IPSC services' integration tests) and correct the count.
+
+**Outcome:** Delivered by adding the missing tiers: the public-contract tests moved out of
+`TransactionServiceImplTest` into a new `TransactionServiceTest` (exercised through the interface), leaving the impl
+test with the protected `loadAssociations`/`replaceStages`/`upsertStages` helpers, and a new
+`TransactionServiceIntegrationTest` commits and rolls back against real H2. That integration test is deliberately not
+`@Transactional` — a surrounding test transaction would hide whether `TransactionService` really commits — and cleans
+up its committed data after each test. `AGENTS.md`'s rule now names all five services and records that exception.
+
+#### 21. `ARCHITECTURE.md`'s data-flow and repository descriptions predate `TransactionService` and the delete work — ✅ Closed in v8.9.0
+
+**Evidence:** The Competitor/Match Bulk CSV Import flows (`ARCHITECTURE.md:357–358`, `372–374`) still say each row
+is persisted "via the same `createCompetitor`/`createMatch` logic", although the Service Layer note (`:172–174`)
+and the code (`IpscCompetitorServiceImpl.createCompetitors`, `IpscMatchServiceImpl.createMatches`) now build every
+row first and save them all in one `TransactionService` call. The System Overview (`:121–127`) and Typical
+Request-Response Flow (`:322–331`) diagrams have no `TransactionService` step, although `AGENTS.md`/
+`CONTRIBUTING.md`'s layer diagrams do. The note at `:380–383` still says the CRUD flows "have been removed pending a
+rebuild", though CRUD shipped in v8.0.0. The Project Structure tree (`:84`) says repositories are "IPSC ones wired
+to services, the rest not yet wired", but all eight are now injected — the scoring/shooter-log ones for the
+`existsBy…` delete checks — and the Repositories section's examples (`:230`) name `findAllByClubId`/
+`findAllByCompetitorIdAndFirearmTypeAndPowerFactor`, which nothing calls, rather than the fetch-join queries the
+services depend on.
+
+**Why it matters:** These are the diagrams a new contributor reads to learn how a write reaches the database, and
+they now describe a per-row, service-level persistence path that no longer exists. Gap #6's own Evidence quotes the
+"not yet wired" comment as proof of that gap, so it has drifted too.
+
+**Proposed improvement:** Redraw the overview and request flows through `TransactionService`, reword the bulk-import
+flows to "builds each row, then saves all rows in one transaction", drop the stale removed-flows note, describe the
+current repository wiring with the fetch-join and `existsBy…` queries as examples, and refresh Gap #6's Evidence to
+match.
+
+**Outcome:** Delivered as proposed. `ARCHITECTURE.md`'s overview and Typical Request-Response Flow diagrams now
+route writes through `TransactionService` (reads go straight to repositories); both bulk-import flows describe
+building every row and then saving them in one `saveCompetitors`/`saveMatches` transaction; the stale
+"removed pending a rebuild" note is gone; the Project Structure tree's `repositories/` comment reads "one per
+entity"; and the Repositories section's examples are now the fetch-join and `existsBy…` queries the services rely
+on. Gap #6's Evidence gained a note that its quoted "not yet wired" comment has changed, without altering the gap
+itself.
+
+#### 22. `AGENTS.md` names the club differently from every other source — ✅ Closed in v8.9.0
+
+**Evidence:** `AGENTS.md:28` introduces the project as serving the "Handgun and Practical Shooting Club (HPSC)",
+while `README.md` (lines 3 and 24), `ARCHITECTURE.md:3`, `LICENSE.md:3` and `ClubIdentifier`'s own Javadoc all say
+"Hartbeespoortdam Practical Shooting Club".
+
+**Why it matters:** `AGENTS.md` declares itself the project's ultimate source of truth, so its one factual error
+about what "HPSC" stands for is the version AI agents are most likely to repeat.
+
+**Proposed improvement:** Correct `AGENTS.md:28` to "Hartbeespoortdam Practical Shooting Club".
+
+**Outcome:** Delivered as proposed: `AGENTS.md`'s Project Overview now expands HPSC as the "Hartbeespoortdam
+Practical Shooting Club".
+
+#### 23. The `Competitor.homeClub` backfill is a stated goal with no gap tracking it — ✅ Closed as not applicable in v8.9.0
+
+**Evidence:** `HISTORY.md`'s Future Roadmap Implications Short-term list includes "Backfill `Competitor.homeClub` for
+existing competitors — the `club` table itself is already seeded (v8.4.0, `V7_3_0__seed_club_data.sql`)", and Gap
+#11's Outcome confirms "no migration or service backfills `homeClub`". None of `V7_0_0` through `V7_8_0` does so.
+
+**Why it matters:** Competitors imported before `homeClub` existed carry no home club, and since v8.4.0 a competitor's
+club number is only kept when their home club is HPSC — so those records can't be classified correctly until the
+backfill happens, yet nothing here tracks it.
+
+**Proposed improvement:** Decide whether the backfill is still wanted. If so, add a data migration (or a one-off
+service operation) that derives `home_club_id` from existing data; if not, drop the bullet from `HISTORY.md`.
+
+**Outcome:** Closed as not applicable. No existing column reliably identifies a competitor's home club — a
+club number is only kept for HPSC members — so a backfill would have to guess. Home clubs are instead set through
+the competitor update/patch endpoints or a CSV re-import, and the backfill bullet was removed from `HISTORY.md`'s
+Short-term roadmap.
+
+#### 24. Entity and repository test coverage is claimed but doesn't exist — ✅ Closed in v8.9.0
+
+**Evidence:** `README.md`'s Testing section claims unit tests for "Domain entities" (line 145), "Domain entities and
+JPA relationships" (line 151) and "Repository operations" (line 155), and `HISTORY.md`'s Short-term list still
+plans to "Add entity, repository and integration test coverage for the promoted/extended domain model". There is no
+`src/test/java/za/co/hpsc/web/domain/` or `repositories/` directory: repositories are exercised only indirectly,
+through the IPSC services' integration tests.
+
+**Why it matters:** The README overstates what the suite verifies. The persistence behaviour v8.9.0 made load-bearing
+— `IpscMatch.stages`' cascade and orphan removal, and the fetch-join queries the read endpoints now depend on to avoid
+`LazyInitializationException` — is only tested as a side effect of service tests.
+
+**Proposed improvement:** Add `@DataJpaTest`-style repository/entity tests for the cascade, the fetch-join queries
+and the `existsBy…` checks, or reword `README.md`'s Testing section to describe the coverage that actually exists.
+
+**Outcome:** Delivered both halves. New Spring-context integration tests under `src/test/.../repositories/`
+cover `IpscMatchRepository`'s and `CompetitorRepository`'s fetch-join queries (moved there from the service
+integration tests), `IpscMatch.stages`' cascade persist, orphan removal and cascade delete, the email element
+collection's delete, and every `existsBy…` query behind the reject-not-cascade deletes, with a small
+`ScoringFixtures` helper for the scoring/shooter-log records. `README.md`'s Testing section now describes the suite
+as it is, without claiming domain-entity unit tests, and `HISTORY.md`'s Short-term roadmap narrows the remaining
+work to entity-level unit tests.
 
 ### 🟡 Partially Completed
 
@@ -635,7 +787,9 @@ wired"; its Model Layer note calls `MatchOverallScoresRequest`/`MatchStageScores
 consumed by any controller". `README.md` and `CONTRIBUTING.md` independently restate the same gap, and
 `documentation/history/RELEASE_NOTES_v8.1.0.md`'s Known Issues/Future Enhancements carry it forward from v8.0.0,
 explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
-"ready" for wiring.
+"ready" for wiring. (As of v8.9.0 that `repositories/` comment no longer says "not yet wired": since v8.8.0 the
+scoring/shooter-log repositories are injected for the delete-time `existsBy…` checks, but still no service or
+controller operates on them, so the gap itself stands.)
 
 **Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
 controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
@@ -654,8 +808,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | No items currently scoped — #13 to #17, this phase's previous occupants, all closed (version pending)                                                           |
-| **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
+| **Next**    | No items currently scoped — #13 to #22, this phase's previous occupants, closed in v8.9.0                                                                       |
+| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                       |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
 ---
@@ -690,18 +844,31 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 - ✅ Met in v8.8.0: `IpscCompetitorController`/`IpscMatchController` expose tested `DELETE` endpoints that
   refuse records still referenced by scoring or shooter-log rows, making the "CRUD" claims in
   `README.md`/`ARCHITECTURE.md` accurate and closing Gap #12.
-- ✅ Met (version pending): `ARCHITECTURE.md`'s CI/CD & Quality Gates table (and `CONTRIBUTING.md`'s summary of
+- ✅ Met in v8.9.0: `ARCHITECTURE.md`'s CI/CD & Quality Gates table (and `CONTRIBUTING.md`'s summary of
   it) lists every workflow in `.github/workflows/`, including the Claude Code review and assistant workflows,
   closing Gap #13.
-- ✅ Met (version pending): `flyway-migration-versioning.md`'s Current State table lists every migration through
+- ✅ Met in v8.9.0: `flyway-migration-versioning.md`'s Current State table lists every migration through
   `V7_8_0`, and a new step in "🔢 Choosing the Next Version" keeps it from drifting again, closing Gap #14.
-- ✅ Met (version pending): `ARCHITECTURE.md`'s Quality Attributes table and its Persistence Layer section agree on
+- ✅ Met in v8.9.0: `ARCHITECTURE.md`'s Quality Attributes table and its Persistence Layer section agree on
   cascade/`mappedBy` — both now describe `IpscMatch.stages` as the one cascaded, bidirectional relationship — and its
   database-profiles cross-reference points at `CONTRIBUTING.md`, closing Gap #15.
-- ✅ Met (version pending): `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing
+- ✅ Met in v8.9.0: `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing
   Gap #16.
-- ✅ Met (version pending): `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log has an entry for
+- ✅ Met in v8.9.0: `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log has an entry for
   every shipped release, and the Release Checklist now updates it unconditionally, closing Gap #17.
+- ✅ Met in v8.9.0: the tech stack in `README.md`/`ARCHITECTURE.md`/`AGENTS.md` matches the dependencies the code
+  actually uses, with no unused dependency left pinned in `pom.xml`, closing Gap #18.
+- ✅ Met in v8.9.0: `ARCHITECTURE.md` describes the `converters/` package only as the enum `AttributeConverter`s it
+  holds, closing Gap #19.
+- ✅ Met in v8.9.0: `AGENTS.md`'s 3-tier test rule names every service, or records `TransactionService` as a deliberate
+  exception, closing Gap #20.
+- ✅ Met in v8.9.0: `ARCHITECTURE.md`'s data-flow diagrams and repository descriptions show writes committed through
+  `TransactionService` and the repositories' real wiring, closing Gap #21.
+- ✅ Met in v8.9.0: `AGENTS.md` expands "HPSC" the same way as every other source, closing Gap #22.
+- ✅ Met in v8.9.0: existing competitors' `homeClub` is backfilled, or the backfill is explicitly dropped from
+  `HISTORY.md`'s roadmap, closing Gap #23.
+- ✅ Met in v8.9.0: the domain model's cascade, fetch-join queries and `existsBy…` checks have direct repository/entity
+  tests, or `README.md` no longer claims them, closing Gap #24.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

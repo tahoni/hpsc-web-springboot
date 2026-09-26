@@ -1,8 +1,6 @@
 package za.co.hpsc.web.services;
 
-import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -12,7 +10,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
-import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
@@ -59,9 +56,6 @@ class IpscCompetitorServiceIntegrationTest {
 
     @Autowired
     private MatchCompetitorRepository matchCompetitorRepository;
-
-    @Autowired
-    private EntityManager entityManager;
 
     // createCompetitor()
     @Test
@@ -704,54 +698,6 @@ class IpscCompetitorServiceIntegrationTest {
             }
             clubRepository.findByName("Test Club").ifPresent(clubRepository::delete);
         }
-    }
-
-    // CompetitorRepository.findByIdWithHomeClubAndEmailAddresses()
-    @Test
-    void testFindByIdWithHomeClubAndEmailAddresses_whenCompetitorExists_thenBothAreFetchedWithCompetitor() {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        CompetitorRequest request = validRequest("HPSC-001");
-        request.setHomeClub("Test Club");
-        request.setEmailAddresses(List.of("jane.doe@example.com", "jane@example.org"));
-        CompetitorResponse created = ipscCompetitorService.createCompetitor(request);
-        entityManager.flush();
-        entityManager.clear();
-
-        // Act
-        Competitor competitor = competitorRepository
-                .findByIdWithHomeClubAndEmailAddresses(created.getCompetitorId()).orElseThrow();
-
-        // Assert
-        assertTrue(Hibernate.isInitialized(competitor.getHomeClub()));
-        assertTrue(Hibernate.isInitialized(competitor.getEmailAddresses()));
-        assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, competitor.getHomeClub().getIdentifier());
-        assertEquals(List.of("jane.doe@example.com", "jane@example.org"), competitor.getEmailAddresses());
-    }
-
-    // CompetitorRepository.findAllWithHomeClubAndEmailAddresses()
-    @Test
-    void testFindAllWithHomeClubAndEmailAddresses_whenCompetitorsExist_thenEachIsReturnedOnceWithBothFetched() {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        CompetitorRequest firstRequest = validRequest("HPSC-001");
-        firstRequest.setHomeClub("Test Club");
-        firstRequest.setEmailAddresses(List.of("jane.doe@example.com", "jane@example.org"));
-        ipscCompetitorService.createCompetitor(firstRequest);
-        CompetitorRequest secondRequest = validRequest("HPSC-002");
-        secondRequest.setFirstName("John");
-        ipscCompetitorService.createCompetitor(secondRequest);
-        entityManager.flush();
-        entityManager.clear();
-
-        // Act
-        List<Competitor> competitors = competitorRepository.findAllWithHomeClubAndEmailAddresses();
-
-        // Assert
-        assertEquals(2, competitors.size());
-        assertTrue(competitors.stream().allMatch(competitor ->
-                Hibernate.isInitialized(competitor.getHomeClub())
-                        && Hibernate.isInitialized(competitor.getEmailAddresses())));
     }
 
     // Helpers
