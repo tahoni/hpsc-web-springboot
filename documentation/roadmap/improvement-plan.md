@@ -48,7 +48,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                |
 | `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                  |
 | `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                                        |
-| `CONTRIBUTING.md`, `application.properties`         | Three distinct runtime profiles (none/prod, `dev`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors                                                                                                                                                                                                           |
+| `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                |
 
 ---
 
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (24):**
+- **✅ Completed (25):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -94,6 +94,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
     applicable)
   - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
   - #25 Entity-level unit tests are a stated goal with no gap tracking it — closed v8.9.1 (`IpscMatchTest` only)
+  - #27 Database-profile docs promise a setup the properties files don't provide — closed v8.9.1 (docs only)
 - **🟡 Partially Completed (1):**
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.9.1 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
@@ -804,6 +805,40 @@ seven entities have no hand-written behaviour and are left to the repository int
 bullet was dropped from `HISTORY.md`'s Short-term list, `ARCHITECTURE.md`'s test tree gained a `domain/` entry
 and `README.md`'s unit-test categories now include entities.
 
+#### 27. Database-profile docs promise a setup the properties files don't provide — ✅ Closed in v8.9.1
+
+**Evidence:** `AGENTS.md:72`'s Build & Run Commands say the no-profile run "uses application.properties; requires
+MYSQL_USER and MYSQL_PASSWORD env vars", and `CONTRIBUTING.md:77`'s Database Profiles table gives the `(none / prod)`
+profile as "MySQL — env vars `MYSQL_USER` / `MYSQL_PASSWORD`". But `application.properties` sets no
+`spring.datasource.url` at all, so a run with no profile can't connect unless a URL is supplied some other way (e.g.
+`SPRING_DATASOURCE_URL`), which no doc mentions. `CHANGELOG.md`'s 8.4.0 entry already recorded this ("has no
+`spring.datasource.url` outside a profile"), but only fixed `README.md`'s steps by switching them to `dev`. Separately,
+`README.md:98` and `CONTRIBUTING.md:48` say credentials come from `MYSQL_USER`/`MYSQL_PASSWORD` "regardless of
+profile", yet `application-local.properties` hard-codes `spring.datasource.username=hpsc_dev` and reads
+`${MYSQL_LOCAL_PASSWORD}` instead. `CONTRIBUTING.md:67`'s note acknowledges the `local` profile but not its different
+credentials, and the Database Profiles table has no `local` row.
+
+**Why it matters:** The no-profile row is the one that describes production, and following it as written produces a
+startup failure rather than a running app. The "regardless of profile" claim is harmless for `dev`, but a contributor
+who does need `local` will set the wrong variables.
+
+**Proposed improvement:** State in `AGENTS.md`'s run command and `CONTRIBUTING.md`'s `(none / prod)` row that the
+datasource URL must be supplied externally (e.g. `SPRING_DATASOURCE_URL`), or add a `${MYSQL_URL}`-style placeholder to
+`application.properties` and document that variable instead. Qualify the "regardless of profile" wording in
+`README.md`/`CONTRIBUTING.md` (except `test` and `local`), and either add a `local` row to the Database Profiles table
+or mention its `hpsc_dev` user and `MYSQL_LOCAL_PASSWORD` variable in the existing note.
+
+**Outcome:** Fixed in the docs, plus a new `prod` profile. Adding a required `${MYSQL_URL}` placeholder to
+`application.properties` would change what an existing no-profile deployment must supply — a breaking configuration
+change under `AGENTS.md`'s Semantic Versioning rules — so the no-profile run keeps taking its URL from outside
+(e.g. `SPRING_DATASOURCE_URL`), and `AGENTS.md`'s run command now says so. Alongside it, a new
+`application-prod.properties` gives production its own profile (`localhost:3306/hpsc_prod`, still reading
+`MYSQL_USER`/`MYSQL_PASSWORD`), with a matching run command in `AGENTS.md` and `ARCHITECTURE.md`'s Database (prod) row
+now naming it. `CONTRIBUTING.md`'s Database Profiles table lists every profile's connection settings, splitting
+`(none / prod)` into `(none)` and `prod` rows and adding a `local` row (user `hpsc_dev`, `MYSQL_LOCAL_PASSWORD`), which
+its `local` note repeats. `README.md`'s and `CONTRIBUTING.md`'s credentials wording now excludes `local` as well as
+`test`.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -868,7 +903,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
-| **Next**    | No items currently scoped — #25 closed in v8.9.1                                                                                                                                                                                                   |
+| **Next**    | No items currently scoped — #25 and #27 closed in v8.9.1                                                                                                                                                                                           |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -931,6 +966,9 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   tests, or `README.md` no longer claims them, closing Gap #24.
 - ✅ Met in v8.9.1: entity-level unit tests exist for the domain model's own behaviour (`IpscMatchTest`), and the
   goal is dropped from `HISTORY.md`'s roadmap, closing Gap #25.
+- ✅ Met in v8.9.1: `AGENTS.md`, `README.md` and `CONTRIBUTING.md` describe every database profile's connection
+  settings as the properties files actually configure them, so the documented no-profile run starts, closing
+  Gap #27.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s

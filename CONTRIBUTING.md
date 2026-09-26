@@ -28,7 +28,7 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 - **Java SDK** — see `<java.version>` in `pom.xml` for the required version
 - **Maven** — use the provided `./mvnw` (or `mvnw.cmd` on Windows) wrapper; it pins its own version automatically, so a
   local Maven installation isn't required
-- **MySQL** — any current version, for the `dev` and production profiles (the `test` profile needs no external
+- **MySQL** — any current version, for the `dev`, `prod` and `local` profiles (the `test` profile needs no external
   database — see [🗄️ Database Profiles](#-database-profiles))
 - **Git**
 
@@ -44,8 +44,9 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 
 2. **Create a local MySQL database**, e.g. `hpsc_dev`, and a user with rights to it.
 
-3. **Set the required environment variables.** The application always reads credentials from `MYSQL_USER` /
-   `MYSQL_PASSWORD`, regardless of profile (except `test`, which needs none):
+3. **Set the required environment variables.** The application reads credentials from `MYSQL_USER` /
+   `MYSQL_PASSWORD` for every profile except `test`, which needs none, and `local` (see
+   [🗄️ Database Profiles](#-database-profiles)):
    ```bash
    export MYSQL_USER=your_username
    export MYSQL_PASSWORD=your_password
@@ -66,17 +67,20 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 
 > An `application-local.properties` profile also exists in the repository, pre-configured against a specific hand-built
 > database baseline from before Flyway was introduced. It isn't a generic onboarding path — use `dev` unless you
-> specifically know you need `local`.
+> specifically know you need `local`. It connects as the `hpsc_dev` user and reads its password from
+> `MYSQL_LOCAL_PASSWORD` rather than `MYSQL_USER`/`MYSQL_PASSWORD`.
 
 ---
 
 ## 🗄️ Database Profiles
 
-| Profile       | Database                                         | DDL                        |
-|---------------|--------------------------------------------------|----------------------------|
-| (none / prod) | MySQL — env vars `MYSQL_USER` / `MYSQL_PASSWORD` | `none` (Flyway migrations) |
-| `dev`         | MySQL `localhost:3306/hpsc_dev`                  | `none` (Flyway migrations) |
-| `test`        | H2 in-memory `testdb`                            | `create-drop` (auto)       |
+| Profile | Database                                                                                                 | DDL                                              |
+|---------|----------------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| (none)  | MySQL — URL supplied externally (e.g. `SPRING_DATASOURCE_URL`); env vars `MYSQL_USER` / `MYSQL_PASSWORD` | `none` (Flyway migrations)                       |
+| `prod`  | MySQL `localhost:3306/hpsc_prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`                               | `none` (Flyway migrations)                       |
+| `dev`   | MySQL `localhost:3306/hpsc_dev`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`                                | `none` (Flyway migrations)                       |
+| `local` | MySQL `localhost:3306/hpsc_dev` as user `hpsc_dev`; env var `MYSQL_LOCAL_PASSWORD`                       | `none` (Flyway migrations, baselined at `7.0.0`) |
+| `test`  | H2 in-memory `testdb`                                                                                    | `create-drop` (auto)                             |
 
 Schema changes are managed by Flyway (`src/main/resources/db/migration/`) for every profile except `test`, where
 Hibernate generates the schema directly from the entities on each run. When you add or change a JPA entity, add a

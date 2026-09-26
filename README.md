@@ -95,7 +95,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
    ```
 
 2. **Create a local MySQL database** (e.g. `hpsc_dev`), then export the credentials the application always reads
-   from the environment, regardless of profile:
+   from the environment (every profile except `test`, which needs none, and `local` — see `CONTRIBUTING.md`):
    ```bash
    export MYSQL_USER=your_username
    export MYSQL_PASSWORD=your_password

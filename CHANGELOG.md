@@ -62,6 +62,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Configuration
+
+- **`application-prod.properties`:** New `prod` profile pointing production at `localhost:3306/hpsc_prod`, still
+  reading `MYSQL_USER`/`MYSQL_PASSWORD` — the no-profile run is unchanged and still takes its URL from outside;
+  documented in `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`
+
 ##### Tests
 
 - **`IpscMatchTest`:** New entity unit test guarding `IpscMatch.stages`' exclusion from Lombok's `toString`/`equals`/
@@ -77,6 +83,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   pin since v8.3.1, although the plan said no overrides remained (#26). "🌳 At a Glance", "🛤️ Roadmap" **Next** and
   **Ongoing** rows, "☑️ Success Criteria" and the "⚙️ Goals & Constraints" `pom.xml` row updated to match, and that
   table's stale ~98.4% coverage figure replaced with v8.9.0's measured 98.77%
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #27 from a second `update-improvement-plan-gaps`
+  sweep — the database-profile docs promised a setup the properties files don't provide — closed within this release
+  (see Fixed)
 
 #### 🔄 Changed
 
@@ -104,6 +113,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   categories now include entities
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.9.1 and moved to ✅ Completed, with
   "🌳 At a Glance", the "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`:** The database-profile docs said a run with no profile needs
+  only `MYSQL_USER`/`MYSQL_PASSWORD`, but `application.properties` sets no `spring.datasource.url`, so
+  the URL must be supplied externally (e.g. `SPRING_DATASOURCE_URL`) — now stated in `AGENTS.md`'s run command and
+  `CONTRIBUTING.md`'s Database Profiles table. The "regardless of profile" credentials wording now excludes `local`,
+  which connects as `hpsc_dev` with `MYSQL_LOCAL_PASSWORD`, and `CONTRIBUTING.md`'s Database Profiles table gains
+  `local` and `prod` rows. Closes `improvement-plan.md`'s Gap #27
 
 ### 🧾 [8.9.0] - 2026-09-26
 

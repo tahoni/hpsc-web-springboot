@@ -273,6 +273,19 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
   — did both halves: added `IpscMatchTest` and dropped the `HISTORY.md` bullet
 
+**Database-profile docs** *(improvement-plan.md → Gap #27)* — ✅ Closed in v8.9.1
+
+- [x] Document that the no-profile (production) run needs its datasource URL supplied externally (e.g.
+  `SPRING_DATASOURCE_URL`) in `AGENTS.md`'s run command and `CONTRIBUTING.md`'s `(none / prod)` row — or add a
+  `${MYSQL_URL}`-style placeholder to `application.properties` and document that variable instead — documented the
+  external URL rather than adding a required placeholder (a breaking configuration change), and added a separate
+  `application-prod.properties` profile (`hpsc_prod`) with its own `CONTRIBUTING.md` row and `AGENTS.md` run
+  command
+- [x] Qualify `README.md`'s/`CONTRIBUTING.md`'s "regardless of profile" credentials wording to exclude `local` as well
+  as `test`
+- [x] Add a `local` row to `CONTRIBUTING.md`'s Database Profiles table, or name its `hpsc_dev` user and
+  `MYSQL_LOCAL_PASSWORD` variable in the existing note — did both
+
 ---
 
 ## 🟡 Partially Completed

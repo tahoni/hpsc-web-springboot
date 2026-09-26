@@ -69,11 +69,15 @@ unrelated app release literally named v7.2.0.
 # Build
 ./mvnw clean install
 
-# Run (uses application.properties; requires MYSQL_USER and MYSQL_PASSWORD env vars)
+# Run (uses application.properties; requires MYSQL_USER and MYSQL_PASSWORD env vars, plus the datasource URL
+# supplied externally, e.g. SPRING_DATASOURCE_URL, since application.properties sets none)
 ./mvnw spring-boot:run
 
-# Run with dev profile (local MySQL at localhost:3306/hpsc_dev)
+# Run with dev profile (local MySQL at localhost:3306/hpsc_dev; still reads MYSQL_USER and MYSQL_PASSWORD)
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Run with prod profile (MySQL at localhost:3306/hpsc_prod; still reads MYSQL_USER and MYSQL_PASSWORD)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
 
 # All tests (uses H2 in-memory — no external DB needed)
 ./mvnw test
