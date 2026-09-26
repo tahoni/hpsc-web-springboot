@@ -71,6 +71,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   built-in one used JDK 21 and ignored the wrapper) on push to `main`/`develop` or manual dispatch; the built-in
   submission must be turned off in the repository's Code security settings. Documented in `ARCHITECTURE.md`'s CI/CD
   & Quality Gates table and `CONTRIBUTING.md`
+- **`.github/dependabot.yml`:** New Dependabot version-update configuration — weekly Maven and GitHub Actions
+  updates, opened against `develop` per the GitFlow branching model, with Maven minor/patch bumps and all Actions
+  bumps each grouped into one PR. Security updates are configured separately and still target `main`. Added to
+  `ARCHITECTURE.md`'s Project Structure tree
 
 ### 🧾 [8.10.0] - 2026-09-26
 

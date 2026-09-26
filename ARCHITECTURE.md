@@ -54,6 +54,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.claude/
 │   └───skills/                 # Claude Code skill definitions, one SKILL.md per skill
 ├───.github/
+│   ├───dependabot.yml          # Dependabot version updates (Maven, GitHub Actions) targeting develop
 │   └───workflows/              # GitHub Actions — CI/CD, security analysis, dependency submission and automated review
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
