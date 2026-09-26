@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
@@ -156,6 +157,8 @@ class IpscCompetitorServiceIntegrationTest {
         request.setCompetitorNumber("C-1");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
+        request.setPaidUpSapsa(true);
+        request.setPaidUpClub(true);
         request.setEmailAddresses(List.of("jane.doe@example.com"));
 
         // Act
@@ -175,7 +178,24 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, response.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, response.getPaidUpClub());
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
+    }
+
+    @Test
+    void testCreateCompetitor_whenPaidUpFlagsAreOmitted_thenPersistsThemAsNull() {
+        // Arrange
+        CompetitorRequest request = validRequest("HPSC-001");
+
+        // Act
+        CompetitorResponse response = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitor(request));
+        CompetitorResponse fetched = assertDoesNotThrow(
+                () -> ipscCompetitorService.getCompetitor(response.getCompetitorId()));
+
+        // Assert
+        assertNull(fetched.getPaidUpSapsa());
+        assertNull(fetched.getPaidUpClub());
     }
 
     @Test
@@ -196,7 +216,7 @@ class IpscCompetitorServiceIntegrationTest {
 
     // createCompetitors()
     private static final String CSV_HEADER =
-            "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses\n";
+            "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
 
     @Test
     void testCreateCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
@@ -265,6 +285,22 @@ class IpscCompetitorServiceIntegrationTest {
         // Assert
         assertNotNull(holder);
         assertTrue(holder.getCompetitors().isEmpty());
+    }
+
+    @Test
+    void testCreateCompetitors_whenPaidUpColumnsProvided_thenPersistsPaidUpFlags() {
+        // Arrange
+        String csvData = CSV_HEADER + "Jane,Doe,,,,,,,,HPSC-001,,,,true,false\n";
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, holder.getCompetitors().size());
+        CompetitorResponse fetched = assertDoesNotThrow(
+                () -> ipscCompetitorService.getCompetitor(holder.getCompetitors().getFirst().getCompetitorId()));
+        assertEquals(Boolean.TRUE, fetched.getPaidUpSapsa());
+        assertEquals(Boolean.FALSE, fetched.getPaidUpClub());
     }
 
     @Test
@@ -623,6 +659,45 @@ class IpscCompetitorServiceIntegrationTest {
 
         // Assert
         assertNull(updated.getHomeClub());
+    }
+
+    // Without a surrounding transaction
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void testCompetitorLifecycle_whenNoTransactionIsActive_thenEachWriteIsCommittedAndReadableAfterwards() {
+        // Each service call below runs without this test's usual rolled-back transaction, so every
+        // write must be committed by TransactionService and every read must work on its own.
+        Long competitorId = null;
+        try {
+            // Arrange
+            createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+            CompetitorRequest request = validRequest("HPSC-001");
+            request.setHomeClub("Test Club");
+            request.setEmailAddresses(List.of("jane.doe@example.com"));
+
+            // Act & Assert - create, then read back in a separate call
+            competitorId = ipscCompetitorService.createCompetitor(request).getCompetitorId();
+            CompetitorResponse fetched = ipscCompetitorService.getCompetitor(competitorId);
+            assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, fetched.getHomeClub());
+            assertEquals(List.of("jane.doe@example.com"), fetched.getEmailAddresses());
+
+            // Act & Assert - patch the email addresses
+            CompetitorRequest patch = new CompetitorRequest();
+            patch.setEmailAddresses(List.of("jane@example.org", "j.doe@example.net"));
+            ipscCompetitorService.patchCompetitor(competitorId, patch);
+            assertEquals(List.of("jane@example.org", "j.doe@example.net"),
+                    ipscCompetitorService.getCompetitor(competitorId).getEmailAddresses());
+
+            // Act & Assert - delete
+            ipscCompetitorService.deleteCompetitor(competitorId);
+            assertFalse(competitorRepository.existsById(competitorId));
+            competitorId = null;
+        } finally {
+            if (competitorId != null) {
+                ipscCompetitorService.deleteCompetitor(competitorId);
+            }
+            clubRepository.findByName("Test Club").ifPresent(clubRepository::delete);
+        }
     }
 
     // Helpers

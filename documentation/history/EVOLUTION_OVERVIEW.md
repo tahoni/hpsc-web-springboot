@@ -2001,7 +2001,7 @@ A domain correction release: adds a nullable `url` field to `IpscMatch`, correct
 **Duration:** September 23, 2026
 
 A documentation-only patch release: splits `HISTORY.md`'s largest section out into this file, regroups the
-per-version archive into major-version subdirectories, and updates every tool/doc that reads or writes those
+per-version archive into major-version subdirectories and updates every tool/doc that reads or writes those
 paths — no domain-model, API or test-behaviour change.
 
 **Key Accomplishments:**
@@ -2034,7 +2034,7 @@ paths — no domain-model, API or test-behaviour change.
 
 **Architecture Highlights:**
 
-- No architectural change — this release reorganizes documentation structure only
+- No architectural change — this release reorganises documentation structure only
 
 **Technical Focus:**
 
@@ -2090,7 +2090,7 @@ test-behaviour change.
   references
 - `improvement-plan.md`/`improvement-plan-tasks.md` synced with the shared project template's structure: project
   title, a note on the four kinds of gap an audit looks for, a fuller Related Documentation list, a note on
-  annotating checked task items, and no more hard-coded gap count in the tasks file's intro
+  annotating checked task items and no more hard-coded gap count in the tasks file's intro
 - The rest of `AGENTS.md`'s icon registry then followed: restructured to mirror the template's core table, with
   its backend / API service extension set adopted as this project's own and its component-based frontend set kept
   reserved, and every live heading realigned to match — Documentation Conventions (`✍️`), Documentation File Map
@@ -2262,6 +2262,74 @@ domains' CRUD set, with a deletion rule that refuses records still referenced by
   `IpscCompetitorControllerTest`, `IpscMatchControllerTest`, `IpscCompetitorServiceTest`, `IpscMatchServiceTest`,
   `IpscCompetitorServiceIntegrationTest` and `IpscMatchServiceIntegrationTest` — covering the delete, not-found and
   reject paths (including a reference added before the flush), with H2-backed integration tests
+
+---
+
+### Phase 35: Competitor Paid-Up Flags, Explicit Transaction Boundary & Lazy Loading (v8.9.0)
+
+**Duration:** September 26, 2026
+
+A minor release: competitors gain SAPSA and club paid-up flags, and the persistence layer is reworked so that lazy
+associations are loaded through fetch-join queries and every competitor/match write is committed by a dedicated
+`TransactionService` — alongside a release-prep audit that closed every open documentation-accuracy gap.
+
+**Competitor Paid-Up Flags**
+
+- New nullable `Competitor.paidUpSapsa`/`paidUpClub` `Boolean` columns via `V7_8_0__add_competitor_paid_up_flags.sql`
+- `CompetitorRequest`, `CompetitorRequestForCSV` and `CompetitorResponse` gain matching fields; an omitted flag is
+  stored as `null` on create/update and left unchanged on patch
+- The competitor CSV bulk import now requires trailing `PaidUpSapsa`/`PaidUpClub` header columns — a client-facing
+  migration for existing CSV files
+
+**Lazy Loading & Fetch-Join Queries**
+
+- Every `@ManyToOne` association switched from `FetchType.EAGER` back to `FetchType.LAZY`, reversing v8.7.0
+- New `left join fetch` queries on `IpscMatchRepository` and `CompetitorRepository` load a match's club and a
+  competitor's home club and email addresses, since `spring.jpa.open-in-view` is disabled
+
+**Explicit Transaction Boundary**
+
+- New `TransactionService`/`TransactionServiceImpl` commits competitor and match saves and deletes in explicit
+  `TransactionTemplate` transactions, returning entities with their response associations loaded
+- `IpscCompetitorServiceImpl`/`IpscMatchServiceImpl` drop `@Transactional`; bulk CSV imports build every row first,
+  then save all rows in one transaction
+- `IpscMatch` gains a cascaded, orphan-removing `stages` collection; stage replace/upsert logic moves into
+  `TransactionServiceImpl`, and match responses list stages by stage number
+
+**Dependencies**
+
+- Unused `jackson-dataformat-xml` and `commons-lang3` dependencies removed
+
+**Documentation & Tooling**
+
+- `ARCHITECTURE.md`'s data flows, design patterns, repository descriptions and Quality Attributes now describe the
+  transaction boundary and cascade; `AGENTS.md`'s club name and 3-tier test rule corrected
+- `AGENTS.md`'s Release Checklist and the `prep-version-release` skill make the Future Roadmap Implications log and
+  "Major Version Goals" mandatory for every release, and both were backfilled through v8.8.0
+
+**Roadmap**
+
+- Gaps #13–#17 closed, and new Gaps #18–#24 recorded and closed by this release's own audit (#23 as not applicable)
+  — only Gap #6, the scoring/shooter-log layer, remains open
+
+**Build & Metadata**
+
+- Project version bumped to 8.9.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Architecture Highlights:**
+
+- A single, explicit write path: services validate and build, `TransactionService` commits
+- `IpscMatch.stages` is the only cascaded relationship; everything else stays reject-not-cascade
+
+**Technical Focus:**
+
+- Making transaction boundaries and association loading explicit and testable
+- Clearing documentation drift across the core project documents
+
+**Test Coverage:**
+
+- 63 new tests (903 → 966): `TransactionService`'s full 3-tier split, six repository integration test classes and
+  service integration tests run without a surrounding transaction; coverage 98.77%/99.09% line/branch
 
 ---
 

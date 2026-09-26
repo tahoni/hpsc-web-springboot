@@ -37,8 +37,10 @@ public interface IpscCompetitorService {
      * Creates a batch of new IPSC competitors from CSV data.
      *
      * <p>
-     * Each row is created independently via {@link #createCompetitor(CompetitorRequest)}, so the
-     * same validation, gender resolution and home club resolution rules apply per row.
+     * Each row is validated and built by the same rules as
+     * {@link #createCompetitor(CompetitorRequest)} (validation, gender resolution and home club
+     * resolution). Every row is checked before any is saved, and all are then saved in a single
+     * transaction, so either every row is created or none is.
      * </p>
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.

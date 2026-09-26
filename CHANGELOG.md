@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.8.0](#-880---2026-09-24) ← Current
+- [🧾 Version 8.9.0](#-890---2026-09-26) ← Current
+- [🧾 Version 8.8.0](#-880---2026-09-24)
 - [🧾 Version 8.7.0](#-870---2026-09-24)
 - [🧾 Version 8.6.2](#-862---2026-09-24)
 - [🧾 Version 8.6.1](#-861---2026-09-23)
@@ -58,6 +59,192 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.9.0] - 2026-09-26
+
+#### ➕ Added
+
+##### Domain
+
+- **`Competitor.paidUpSapsa`, `Competitor.paidUpClub`:** New nullable `Boolean` columns — whether a competitor's
+  SAPSA and club memberships are paid up
+- **`IpscMatch.stages`:** New `@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)`
+  collection — the domain model's only bidirectional, cascaded relationship, since a stage can't exist without its
+  match; no schema change
+
+##### Repositories
+
+- **`IpscMatchRepository.findByIdWithClub`, `findAllWithClub`:** New `left join fetch` queries loading a match's
+  `club` with it
+- **`CompetitorRepository.findByIdWithHomeClubAndEmailAddresses`, `findAllWithHomeClubAndEmailAddresses`:** New
+  `left join fetch` queries loading a competitor's `homeClub` and `emailAddresses` with it
+
+##### Services
+
+- **`TransactionService`, `TransactionServiceImpl`:** New service that commits competitor and match writes —
+  `saveCompetitor`/`saveCompetitors`/`deleteCompetitor` and `saveMatch`/`saveMatches`/`deleteMatch`, plus a
+  `saveMatch` overload that replaces or upserts an existing match's stages — each in its own explicit
+  `TransactionTemplate` transaction, returning entities with the associations their responses read already loaded
+
+##### API Models
+
+- **`CompetitorRequest`, `CompetitorRequestForCSV`, `CompetitorResponse`:** New `paidUpSapsa`/`paidUpClub` fields;
+  an omitted flag is stored as `null` on create/update and left unchanged on patch
+
+##### Database
+
+- **`V7_8_0__add_competitor_paid_up_flags.sql`:** New Flyway migration — adds nullable `paid_up_sapsa` and
+  `paid_up_club` `BOOLEAN` columns to `competitor`
+
+##### Tests
+
+- **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceImplTest`,
+  `CompetitorRequestTest`, `CompetitorRequestForCSVTest`:** Cover the new paid-up flags
+- **`TransactionServiceImplTest`:** New unit tests for every commit method, including rollback on failure, and the
+  stage replace/upsert logic moved from `IpscMatchServiceImplTest`
+- **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** New tests run with no surrounding
+  transaction, so each create/update/patch/delete must really commit and be readable by the next call, plus a check
+  that a bulk match import with one bad row commits nothing
+- **`TransactionServiceTest`, `TransactionServiceIntegrationTest`:** Complete `TransactionService`'s 3-tier test
+  split — the contract through the interface, and real H2 commits/rollbacks in an integration test that is
+  deliberately not `@Transactional`, so a surrounding test transaction can't hide whether each write commits
+- **`IpscMatchRepositoryIntegrationTest`, `CompetitorRepositoryIntegrationTest`,
+  `MatchCompetitorRepositoryIntegrationTest`, `MatchStageCompetitorRepositoryIntegrationTest`,
+  `ShooterLogRepositoryIntegrationTest`, `ShooterLogCompetitorRepositoryIntegrationTest`:** New repository tests for the
+  fetch-join queries, `IpscMatch.stages`' cascade persist/orphan removal/cascade delete, the email collection's delete
+  and every `existsBy…` check behind the reject-not-cascade deletes, with a shared `ScoringFixtures` helper
+
+##### Documentation
+
+- **`improvement-plan.md`:** New Gaps #14–#17 from an `update-improvement-plan-gaps` sweep — `flyway-migration-
+  versioning.md`'s Current State table stops five migrations short of what's on disk (#14); `ARCHITECTURE.md`'s
+  Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy`, and misattributes
+  database-profiles documentation to `README.md` instead of `CONTRIBUTING.md` (#15); `CONTRIBUTING.md`'s Running
+  Tests example names a renamed-away test method (#16); `HISTORY.md`'s Future Roadmap Implications "Recently
+  Completed" log hasn't been extended since v8.4.0, missing nine shipped releases (#17). "🌳 At a Glance", "🛤️
+  Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox blocks for Gaps #14–#17
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gaps #18–#24 from the v8.9.0 release-prep
+  `update-improvement-plan-gaps` sweep, all closed within this release (see Fixed and Removed)
+
+#### 🔄 Changed
+
+##### Controllers
+
+- **`IpscCompetitorController.createCompetitors`:** The competitor CSV header now requires trailing `PaidUpSapsa` and
+  `PaidUpClub` columns (a row may leave them empty); existing CSV files need the two header columns added
+
+##### Domain
+
+- **`Competitor.emailAddresses`:** The `email_address` element column mapping no longer declares `nullable = false`
+- **`Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`,
+  `ShooterLogCompetitor`:** Every `@ManyToOne` association now uses `FetchType.LAZY` instead of `FetchType.EAGER` —
+  loading an entity no longer pulls in its whole parent chain, reversing v8.7.0's switch to eager fetching
+
+##### Services
+
+- **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** No longer `@Transactional` — they validate requests and
+  build or modify entities outside any transaction, then commit through `TransactionService`. Their bulk CSV imports
+  now validate and build every row before saving any, then save all rows in one transaction, so they stay
+  all-or-nothing. Stage replace/upsert logic moved into `TransactionServiceImpl`, and create/update/patch responses
+  now list stages ordered by stage number, matching `getMatch`
+- **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** `findMatchOrThrow`/`getAllMatches` and
+  `findCompetitorOrThrow`/`getAllCompetitors` now load through the new fetch-join queries, so `toResponse` can read
+  the club, home club and email addresses outside a transaction — `spring.jpa.open-in-view` is disabled, so a
+  lazily-loaded association would otherwise throw `LazyInitializationException`
+- **`IpscMatchServiceImpl.deleteMatch`:** Now commits the delete through `TransactionService.deleteMatch`, with the
+  match's stages removed by `IpscMatch.stages`' cascade rather than explicitly; the reject-not-cascade checks for
+  results and shooter logs are unchanged
+- **`TransactionServiceImpl.replaceStages`, `upsertStages`:** Moved from `IpscMatchServiceImpl`, and now work on the
+  managed match's `IpscMatch.stages` collection; `replaceStages` removes the old stages as managed entities and
+  flushes before inserting the replacements, instead of `deleteAllInBatch`'s bulk query
+
+##### Tests
+
+- **`TransactionServiceImplTest`:** Now covers only the impl's protected helpers (`loadAssociations`, `replaceStages`,
+  `upsertStages`); its public-contract tests moved to the new `TransactionServiceTest`
+- **`IpscMatchServiceTest`, `IpscCompetitorServiceTest`:** Build their service with a real `TransactionServiceImpl`
+  over the same repository mocks and a mocked `PlatformTransactionManager`; match tests now seed existing stages on
+  the match's `stages` collection instead of stubbing `findAllByMatchIdOrderByStageNumber`
+
+##### CI/CD & Configuration
+
+- **`claude-code-review.yml`:** The commented-out `paths:` filter example still named its template's
+  TypeScript/JavaScript globs — now `src/**/*.java`, `src/main/resources/**` and `pom.xml`, still left commented out
+
+##### Tooling
+
+- **`prep-version-release`, `AGENTS.md`:** The Release Checklist's `HISTORY.md` step now makes updating "Major
+  Version Goals" mandatory for every release — extending the current major version's range and narrative, or adding
+  a new entry for a new major version — rather than leaving it unmentioned
+
+##### Documentation
+
+- **`ARCHITECTURE.md`, `AGENTS.md`, `CONTRIBUTING.md`, `IpscMatchService`, `IpscCompetitorService`:** Describe
+  `TransactionService` as where writes are committed, replacing the `@Transactional` services, and the bulk imports'
+  validate-everything-then-save-in-one-transaction behaviour
+
+##### Build & Metadata
+
+- Project version bumped to **8.9.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing in `src/` produced or consumed
+  XML or used Apache Commons, so dropping `jackson-dataformat-xml` only removes Spring MVC's unused XML content
+  negotiation; closes `improvement-plan.md`'s Gap #18
+
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`flyway-migration-versioning.md`:** Related Documentation pointed to `ARCHITECTURE.md` for content that actually
+  lives in `CONTRIBUTING.md`'s Database Profiles section — removed the incorrect bullet and folded its claim into the
+  `CONTRIBUTING.md` entry
+- **`improvement-plan.md`:** Reverted "low-regression backstop" to "low regression backstop" — the hyphen bound "low"
+  to "regression" instead of the intended "low [threshold], regression backstop" reading, nearly inverting the
+  meaning
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md`:** The CI/CD & Quality Gates documentation left out the two
+  live Claude Code workflows — `ARCHITECTURE.md`'s table gains "Automated Code Review" (`claude-code-review.yml`, every
+  PR, advisory) and "AI Assistant" (`claude.yml`, on `@claude` mention) rows plus a note on the
+  `CLAUDE_CODE_OAUTH_TOKEN` secret, its Project Structure tree's `.github/workflows/` comment is widened, and the other
+  two files' summaries match, closing `improvement-plan.md`'s Gap #13
+- **`flyway-migration-versioning.md`:** Current State table extended with the five migrations missing since v8.4.0
+  (`V7_4_0` through `V7_8_0`); a new step 5 in "🔢 Choosing the Next Version" now has the next migration's author add
+  its own row, closing `improvement-plan.md`'s Gap #14
+- **`ARCHITECTURE.md`:** The Quality Attributes table's "Data Integrity" row claimed JPA cascade rules and
+  bidirectional `mappedBy` declarations the domain model didn't have, contradicting the Persistence Layer section —
+  both now describe `IpscMatch.stages` as the one cascaded relationship, and the Development Guidelines paragraph
+  points at `CONTRIBUTING.md`, not `README.md`, for database profiles, closing `improvement-plan.md`'s Gap #15
+- **`CONTRIBUTING.md`:** The Running Tests single-method example named
+  `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`, which was renamed away — now
+  `testCreateAwards_whenValidCsvData_thenReturns200`, closing `improvement-plan.md`'s Gap #16
+- **`HISTORY.md`:** "Major Version Goals"' Version 8.x entry stopped at v8.5.1 — its range now runs to v8.8.0, and
+  its narrative covers v8.6.0 – v8.8.0's match/competitor API completion, platform tidy-up and documentation work
+- **`HISTORY.md`:** The Future Roadmap Implications "Recently Completed" log stopped at v8.4.0 — added entries for
+  v8.4.1 through v8.8.0 and updated the section's opening sentence to v8.8.0, closing `improvement-plan.md`'s Gap #17
+- **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `HISTORY.md` step now updates the Future Roadmap
+  Implications log for every release, rather than only "if the release is significant enough" — the condition that
+  let it fall nine releases behind
+- **`README.md`, `ARCHITECTURE.md`, `AGENTS.md`:** Tech-stack lines no longer claim XML processing or Apache Commons
+  (Gap #18)
+- **`ARCHITECTURE.md`:** The Key Design Patterns table's "Strategy Pattern" row described CSV/XML converters that
+  never existed — replaced with a "Transaction Boundary" row for `TransactionService`, and the Extensibility row now
+  credits the enum `AttributeConverter`s (Gap #19)
+- **`AGENTS.md`:** The 3-tier test rule named four services — it now names all five, including `TransactionService`,
+  and records its integration test's deliberate lack of `@Transactional` (Gap #20)
+- **`ARCHITECTURE.md`:** The overview and request-flow diagrams now route writes through `TransactionService`, the
+  bulk-import flows describe saving every row in one transaction, the stale "removed pending a rebuild" note is gone,
+  and the repositories' tree comment and examples match their real wiring and queries (Gap #21)
+- **`AGENTS.md`:** Expanded HPSC as "Handgun and Practical Shooting Club" — now "Hartbeespoortdam Practical Shooting
+  Club", matching every other source (Gap #22)
+- **`HISTORY.md`:** Dropped the Short-term roadmap's `Competitor.homeClub` backfill — no column reliably identifies a
+  competitor's home club, so it's closed as not applicable (Gap #23) — and narrowed the test-coverage bullet to the
+  entity-level unit tests still missing
+- **`README.md`:** The Testing section claimed domain-entity unit tests and repository tests that didn't exist — it
+  now describes the suite as it is, including the new repository integration tests (Gap #24)
 
 ### 🧾 [8.8.0] - 2026-09-24
 
@@ -146,8 +333,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
   Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
-- **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's
-  **Next** row points at it instead of the "no items currently scoped" placeholder and "☑️ Success Criteria" gains
+- **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's **Next** row
+  points at it instead of the "no items currently scoped" placeholder and "☑️ Success Criteria" gains
   a matching bullet
 
 ##### Domain
@@ -234,12 +421,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
   bold-lead-in bullet style — reverse-synced from the shared project template
 - **`HISTORY.md`:** "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
-  actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half
-  (the `club` table was already seeded in v8.4.0), `ShooterLogEntry` renamed to `ShooterLogCompetitor`,
+  actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half (the
+  `club` table was already seeded in v8.4.0), `ShooterLogEntry` renamed to `ShooterLogCompetitor`,
   "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x Releases)" and "Bulk match processing capabilities"
   dropped as delivered by v8.3.0's bulk CSV import
-- **`CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form
-  ("prose, comments and Javadoc") instead of showing the forbidden one ("prose, comments, and Javadoc")
+- **`CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form ("prose, comments and
+  Javadoc") instead of showing the forbidden one ("prose, comments, and Javadoc")
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
   this same release — "🌳 At a Glance" counts, the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria"
   updated to match
@@ -364,8 +551,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`:** New "📋 At a Glance" section (originally added as "📋 Gap Status Summary", later
   renamed), listing every numbered gap by completion status — a quick-reference index ahead of the full per-gap
   detail in "🔍 Gaps & Improvement Opportunities"
-- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Now** row dropped #2/#7, both already closed, and promoted #6
-  (match scoring / shooter-log service and controller layer) up from **Next** as the only remaining open gap; **Next**
+- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Now** row dropped #2/#7, both already closed, and promoted #6 (match
+  scoring / shooter-log service and controller layer) up from **Next** as the only remaining open gap; **Next**
   is now unscoped
 - **`improvement-plan.md`:** "📋 At a Glance" section's #6 entry corrected to say it's the current **Now** roadmap
   focus, not **Next** — stale after the Roadmap table update above promoted it
@@ -794,8 +981,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Database
 
-- **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment
-  ("infrequently-changed" → "infrequently changed")
+- **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment ("infrequently-changed" →
+  "infrequently changed")
 
 ##### Documentation
 
@@ -902,8 +1089,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables updated to reflect the new `build.yml` gate
   and JaCoCo coverage-check rule, dropping the stale "locally / by reviewers"/"All PRs" language
 - **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #2 closed in v8.3.1; Gap #3
-  closed in v8.3.1; Gap #4 marked partially progressed in v8.3.1, noting the refreshed coverage baseline
-  (98.16%/98.94% line/branch, 836 tests) and the JaCoCo floor tightened twice within the same branch (51% → 86%);
+  closed in v8.3.1; Gap #4 marked partially progressed in v8.3.1, noting the refreshed coverage baseline (98.16%/98.94%
+  line/branch, 836 tests) and the JaCoCo floor tightened twice within the same branch (51% → 86%);
   `HISTORY.md`'s coverage figure refresh is done, recorded in its Historical Timeline, Phase 24 and Milestone 24
 
 #### 🐛 Fixed
@@ -945,8 +1132,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
-- **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON
-  (de)serialization, its CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
+- **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON (de)serialization, its
+  CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
   constructor's enforcement of `matchDate`/`matchName` as required creator properties
 - **`IpscMatchControllerTest`:** New tests covering `createMatches`'s `201` response, delegation to the
   service and propagation of `ValidationException`/`NonFatalException`/`FatalException`
@@ -987,8 +1174,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Database
 
-- **`V7_2_0__add_competitor_emails.sql`:** New Flyway migration adding the `competitor_email` table
-  (`competitor_id` FK, `email_address`), backfilling it from any existing non-blank
+- **`V7_2_0__add_competitor_emails.sql`:** New Flyway migration adding the `competitor_email` table (`competitor_id` FK,
+  `email_address`), backfilling it from any existing non-blank
   `competitor.email_address` values, then dropping that column
 
 ##### Constants
@@ -1216,8 +1403,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `@JsonProperty`, replacing the Lombok `@AllArgsConstructor` (same signature, so `IpscCompetitorServiceImpl
   .toRequest`'s positional call is unaffected) — `firstName`/`lastName` remain `required = true`, and
   `@JsonProperty(required = true)` moves from `competitorNumber` to `clubNumber`, correcting a mismatch between
-  the JSON-level requirement and `IpscCompetitorServiceImpl.validateForCreate`'s actual required fields
-  (`firstName`, `lastName`, `clubNumber`)
+  the JSON-level requirement and `IpscCompetitorServiceImpl.validateForCreate`'s actual required fields (`firstName`,
+  `lastName`, `clubNumber`)
 - **`CompetitorResponse`:** Added `@NotNull` to `competitorId`, `firstName`, `lastName` and `clubNumber` — every
   persisted competitor always has these set, documenting the existing contract rather than changing behaviour,
   matching the `@NotNull` already used on `CompetitorRequest`/`ImageRequest`

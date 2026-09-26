@@ -28,7 +28,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code readCompetitors},
+ * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code newCompetitor},
+ * {@code readCompetitors},
  * {@code resolveClubNumber}, {@code resolveGender}, {@code resolveHomeClub},
  * {@code splitEmailAddresses}, {@code toRequest}, {@code toResponse}, {@code validateForCreate}) -
  * not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
@@ -70,6 +71,8 @@ class IpscCompetitorServiceImplTest {
         request.setClubNumber("HPSC-001");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
+        request.setPaidUpSapsa(true);
+        request.setPaidUpClub(true);
         request.setEmailAddresses(List.of("jane.doe@example.com"));
 
         Competitor competitor = new Competitor();
@@ -90,7 +93,27 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", competitor.getClubNumber());
         assertEquals("9001015800083", competitor.getIdNumber());
         assertEquals("0821234567", competitor.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, competitor.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, competitor.getPaidUpClub());
         assertEquals(List.of("jane.doe@example.com"), competitor.getEmailAddresses());
+    }
+
+    @Test
+    void testApplyFields_whenPaidUpFlagsAreNull_thenCompetitorPaidUpFlagsAreNull() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        Competitor competitor = new Competitor();
+        competitor.setPaidUpSapsa(true);
+        competitor.setPaidUpClub(true);
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertNull(competitor.getPaidUpSapsa());
+        assertNull(competitor.getPaidUpClub());
     }
 
     @Test
@@ -160,7 +183,7 @@ class IpscCompetitorServiceImplTest {
     @Test
     void testFindCompetitorOrThrow_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findById(999L)).thenReturn(Optional.empty());
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorServiceImpl.findCompetitorOrThrow(999L));
@@ -171,7 +194,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(competitor));
 
         // Act
         Competitor found = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.findCompetitorOrThrow(1L));
@@ -228,12 +251,42 @@ class IpscCompetitorServiceImplTest {
         assertTrue(ipscCompetitorServiceImpl.isHpscMember(club, ClubIdentifier.HPSC));
     }
 
+    // newCompetitor()
+    @Test
+    void testNewCompetitor_whenRequestIsValid_thenBuildsUnsavedCompetitor() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setEmailAddresses(List.of("jane.doe@example.com"));
+
+        // Act
+        Competitor competitor = ipscCompetitorServiceImpl.newCompetitor(request);
+
+        // Assert
+        assertNull(competitor.getId());
+        assertEquals("Jane", competitor.getFirstName());
+        assertEquals("Doe", competitor.getLastName());
+        assertEquals(List.of("jane.doe@example.com"), competitor.getEmailAddresses());
+        verifyNoInteractions(competitorRepository);
+    }
+
+    @Test
+    void testNewCompetitor_whenRequestIsInvalid_thenThrowsValidationException() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setLastName("Doe");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.newCompetitor(request));
+    }
+
     // readCompetitors()
     @Test
     void testReadCompetitors_whenValidCsv_thenReturnsCompetitorRequestForCSVList() {
         // Arrange
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses
+                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com
                 John,Smith,,,,,,,,HPSC-002,,,
                 """;
@@ -269,7 +322,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
-                ClubNumber,LastName,FirstName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,IdNumber,CellphoneNumber,EmailAddresses
+                ClubNumber,LastName,FirstName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 HPSC-001,Doe,Jane,,,,,,,,,,
                 """;
 
@@ -287,7 +340,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyList() {
         // Arrange
         String csvData =
-                "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses\n";
+                "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
 
         // Act
         List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -460,7 +513,8 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", "jane.doe@example.com;jane2.doe@example.com");
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
+                "jane.doe@example.com;jane2.doe@example.com");
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
@@ -479,6 +533,8 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
+        assertEquals(Boolean.FALSE, request.getPaidUpClub());
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
     }
 
@@ -486,7 +542,7 @@ class IpscCompetitorServiceImplTest {
     void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null);
+                "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
@@ -502,6 +558,8 @@ class IpscCompetitorServiceImplTest {
         assertNull(request.getCompetitorNumber());
         assertNull(request.getIdNumber());
         assertNull(request.getCellphoneNumber());
+        assertNull(request.getPaidUpSapsa());
+        assertNull(request.getPaidUpClub());
         assertEquals(List.of(), request.getEmailAddresses());
     }
 
@@ -546,6 +604,8 @@ class IpscCompetitorServiceImplTest {
         competitor.setClubNumber("HPSC-001");
         competitor.setIdNumber("9001015800083");
         competitor.setCellphoneNumber("0821234567");
+        competitor.setPaidUpSapsa(true);
+        competitor.setPaidUpClub(false);
         competitor.setEmailAddresses(List.of("jane.doe@example.com"));
 
         // Act
@@ -564,6 +624,8 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, response.getPaidUpSapsa());
+        assertEquals(Boolean.FALSE, response.getPaidUpClub());
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
     }
 

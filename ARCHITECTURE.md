@@ -38,7 +38,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
 | ORM               | Spring Data JPA, Hibernate                                          |
 | Schema migrations | Flyway (`src/main/resources/db/migration/`)                         |
-| Data processing   | Jackson (JSON/CSV/XML), Apache Commons Lang3                        |
+| Data processing   | Jackson (JSON/CSV)                                                  |
 | API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
 | Validation        | Hibernate Validator, Jakarta Validation                             |
 | Testing           | JUnit, Mockito, Spring Test                                         |
@@ -54,7 +54,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.claude/
 │   └───skills/                 # Claude Code skill definitions, one SKILL.md per skill
 ├───.github/
-│   └───workflows/              # GitHub Actions — CI/CD, CodeQL
+│   └───workflows/              # GitHub Actions — CI/CD, security analysis and automated review
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
@@ -81,7 +81,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
 │   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
 │   │   │   └───(root)          # Top-level request/response wrapper models
-│   │   ├───repositories/       # Spring Data JPA interfaces — IPSC ones wired to services, the rest not yet wired
+│   │   ├───repositories/       # Spring Data JPA interfaces, one per entity
 │   │   ├───services/           # Service interfaces
 │   │   │   └───impl/           # Service implementations
 │   │   └───utils/              # Utility classes
@@ -97,6 +97,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
     ├───models/                 # DTO / model unit tests
+    ├───repositories/           # Repository query and JPA mapping integration tests (H2)
     ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
     │   └───impl/               # Service impl helper unit tests (Mockito)
     └───utils/                  # Utility unit tests
@@ -122,9 +123,13 @@ The application follows a strict **N-Tier Layered Architecture** with unidirecti
 HTTP Request
     → Controller
         → Service
-            → Repository
-                → Database
+            → TransactionService (competitor/match writes only)
+                → Repository
+                    → Database
 ```
+
+Reads go from a service straight to its repositories; only writes pass through `TransactionService` (see the Service
+Layer notes below).
 
 ---
 
@@ -163,16 +168,22 @@ Contains all business logic.
 | `ImageService`          | `ImageServiceImpl`          | Image CSV processing (deliberately stateless — see below)    |
 | `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages, + bulk CSV import |
 | `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
+| `TransactionService`    | `TransactionServiceImpl`    | Commits competitor/match writes, each in its own transaction |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
 > rather than an import. See the Award/Image CSV Processing Flow below.
 
-> Both IPSC domains support bulk CSV import, each persisting every row via the same validation/resolution logic
-> as its single-item `create` endpoint: `IpscCompetitorController.createCompetitors`
-> (`IpscCompetitorService`/`IpscCompetitorServiceImpl`) and `IpscMatchController.createMatches`
-> (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses a `Stages` CSV cell into
-> `MatchStageRequest`s via `parseStages`.
+> Both IPSC domains support bulk CSV import, each building every row via the same validation/resolution logic
+> as its single-item `create` endpoint, then saving all rows in one transaction so a bad row leaves none
+> persisted: `IpscCompetitorController.createCompetitors` (`IpscCompetitorService`/`IpscCompetitorServiceImpl`)
+> and `IpscMatchController.createMatches` (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses
+> a `Stages` CSV cell into `MatchStageRequest`s via `parseStages`.
+
+> `IpscMatchService`/`IpscCompetitorService` declare no `@Transactional`: they validate requests and build or modify
+> entities outside any transaction, then hand them to `TransactionService`, which commits each write (and each bulk
+> import as a whole) in its own explicit `TransactionTemplate` transaction. Everything it returns has the associations
+> a response reads already loaded, since `spring.jpa.open-in-view` is disabled.
 
 > Deleting a competitor or match only removes what it owns — a competitor's email addresses, a match's stages. A
 > record that match results, stage results or shooter logs still reference is refused with a `ValidationException`
@@ -190,15 +201,19 @@ The JPA entities map to database tables:
 |------------------------|--------------------------|--------------------------------------------------------------------------------------|
 | `Club`                 | `club`                   | No outgoing references; targeted by `Competitor`, `IpscMatch` and `ShooterLog` below |
 | `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                                           |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                                 |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`; one-to-many → `IpscMatchStage` (cascaded)                      |
 | `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one → `IpscMatch`                                                            |
 | `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                              |
 | `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one → `MatchCompetitor`, `IpscMatchStage`                                    |
 | `ShooterLog`           | `shooter_log`            | Many-to-one → `Competitor`, `Club`                                                   |
 | `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `MatchCompetitor`, `IpscMatch`                           |
 
-Every relationship is unidirectional: only the owning (child) side declares a `@ManyToOne`/`@JoinColumn`. No entity
-declares a back-referencing `@OneToMany` collection, so there is no `mappedBy` anywhere in the domain model.
+Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, all `FetchType.LAZY` — the queries that
+build responses load what they need with `left join fetch` (see Repositories below). Only one relationship is
+bidirectional: `IpscMatch.stages` is a `@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)`
+collection, since a stage can't exist without its match — so deleting a match cascades to its stages. Every other
+relationship is unidirectional, with no back-referencing collection and no cascade, so a record still referenced by
+results or shooter logs is refused on delete rather than cascaded (see the note above).
 
 #### Custom JPA Attribute Converters (`za.co.hpsc.web.converters`)
 
@@ -217,8 +232,11 @@ All enum-typed entity fields use explicit `AttributeConverter` implementations r
 
 #### Repositories (`za.co.hpsc.web.repositories`)
 
-One Spring Data JPA interface per entity. Custom query methods supplement the standard CRUD operations (e.g.,
-`IpscMatchRepository.findAllByClubId`, `ShooterLogRepository.findAllByCompetitorIdAndFirearmTypeAndPowerFactor`).
+One Spring Data JPA interface per entity, each injected into the service layer. Custom query methods supplement the
+standard CRUD operations — the `left join fetch` queries that load everything a response reads, since
+`spring.jpa.open-in-view` is disabled (e.g. `IpscMatchRepository.findByIdWithClub`,
+`CompetitorRepository.findByIdWithHomeClubAndEmailAddresses`), and the `existsBy…` checks behind the
+reject-not-cascade deletes (e.g. `MatchCompetitorRepository.existsByMatchId`).
 
 ---
 
@@ -300,7 +318,7 @@ response. Structured logging is applied in every handler — do not catch and re
 | **Repository Pattern**    | Spring Data JPA repos abstract all DB access                                                        |
 | **Service Layer Pattern** | All business logic lives in service classes; controllers and repos are kept thin                    |
 | **DTO Pattern**           | `models/` DTOs decouple external API contracts from JPA entities                                    |
-| **Strategy Pattern**      | CSV/XML converters (`converters/` package) handle format variants behind a common interface         |
+| **Transaction Boundary**  | `TransactionService` alone commits competitor/match writes, each in an explicit transaction         |
 | **Custom JPA Converters** | `AttributeConverter` implementations replace `@Enumerated` for type-safe, testable enum persistence |
 | **Global Error Handling** | `ControllerAdvice` translates domain exceptions to HTTP responses with structured logging           |
 
@@ -314,10 +332,12 @@ response. Structured logging is applied in every handler — do not catch and re
 Client → HTTP Request
     → Controller (validate input, extract body/path vars)
         → Service (business logic)
-            → Repository (Spring Data JPA query, where applicable)
-                → Database
-            ← Domain model / DTO
-        ← Service result
+            → Repository (reads, via fetch-join queries where the response needs associations)
+            → TransactionService (writes, each committed in its own explicit transaction)
+                → Repository
+                    → Database
+            ← Domain model
+        ← Service result (response DTO)
     ← Controller wraps in ResponseEntity<T>
 ← HTTP Response (JSON)
 ```
@@ -339,14 +359,16 @@ Client uploads CSV (Content-Type: text/csv)
 
 ### 📥 Competitor Bulk CSV Import Flow
 
-Handled by `IpscCompetitorController` — unlike the Award/Image flow above, each row is actually persisted:
+Handled by `IpscCompetitorController` — unlike the Award/Image flow above, the rows are actually persisted:
 
 ```
 Client uploads CSV (Content-Type: text/csv)
     → IpscCompetitorController.createCompetitors
         → IpscCompetitorService.createCompetitors
-            (parses CSV via Jackson CsvMapper into CompetitorRequestForCSV rows, then persists each via the same
-             createCompetitor validation/gender/home-club-resolution logic the single-competitor endpoint uses)
+            (parses CSV via Jackson CsvMapper into CompetitorRequestForCSV rows, then builds each row with the same
+             validation/gender/home-club-resolution logic the single-competitor endpoint uses)
+            → TransactionService.saveCompetitors
+                (saves every row in one transaction — a bad row fails before anything is saved)
         ← CompetitorResponseHolder
     ← ResponseEntity<...>
 ← JSON response
@@ -354,24 +376,21 @@ Client uploads CSV (Content-Type: text/csv)
 
 ### 📥 Match Bulk CSV Import Flow
 
-Handled by `IpscMatchController` — same shape as the Competitor flow above, each row is actually persisted:
+Handled by `IpscMatchController` — same shape as the Competitor flow above:
 
 ```
 Client uploads CSV (Content-Type: text/csv)
     → IpscMatchController.createMatches
         → IpscMatchService.createMatches
             (parses CSV via Jackson CsvMapper into MatchRequestForCSV rows, splits each row's semicolon-separated
-             Stages cell into MatchStageRequests via parseStages, then persists each row via the same createMatch
-             validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
+             Stages cell into MatchStageRequests via parseStages, then builds each row, stages included, with the
+             same validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
+            → TransactionService.saveMatches
+                (saves every row in one transaction — a bad row fails before anything is saved)
         ← MatchResponseHolder
     ← ResponseEntity<...>
 ← JSON response
 ```
-
-> The match/competitor bulk-import and CRUD flows described in earlier versions of this document (`IpscController`,
-> WinMSS CAB import, `/v2/ipsc/matches` CRUD) have been removed pending a rebuild of that service layer. The
-> competitor and match bulk CSV import flows above are new, unrelated implementations, not a restoration of that
-> removed flow.
 
 ---
 
@@ -383,27 +402,33 @@ Client uploads CSV (Content-Type: text/csv)
 | **Maintainability** | Strict layering, package-by-feature model structure, Javadoc and CLAUDE.md guidance                                                   |
 | **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
-| **Extensibility**   | Firearm-type enums + division mappings, strategy-pattern converters                                                                   |
-| **Data Integrity**  | JPA cascade rules, bidirectional `mappedBy` declarations, `@Transactional` service methods, custom attribute converters               |
+| **Extensibility**   | Firearm-type enums + division mappings, enum `AttributeConverter`s with `fromX` lookups                                               |
+| **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters   |
 | **Type Safety**     | Custom `AttributeConverter` implementations for all enum-typed columns replace `@Enumerated(EnumType.STRING)`                         |
 
 ---
 
 ## 🔬 CI/CD & Quality Gates
 
-| Gate                  | Tool                                                                                         | Trigger                                                                 |
-|-----------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| **Security Analysis** | CodeQL                                                                                       | Push / PR to `main` / `develop`; weekly schedule                        |
-| **Build & Tests**     | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                        | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
-| **Code Coverage**     | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
+| Gate                      | Tool                                                                                         | Trigger                                                                 |
+|---------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| **Security Analysis**     | CodeQL                                                                                       | Push / PR to `main` / `develop`; weekly schedule                        |
+| **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                        | Push / PR to `main` / `develop`; H2 in-memory — no external DB required |
+| **Code Coverage**         | JaCoCo, minimum 97% line coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile) | Enforced automatically as part of the `Build & Tests` gate above        |
+| **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`           | Every PR opened, updated, marked ready or reopened; advisory only       |
+| **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                              | An `@claude` mention in an issue, PR comment or PR review               |
+
+Both Claude Code workflows run `anthropics/claude-code-action` and authenticate with the `CLAUDE_CODE_OAUTH_TOKEN`
+repository secret, which must stay provisioned for them to run. The review posts inline comments on the PR but
+doesn't block merging.
 
 ---
 
 ## 🛠️ Development Guidelines
 
-Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
-commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section
-for a full map of this project's documentation.
+Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, [README.md](README.md) for local setup, build
+commands and coding standards, and [CONTRIBUTING.md](CONTRIBUTING.md#-database-profiles) for database profiles. See
+README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 

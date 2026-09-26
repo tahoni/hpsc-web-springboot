@@ -38,8 +38,10 @@ public interface IpscMatchService {
      * Creates a batch of new IPSC matches, together with their stages, from CSV data.
      *
      * <p>
-     * Each row is created independently via {@link #createMatch(MatchRequest)}, so the same
-     * validation, firearm type/category resolution and club resolution rules apply per row. A
+     * Each row is validated and built by the same rules as {@link #createMatch(MatchRequest)}
+     * (validation, firearm type/category resolution and club resolution). Every row is checked
+     * before any is saved, and all are then saved in a single transaction, so either every row is
+     * created or none is. A
      * row's {@code Stages} cell is parsed into individual stages as described on
      * {@link za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV#getStages()}.
      * </p>

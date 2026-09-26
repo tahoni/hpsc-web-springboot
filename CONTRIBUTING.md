@@ -98,7 +98,7 @@ Tests activate the `test` profile automatically — no database setup is require
 ./mvnw test -Dtest=AwardControllerTest
 
 # Single test method
-./mvnw test -Dtest=AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200
+./mvnw test -Dtest=AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200
 
 # Tests + JaCoCo coverage report (target/site/jacoco/)
 ./mvnw verify -Pcoverage
@@ -126,7 +126,7 @@ The application follows a strict layered architecture — see [`ARCHITECTURE.md`
 ```
 HTTP Request
     → Controller  (REST endpoint, DTO validation)
-        → Service     (business logic, `@Transactional`)
+        → Service     (business logic; writes committed via `TransactionService`)
             → Repository     (Spring Data JPA)
                 → MySQL / H2
 ```
@@ -245,8 +245,8 @@ removed.
 ## 🔬 CI/CD & Quality Gates
 
 See [`ARCHITECTURE.md`'s CI/CD & Quality Gates table](ARCHITECTURE.md#-cicd--quality-gates) for the full gate/tool/
-trigger matrix (CodeQL security analysis, Maven build and tests, JaCoCo coverage) rather than duplicating it here, so
-the two never drift out of sync.
+trigger matrix (CodeQL security analysis, Maven build and tests, JaCoCo coverage, Claude Code automated review and the
+`@claude` assistant) rather than duplicating it here, so the two never drift out of sync.
 
 ---
 

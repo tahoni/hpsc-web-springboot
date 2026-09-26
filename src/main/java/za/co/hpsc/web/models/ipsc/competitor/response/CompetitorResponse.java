@@ -50,6 +50,10 @@ public class CompetitorResponse {
     private String idNumber;
     /** The competitor's cellphone number. */
     private String cellphoneNumber;
+    /** Whether the competitor's SAPSA membership is paid up. */
+    private Boolean paidUpSapsa;
+    /** Whether the competitor's club membership is paid up. */
+    private Boolean paidUpClub;
     /** The competitor's email addresses, if any. */
     private List<String> emailAddresses;
 }

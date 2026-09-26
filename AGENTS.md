@@ -25,9 +25,9 @@ convention; no Claude-Code-specific content is split out from it.
 
 ## 📖 Project Overview
 
-HPSC Web is a Spring Boot REST API backend for the Handgun and Practical Shooting Club (HPSC) platform. It manages IPSC
-match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this is a pure API
-server.
+HPSC Web is a Spring Boot REST API backend for the Hartbeespoortdam Practical Shooting Club (HPSC) platform. It
+manages IPSC match data, competitor tracking, club operations, awards and image gallery. There is no frontend — this
+is a pure API server.
 
 - **Port / context path:** `8080` / `/hpsc-web`
 - **API docs:** Swagger UI at `http://localhost:8080/hpsc-web/swagger-ui/index.html`
@@ -42,7 +42,7 @@ server.
 - **Persistence:** Spring Data JPA, Hibernate
 - **Databases:** MySQL (production/dev), H2 in-memory (test)
 - **Schema migrations:** Flyway
-- **Data processing:** Jackson (JSON/CSV/XML)
+- **Data processing:** Jackson (JSON/CSV)
 - **API documentation:** SpringDoc OpenAPI (Swagger UI)
 - **Validation:** Hibernate Validator, Jakarta Validation
 - **Testing:** JUnit, Mockito, Spring Test
@@ -84,7 +84,8 @@ unrelated app release literally named v7.2.0.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles)'s Database Profiles section for the profile/DDL matrix —
 tests activate the `test` profile automatically, so no database setup is required to run them. See
-[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/JaCoCo triggers.
+[`ARCHITECTURE.md`](ARCHITECTURE.md#-cicd--quality-gates)'s CI/CD & Quality Gates table for CodeQL/JaCoCo/Claude
+Code triggers.
 
 ---
 
@@ -95,7 +96,7 @@ The application follows a strict layered architecture with unidirectional depend
 ```
 HTTP Request
     → Controller  (REST endpoint, DTO validation)
-    → Service     (business logic, @Transactional)
+    → Service     (business logic; writes committed via TransactionService)
     → Repository  (Spring Data JPA)
     → MySQL / H2
 ```
@@ -411,9 +412,12 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
        the interface's full public contract end-to-end through a real, Spring-wired bean backed by the H2 `test`
        profile database — no mocks.
 
-   All four services (`AwardService`, `ImageService`, `IpscCompetitorService`, `IpscMatchService`) follow this
-   split; a new service should too. See the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the
-   detailed per-tier rules (what each tier must/must not cover, Spring Boot 4 auto-configuration gotchas, etc.).
+   All five services (`AwardService`, `ImageService`, `IpscCompetitorService`, `IpscMatchService`,
+   `TransactionService`) follow this split; a new service should too. `TransactionServiceIntegrationTest` is the one
+   integration test deliberately not `@Transactional`, since a surrounding test transaction would hide whether
+   `TransactionService` really commits or rolls back; it deletes its committed data after each test instead. See
+   the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the detailed per-tier rules (what each tier
+   should and shouldn't cover, Spring Boot 4 auto-configuration gotchas, etc.).
 - Test class names follow `<ClassName>Test`; test method names follow
   `test<Scenario>_when<Condition>_then<Expectation>`.
 - JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from
@@ -525,10 +529,17 @@ anything downstream references them:
    file once it grew to roughly half of `HISTORY.md`'s size, but the two still gain one paired entry per release. If
    the release is significant enough to have shifted the project's trajectory, also thread it through the other
    sections that already track version-by-version state (Architectural Evolution, Feature Timeline, Key Learnings,
-   Future Roadmap, Conclusion/footer). Use how the immediately preceding version was woven into those sections as the
-   template. Then check whether `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a
-   matching update — it's synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change
-   here can leave that table stale.
+   Conclusion/footer). Use how the immediately preceding version was woven into those sections as the template.
+   Whatever its significance, every release also renames the Future Roadmap Implications section's current
+   `### Recently Completed (vX.Y.Z)` entry to `### Previously Completed (vX.Y.Z)`, adds a `### Recently Completed`
+   entry for the new version and updates the section's "Based on the evolution to vX.Y.Z" opening sentence — that log
+   is meant to cover every release, and fell nine releases behind while it was treated as optional. Each release
+   likewise updates the "Major Version Goals" subsection under Project Philosophy Evolution, extending the current
+   major version's `Version N.x (vN.0.0 – vX.Y.Z)` range to end at the new version and weaving the release's driving
+   goal into that entry's narrative, or adding a new `Version N.x` entry for a new major version. Then check whether
+   `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
+   synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that table
+   stale.
 7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent

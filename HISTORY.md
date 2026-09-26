@@ -21,6 +21,42 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.9.0 (September 26, 2026)
+
+**Theme:** Competitor Paid-Up Flags, Explicit Transaction Boundary & Lazy Loading
+
+**Key Focus:**
+
+- `Competitor` gains nullable `paidUpSapsa`/`paidUpClub` flags via `V7_8_0__add_competitor_paid_up_flags.sql`,
+  wired through `CompetitorRequest`, `CompetitorRequestForCSV` and `CompetitorResponse`; the competitor CSV bulk
+  import now requires trailing `PaidUpSapsa`/`PaidUpClub` header columns (values may be blank) — existing CSV files
+  need the two columns added
+- Every `@ManyToOne` association switched back from `FetchType.EAGER` to `FetchType.LAZY`, reversing v8.7.0; since
+  `spring.jpa.open-in-view` is disabled, new `left join fetch` repository queries
+  (`IpscMatchRepository.findByIdWithClub`/`findAllWithClub`,
+  `CompetitorRepository.findByIdWithHomeClubAndEmailAddresses`/`findAllWithHomeClubAndEmailAddresses`) load what
+  each response reads
+- New `TransactionService`/`TransactionServiceImpl` commits every competitor and match write in its own explicit
+  `TransactionTemplate` transaction; `IpscCompetitorServiceImpl`/`IpscMatchServiceImpl` drop `@Transactional`,
+  validating and building entities outside any transaction. Bulk CSV imports now build every row before saving any,
+  then save all rows in one transaction
+- `IpscMatch` gains a cascaded, orphan-removing `@OneToMany(mappedBy = "match")` `stages` collection — the domain
+  model's only bidirectional relationship — so deleting a match removes its stages by cascade
+- Create/update/patch match responses now list stages ordered by stage number, matching `getMatch`
+- Unused `jackson-dataformat-xml`/`commons-lang3` dependencies removed
+- 63 new tests (903 → 966): `TransactionService`'s full 3-tier split, a new `repositories/` package of repository
+  integration tests (fetch-join queries, the stage cascade, every `existsBy…` check) and service integration tests
+  run without a surrounding transaction to prove each write really commits; coverage 98.77%/99.09% line/branch
+- Closed `improvement-plan.md`'s Gaps #13–#17 (documentation drift) and, from this release's own audit, Gaps #18–#24
+  (unused dependencies, stale `ARCHITECTURE.md` patterns/data flows/repository descriptions, the 3-tier test rule,
+  `AGENTS.md`'s club name, missing repository tests and the `homeClub` backfill, closed as not applicable) — only
+  Gap #6 remains open
+- `AGENTS.md`'s Release Checklist now makes the Future Roadmap Implications log and "Major Version Goals" mandatory
+  per release; both were backfilled through v8.8.0
+- Scoped as `v8.9.0` **MINOR** for the new competitor fields, with the competitor CSV's two new required header
+  columns called out as a client-facing migration — matching the v8.5.0/v8.7.0 precedent
+- Project version bumped to 8.9.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.8.0 (September 24, 2026)
 
 **Theme:** Competitor & Match Delete Endpoints
@@ -267,8 +303,8 @@ evolution of architecture, features and design philosophy across all versions.
   time measured 98.44%/98.98% line/branch, 868 tests
 - `tomcat-embed-core`/`-el`/`-websocket` overridden `11.0.24` → `11.0.25`, closing three critical CVEs still pinned
   by `spring-boot-starter-parent:4.1.1`'s dependency management
-- New `AGENTS.md` conventions: Member ordering (constructors → public → protected → private), REST URL/handler-
-  naming rules condensed from `standard-rest-conventions.md`, and a Release Checklist step verifying
+- New `AGENTS.md` conventions: Member ordering (constructors → public → protected → private),
+  REST URL/handler-naming rules condensed from `standard-rest-conventions.md`, and a Release Checklist step verifying
   `ARCHITECTURE.md`'s Project Structure tree against disk at every release
 - `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` restructured into ✅ Completed/
   🟡 Partially Completed/⚪ Open sections, replacing the previous flat Now/Next/Later/Ongoing phasing
@@ -511,8 +547,8 @@ evolution of architecture, features and design philosophy across all versions.
 **Key Focus:**
 
 - New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest` (Mockito-based, testing
-  `createAwards` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing 4
-  JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest` and `ControllerAdviceTest` — overall
+  `createAwards` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing
+  4 JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest` and `ControllerAdviceTest` — overall
   suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - New Claude Code commands `/scaffold-unit-tests` (migrated from a stale, wrong-project prompt file and corrected to
   this repo's real interface/impl test split) and `/scaffold-integration-tests` (new, `@SpringBootTest`-based, following
@@ -1059,8 +1095,8 @@ Award/Image CSV persistence.
   missing/blank match `club` to it instead of failing validation, closing Gap #9
 - `IpscCompetitorServiceImpl.resolveClubNumber()` requires `clubNumber` only for HPSC-home-club competitors; column
   relaxed to nullable via `V7_4_0__make_club_number_nullable.sql`
-- JaCoCo `LINE`/`COVEREDRATIO` floor tightened `0.86` → `0.97`, confirmed holding at a fresh 98.44%/98.98%
-  (line/branch, 868 tests) baseline, closing Gap #4
+- JaCoCo `LINE`/`COVEREDRATIO` floor tightened `0.86` → `0.97`, confirmed holding at a fresh 98.44%/98.98% (line/branch,
+  868 tests) baseline, closing Gap #4
 - `HpscConstants` removed; `AGENTS.md` gained Member ordering and REST naming conventions plus a Project-Structure-
   tree release-checklist backstop; `tomcat-embed-*` patched to 11.0.25 for three critical CVEs
 
@@ -1195,6 +1231,17 @@ operation) for a later release.
 
 **Achievement:** Made the long-standing "full CRUD" description of the competitor and match APIs true, with a
 deletion rule that protects scoring history rather than silently destroying it.
+
+### Milestone 35: Competitor Paid-Up Flags & Explicit Transaction Boundary (v8.9.0)
+
+- Competitors record whether their SAPSA and club memberships are paid up, through the API and CSV import alike
+- Competitor and match writes are committed only by `TransactionService`, in explicit transactions, with bulk
+  imports all-or-nothing
+- Lazy association loading paired with fetch-join queries, so responses never depend on an open session
+- Gaps #13–#24 closed, leaving only the scoring/shooter-log layer (Gap #6) open
+
+**Achievement:** Made the persistence layer's transaction and loading behaviour explicit and tested at every tier,
+while clearing the improvement plan of every documentation-accuracy gap.
 
 ---
 
@@ -1572,6 +1619,32 @@ IpscCompetitorService          IpscMatchService
 
 ---
 
+### v8.9.0: Explicit Transaction Boundary & Lazy Persistence
+
+```
+IpscCompetitorController           IpscMatchController
+        ↓                                  ↓
+IpscCompetitorService              IpscMatchService
+   (validate, build — no transaction)      (validate, build — no transaction)
+        ↓ reads                            ↓ reads
+CompetitorRepository               IpscMatchRepository / IpscMatchStageRepository
+   (fetch-join queries)               (fetch-join queries)
+        ↓ writes                           ↓ writes
+                 TransactionService
+        (explicit TransactionTemplate transactions)
+```
+
+**Characteristics:**
+
+- One class, `TransactionService`, owns every competitor/match commit; the IPSC services no longer declare
+  `@Transactional` at all
+- Every `@ManyToOne` is `LAZY`, and reads that feed a response load their associations up front through
+  `left join fetch` queries, since `spring.jpa.open-in-view` stays disabled
+- `IpscMatch.stages` is the domain model's single bidirectional, cascaded relationship — composition, since a stage
+  can't exist without its match — while every other relationship stays unidirectional and reject-not-cascade
+
+---
+
 ## ✨ Feature Timeline
 
 ### Data Processing Features
@@ -1697,6 +1770,10 @@ IpscCompetitorService          IpscMatchService
 - **v8.0.0:** New unit and integration test coverage for `IpscCompetitorController`/`Service`/`ServiceImpl` and
   `IpscMatchController`/`Service`/`ServiceImpl`; new `GenderTest`/`GenderConverterTest`; mechanical test updates for the
   `fromX` enum-factory rename — the largest single-release test expansion since v5.4.0
+- **v8.9.0:** New `TransactionServiceTest`/`TransactionServiceImplTest`/`TransactionServiceIntegrationTest` 3-tier
+  split; a new `repositories/` package of repository integration tests covering the fetch-join queries, the stage
+  cascade and every `existsBy…` check; service integration tests run without a surrounding transaction; 903 → 966
+  tests, 98.77%/99.09% line/branch coverage
 
 ### Documentation Quality
 
@@ -1740,7 +1817,7 @@ IpscCompetitorService          IpscMatchService
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.5.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.9.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1752,7 +1829,15 @@ IpscCompetitorService          IpscMatchService
   documentation scale: a project-wide icon-registry and cross-reference consolidation, root-document title
   standardisation naming `AGENTS.md` as the project's single source of truth, and finally closing the release
   checklist's own audit loop by backfilling `HISTORY.md`'s Phase/Milestone record for every release that had fallen
-  behind it.
+  behind it. Then round out the match and competitor APIs — a match URL, start/end times corrected to time-of-day
+  values, a competitor listing endpoint and finally delete endpoints that refuse rather than cascade over scoring
+  history, making the long-standing "full CRUD" claim true — while tidying the platform underneath (Spring Boot's
+  default port, a Spring Boot 4 springdoc line) and keeping the documentation honest at scale: formalising the 3-tier
+  service test architecture, splitting `HISTORY.md`'s Evolution Overview and archived release notes into their own
+  structure, and correcting `CHANGELOG.md` heading-depth drift across every convention document and skill. Finally,
+  make the persistence layer's behaviour explicit — competitor paid-up flags, every write committed by a dedicated
+  `TransactionService` and lazy associations loaded through fetch-join queries — while clearing every
+  documentation-accuracy gap the improvement plan tracked.
 
 ### Initial Phase (v1.0.0)
 
@@ -2002,11 +2087,21 @@ IpscCompetitorService          IpscMatchService
     - Caught a genuine validation mismatch along the way: `CompetitorRequest`'s Jackson-required field was
       `competitorNumber`, not the actually-validated `clubNumber`
 
+
+16. **Explicit Transaction Boundary (v8.9.0):** With `spring.jpa.open-in-view` disabled and associations lazy,
+    where a transaction starts and ends decides what a response can read
+    - Moving every competitor/match write into `TransactionService`'s explicit `TransactionTemplate` transactions made
+      the boundary visible in one class instead of spread across `@Transactional` service methods
+    - `orphanRemoval` only sees removals relative to a collection's last-flushed snapshot, so replacing stages still
+      deletes them explicitly and flushes before inserting reused stage numbers
+    - Integration tests that are themselves `@Transactional` absorb the code's own transactions and hide commit and
+      lazy-loading bugs — so the new tests that prove commits run without a surrounding transaction
+
 ---
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.4.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.9.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2064,8 +2159,8 @@ Based on the evolution to v8.4.0, the following areas are identified for future 
 
 ### Previously Completed (v7.2.0)
 
-- New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `createAwards` through the interface
-  type rather than the impl class
+- New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `createAwards` through the
+  interface type rather than the impl class
 - 4 JaCoCo-identified coverage gaps closed (`ControllerResponse`, `FirearmType.toString()`,
   `ControllerAdvice.logError`); suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with a new
@@ -2147,7 +2242,7 @@ Based on the evolution to v8.4.0, the following areas are identified for future 
 - `ARCHITECTURE.md`/`CONTRIBUTING.md`'s CI/CD & Quality Gates tables updated to match
 - Project version bumped to 8.3.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.4.0)
+### Previously Completed (v8.4.0)
 
 - New `ClubIdentifier.ALL`, seeded via `V7_3_0__seed_club_data.sql`; `IpscMatchServiceImpl.resolveClub()` now
   defaults a missing/blank match `club` to it instead of failing validation, closing Gap #9
@@ -2161,17 +2256,118 @@ Based on the evolution to v8.4.0, the following areas are identified for future 
   `ARCHITECTURE.md`'s Project Structure tree against disk
 - Project version bumped to 8.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
+### Previously Completed (v8.4.1)
+
+- `AGENTS.md`/`CONTRIBUTING.md`'s near-verbatim duplicates condensed into highlights-and-link references, with
+  `CONTRIBUTING.md` kept as the sole canonical copy of Git Workflow's "Merging" subsection
+- New `AGENTS.md` "🧩 Claude Code Skills" and "🗺️ Roadmap Planning" sections, each mirrored by a short pointer in
+  `CONTRIBUTING.md`
+- `AGENTS.md`'s icon registry backfilled with 25 icons already in use, plus a "Reserved" sub-table for the sibling
+  `hpsc-web-vite` repository's frontend icons; icon collisions resolved across the root documents and 17 archived
+  release notes
+- `CHANGELOG.md`'s duplicate, truncated `[5.0.0]` section removed
+- Project version bumped to 8.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.4.2)
+
+- `AGENTS.md` declared this project's ultimate source of truth for conventions, with `CONTRIBUTING.md`'s intro
+  pointing back to it
+- `CHANGELOG.md` retitled "HPSC Website Backend" under a new "🧾 Change Log" heading, every heading beneath it
+  demoted one level; `CONTRIBUTING.md`/`HISTORY.md`'s titles gain the same prefix
+- Project version bumped to 8.4.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.5.0)
+
+- `IpscMatch` gains nullable `startTime`/`endTime` columns via `V7_5_0__add_ipsc_match_start_end_time.sql`, wired
+  through `MatchRequest`, `MatchRequestForCSV`, `MatchResponse` and `IpscMatchServiceImpl`
+- Match CSV bulk import now requires `StartTime`/`EndTime` header columns (values may be left blank)
+- New `IpscMatchServiceIntegrationTest` coverage proves the round-trip through the real H2/Hibernate layer
+- British English "Licence" applied everywhere except `LICENSE.md`'s own filename and content
+- Project version bumped to 8.5.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.5.1)
+
+- `HISTORY.md` backfilled with Phase/Milestone 26–28 for v8.4.1, v8.4.2 and v8.5.0, closing Gap #10
+- `improvement-plan.md` gains an "At a Glance" gap-status index; its Roadmap's **Now**/**Next** rows refreshed
+- `HISTORY.md`'s narrative sections reordered oldest-first (only the Historical Timeline stays newest-first), and
+  stale Conclusion-section metadata removed
+- Re-scoped from `v8.6.0` **MINOR** to `v8.5.1` **PATCH**, since the whole diff proved documentation/tooling-only
+- Project version bumped to 8.5.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.6.0)
+
+- New nullable `IpscMatch.url` column via `V7_6_0__add_ipsc_match_url.sql`, wired end-to-end with a matching `Url`
+  CSV column
+- `IpscMatch.startTime`/`endTime` corrected from `LocalDateTime` to `LocalTime` via
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql`; JSON/CSV values are now bare `HH:mm`, per the new
+  `IpscConstants.IPSC_INPUT_TIME_FORMAT`
+- `AGENTS.md`'s Test Conventions formally document the 3-tier `<Service>Test`/`<Service>ImplTest`/
+  `<Service>IntegrationTest` architecture
+- Project version bumped to 8.6.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.6.1)
+
+- `HISTORY.md`'s Evolution Overview split out into `documentation/history/EVOLUTION_OVERVIEW.md`
+- All 52 archived release notes/PR descriptions regrouped into `documentation/history/v1/`–`v8/` by major version,
+  with `AGENTS.md`, `README.md` and the affected skills updated to the new paths
+- Scoped as a **PATCH**, since the whole diff proved documentation/tooling-only
+- Project version bumped to 8.6.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.6.2)
+
+- `CHANGELOG.md` heading-depth references corrected to `###`/`####`/`#####` across `AGENTS.md`,
+  `CONTRIBUTING.md` and five skills, with `AGENTS.md` now spelling out the full nesting
+- This section's Short-term/Medium-term lists refreshed against what had actually shipped, closing Gap #11
+- `AGENTS.md`'s icon registry restructured to mirror the shared project template (`🛤️` Roadmap, `☑️` Success
+  Criteria), with every live heading realigned
+- Scoped as a **PATCH**, since the whole diff proved documentation/tooling-only
+- Project version bumped to 8.6.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.7.0)
+
+- New `GET /ipsc/competitors` endpoint (`IpscCompetitorController.getAllCompetitors`), mirroring `getAllMatches`
+- A match CSV's `Stages` cell now separates stage number from name with `:` instead of `-`; the old form is rejected
+- Every `@ManyToOne` association switched from `FetchType.LAZY` to `FetchType.EAGER`
+- The `server.port=8081` override removed, so the app runs on Spring Boot's default port `8080`
+- `springdoc-openapi-starter-webmvc-ui` bumped `2.8.5` → `3.1.0` via an imported BOM; unused
+  `spring-restdocs-mockmvc` removed
+- Gap #12 recorded: competitors and matches documented as "full CRUD" with no delete operation
+- Project version bumped to 8.7.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v8.8.0)
+
+- New `DELETE /ipsc/competitors/{competitorId}` and `DELETE /ipsc/matches/{matchId}` endpoints, returning `204`,
+  `400` when still referenced or `404` when missing
+- Deletes reject rather than cascade: a record still referenced by match results, stage results or shooter logs is
+  refused, while what it owns (a competitor's emails, a match's stages) goes with it
+- Each delete is flushed inside the service method, so a reference added concurrently still surfaces as a `400`
+- New `existsBy…` repository queries back the dependent-row checks
+- Gap #12 closed; Gap #13 recorded (Claude Code workflows missing from the CI/CD documentation)
+- Project version bumped to 8.8.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.9.0)
+
+- New nullable `Competitor.paidUpSapsa`/`paidUpClub` columns via `V7_8_0__add_competitor_paid_up_flags.sql`; the
+  competitor CSV now requires `PaidUpSapsa`/`PaidUpClub` header columns
+- `@ManyToOne` associations switched to `FetchType.LAZY`, with fetch-join repository queries loading what responses
+  read
+- New `TransactionService` commits every competitor/match write in an explicit transaction; bulk imports save all
+  rows in one transaction
+- `IpscMatch.stages` becomes a cascaded `@OneToMany`, the domain model's only bidirectional relationship
+- Unused `jackson-dataformat-xml`/`commons-lang3` dependencies removed
+- New repository integration tests and `TransactionService` test tiers; 903 → 966 tests
+- Gaps #13–#24 closed, leaving only Gap #6 open
+- Project version bumped to 8.9.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
 ### Short-term (Minor Releases)
 
 - Wire service/controller/import support for `clubRanking`, `isVisitor`, `ShooterLog` and `ShooterLogCompetitor` —
   currently schema-only (`homeClub` now wired via `IpscCompetitorService`)
 - Build a `ShooterLogService` to calculate and persist best-4-match snapshots — no calculation job/service exists yet
 - Populate `overallRanking`, `clubRanking` and `isVisitor` during match-result import
-- Backfill `Competitor.homeClub` for existing competitors — the `club` table itself is already seeded (v8.4.0,
-  `V7_3_0__seed_club_data.sql`)
 - Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) to an endpoint — still
   groundwork, not yet consumed by any controller
-- Add entity, repository and integration test coverage for the promoted/extended domain model
+- Add entity-level unit tests for the promoted/extended domain model — repository integration tests exist as of v8.9.0
 - Performance optimisation for large-scale match processing
 - Enhanced diagnostic logging
 
@@ -2279,6 +2475,6 @@ Version 8.0.0 completes the IPSC module rebuild that v6.0.0 first began: `IpscCo
 replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new `IpscCompetitorService`/`IpscMatchService`
 implementations, real competitor and match CRUD with club/gender/firearm-type/match-category resolution and the
 largest test expansion since v5.4.0. Alongside the domain work, the release also merges `CLAUDE.md`'s guidance into a
-single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana
-JVM static analysis — marking the transition from a project with significant architectural groundwork to one with a
-genuinely complete, if still growing, IPSC feature set.
+single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds
+Qodana JVM static analysis — marking the transition from a project with significant architectural groundwork to one with
+a genuinely complete, if still growing, IPSC feature set.

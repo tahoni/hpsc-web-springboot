@@ -40,7 +40,7 @@ public class Competitor {
     @Convert(converter = GenderConverter.class)
     private Gender gender;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_club_id")
     private Club homeClub;
 
@@ -59,9 +59,15 @@ public class Competitor {
     @Column(name = "cellphone_number")
     private String cellphoneNumber;
 
+    @Column(name = "paid_up_sapsa")
+    private Boolean paidUpSapsa;
+
+    @Column(name = "paid_up_club")
+    private Boolean paidUpClub;
+
     @ElementCollection
     @CollectionTable(name = "competitor_email", joinColumns = @JoinColumn(name = "competitor_id"))
-    @Column(name = "email_address", nullable = false)
+    @Column(name = "email_address")
     private List<String> emailAddresses = new ArrayList<>();
 
     @CreationTimestamp
