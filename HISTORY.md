@@ -21,6 +21,26 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.10.1 (September 26, 2026)
+
+**Theme:** Explicit Dependency Submission & Dependabot Configuration
+
+**Key Focus:**
+
+- New `.github/workflows/dependency-submission.yml` replaces GitHub's built-in "Automatic Dependency Submission
+  (Maven)" — the one check on `develop`→`main` PRs with no workflow file behind it — resolving the dependency
+  graph with the project's own JDK 25 and Maven wrapper instead of the built-in JDK 21 without the wrapper; the
+  built-in submission must be turned off in the repository's Code security settings
+- New `.github/dependabot.yml` enables weekly Maven and GitHub Actions version updates, opened against `develop`,
+  with Maven minor/patch bumps and all Actions bumps each grouped into one PR
+- Dependabot security-update PRs, which always target `main`, are handled as hotfixes: `AGENTS.md`'s Branching
+  Model and `CONTRIBUTING.md`'s Merging section name them as the only exception besides `hotfix/*`, merged into
+  `main` and then carried into `develop` by merging `main` back into it
+- The release's own improvement-plan sweep recorded Gap #29 for that branching conflict and closed it — Gap #6
+  remains the only open gap, with #26 still waiting on a Spring Boot release
+- Scoped as `v8.10.1` **PATCH**: CI and documentation only, with no change to the API, configuration or schema
+- Project version bumped to 8.10.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.10.0 (September 26, 2026)
 
 **Theme:** Strict Semantic Versioning, Production Profile & Roadmap Gap Closure
@@ -1283,6 +1303,16 @@ while clearing the improvement plan of every documentation-accuracy gap.
 **Achievement:** Turned the project's version numbers from a matter of precedent into a rule the release process
 checks, and made the documented runtime profiles match the ones that actually exist.
 
+### Milestone 37: Explicit Dependency Submission & Dependabot Configuration (v8.10.1)
+
+- Every check on a `develop`→`main` PR now comes from a workflow file in the repository
+- Dependabot version updates configured, targeting `develop`
+- Dependabot security PRs given a place in the GitFlow model, as hotfixes
+- Gap #29 recorded and closed
+
+**Achievement:** Brought the repository's dependency tooling under version control and fitted it into the branching
+model, rather than leaving it to GitHub's defaults.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1857,7 +1887,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.10.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.10.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1879,7 +1909,8 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   `TransactionService` and lazy associations loaded through fetch-join queries — while clearing every
   documentation-accuracy gap the improvement plan tracked. Then turn Semantic Versioning from precedent into a rule
   the release process enforces, give production its own profile and make every documented runtime profile match the
-  configuration behind it.
+  configuration behind it, then bring the repository's dependency tooling — dependency submission and Dependabot —
+  under version control and into the branching model.
 
 ### Initial Phase (v1.0.0)
 
@@ -2143,7 +2174,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.10.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.10.1, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2401,7 +2432,7 @@ Based on the evolution to v8.10.0, the following areas are identified for future
 - Gaps #13–#24 closed, leaving only Gap #6 open
 - Project version bumped to 8.9.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.10.0)
+### Previously Completed (v8.10.0)
 
 - New Semantic Versioning subsection in `AGENTS.md`; `prep-version-release` validates each release's version against
   it, and `**Breaking:**` CHANGELOG entries are flagged as they land
@@ -2411,6 +2442,15 @@ Based on the evolution to v8.10.0, the following areas are identified for future
 - New `IpscMatchTest` guarding the `IpscMatch.stages` Lombok exclusions; 966 → 970 tests
 - Gaps #25, #27 and #28 closed and #26 progressed, leaving only Gap #6 open
 - Project version bumped to 8.10.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.10.1)
+
+- New `.github/workflows/dependency-submission.yml` replaces GitHub's built-in Maven dependency submission, using the
+  project's own JDK 25 and Maven wrapper
+- New `.github/dependabot.yml`: weekly, grouped Maven and GitHub Actions version updates targeting `develop`
+- Dependabot security-update PRs handled as hotfixes in `AGENTS.md`'s and `CONTRIBUTING.md`'s branching rules
+- Gap #29 recorded and closed, leaving only Gap #6 open
+- Project version bumped to 8.10.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 

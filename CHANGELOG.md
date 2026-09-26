@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.10.0](#-8100---2026-09-26) ← Current
+- [🧾 Version 8.10.1](#-8101---2026-09-26) ← Current
+- [🧾 Version 8.10.0](#-8100---2026-09-26)
 - [🧾 Version 8.9.0](#-890---2026-09-26)
 - [🧾 Version 8.8.0](#-880---2026-09-24)
 - [🧾 Version 8.7.0](#-870---2026-09-24)
@@ -61,6 +62,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [8.10.1] - 2026-09-26
+
 #### ➕ Added
 
 ##### CI/CD & Configuration
@@ -91,6 +94,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   merging `main` back into it, since Dependabot deletes its branch after merging. `AGENTS.md`'s Branching Model names
   them as the only exception besides `hotfix/*`, and a new `dependabot/*` entry separates them from version-update
   PRs, which target `develop` like any `feature/*` PR. Closes `improvement-plan.md`'s Gap #29
+
+##### Build & Metadata
+
+- Project version bumped to **8.10.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### 🧾 [8.10.0] - 2026-09-26
 
