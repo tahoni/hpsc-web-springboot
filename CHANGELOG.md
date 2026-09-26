@@ -59,6 +59,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Build & Metadata
+
+- **`commons-text`:** New `org.apache.commons:commons-text` 1.15.0 dependency
+
 ### 🧾 [8.8.0] - 2026-09-24
 
 #### ➕ Added
