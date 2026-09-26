@@ -289,6 +289,19 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
 
+**Entity-level unit tests** *(improvement-plan.md → Gap #25)*
+
+- [ ] Decide whether entity-level unit tests are still wanted, given the entities hold no hand-written behaviour and
+  their persistence behaviour is covered by the repository integration tests
+- [ ] If so, add unit tests for the entity behaviour that warrants it (e.g. empty-collection defaults); if not, drop
+  the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
+
+**`tomcat.version` override** *(improvement-plan.md → Gap #26)*
+
+- [ ] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later
+- [ ] Once it has, drop the `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
+  bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
+
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
 

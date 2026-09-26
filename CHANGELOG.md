@@ -60,6 +60,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gaps #25–#26 from an
+  `update-improvement-plan-gaps` sweep — entity-level unit tests are a stated goal in `HISTORY.md` and the v8.9.0
+  release notes with nothing tracking it (#25); `pom.xml`'s `tomcat.version` CVE override has been a standing manual
+  pin since v8.3.1, although the plan said no overrides remained (#26). "🌳 At a Glance", "🛤️ Roadmap" **Next** and
+  **Ongoing** rows, "☑️ Success Criteria" and the "⚙️ Goals & Constraints" `pom.xml` row updated to match, and that
+  table's stale ~98.4% coverage figure replaced with v8.9.0's measured 98.77%
+
 #### 🔄 Changed
 
 ##### Tooling
