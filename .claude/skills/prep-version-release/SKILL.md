@@ -60,7 +60,7 @@ Steps:
 6. **Add a `CHANGELOG.md` entry.** Rename `### 🧪 [Unreleased]`'s accumulated entries (now synced in the previous
    step) into a new `### 🧾 [$VERSION] - YYYY-MM-DD` section, keeping only the `#### <category>` headings that apply
    (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security`) and their `##### <Area>`
-   sub-headings. Update the Table of Contents and move the "← Current" marker to the new version, then start a fresh
+   subheadings. Update the Table of Contents and move the "← Current" marker to the new version, then start a fresh
    empty `### 🧪 [Unreleased]` section above it.
 7. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for `$VERSION`, at the same narrative
    depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
