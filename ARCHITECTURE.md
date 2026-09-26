@@ -403,7 +403,7 @@ Client uploads CSV (Content-Type: text/csv)
 | **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
 | **Extensibility**   | Firearm-type enums + division mappings, enum `AttributeConverter`s with `fromX` lookups                                               |
-| **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters    |
+| **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters   |
 | **Type Safety**     | Custom `AttributeConverter` implementations for all enum-typed columns replace `@Enumerated(EnumType.STRING)`                         |
 
 ---

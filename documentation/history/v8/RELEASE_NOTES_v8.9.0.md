@@ -204,13 +204,13 @@ No endpoint was added or removed, and no JSON field was removed or made required
 
 ## 📊 Statistics
 
-- **Total Commits:** 23 (the paid-up flags feature and its follow-ups, Gaps #13–#17, lazy loading, fetch-join queries,
+- **Total Commits:** 24 (the paid-up flags feature and its follow-ups, Gaps #13–#17, lazy loading, fetch-join queries,
   `TransactionService`, the HISTORY.md checklist changes, plus this release's version bump, Gaps #18–#24, release
-  documentation and PR description commits)
+  documentation, PR description and documentation tidy-up commits)
 - **Files Changed:** 57
-- **Insertions:** 3,965 lines
-- **Deletions:** 672 lines
-- **Net Change:** +3,293 lines
+- **Insertions:** 3,998 lines
+- **Deletions:** 704 lines
+- **Net Change:** +3,294 lines
 - **New Source Files:** 3 (`TransactionService`, `TransactionServiceImpl`, `V7_8_0__add_competitor_paid_up_flags.sql`)
 - **Deleted Files:** 0
 - **New Test Files:** 10 (six repository integration tests, the `ScoringFixtures` helper and three `TransactionService`
@@ -233,7 +233,7 @@ No endpoint was added or removed, and no JSON field was removed or made required
   before the new ones are saved. `orphanRemoval` alone isn't enough: it only sees removals relative to the
   collection's last flushed snapshot.
 - **Build everything, then save once.** Bulk imports validate and build every row before touching the database, so a
-  bad row costs nothing and the single save keeps the import atomic.
+  bad row costs nothing, and the single save keeps the import atomic.
 - **Test without the safety net.** An `@Transactional` test absorbs the code's own transactions, hiding commit and
   lazy-loading bugs. The tests that prove real commits run without a surrounding transaction and clean up after
   themselves.

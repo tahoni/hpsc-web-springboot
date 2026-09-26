@@ -110,9 +110,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   deliberately not `@Transactional`, so a surrounding test transaction can't hide whether each write commits
 - **`IpscMatchRepositoryIntegrationTest`, `CompetitorRepositoryIntegrationTest`,
   `MatchCompetitorRepositoryIntegrationTest`, `MatchStageCompetitorRepositoryIntegrationTest`,
-  `ShooterLogRepositoryIntegrationTest`, `ShooterLogCompetitorRepositoryIntegrationTest`:** New repository tests for the fetch-join queries,
-  `IpscMatch.stages`' cascade persist/orphan removal/cascade delete, the email collection's delete and every
-  `existsBy…` check behind the reject-not-cascade deletes, with a shared `ScoringFixtures` helper
+  `ShooterLogRepositoryIntegrationTest`, `ShooterLogCompetitorRepositoryIntegrationTest`:** New repository tests for the
+  fetch-join queries, `IpscMatch.stages`' cascade persist/orphan removal/cascade delete, the email collection's delete
+  and every `existsBy…` check behind the reject-not-cascade deletes, with a shared `ScoringFixtures` helper
 
 ##### Documentation
 
@@ -169,8 +169,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### CI/CD & Configuration
 
-- **`claude-code-review.yml`:** The commented-out `paths:` filter example still named its template's TypeScript/
-  JavaScript globs — now `src/**/*.java`, `src/main/resources/**` and `pom.xml`, still left commented out
+- **`claude-code-review.yml`:** The commented-out `paths:` filter example still named its template's
+  TypeScript/JavaScript globs — now `src/**/*.java`, `src/main/resources/**` and `pom.xml`, still left commented out
 
 ##### Tooling
 
@@ -222,7 +222,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`, which was renamed away — now
   `testCreateAwards_whenValidCsvData_thenReturns200`, closing `improvement-plan.md`'s Gap #16
 - **`HISTORY.md`:** "Major Version Goals"' Version 8.x entry stopped at v8.5.1 — its range now runs to v8.8.0, and
-  its narrative covers v8.6.0–v8.8.0's match/competitor API completion, platform tidy-up and documentation work
+  its narrative covers v8.6.0 – v8.8.0's match/competitor API completion, platform tidy-up and documentation work
 - **`HISTORY.md`:** The Future Roadmap Implications "Recently Completed" log stopped at v8.4.0 — added entries for
   v8.4.1 through v8.8.0 and updated the section's opening sentence to v8.8.0, closing `improvement-plan.md`'s Gap #17
 - **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `HISTORY.md` step now updates the Future Roadmap
@@ -333,8 +333,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
   Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
-- **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's
-  **Next** row points at it instead of the "no items currently scoped" placeholder and "☑️ Success Criteria" gains
+- **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's **Next** row
+  points at it instead of the "no items currently scoped" placeholder and "☑️ Success Criteria" gains
   a matching bullet
 
 ##### Domain
@@ -421,12 +421,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
   bold-lead-in bullet style — reverse-synced from the shared project template
 - **`HISTORY.md`:** "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
-  actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half
-  (the `club` table was already seeded in v8.4.0), `ShooterLogEntry` renamed to `ShooterLogCompetitor`,
+  actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half (the
+  `club` table was already seeded in v8.4.0), `ShooterLogEntry` renamed to `ShooterLogCompetitor`,
   "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x Releases)" and "Bulk match processing capabilities"
   dropped as delivered by v8.3.0's bulk CSV import
-- **`CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form
-  ("prose, comments and Javadoc") instead of showing the forbidden one ("prose, comments, and Javadoc")
+- **`CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form ("prose, comments and
+  Javadoc") instead of showing the forbidden one ("prose, comments, and Javadoc")
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
   this same release — "🌳 At a Glance" counts, the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria"
   updated to match
@@ -551,8 +551,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`:** New "📋 At a Glance" section (originally added as "📋 Gap Status Summary", later
   renamed), listing every numbered gap by completion status — a quick-reference index ahead of the full per-gap
   detail in "🔍 Gaps & Improvement Opportunities"
-- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Now** row dropped #2/#7, both already closed, and promoted #6
-  (match scoring / shooter-log service and controller layer) up from **Next** as the only remaining open gap; **Next**
+- **`improvement-plan.md`:** "🗺️ Roadmap" table's **Now** row dropped #2/#7, both already closed, and promoted #6 (match
+  scoring / shooter-log service and controller layer) up from **Next** as the only remaining open gap; **Next**
   is now unscoped
 - **`improvement-plan.md`:** "📋 At a Glance" section's #6 entry corrected to say it's the current **Now** roadmap
   focus, not **Next** — stale after the Roadmap table update above promoted it
@@ -981,8 +981,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Database
 
-- **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment
-  ("infrequently-changed" → "infrequently changed")
+- **`V7_2_0__add_competitor_emails.sql`:** Dropped an unnecessary hyphen in the header comment ("infrequently-changed" →
+  "infrequently changed")
 
 ##### Documentation
 
@@ -1089,8 +1089,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`/`CONTRIBUTING.md`:** CI/CD & Quality Gates tables updated to reflect the new `build.yml` gate
   and JaCoCo coverage-check rule, dropping the stale "locally / by reviewers"/"All PRs" language
 - **`documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #2 closed in v8.3.1; Gap #3
-  closed in v8.3.1; Gap #4 marked partially progressed in v8.3.1, noting the refreshed coverage baseline
-  (98.16%/98.94% line/branch, 836 tests) and the JaCoCo floor tightened twice within the same branch (51% → 86%);
+  closed in v8.3.1; Gap #4 marked partially progressed in v8.3.1, noting the refreshed coverage baseline (98.16%/98.94%
+  line/branch, 836 tests) and the JaCoCo floor tightened twice within the same branch (51% → 86%);
   `HISTORY.md`'s coverage figure refresh is done, recorded in its Historical Timeline, Phase 24 and Milestone 24
 
 #### 🐛 Fixed
@@ -1132,8 +1132,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
-- **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON
-  (de)serialization, its CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
+- **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON (de)serialization, its
+  CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
   constructor's enforcement of `matchDate`/`matchName` as required creator properties
 - **`IpscMatchControllerTest`:** New tests covering `createMatches`'s `201` response, delegation to the
   service and propagation of `ValidationException`/`NonFatalException`/`FatalException`
@@ -1174,8 +1174,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Database
 
-- **`V7_2_0__add_competitor_emails.sql`:** New Flyway migration adding the `competitor_email` table
-  (`competitor_id` FK, `email_address`), backfilling it from any existing non-blank
+- **`V7_2_0__add_competitor_emails.sql`:** New Flyway migration adding the `competitor_email` table (`competitor_id` FK,
+  `email_address`), backfilling it from any existing non-blank
   `competitor.email_address` values, then dropping that column
 
 ##### Constants
@@ -1403,8 +1403,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `@JsonProperty`, replacing the Lombok `@AllArgsConstructor` (same signature, so `IpscCompetitorServiceImpl
   .toRequest`'s positional call is unaffected) — `firstName`/`lastName` remain `required = true`, and
   `@JsonProperty(required = true)` moves from `competitorNumber` to `clubNumber`, correcting a mismatch between
-  the JSON-level requirement and `IpscCompetitorServiceImpl.validateForCreate`'s actual required fields
-  (`firstName`, `lastName`, `clubNumber`)
+  the JSON-level requirement and `IpscCompetitorServiceImpl.validateForCreate`'s actual required fields (`firstName`,
+  `lastName`, `clubNumber`)
 - **`CompetitorResponse`:** Added `@NotNull` to `competitorId`, `firstName`, `lastName` and `clubNumber` — every
   persisted competitor always has these set, documenting the existing contract rather than changing behaviour,
   matching the `@NotNull` already used on `CompetitorRequest`/`ImageRequest`

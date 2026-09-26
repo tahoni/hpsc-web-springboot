@@ -494,7 +494,7 @@ recent release PR's review run succeeding. `ARCHITECTURE.md`'s Project Structure
 `.github/workflows/` as "GitHub Actions — CI/CD, CodeQL".
 
 **Why it matters:** A contributor reading `ARCHITECTURE.md`/`CONTRIBUTING.md` doesn't learn that every pull request
-gets an automated AI review, that `@claude` can be invoked on issues and PRs, or that both depend on a repository
+gets an automated AI review, that `@claude` can be invoked on issues and PRs or that both depend on a repository
 secret that must stay provisioned — the same kind of doc-vs-code drift Gap #2 and Gap #7 closed for the build and
 static-analysis gates. The review workflow's commented-out `paths:` filter also still names TypeScript/JavaScript
 globs from its template, a hint it was added as-is rather than tailored to this Java project.
@@ -704,7 +704,7 @@ they now describe a per-row, service-level persistence path that no longer exist
 
 **Proposed improvement:** Redraw the overview and request flows through `TransactionService`, reword the bulk-import
 flows to "builds each row, then saves all rows in one transaction", drop the stale removed-flows note, describe the
-current repository wiring with the fetch-join and `existsBy…` queries as examples, and refresh Gap #6's Evidence to
+current repository wiring with the fetch-join and `existsBy…` queries as examples and refresh Gap #6's Evidence to
 match.
 
 **Outcome:** Delivered as proposed. `ARCHITECTURE.md`'s overview and Typical Request-Response Flow diagrams now

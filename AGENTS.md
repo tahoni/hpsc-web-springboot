@@ -533,7 +533,7 @@ anything downstream references them:
    Regardless of significance, always rename the Future Roadmap Implications section's current `### Recently
    Completed (vX.Y.Z)` entry to `### Previously Completed (vX.Y.Z)`, add a `### Recently Completed` entry for the new
    version and update the section's "Based on the evolution to vX.Y.Z" opening sentence — that log is meant to cover
-   every release, and fell nine releases behind while it was treated as optional. Likewise always update the "Major
+   every release, and fell nine releases behind while it was treated as optional. Likewise, always update the "Major
    Version Goals" subsection under Project Philosophy Evolution: extend the current major version's
    `Version N.x (vN.0.0 – vX.Y.Z)` range to end at the new version and weave the release's driving goal into that
    entry's narrative, or add a new `Version N.x` entry for a new major version. Then check whether

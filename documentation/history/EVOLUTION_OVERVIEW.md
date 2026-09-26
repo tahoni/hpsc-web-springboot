@@ -2001,7 +2001,7 @@ A domain correction release: adds a nullable `url` field to `IpscMatch`, correct
 **Duration:** September 23, 2026
 
 A documentation-only patch release: splits `HISTORY.md`'s largest section out into this file, regroups the
-per-version archive into major-version subdirectories, and updates every tool/doc that reads or writes those
+per-version archive into major-version subdirectories and updates every tool/doc that reads or writes those
 paths — no domain-model, API or test-behaviour change.
 
 **Key Accomplishments:**
@@ -2034,7 +2034,7 @@ paths — no domain-model, API or test-behaviour change.
 
 **Architecture Highlights:**
 
-- No architectural change — this release reorganizes documentation structure only
+- No architectural change — this release reorganises documentation structure only
 
 **Technical Focus:**
 
@@ -2090,7 +2090,7 @@ test-behaviour change.
   references
 - `improvement-plan.md`/`improvement-plan-tasks.md` synced with the shared project template's structure: project
   title, a note on the four kinds of gap an audit looks for, a fuller Related Documentation list, a note on
-  annotating checked task items, and no more hard-coded gap count in the tasks file's intro
+  annotating checked task items and no more hard-coded gap count in the tasks file's intro
 - The rest of `AGENTS.md`'s icon registry then followed: restructured to mirror the template's core table, with
   its backend / API service extension set adopted as this project's own and its component-based frontend set kept
   reserved, and every live heading realigned to match — Documentation Conventions (`✍️`), Documentation File Map
@@ -2328,7 +2328,7 @@ associations are loaded through fetch-join queries and every competitor/match wr
 
 **Test Coverage:**
 
-- 63 new tests (903 → 966): `TransactionService`'s full 3-tier split, six repository integration test classes, and
+- 63 new tests (903 → 966): `TransactionService`'s full 3-tier split, six repository integration test classes and
   service integration tests run without a surrounding transaction; coverage 98.77%/99.09% line/branch
 
 ---

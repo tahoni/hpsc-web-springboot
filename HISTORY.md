@@ -49,8 +49,8 @@ evolution of architecture, features and design philosophy across all versions.
   run without a surrounding transaction to prove each write really commits; coverage 98.77%/99.09% line/branch
 - Closed `improvement-plan.md`'s Gaps #13–#17 (documentation drift) and, from this release's own audit, Gaps #18–#24
   (unused dependencies, stale `ARCHITECTURE.md` patterns/data flows/repository descriptions, the 3-tier test rule,
-  `AGENTS.md`'s club name, the `homeClub` backfill as not applicable, and missing repository tests) — only Gap #6
-  remains open
+  `AGENTS.md`'s club name, missing repository tests and the `homeClub` backfill, closed as not applicable) — only
+  Gap #6 remains open
 - `AGENTS.md`'s Release Checklist now makes the Future Roadmap Implications log and "Major Version Goals" mandatory
   per release; both were backfilled through v8.8.0
 - Scoped as `v8.9.0` **MINOR** for the new competitor fields, with the competitor CSV's two new required header
@@ -303,8 +303,8 @@ evolution of architecture, features and design philosophy across all versions.
   time measured 98.44%/98.98% line/branch, 868 tests
 - `tomcat-embed-core`/`-el`/`-websocket` overridden `11.0.24` → `11.0.25`, closing three critical CVEs still pinned
   by `spring-boot-starter-parent:4.1.1`'s dependency management
-- New `AGENTS.md` conventions: Member ordering (constructors → public → protected → private), REST URL/handler-
-  naming rules condensed from `standard-rest-conventions.md`, and a Release Checklist step verifying
+- New `AGENTS.md` conventions: Member ordering (constructors → public → protected → private),
+  REST URL/handler-naming rules condensed from `standard-rest-conventions.md`, and a Release Checklist step verifying
   `ARCHITECTURE.md`'s Project Structure tree against disk at every release
 - `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` restructured into ✅ Completed/
   🟡 Partially Completed/⚪ Open sections, replacing the previous flat Now/Next/Later/Ongoing phasing
@@ -547,8 +547,8 @@ evolution of architecture, features and design philosophy across all versions.
 **Key Focus:**
 
 - New interface-contract unit tests `services/AwardServiceTest`/`services/ImageServiceTest` (Mockito-based, testing
-  `createAwards` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing 4
-  JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest` and `ControllerAdviceTest` — overall
+  `createAwards` through the `AwardService`/`ImageService` interface type rather than the impl class); new tests closing
+  4 JaCoCo-identified coverage gaps in `ControllerResponseTest`, `FirearmTypeTest` and `ControllerAdviceTest` — overall
   suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - New Claude Code commands `/scaffold-unit-tests` (migrated from a stale, wrong-project prompt file and corrected to
   this repo's real interface/impl test split) and `/scaffold-integration-tests` (new, `@SpringBootTest`-based, following
@@ -1095,8 +1095,8 @@ Award/Image CSV persistence.
   missing/blank match `club` to it instead of failing validation, closing Gap #9
 - `IpscCompetitorServiceImpl.resolveClubNumber()` requires `clubNumber` only for HPSC-home-club competitors; column
   relaxed to nullable via `V7_4_0__make_club_number_nullable.sql`
-- JaCoCo `LINE`/`COVEREDRATIO` floor tightened `0.86` → `0.97`, confirmed holding at a fresh 98.44%/98.98%
-  (line/branch, 868 tests) baseline, closing Gap #4
+- JaCoCo `LINE`/`COVEREDRATIO` floor tightened `0.86` → `0.97`, confirmed holding at a fresh 98.44%/98.98% (line/branch,
+  868 tests) baseline, closing Gap #4
 - `HpscConstants` removed; `AGENTS.md` gained Member ordering and REST naming conventions plus a Project-Structure-
   tree release-checklist backstop; `tomcat-embed-*` patched to 11.0.25 for three critical CVEs
 
@@ -1835,8 +1835,8 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   default port, a Spring Boot 4 springdoc line) and keeping the documentation honest at scale: formalising the 3-tier
   service test architecture, splitting `HISTORY.md`'s Evolution Overview and archived release notes into their own
   structure, and correcting `CHANGELOG.md` heading-depth drift across every convention document and skill. Finally,
-  make the persistence layer's behaviour explicit — competitor paid-up flags, lazy associations loaded through
-  fetch-join queries, and every write committed by a dedicated `TransactionService` — while clearing every
+  make the persistence layer's behaviour explicit — competitor paid-up flags, every write committed by a dedicated
+  `TransactionService` and lazy associations loaded through fetch-join queries — while clearing every
   documentation-accuracy gap the improvement plan tracked.
 
 ### Initial Phase (v1.0.0)
@@ -2096,6 +2096,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
       deletes them explicitly and flushes before inserting reused stage numbers
     - Integration tests that are themselves `@Transactional` absorb the code's own transactions and hide commit and
       lazy-loading bugs — so the new tests that prove commits run without a surrounding transaction
+
 ---
 
 ## 🛤️ Future Roadmap Implications
@@ -2158,8 +2159,8 @@ Based on the evolution to v8.9.0, the following areas are identified for future 
 
 ### Previously Completed (v7.2.0)
 
-- New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `createAwards` through the interface
-  type rather than the impl class
+- New interface-contract unit tests `AwardServiceTest`/`ImageServiceTest`, exercising `createAwards` through the
+  interface type rather than the impl class
 - 4 JaCoCo-identified coverage gaps closed (`ControllerResponse`, `FirearmType.toString()`,
   `ControllerAdvice.logError`); suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`; 26 existing test files retrofitted with a new
@@ -2474,6 +2475,6 @@ Version 8.0.0 completes the IPSC module rebuild that v6.0.0 first began: `IpscCo
 replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new `IpscCompetitorService`/`IpscMatchService`
 implementations, real competitor and match CRUD with club/gender/firearm-type/match-category resolution and the
 largest test expansion since v5.4.0. Alongside the domain work, the release also merges `CLAUDE.md`'s guidance into a
-single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana
-JVM static analysis — marking the transition from a project with significant architectural groundwork to one with a
-genuinely complete, if still growing, IPSC feature set.
+single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds
+Qodana JVM static analysis — marking the transition from a project with significant architectural groundwork to one with
+a genuinely complete, if still growing, IPSC feature set.
