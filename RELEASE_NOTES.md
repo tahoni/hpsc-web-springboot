@@ -128,12 +128,12 @@ section.
 
 ## 📊 Statistics
 
-- **Total Commits:** 13 (Semantic Versioning rules and their skill updates, Gaps #25–#28 and their fixes, the `prod`
+- **Total Commits:** 15 (Semantic Versioning rules and their skill updates, Gaps #25–#28 and their fixes, the `prod`
   profile, the `staging` profile removal, the Removed/Fixed reorder, plus this release's version bump, release
-  documentation and PR description commits)
-- **Files Changed:** 24
-- **Insertions:** 1,000 lines
-- **Deletions:** 304 lines
+  documentation, PR description, table-alignment and statistics-refresh commits)
+- **Files Changed:** 25
+- **Insertions:** 1,001 lines
+- **Deletions:** 305 lines
 - **Net Change:** +696 lines
 - **New Source Files:** 1 (`application-prod.properties`)
 - **Deleted Files:** 0
