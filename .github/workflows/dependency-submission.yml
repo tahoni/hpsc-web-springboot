@@ -29,10 +29,5 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # mvnw is committed without its executable bit (build.yml runs it through `sh` instead), but this
-      # action executes the wrapper directly
-      - name: Make Maven wrapper executable
-        run: chmod +x mvnw
-
       - name: Submit dependency snapshot
         uses: advanced-security/maven-dependency-submission-action@v6

@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.10.2](#-8102---2026-09-26) ← Current
+- [🧾 Version 8.10.3](#-8103---2026-09-26) ← Current
+- [🧾 Version 8.10.2](#-8102---2026-09-26)
 - [🧾 Version 8.10.1](#-8101---2026-09-26)
 - [🧾 Version 8.10.0](#-8100---2026-09-26)
 - [🧾 Version 8.9.0](#-890---2026-09-26)
@@ -62,6 +63,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.10.3] - 2026-09-26
+
+#### 🔄 Changed
+
+##### CI/CD & Configuration
+
+- **`actions/checkout`, `actions/setup-java`, `actions/upload-artifact`:** Bumped `v4` → `v7`, `v4` → `v6` and
+  `v4` → `v7` across every workflow — Dependabot's first grouped GitHub Actions update (#140)
+- **`.github/workflows/dependency-submission.yml`:** The "Make Maven wrapper executable" step is gone — `mvnw` is now
+  committed with its executable bit, set by Dependabot's Maven wrapper update
+
+##### Build & Metadata
+
+- **`springdoc-openapi-bom`, `jacoco-maven-plugin`, Maven wrapper:** Bumped `3.1.0` → `3.1.1`, `0.8.14` → `0.8.15`
+  and Maven `3.9.12` → `3.9.16` (`.mvn/wrapper/maven-wrapper.properties`, regenerated `mvnw`/`mvnw.cmd`, `mvnw` now
+  executable) — Dependabot's first grouped Maven minor/patch update (#138). It reached `main` through #142 ahead of
+  its release notes, so it is first documented here
+- Project version bumped to **8.10.3** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
+#### 🐛 Fixed
+
+##### Build & Metadata
+
+- **`flyway-maven-plugin`'s `flyway-mysql` dependency:** Dependabot bumped it `12.4.0` → `13.7.0` (#139, also on
+  `main` through #142), but the plugin itself is Spring Boot's managed `12.4.0` and `flyway-mysql` 13.7.0 requires
+  `flyway-core` 13.7.0, mixing two Flyway majors on the plugin's classpath. It now uses `${flyway.version}` —
+  plugin-scoped dependencies don't inherit the parent's `dependencyManagement`, but they do inherit its properties —
+  so it always matches the plugin, with no hand-pinned version to keep in sync or for Dependabot to bump
+- **`mvnw.cmd`:** Renormalised to the line endings `.gitattributes` specifies — Dependabot's wrapper update had
+  committed it with CRLF line endings
 
 ### 🧾 [8.10.2] - 2026-09-26
 
