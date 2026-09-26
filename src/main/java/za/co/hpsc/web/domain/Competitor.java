@@ -40,7 +40,7 @@ public class Competitor {
     @Convert(converter = GenderConverter.class)
     private Gender gender;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_club_id")
     private Club homeClub;
 

@@ -109,6 +109,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Domain
 
 - **`Competitor.emailAddresses`:** The `email_address` element column mapping no longer declares `nullable = false`
+- **`Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`, `ShooterLog`,
+  `ShooterLogCompetitor`:** Every `@ManyToOne` association now uses `FetchType.LAZY` instead of `FetchType.EAGER` —
+  loading an entity no longer pulls in its whole parent chain, reversing v8.7.0's switch to eager fetching
 
 ##### Services
 
