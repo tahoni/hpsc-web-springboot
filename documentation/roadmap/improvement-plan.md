@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (12):**
+- **✅ Completed (13):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -78,12 +78,12 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #12 Competitor/match "full CRUD" claims have no delete operation behind them — closed v8.8.0
   - #14 `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — closed (version
     pending)
+  - #15 `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA
+    cascade/`mappedBy` — closed (version pending)
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (5):**
+- **⚪ Open (4):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
   - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — **Next**
-  - #15 `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA
-    cascade/`mappedBy` — **Next**
   - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — **Next**
   - #17 `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 —
     **Next**
@@ -499,6 +499,40 @@ now, with `V7_8_0__add_competitor_paid_up_flags.sql` listed as "Unreleased" sinc
 a `feature/competitor-paid-up` branch, not a `release/*` branch, so the closing version is filled in at the next
 release-prep pass rather than guessed here.
 
+#### 15. `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy` — ✅ Closed (version pending)
+
+**Evidence:** `ARCHITECTURE.md:387`'s Quality Attributes table states, under "Data Integrity": "JPA cascade rules,
+bidirectional `mappedBy` declarations, `@Transactional` service methods, custom attribute converters." Two
+subsections earlier, `ARCHITECTURE.md:201` states the opposite, explicitly: "No entity declares a back-referencing
+`@OneToMany` collection, so there is no `mappedBy` anywhere in the domain model." `grep -rn
+"cascade\|mappedBy\|OneToMany" src/main/java/za/co/hpsc/web/domain/` returns zero matches, confirming line 201 is
+the accurate one. Separately, `ARCHITECTURE.md:405` attributes "database profiles" documentation to `README.md`
+("See README.md's ... section ... commands, database profiles and coding standards"), but `README.md` itself only
+links out to `CONTRIBUTING.md`'s "🗄️ Database Profiles" section (confirmed at `CONTRIBUTING.md:73`) rather than
+documenting it directly.
+
+**Why it matters:** The same document contradicts itself on a fairly fundamental persistence-layer claim — a reader
+who reads the Quality Attributes table first would expect cascade/`mappedBy` behaviour the domain model doesn't
+have, which matters more now that Gap #12 added explicit reject-not-cascade delete logic precisely because there's
+no cascade to lean on. The `README.md` misattribution is a smaller instance of the same "which doc actually owns
+this" drift.
+
+**Proposed improvement:** Correct line 387 to match line 201's accurate description (e.g. "explicit `@ManyToOne`-only
+associations, no cascade or `mappedBy`, `@Transactional` service methods, custom attribute converters"), and correct
+line 405's cross-reference to point at `CONTRIBUTING.md` for database profiles rather than `README.md`.
+
+**Outcome:** Delivered differently from the exact proposal: rather than rewording line 387 down to line 201's "no
+cascade or `mappedBy`", the domain model was changed so the Quality Attributes table's claim holds where it makes
+sense. `IpscMatch` gained a `stages` collection —
+`@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)` — since a stage can't exist
+without its match; `IpscMatchServiceImpl.deleteMatch` now relies on that cascade instead of deleting stages itself,
+and `replaceStages`/`upsertStages` keep the collection in step with the stages they persist. Every other relationship
+stays unidirectional and uncascaded, keeping Gap #12's reject-not-cascade rule for records still referenced by
+results or shooter logs. `ARCHITECTURE.md`'s Persistence Layer paragraph, entity table and "Data Integrity" row now
+all describe exactly that, and its Development Guidelines paragraph points at `CONTRIBUTING.md` for database
+profiles. No Flyway migration was needed, since `mappedBy` adds no column. Delivered on a
+`feature/competitor-paid-up` branch, so the closing version is filled in at the next release-prep pass.
+
 ### 🟡 Partially Completed
 
 *No gaps are currently partially completed.* A gap moves here when it has at least one **Progress** paragraph (per
@@ -554,28 +588,6 @@ on, and widen the Project Structure tree's `.github/workflows/` comment generica
 security analysis and automated review"). `CONTRIBUTING.md`'s summary line then only needs its parenthetical scope
 list extended to match. Optionally drop or tailor the review workflow's leftover template `paths:` comment.
 
-#### 15. `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy`
-
-**Evidence:** `ARCHITECTURE.md:387`'s Quality Attributes table states, under "Data Integrity": "JPA cascade rules,
-bidirectional `mappedBy` declarations, `@Transactional` service methods, custom attribute converters." Two
-subsections earlier, `ARCHITECTURE.md:201` states the opposite, explicitly: "No entity declares a back-referencing
-`@OneToMany` collection, so there is no `mappedBy` anywhere in the domain model." `grep -rn
-"cascade\|mappedBy\|OneToMany" src/main/java/za/co/hpsc/web/domain/` returns zero matches, confirming line 201 is
-the accurate one. Separately, `ARCHITECTURE.md:405` attributes "database profiles" documentation to `README.md`
-("See README.md's ... section ... commands, database profiles and coding standards"), but `README.md` itself only
-links out to `CONTRIBUTING.md`'s "🗄️ Database Profiles" section (confirmed at `CONTRIBUTING.md:73`) rather than
-documenting it directly.
-
-**Why it matters:** The same document contradicts itself on a fairly fundamental persistence-layer claim — a reader
-who reads the Quality Attributes table first would expect cascade/`mappedBy` behaviour the domain model doesn't
-have, which matters more now that Gap #12 added explicit reject-not-cascade delete logic precisely because there's
-no cascade to lean on. The `README.md` misattribution is a smaller instance of the same "which doc actually owns
-this" drift.
-
-**Proposed improvement:** Correct line 387 to match line 201's accurate description (e.g. "explicit `@ManyToOne`-only
-associations, no cascade or `mappedBy`, `@Transactional` service methods, custom attribute converters"), and correct
-line 405's cross-reference to point at `CONTRIBUTING.md` for database profiles rather than `README.md`.
-
 #### 16. `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists
 
 **Evidence:** `CONTRIBUTING.md:101`'s single-test example reads
@@ -619,7 +631,7 @@ again.
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | Document the Claude Code workflows (#13) and clear three remaining small documentation-accuracy gaps found in the same pass: `ARCHITECTURE.md`'s cascade/`mappedBy` self-contradiction (#15), `CONTRIBUTING.md`'s dead test-method example (#16), and `HISTORY.md`'s stalled Future Roadmap Implications log (#17) — #14, this phase's previous occupant, closed (version pending) |
+| **Next**    | Document the Claude Code workflows (#13) and clear two remaining small documentation-accuracy gaps found in the same pass: `CONTRIBUTING.md`'s dead test-method example (#16) and `HISTORY.md`'s stalled Future Roadmap Implications log (#17) — #14 and #15, this phase's previous occupants, closed (version pending) |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -659,8 +671,9 @@ again.
   `.github/workflows/`, including the Claude Code review and assistant workflows, closing Gap #13.
 - ✅ Met (version pending): `flyway-migration-versioning.md`'s Current State table lists every migration through
   `V7_8_0`, and a new step in "🔢 Choosing the Next Version" keeps it from drifting again, closing Gap #14.
-- `ARCHITECTURE.md`'s Quality Attributes table and its Persistence Layer section agree on whether cascade/`mappedBy`
-  exist, and its database-profiles cross-reference points at `CONTRIBUTING.md`, closing Gap #15.
+- ✅ Met (version pending): `ARCHITECTURE.md`'s Quality Attributes table and its Persistence Layer section agree on
+  cascade/`mappedBy` — both now describe `IpscMatch.stages` as the one cascaded, bidirectional relationship — and its
+  database-profiles cross-reference points at `CONTRIBUTING.md`, closing Gap #15.
 - `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing Gap #16.
 - `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log has an entry for every shipped release,
   closing Gap #17.

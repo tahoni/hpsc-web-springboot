@@ -310,21 +310,22 @@ class IpscMatchServiceImplTest {
         match.setId(1L);
         IpscMatchStage existingStage = new IpscMatchStage();
         existingStage.setId(100L);
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of(existingStage));
+        match.getStages().add(existingStage);
 
         // Act
         List<IpscMatchStage> result = ipscMatchServiceImpl.replaceStages(match, null);
 
         // Assert
         assertTrue(result.isEmpty());
-        verify(ipscMatchStageRepository).deleteAllInBatch(List.of(existingStage));
+        assertTrue(match.getStages().isEmpty());
+        verify(ipscMatchStageRepository).deleteAll(List.of(existingStage));
+        verify(ipscMatchRepository).flush();
     }
 
     @Test
     void testReplaceStages_whenStageRequestsIsEmpty_thenReturnsEmptyListWithoutSaving() {
         IpscMatch match = new IpscMatch();
         match.setId(1L);
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
 
         List<IpscMatchStage> result = ipscMatchServiceImpl.replaceStages(match, List.of());
 
@@ -337,7 +338,6 @@ class IpscMatchServiceImplTest {
         // Arrange
         IpscMatch match = new IpscMatch();
         match.setId(1L);
-        when(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(1L)).thenReturn(List.of());
         when(ipscMatchStageRepository.save(any(IpscMatchStage.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<MatchStageRequest> stageRequests = List.of(
@@ -354,6 +354,7 @@ class IpscMatchServiceImplTest {
         assertEquals("Stage 1", result.get(0).getStageName());
         assertEquals(2, result.get(1).getStageNumber());
         assertEquals("Stage 2", result.get(1).getStageName());
+        assertEquals(result, match.getStages());
         verify(ipscMatchStageRepository, times(2)).save(any(IpscMatchStage.class));
     }
 

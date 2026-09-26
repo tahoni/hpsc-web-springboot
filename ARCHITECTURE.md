@@ -190,15 +190,18 @@ The JPA entities map to database tables:
 |------------------------|--------------------------|--------------------------------------------------------------------------------------|
 | `Club`                 | `club`                   | No outgoing references; targeted by `Competitor`, `IpscMatch` and `ShooterLog` below |
 | `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                                           |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                                 |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`; one-to-many → `IpscMatchStage` (cascaded)                      |
 | `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one → `IpscMatch`                                                            |
 | `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                              |
 | `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one → `MatchCompetitor`, `IpscMatchStage`                                    |
 | `ShooterLog`           | `shooter_log`            | Many-to-one → `Competitor`, `Club`                                                   |
 | `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `MatchCompetitor`, `IpscMatch`                           |
 
-Every relationship is unidirectional: only the owning (child) side declares a `@ManyToOne`/`@JoinColumn`. No entity
-declares a back-referencing `@OneToMany` collection, so there is no `mappedBy` anywhere in the domain model.
+Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`. Only one is bidirectional:
+`IpscMatch.stages` is a `@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)`
+collection, since a stage can't exist without its match — so deleting a match cascades to its stages. Every other
+relationship is unidirectional, with no back-referencing collection and no cascade, so a record still referenced by
+results or shooter logs is refused on delete rather than cascaded (see the note above).
 
 #### Custom JPA Attribute Converters (`za.co.hpsc.web.converters`)
 
@@ -384,7 +387,7 @@ Client uploads CSV (Content-Type: text/csv)
 | **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
 | **Extensibility**   | Firearm-type enums + division mappings, strategy-pattern converters                                                                   |
-| **Data Integrity**  | JPA cascade rules, bidirectional `mappedBy` declarations, `@Transactional` service methods, custom attribute converters               |
+| **Data Integrity**  | Cascade limited to `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `@Transactional` services, attribute converters |
 | **Type Safety**     | Custom `AttributeConverter` implementations for all enum-typed columns replace `@Enumerated(EnumType.STRING)`                         |
 
 ---
@@ -401,9 +404,9 @@ Client uploads CSV (Content-Type: text/csv)
 
 ## 🛠️ Development Guidelines
 
-Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, and [README.md](README.md) for local setup, build
-commands, database profiles and coding standards. See README.md's [📚 Documentation](README.md#-documentation) section
-for a full map of this project's documentation.
+Refer to [AGENTS.md](AGENTS.md) for AI-assistant-oriented guidance, [README.md](README.md) for local setup, build
+commands and coding standards, and [CONTRIBUTING.md](CONTRIBUTING.md#-database-profiles) for database profiles. See
+README.md's [📚 Documentation](README.md#-documentation) section for a full map of this project's documentation.
 
 **Key rules enforced by convention:**
 

@@ -179,12 +179,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     + " cannot be deleted: it is referenced by shooter logs.");
         }
 
-        // Stages are removed as managed entities (not deleteAllInBatch's bulk query), so they leave
-        // the persistence context before their match does and the flush deletes them first. Flushed
-        // here rather than at commit, so a reference added by another transaction since the checks
-        // above surfaces inside this method and is reported as a 400, not a 500.
+        // The match's stages are removed by IpscMatch.stages' cascade, which deletes them before
+        // their match within the same flush. Flushed here rather than at commit, so a reference
+        // added by another transaction since the checks above surfaces inside this method and is
+        // reported as a 400, not a 500.
         try {
-            ipscMatchStageRepository.deleteAll(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId));
             ipscMatchRepository.delete(match);
             ipscMatchRepository.flush();
         } catch (DataIntegrityViolationException e) {
@@ -308,7 +307,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * Replaces all of a match's persisted stages with those on the given list.
      *
      * <p>
-     * Any stages the match previously had are deleted first, so this is only appropriate for
+     * Any stages the match previously had are removed from its {@link IpscMatch#getStages() stages}
+     * collection, and so deleted, first, so this is only appropriate for
      * a full create/replace — see {@link #upsertStages} for partial updates.
      * </p>
      *
@@ -319,11 +319,14 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @return the newly persisted stages, in the order given.
      */
     protected List<IpscMatchStage> replaceStages(@NotNull IpscMatch match, List<MatchStageRequest> stageRequests) {
-        // Flushed immediately so the deletes are applied before any replacement stages are
-        // inserted — otherwise Hibernate would order the inserts first within the same flush,
+        // The old stages are removed explicitly rather than left to IpscMatch.stages' orphanRemoval,
+        // which only sees removals relative to the collection's last-flushed snapshot and so would
+        // miss stages added since. Flushed immediately so the deletes are applied before any
+        // replacement stages are inserted — otherwise Hibernate would order the inserts first,
         // tripping the (match_id, stage_number) unique constraint on a reused stage number.
-        ipscMatchStageRepository.deleteAllInBatch(
-                ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId()));
+        ipscMatchStageRepository.deleteAll(List.copyOf(match.getStages()));
+        match.getStages().clear();
+        ipscMatchRepository.flush();
 
         if (stageRequests == null) {
             return List.of();
@@ -335,6 +338,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     stage.setMatch(match);
                     stage.setStageNumber(stageRequest.getStageNumber());
                     stage.setStageName(stageRequest.getStageName());
+                    match.getStages().add(stage);
                     return ipscMatchStageRepository.save(stage);
                 })
                 .toList();
@@ -356,7 +360,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                         .collect(Collectors.toMap(IpscMatchStage::getStageNumber, Function.identity()));
 
         for (MatchStageRequest stageRequest : stageRequests) {
-            IpscMatchStage stage = existingByNumber.getOrDefault(stageRequest.getStageNumber(), new IpscMatchStage());
+            IpscMatchStage stage = existingByNumber.get(stageRequest.getStageNumber());
+            if (stage == null) {
+                stage = new IpscMatchStage();
+                match.getStages().add(stage);
+            }
             stage.setMatch(match);
             stage.setStageNumber(stageRequest.getStageNumber());
             if (stageRequest.getStageName() != null) {

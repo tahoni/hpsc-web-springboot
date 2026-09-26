@@ -65,6 +65,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Competitor.paidUpSapsa`, `Competitor.paidUpClub`:** New nullable `Boolean` columns — whether a competitor's
   SAPSA and club memberships are paid up
+- **`IpscMatch.stages`:** New `@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)`
+  collection — the domain model's only bidirectional, cascaded relationship, since a stage can't exist without its
+  match; no schema change
 
 ##### API Models
 
@@ -107,6 +110,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Competitor.emailAddresses`:** The `email_address` element column mapping no longer declares `nullable = false`
 
+##### Services
+
+- **`IpscMatchServiceImpl.deleteMatch`:** A match's stages are now deleted by `IpscMatch.stages`' cascade rather than
+  explicitly; the reject-not-cascade checks for results and shooter logs are unchanged
+- **`IpscMatchServiceImpl.replaceStages`, `upsertStages`:** Keep `IpscMatch.stages` in step with the stages they
+  persist; `replaceStages` removes the old stages as managed entities and flushes, instead of
+  `deleteAllInBatch`'s bulk query
+
+##### Tests
+
+- **`IpscMatchServiceTest`, `IpscMatchServiceImplTest`:** Updated for cascade-based stage deletion, dropping stubs
+  for the no-longer-queried stage lookup
+
 #### 🐛 Fixed
 
 ##### Documentation
@@ -120,6 +136,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`flyway-migration-versioning.md`:** Current State table extended with the five migrations missing since v8.4.0
   (`V7_4_0` through `V7_8_0`); a new step 5 in "🔢 Choosing the Next Version" now has the next migration's author add
   its own row, closing `improvement-plan.md`'s Gap #14 (version pending — delivered on this feature branch)
+- **`ARCHITECTURE.md`:** The Quality Attributes table's "Data Integrity" row claimed JPA cascade rules and
+  bidirectional `mappedBy` declarations the domain model didn't have, contradicting the Persistence Layer section —
+  both now describe `IpscMatch.stages` as the one cascaded relationship, and the Development Guidelines paragraph
+  points at `CONTRIBUTING.md`, not `README.md`, for database profiles, closing `improvement-plan.md`'s Gap #15
+  (version pending — delivered on this feature branch)
 
 ### 🧾 [8.8.0] - 2026-09-24
 

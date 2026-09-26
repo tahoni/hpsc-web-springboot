@@ -2,7 +2,9 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import za.co.hpsc.web.converters.FirearmTypeConverter;
@@ -12,6 +14,8 @@ import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -46,6 +50,14 @@ public class IpscMatch {
     @Convert(converter = MatchCategoryConverter.class)
     @Column(name = "match_category")
     private MatchCategory matchCategory;
+
+    // A stage can't exist without its match, so its lifecycle follows the match's. Excluded from
+    // Lombok's toString/equals/hashCode, since IpscMatchStage.match points straight back here.
+    @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("stageNumber")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<IpscMatchStage> stages = new ArrayList<>();
 
     @Column(name = "url")
     private String url;

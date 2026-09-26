@@ -185,6 +185,15 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   `flyway-migration-versioning.md`'s own "🔢 Choosing the Next Version" section instead, so whoever adds the next
   migration updates the table in the same change rather than relying on a separate release-time check
 
+**ARCHITECTURE.md cascade/mappedBy self-contradiction** *(improvement-plan.md → Gap #15)* — ✅ Closed (version pending)
+
+- [x] ~~Correct the Quality Attributes table's "Data Integrity" row (line 387) to match the Persistence Layer
+  section's "no cascade or `mappedBy`" description (line 201)~~ — done the other way round: `IpscMatch` gained a
+  cascaded `@OneToMany(mappedBy = "match")` `stages` collection, and the Persistence Layer section, entity table and
+  "Data Integrity" row were all rewritten to describe it as the domain model's one cascaded relationship
+- [x] Correct the Development Guidelines cross-reference (line 405) to point at `CONTRIBUTING.md`, not `README.md`,
+  for database profiles documentation
+
 ---
 
 ## 🟡 Partially Completed
@@ -218,13 +227,6 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
   individual workflow files
 - [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
 - [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
-
-**ARCHITECTURE.md cascade/mappedBy self-contradiction** *(improvement-plan.md → Gap #15)*
-
-- [ ] Correct the Quality Attributes table's "Data Integrity" row (line 387) to match the Persistence Layer
-  section's accurate "no cascade or `mappedBy`" description (line 201)
-- [ ] Correct the Development Guidelines cross-reference (line 405) to point at `CONTRIBUTING.md`, not `README.md`,
-  for database profiles documentation
 
 **CONTRIBUTING.md dead test-method example** *(improvement-plan.md → Gap #16)*
 
