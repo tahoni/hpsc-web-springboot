@@ -95,7 +95,7 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
    ```
 
 2. **Create a local MySQL database** (e.g. `hpsc_dev`), then export the credentials the application always reads
-   from the environment, regardless of profile:
+   from the environment (every profile except `test`, which needs none, and `local` — see `CONTRIBUTING.md`):
    ```bash
    export MYSQL_USER=your_username
    export MYSQL_PASSWORD=your_password
@@ -143,7 +143,7 @@ The report is written to `target/site/jacoco/`.
 
 **Test Categories**:
 
-- **Unit Tests**: DTOs, enums, converters, exceptions, utilities, controllers and service logic
+- **Unit Tests**: DTOs, entities, enums, converters, exceptions, utilities, controllers and service logic
 - **Integration Tests**: Services and repositories, against an in-memory H2 database
 - **Test Frameworks**: JUnit, Mockito, Spring Test
 
@@ -202,8 +202,9 @@ documentation set above, and not required reading to work in this repository:
 | `improvement-plan.md`       | Synthesised goals/constraints from this project's own docs and configuration, and the resulting gaps and roadmap |
 | `improvement-plan-tasks.md` | Concrete, checkbox-level task list broken out from `improvement-plan.md`'s gaps                                  |
 
-This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) —
-see [CHANGELOG.md](CHANGELOG.md#-version-policy) for the full version policy.
+This project follows [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH`) strictly — see
+[`AGENTS.md`'s Semantic Versioning section](AGENTS.md#semantic-versioning) for what counts as a MAJOR, MINOR or PATCH
+change here, and [CHANGELOG.md](CHANGELOG.md#-version-policy) for the version policy's history.
 
 ## 📜 Licence
 

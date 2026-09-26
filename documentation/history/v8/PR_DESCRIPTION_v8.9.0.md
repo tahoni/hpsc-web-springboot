@@ -23,14 +23,14 @@
 - Match create/update/patch responses list stages by stage number
 - Release Checklist makes the Future Roadmap log and "Major Version Goals" mandatory per release
 
-**Removed**
-
-- Unused `jackson-dataformat-xml` and `commons-lang3` dependencies
-
 **Fixed**
 
 - Documentation drift across `ARCHITECTURE.md`, `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `HISTORY.md` and
   `flyway-migration-versioning.md` (Gaps #13–#24)
+
+**Removed**
+
+- Unused `jackson-dataformat-xml` and `commons-lang3` dependencies
 
 ## 🧪 Test Plan
 

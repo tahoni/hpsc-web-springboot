@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.9.0](#-890---2026-09-26) ← Current
+- [🧾 Version 8.10.0](#-8100---2026-09-26) ← Current
+- [🧾 Version 8.9.0](#-890---2026-09-26)
 - [🧾 Version 8.8.0](#-880---2026-09-24)
 - [🧾 Version 8.7.0](#-870---2026-09-24)
 - [🧾 Version 8.6.2](#-862---2026-09-24)
@@ -59,6 +60,94 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.10.0] - 2026-09-26
+
+#### ➕ Added
+
+##### Configuration
+
+- **`application-prod.properties`:** New `prod` profile pointing production at `localhost:3306/hpsc_prod`, still
+  reading `MYSQL_USER`/`MYSQL_PASSWORD` — the no-profile run is unchanged and still takes its URL from outside;
+  documented in `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`
+
+##### Tests
+
+- **`IpscMatchTest`:** New entity unit test guarding `IpscMatch.stages`' exclusion from Lombok's `toString`/`equals`/
+  `hashCode` — `IpscMatchStage.match` points straight back, so dropping either exclusion makes both recurse into a
+  `StackOverflowError` — plus `stages` initialising empty and mutable. The other seven entities have no hand-written
+  behaviour, so get no unit tests of their own; closes `improvement-plan.md`'s Gap #25
+
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gaps #25–#26 from an
+  `update-improvement-plan-gaps` sweep — entity-level unit tests are a stated goal in `HISTORY.md` and the v8.9.0
+  release notes with nothing tracking it (#25); `pom.xml`'s `tomcat.version` CVE override has been a standing manual
+  pin since v8.3.1, although the plan said no overrides remained (#26). "🌳 At a Glance", "🛤️ Roadmap" **Next** and
+  **Ongoing** rows, "☑️ Success Criteria" and the "⚙️ Goals & Constraints" `pom.xml` row updated to match, and that
+  table's stale ~98.4% coverage figure replaced with v8.9.0's measured 98.77%
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #27 from a second `update-improvement-plan-gaps`
+  sweep — the database-profile docs promised a setup the properties files don't provide — closed within this release
+  (see Fixed)
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #28 from a third `update-improvement-plan-gaps`
+  sweep — `logback-spring.xml` configured a `staging` profile that existed nowhere else — closed within this release
+  (see Removed)
+
+#### 🔄 Changed
+
+##### Tooling
+
+- **`AGENTS.md`, `prep-version-release`:** Semantic Versioning is now a strict, documented rule — a new Semantic
+  Versioning subsection under Git Workflow defines what counts as a MAJOR, MINOR or PATCH change for this project,
+  how to classify a release from `[Unreleased]`, and that breaking changes are flagged in `CHANGELOG.md` as they land;
+  the Release Checklist and the `prep-version-release` skill now validate the requested version against those rules
+  before bumping, and re-check it after syncing `[Unreleased]`
+- **`generate-commit-message`, `sync-unreleased-changes`:** Both skills now apply `AGENTS.md`'s `**Breaking:**`
+  prefix to CHANGELOG entries for backward-incompatible changes — `sync-unreleased-changes` also flags existing
+  entries whose prefix is missing or wrong as drifted, and reports the release level the synced `[Unreleased]` section
+  implies
+- **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `pom.xml` bump step now re-checks every manual
+  dependency-version override against the version the Spring Boot parent's own `spring-boot-dependencies` POM manages,
+  and drops any the parent has caught up with — the plan had said this happened "per the Release Checklist", but no
+  step did it. Progresses `improvement-plan.md`'s Gap #26: the `tomcat.version` override stays until a Spring Boot GA
+  release manages Tomcat `11.0.25` or later
+
+##### Documentation
+
+- **`HISTORY.md`, `ARCHITECTURE.md`, `README.md`:** The Short-term roadmap no longer plans entity-level unit tests
+  for the whole domain model; `ARCHITECTURE.md`'s test tree gains a `domain/` entry and `README.md`'s unit-test
+  categories now include entities
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.10.0 and moved to ✅ Completed, with
+  "🌳 At a Glance", the "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+
+- **`README.md`, `CHANGELOG.md`:** The Semantic Versioning note and the Version Policy section now point at
+  `AGENTS.md`'s Semantic Versioning section as the definition of each release level, rather than calling the
+  Version Policy the full policy
+
+##### Build & Metadata
+
+- Project version bumped to **8.10.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
+#### 🐛 Fixed
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`:** The database-profile docs said a run with no profile needs
+  only `MYSQL_USER`/`MYSQL_PASSWORD`, but `application.properties` sets no `spring.datasource.url`, so
+  the URL must be supplied externally (e.g. `SPRING_DATASOURCE_URL`) — now stated in `AGENTS.md`'s run command and
+  `CONTRIBUTING.md`'s Database Profiles table. The "regardless of profile" credentials wording now excludes `local`,
+  which connects as `hpsc_dev` with `MYSQL_LOCAL_PASSWORD`, and `CONTRIBUTING.md`'s Database Profiles table gains
+  `local` and `prod` rows. Closes `improvement-plan.md`'s Gap #27
+
+#### 🗑️ Removed
+
+##### Configuration
+
+- **`logback-spring.xml`:** Removed the `staging` `<springProfile>` block and its `logs/application-staging.log`
+  appender — no staging environment exists, there was no `application-staging.properties` behind it and no doc
+  mentioned it, so `staging` had no datasource URL of its own and couldn't start without one supplied externally.
+  The remaining blocks (`default`, `dev`, `local`, `prod`, `test`) each match a documented profile; closes
+  `improvement-plan.md`'s Gap #28
 
 ### 🧾 [8.9.0] - 2026-09-26
 
@@ -188,14 +277,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - Project version bumped to **8.9.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
-#### 🗑️ Removed
-
-##### Build & Metadata
-
-- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing in `src/` produced or consumed
-  XML or used Apache Commons, so dropping `jackson-dataformat-xml` only removes Spring MVC's unused XML content
-  negotiation; closes `improvement-plan.md`'s Gap #18
-
 #### 🐛 Fixed
 
 ##### Documentation
@@ -245,6 +326,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   entity-level unit tests still missing
 - **`README.md`:** The Testing section claimed domain-entity unit tests and repository tests that didn't exist — it
   now describes the suite as it is, including the new repository integration tests (Gap #24)
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing in `src/` produced or consumed
+  XML or used Apache Commons, so dropping `jackson-dataformat-xml` only removes Spring MVC's unused XML content
+  negotiation; closes `improvement-plan.md`'s Gap #18
 
 ### 🧾 [8.8.0] - 2026-09-24
 
@@ -358,14 +447,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   port `8080`; the port and Swagger/OpenAPI URLs in `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and
   `CONTRIBUTING.md` updated to match
 
-#### 🗑️ Removed
-
-##### Build & Metadata
-
-- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
-  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
-- **`HELP.md`:** Spring REST Docs reference link dropped, following the `spring-restdocs-mockmvc` removal above
-
 #### 🐛 Fixed
 
 ##### Controllers
@@ -380,6 +461,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   now describes its per-major-version subdirectories and `EVOLUTION_OVERVIEW.md`, `documentation/roadmap/` names
   `improvement-plan.md` alongside its task breakdown, the test `services/`/`services/impl/` comments match the
   3-tier service test split, and the previously missing `banner.txt` is listed
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
+  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
+- **`HELP.md`:** Spring REST Docs reference link dropped, following the `spring-restdocs-mockmvc` removal above
 
 ### 🧾 [8.6.2] - 2026-09-24
 
@@ -3163,6 +3252,10 @@ As of version 5.0.0, this project follows [Semantic Versioning 2.0.0](https://se
 - **MAJOR** version for incompatible API changes
 - **MINOR** version for backward-compatible functionality additions
 - **PATCH** version for backward-compatible bug fixes
+
+Every release must follow these rules strictly — see [`AGENTS.md`'s Semantic Versioning
+section](/AGENTS.md#semantic-versioning) for what counts as a MAJOR, MINOR or PATCH change in this project and how
+each release is classified from the `[Unreleased]` section.
 
 #### Legacy Versioning (v1.x – v4.x)
 

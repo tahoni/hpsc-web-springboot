@@ -34,7 +34,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Framework         | Spring Boot (see `pom.xml` for the pinned version)                  |
 | Language          | Java (see `<java.version>` in `pom.xml`)                            |
 | Build             | Maven, via the provided `./mvnw` wrapper                            |
-| Database (prod)   | MySQL (env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                    |
+| Database (prod)   | MySQL (profile `prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`)    |
 | Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
 | ORM               | Spring Data JPA, Hibernate                                          |
 | Schema migrations | Flyway (`src/main/resources/db/migration/`)                         |
@@ -94,6 +94,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───configs/                # ControllerAdvice tests
     ├───controllers/            # Controller unit tests (Mockito, no Spring context)
     ├───converters/             # AttributeConverter unit tests
+    ├───domain/                 # Entity unit tests (bidirectional toString/equals/hashCode safety)
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
     ├───models/                 # DTO / model unit tests
