@@ -209,6 +209,34 @@ and moves on to ✅ Completed once every item is checked and the gap's own heade
 - [ ] Extend `CONTRIBUTING.md`'s CI/CD & Quality Gates summary line to match the updated table
 - [ ] Optionally drop or tailor `claude-code-review.yml`'s leftover TypeScript/JavaScript `paths:` template comment
 
+**Flyway migration table refresh** *(improvement-plan.md → Gap #14)*
+
+- [ ] Add rows to `flyway-migration-versioning.md`'s Current State table for `V7_4_0__make_club_number_nullable.sql`
+  (v8.4.0), `V7_5_0__add_ipsc_match_start_end_time.sql` (v8.5.0), `V7_6_0__add_ipsc_match_url.sql` (v8.6.0),
+  `V7_7_0__change_ipsc_match_start_end_time_to_time.sql` (v8.6.0) and `V7_8_0__add_competitor_paid_up_flags.sql`
+  (Unreleased at time of writing — confirm actual shipping version when this lands)
+- [ ] Fold this table refresh into a recurring release-prep check so it doesn't fall behind again
+
+**ARCHITECTURE.md cascade/mappedBy self-contradiction** *(improvement-plan.md → Gap #15)*
+
+- [ ] Correct the Quality Attributes table's "Data Integrity" row (line 387) to match the Persistence Layer
+  section's accurate "no cascade or `mappedBy`" description (line 201)
+- [ ] Correct the Development Guidelines cross-reference (line 405) to point at `CONTRIBUTING.md`, not `README.md`,
+  for database profiles documentation
+
+**CONTRIBUTING.md dead test-method example** *(improvement-plan.md → Gap #16)*
+
+- [ ] Replace `AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200` (line 101) with an existing test
+  method, e.g. `AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`
+
+**HISTORY.md Future Roadmap Implications log refresh** *(improvement-plan.md → Gap #17)*
+
+- [ ] Rename the current final `### Recently Completed (v8.4.0)` entry to `### Previously Completed (v8.4.0)`
+- [ ] Add a `### Recently Completed (vX.Y.Z)` entry for each of v8.4.1, v8.4.2, v8.5.0, v8.5.1, v8.6.0, v8.6.1,
+  v8.6.2, v8.7.0 and v8.8.0, summarising each release's already-written Historical Timeline/`CHANGELOG.md` content
+- [ ] Update the section's opening sentence from "Based on the evolution to v8.4.0" to the current version
+- [ ] Fold this refresh into the Release Checklist alongside Gap #10's Phase/Milestone step
+
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
 

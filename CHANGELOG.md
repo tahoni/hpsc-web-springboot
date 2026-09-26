@@ -85,6 +85,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceImplTest`,
   `CompetitorRequestTest`, `CompetitorRequestForCSVTest`:** Cover the new paid-up flags
 
+##### Documentation
+
+- **`improvement-plan.md`:** New Gaps #14–#17 from an `update-improvement-plan-gaps` sweep — `flyway-migration-
+  versioning.md`'s Current State table stops five migrations short of what's on disk (#14); `ARCHITECTURE.md`'s
+  Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy`, and misattributes
+  database-profiles documentation to `README.md` instead of `CONTRIBUTING.md` (#15); `CONTRIBUTING.md`'s Running
+  Tests example names a renamed-away test method (#16); `HISTORY.md`'s Future Roadmap Implications "Recently
+  Completed" log hasn't been extended since v8.4.0, missing nine shipped releases (#17). "🌳 At a Glance", "🛤️
+  Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+- **`improvement-plan-tasks.md`:** New "⚪ Open" checkbox blocks for Gaps #14–#17
+
 #### 🔄 Changed
 
 ##### Controllers

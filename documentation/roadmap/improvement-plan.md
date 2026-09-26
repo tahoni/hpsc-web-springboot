@@ -77,9 +77,15 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #11 `HISTORY.md`'s forward-looking Future Roadmap lists still name delivered or renamed work — closed v8.6.2
   - #12 Competitor/match "full CRUD" claims have no delete operation behind them — closed v8.8.0
 - **🟡 Partially Completed (0):** none currently.
-- **⚪ Open (2):**
+- **⚪ Open (6):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
   - #13 Claude Code GitHub Actions workflows are missing from the CI/CD & Quality Gates documentation — **Next**
+  - #14 `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0 — **Next**
+  - #15 `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA
+    cascade/`mappedBy` — **Next**
+  - #16 `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists — **Next**
+  - #17 `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0 —
+    **Next**
 
 ### ✅ Completed
 
@@ -519,6 +525,84 @@ on, and widen the Project Structure tree's `.github/workflows/` comment generica
 security analysis and automated review"). `CONTRIBUTING.md`'s summary line then only needs its parenthetical scope
 list extended to match. Optionally drop or tailor the review workflow's leftover template `paths:` comment.
 
+#### 14. `flyway-migration-versioning.md`'s Current State table hasn't been extended since v8.4.0
+
+**Evidence:** `documentation/recommendations/flyway-migration-versioning.md`'s "🔍 Current State in This Codebase"
+table lists only `V7_0_0__create_schema.sql` through `V7_3_0__seed_club_data.sql`. `src/main/resources/db/migration/`
+now holds five more: `V7_4_0__make_club_number_nullable.sql` (shipped v8.4.0),
+`V7_5_0__add_ipsc_match_start_end_time.sql` (v8.5.0), `V7_6_0__add_ipsc_match_url.sql` and
+`V7_7_0__change_ipsc_match_start_end_time_to_time.sql` (both v8.6.0), and
+`V7_8_0__add_competitor_paid_up_flags.sql` (this branch, still under `CHANGELOG.md`'s `### 🧪 [Unreleased]`).
+
+**Why it matters:** This is the document that explains and demonstrates the project's Flyway-versioning convention —
+referenced from `AGENTS.md`'s Tech Stack section and `CONTRIBUTING.md`'s Database Profiles section — so a table that
+stops five migrations short of the real history undersells its own "the two counters diverge" argument, missing
+exactly the rows a reader would want to check against.
+
+**Proposed improvement:** Add a row per missing migration (`V7_4_0` through `V7_8_0`), following the existing
+table's "Shipped in app version"/"Notes" shape — most need no more than the version and a `—`, the way `V7_1_0`'s
+row already does for a schema-only change. Fold this refresh into a recurring release-prep check (alongside
+`AGENTS.md`'s Release Checklist step verifying `ARCHITECTURE.md`'s Project Structure tree), so it doesn't drift
+five versions behind again.
+
+#### 15. `ARCHITECTURE.md`'s Quality Attributes table contradicts its own Persistence Layer section on JPA cascade/`mappedBy`
+
+**Evidence:** `ARCHITECTURE.md:387`'s Quality Attributes table states, under "Data Integrity": "JPA cascade rules,
+bidirectional `mappedBy` declarations, `@Transactional` service methods, custom attribute converters." Two
+subsections earlier, `ARCHITECTURE.md:201` states the opposite, explicitly: "No entity declares a back-referencing
+`@OneToMany` collection, so there is no `mappedBy` anywhere in the domain model." `grep -rn
+"cascade\|mappedBy\|OneToMany" src/main/java/za/co/hpsc/web/domain/` returns zero matches, confirming line 201 is
+the accurate one. Separately, `ARCHITECTURE.md:405` attributes "database profiles" documentation to `README.md`
+("See README.md's ... section ... commands, database profiles and coding standards"), but `README.md` itself only
+links out to `CONTRIBUTING.md`'s "🗄️ Database Profiles" section (confirmed at `CONTRIBUTING.md:73`) rather than
+documenting it directly.
+
+**Why it matters:** The same document contradicts itself on a fairly fundamental persistence-layer claim — a reader
+who reads the Quality Attributes table first would expect cascade/`mappedBy` behaviour the domain model doesn't
+have, which matters more now that Gap #12 added explicit reject-not-cascade delete logic precisely because there's
+no cascade to lean on. The `README.md` misattribution is a smaller instance of the same "which doc actually owns
+this" drift.
+
+**Proposed improvement:** Correct line 387 to match line 201's accurate description (e.g. "explicit `@ManyToOne`-only
+associations, no cascade or `mappedBy`, `@Transactional` service methods, custom attribute converters"), and correct
+line 405's cross-reference to point at `CONTRIBUTING.md` for database profiles rather than `README.md`.
+
+#### 16. `CONTRIBUTING.md`'s Running Tests example names a test method that no longer exists
+
+**Evidence:** `CONTRIBUTING.md:101`'s single-test example reads
+`./mvnw test -Dtest=AwardControllerTest#testProcessCsv_whenValidCsvData_thenReturns200`. `AwardControllerTest.java`
+has no `testProcessCsv_*` method — every method was renamed to `testCreateAwards_*` (e.g.
+`testCreateAwards_whenValidCsvData_thenReturns200`) when `AwardService.processCsv`/`AwardController` were renamed to
+`createAwards`. A repo-wide grep for `testProcessCsv_whenValidCsvData_thenReturns200` finds only this one line.
+
+**Why it matters:** This is `CONTRIBUTING.md`'s worked example for running a single test — a new contributor
+copy-pasting it gets a "no tests found" failure, undermining the exact onboarding step it's meant to demonstrate.
+
+**Proposed improvement:** Update the example to name an existing test, e.g.
+`AwardControllerTest#testCreateAwards_whenValidCsvData_thenReturns200`.
+
+#### 17. `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log hasn't been extended since v8.4.0
+
+**Evidence:** `HISTORY.md:2007`'s "🛤️ Future Roadmap Implications" section opens "Based on the evolution to v8.4.0,
+the following areas are identified for future enhancement," and its rolling per-release `### Previously Completed
+(vX.Y.Z)` / `### Recently Completed (vX.Y.Z)` log stops at `### Recently Completed (v8.4.0)`. Nine shipped releases
+are missing from this log: v8.4.1, v8.4.2, v8.5.0, v8.5.1, v8.6.0, v8.6.1, v8.6.2, v8.7.0 and v8.8.0. This is
+distinct from Gap #10 (which extended the separate "📖 Evolution Overview"/"🎯 Major Milestones" sections, and does
+correctly reach "Milestone 34: ... (v8.8.0)") and from Gap #11 (which only reworded three stale bullets inside the
+Short-term/Medium-term/Long-term forward-looking lists that follow this log, not the log itself or its intro
+sentence).
+
+**Why it matters:** The same category of drift Gap #10 closed for Evolution Overview/Major Milestones, now found in
+a different subsection under the same "🛤️ Future Roadmap Implications" heading — a reader following this log
+specifically sees it stop at v8.4.0 even though four Milestones and nine point releases have shipped since.
+
+**Proposed improvement:** Rename the current final entry to `### Previously Completed (v8.4.0)` and add a
+`### Recently Completed (vX.Y.Z)` entry for each of the nine missing releases, summarising each release's
+already-written Historical Timeline/`CHANGELOG.md` content at the same depth as the existing entries, and update
+the section's opening sentence from "Based on the evolution to v8.4.0" to the current version. Apply this as a
+recurring Release Checklist check alongside Gap #10's Phase/Milestone step, so this subsection doesn't fall behind
+again.
+
 ---
 
 ## 🛤️ Roadmap
@@ -526,7 +610,7 @@ list extended to match. Optionally drop or tailor the review workflow's leftover
 | Phase       | Focus                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                       |
-| **Next**    | Document the Claude Code workflows in `ARCHITECTURE.md`'s CI/CD & Quality Gates table (#13) — #12, the previous occupant, closed in v8.8.0                      |
+| **Next**    | Document the Claude Code workflows (#13) and clear four small documentation-accuracy gaps found in the same pass: the stale Flyway migration table (#14), `ARCHITECTURE.md`'s cascade/`mappedBy` self-contradiction (#15), `CONTRIBUTING.md`'s dead test-method example (#16), and `HISTORY.md`'s stalled Future Roadmap Implications log (#17) |
 | **Later**   | No items currently scoped — #9, this phase's previous occupant, closed in v8.4.0                                                                                |
 | **Ongoing** | #5's overrides are gone as of v8.1.1; keep re-checking for new manual dependency-version overrides becoming redundant at each release per the Release Checklist |
 
@@ -564,6 +648,13 @@ list extended to match. Optionally drop or tailor the review workflow's leftover
   `README.md`/`ARCHITECTURE.md` accurate and closing Gap #12.
 - `ARCHITECTURE.md`'s CI/CD & Quality Gates table (and `CONTRIBUTING.md`'s summary of it) lists every workflow in
   `.github/workflows/`, including the Claude Code review and assistant workflows, closing Gap #13.
+- `flyway-migration-versioning.md`'s Current State table lists every migration through the highest one that exists
+  on disk, closing Gap #14.
+- `ARCHITECTURE.md`'s Quality Attributes table and its Persistence Layer section agree on whether cascade/`mappedBy`
+  exist, and its database-profiles cross-reference points at `CONTRIBUTING.md`, closing Gap #15.
+- `CONTRIBUTING.md`'s Running Tests example names a real, existing test method, closing Gap #16.
+- `HISTORY.md`'s Future Roadmap Implications "Recently Completed" log has an entry for every shipped release,
+  closing Gap #17.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
