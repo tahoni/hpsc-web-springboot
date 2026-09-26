@@ -23,7 +23,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ### Version 8.10.2 (September 26, 2026)
 
-**Theme:** Claude Code Review for Dependabot PRs
+**Theme:** Claude Code Review for Dependabot PRs & First Dependabot Updates
 
 **Key Focus:**
 
@@ -33,6 +33,11 @@ evolution of architecture, features and design philosophy across all versions.
   Dependabot secret — documented in `ARCHITECTURE.md`'s CI/CD & Quality Gates section
 - Shipped as its own release rather than folded into the already-shipped v8.10.1, per `AGENTS.md`'s rule that a
   released version's contents are never changed
+- Dependabot's first three PRs landed on `develop`: GitHub Actions `checkout` `v7`, `setup-java` `v6` and
+  `upload-artifact` `v7`; springdoc `3.1.1`, JaCoCo `0.8.15` and Maven `3.9.16` (the regenerated wrapper also makes
+  `mvnw` executable, so `dependency-submission.yml`'s `chmod` step is dropped); and `flyway-mysql` `13.7.0`
+- That last bump put `flyway-mysql` 13.7.0 beside Spring Boot's 12.4.0 `flyway-maven-plugin`, mixing two Flyway
+  majors; the plugin dependency now uses `${flyway.version}`, inherited from the parent, so it can't drift again
 - Scoped as `v8.10.2` **PATCH**: CI only, with no change to the API, configuration or schema
 - Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
@@ -1328,10 +1333,12 @@ checks, and made the documented runtime profiles match the ones that actually ex
 **Achievement:** Brought the repository's dependency tooling under version control and fitted it into the branching
 model, rather than leaving it to GitHub's defaults.
 
-### Milestone 38: Claude Code Review for Dependabot PRs (v8.10.2)
+### Milestone 38: Claude Code Review for Dependabot PRs & First Dependabot Updates (v8.10.2)
 
 - The automated Claude code review extends to Dependabot's PRs, including the security updates merged straight into
   `main`
+- Dependabot's first updates merged; the one that broke a hand-kept version sync (`flyway-mysql`) was fixed by
+  deriving the version from Spring Boot instead
 - The first release shipped as a follow-up PATCH under the rule that a released version is never changed
 
 **Achievement:** Gave Dependabot's PRs — including those that bypass `develop` — the same automated review as
@@ -1934,7 +1941,8 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   documentation-accuracy gap the improvement plan tracked. Then turn Semantic Versioning from precedent into a rule
   the release process enforces, give production its own profile and make every documented runtime profile match the
   configuration behind it, then bring the repository's dependency tooling — dependency submission and Dependabot —
-  under version control and into the branching model, and extend the automated code review to Dependabot's PRs.
+  under version control and into the branching model, extend the automated code review to Dependabot's PRs, and
+  absorb its first updates.
 
 ### Initial Phase (v1.0.0)
 
@@ -2480,6 +2488,9 @@ Based on the evolution to v8.10.2, the following areas are identified for future
 
 - The Claude code review runs on Dependabot's PRs (`allowed_bots: 'dependabot'`), with `CLAUDE_CODE_OAUTH_TOKEN`
   also needed as a Dependabot secret
+- Dependabot's first updates: GitHub Actions to `checkout@v7`/`setup-java@v6`/`upload-artifact@v7`, springdoc
+  `3.1.1`, JaCoCo `0.8.15`, Maven `3.9.16`
+- `flyway-mysql` in the Flyway plugin now follows `${flyway.version}`, fixing Dependabot's mismatched `13.7.0` bump
 - Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)

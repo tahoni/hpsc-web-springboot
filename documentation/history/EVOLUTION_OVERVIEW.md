@@ -2438,12 +2438,13 @@ GitFlow branching model.
 - No test changes (970 tests); coverage unchanged at 98.77%/99.09% line/branch
 
 
-### Phase 38: Claude Code Review for Dependabot PRs (v8.10.2)
+### Phase 38: Claude Code Review for Dependabot PRs & First Dependabot Updates (v8.10.2)
 
 **Duration:** September 26, 2026
 
-A patch release, CI only: the automated Claude code review, which skipped every bot-authored PR, now reviews
-Dependabot's too — shipped as its own release because v8.10.1 had already reached `main`.
+A patch release: the automated Claude code review, which skipped every bot-authored PR, now reviews Dependabot's too
+— shipped as its own release because v8.10.1 had already reached `main` — and Dependabot's first updates are
+absorbed, with one that broke a hand-kept Flyway version sync fixed at the root.
 
 **Key Accomplishments:**
 
@@ -2453,6 +2454,17 @@ Dependabot's too — shipped as its own release because v8.10.1 had already reac
   admit every bot — so Dependabot's version-update PRs into `develop` and security-update PRs into `main` are reviewed
 - Dependabot-triggered workflow runs can only read Dependabot secrets, so `CLAUDE_CODE_OAUTH_TOKEN` must be stored as
   a Dependabot secret as well as an Actions secret; `ARCHITECTURE.md`'s CI/CD & Quality Gates section says so
+- Dependabot's first GitHub Actions update: `actions/checkout` `v7`, `actions/setup-java` `v6` and
+  `actions/upload-artifact` `v7` across every workflow
+- `dependency-submission.yml`'s `chmod +x mvnw` step dropped, since `mvnw` is now committed as executable
+
+**Dependencies**
+
+- Dependabot's first Maven minor/patch update: `springdoc-openapi-bom` `3.1.1`, `jacoco-maven-plugin` `0.8.15` and
+  Maven `3.9.16` through a regenerated wrapper; `mvnw.cmd`'s line endings renormalised afterwards
+- Dependabot bumped the Flyway plugin's `flyway-mysql` dependency to `13.7.0` while the plugin stayed on Spring Boot's
+  `12.4.0`, mixing two Flyway majors; it now uses `${flyway.version}`, a property plugin dependencies do inherit from
+  the parent, replacing the hand-kept sync that `pom.xml`'s own comment had warned about
 
 **Build & Metadata**
 
@@ -2461,6 +2473,7 @@ Dependabot's too — shipped as its own release because v8.10.1 had already reac
 **Technical Focus:**
 
 - Applying the same review to every PR, bot-authored or not, and never rewriting a shipped release
+- Replacing a hand-synced version with one derived from the parent, so automated updates can't break it
 
 **Test Coverage:**
 
