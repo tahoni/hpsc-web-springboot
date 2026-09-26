@@ -61,6 +61,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/dependency-submission.yml`:** New explicit Maven dependency-submission workflow, replacing
+  GitHub's built-in "Automatic Dependency Submission (Maven)" — the one check on `develop`→`main` PRs with no
+  workflow file behind it. It resolves the dependency graph with the project's own JDK 25 and Maven wrapper (the
+  built-in one used JDK 21 and ignored the wrapper) on push to `main`/`develop` or manual dispatch; the built-in
+  submission must be turned off in the repository's Code security settings. Documented in `ARCHITECTURE.md`'s CI/CD
+  & Quality Gates table and `CONTRIBUTING.md`
+
 ### 🧾 [8.10.0] - 2026-09-26
 
 #### ➕ Added
