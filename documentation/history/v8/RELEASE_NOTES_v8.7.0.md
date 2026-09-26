@@ -96,13 +96,6 @@ Gap #12: competitors and matches are documented as "full CRUD", yet neither can 
 - **`improvement-plan.md`:** "🌳 At a Glance", the "🛤️ Roadmap" table's **Next** row and "☑️ Success Criteria"
   updated for Gap #12
 
-### Removed
-
-#### Build & Metadata
-
-- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
-  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists and `HELP.md`'s reference links
-
 ### Fixed
 
 #### Controllers
@@ -115,6 +108,13 @@ Gap #12: competitors and matches are documented as "full CRUD", yet neither can 
 - **`ARCHITECTURE.md`'s Project Structure tree:** Stale directory comments corrected against disk
   (`documentation/history/`, `documentation/roadmap/`, the test `services/`/`services/impl/` tiers) and the missing
   `banner.txt` added
+
+### Removed
+
+#### Build & Metadata
+
+- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
+  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists and `HELP.md`'s reference links
 
 ---
 

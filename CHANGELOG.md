@@ -117,15 +117,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #25 closed in v8.10.0 and moved to ✅ Completed, with
   "🌳 At a Glance", the "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
 
-#### 🗑️ Removed
-
-##### Configuration
-
-- **`logback-spring.xml`:** Removed the `staging` `<springProfile>` block and its `logs/application-staging.log`
-  appender — no staging environment exists, there was no `application-staging.properties` behind it and no doc
-  mentioned it, so activating `staging` could never start the app. The remaining blocks (`default`, `dev`, `local`,
-  `prod`, `test`) each match a documented profile; closes `improvement-plan.md`'s Gap #28
-
 #### 🐛 Fixed
 
 ##### Documentation
@@ -136,6 +127,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `CONTRIBUTING.md`'s Database Profiles table. The "regardless of profile" credentials wording now excludes `local`,
   which connects as `hpsc_dev` with `MYSQL_LOCAL_PASSWORD`, and `CONTRIBUTING.md`'s Database Profiles table gains
   `local` and `prod` rows. Closes `improvement-plan.md`'s Gap #27
+
+#### 🗑️ Removed
+
+##### Configuration
+
+- **`logback-spring.xml`:** Removed the `staging` `<springProfile>` block and its `logs/application-staging.log`
+  appender — no staging environment exists, there was no `application-staging.properties` behind it and no doc
+  mentioned it, so activating `staging` could never start the app. The remaining blocks (`default`, `dev`, `local`,
+  `prod`, `test`) each match a documented profile; closes `improvement-plan.md`'s Gap #28
 
 ### 🧾 [8.9.0] - 2026-09-26
 
@@ -265,14 +265,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - Project version bumped to **8.9.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
-#### 🗑️ Removed
-
-##### Build & Metadata
-
-- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing in `src/` produced or consumed
-  XML or used Apache Commons, so dropping `jackson-dataformat-xml` only removes Spring MVC's unused XML content
-  negotiation; closes `improvement-plan.md`'s Gap #18
-
 #### 🐛 Fixed
 
 ##### Documentation
@@ -322,6 +314,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   entity-level unit tests still missing
 - **`README.md`:** The Testing section claimed domain-entity unit tests and repository tests that didn't exist — it
   now describes the suite as it is, including the new repository integration tests (Gap #24)
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing in `src/` produced or consumed
+  XML or used Apache Commons, so dropping `jackson-dataformat-xml` only removes Spring MVC's unused XML content
+  negotiation; closes `improvement-plan.md`'s Gap #18
 
 ### 🧾 [8.8.0] - 2026-09-24
 
@@ -435,14 +435,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   port `8080`; the port and Swagger/OpenAPI URLs in `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and
   `CONTRIBUTING.md` updated to match
 
-#### 🗑️ Removed
-
-##### Build & Metadata
-
-- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
-  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
-- **`HELP.md`:** Spring REST Docs reference link dropped, following the `spring-restdocs-mockmvc` removal above
-
 #### 🐛 Fixed
 
 ##### Controllers
@@ -457,6 +449,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   now describes its per-major-version subdirectories and `EVOLUTION_OVERVIEW.md`, `documentation/roadmap/` names
   `improvement-plan.md` alongside its task breakdown, the test `services/`/`services/impl/` comments match the
   3-tier service test split, and the previously missing `banner.txt` is listed
+
+#### 🗑️ Removed
+
+##### Build & Metadata
+
+- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
+  mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists
+- **`HELP.md`:** Spring REST Docs reference link dropped, following the `spring-restdocs-mockmvc` removal above
 
 ### 🧾 [8.6.2] - 2026-09-24
 

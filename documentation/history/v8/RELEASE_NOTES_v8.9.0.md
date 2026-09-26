@@ -149,13 +149,6 @@ release's own audit, leaving only Gap #6 — the scoring/shooter-log layer — o
 
 - Project version bumped to **8.9.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
-### Removed
-
-#### Dependencies
-
-- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing produced or consumed XML or
-  used Apache Commons
-
 ### Fixed
 
 #### Documentation Fixes
@@ -173,6 +166,13 @@ release's own audit, leaving only Gap #6 — the scoring/shooter-log layer — o
   Shooting Club" (Gap #22)
 - **`README.md`, `ARCHITECTURE.md`, `AGENTS.md`:** Tech stack no longer claims XML or Apache Commons (Gap #18);
   `README.md`'s Testing section describes the suite as it is (Gap #24)
+
+### Removed
+
+#### Dependencies
+
+- **`jackson-dataformat-xml`, `commons-lang3`:** Unused dependencies dropped — nothing produced or consumed XML or
+  used Apache Commons
 
 ---
 
