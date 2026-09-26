@@ -60,6 +60,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Tooling
+
+- **`AGENTS.md`, `prep-version-release`:** Semantic Versioning is now a strict, documented rule — a new Semantic
+  Versioning subsection under Git Workflow defines what counts as a MAJOR, MINOR or PATCH change for this project,
+  how to classify a release from `[Unreleased]`, and that breaking changes are flagged in `CHANGELOG.md` as they land;
+  the Release Checklist and the `prep-version-release` skill now validate the requested version against those rules
+  before bumping, and re-check it after syncing `[Unreleased]`
+
 ### 🧾 [8.9.0] - 2026-09-26
 
 #### ➕ Added
