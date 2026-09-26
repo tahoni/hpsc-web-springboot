@@ -59,9 +59,16 @@ changed. Treat it as the single source of truth.
     - Follow the established bullet style: bold the backticked class/method/file/entity name, a colon, then a concise
       em-dash-separated description of what changed and why.
     - British English spelling and grammar throughout.
+    - If the change is backward-incompatible for the public API, as defined by AGENTS.md's Semantic Versioning
+      section (a REST endpoint, request/response contract, accepted import format or configuration
+      property/environment variable changed or removed so existing callers or deployments break), start the
+      bullet's description with `**Breaking:**`, as AGENTS.md requires.
 5. **For each change already covered**, verify the existing entry is still accurate against the actual diff (right
    file/class named, description still matches what the code does); flag any that have drifted, but don't rewrite
-   entries that are still correct just to change their wording.
+   entries that are still correct just to change their wording. An entry for a breaking change that lacks the
+   `**Breaking:**` prefix counts as drifted — flag it rather than adding the prefix silently, since it changes the
+   next release's Semantic Versioning classification. Likewise flag a `**Breaking:**` entry whose change the diff
+   shows is actually backward-compatible.
 6. **Do not remove or alter entries** for changes unrelated to this branch's diff — this skill only adds/corrects
    coverage for what this branch actually introduced.
 7. **Consolidate duplicate sub-headers across the whole `[Unreleased]` section**, not just newly added entries — this
@@ -88,3 +95,6 @@ After editing CHANGELOG.md, report concisely:
    reason each — do not silently rewrite these; call them out for the user to confirm.
 4. **Any sub-headers consolidated**, e.g. "Merged two `##### Controllers` blocks under `#### 🔄 Changed` into one" (or
    "No duplicate sub-headers found.").
+5. **Semantic Versioning impact** — the release level the synced `[Unreleased]` section now implies under AGENTS.md's
+   Semantic Versioning rules (MAJOR if any entry is `**Breaking:**`, MINOR if any externally visible addition or
+   deprecation, otherwise PATCH), naming the entry or entries that decide it.

@@ -69,6 +69,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   how to classify a release from `[Unreleased]`, and that breaking changes are flagged in `CHANGELOG.md` as they land;
   the Release Checklist and the `prep-version-release` skill now validate the requested version against those rules
   before bumping, and re-check it after syncing `[Unreleased]`
+- **`generate-commit-message`, `sync-unreleased-changes`:** Both skills now apply `AGENTS.md`'s `**Breaking:**`
+  prefix to CHANGELOG entries for backward-incompatible changes — `sync-unreleased-changes` also flags existing
+  entries whose prefix is missing or wrong as drifted, and reports the release level the synced `[Unreleased]` section
+  implies
 
 ### 🧾 [8.9.0] - 2026-09-26
 
