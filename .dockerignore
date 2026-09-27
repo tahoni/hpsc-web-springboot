@@ -1,0 +1,6 @@
+# Keep the build context to what the Dockerfile copies: .mvn/, mvnw, pom.xml and src/
+*
+!.mvn/
+!mvnw
+!pom.xml
+!src/

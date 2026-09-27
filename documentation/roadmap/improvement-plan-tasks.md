@@ -300,6 +300,13 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Document the decision in `AGENTS.md`'s Branching Model and `CONTRIBUTING.md`'s Merging section — also in
   `CONTRIBUTING.md`'s Branching Model summary and `.github/dependabot.yml`'s header comment
 
+**Flyway at startup** *(improvement-plan.md → Gap #30)* — ✅ Closed in v8.11.0
+
+- [x] Replace `flyway-core` with `spring-boot-starter-flyway` in `pom.xml`, so Spring Boot 4's Flyway
+  auto-configuration runs the migrations at startup
+- [x] Baseline the hand-built production schema at `7.0.0` (`baseline-on-migrate` in `application-prod.properties`,
+  as `local` already does), and name it in `CONTRIBUTING.md`'s Database Profiles table and `AGENTS.md`'s Flyway note
+
 ---
 
 ## 🟡 Partially Completed

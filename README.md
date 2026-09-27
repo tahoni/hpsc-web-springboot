@@ -11,6 +11,7 @@ The official repository for the Spring Boot backend of the Hartbeespoortdam Prac
 - [🚀 Instructions](#-instructions)
     - [📋 Prerequisites](#-prerequisites)
     - [🔧 Installation and Execution](#-installation-and-execution)
+    - [🐳 Running with Docker](#-running-with-docker)
 - [🌐 API Documentation](#-api-documentation)
 - [🧪 Testing](#-testing)
 - [🏛️ Architecture](#-architecture)
@@ -58,6 +59,7 @@ This is a Spring Boot application built with:
 - **Data Processing**: Jackson (JSON, CSV)
 - **API Documentation**: SpringDoc OpenAPI (Swagger UI)
 - **Validation**: Hibernate Validator with Jakarta Validation
+- **Health Checks**: Spring Boot Actuator
 - **Testing**: JUnit, Mockito, Spring Test
 
 Bootstrapped using the [Spring Initializr](https://start.spring.io/).
@@ -113,6 +115,35 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
 The application starts on `http://localhost:8080/hpsc-web`. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md#-database-profiles) for the full profile/DDL matrix and other database options.
+
+### 🐳 Running with Docker
+
+The `Dockerfile` builds the application and runs it on a JRE, under the `prod` profile by default. Since that
+profile's datasource URL points at `localhost`, supply the database's address along with the credentials:
+
+```bash
+docker build -t hpsc-web .
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/hpsc_prod \
+  -e MYSQL_USER=your_username \
+  -e MYSQL_PASSWORD=your_password \
+  hpsc-web
+```
+
+Set `SPRING_PROFILES_ACTIVE` to run under another profile, and `JAVA_OPTS` to pass JVM options. The container
+reports its health from `http://localhost:8080/hpsc-web/actuator/health`, which is also `DOWN` when the database is
+unreachable.
+
+To run the application together with a MySQL database instead, use `docker-compose.yml`. Copy `.env.example` to
+`.env` (gitignored) and set the credentials, then:
+
+```bash
+docker compose up --build
+```
+
+MySQL's data persists in a named volume, and Flyway creates the schema on first start. The ports default to `8080`
+(application) and `3306` (MySQL); set `APP_PORT` or `MYSQL_PORT` in `.env` if either is already in use — e.g.
+`MYSQL_PORT=3307` alongside a local MySQL.
 
 ## 🌐 API Documentation
 

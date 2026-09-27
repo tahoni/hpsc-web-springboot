@@ -21,6 +21,30 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.11.0 (September 27, 2026)
+
+**Theme:** Docker Deployment, Actuator Health Checks & Flyway at Startup
+
+**Key Focus:**
+
+- New multi-stage `Dockerfile`: built with the Maven wrapper on a JDK 25 image, run as a non-root user on a Java 25
+  JRE from Spring Boot's extracted JAR layers, under the `prod` profile by default, with `SPRING_DATASOURCE_URL`,
+  `MYSQL_USER` and `MYSQL_PASSWORD` supplied at run time
+- New `docker-compose.yml` runs the application against a MySQL 8.4 container, with credentials from a gitignored
+  `.env` copied from `.env.example`, named volumes for the database and logs, and a health-gated start order
+- New `spring-boot-starter-actuator` dependency exposes `/hpsc-web/actuator/health`, including a database check,
+  which the image's `HEALTHCHECK` polls
+- Bringing up the Compose database exposed a long-standing defect: Spring Boot 4 moved Flyway's auto-configuration
+  into its own module, so with only `flyway-core` on the classpath Flyway had never run at startup and every
+  `spring.flyway.*` property was ignored; `spring-boot-starter-flyway` replaces it
+- The `prod` profile now baselines a hand-built schema without Flyway's history at `7.0.0`, as `local` already did,
+  so production's first start applies `V7_1_0` onwards rather than failing on the existing tables
+- The release's improvement-plan sweep recorded Gap #30 for the Flyway drift and closed it — Gap #6 remains the only
+  open gap, with #26 still waiting on a Spring Boot release
+- Scoped as `v8.11.0` **MINOR** for the new health endpoint and Docker setup; no existing API, configuration property
+  or schema changes
+- Project version bumped to 8.11.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.10.2 (September 26, 2026)
 
 **Theme:** Claude Code Review for Dependabot PRs & First Dependabot Updates
@@ -1344,6 +1368,17 @@ model, rather than leaving it to GitHub's defaults.
 **Achievement:** Gave Dependabot's PRs — including those that bypass `develop` — the same automated review as
 everyone else's.
 
+### Milestone 39: Docker Deployment, Actuator Health Checks & Flyway at Startup (v8.11.0)
+
+- The application ships as a Docker image, with a Compose setup that runs it against its own MySQL database
+- An Actuator health endpoint gives deployments, and the image itself, something to poll
+- Flyway migrations run at startup for the first time since the move to Spring Boot 4, and production's hand-built
+  schema is baselined rather than rejected
+- Gap #30 recorded and closed
+
+**Achievement:** Gave the application a reproducible way to run outside a developer's machine, and in doing so found
+and fixed the schema migrations the documentation had long assumed were running.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1918,7 +1953,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.10.2):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.11.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1942,7 +1977,9 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   the release process enforces, give production its own profile and make every documented runtime profile match the
   configuration behind it, then bring the repository's dependency tooling — dependency submission and Dependabot —
   under version control and into the branching model, extend the automated code review to Dependabot's PRs, and
-  absorb its first updates.
+  absorb its first updates. Then make the application deployable as a container — a Docker image, a Compose setup
+  with its own MySQL database and an Actuator health endpoint — and, in running it against an empty database, make
+  Flyway's migrations actually run at startup as the documentation had always described.
 
 ### Initial Phase (v1.0.0)
 
@@ -2206,7 +2243,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.10.2, the following areas are identified for future enhancement:
+Based on the evolution to v8.11.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2484,7 +2521,7 @@ Based on the evolution to v8.10.2, the following areas are identified for future
 - Gap #29 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.10.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.10.2)
+### Previously Completed (v8.10.2)
 
 - The Claude code review runs on Dependabot's PRs (`allowed_bots: 'dependabot'`), with `CLAUDE_CODE_OAUTH_TOKEN`
   also needed as a Dependabot secret
@@ -2492,6 +2529,16 @@ Based on the evolution to v8.10.2, the following areas are identified for future
   `3.1.1`, JaCoCo `0.8.15`, Maven `3.9.16`
 - `flyway-mysql` in the Flyway plugin now follows `${flyway.version}`, fixing Dependabot's mismatched `13.7.0` bump
 - Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.11.0)
+
+- New multi-stage `Dockerfile` (JDK 25 build, non-root Java 25 JRE runtime from Spring Boot's JAR layers, `prod`
+  profile by default) and `docker-compose.yml` running it against MySQL 8.4, with `.env.example` for credentials
+- New `spring-boot-starter-actuator` exposing `/hpsc-web/actuator/health`, polled by the image's `HEALTHCHECK`
+- `spring-boot-starter-flyway` replaces `flyway-core`, so Flyway migrations run at startup under Spring Boot 4; the
+  `prod` profile baselines a hand-built schema at `7.0.0`
+- Gap #30 recorded and closed, leaving only Gap #6 open
+- Project version bumped to 8.11.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 

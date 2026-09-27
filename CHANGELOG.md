@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.10.2](#-8102---2026-09-26) ← Current
+- [🧾 Version 8.11.0](#-8110---2026-09-27) ← Current
+- [🧾 Version 8.10.2](#-8102---2026-09-26)
 - [🧾 Version 8.10.1](#-8101---2026-09-26)
 - [🧾 Version 8.10.0](#-8100---2026-09-26)
 - [🧾 Version 8.9.0](#-890---2026-09-26)
@@ -62,6 +63,63 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.11.0] - 2026-09-27
+
+#### ➕ Added
+
+##### CI/CD & Configuration
+
+- **`Dockerfile`, `.dockerignore`:** New multi-stage Docker image — built with the Maven wrapper on a JDK 25 image,
+  then run as a non-root user on a Java 25 JRE from Spring Boot's extracted JAR layers, so dependency layers stay
+  cached between builds. It defaults to the `prod` profile and reads `SPRING_DATASOURCE_URL`, `MYSQL_USER` and
+  `MYSQL_PASSWORD` at run time; `JAVA_OPTS` passes JVM options. Its `HEALTHCHECK` polls Actuator's health endpoint,
+  with a 90-second start period for Flyway's first migration. Documented in `README.md`'s new Running with Docker
+  section
+- **`spring-boot-starter-actuator`:** New dependency exposing `/hpsc-web/actuator/health` (Actuator's defaults: the
+  health endpoint only, including a database check) for deployments to poll. Added to the tech stacks in
+  `README.md`, `ARCHITECTURE.md` and `AGENTS.md`
+- **`docker-compose.yml`, `.env.example`:** New Compose setup running the application against a MySQL 8.4 container
+  — the application waits for MySQL's health check, Flyway creates the schema on first start, and the database and
+  log files persist in named volumes. Credentials come from a gitignored `.env`, copied from `.env.example`, and
+  Compose refuses to start without them. `.env.example` recommends `MYSQL_PORT=3307` when a local MySQL already
+  listens on 3306
+
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #30 from an `update-improvement-plan-gaps` sweep —
+  every doc described Flyway as managing the MySQL schema, but it never ran at startup — closed within this release
+  (see Fixed), with "🌳 At a Glance", the "⚙️ Goals & Constraints" Flyway row, the "🛤️ Roadmap" **Next** row and
+  "☑️ Success Criteria" updated to match
+
+#### 🔄 Changed
+
+##### Tests
+
+- **`IpscMatchTest`:** The two stage tests now separate Act from Assert — linking the stage is the Act step, in place
+  of a combined `// Act & Assert` comment — per `AGENTS.md`'s Arrange-Act-Assert convention
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** The Technology Stack table gains a Containerisation row (`Dockerfile`, `docker-compose.yml`),
+  and its Schema migrations row now says Flyway applies them at startup
+
+##### Build & Metadata
+
+- Project version bumped to **8.11.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
+#### 🐛 Fixed
+
+##### Build & Configuration
+
+- **`spring-boot-starter-flyway`:** Flyway migrations now run at startup. Spring Boot 4 moved Flyway's
+  auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
+  application never migrated and `spring.flyway.*` was ignored in every profile — found when the Docker Compose
+  database came up empty. The starter replaces the direct `flyway-core` dependency
+- **`application-prod.properties`:** Baselines a non-empty production schema without Flyway's history at `7.0.0`
+  (`baseline-on-migrate`, as the `local` profile does), so the first start applies `V7_1_0` onwards instead of
+  failing on the existing tables; an empty database is still built in full. Reflected in `CONTRIBUTING.md`'s Database
+  Profiles table and `AGENTS.md`'s Flyway note
 
 ### 🧾 [8.10.2] - 2026-09-26
 
