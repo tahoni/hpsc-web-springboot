@@ -71,7 +71,8 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   raised to `0.86` (86%) within the v8.3.1 branch, then to `0.97` (97%) in v8.4.0 once the 86% floor was confirmed
   holding cleanly in CI — genuinely "near the current baseline" (98.16%/98.94%) now, with a small deliberate margin
   rather than pinned exactly to it. `BRANCH` is still not separately enforced, only `LINE` — a documented deviation
-  from the original wording, not an oversight
+  from the original wording, not an oversight. Since v8.11.1 a matching 97% `BRANCH` minimum sits beside the `LINE`
+  one, so the rule now matches the original wording
 - [x] Wire that rule into the CI gate, so a coverage regression fails the build — the `check` execution runs as
   part of `build.yml`'s `./mvnw verify -Pcoverage` step
 - [x] Refresh `HISTORY.md`'s coverage figure at the same time, so it stops drifting from the real number — done in
@@ -306,6 +307,12 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   auto-configuration runs the migrations at startup
 - [x] Baseline the hand-built production schema at `7.0.0` (`baseline-on-migrate` in `application-prod.properties`,
   as `local` already does), and name it in `CONTRIBUTING.md`'s Database Profiles table and `AGENTS.md`'s Flyway note
+
+**Docker image build in CI** *(improvement-plan.md → Gap #31)* — ✅ Closed in v8.11.1
+
+- [x] Add a workflow building the `Dockerfile` on every push/PR to `main`/`develop` — build only, never pushed, and
+  without repeating the tests `build.yml` already runs
+- [x] List it in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
 
 ---
 

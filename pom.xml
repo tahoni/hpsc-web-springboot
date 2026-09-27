@@ -12,7 +12,7 @@
     <!-- Application definition -->
     <groupId>za.co.hpsc</groupId>
     <artifactId>hpsc-web</artifactId>
-    <version>8.11.0</version>
+    <version>8.11.1</version>
     <name>hpsc-web</name>
     <description>HPSC website backend</description>
 
@@ -280,7 +280,7 @@
                                     </outputDirectory>
                                 </configuration>
                             </execution>
-                            <!-- Fail the build if line coverage drops below the enforced minimum -->
+                            <!-- Fail the build if line or branch coverage drops below the enforced minimum -->
                             <execution>
                                 <id>check</id>
                                 <phase>verify</phase>
@@ -294,6 +294,11 @@
                                             <limits>
                                                 <limit>
                                                     <counter>LINE</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.97</minimum>
+                                                </limit>
+                                                <limit>
+                                                    <counter>BRANCH</counter>
                                                     <value>COVEREDRATIO</value>
                                                     <minimum>0.97</minimum>
                                                 </limit>

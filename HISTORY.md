@@ -21,6 +21,27 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.11.1 (September 27, 2026)
+
+**Theme:** Docker Image Build in CI & Branch Coverage Gate
+
+**Key Focus:**
+
+- New `.github/workflows/docker.yml` builds the `Dockerfile` with `docker/build-push-action` on every push and PR to
+  `main`/`develop` — build only, never pushed — so a change that breaks the image fails CI instead of surfacing at
+  deployment, closing the Known Issue v8.11.0 shipped with
+- Layers are reused across runs through the GitHub Actions cache; tests stay in `build.yml`, since the `Dockerfile`
+  skips them
+- `ARCHITECTURE.md`'s CI/CD & Quality Gates table gains a Docker Image row, and `CONTRIBUTING.md`'s summary of it
+  names the new gate
+- `pom.xml`'s JaCoCo `check` execution gains a 97% `BRANCH` minimum beside the existing `LINE` one, ending the
+  line-only deviation Gap #4 recorded and the Known Issue carried since v8.4.0; branch coverage stands at 99.09%
+- The release's improvement-plan sweep recorded Gap #31 for the untracked Docker CI gap and closed it — Gap #6
+  remains the only open gap, with #26 still waiting on a Spring Boot release that manages Tomcat `11.0.25`
+- Scoped as `v8.11.1` **PATCH**: CI, build tooling and documentation only, with no change to the API,
+  configuration or schema
+- Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.11.0 (September 27, 2026)
 
 **Theme:** Docker Deployment, Actuator Health Checks & Flyway at Startup
@@ -1379,6 +1400,16 @@ everyone else's.
 **Achievement:** Gave the application a reproducible way to run outside a developer's machine, and in doing so found
 and fixed the schema migrations the documentation had long assumed were running.
 
+### Milestone 40: Docker Image Build in CI & Branch Coverage Gate (v8.11.1)
+
+- The Docker image is built on every push and PR, giving the `Dockerfile` the same automatic gate as the Maven build
+- The one Known Issue v8.11.0 introduced is closed in the very next release
+- The coverage gate enforces branch coverage as well as line coverage, as Gap #4 originally proposed
+- Gap #31 recorded and closed
+
+**Achievement:** Made a broken image fail a pull request rather than a deployment, and a branch-coverage regression
+fail the build rather than slip through.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1953,7 +1984,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.11.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.11.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1979,7 +2010,9 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   under version control and into the branching model, extend the automated code review to Dependabot's PRs, and
   absorb its first updates. Then make the application deployable as a container — a Docker image, a Compose setup
   with its own MySQL database and an Actuator health endpoint — and, in running it against an empty database, make
-  Flyway's migrations actually run at startup as the documentation had always described.
+  Flyway's migrations actually run at startup as the documentation had always described, then build that image on
+  every pull request so a broken `Dockerfile` fails CI rather than a deployment, and hold branch coverage to the same
+  97% floor as line coverage.
 
 ### Initial Phase (v1.0.0)
 
@@ -2243,7 +2276,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.11.0, the following areas are identified for future enhancement:
+Based on the evolution to v8.11.1, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2530,7 +2563,7 @@ Based on the evolution to v8.11.0, the following areas are identified for future
 - `flyway-mysql` in the Flyway plugin now follows `${flyway.version}`, fixing Dependabot's mismatched `13.7.0` bump
 - Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.11.0)
+### Previously Completed (v8.11.0)
 
 - New multi-stage `Dockerfile` (JDK 25 build, non-root Java 25 JRE runtime from Spring Boot's JAR layers, `prod`
   profile by default) and `docker-compose.yml` running it against MySQL 8.4, with `.env.example` for credentials
@@ -2539,6 +2572,14 @@ Based on the evolution to v8.11.0, the following areas are identified for future
   `prod` profile baselines a hand-built schema at `7.0.0`
 - Gap #30 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.11.1)
+
+- New `.github/workflows/docker.yml` builds the `Dockerfile` on every push and PR to `main`/`develop` (build only,
+  never pushed, cached through GitHub Actions), listed in `ARCHITECTURE.md`'s CI/CD & Quality Gates table
+- The JaCoCo coverage gate enforces a 97% `BRANCH` minimum beside the `LINE` one
+- Gap #31 recorded and closed, leaving only Gap #6 open
+- Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 

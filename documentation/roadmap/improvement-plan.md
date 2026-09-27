@@ -36,19 +36,19 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 
 ## ⚙️ Goals & Constraints (Synthesised)
 
-| Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                                                                                            |
-|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                                                                                         |
-| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                                                                                                   |
-| `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                                               |
-| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                                      |
-| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real baseline in v8.4.0 (Gap #4 closed; 98.77% line as of v8.9.0); Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7) |
-| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` and Dependabot security PRs direct to `main`), strict Semantic Versioning (classified from `[Unreleased]`, validated at release time) and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs              |
-| `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                                             |
-| `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                |
-| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                  |
-| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev), run at startup since v8.11.0 (Gap #30); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                |
-| `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                |
+| Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                                                                                                                                                                                                               |
+| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                                                                                                                                                                                                                        |
+| `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                                                                                                                                                                    |
+| `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                                                                                                                                                           |
+| `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real baseline in v8.4.0 (Gap #4 closed; 98.77% line as of v8.9.0), and a matching 97% branch minimum since v8.11.1; Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7); the `Dockerfile` has been built on push/PR since v8.11.1 (Gap #31) |
+| `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` and Dependabot security PRs direct to `main`), strict Semantic Versioning (classified from `[Unreleased]`, validated at release time) and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                                                                                                                   |
+| `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                                                                                                                                                                  |
+| `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                                                                                                                                     |
+| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                                                                                       |
+| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev), run at startup since v8.11.0 (Gap #30); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                                                                                                                     |
+| `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                                                                                                                                     |
 
 ---
 
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (28):**
+- **✅ Completed (29):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -102,6 +102,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     closed v8.10.1 (handled as hotfixes)
   - #30 Flyway is documented as managing the MySQL schema, but never runs at startup — closed v8.11.0
     (`spring-boot-starter-flyway`)
+  - #31 CI never builds the Docker image, so a broken `Dockerfile` surfaces only at deployment — closed v8.11.1
+    (`docker.yml`)
 - **🟡 Partially Completed (1):**
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
@@ -244,6 +246,10 @@ measured 98.44%/98.98% line/branch, 868 tests — still comfortably above the 97
 still not separately enforced — only `LINE`, as established when this gate was first added
 in v8.3.1 — which remains a deliberate, documented deviation from the original "line/branch minimum" wording rather
 than an oversight.
+
+**Follow-up (v8.11.1):** That deviation is gone. The `check` execution now carries a second limit, a 97% `BRANCH`
+`COVEREDRATIO` minimum beside the `LINE` one, so the gate finally matches the "line/branch minimum" this gap's
+Proposed improvement asked for; branch coverage stood at 99.09% when it landed.
 
 #### 5. `jackson-databind` version override is a standing manual constraint — ✅ Closed in v8.1.1
 
@@ -928,6 +934,32 @@ baselines a non-empty schema without Flyway's history at `7.0.0`, so the first s
 empty database (such as the Docker Compose one) is still built in full from `V7_0_0`. `CONTRIBUTING.md`'s Database
 Profiles table and `AGENTS.md`'s Flyway note name the new `prod` baseline.
 
+#### 31. CI never builds the Docker image, so a broken `Dockerfile` surfaces only at deployment — ✅ Closed in v8.11.1
+
+**Evidence:** v8.11.0 added a `Dockerfile` and `docker-compose.yml`, and `README.md`'s "🐳 Running with Docker"
+section and `ARCHITECTURE.md`'s Technology Stack table present both as supported ways to run the application. But
+none of the workflows in `.github/workflows/` (`build.yml`, `codeql.yml`, `dependency-submission.yml`,
+`claude-code-review.yml`, `claude.yml`) builds the image, and `ARCHITECTURE.md`'s CI/CD & Quality Gates table has no
+row for it. `documentation/history/v8/RELEASE_NOTES_v8.11.0.md` records exactly this as a Known Issue — "CI doesn't
+build the Docker image, so a change that breaks the `Dockerfile` isn't caught until someone builds it" — and carries
+"Consider building the Docker image in CI" as a Future Enhancement, yet no gap here tracks it.
+
+**Why it matters:** The `Dockerfile` runs its own Maven build, separately from `build.yml`'s, so a dependency, plugin
+or packaging change can pass every existing gate and still break the image. Nobody finds out until the next manual
+`docker build` or deployment, which undercuts the automatic-gate goal `ARCHITECTURE.md`'s CI/CD table sets.
+
+**Proposed improvement:** Add a workflow that builds the `Dockerfile` on push/PR to `main`/`develop`, build only
+and never pushed, since publishing an image isn't a stated goal. Tests already run in `build.yml`, so the image build
+doesn't need to repeat them. List the new gate in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and
+`CONTRIBUTING.md`'s summary of it.
+
+**Outcome:** Done as proposed. `.github/workflows/docker.yml` (commit `69125c9`) builds the `Dockerfile` with
+`docker/build-push-action` on every push and PR to `main`/`develop`, with `push: false`, so the image is checked but
+never published; a comment in the workflow notes that tests stay in `build.yml` and the `Dockerfile` skips them. It
+reuses layers through the GitHub Actions cache, so unchanged dependency layers aren't rebuilt on each run.
+`ARCHITECTURE.md`'s CI/CD & Quality Gates table gains a "Docker Image" row, and `CONTRIBUTING.md`'s summary of that
+table names the Docker image build.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -992,7 +1024,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
-| **Next**    | No items currently scoped — #30 closed in v8.11.0                                                                                                                                                                                                  |
+| **Next**    | No items currently scoped — #31 closed in v8.11.1                                                                                                                                                                                                  |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1064,6 +1096,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   following that keeps every fix on both `main` and `develop`, closing Gap #29.
 - ✅ Met in v8.11.0: Flyway runs the migrations at startup in every MySQL profile, as the docs describe, and an
   existing production schema without Flyway's history is baselined rather than rejected, closing Gap #30.
+- ✅ Met in v8.11.1: a CI workflow builds the `Dockerfile` on every push/PR to `main`/`develop`, and
+  `ARCHITECTURE.md`'s CI/CD & Quality Gates table lists it, closing Gap #31.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
