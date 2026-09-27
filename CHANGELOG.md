@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.11.0](#-8110---2026-09-27) ← Current
+- [🧾 Version 8.11.1](#-8111---2026-09-27) ← Current
+- [🧾 Version 8.11.0](#-8110---2026-09-27)
 - [🧾 Version 8.10.2](#-8102---2026-09-26)
 - [🧾 Version 8.10.1](#-8101---2026-09-26)
 - [🧾 Version 8.10.0](#-8100---2026-09-26)
@@ -63,6 +64,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.11.1] - 2026-09-27
+
+#### ➕ Added
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/docker.yml`:** New workflow building the `Dockerfile` on every push and PR to `main`/`develop`,
+  so a change that breaks the image fails CI instead of surfacing at deployment — the Known Issue v8.11.0 recorded.
+  Built with `docker/build-push-action` and never pushed, reusing layers through the GitHub Actions cache. Listed in
+  `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
+
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #31 from an `update-improvement-plan-gaps` sweep —
+  CI never built the Docker image, the Known Issue and Future Enhancement v8.11.0 recorded with no gap tracking it —
+  closed within this release by `docker.yml`, with "🌳 At a Glance", the "⚙️ Goals & Constraints" CI/CD row, the
+  "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+
+#### 🔄 Changed
+
+##### CI/CD & Configuration
+
+- **`pom.xml` (`jacoco-maven-plugin`'s `check` execution):** The coverage gate now also enforces a 97% `BRANCH`
+  minimum alongside the existing 97% `LINE` one, so a branch-coverage regression fails `build.yml` too — ending the
+  line-only deviation recorded under Gap #4 and the Known Issue carried since v8.4.0. Branch coverage stands at
+  99.09%. Reflected in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `improvement-plan.md`
+
+##### Build & Metadata
+
+- Project version bumped to **8.11.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### 🧾 [8.11.0] - 2026-09-27
 
