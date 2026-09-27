@@ -67,6 +67,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### CI/CD & Configuration
 
+- **`Dockerfile`, `.dockerignore`:** New multi-stage Docker image — built with the Maven wrapper on a JDK 25 image,
+  then run as a non-root user on a Java 25 JRE from Spring Boot's extracted JAR layers, so dependency layers stay
+  cached between builds. It defaults to the `prod` profile and reads `SPRING_DATASOURCE_URL`, `MYSQL_USER` and
+  `MYSQL_PASSWORD` at run time; `JAVA_OPTS` passes JVM options. Its `HEALTHCHECK` polls Actuator's health endpoint,
+  with a 90-second start period for Flyway's first migration. Documented in `README.md`'s new Running with Docker
+  section
 - **`spring-boot-starter-actuator`:** New dependency exposing `/hpsc-web/actuator/health` (Actuator's defaults: the
   health endpoint only, including a database check) for deployments to poll. Added to the tech stacks in
   `README.md`, `ARCHITECTURE.md` and `AGENTS.md`
