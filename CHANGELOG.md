@@ -85,6 +85,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### CI/CD & Configuration
+
+- **`pom.xml` (`jacoco-maven-plugin`'s `check` execution):** The coverage gate now also enforces a 97% `BRANCH`
+  minimum alongside the existing 97% `LINE` one, so a branch-coverage regression fails `build.yml` too — ending the
+  line-only deviation recorded under Gap #4 and the Known Issue carried since v8.4.0. Branch coverage stands at
+  99.09%. Reflected in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `improvement-plan.md`
+
 ##### Documentation
 
 - **`CHANGELOG.md`, `RELEASE_NOTES.md`, `RELEASE_NOTES_v8.11.0.md`:** v8.11.0's Fixed section now files the Flyway fix
