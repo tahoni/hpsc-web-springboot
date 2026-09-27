@@ -82,6 +82,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Compose refuses to start without them. `.env.example` recommends `MYSQL_PORT=3307` when a local MySQL already
   listens on 3306
 
+#### 🐛 Fixed
+
+##### Build & Configuration
+
+- **`spring-boot-starter-flyway`:** Flyway migrations now run at startup. Spring Boot 4 moved Flyway's
+  auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
+  application never migrated and `spring.flyway.*` was ignored in every profile — found when the Docker Compose
+  database came up empty. The starter replaces the direct `flyway-core` dependency
+- **`application-prod.properties`:** Baselines a non-empty production schema without Flyway's history at `7.0.0`
+  (`baseline-on-migrate`, as the `local` profile does), so the first start applies `V7_1_0` onwards instead of
+  failing on the existing tables; an empty database is still built in full. Reflected in `CONTRIBUTING.md`'s Database
+  Profiles table and `AGENTS.md`'s Flyway note
+
 ### 🧾 [8.10.2] - 2026-09-26
 
 #### 🔄 Changed

@@ -55,12 +55,12 @@ currently in use.
 
 **Flyway migration versioning is independent of the app version.** `db/migration/V<X>_<Y>_<Z>__description.sql`
 filenames are their own counter, baselined at `7.0.0` (`spring.flyway.baseline-version` in `pom.xml`/
-`application-local.properties`) to match the hand-built schema Flyway inherited when it was first wired up — they do
-**not** track `pom.xml`'s `<project><version>`. Most releases ship no schema change at all, so the two numbers drift
-apart by design; a new migration's version is simply the next one after the highest existing `db/migration` file,
-regardless of the app version at the time. Treat any resemblance between a migration version and an app version as
-coincidental — e.g. `V7_2_0__add_competitor_emails.sql` actually shipped in app v8.2.0, and there is a wholly
-unrelated app release literally named v7.2.0.
+`application-local.properties`/`application-prod.properties`) to match the hand-built schema Flyway inherited when it
+was first wired up — they do **not** track `pom.xml`'s `<project><version>`. Most releases ship no schema change at
+all, so the two numbers drift apart by design; a new migration's version is simply the next one after the highest
+existing `db/migration` file, regardless of the app version at the time. Treat any resemblance between a migration
+version and an app version as coincidental — e.g. `V7_2_0__add_competitor_emails.sql` actually shipped in app v8.2.0,
+and there is a wholly unrelated app release literally named v7.2.0.
 
 ---
 

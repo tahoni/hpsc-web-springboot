@@ -77,7 +77,7 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
 | Profile | Database                                                                                                 | DDL                                              |
 |---------|----------------------------------------------------------------------------------------------------------|--------------------------------------------------|
 | (none)  | MySQL — URL supplied externally (e.g. `SPRING_DATASOURCE_URL`); env vars `MYSQL_USER` / `MYSQL_PASSWORD` | `none` (Flyway migrations)                       |
-| `prod`  | MySQL `localhost:3306/hpsc_prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`                               | `none` (Flyway migrations)                       |
+| `prod`  | MySQL `localhost:3306/hpsc_prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`                               | `none` (Flyway migrations, baselined at `7.0.0`) |
 | `dev`   | MySQL `localhost:3306/hpsc_dev`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`                                | `none` (Flyway migrations)                       |
 | `local` | MySQL `localhost:3306/hpsc_dev` as user `hpsc_dev`; env var `MYSQL_LOCAL_PASSWORD`                       | `none` (Flyway migrations, baselined at `7.0.0`) |
 | `test`  | H2 in-memory `testdb`                                                                                    | `create-drop` (auto)                             |
