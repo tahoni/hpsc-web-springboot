@@ -119,13 +119,13 @@ set `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` before `docker comp
 
 ## 📊 Statistics
 
-- **Total Commits:** 11 (the Actuator, Dockerfile, Docker Compose and Flyway changes, a Docker Compose port note, two
+- **Total Commits:** 15 (the Actuator, Dockerfile, Docker Compose and Flyway changes, a Docker Compose port note, two
   `IpscMatchTest` clean-ups, plus this release's Gap #30, version bump, release documentation and PR description
-  commits)
+  commits, and two commits each ticking the PR checklist and updating these statistics)
 - **Files Changed:** 20
-- **Insertions:** 776 lines
+- **Insertions:** 777 lines
 - **Deletions:** 113 lines
-- **Net Change:** +663 lines
+- **Net Change:** +664 lines
 - **New Source Files:** 4 (`Dockerfile`, `.dockerignore`, `docker-compose.yml`, `.env.example`)
 - **Deleted Files:** 0
 - **New Test Files:** 0

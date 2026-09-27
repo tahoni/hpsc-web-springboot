@@ -33,8 +33,9 @@
 - [x] `tomcat.version` override re-checked: Spring Boot 4.1.1 still manages `11.0.24`, so it stays (Gap #26)
 - [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.11.0.md`
 - [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
-- [ ] `docker compose up --build` against an empty database: schema created, `/hpsc-web/actuator/health` reports `UP`
-- [ ] Back up the production database and confirm its tables match the v7.0.0 shape before deploying (see the
+- [x] `docker compose up --build` against an empty MySQL 8.4 database: Flyway applied all 9 migrations
+      (`V7_0_0`–`V7_8_0`), `/hpsc-web/actuator/health` reports `UP`
+- [x] Back up the production database and confirm its tables match the v7.0.0 shape before deploying (see the
       Migration Guide)
 
 ## 🔗 Related Documentation
