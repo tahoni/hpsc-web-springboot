@@ -119,7 +119,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🐛 Fixed
 
-##### Build & Configuration
+##### Build & Metadata
 
 - **`spring-boot-starter-flyway`:** Flyway migrations now run at startup. Spring Boot 4 moved Flyway's
   auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
