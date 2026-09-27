@@ -134,6 +134,16 @@ Set `SPRING_PROFILES_ACTIVE` to run under another profile, and `JAVA_OPTS` to pa
 reports its health from `http://localhost:8080/hpsc-web/actuator/health`, which is also `DOWN` when the database is
 unreachable.
 
+To run the application together with a MySQL database instead, use `docker-compose.yml`. Copy `.env.example` to
+`.env` (gitignored) and set the credentials, then:
+
+```bash
+docker compose up --build
+```
+
+MySQL's data persists in a named volume, and Flyway creates the schema on first start. The ports default to `8080`
+(application) and `3306` (MySQL); set `APP_PORT` or `MYSQL_PORT` in `.env` if either is already in use.
+
 ## 🌐 API Documentation
 
 Interactive API documentation is automatically generated using SpringDoc OpenAPI and can be accessed at:
