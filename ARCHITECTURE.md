@@ -41,6 +41,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 | Data processing   | Jackson (JSON/CSV)                                                  |
 | API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
 | Validation        | Hibernate Validator, Jakarta Validation                             |
+| Health checks     | Spring Boot Actuator (`/hpsc-web/actuator/health`)                  |
 | Testing           | JUnit, Mockito, Spring Test                                         |
 | Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
 | Code generation   | Lombok                                                              |

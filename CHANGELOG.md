@@ -63,6 +63,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### CI/CD & Configuration
+
+- **`spring-boot-starter-actuator`:** New dependency exposing `/hpsc-web/actuator/health` (Actuator's defaults: the
+  health endpoint only, including a database check) for deployments to poll. Added to the tech stacks in
+  `README.md`, `ARCHITECTURE.md` and `AGENTS.md`
+
 ### 🧾 [8.10.2] - 2026-09-26
 
 #### 🔄 Changed

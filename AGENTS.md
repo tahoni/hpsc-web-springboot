@@ -45,6 +45,7 @@ is a pure API server.
 - **Data processing:** Jackson (JSON/CSV)
 - **API documentation:** SpringDoc OpenAPI (Swagger UI)
 - **Validation:** Hibernate Validator, Jakarta Validation
+- **Health checks:** Spring Boot Actuator
 - **Testing:** JUnit, Mockito, Spring Test
 - **Code coverage:** JaCoCo
 - **Code generation:** Lombok
