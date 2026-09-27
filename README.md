@@ -142,7 +142,8 @@ docker compose up --build
 ```
 
 MySQL's data persists in a named volume, and Flyway creates the schema on first start. The ports default to `8080`
-(application) and `3306` (MySQL); set `APP_PORT` or `MYSQL_PORT` in `.env` if either is already in use.
+(application) and `3306` (MySQL); set `APP_PORT` or `MYSQL_PORT` in `.env` if either is already in use — e.g.
+`MYSQL_PORT=3307` alongside a local MySQL.
 
 ## 🌐 API Documentation
 

@@ -79,7 +79,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`docker-compose.yml`, `.env.example`:** New Compose setup running the application against a MySQL 8.4 container
   — the application waits for MySQL's health check, Flyway creates the schema on first start, and the database and
   log files persist in named volumes. Credentials come from a gitignored `.env`, copied from `.env.example`, and
-  Compose refuses to start without them
+  Compose refuses to start without them. `.env.example` recommends `MYSQL_PORT=3307` when a local MySQL already
+  listens on 3306
 
 ### 🧾 [8.10.2] - 2026-09-26
 
