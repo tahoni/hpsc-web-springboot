@@ -68,12 +68,12 @@ runs only in GitHub Actions and changes nothing about how the application is bui
 
 ## 📊 Statistics
 
-- **Total Commits:** 7 (the Docker CI workflow and the v8.11.0 sub-heading fix, plus this release's Gap #31, version
-  bump, release documentation and PR description commits, and one recording the local image build)
+- **Total Commits:** 8 (the Docker CI workflow and the v8.11.0 sub-heading fix, plus this release's Gap #31, version
+  bump, release documentation and PR description commits, and two recording the local and CI image builds)
 - **Files Changed:** 14
-- **Insertions:** 440 lines
+- **Insertions:** 438 lines
 - **Deletions:** 138 lines
-- **Net Change:** +302 lines
+- **Net Change:** +300 lines
 - **New Source Files:** 1 (`.github/workflows/docker.yml`)
 - **Deleted Files:** 0
 - **New Test Files:** 0
@@ -99,8 +99,7 @@ runs only in GitHub Actions and changes nothing about how the application is bui
   98.77% line / 99.09% branch coverage, JaCoCo gate passing.
 - `docker build --no-cache -t hpsc-web .` — the image builds locally from the release branch, running as the non-root
   `hpsc` user with an `Implementation-Version` of 8.11.1.
-- The new `Docker Image` workflow runs on this release's own pull request, which is the first check that the
-  `Dockerfile` builds in CI.
+- The new `Docker Image` workflow passed on this release's own pull request (#150), its first run in CI.
 
 ---
 

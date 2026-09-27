@@ -28,7 +28,7 @@
 - [x] `docker build --no-cache -t hpsc-web .` builds the image locally (non-root `hpsc` user, version 8.11.1)
 - [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.11.1.md`
 - [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
-- [ ] The new `Docker Image` check passes on this PR
+- [x] The new `Docker Image` check passes on this PR
 
 ## 🔗 Related Documentation
 
