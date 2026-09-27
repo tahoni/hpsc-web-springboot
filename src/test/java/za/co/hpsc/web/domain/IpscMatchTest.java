@@ -24,9 +24,11 @@ class IpscMatchTest {
         // Arrange
         IpscMatch match = createMatch();
         IpscMatch other = createMatch();
+
+        // Act
         addStage(other, 1);
 
-        // Act & Assert
+        // Assert
         assertEquals(match, other);
     }
 
@@ -35,9 +37,11 @@ class IpscMatchTest {
     void testHashCode_whenStageLinksBackToMatch_thenDoesNotRecurse() {
         // Arrange
         IpscMatch match = createMatch();
+
+        // Act
         IpscMatchStage stage = addStage(match, 1);
 
-        // Act & Assert
+        // Assert
         assertDoesNotThrow(match::hashCode);
         assertDoesNotThrow(stage::hashCode);
     }

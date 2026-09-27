@@ -2479,6 +2479,68 @@ absorbed, with one that broke a hand-kept Flyway version sync fixed at the root.
 
 - No test changes (970 tests); coverage unchanged at 98.77%/99.09% line/branch
 
+
+### Phase 39: Docker Deployment, Actuator Health Checks & Flyway at Startup (v8.11.0)
+
+**Duration:** September 27, 2026
+
+A minor release: the application gains a Docker image, a Compose setup with its own MySQL database and an Actuator
+health endpoint — and bringing up that empty database revealed that Flyway had never run at startup under Spring
+Boot 4, which is fixed here.
+
+**Key Accomplishments:**
+
+**Deployment**
+
+- New multi-stage `Dockerfile`: the Maven wrapper builds the JAR on `eclipse-temurin:25-jdk`, and a non-root `hpsc`
+  user runs it on `eclipse-temurin:25-jre` from Spring Boot's extracted layers, so dependency layers stay cached
+  between builds; `.dockerignore` keeps the build context to `.mvn/`, `mvnw`, `pom.xml` and `src/`
+- The image defaults to the `prod` profile, reads `SPRING_DATASOURCE_URL`, `MYSQL_USER` and `MYSQL_PASSWORD` at run
+  time and takes JVM options from `JAVA_OPTS`; its `HEALTHCHECK` polls the health endpoint, with a 90-second start
+  period for Flyway's first migration
+- New `docker-compose.yml` runs the image against a `mysql:8.4` container, starting the application only once MySQL
+  reports healthy; the database and log files persist in named volumes
+- Credentials come from a gitignored `.env`, copied from the new `.env.example`, and Compose refuses to start without
+  them; optional `APP_PORT`/`MYSQL_PORT` move the host ports, with `MYSQL_PORT=3307` recommended beside a local MySQL
+
+**Health Checks**
+
+- New `spring-boot-starter-actuator` dependency exposing `/hpsc-web/actuator/health` with Actuator's defaults — the
+  health endpoint only, including a database check
+
+**Schema Migrations**
+
+- Spring Boot 4 moved Flyway's auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core`
+  on the classpath Flyway never ran at startup and `spring.flyway.*` was ignored in every profile; databases had only
+  been migrated by hand through the Maven plugin. `spring-boot-starter-flyway` replaces `flyway-core`
+- `application-prod.properties` baselines a non-empty schema without Flyway's history at `7.0.0`, as
+  `application-local.properties` already did; an empty database is still built in full from `V7_0_0`
+
+**Documentation**
+
+- `README.md` gains a Running with Docker section; the tech stacks in `README.md`, `ARCHITECTURE.md` and
+  `AGENTS.md` list Actuator, and `ARCHITECTURE.md`'s gains a Containerisation row; `CONTRIBUTING.md`'s Database
+  Profiles table and `AGENTS.md`'s Flyway note name the `prod` baseline
+
+**Roadmap**
+
+- Gap #30 (Flyway documented as managing the schema but never running at startup) recorded and closed — Gap #6
+  remains open, and #26 still waits on a Spring Boot release
+
+**Build & Metadata**
+
+- Project version bumped to 8.11.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- A reproducible, containerised way to run the application, and schema migrations that run where the docs said they
+  did
+
+**Test Coverage:**
+
+- No new tests (970 tests); `IpscMatchTest`'s stage tests now separate Act from Assert; coverage unchanged at
+  98.77%/99.09% line/branch
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

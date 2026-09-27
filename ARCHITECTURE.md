@@ -29,22 +29,24 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## ⚙️ Technology Stack
 
-| Component         | Technology                                                          |
-|-------------------|---------------------------------------------------------------------|
-| Framework         | Spring Boot (see `pom.xml` for the pinned version)                  |
-| Language          | Java (see `<java.version>` in `pom.xml`)                            |
-| Build             | Maven, via the provided `./mvnw` wrapper                            |
-| Database (prod)   | MySQL (profile `prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`)    |
-| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                        |
-| ORM               | Spring Data JPA, Hibernate                                          |
-| Schema migrations | Flyway (`src/main/resources/db/migration/`)                         |
-| Data processing   | Jackson (JSON/CSV)                                                  |
-| API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`) |
-| Validation        | Hibernate Validator, Jakarta Validation                             |
-| Testing           | JUnit, Mockito, Spring Test                                         |
-| Code coverage     | JaCoCo (Maven `coverage` profile)                                   |
-| Code generation   | Lombok                                                              |
-| Port / context    | `8080` / `/hpsc-web`                                                |
+| Component         | Technology                                                              |
+|-------------------|-------------------------------------------------------------------------|
+| Framework         | Spring Boot (see `pom.xml` for the pinned version)                      |
+| Language          | Java (see `<java.version>` in `pom.xml`)                                |
+| Build             | Maven, via the provided `./mvnw` wrapper                                |
+| Database (prod)   | MySQL (profile `prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`)        |
+| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                            |
+| ORM               | Spring Data JPA, Hibernate                                              |
+| Schema migrations | Flyway (`src/main/resources/db/migration/`), applied at startup         |
+| Data processing   | Jackson (JSON/CSV)                                                      |
+| API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`)     |
+| Validation        | Hibernate Validator, Jakarta Validation                                 |
+| Health checks     | Spring Boot Actuator (`/hpsc-web/actuator/health`)                      |
+| Testing           | JUnit, Mockito, Spring Test                                             |
+| Code coverage     | JaCoCo (Maven `coverage` profile)                                       |
+| Code generation   | Lombok                                                                  |
+| Containerisation  | Docker (`Dockerfile`), Docker Compose with MySQL (`docker-compose.yml`) |
+| Port / context    | `8080` / `/hpsc-web`                                                    |
 
 ---
 
