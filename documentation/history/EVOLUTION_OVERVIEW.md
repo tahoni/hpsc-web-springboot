@@ -2541,6 +2541,48 @@ Boot 4, which is fixed here.
 - No new tests (970 tests); `IpscMatchTest`'s stage tests now separate Act from Assert; coverage unchanged at
   98.77%/99.09% line/branch
 
+### Phase 40: Docker Image Build in CI (v8.11.1)
+
+**Duration:** September 27, 2026
+
+A patch release: v8.11.0 shipped a `Dockerfile` that no CI workflow built, and recorded that as a Known Issue; this
+release adds the missing gate, so a change that breaks the image fails a pull request instead of a deployment.
+
+**Key Accomplishments:**
+
+**CI/CD**
+
+- New `.github/workflows/docker.yml` builds the `Dockerfile` with `docker/setup-buildx-action` and
+  `docker/build-push-action` on every push and PR to `main`/`develop`, with `push: false` — the image is checked, never
+  published
+- Layers are cached through the GitHub Actions cache (`type=gha`, `mode=max`), so unchanged dependency layers aren't
+  rebuilt on each run; tests stay in `build.yml`, since the `Dockerfile` skips them
+- The workflow runs with read-only `contents` permission, as the image is never pushed to a registry
+
+**Documentation**
+
+- `ARCHITECTURE.md`'s CI/CD & Quality Gates table gains a Docker Image row, and `CONTRIBUTING.md`'s summary of that
+  table names the Docker image build
+- v8.11.0's Flyway fix is refiled under the existing `Build & Metadata` area in `CHANGELOG.md`, `RELEASE_NOTES.md` and
+  the archived `RELEASE_NOTES_v8.11.0.md`, replacing a near-duplicate `Build & Configuration` sub-heading
+
+**Roadmap**
+
+- Gap #31 (CI never built the Docker image) recorded and closed — Gap #6 remains open, and #26 still waits on a Spring
+  Boot release, as Spring Boot 4.1.1 still manages Tomcat `11.0.24`
+
+**Build & Metadata**
+
+- Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Giving the container image the same automatic CI gate as the Maven build
+
+**Test Coverage:**
+
+- No test changes (970 tests); coverage unchanged at 98.77%/99.09% line/branch
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.11.0](#-8110---2026-09-27) ← Current
+- [🧾 Version 8.11.1](#-8111---2026-09-27) ← Current
+- [🧾 Version 8.11.0](#-8110---2026-09-27)
 - [🧾 Version 8.10.2](#-8102---2026-09-26)
 - [🧾 Version 8.10.1](#-8101---2026-09-26)
 - [🧾 Version 8.10.0](#-8100---2026-09-26)
@@ -64,6 +65,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [8.11.1] - 2026-09-27
+
 #### ➕ Added
 
 ##### CI/CD & Configuration
@@ -81,6 +84,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
 
 #### 🔄 Changed
+
+##### Documentation
+
+- **`CHANGELOG.md`, `RELEASE_NOTES.md`, `RELEASE_NOTES_v8.11.0.md`:** v8.11.0's Fixed section now files the Flyway fix
+  under the existing `Build & Metadata` area rather than a near-duplicate `Build & Configuration` sub-heading, matching
+  the same release's version bump and the analogous v8.10.2 Flyway fix
 
 ##### Build & Metadata
 
