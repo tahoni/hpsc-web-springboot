@@ -21,6 +21,26 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.10.2 (September 26, 2026)
+
+**Theme:** Claude Code Review for Dependabot PRs & First Dependabot Updates
+
+**Key Focus:**
+
+- `.github/workflows/claude-code-review.yml` gains `allowed_bots: 'dependabot'`, so the Claude code review now runs
+  on Dependabot's version- and security-update PRs, which it previously skipped as bot-authored
+- Dependabot-triggered runs can only read Dependabot secrets, so `CLAUDE_CODE_OAUTH_TOKEN` must also be stored as a
+  Dependabot secret — documented in `ARCHITECTURE.md`'s CI/CD & Quality Gates section
+- Shipped as its own release rather than folded into the already-shipped v8.10.1, per `AGENTS.md`'s rule that a
+  released version's contents are never changed
+- Dependabot's first three PRs landed on `develop`: GitHub Actions `checkout` `v7`, `setup-java` `v6` and
+  `upload-artifact` `v7`; springdoc `3.1.1`, JaCoCo `0.8.15` and Maven `3.9.16` (the regenerated wrapper also makes
+  `mvnw` executable, so `dependency-submission.yml`'s `chmod` step is dropped); and `flyway-mysql` `13.7.0`
+- That last bump put `flyway-mysql` 13.7.0 beside Spring Boot's 12.4.0 `flyway-maven-plugin`, mixing two Flyway
+  majors; the plugin dependency now uses `${flyway.version}`, inherited from the parent, so it can't drift again
+- Scoped as `v8.10.2` **PATCH**: CI only, with no change to the API, configuration or schema
+- Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.10.1 (September 26, 2026)
 
 **Theme:** Explicit Dependency Submission & Dependabot Configuration
@@ -1313,6 +1333,17 @@ checks, and made the documented runtime profiles match the ones that actually ex
 **Achievement:** Brought the repository's dependency tooling under version control and fitted it into the branching
 model, rather than leaving it to GitHub's defaults.
 
+### Milestone 38: Claude Code Review for Dependabot PRs & First Dependabot Updates (v8.10.2)
+
+- The automated Claude code review extends to Dependabot's PRs, including the security updates merged straight into
+  `main`
+- Dependabot's first updates merged; the one that broke a hand-kept version sync (`flyway-mysql`) was fixed by
+  deriving the version from Spring Boot instead
+- The first release shipped as a follow-up PATCH under the rule that a released version is never changed
+
+**Achievement:** Gave Dependabot's PRs — including those that bypass `develop` — the same automated review as
+everyone else's.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1887,7 +1918,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.10.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.10.2):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -1910,7 +1941,8 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   documentation-accuracy gap the improvement plan tracked. Then turn Semantic Versioning from precedent into a rule
   the release process enforces, give production its own profile and make every documented runtime profile match the
   configuration behind it, then bring the repository's dependency tooling — dependency submission and Dependabot —
-  under version control and into the branching model.
+  under version control and into the branching model, extend the automated code review to Dependabot's PRs, and
+  absorb its first updates.
 
 ### Initial Phase (v1.0.0)
 
@@ -2174,7 +2206,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.10.1, the following areas are identified for future enhancement:
+Based on the evolution to v8.10.2, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2443,7 +2475,7 @@ Based on the evolution to v8.10.1, the following areas are identified for future
 - Gaps #25, #27 and #28 closed and #26 progressed, leaving only Gap #6 open
 - Project version bumped to 8.10.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.10.1)
+### Previously Completed (v8.10.1)
 
 - New `.github/workflows/dependency-submission.yml` replaces GitHub's built-in Maven dependency submission, using the
   project's own JDK 25 and Maven wrapper
@@ -2451,6 +2483,15 @@ Based on the evolution to v8.10.1, the following areas are identified for future
 - Dependabot security-update PRs handled as hotfixes in `AGENTS.md`'s and `CONTRIBUTING.md`'s branching rules
 - Gap #29 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.10.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.10.2)
+
+- The Claude code review runs on Dependabot's PRs (`allowed_bots: 'dependabot'`), with `CLAUDE_CODE_OAUTH_TOKEN`
+  also needed as a Dependabot secret
+- Dependabot's first updates: GitHub Actions to `checkout@v7`/`setup-java@v6`/`upload-artifact@v7`, springdoc
+  `3.1.1`, JaCoCo `0.8.15`, Maven `3.9.16`
+- `flyway-mysql` in the Flyway plugin now follows `${flyway.version}`, fixing Dependabot's mismatched `13.7.0` bump
+- Project version bumped to 8.10.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 
