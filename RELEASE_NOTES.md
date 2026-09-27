@@ -12,9 +12,8 @@ Version 8.11.1 is a patch release. v8.11.0 added a `Dockerfile`, but no CI workf
 recorded that as a Known Issue: a change that broke the image would only surface the next time someone built it by
 hand or deployed it. A new GitHub Actions workflow now builds the image on every push and pull request to `main` and
 `develop`, so a broken `Dockerfile` fails CI like any other regression. The coverage gate now enforces a 97% branch
-minimum as well as the existing 97% line minimum, ending a Known Issue carried since v8.4.0. The release also tidies
-one sub-heading in v8.11.0's changelog and release notes, and records the Docker gap in the improvement plan as
-Gap #31, closed here.
+minimum as well as the existing 97% line minimum, ending a Known Issue carried since v8.4.0. The release also records
+the Docker gap in the improvement plan as Gap #31, closed here.
 
 ---
 
@@ -61,11 +60,6 @@ Gap #31, closed here.
   97% `LINE` one, so a branch-coverage regression fails `build.yml` too — ending the line-only deviation recorded
   under Gap #4. Reflected in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `improvement-plan.md`
 
-#### Documentation
-
-- **`CHANGELOG.md`, `RELEASE_NOTES.md`, `RELEASE_NOTES_v8.11.0.md`:** v8.11.0's Flyway fix is now filed under the
-  existing `Build & Metadata` area rather than a near-duplicate `Build & Configuration` sub-heading
-
 #### Build & Metadata
 
 - Project version bumped to **8.11.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
@@ -81,13 +75,14 @@ runs only in GitHub Actions and changes nothing about how the application is bui
 
 ## 📊 Statistics
 
-- **Total Commits:** 10 (the Docker CI workflow, the v8.11.0 sub-heading fix and the branch coverage gate, plus this
-  release's Gap #31, version bump, release documentation and PR description commits, two recording the local and CI
-  image builds, and one adding the coverage gate to these release documents)
-- **Files Changed:** 14
-- **Insertions:** 506 lines
-- **Deletions:** 140 lines
-- **Net Change:** +366 lines
+- **Total Commits:** 11 (the Docker CI workflow and the branch coverage gate, plus this release's Gap #31, version
+  bump, release documentation and PR description commits, two recording the local and CI image builds, one adding
+  the coverage gate to these release documents, and a v8.11.0 sub-heading rename plus its revert after review, since
+  a released version's record is never changed)
+- **Files Changed:** 13
+- **Insertions:** 485 lines
+- **Deletions:** 141 lines
+- **Net Change:** +344 lines
 - **New Source Files:** 1 (`.github/workflows/docker.yml`)
 - **Deleted Files:** 0
 - **New Test Files:** 0

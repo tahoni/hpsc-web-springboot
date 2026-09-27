@@ -36,8 +36,6 @@ evolution of architecture, features and design philosophy across all versions.
   names the new gate
 - `pom.xml`'s JaCoCo `check` execution gains a 97% `BRANCH` minimum beside the existing `LINE` one, ending the
   line-only deviation Gap #4 recorded and the Known Issue carried since v8.4.0; branch coverage stands at 99.09%
-- v8.11.0's Flyway fix is refiled under the existing `Build & Metadata` area in `CHANGELOG.md` and both copies of its
-  release notes, replacing a near-duplicate `Build & Configuration` sub-heading
 - The release's improvement-plan sweep recorded Gap #31 for the untracked Docker CI gap and closed it — Gap #6
   remains the only open gap, with #26 still waiting on a Spring Boot release that manages Tomcat `11.0.25`
 - Scoped as `v8.11.1` **PATCH**: CI, build tooling and documentation only, with no change to the API,
@@ -2580,7 +2578,6 @@ Based on the evolution to v8.11.1, the following areas are identified for future
 - New `.github/workflows/docker.yml` builds the `Dockerfile` on every push and PR to `main`/`develop` (build only,
   never pushed, cached through GitHub Actions), listed in `ARCHITECTURE.md`'s CI/CD & Quality Gates table
 - The JaCoCo coverage gate enforces a 97% `BRANCH` minimum beside the `LINE` one
-- v8.11.0's Flyway fix refiled under the existing `Build & Metadata` area in its changelog and release notes
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 

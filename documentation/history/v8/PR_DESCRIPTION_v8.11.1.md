@@ -20,7 +20,6 @@
 **Changed**
 
 - JaCoCo `check` execution: a 97% `BRANCH` limit beside the 97% `LINE` one; `ARCHITECTURE.md` and Gap #4 updated
-- v8.11.0's Flyway fix refiled under the existing `Build & Metadata` area in its changelog and release notes
 - Version bumped to 8.11.1 in `pom.xml` and `@OpenAPIDefinition`; `tomcat.version` override kept, as Spring Boot
   4.1.1 still manages Tomcat `11.0.24` (Gap #26)
 

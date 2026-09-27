@@ -83,7 +83,7 @@ production schema instead of failing on it.
 
 ### Fixed
 
-#### Build & Metadata
+#### Build & Configuration
 
 - **`spring-boot-starter-flyway`:** Flyway migrations now run at startup. Spring Boot 4 moved Flyway's
   auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the

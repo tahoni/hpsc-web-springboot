@@ -2567,8 +2567,6 @@ also extends the coverage gate from line coverage alone to branch coverage too.
 
 - `ARCHITECTURE.md`'s CI/CD & Quality Gates table gains a Docker Image row, and `CONTRIBUTING.md`'s summary of that
   table names the Docker image build; its Code Coverage row now names line and branch coverage
-- v8.11.0's Flyway fix is refiled under the existing `Build & Metadata` area in `CHANGELOG.md`, `RELEASE_NOTES.md` and
-  the archived `RELEASE_NOTES_v8.11.0.md`, replacing a near-duplicate `Build & Configuration` sub-heading
 
 **Roadmap**
 

@@ -92,12 +92,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   line-only deviation recorded under Gap #4 and the Known Issue carried since v8.4.0. Branch coverage stands at
   99.09%. Reflected in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `improvement-plan.md`
 
-##### Documentation
-
-- **`CHANGELOG.md`, `RELEASE_NOTES.md`, `RELEASE_NOTES_v8.11.0.md`:** v8.11.0's Fixed section now files the Flyway fix
-  under the existing `Build & Metadata` area rather than a near-duplicate `Build & Configuration` sub-heading, matching
-  the same release's version bump and the analogous v8.10.2 Flyway fix
-
 ##### Build & Metadata
 
 - Project version bumped to **8.11.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
@@ -148,7 +142,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🐛 Fixed
 
-##### Build & Metadata
+##### Build & Configuration
 
 - **`spring-boot-starter-flyway`:** Flyway migrations now run at startup. Spring Boot 4 moved Flyway's
   auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
