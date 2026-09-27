@@ -80,6 +80,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   closed within this release by `docker.yml`, with "🌳 At a Glance", the "⚙️ Goals & Constraints" CI/CD row, the
   "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
 
+#### 🔄 Changed
+
+##### Build & Metadata
+
+- Project version bumped to **8.11.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+
 ### 🧾 [8.11.0] - 2026-09-27
 
 #### ➕ Added
