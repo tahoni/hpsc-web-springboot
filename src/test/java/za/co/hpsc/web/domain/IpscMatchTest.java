@@ -28,7 +28,7 @@ class IpscMatchTest {
         // Act
         addStage(other, 1);
 
-        // Act & Assert
+        // Assert
         assertEquals(match, other);
     }
 
