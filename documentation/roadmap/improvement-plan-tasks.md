@@ -307,6 +307,12 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Baseline the hand-built production schema at `7.0.0` (`baseline-on-migrate` in `application-prod.properties`,
   as `local` already does), and name it in `CONTRIBUTING.md`'s Database Profiles table and `AGENTS.md`'s Flyway note
 
+**Docker image build in CI** *(improvement-plan.md → Gap #31)* — ✅ Closed in v8.11.1
+
+- [x] Add a workflow building the `Dockerfile` on every push/PR to `main`/`develop` — build only, never pushed, and
+  without repeating the tests `build.yml` already runs
+- [x] List it in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
+
 ---
 
 ## 🟡 Partially Completed

@@ -73,6 +73,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Built with `docker/build-push-action` and never pushed, reusing layers through the GitHub Actions cache. Listed in
   `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
 
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #31 from an `update-improvement-plan-gaps` sweep —
+  CI never built the Docker image, the Known Issue and Future Enhancement v8.11.0 recorded with no gap tracking it —
+  closed within this release by `docker.yml`, with "🌳 At a Glance", the "⚙️ Goals & Constraints" CI/CD row, the
+  "🛤️ Roadmap" **Next** row and "☑️ Success Criteria" updated to match
+
 ### 🧾 [8.11.0] - 2026-09-27
 
 #### ➕ Added
