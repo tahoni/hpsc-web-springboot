@@ -25,6 +25,7 @@
 - [x] `./mvnw verify -Pcoverage` — full suite passing (970 tests, 0 failures/errors), unchanged
       from v8.11.0; 98.77% line / 99.09% branch coverage, JaCoCo gate passing
 - [x] `docker.yml` validated as YAML
+- [x] `docker build --no-cache -t hpsc-web .` builds the image locally (non-root `hpsc` user, version 8.11.1)
 - [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.11.1.md`
 - [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
 - [ ] The new `Docker Image` check passes on this PR
