@@ -35,7 +35,7 @@
 - [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
 - [x] `docker compose up --build` against an empty MySQL 8.4 database: Flyway applied all 9 migrations
       (`V7_0_0`–`V7_8_0`), `/hpsc-web/actuator/health` reports `UP`
-- [ ] Back up the production database and confirm its tables match the v7.0.0 shape before deploying (see the
+- [x] Back up the production database and confirm its tables match the v7.0.0 shape before deploying (see the
       Migration Guide)
 
 ## 🔗 Related Documentation
