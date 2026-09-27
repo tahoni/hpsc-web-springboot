@@ -23,7 +23,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ### Version 8.11.1 (September 27, 2026)
 
-**Theme:** Docker Image Build in CI
+**Theme:** Docker Image Build in CI & Branch Coverage Gate
 
 **Key Focus:**
 
@@ -34,11 +34,14 @@ evolution of architecture, features and design philosophy across all versions.
   skips them
 - `ARCHITECTURE.md`'s CI/CD & Quality Gates table gains a Docker Image row, and `CONTRIBUTING.md`'s summary of it
   names the new gate
+- `pom.xml`'s JaCoCo `check` execution gains a 97% `BRANCH` minimum beside the existing `LINE` one, ending the
+  line-only deviation Gap #4 recorded and the Known Issue carried since v8.4.0; branch coverage stands at 99.09%
 - v8.11.0's Flyway fix is refiled under the existing `Build & Metadata` area in `CHANGELOG.md` and both copies of its
   release notes, replacing a near-duplicate `Build & Configuration` sub-heading
 - The release's improvement-plan sweep recorded Gap #31 for the untracked Docker CI gap and closed it — Gap #6
   remains the only open gap, with #26 still waiting on a Spring Boot release that manages Tomcat `11.0.25`
-- Scoped as `v8.11.1` **PATCH**: CI and documentation only, with no change to the API, configuration or schema
+- Scoped as `v8.11.1` **PATCH**: CI, build tooling and documentation only, with no change to the API,
+  configuration or schema
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 8.11.0 (September 27, 2026)
@@ -1399,13 +1402,15 @@ everyone else's.
 **Achievement:** Gave the application a reproducible way to run outside a developer's machine, and in doing so found
 and fixed the schema migrations the documentation had long assumed were running.
 
-### Milestone 40: Docker Image Build in CI (v8.11.1)
+### Milestone 40: Docker Image Build in CI & Branch Coverage Gate (v8.11.1)
 
 - The Docker image is built on every push and PR, giving the `Dockerfile` the same automatic gate as the Maven build
 - The one Known Issue v8.11.0 introduced is closed in the very next release
+- The coverage gate enforces branch coverage as well as line coverage, as Gap #4 originally proposed
 - Gap #31 recorded and closed
 
-**Achievement:** Made a broken image fail a pull request rather than a deployment.
+**Achievement:** Made a broken image fail a pull request rather than a deployment, and a branch-coverage regression
+fail the build rather than slip through.
 
 ---
 
@@ -2008,7 +2013,8 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   absorb its first updates. Then make the application deployable as a container — a Docker image, a Compose setup
   with its own MySQL database and an Actuator health endpoint — and, in running it against an empty database, make
   Flyway's migrations actually run at startup as the documentation had always described, then build that image on
-  every pull request so a broken `Dockerfile` fails CI rather than a deployment.
+  every pull request so a broken `Dockerfile` fails CI rather than a deployment, and hold branch coverage to the same
+  97% floor as line coverage.
 
 ### Initial Phase (v1.0.0)
 
@@ -2573,6 +2579,7 @@ Based on the evolution to v8.11.1, the following areas are identified for future
 
 - New `.github/workflows/docker.yml` builds the `Dockerfile` on every push and PR to `main`/`develop` (build only,
   never pushed, cached through GitHub Actions), listed in `ARCHITECTURE.md`'s CI/CD & Quality Gates table
+- The JaCoCo coverage gate enforces a 97% `BRANCH` minimum beside the `LINE` one
 - v8.11.0's Flyway fix refiled under the existing `Build & Metadata` area in its changelog and release notes
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
