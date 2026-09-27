@@ -64,6 +64,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/docker.yml`:** New workflow building the `Dockerfile` on every push and PR to `main`/`develop`,
+  so a change that breaks the image fails CI instead of surfacing at deployment — the Known Issue v8.11.0 recorded.
+  Built with `docker/build-push-action` and never pushed, reusing layers through the GitHub Actions cache. Listed in
+  `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
+
 ### 🧾 [8.11.0] - 2026-09-27
 
 #### ➕ Added
