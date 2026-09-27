@@ -47,7 +47,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                                             |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                |
 | `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                  |
-| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                                        |
+| `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev), run at startup since v8.11.0 (Gap #30); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                |
 | `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                |
 
 ---
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (27):**
+- **✅ Completed (28):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -100,6 +100,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     removed)
   - #29 Dependabot security-update PRs bypass the GitFlow rule that only `develop` and `hotfix/*` reach `main` —
     closed v8.10.1 (handled as hotfixes)
+  - #30 Flyway is documented as managing the MySQL schema, but never runs at startup — closed v8.11.0
+    (`spring-boot-starter-flyway`)
 - **🟡 Partially Completed (1):**
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
@@ -899,6 +901,33 @@ Model summary and `.github/dependabot.yml`'s header comment point at the same ru
 taken: retargeting each PR to `develop` would delay security fixes to the next release, and making `develop` the
 default branch would also move where Dependabot reads its configuration from.
 
+#### 30. Flyway is documented as managing the MySQL schema, but never runs at startup — ✅ Closed in v8.11.0
+
+**Evidence:** `CONTRIBUTING.md:79–85`'s Database Profiles table gives every MySQL profile's DDL strategy as
+"`none` (Flyway migrations)" and says schema changes "are managed by Flyway ... for every profile except `test`";
+`application.properties` sets `spring.flyway.enabled=true`, and `application-local.properties` configures
+`baseline-on-migrate`. But `pom.xml` depended only on `org.flywaydb:flyway-core`, and Spring Boot 4 moved Flyway's
+auto-configuration out of `spring-boot-autoconfigure` into its own `spring-boot-flyway` module. With that module
+absent, nothing runs Flyway at startup and every `spring.flyway.*` property is silently ignored, in every profile —
+existing databases were only ever migrated by hand through `flyway-maven-plugin` (`flyway:migrate`). It surfaced when
+the new Docker Compose setup's empty MySQL database came up with no tables.
+
+**Why it matters:** Every doc — and this plan's own "⚙️ Goals & Constraints" row — treats Flyway as the schema
+source of truth for MySQL, yet a fresh database was never created, and a new migration never applied, unless someone
+remembered to run the Maven plugin by hand. `ddl-auto=none` means Hibernate doesn't fill the gap either, so the
+application starts against a missing or stale schema and fails only at the first query.
+
+**Proposed improvement:** Replace `flyway-core` with `spring-boot-starter-flyway`, so Boot's auto-configuration runs
+the migrations at startup. Check the one database that already exists without Flyway's history — production, built
+by hand before Flyway ran — and give the `prod` profile the same `baseline-on-migrate` at `7.0.0` that `local`
+already has, so its first start doesn't fail on the existing tables.
+
+**Outcome:** Done as proposed. `pom.xml` now depends on `spring-boot-starter-flyway` in place of `flyway-core`, with a
+comment explaining why, so migrations run at startup in every MySQL profile. `application-prod.properties`
+baselines a non-empty schema without Flyway's history at `7.0.0`, so the first start applies `V7_1_0` onwards; an
+empty database (such as the Docker Compose one) is still built in full from `V7_0_0`. `CONTRIBUTING.md`'s Database
+Profiles table and `AGENTS.md`'s Flyway note name the new `prod` baseline.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -963,7 +992,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
-| **Next**    | No items currently scoped — #29 closed in v8.10.1                                                                                                                                                                                                  |
+| **Next**    | No items currently scoped — #30 closed in v8.11.0                                                                                                                                                                                                  |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1033,6 +1062,8 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
   either removed or backed by its own properties file and `CONTRIBUTING.md` row, closing Gap #28.
 - ✅ Met in v8.10.1: `AGENTS.md` and `CONTRIBUTING.md` say how Dependabot security-update PRs are merged, and
   following that keeps every fix on both `main` and `develop`, closing Gap #29.
+- ✅ Met in v8.11.0: Flyway runs the migrations at startup in every MySQL profile, as the docs describe, and an
+  existing production schema without Flyway's history is baselined rather than rejected, closing Gap #30.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s

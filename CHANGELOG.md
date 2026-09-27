@@ -82,6 +82,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Compose refuses to start without them. `.env.example` recommends `MYSQL_PORT=3307` when a local MySQL already
   listens on 3306
 
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #30 from an `update-improvement-plan-gaps` sweep —
+  every doc described Flyway as managing the MySQL schema, but it never ran at startup — closed within this release
+  (see Fixed), with "🌳 At a Glance", the "⚙️ Goals & Constraints" Flyway row, the "🛤️ Roadmap" **Next** row and
+  "☑️ Success Criteria" updated to match
+
 #### 🐛 Fixed
 
 ##### Build & Configuration
