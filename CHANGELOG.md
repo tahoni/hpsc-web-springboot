@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.10.2](#-8102---2026-09-26) ← Current
+- [🧾 Version 8.11.0](#-8110---2026-09-27) ← Current
+- [🧾 Version 8.10.2](#-8102---2026-09-26)
 - [🧾 Version 8.10.1](#-8101---2026-09-26)
 - [🧾 Version 8.10.0](#-8100---2026-09-26)
 - [🧾 Version 8.9.0](#-890---2026-09-26)
@@ -63,6 +64,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [8.11.0] - 2026-09-27
+
 #### ➕ Added
 
 ##### CI/CD & Configuration
@@ -88,6 +91,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   every doc described Flyway as managing the MySQL schema, but it never ran at startup — closed within this release
   (see Fixed), with "🌳 At a Glance", the "⚙️ Goals & Constraints" Flyway row, the "🛤️ Roadmap" **Next** row and
   "☑️ Success Criteria" updated to match
+
+#### 🔄 Changed
+
+##### Tests
+
+- **`IpscMatchTest`:** The two stage tests now separate Act from Assert — linking the stage is the Act step, in place
+  of a combined `// Act & Assert` comment — per `AGENTS.md`'s Arrange-Act-Assert convention
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** The Technology Stack table gains a Containerisation row (`Dockerfile`, `docker-compose.yml`),
+  and its Schema migrations row now says Flyway applies them at startup
+
+##### Build & Metadata
+
+- Project version bumped to **8.11.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 #### 🐛 Fixed
 
