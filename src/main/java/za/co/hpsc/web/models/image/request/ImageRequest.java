@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.Request;
-import za.co.hpsc.web.utils.ValueUtil;
+import za.co.hpsc.web.utils.ValueUtils;
 
 import java.util.List;
 
@@ -50,8 +50,8 @@ public class ImageRequest extends Request {
      */
     public ImageRequest(@NotNull @NotBlank String title, String filePath, String fileName) {
         super(title);
-        this.filePath = ValueUtil.nullAsEmptyString(filePath);
-        this.fileName = ValueUtil.nullAsEmptyString(fileName);
+        this.filePath = ValueUtils.nullAsEmptyString(filePath);
+        this.fileName = ValueUtils.nullAsEmptyString(fileName);
     }
 
     /**
@@ -82,7 +82,7 @@ public class ImageRequest extends Request {
     public ImageRequest(@NotNull @NotBlank String title, String summary, String description,
                         String category, List<String> tags, String filePath, String fileName) {
         super(title, summary, description, category, tags);
-        this.filePath = ValueUtil.nullAsEmptyString(filePath);
-        this.fileName = ValueUtil.nullAsEmptyString(fileName);
+        this.filePath = ValueUtils.nullAsEmptyString(filePath);
+        this.fileName = ValueUtils.nullAsEmptyString(fileName);
     }
 }

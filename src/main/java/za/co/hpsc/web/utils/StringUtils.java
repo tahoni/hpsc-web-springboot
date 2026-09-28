@@ -14,8 +14,8 @@ import java.util.Map;
  *
  * @since 1.1.3
  */
-public final class StringUtil {
-    private StringUtil() {
+public final class StringUtils {
+    private StringUtils() {
         // Utility class, not to be instantiated
     }
 

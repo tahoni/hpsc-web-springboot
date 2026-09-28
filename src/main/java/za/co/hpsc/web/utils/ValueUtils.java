@@ -29,9 +29,9 @@ import java.util.UUID;
  *
  * @since 1.1.0
  */
-public final class ValueUtil {
+public final class ValueUtils {
 
-    private ValueUtil() {
+    private ValueUtils() {
         // Utility class, not to be instantiated
     }
 

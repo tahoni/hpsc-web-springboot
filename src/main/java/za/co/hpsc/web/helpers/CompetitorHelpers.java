@@ -9,13 +9,13 @@ import java.util.stream.IntStream;
  *
  * @since 8.12.0
  */
-public final class CompetitorHelper {
+public final class CompetitorHelpers {
     /** Surname particles written in lower case when they precede the surname proper (e.g. "van der Merwe"). */
     private static final List<String> PREFIX_LAST_NAME = List.of(
             "da", "de", "del", "den", "der", "des", "du", "la", "le", "ten", "ter", "van", "von"
     );
 
-    private CompetitorHelper() {
+    private CompetitorHelpers() {
         // Helper class, not to be instantiated
     }
 

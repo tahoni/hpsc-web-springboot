@@ -69,10 +69,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
-- **`StringUtil.toProperCase`:** New helper that upper-cases the first letter of each word and lower-cases the rest,
+- **`StringUtils.toProperCase`:** New helper that upper-cases the first letter of each word and lower-cases the rest,
   treating spaces, hyphens and apostrophes as word breaks (e.g. `o'NEIL-smith` → `O'Neil-Smith`) — backed by the new
   `org.apache.commons:commons-text` dependency's `WordUtils`
-- **`CompetitorHelper.toSentenceCaseLastName`:** New helper in the new `za.co.hpsc.web.helpers` package that
+- **`CompetitorHelpers.toSentenceCaseLastName`:** New helper in the new `za.co.hpsc.web.helpers` package that
   lower-cases surname particles (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper —
   e.g. `Van Der Merwe` → `van der Merwe`. Only whole words are matched, so `Dube` and `Vanderbilt` are left alone.
   Listed in `ARCHITECTURE.md`'s Project Structure tree and a new Helpers table
@@ -87,8 +87,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `CompetitorNumber` (codes, club numbers also being unique) and `EmailAddresses` are kept as supplied. The JSON
   create, update and patch endpoints are unaffected
 - **`IpscCompetitorServiceImpl.toRequest`:** The imported `LastName` is also passed through
-  `CompetitorHelper.toSentenceCaseLastName` after proper-casing, so `VAN DER MERWE` is stored as `van der Merwe`
+  `CompetitorHelpers.toSentenceCaseLastName` after proper-casing, so `VAN DER MERWE` is stored as `van der Merwe`
   rather than `Van Der Merwe`
+
+##### Utils
+
+- **`DateUtils`, `NumberUtils`, `StringUtils`, `ValueUtils`:** Renamed from `DateUtil`, `NumberUtil`, `StringUtil` and
+  `ValueUtil` (and their test classes to match) — internal classes only, so there is no API change
 
 ### 🧾 [8.11.1] - 2026-09-27
 

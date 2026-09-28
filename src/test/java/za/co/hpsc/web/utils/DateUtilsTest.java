@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DateUtilTest {
+class DateUtilsTest {
 
     // formatDate(LocalDate, String)
     @Test
@@ -18,7 +18,7 @@ class DateUtilTest {
         String expected = "2023-10-05";
 
         // Act
-        String result = DateUtil.formatDate(date, format);
+        String result = DateUtils.formatDate(date, format);
 
         // Assert
         assertEquals(expected, result);
@@ -30,7 +30,7 @@ class DateUtilTest {
         String format = "yyyy-MM-dd";
 
         // Act
-        String result = DateUtil.formatDate(null, format);
+        String result = DateUtils.formatDate(null, format);
 
         // Assert
         assertEquals("", result);
@@ -42,7 +42,7 @@ class DateUtilTest {
         LocalDate date = LocalDate.of(2023, 10, 5);
 
         // Act
-        String result = DateUtil.formatDate(date, null);
+        String result = DateUtils.formatDate(date, null);
 
         // Assert
         assertEquals("", result);
@@ -57,7 +57,7 @@ class DateUtilTest {
         String expected = "2023-10-05 14:30:00";
 
         // Act
-        String result = DateUtil.formatDateTime(dateTime, format);
+        String result = DateUtils.formatDateTime(dateTime, format);
 
         // Assert
         assertEquals(expected, result);
@@ -69,7 +69,7 @@ class DateUtilTest {
         String format = "yyyy-MM-dd HH:mm:ss";
 
         // Act
-        String result = DateUtil.formatDateTime(null, format);
+        String result = DateUtils.formatDateTime(null, format);
 
         // Assert
         assertEquals("", result);
@@ -81,7 +81,7 @@ class DateUtilTest {
         LocalDateTime dateTime = LocalDateTime.of(2023, 10, 5, 14, 30, 0);
 
         // Act
-        String result = DateUtil.formatDateTime(dateTime, null);
+        String result = DateUtils.formatDateTime(dateTime, null);
 
         // Assert
         assertEquals("", result);

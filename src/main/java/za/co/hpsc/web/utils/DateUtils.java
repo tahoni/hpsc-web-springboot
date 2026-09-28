@@ -17,8 +17,8 @@ import java.time.format.DateTimeFormatter;
  *
  * @since 4.1.0
  */
-public final class DateUtil {
-    private DateUtil() {
+public final class DateUtils {
+    private DateUtils() {
         // Utility class, not to be instantiated
     }
 

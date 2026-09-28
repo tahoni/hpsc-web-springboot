@@ -288,18 +288,18 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 #### Utilities (`za.co.hpsc.web.utils`)
 
-| Class        | Responsibility                                              |
-|--------------|-------------------------------------------------------------|
-| `DateUtil`   | Date formatting and parsing helpers                         |
-| `NumberUtil` | Numeric parsing and formatting helpers                      |
-| `StringUtil` | String normalisation helpers                                |
-| `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
+| Class         | Responsibility                                              |
+|---------------|-------------------------------------------------------------|
+| `DateUtils`   | Date formatting and parsing helpers                         |
+| `NumberUtils` | Numeric parsing and formatting helpers                      |
+| `StringUtils` | String normalisation helpers                                |
+| `ValueUtils`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
 
 #### Helpers (`za.co.hpsc.web.helpers`)
 
-| Class              | Responsibility                                                 |
-|--------------------|----------------------------------------------------------------|
-| `CompetitorHelper` | Competitor detail normalisation (e.g. last name particle case) |
+| Class               | Responsibility                                                 |
+|---------------------|----------------------------------------------------------------|
+| `CompetitorHelpers` | Competitor detail normalisation (e.g. last name particle case) |
 
 #### Constants (`za.co.hpsc.web.constants`)
 
@@ -412,7 +412,7 @@ Client uploads CSV (Content-Type: text/csv)
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | **Scalability**     | Stateless REST design; database-backed persistence allows horizontal scaling                                                          |
 | **Maintainability** | Strict layering, package-by-feature model structure, Javadoc and CLAUDE.md guidance                                                   |
-| **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
+| **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtils` null-safe helpers                      |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
 | **Extensibility**   | Firearm-type enums + division mappings, enum `AttributeConverter`s with `fromX` lookups                                               |
 | **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters   |

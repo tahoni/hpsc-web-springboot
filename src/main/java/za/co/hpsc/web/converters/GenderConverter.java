@@ -3,7 +3,7 @@ package za.co.hpsc.web.converters;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import za.co.hpsc.web.enums.Gender;
-import za.co.hpsc.web.utils.ValueUtil;
+import za.co.hpsc.web.utils.ValueUtils;
 
 /**
  * JPA {@link AttributeConverter} that maps a {@link Gender} to and from its display
@@ -20,7 +20,7 @@ import za.co.hpsc.web.utils.ValueUtil;
 public class GenderConverter implements AttributeConverter<Gender, String> {
     @Override
     public String convertToDatabaseColumn(Gender attribute) {
-        return ValueUtil.nullAsDefaultString(attribute, null);
+        return ValueUtils.nullAsDefaultString(attribute, null);
     }
 
     @Override
