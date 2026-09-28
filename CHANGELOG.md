@@ -77,6 +77,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   e.g. `Van Der Merwe` → `van der Merwe`. Only whole words are matched, so `Dube` and `Vanderbilt` are left alone.
   Listed in `ARCHITECTURE.md`'s Project Structure tree and a new Helpers table
 
+##### Tests
+
+- **`IpscCompetitorServiceImplTest`:** New `toRequest` tests for all-upper-case and all-lower-case CSV rows, an
+  upper-case last name with several particles (`DE LA REY` → `de la Rey`) and one that merely starts with particle
+  letters (`DUBE` → `Dube`) — pinning that the home club, competitor and club numbers and email addresses keep their
+  case whatever case they arrive in
+
 #### 🔄 Changed
 
 ##### Services

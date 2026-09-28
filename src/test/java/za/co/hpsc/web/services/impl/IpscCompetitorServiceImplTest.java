@@ -561,6 +561,79 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testToRequest_whenTextFieldsAreAllUpperCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "JANE", "O'NEIL-SMITH", "ANN MARIE", "JANIE", LocalDate.of(1990, 1, 1), "FEMALE", "TEST CLUB",
+                12345, "C-1A", "HPSC-001", "9001015800083", "0821234567", true, false,
+                "JANE.DOE@EXAMPLE.COM;JANE2.DOE@EXAMPLE.COM");
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("O'Neil-Smith", request.getLastName());
+        assertEquals("Ann Marie", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals("Female", request.getGender());
+        assertEquals("TEST CLUB", request.getHomeClub());
+        assertEquals("C-1A", request.getCompetitorNumber());
+        assertEquals("HPSC-001", request.getClubNumber());
+        assertEquals("9001015800083", request.getIdNumber());
+        assertEquals("0821234567", request.getCellphoneNumber());
+        assertEquals(List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), request.getEmailAddresses());
+    }
+
+    @Test
+    void testToRequest_whenTextFieldsAreAllLowerCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "jane", "o'neil-smith", "ann marie", "janie", null, "female", "test club",
+                null, "c-1a", "hpsc-001", null, null, null, null, "jane.doe@example.com");
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("O'Neil-Smith", request.getLastName());
+        assertEquals("Ann Marie", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals("Female", request.getGender());
+        assertEquals("test club", request.getHomeClub());
+        assertEquals("c-1a", request.getCompetitorNumber());
+        assertEquals("hpsc-001", request.getClubNumber());
+        assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
+    }
+
+    @Test
+    void testToRequest_whenUpperCaseLastNameHasMultipleParticles_thenLowerCasesAllOfThem() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "JANE", "DE LA REY", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("de la Rey", request.getLastName());
+    }
+
+    @Test
+    void testToRequest_whenUpperCaseLastNameStartsWithParticleLetters_thenProperCasesItOnly() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "JANE", "DUBE", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("Dube", request.getLastName());
+    }
+
+    @Test
     void testToRequest_whenLastNameHasParticles_thenLowerCasesThem() {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
