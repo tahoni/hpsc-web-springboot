@@ -20,6 +20,7 @@ import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.CompetitorHelper;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestForCSV;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
@@ -30,6 +31,7 @@ import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
+import za.co.hpsc.web.utils.StringUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -238,24 +240,31 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     /**
      * Maps a {@link CompetitorRequestForCSV} row onto a {@link CompetitorRequest}.
      *
+     * <p>
+     * Every text column is proper-cased (see {@link StringUtil#toProperCase(String)}), other than
+     * the home club name, which must match an existing club's name exactly, the competitor and club
+     * numbers, which are codes (club numbers must also stay unique), and the email
+     * addresses.
+     * </p>
+     *
      * @param competitorRequestForCSV the CSV row to map; must not be null.
      * @return the equivalent {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
      */
     protected CompetitorRequest toRequest(@NotNull CompetitorRequestForCSV competitorRequestForCSV) {
         return new CompetitorRequest(
                 null,
-                competitorRequestForCSV.getFirstName(),
-                competitorRequestForCSV.getLastName(),
-                competitorRequestForCSV.getMiddleNames(),
-                competitorRequestForCSV.getNickname(),
+                StringUtil.toProperCase(competitorRequestForCSV.getFirstName()),
+                CompetitorHelper.toSentenceCaseLastName(StringUtil.toProperCase(competitorRequestForCSV.getLastName())),
+                StringUtil.toProperCase(competitorRequestForCSV.getMiddleNames()),
+                StringUtil.toProperCase(competitorRequestForCSV.getNickname()),
                 competitorRequestForCSV.getDateOfBirth(),
-                competitorRequestForCSV.getGender(),
+                StringUtil.toProperCase(competitorRequestForCSV.getGender()),
                 competitorRequestForCSV.getHomeClub(),
                 competitorRequestForCSV.getSapsaNumber(),
                 competitorRequestForCSV.getCompetitorNumber(),
                 competitorRequestForCSV.getClubNumber(),
-                competitorRequestForCSV.getIdNumber(),
-                competitorRequestForCSV.getCellphoneNumber(),
+                StringUtil.toProperCase(competitorRequestForCSV.getIdNumber()),
+                StringUtil.toProperCase(competitorRequestForCSV.getCellphoneNumber()),
                 competitorRequestForCSV.getPaidUpSapsa(),
                 competitorRequestForCSV.getPaidUpClub(),
                 splitEmailAddresses(competitorRequestForCSV.getEmailAddresses()));

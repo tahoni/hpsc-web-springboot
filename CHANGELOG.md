@@ -65,6 +65,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Services
+
+- **`StringUtil.toProperCase`:** New helper that upper-cases the first letter of each word and lower-cases the rest,
+  treating spaces, hyphens and apostrophes as word breaks (e.g. `o'NEIL-smith` → `O'Neil-Smith`) — backed by the new
+  `org.apache.commons:commons-text` dependency's `WordUtils`
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.toRequest`:** The competitor CSV import now proper-cases the `FirstName`, `LastName`,
+  `MiddleNames`, `Nickname`, `Gender`, `IdNumber` and `CellphoneNumber` columns, so imported names are stored
+  consistently regardless of how they were typed — `HomeClub` (matched exactly against club names), `ClubNumber` and
+  `CompetitorNumber` (codes, club numbers also being unique) and `EmailAddresses` are kept as supplied. The JSON
+  create, update and patch endpoints are unaffected
+
 ### 🧾 [8.11.1] - 2026-09-27
 
 #### ➕ Added

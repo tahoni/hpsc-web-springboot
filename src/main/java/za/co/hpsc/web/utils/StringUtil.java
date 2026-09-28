@@ -1,5 +1,7 @@
 package za.co.hpsc.web.utils;
 
+import org.apache.commons.text.WordUtils;
+
 import java.util.Map;
 
 /**
@@ -60,5 +62,22 @@ public final class StringUtil {
         }
 
         return object.toString();
+    }
+
+    /**
+     * Converts a string to proper case: the first letter of each word upper case, the rest lower
+     * case. Words are delimited by whitespace, hyphens and apostrophes, so {@code "o'NEIL-smith"}
+     * becomes {@code "O'Neil-Smith"}.
+     *
+     * @param value the string to convert; may be null.
+     * @return the proper-cased string, or null if {@code value} is null.
+     * @since 8.12.0
+     */
+    public static String toProperCase(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return WordUtils.capitalizeFully(value, ' ', '\t', '-', '\'');
     }
 }

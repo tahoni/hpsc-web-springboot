@@ -539,6 +539,28 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testToRequest_whenTextFieldsAreMixedCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "jANE", "o'NEIL-smith", "ann marie", "JANIE", null, "FEMALE", "test CLUB",
+                null, "c-1a", "hpsc-001", null, null, null, null, "Jane.Doe@Example.com");
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("O'Neil-Smith", request.getLastName());
+        assertEquals("Ann Marie", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals("Female", request.getGender());
+        assertEquals("test CLUB", request.getHomeClub());
+        assertEquals("c-1a", request.getCompetitorNumber());
+        assertEquals("hpsc-001", request.getClubNumber());
+        assertEquals(List.of("Jane.Doe@Example.com"), request.getEmailAddresses());
+    }
+
+    @Test
     void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(

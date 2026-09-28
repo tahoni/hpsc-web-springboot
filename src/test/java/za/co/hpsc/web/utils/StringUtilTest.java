@@ -203,5 +203,36 @@ public class StringUtilTest {
         // Act & Assert
         assertNull(StringUtil.toString(null));
     }
+
+    // toProperCase(String)
+    @Test
+    void testToProperCase_whenNull_thenReturnsNull() {
+        // Act & Assert
+        assertNull(StringUtil.toProperCase(null));
+    }
+
+    @Test
+    void testToProperCase_whenMixedCaseWords_thenCapitalisesEachWord() {
+        // Act & Assert
+        assertEquals("Jane Ann Doe", StringUtil.toProperCase("jANE ann DOE"));
+    }
+
+    @Test
+    void testToProperCase_whenHyphenatedOrApostrophised_thenCapitalisesEachPart() {
+        // Act & Assert
+        assertEquals("O'Neil-Smith", StringUtil.toProperCase("o'NEIL-SMITH"));
+    }
+
+    @Test
+    void testToProperCase_whenDigitsOnly_thenReturnsUnchanged() {
+        // Act & Assert
+        assertEquals("0821234567", StringUtil.toProperCase("0821234567"));
+    }
+
+    @Test
+    void testToProperCase_whenEmpty_thenReturnsEmpty() {
+        // Act & Assert
+        assertEquals("", StringUtil.toProperCase(""));
+    }
 }
 

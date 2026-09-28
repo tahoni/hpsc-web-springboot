@@ -133,6 +133,13 @@
             <artifactId>jackson-dataformat-csv</artifactId>
         </dependency>
 
+        <!-- Apache Commons -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.15.0</version>
+        </dependency>
+
         <!-- Developer tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
