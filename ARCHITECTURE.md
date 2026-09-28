@@ -73,6 +73,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   ├───domain/             # JPA entities (database tables)
 │   │   ├───enums/              # Domain enumerations
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
+│   │   ├───helpers/            # Domain-specific normalisation helpers
 │   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response/shared models
 │   │   │   ├───image/          # Image gallery request/response models
@@ -100,6 +101,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───domain/                 # Entity unit tests (bidirectional toString/equals/hashCode safety)
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
+    ├───helpers/                # Helper unit tests
     ├───models/                 # DTO / model unit tests
     ├───repositories/           # Repository query and JPA mapping integration tests (H2)
     ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
@@ -292,6 +294,12 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 | `NumberUtil` | Numeric parsing and formatting helpers                      |
 | `StringUtil` | String normalisation helpers                                |
 | `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
+
+#### Helpers (`za.co.hpsc.web.helpers`)
+
+| Class              | Responsibility                                                 |
+|--------------------|----------------------------------------------------------------|
+| `CompetitorHelper` | Competitor detail normalisation (e.g. last name particle case) |
 
 #### Constants (`za.co.hpsc.web.constants`)
 

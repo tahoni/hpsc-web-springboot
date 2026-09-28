@@ -561,6 +561,19 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testToRequest_whenLastNameHasParticles_thenLowerCasesThem() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "Jane", "VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("van der Merwe", request.getLastName());
+    }
+
+    @Test
     void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(

@@ -244,7 +244,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * Every text column is proper-cased (see {@link StringUtil#toProperCase(String)}), other than
      * the home club name, which must match an existing club's name exactly, the competitor and club
      * numbers, which are codes (club numbers must also stay unique), and the email
-     * addresses.
+     * addresses. Particles in the last name are then lower-cased (see
+     * {@link CompetitorHelper#toSentenceCaseLastName(String)}), so "VAN DER MERWE" becomes "van der Merwe".
      * </p>
      *
      * @param competitorRequestForCSV the CSV row to map; must not be null.
