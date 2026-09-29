@@ -216,7 +216,9 @@ This repository follows [GitFlow](https://nvie.com/posts/a-successful-git-branch
 - **`develop`** is the current development branch — all day-to-day work lands here first; **`main`** is the
   production branch, updated only by promoting `develop`, or directly from a `hotfix/*` branch or a Dependabot
   security-update PR.
-- **`feature/<short-description>`** — day-to-day work. Branch from, and PR back into, `develop`.
+- **`feature/<short-description>`** — day-to-day new-functionality work. Branch from, and PR back into, `develop`.
+- **`bugfix/<short-description>`** — non-critical bug fixes not yet in production. Branch from, and PR back into,
+  `develop`, same as `feature/*`.
 - **`release/vX.Y.Z`** — cut from `develop` once ready to ship (see [🚢 Cutting a Release](#-cutting-a-release)
   below), PR'd into `develop`; once merged, a second PR promotes `develop` into `main` (see Merging below).
 - **`hotfix/<short-description>`** — urgent production fixes. Branch from, and PR directly into, `main`; also
@@ -230,8 +232,8 @@ directly against `main`.
 
 ### Merging
 
-- **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this
-  repo's existing history — no squashing or rebasing) and delete the branch afterwards.
+- **`feature/*`/`bugfix/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit
+  (matching this repo's existing history — no squashing or rebasing) and delete the branch afterwards.
 - **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second
   PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
   description. Only delete the branch once both merges have landed, so the fix isn't lost when the next

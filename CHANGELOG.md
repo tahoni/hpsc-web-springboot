@@ -65,6 +65,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`:** Added `bugfix/<short-description>` as its own standard GitFlow branch type,
+  split out of `feature/*`'s prior "feature and bug-fix work" description — non-critical bug fixes not yet in
+  production branch from, and PR back into, `develop`, same as `feature/*`, distinguishing them from `hotfix/*`,
+  which is reserved for defects already in production
+
+### 🧾 [8.12.0] - 2026-09-28
+
 #### ➕ Added
 
 ##### Services

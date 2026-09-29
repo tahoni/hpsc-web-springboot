@@ -475,8 +475,12 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
 - **`main`** is the production branch. It is only ever updated by promoting `develop` after a `release/vX.Y.Z` branch
   has merged into it, or directly from a `hotfix/*` branch or a Dependabot security-update PR — never any other
   source.
-- **`feature/<short-description>`** — day-to-day feature and bug-fix work (e.g. `feature/shooter-log-power-factor`,
-  `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
+- **`feature/<short-description>`** — day-to-day new-functionality work (e.g. `feature/shooter-log-power-factor`).
+  Branch from, and PR back into, `develop`.
+- **`bugfix/<short-description>`** — non-critical bug fixes not yet in production (e.g. `bugfix/club-ranking-null-fix`).
+  Branch from, and PR back into, `develop`, just like `feature/*`; the separate prefix only distinguishes a fix from
+  new functionality when triaging or scanning branch lists. Use `hotfix/*` instead once the defect has already shipped
+  to production.
 - **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes
   (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see the Release Checklist below) and are opened
   as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see
@@ -492,8 +496,8 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
 
 **All branches are committed to `develop` first, never `main`.** `hotfix/*` and Dependabot security-update PRs are the
 only, deliberate exceptions, and even then the same fix still lands on `develop` immediately afterwards (see
-[`CONTRIBUTING.md`'s Merging section](CONTRIBUTING.md#merging)). Every other branch — `feature/*`, `release/*` and
-Dependabot version-update PRs included — must never open a PR directly against `main`.
+[`CONTRIBUTING.md`'s Merging section](CONTRIBUTING.md#merging)). Every other branch — `feature/*`, `bugfix/*`,
+`release/*` and Dependabot version-update PRs included — must never open a PR directly against `main`.
 
 Which merge strategy each branch type uses, PR ordering, tagging `main` and branch clean-up are a human contributor's
 GitHub mechanics, not something an AI agent executes unprompted — see
