@@ -2626,8 +2626,9 @@ CodeQL and dependency-submission triggers to every GitFlow branch.
 
 **Roadmap**
 
-- No gaps recorded or closed — Gap #6 remains the only open gap, and #26 still waits on a Spring Boot release that
-  manages Tomcat `11.0.25`
+- Gap #32 (the plan still describing Qodana as removed, after `code_quality.yml` brought it back to CI) recorded and
+  closed — Gap #6 remains the only open gap, and #26 still waits on a Spring Boot release that manages Tomcat
+  `11.0.25`
 
 **Build & Metadata**
 

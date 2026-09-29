@@ -89,6 +89,8 @@ triggers to every GitFlow branch.
 - **`AGENTS.md`, `CONTRIBUTING.md`:** `bugfix/<short-description>` added as a standard GitFlow branch type
 - **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates table gains a Static Analysis (Qodana) row, and its
   CodeQL and Dependency Submission triggers now read "any GitFlow branch"
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #32 recorded and closed — the plan still described
+  Qodana as removed, after `code_quality.yml` brought it back to CI
 
 #### Build & Metadata
 

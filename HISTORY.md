@@ -46,8 +46,9 @@ evolution of architecture, features and design philosophy across all versions.
   `main`/`develop`, and the CodeQL and dependency-submission workflows' push triggers now cover `release/*`,
   `feature/*`, `bugfix/*` and `hotfix/*` too
 - `AGENTS.md` and `CONTRIBUTING.md` add `bugfix/<short-description>` as its own standard GitFlow branch type
-- The release's improvement-plan sweep found nothing new to close or progress — Gap #6 remains the only open gap,
-  with #26 still waiting on a Spring Boot release that manages Tomcat `11.0.25`
+- The release's improvement-plan sweep recorded Gap #32 for Qodana's return to CI, which the plan still described as
+  removed, and closed it — Gap #6 remains the only open gap, with #26 still waiting on a Spring Boot release that
+  manages Tomcat `11.0.25`
 - Scoped as `v8.12.0` **MINOR**: a backward-compatible new import-formatting capability, with no existing endpoint,
   request/response contract or configuration property changed
 - Project version bumped to 8.12.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
@@ -2638,8 +2639,9 @@ Based on the evolution to v8.12.0, the following areas are identified for future
   `ValueUtils`, closing a naming inconsistency
 - New Qodana workflow, CodeQL/dependency-submission triggers widened to every GitFlow branch, and `bugfix/*` documented
   as a standard branch type
-- No gaps recorded or closed this release — Gap #6 remains the only open gap, with #26 still waiting on a Spring
-  Boot release that manages Tomcat `11.0.25`
+- Gap #32 (the plan still describing Qodana as removed, after `code_quality.yml` brought it back to CI) recorded and
+  closed — Gap #6 remains the only open gap, with #26 still waiting on a Spring Boot release that manages Tomcat
+  `11.0.25`
 - Project version bumped to 8.12.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)

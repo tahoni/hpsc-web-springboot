@@ -126,6 +126,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   which is reserved for defects already in production
 - **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates table gains a Static Analysis (Qodana) row, and its
   CodeQL and Dependency Submission triggers now read "any GitFlow branch", matching the widened workflow triggers
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #32 from an `update-improvement-plan-gaps` sweep —
+  Qodana returned to CI as `code_quality.yml`, but the plan still described it as removed in v8.2.0 (Gap #7) — closed
+  within this release, with "🌳 At a Glance", the "⚙️ Goals & Constraints" CI/CD row, the "🛤️ Roadmap" **Next** row and
+  "☑️ Success Criteria" updated to match
 
 ### 🧾 [8.11.1] - 2026-09-27
 
