@@ -224,6 +224,12 @@ public class StringUtilsTest {
     }
 
     @Test
+    void testToProperCase_whenCurlyApostrophe_thenCapitalisesTheNextLetter() {
+        // Act & Assert
+        assertEquals("O’Neil", StringUtils.toProperCase("o’NEIL"));
+    }
+
+    @Test
     void testToProperCase_whenDigitsOnly_thenReturnsUnchanged() {
         // Act & Assert
         assertEquals("0821234567", StringUtils.toProperCase("0821234567"));

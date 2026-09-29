@@ -1,8 +1,8 @@
 ## 🎯 Summary
 
 - **Normalises casing on the competitor CSV import**: free-text columns are proper-cased and surname particles
-  lower-cased (`VAN DER MERWE` → `van der Merwe`), so imported names read consistently however the source spreadsheet
-  was typed. The CSV format and JSON endpoints are unchanged.
+  lower-cased (`VAN DER MERWE` → `van der Merwe`, also after a hyphen) and `Mc` prefixes corrected (`McDonald`), so
+  imported names read consistently however the source spreadsheet was typed. The CSV format and JSON endpoints are unchanged.
 - Adds a **Qodana static-analysis workflow** and widens the CodeQL and dependency-submission triggers to every GitFlow
   branch, so failures surface on the branch that introduced them.
 - Documents **`bugfix/*`** as its own standard GitFlow branch type.
@@ -30,7 +30,7 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw verify -Pcoverage` — full suite passing (1101 tests, 0 failures/errors), 98.64% line / 98.81% branch
+- [x] `./mvnw verify -Pcoverage` — full suite passing (1110 tests, 0 failures/errors), 98.65% line / 99.13% branch
       coverage, JaCoCo gate (line and branch) passing
 - [ ] New Qodana check runs on this PR
 - [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.12.0.md`

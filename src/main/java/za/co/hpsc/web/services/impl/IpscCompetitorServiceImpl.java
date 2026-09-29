@@ -244,8 +244,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * Every name column and the gender are proper-cased (see {@link StringUtils#toProperCase(String)}). The
      * home club name, which must match an existing club's name exactly, the competitor and club
      * numbers, which are codes (club numbers must also stay unique), the ID and cellphone numbers and the
-     * email addresses are kept as supplied. Particles in the last name are then lower-cased (see
-     * {@link CompetitorHelpers#toSentenceCaseLastName(String)}), so "VAN DER MERWE" becomes "van der Merwe".
+     * email addresses are kept as supplied. The last name then gets surname casing (see
+     * {@link CompetitorHelpers#toSentenceCaseLastName(String)}): particles are lower-cased, so "VAN DER MERWE" becomes
+     * "van der Merwe", and an "Mc" prefix is corrected, so "MCDONALD" becomes "McDonald".
      * </p>
      *
      * @param competitorRequestForCSV the CSV row to map; must not be null.

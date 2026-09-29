@@ -23,8 +23,10 @@ triggers to every GitFlow branch.
 
 - `FirstName`, `LastName`, `MiddleNames`, `Nickname` and `Gender` are proper-cased on import
   (`o'NEIL-smith` → `O'Neil-Smith`)
-- Surname particles are lower-cased ahead of the surname proper (`VAN DER MERWE` → `van der Merwe`), while `Dube` and
-  `Vanderbilt` are left alone
+- Surname particles are lower-cased ahead of the surname proper, including after a hyphen (`VAN DER MERWE` →
+  `van der Merwe`, `SMITH-VAN DER MERWE` → `Smith-van der Merwe`), while `Dube` and `Vanderbilt` are left alone
+- A Gaelic `Mc` prefix is corrected (`MCDONALD` → `McDonald`), and curly apostrophes are handled like straight ones
+  (`o’NEIL` → `O’Neil`)
 - `HomeClub`, `ClubNumber`, `CompetitorNumber`, `IdNumber`, `CellphoneNumber` and `EmailAddresses` keep the case
   supplied
 
@@ -54,7 +56,8 @@ triggers to every GitFlow branch.
 - **`StringUtils.toProperCase`:** Upper-cases the first letter of each word and lower-cases the rest, treating spaces,
   hyphens and apostrophes as word breaks, backed by the new `org.apache.commons:commons-text` dependency's `WordUtils`
 - **`CompetitorHelpers.toSentenceCaseLastName`:** New helper in the new `za.co.hpsc.web.helpers` package that
-  lower-cases surname particles when they precede the surname proper. Only whole words are matched. Listed in
+  lower-cases surname particles (also after a hyphen) when they precede the surname proper and capitalises the letter
+  after a `Mc` prefix. Only whole words are matched. Listed in
   `ARCHITECTURE.md`'s Project Structure tree and a new Helpers table
 
 #### Tests
@@ -113,6 +116,8 @@ database are not modified.
 
 - **Proper-case, then fix particles.** `toProperCase` knows nothing about surnames, so the particle rule is a separate
   step applied only to `LastName`, keeping the general-purpose utility free of competitor-specific logic.
+- **Hyphens are word breaks.** Particles are found in space- and hyphen-delimited words alike; the final word is always
+  the surname proper.
 - **Whole words only.** Particles are matched as whole words, so `Dube` (starts with `du`) and `Vanderbilt` (starts
   with `van`) are never altered.
 - **Codes and lookups are untouched.** `HomeClub` is matched exactly against club names, and club and competitor
@@ -124,18 +129,19 @@ database are not modified.
 
 ## 🧪 Testing
 
-- New `IpscCompetitorServiceImplTest` `toRequest` cases pin the casing behaviour for upper-case, lower-case and
-  particle-bearing rows, including that home club, competitor, club, ID and cellphone numbers and email addresses keep their case.
-- `./mvnw verify -Pcoverage` passes on the release branch: 1101 tests, 0 failures/errors/skipped; 98.64% line / 98.81%
+- New `IpscCompetitorServiceImplTest` `toRequest` cases pin the casing behaviour for upper-case, lower-case,
+  particle-bearing, hyphenated, `Mc`-prefixed and curly-apostrophe rows, including that home club, competitor, club, ID
+  and cellphone numbers and email addresses keep their case.
+- `./mvnw verify -Pcoverage` passes on the release branch: 1110 tests, 0 failures/errors/skipped; 98.65% line / 99.13%
   branch coverage, with the JaCoCo gate (97% line and branch) passing.
 
 ---
 
 ## 🐛 Known Issues
 
-- Proper-casing is naive about internal capitals, so a surname such as `McDonald` is imported as `Mcdonald`.
-- Surname particles are only recognised as whole, space-separated words, so a particle inside a hyphenated surname
-  (e.g. the `van` in `Smith-Van Der Merwe`) is left proper-cased.
+- Proper-casing is still naive about other internal capitals: only the `Mc` prefix is corrected, so `MacDonald` is
+  imported as `Macdonald` (`Mac` is ambiguous — `Mackenzie`), and `Mch`/`Mcu` surnames (`Mchunu`) are deliberately left
+  as `Mchunu` rather than `McHunu`, at the cost of `McUsher`-style Scottish names.
 - Competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains groundwork only —
   not yet wired to any controller (carried over from v8.0.0).
 - No calculation service exists yet for `ShooterLog`/`ShooterLogCompetitor`, which remains schema-only (carried

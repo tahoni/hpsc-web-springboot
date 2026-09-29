@@ -66,8 +66,8 @@ public final class StringUtils {
 
     /**
      * Converts a string to proper case: the first letter of each word upper case, the rest lower
-     * case. Words are delimited by whitespace, hyphens and apostrophes, so {@code "o'NEIL-smith"}
-     * becomes {@code "O'Neil-Smith"}.
+     * case. Words are delimited by whitespace, hyphens and apostrophes (straight or curly, as spreadsheets often
+     * produce), so {@code "o'NEIL-smith"} becomes {@code "O'Neil-Smith"}.
      *
      * @param value the string to convert; may be null.
      * @return the proper-cased string, or null if {@code value} is null.
@@ -78,6 +78,6 @@ public final class StringUtils {
             return null;
         }
 
-        return WordUtils.capitalizeFully(value, ' ', '\t', '-', '\'');
+        return WordUtils.capitalizeFully(value, ' ', '\t', '-', '\'', '’');
     }
 }

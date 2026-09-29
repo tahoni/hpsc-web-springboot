@@ -664,6 +664,33 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testToRequest_whenLastNameIsHyphenatedWithParticles_thenLowerCasesThem() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "Jane", "SMITH-VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null,
+                null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("Smith-van der Merwe", request.getLastName());
+    }
+
+    @Test
+    void testToRequest_whenLastNameHasMcOrApostrophePrefix_thenCapitalisesCorrectly() {
+        // Arrange
+        CompetitorRequestForCSV mcRequest = new CompetitorRequestForCSV(
+                "JANE", "MCDONALD", null, null, null, null, null, null, null, null, null, null, null, null, null);
+        CompetitorRequestForCSV apostropheRequest = new CompetitorRequestForCSV(
+                "JANE", "o’NEIL", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act & Assert
+        assertEquals("McDonald", ipscCompetitorServiceImpl.toRequest(mcRequest).getLastName());
+        assertEquals("O’Neil", ipscCompetitorServiceImpl.toRequest(apostropheRequest).getLastName());
+    }
+
+    @Test
     void testToRequest_whenLastNameHasParticles_thenLowerCasesThem() {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(

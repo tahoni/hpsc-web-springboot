@@ -2604,8 +2604,9 @@ CodeQL and dependency-submission triggers to every GitFlow branch.
   upper-cases the first letter of each word and lower-cases the rest, treating spaces, hyphens and apostrophes as
   word breaks
 - New `za.co.hpsc.web.helpers` package and its first class, `CompetitorHelpers.toSentenceCaseLastName`, lower-cases
-  surname particles (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper, matching whole
-  words only so `Dube` and `Vanderbilt` are left alone
+  surname particles (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper, also after a
+  hyphen, and capitalises the letter after a Gaelic `Mc` prefix; it matches whole words only, so `Dube`, `Vanderbilt`
+  and the Zulu `Mchunu` are left alone
 - `IpscCompetitorServiceImpl.toRequest` proper-cases `FirstName`, `LastName`, `MiddleNames`, `Nickname` and `Gender`,
   then passes the `LastName` through the particle helper; `HomeClub`, `ClubNumber`, `CompetitorNumber`, `IdNumber`,
   `CellphoneNumber` and `EmailAddresses` are kept as supplied

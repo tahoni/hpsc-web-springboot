@@ -32,7 +32,9 @@ evolution of architecture, features and design philosophy across all versions.
   word breaks
 - New `za.co.hpsc.web.helpers` package and its first class, `CompetitorHelpers`, lower-cases surname particles
   (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper, so `Van Der Merwe` becomes
-  `van der Merwe`, without touching a surname that merely starts with particle letters (`Dube`, `Vanderbilt`)
+  `van der Merwe` (also after a hyphen), and capitalises the letter after a Gaelic `Mc` prefix (`McDonald`),
+  without touching a surname that merely starts with particle letters (`Dube`, `Vanderbilt`) or a Zulu `Mch`/`Mcu`
+  surname (`Mchunu`)
 - `IpscCompetitorServiceImpl.toRequest` now proper-cases the competitor CSV import's free-text columns
   (`FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`) before passing the `LastName` through the new
   particle-casing helper, so imported names read consistently regardless of how they were typed in the source
