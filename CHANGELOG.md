@@ -104,9 +104,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Services
 
 - **`IpscCompetitorServiceImpl.toRequest`:** The competitor CSV import now proper-cases the `FirstName`, `LastName`,
-  `MiddleNames`, `Nickname`, `Gender`, `IdNumber` and `CellphoneNumber` columns, so imported names are stored
-  consistently regardless of how they were typed — `HomeClub` (matched exactly against club names), `ClubNumber` and
-  `CompetitorNumber` (codes, club numbers also being unique) and `EmailAddresses` are kept as supplied. The JSON
+  `MiddleNames`, `Nickname` and `Gender` columns, so imported names are stored consistently regardless of how they
+  were typed — `HomeClub` (matched exactly against club names), `ClubNumber` and `CompetitorNumber` (codes, club
+  numbers also being unique), `IdNumber`, `CellphoneNumber` and `EmailAddresses` are kept as supplied. The JSON
   create, update and patch endpoints are unaffected
 - **`IpscCompetitorServiceImpl.toRequest`:** The imported `LastName` is also passed through
   `CompetitorHelpers.toSentenceCaseLastName` after proper-casing, so `VAN DER MERWE` is stored as `van der Merwe`

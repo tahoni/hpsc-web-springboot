@@ -21,11 +21,12 @@ triggers to every GitFlow branch.
 
 ### 🔤 Consistent Imported Names
 
-- `FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`, `IdNumber` and `CellphoneNumber` are proper-cased on
-  import (`o'NEIL-smith` → `O'Neil-Smith`)
+- `FirstName`, `LastName`, `MiddleNames`, `Nickname` and `Gender` are proper-cased on import
+  (`o'NEIL-smith` → `O'Neil-Smith`)
 - Surname particles are lower-cased ahead of the surname proper (`VAN DER MERWE` → `van der Merwe`), while `Dube` and
   `Vanderbilt` are left alone
-- `HomeClub`, `ClubNumber`, `CompetitorNumber` and `EmailAddresses` keep the case supplied
+- `HomeClub`, `ClubNumber`, `CompetitorNumber`, `IdNumber`, `CellphoneNumber` and `EmailAddresses` keep the case
+  supplied
 
 ### 🔬 Static Analysis in CI
 
@@ -131,6 +132,9 @@ database are not modified.
 
 ## 🐛 Known Issues
 
+- Proper-casing is naive about internal capitals, so a surname such as `McDonald` is imported as `Mcdonald`.
+- Surname particles are only recognised as whole, space-separated words, so a particle inside a hyphenated surname
+  (e.g. the `van` in `Smith-Van Der Merwe`) is left proper-cased.
 - Competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains groundwork only —
   not yet wired to any controller (carried over from v8.0.0).
 - No calculation service exists yet for `ShooterLog`/`ShooterLogCompetitor`, which remains schema-only (carried

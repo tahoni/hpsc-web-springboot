@@ -34,10 +34,10 @@ evolution of architecture, features and design philosophy across all versions.
   (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper, so `Van Der Merwe` becomes
   `van der Merwe`, without touching a surname that merely starts with particle letters (`Dube`, `Vanderbilt`)
 - `IpscCompetitorServiceImpl.toRequest` now proper-cases the competitor CSV import's free-text columns
-  (`FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`, `IdNumber`, `CellphoneNumber`) before passing the
-  `LastName` through the new particle-casing helper, so imported names read consistently regardless of how they
-  were typed in the source spreadsheet; `HomeClub`, `ClubNumber`, `CompetitorNumber` and `EmailAddresses` are kept
-  as supplied, and the JSON create/update/patch endpoints are unaffected
+  (`FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`) before passing the `LastName` through the new
+  particle-casing helper, so imported names read consistently regardless of how they were typed in the source
+  spreadsheet; `HomeClub`, `ClubNumber`, `CompetitorNumber`, `IdNumber`, `CellphoneNumber` and `EmailAddresses` are
+  kept as supplied, and the JSON create/update/patch endpoints are unaffected
 - `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` renamed to `DateUtils`, `NumberUtils`, `StringUtils` and
   `ValueUtils` (and their test classes to match) — internal classes only, so there is no API change
 - New `.github/workflows/code_quality.yml` runs Qodana static analysis on every GitFlow branch and PRs into

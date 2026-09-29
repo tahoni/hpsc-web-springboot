@@ -2606,9 +2606,9 @@ CodeQL and dependency-submission triggers to every GitFlow branch.
 - New `za.co.hpsc.web.helpers` package and its first class, `CompetitorHelpers.toSentenceCaseLastName`, lower-cases
   surname particles (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper, matching whole
   words only so `Dube` and `Vanderbilt` are left alone
-- `IpscCompetitorServiceImpl.toRequest` proper-cases `FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`,
-  `IdNumber` and `CellphoneNumber`, then passes the `LastName` through the particle helper; `HomeClub`, `ClubNumber`,
-  `CompetitorNumber` and `EmailAddresses` are kept as supplied
+- `IpscCompetitorServiceImpl.toRequest` proper-cases `FirstName`, `LastName`, `MiddleNames`, `Nickname` and `Gender`,
+  then passes the `LastName` through the particle helper; `HomeClub`, `ClubNumber`, `CompetitorNumber`, `IdNumber`,
+  `CellphoneNumber` and `EmailAddresses` are kept as supplied
 - `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` renamed to their plural `Utils` names (internal only)
 
 **CI/CD**

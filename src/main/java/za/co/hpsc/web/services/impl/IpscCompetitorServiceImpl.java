@@ -241,10 +241,10 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * Maps a {@link CompetitorRequestForCSV} row onto a {@link CompetitorRequest}.
      *
      * <p>
-     * Every text column is proper-cased (see {@link StringUtils#toProperCase(String)}), other than
-     * the home club name, which must match an existing club's name exactly, the competitor and club
-     * numbers, which are codes (club numbers must also stay unique), and the email
-     * addresses. Particles in the last name are then lower-cased (see
+     * Every name column and the gender are proper-cased (see {@link StringUtils#toProperCase(String)}). The
+     * home club name, which must match an existing club's name exactly, the competitor and club
+     * numbers, which are codes (club numbers must also stay unique), the ID and cellphone numbers and the
+     * email addresses are kept as supplied. Particles in the last name are then lower-cased (see
      * {@link CompetitorHelpers#toSentenceCaseLastName(String)}), so "VAN DER MERWE" becomes "van der Merwe".
      * </p>
      *
@@ -265,8 +265,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitorRequestForCSV.getSapsaNumber(),
                 competitorRequestForCSV.getCompetitorNumber(),
                 competitorRequestForCSV.getClubNumber(),
-                StringUtils.toProperCase(competitorRequestForCSV.getIdNumber()),
-                StringUtils.toProperCase(competitorRequestForCSV.getCellphoneNumber()),
+                competitorRequestForCSV.getIdNumber(),
+                competitorRequestForCSV.getCellphoneNumber(),
                 competitorRequestForCSV.getPaidUpSapsa(),
                 competitorRequestForCSV.getPaidUpClub(),
                 splitEmailAddresses(competitorRequestForCSV.getEmailAddresses()));

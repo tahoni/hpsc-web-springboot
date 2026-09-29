@@ -21,8 +21,8 @@
 
 **Changed**
 
-- `IpscCompetitorServiceImpl.toRequest` proper-cases `FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`,
-  `IdNumber` and `CellphoneNumber`; `HomeClub`, `ClubNumber`, `CompetitorNumber` and `EmailAddresses` are kept as
+- `IpscCompetitorServiceImpl.toRequest` proper-cases `FirstName`, `LastName`, `MiddleNames`, `Nickname` and `Gender`;
+  `HomeClub`, `ClubNumber`, `CompetitorNumber`, `IdNumber`, `CellphoneNumber` and `EmailAddresses` are kept as
   supplied
 - `DateUtil`/`NumberUtil`/`StringUtil`/`ValueUtil` renamed to their `Utils` names (internal only)
 - `codeql.yml` and `dependency-submission.yml` push triggers cover `release/*`, `feature/*`, `bugfix/*`, `hotfix/*`
