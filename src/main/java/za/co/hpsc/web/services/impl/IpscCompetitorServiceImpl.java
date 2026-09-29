@@ -255,7 +255,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         return new CompetitorRequest(
                 null,
                 StringUtils.toProperCase(competitorRequestForCSV.getFirstName()),
-                CompetitorHelpers.toSentenceCaseLastName(StringUtils.toProperCase(competitorRequestForCSV.getLastName())),
+                CompetitorHelpers.toSentenceCaseLastName(
+                        StringUtils.toProperCase(competitorRequestForCSV.getLastName())),
                 StringUtils.toProperCase(competitorRequestForCSV.getMiddleNames()),
                 StringUtils.toProperCase(competitorRequestForCSV.getNickname()),
                 competitorRequestForCSV.getDateOfBirth(),

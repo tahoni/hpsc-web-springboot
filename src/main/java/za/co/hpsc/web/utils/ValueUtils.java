@@ -19,9 +19,9 @@ import java.util.UUID;
  * <b>Usage:</b>
  * </p>
  * <pre>{@code
- *   String name = ValueUtil.nullAsEmptyString(nullableName);  // "" if null
- *   int count = ValueUtil.nullAsZero(nullableCount);          // 0 if null
- *   List<T> items = ValueUtil.nullAsEmptyList(nullableList);  // [] if null
+ *   String name = ValueUtils.nullAsEmptyString(nullableName);  // "" if null
+ *   int count = ValueUtils.nullAsZero(nullableCount);          // 0 if null
+ *   List<T> items = ValueUtils.nullAsEmptyList(nullableList);  // [] if null
  * }</pre>
  *
  * @see java.util.UUID

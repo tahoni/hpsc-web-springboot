@@ -8,7 +8,7 @@ import java.util.Map;
  * Utility class for string operations.
  *
  * <p>
- * The {@code StringUtil} class offers static methods for common string-related tasks. These methods
+ * The {@code StringUtils} class offers static methods for common string-related tasks. These methods
  * are designed to handle various use cases where string manipulation is required.
  * </p>
  *

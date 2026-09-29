@@ -10,7 +10,7 @@ import java.util.List;
  * Utility class providing methods for numeric calculations and operations.
  *
  * <p>
- * The {@code NumberUtil} class offers static methods for common numerical tasks. These methods
+ * The {@code NumberUtils} class offers static methods for common numerical tasks. These methods
  * are designed to handle various use cases where numerical computations are required.
  * </p>
  *
