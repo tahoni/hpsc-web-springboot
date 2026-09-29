@@ -2,7 +2,8 @@
 
 - **Normalises casing on the competitor CSV import**: free-text columns are proper-cased and surname particles
   lower-cased (`VAN DER MERWE` → `van der Merwe`, also after a hyphen) and `Mc` prefixes corrected (`McDonald`), so
-  imported names read consistently however the source spreadsheet was typed. The CSV format and JSON endpoints are unchanged.
+  imported names read consistently however the source spreadsheet was typed. The CSV format and JSON endpoints are
+  unchanged.
 - Adds a **Qodana static-analysis workflow** and widens the CodeQL and dependency-submission triggers to every GitFlow
   branch, so failures surface on the branch that introduced them.
 - Documents **`bugfix/*`** as its own standard GitFlow branch type.
