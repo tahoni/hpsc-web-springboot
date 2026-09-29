@@ -176,6 +176,8 @@ read it before writing or editing any documentation in this repository. Highligh
   "prose, comments, and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
   [`AGENTS.md`'s Line wrapping rule](AGENTS.md#line-wrapping).
+- **Align every Markdown table column**, padding cells so the `|` separators line up, and re-pad the whole table
+  after any edit — see [`AGENTS.md`'s Table alignment rule](AGENTS.md#table-alignment).
 - Every `##` heading gets a matching emoji, reused from the
   [established icon registry in `AGENTS.md`](AGENTS.md#icons-in-headings) rather than invented fresh.
 - **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't

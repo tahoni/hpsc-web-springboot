@@ -169,6 +169,12 @@ Wrap prose lines in every Markdown file between 100 and 120 characters. This doe
 run longer to keep columns aligned, or to fenced code blocks, directory trees and diagrams, which keep their own
 natural line lengths.
 
+### Table alignment
+
+Align every column in a Markdown table: pad each cell with trailing spaces so the `|` separators line up vertically
+across the header, delimiter and body rows, sized to the widest cell in that column. When an edit lengthens or
+shortens a cell, re-pad the whole table rather than only the edited row.
+
 ### Javadoc
 
 - Use British English conventions (spelling, grammar, punctuation), consistent with the rest of this project's
