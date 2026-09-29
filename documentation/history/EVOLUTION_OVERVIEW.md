@@ -2587,6 +2587,60 @@ also extends the coverage gate from line coverage alone to branch coverage too.
 - No test changes (970 tests); coverage unchanged at 98.77%/99.09% line/branch, both now above an enforced 97%
   floor
 
+### Phase 41: Competitor CSV Import Casing Normalisation (v8.12.0)
+
+**Duration:** September 29, 2026
+
+A minor release: the competitor CSV import stored names exactly as typed in the source spreadsheet, so `VAN DER MERWE`
+and `van der merwe` produced different-looking records. The import now normalises casing on the way in, without
+touching the CSV format or the JSON endpoints. The release also adds Qodana static analysis to CI and widens the
+CodeQL and dependency-submission triggers to every GitFlow branch.
+
+**Key Accomplishments:**
+
+**Services**
+
+- New `StringUtils.toProperCase`, backed by the new `org.apache.commons:commons-text` dependency's `WordUtils`,
+  upper-cases the first letter of each word and lower-cases the rest, treating spaces, hyphens and apostrophes as
+  word breaks
+- New `za.co.hpsc.web.helpers` package and its first class, `CompetitorHelpers.toSentenceCaseLastName`, lower-cases
+  surname particles (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper, matching whole
+  words only so `Dube` and `Vanderbilt` are left alone
+- `IpscCompetitorServiceImpl.toRequest` proper-cases `FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`,
+  `IdNumber` and `CellphoneNumber`, then passes the `LastName` through the particle helper; `HomeClub`, `ClubNumber`,
+  `CompetitorNumber` and `EmailAddresses` are kept as supplied
+- `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` renamed to their plural `Utils` names (internal only)
+
+**CI/CD**
+
+- New `.github/workflows/code_quality.yml` runs `JetBrains/qodana-action` on every push to `main`, `release/*`,
+  `feature/*`, `bugfix/*` and `hotfix/*`, plus PRs into `main`/`develop`
+- `codeql.yml` and `dependency-submission.yml` push triggers now also cover `release/*`, `feature/*`, `bugfix/*` and
+  `hotfix/*`, so a failure surfaces on the branch that introduced it
+
+**Documentation**
+
+- `AGENTS.md` and `CONTRIBUTING.md` add `bugfix/<short-description>` as its own standard GitFlow branch type
+- `ARCHITECTURE.md` lists the new `helpers` package and a Helpers table
+
+**Roadmap**
+
+- No gaps recorded or closed — Gap #6 remains the only open gap, and #26 still waits on a Spring Boot release that
+  manages Tomcat `11.0.25`
+
+**Build & Metadata**
+
+- Project version bumped to 8.12.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Making bulk-imported competitor data consistent to read, and running static analysis on every GitFlow branch
+
+**Test Coverage:**
+
+- New `IpscCompetitorServiceImplTest` `toRequest` tests for all-upper-case, all-lower-case and particle-bearing CSV
+  rows, alongside tests for the two new helpers
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

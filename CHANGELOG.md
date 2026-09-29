@@ -12,7 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.12.0](#-8120---2026-09-28) ← Current
+- [🧾 Version 8.12.0](#-8120---2026-09-29) ← Current
 - [🧾 Version 8.11.1](#-8111---2026-09-27)
 - [🧾 Version 8.11.0](#-8110---2026-09-27)
 - [🧾 Version 8.10.2](#-8102---2026-09-26)
@@ -66,32 +66,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [8.12.0] - 2026-09-29
+
 #### ➕ Added
 
 ##### CI/CD & Configuration
 
 - **`.github/workflows/code_quality.yml`:** New Qodana static-analysis workflow, running `JetBrains/qodana-action` on
   every push to `main`, `release/*`, `feature/*`, `bugfix/*` and `hotfix/*`, plus PRs into `main`/`develop`
-
-#### 🔄 Changed
-
-##### CI/CD & Configuration
-
-- **`.github/workflows/codeql.yml`, `.github/workflows/dependency-submission.yml`:** Push triggers now also cover
-  `release/*`, `feature/*`, `bugfix/*` and `hotfix/*` branches, not just `main`/`develop`, so a CodeQL or
-  dependency-submission failure surfaces on the branch it was introduced on rather than only once it reaches
-  `develop`
-
-##### Documentation
-
-- **`AGENTS.md`, `CONTRIBUTING.md`:** Added `bugfix/<short-description>` as its own standard GitFlow branch type,
-  split out of `feature/*`'s prior "feature and bug-fix work" description — non-critical bug fixes not yet in
-  production branch from, and PR back into, `develop`, same as `feature/*`, distinguishing them from `hotfix/*`,
-  which is reserved for defects already in production
-
-### 🧾 [8.12.0] - 2026-09-28
-
-#### ➕ Added
 
 ##### Services
 
@@ -112,6 +94,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### CI/CD & Configuration
+
+- **`.github/workflows/codeql.yml`, `.github/workflows/dependency-submission.yml`:** Push triggers now also cover
+  `release/*`, `feature/*`, `bugfix/*` and `hotfix/*` branches, not just `main`/`develop`, so a CodeQL or
+  dependency-submission failure surfaces on the branch it was introduced on rather than only once it reaches
+  `develop`
+
 ##### Services
 
 - **`IpscCompetitorServiceImpl.toRequest`:** The competitor CSV import now proper-cases the `FirstName`, `LastName`,
@@ -127,6 +116,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`DateUtils`, `NumberUtils`, `StringUtils`, `ValueUtils`:** Renamed from `DateUtil`, `NumberUtil`, `StringUtil` and
   `ValueUtil` (and their test classes to match) — internal classes only, so there is no API change
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`:** Added `bugfix/<short-description>` as its own standard GitFlow branch type,
+  split out of `feature/*`'s prior "feature and bug-fix work" description — non-critical bug fixes not yet in
+  production branch from, and PR back into, `develop`, same as `feature/*`, distinguishing them from `hotfix/*`,
+  which is reserved for defects already in production
 
 ### 🧾 [8.11.1] - 2026-09-27
 

@@ -21,7 +21,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
-### Version 8.12.0 (September 28, 2026)
+### Version 8.12.0 (September 29, 2026)
 
 **Theme:** Competitor CSV Import Casing Normalisation
 
@@ -40,6 +40,10 @@ evolution of architecture, features and design philosophy across all versions.
   as supplied, and the JSON create/update/patch endpoints are unaffected
 - `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` renamed to `DateUtils`, `NumberUtils`, `StringUtils` and
   `ValueUtils` (and their test classes to match) — internal classes only, so there is no API change
+- New `.github/workflows/code_quality.yml` runs Qodana static analysis on every GitFlow branch and PRs into
+  `main`/`develop`, and the CodeQL and dependency-submission workflows' push triggers now cover `release/*`,
+  `feature/*`, `bugfix/*` and `hotfix/*` too
+- `AGENTS.md` and `CONTRIBUTING.md` add `bugfix/<short-description>` as its own standard GitFlow branch type
 - The release's improvement-plan sweep found nothing new to close or progress — Gap #6 remains the only open gap,
   with #26 still waiting on a Spring Boot release that manages Tomcat `11.0.25`
 - Scoped as `v8.12.0` **MINOR**: a backward-compatible new import-formatting capability, with no existing endpoint,
@@ -1443,6 +1447,8 @@ fail the build rather than slip through.
   from the general-purpose `za.co.hpsc.web.utils` classes it builds on
 - `Util` classes renamed to `Utils`, closing a naming inconsistency with the rest of the codebase's plural utility
   class names
+- A Qodana static-analysis workflow, and CodeQL/dependency-submission triggers widened to every GitFlow branch, bring
+  CI feedback to the branch where a problem is introduced
 
 **Achievement:** Made bulk-imported competitor data consistent to read regardless of how the source spreadsheet was
 typed, without changing the CSV format or JSON endpoints consumers already rely on.
@@ -2628,6 +2634,8 @@ Based on the evolution to v8.12.0, the following areas are identified for future
   particles, leaving `HomeClub`, `ClubNumber`, `CompetitorNumber` and `EmailAddresses` as supplied
 - `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` renamed to `DateUtils`, `NumberUtils`, `StringUtils` and
   `ValueUtils`, closing a naming inconsistency
+- New Qodana workflow, CodeQL/dependency-submission triggers widened to every GitFlow branch, and `bugfix/*` documented
+  as a standard branch type
 - No gaps recorded or closed this release — Gap #6 remains the only open gap, with #26 still waiting on a Spring
   Boot release that manages Tomcat `11.0.25`
 - Project version bumped to 8.12.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
