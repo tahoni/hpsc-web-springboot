@@ -74,6 +74,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### CI/CD & Configuration
+
+- **`.github/workflows/codeql.yml`, `.github/workflows/dependency-submission.yml`:** Push triggers now also cover
+  `release/*`, `feature/*`, `bugfix/*` and `hotfix/*` branches, not just `main`/`develop`, so a CodeQL or
+  dependency-submission failure surfaces on the branch it was introduced on rather than only once it reaches
+  `develop`
+
 ##### Documentation
 
 - **`AGENTS.md`, `CONTRIBUTING.md`:** Added `bugfix/<short-description>` as its own standard GitFlow branch type,
