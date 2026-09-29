@@ -30,7 +30,7 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw verify -Pcoverage` — full suite passing (1099 tests, 0 failures/errors), 98.64% line / 98.81% branch
+- [x] `./mvnw verify -Pcoverage` — full suite passing (1101 tests, 0 failures/errors), 98.64% line / 98.81% branch
       coverage, JaCoCo gate (line and branch) passing
 - [ ] New Qodana check runs on this PR
 - [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.12.0.md`

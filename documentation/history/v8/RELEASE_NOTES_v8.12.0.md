@@ -60,7 +60,8 @@ triggers to every GitFlow branch.
 #### Tests
 
 - **`IpscCompetitorServiceImplTest`:** New `toRequest` tests for all-upper-case and all-lower-case CSV rows, an
-  upper-case last name with several particles and one that merely starts with particle letters
+  upper-case last name with several particles, one that merely starts with particle letters, and ID and cellphone
+  numbers that keep their case
 
 ### Changed
 
@@ -124,8 +125,8 @@ database are not modified.
 ## 🧪 Testing
 
 - New `IpscCompetitorServiceImplTest` `toRequest` cases pin the casing behaviour for upper-case, lower-case and
-  particle-bearing rows, including that home club, competitor and club numbers and email addresses keep their case.
-- `./mvnw verify -Pcoverage` passes on the release branch: 1099 tests, 0 failures/errors/skipped; 98.64% line / 98.81%
+  particle-bearing rows, including that home club, competitor, club, ID and cellphone numbers and email addresses keep their case.
+- `./mvnw verify -Pcoverage` passes on the release branch: 1101 tests, 0 failures/errors/skipped; 98.64% line / 98.81%
   branch coverage, with the JaCoCo gate (97% line and branch) passing.
 
 ---

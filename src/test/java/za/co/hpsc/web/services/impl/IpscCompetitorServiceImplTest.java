@@ -608,6 +608,36 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testToRequest_whenIdAndCellphoneNumbersAreLowerCase_thenKeepsThemAsSupplied() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "jane", "doe", null, null, null, null, null, null, null, null, "ab123456x", "+27 82 abc-1234", null,
+                null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("ab123456x", request.getIdNumber());
+        assertEquals("+27 82 abc-1234", request.getCellphoneNumber());
+    }
+
+    @Test
+    void testToRequest_whenIdAndCellphoneNumbersAreUpperCase_thenKeepsThemAsSupplied() {
+        // Arrange
+        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
+                "JANE", "DOE", null, null, null, null, null, null, null, null, "AB123456X", "+27 82 ABC-1234", null,
+                null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+
+        // Assert
+        assertEquals("AB123456X", request.getIdNumber());
+        assertEquals("+27 82 ABC-1234", request.getCellphoneNumber());
+    }
+
+    @Test
     void testToRequest_whenUpperCaseLastNameHasMultipleParticles_thenLowerCasesAllOfThem() {
         // Arrange
         CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
