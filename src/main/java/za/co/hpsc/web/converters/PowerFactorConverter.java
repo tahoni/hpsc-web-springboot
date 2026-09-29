@@ -3,7 +3,7 @@ package za.co.hpsc.web.converters;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import za.co.hpsc.web.enums.PowerFactor;
-import za.co.hpsc.web.utils.ValueUtil;
+import za.co.hpsc.web.utils.ValueUtils;
 
 /**
  * JPA {@link AttributeConverter} that maps a {@link PowerFactor} to and from its
@@ -20,7 +20,7 @@ import za.co.hpsc.web.utils.ValueUtil;
 public class PowerFactorConverter implements AttributeConverter<PowerFactor, String> {
     @Override
     public String convertToDatabaseColumn(PowerFactor attribute) {
-        return ValueUtil.nullAsDefaultString(attribute, null);
+        return ValueUtils.nullAsDefaultString(attribute, null);
     }
 
     @Override

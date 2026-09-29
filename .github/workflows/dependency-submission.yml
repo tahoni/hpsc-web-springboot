@@ -7,7 +7,7 @@ name: Dependency Submission
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "release/*", "feature/*", "bugfix/*", "hotfix/*" ]
   workflow_dispatch:
 
 jobs:

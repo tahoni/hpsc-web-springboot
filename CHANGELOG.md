@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.11.1](#-8111---2026-09-27) ← Current
+- [🧾 Version 8.12.0](#-8120---2026-09-29) ← Current
+- [🧾 Version 8.11.1](#-8111---2026-09-27)
 - [🧾 Version 8.11.0](#-8110---2026-09-27)
 - [🧾 Version 8.10.2](#-8102---2026-09-26)
 - [🧾 Version 8.10.1](#-8101---2026-09-26)
@@ -64,6 +65,74 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [8.12.0] - 2026-09-29
+
+#### ➕ Added
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/code_quality.yml`:** New Qodana static-analysis workflow, running `JetBrains/qodana-action` on
+  every push to `main`, `release/*`, `feature/*`, `bugfix/*` and `hotfix/*`, plus PRs into `main`/`develop`
+
+##### Services
+
+- **`StringUtils.toProperCase`:** New helper that upper-cases the first letter of each word and lower-cases the rest,
+  treating spaces, hyphens and apostrophes, straight or curly, as word breaks (e.g. `o'NEIL-smith` → `O'Neil-Smith`) — backed by the new
+  `org.apache.commons:commons-text` dependency's `WordUtils`
+- **`CompetitorHelpers.toSentenceCaseLastName`:** New helper in the new `za.co.hpsc.web.helpers` package that
+  lower-cases surname particles (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper —
+  e.g. `Van Der Merwe` → `van der Merwe`, including after a hyphen (`Smith-Van Der Merwe` → `Smith-van der Merwe`) —
+  and capitalises the letter after a Gaelic `Mc` prefix (`Mcdonald` → `McDonald`, leaving the Zulu `Mch`/`Mcu`
+  surnames such as `Mchunu` alone). Only whole words are matched, so `Dube` and `Vanderbilt` are left alone. Listed in `ARCHITECTURE.md`'s Project Structure tree and a new Helpers table
+
+##### Tests
+
+- **`IpscCompetitorServiceImplTest`:** New `toRequest` tests for all-upper-case and all-lower-case CSV rows, an
+  upper-case last name with several particles (`DE LA REY` → `de la Rey`) and one that merely starts with particle
+  letters (`DUBE` → `Dube`), hyphenated, `Mc`-prefixed and curly-apostrophe last names, and lower- and upper-case alphanumeric ID and cellphone numbers — pinning that the home
+  club, competitor, club, ID and cellphone numbers and email addresses keep their case whatever case they arrive in
+
+#### 🔄 Changed
+
+##### CI/CD & Configuration
+
+- **`.github/workflows/codeql.yml`, `.github/workflows/dependency-submission.yml`:** Push triggers now also cover
+  `release/*`, `feature/*`, `bugfix/*` and `hotfix/*` branches, not just `main`/`develop`, so a CodeQL or
+  dependency-submission failure surfaces on the branch it was introduced on rather than only once it reaches
+  `develop`
+- **`.github/workflows/docker.yml`:** Dependabot's `github-actions` group update (PR #152, merged into `develop` and
+  then into this release branch) bumps `docker/setup-buildx-action` from `v3` to `v4` and `docker/build-push-action`
+  from `v6` to `v7` — both major bumps, with no change to the workflow's inputs
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.toRequest`:** The competitor CSV import now proper-cases the `FirstName`, `LastName`,
+  `MiddleNames`, `Nickname` and `Gender` columns, so imported names are stored consistently regardless of how they
+  were typed — `HomeClub` (matched exactly against club names), `ClubNumber` and `CompetitorNumber` (codes, club
+  numbers also being unique), `IdNumber`, `CellphoneNumber` and `EmailAddresses` are kept as supplied. The JSON
+  create, update and patch endpoints are unaffected
+- **`IpscCompetitorServiceImpl.toRequest`:** The imported `LastName` is also passed through
+  `CompetitorHelpers.toSentenceCaseLastName` after proper-casing, so `VAN DER MERWE` is stored as `van der Merwe`
+  rather than `Van Der Merwe`
+
+##### Utils
+
+- **`DateUtils`, `NumberUtils`, `StringUtils`, `ValueUtils`:** Renamed from `DateUtil`, `NumberUtil`, `StringUtil` and
+  `ValueUtil` (and their test classes to match) — internal classes only, so there is no API change
+
+##### Documentation
+
+- **`AGENTS.md`, `CONTRIBUTING.md`:** Added `bugfix/<short-description>` as its own standard GitFlow branch type,
+  split out of `feature/*`'s prior "feature and bug-fix work" description — non-critical bug fixes not yet in
+  production branch from, and PR back into, `develop`, same as `feature/*`, distinguishing them from `hotfix/*`,
+  which is reserved for defects already in production
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates table gains a Static Analysis (Qodana) row, and its
+  CodeQL and Dependency Submission triggers now read "any GitFlow branch", matching the widened workflow triggers
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #32 from an `update-improvement-plan-gaps` sweep —
+  Qodana returned to CI as `code_quality.yml`, but the plan still described it as removed in v8.2.0 (Gap #7) — closed
+  within this release, with "🌳 At a Glance", the "⚙️ Goals & Constraints" CI/CD row, the "🛤️ Roadmap" **Next** row and
+  "☑️ Success Criteria" updated to match
 
 ### 🧾 [8.11.1] - 2026-09-27
 

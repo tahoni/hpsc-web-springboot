@@ -135,7 +135,7 @@ Within a class, order members: constructors first, then public methods, then —
 every protected method, regardless of where they were originally declared; a class with no private helpers simply
 ends after its last protected method. Within each visibility group, keep the existing relative order rather than
 alphabetising — that stricter, alphabetised ordering is specific to test classes, per the Test Conventions below. A
-`final` utility class (e.g. `NumberUtil`, `IpscConstants`) can't be subclassed, so it has no protected members to
+`final` utility class (e.g. `NumberUtils`, `IpscConstants`) can't be subclassed, so it has no protected members to
 place; its private helpers, if any, still go after every public method.
 
 ---
@@ -169,6 +169,12 @@ Wrap prose lines in every Markdown file between 100 and 120 characters. This doe
 run longer to keep columns aligned, or to fenced code blocks, directory trees and diagrams, which keep their own
 natural line lengths.
 
+### Table alignment
+
+Align every column in a Markdown table: pad each cell with trailing spaces so the `|` separators line up vertically
+across the header, delimiter and body rows, sized to the widest cell in that column. When an edit lengthens or
+shortens a cell, re-pad the whole table rather than only the edited row.
+
 ### Javadoc
 
 - Use British English conventions (spelling, grammar, punctuation), consistent with the rest of this project's
@@ -178,7 +184,7 @@ natural line lengths.
 - Class-level Javadoc should carry `@see` references to closely related types and `@since` where the codebase already
   tracks it.
 - Include a `<pre>{@code …}</pre>` usage example on utility classes and non-obvious constructors, matching the style in
-  `ValueUtil`.
+  `ValueUtils`.
 - Don't duplicate an interface method's Javadoc on its implementation unless the implementation has behaviour the
   interface contract doesn't already describe.
 
@@ -475,8 +481,12 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
 - **`main`** is the production branch. It is only ever updated by promoting `develop` after a `release/vX.Y.Z` branch
   has merged into it, or directly from a `hotfix/*` branch or a Dependabot security-update PR — never any other
   source.
-- **`feature/<short-description>`** — day-to-day feature and bug-fix work (e.g. `feature/shooter-log-power-factor`,
-  `feature/club-ranking-null-fix`). Branch from, and PR back into, `develop`.
+- **`feature/<short-description>`** — day-to-day new-functionality work (e.g. `feature/shooter-log-power-factor`).
+  Branch from, and PR back into, `develop`.
+- **`bugfix/<short-description>`** — non-critical bug fixes not yet in production (e.g. `bugfix/club-ranking-null-fix`).
+  Branch from, and PR back into, `develop`, just like `feature/*`; the separate prefix only distinguishes a fix from
+  new functionality when triaging or scanning branch lists. Use `hotfix/*` instead once the defect has already shipped
+  to production.
 - **`release/vX.Y.Z`** branches are cut from `develop` once it's ready to ship — they carry the release-prep changes
   (version bump, `CHANGELOG.md`/`HISTORY.md`/`RELEASE_NOTES.md`, etc.; see the Release Checklist below) and are opened
   as a PR against `develop`. Once that merges, a second PR promotes `develop` into `main` (see
@@ -492,8 +502,8 @@ This repository follows the [GitFlow](https://nvie.com/posts/a-successful-git-br
 
 **All branches are committed to `develop` first, never `main`.** `hotfix/*` and Dependabot security-update PRs are the
 only, deliberate exceptions, and even then the same fix still lands on `develop` immediately afterwards (see
-[`CONTRIBUTING.md`'s Merging section](CONTRIBUTING.md#merging)). Every other branch — `feature/*`, `release/*` and
-Dependabot version-update PRs included — must never open a PR directly against `main`.
+[`CONTRIBUTING.md`'s Merging section](CONTRIBUTING.md#merging)). Every other branch — `feature/*`, `bugfix/*`,
+`release/*` and Dependabot version-update PRs included — must never open a PR directly against `main`.
 
 Which merge strategy each branch type uses, PR ordering, tagging `main` and branch clean-up are a human contributor's
 GitHub mechanics, not something an AI agent executes unprompted — see
