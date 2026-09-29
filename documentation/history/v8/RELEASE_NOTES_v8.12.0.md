@@ -72,6 +72,8 @@ triggers to every GitFlow branch.
 
 - **`codeql.yml`, `dependency-submission.yml`:** Push triggers now also cover `release/*`, `feature/*`, `bugfix/*` and
   `hotfix/*`
+- **`docker.yml`:** Dependabot's `github-actions` group update (PR #152) bumps `docker/setup-buildx-action` to `v4` and
+  `docker/build-push-action` to `v7`, both major bumps with no change to the workflow's inputs
 
 #### Services
 
@@ -168,7 +170,7 @@ database are not modified.
 
 ## 👥 Contributors
 
-Leoni Lubbinge
+Leoni Lubbinge, `dependabot[bot]`
 
 ---
 

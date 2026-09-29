@@ -101,6 +101,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `release/*`, `feature/*`, `bugfix/*` and `hotfix/*` branches, not just `main`/`develop`, so a CodeQL or
   dependency-submission failure surfaces on the branch it was introduced on rather than only once it reaches
   `develop`
+- **`.github/workflows/docker.yml`:** Dependabot's `github-actions` group update (PR #152, merged into `develop` and
+  then into this release branch) bumps `docker/setup-buildx-action` from `v3` to `v4` and `docker/build-push-action`
+  from `v6` to `v7` — both major bumps, with no change to the workflow's inputs
 
 ##### Services
 

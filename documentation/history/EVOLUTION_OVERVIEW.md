@@ -2618,6 +2618,8 @@ CodeQL and dependency-submission triggers to every GitFlow branch.
   `feature/*`, `bugfix/*` and `hotfix/*`, plus PRs into `main`/`develop`
 - `codeql.yml` and `dependency-submission.yml` push triggers now also cover `release/*`, `feature/*`, `bugfix/*` and
   `hotfix/*`, so a failure surfaces on the branch that introduced it
+- Dependabot's `github-actions` group update (PR #152) bumps `docker/setup-buildx-action` to `v4` and
+  `docker/build-push-action` to `v7` in `docker.yml`
 
 **Documentation**
 

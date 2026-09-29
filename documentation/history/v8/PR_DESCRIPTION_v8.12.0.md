@@ -26,6 +26,7 @@
   supplied
 - `DateUtil`/`NumberUtil`/`StringUtil`/`ValueUtil` renamed to their `Utils` names (internal only)
 - `codeql.yml` and `dependency-submission.yml` push triggers cover `release/*`, `feature/*`, `bugfix/*`, `hotfix/*`
+- `docker.yml`: Dependabot bumps `docker/setup-buildx-action` to `v4` and `docker/build-push-action` to `v7` (#152)
 - Version bumped to 8.12.0 in `pom.xml` and `@OpenAPIDefinition`; `tomcat.version` override kept (Gap #26)
 
 ## 🧪 Test Plan
