@@ -424,11 +424,12 @@ Client uploads CSV (Content-Type: text/csv)
 
 | Gate                      | Tool                                                                                                      | Trigger                                                                                  |
 |---------------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| **Security Analysis**     | CodeQL                                                                                                    | Push / PR to `main` / `develop`; weekly schedule                                         |
+| **Security Analysis**     | CodeQL                                                                                                    | Push to any GitFlow branch / PR to `main` / `develop`; weekly schedule                   |
+| **Static Analysis**       | Qodana (`JetBrains/qodana-action`), via `.github/workflows/code_quality.yml`                              | Push to any GitFlow branch / PR to `main` / `develop`; manual dispatch                   |
 | **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                                     | Push / PR to `main` / `develop`; H2 in-memory — no external DB required                  |
 | **Code Coverage**         | JaCoCo, minimum 97% line and branch coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)   | Enforced automatically as part of the `Build & Tests` gate above                         |
 | **Docker Image**          | `docker/build-push-action` (build only, never pushed), via `.github/workflows/docker.yml`                 | Push / PR to `main` / `develop`                                                          |
-| **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to `main` / `develop`; manual dispatch                                              |
+| **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to any GitFlow branch; manual dispatch                                              |
 | **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`                        | Every PR opened, updated, marked ready or reopened, Dependabot's included; advisory only |
 | **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                                           | An `@claude` mention in an issue, PR comment or PR review                                |
 

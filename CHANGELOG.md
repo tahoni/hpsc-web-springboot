@@ -123,6 +123,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   split out of `feature/*`'s prior "feature and bug-fix work" description — non-critical bug fixes not yet in
   production branch from, and PR back into, `develop`, same as `feature/*`, distinguishing them from `hotfix/*`,
   which is reserved for defects already in production
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates table gains a Static Analysis (Qodana) row, and its
+  CodeQL and Dependency Submission triggers now read "any GitFlow branch", matching the widened workflow triggers
 
 ### 🧾 [8.11.1] - 2026-09-27
 

@@ -260,8 +260,9 @@ removed.
 ## 🔬 CI/CD & Quality Gates
 
 See [`ARCHITECTURE.md`'s CI/CD & Quality Gates table](ARCHITECTURE.md#-cicd--quality-gates) for the full gate/tool/
-trigger matrix (CodeQL security analysis, Maven build and tests, JaCoCo coverage, the Docker image build, Maven
-dependency submission, Claude Code automated review and the `@claude` assistant) rather than duplicating it here, so
+trigger matrix (CodeQL security analysis, Qodana static analysis, Maven build and tests, JaCoCo coverage, the Docker
+image build, Maven dependency submission, Claude Code automated review and the `@claude` assistant) rather than
+duplicating it here, so
 the two never drift out of sync.
 
 ---
