@@ -82,6 +82,8 @@ triggers to every GitFlow branch.
 #### Documentation
 
 - **`AGENTS.md`, `CONTRIBUTING.md`:** `bugfix/<short-description>` added as a standard GitFlow branch type
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates table gains a Static Analysis (Qodana) row, and its
+  CodeQL and Dependency Submission triggers now read "any GitFlow branch"
 
 #### Build & Metadata
 
@@ -122,7 +124,8 @@ database are not modified.
 
 - New `IpscCompetitorServiceImplTest` `toRequest` cases pin the casing behaviour for upper-case, lower-case and
   particle-bearing rows, including that home club, competitor and club numbers and email addresses keep their case.
-- Run `./mvnw verify -Pcoverage` on the release branch and confirm the full suite and the JaCoCo gate pass.
+- `./mvnw verify -Pcoverage` passes on the release branch: 1099 tests, 0 failures/errors/skipped; 98.64% line / 98.81%
+  branch coverage, with the JaCoCo gate (97% line and branch) passing.
 
 ---
 

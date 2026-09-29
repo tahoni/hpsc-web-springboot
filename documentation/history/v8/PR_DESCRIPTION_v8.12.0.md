@@ -16,7 +16,8 @@
 - `StringUtils.toProperCase` (backed by the new `commons-text` dependency) and `CompetitorHelpers.toSentenceCaseLastName`
   in the new `za.co.hpsc.web.helpers` package
 - `.github/workflows/code_quality.yml` (Qodana)
-- New `IpscCompetitorServiceImplTest` `toRequest` casing tests
+- `toRequest` casing tests in `IpscCompetitorServiceImplTest`, plus `CompetitorHelpersTest` and new `StringUtilsTest`
+  cases
 
 **Changed**
 
@@ -29,10 +30,11 @@
 
 ## 🧪 Test Plan
 
-- [ ] `./mvnw verify -Pcoverage` — full suite passing, JaCoCo gate (line and branch) passing
+- [x] `./mvnw verify -Pcoverage` — full suite passing (1099 tests, 0 failures/errors), 98.64% line / 98.81% branch
+      coverage, JaCoCo gate (line and branch) passing
 - [ ] New Qodana check runs on this PR
-- [ ] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.12.0.md`
-- [ ] No version-specific references leaked into `README.md`/`ARCHITECTURE.md`
+- [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.12.0.md`
+- [x] No version-specific references leaked into `README.md`/`ARCHITECTURE.md`
 
 ## 🔗 Related Documentation
 
