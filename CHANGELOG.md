@@ -70,7 +70,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Match API
 
-- **Breaking — `MatchRequest`, `MatchResponse`, `MatchRequestForCsvMixin`:** The `stages` field is gone from all three. A
+- **Breaking — `MatchRequest`, `MatchResponse`, `MatchRequestCsv`:** The `stages` field is gone from all three. A
   match request or response no longer carries stages, and the bulk CSV import no longer has a `Stages` column, so a CSV
   that still includes one is rejected as invalid
 - **`TransactionService.saveMatch`:** The `saveMatch(IpscMatch, List, StageSaveMode)` overload and the `StageSaveMode`

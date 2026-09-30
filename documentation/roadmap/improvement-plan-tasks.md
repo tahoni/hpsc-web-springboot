@@ -114,8 +114,8 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 
 **Match bulk CSV import** *(improvement-plan.md → Gap #8)* — ✅ Closed in v8.3.0
 
-- [x] Introduce `MatchRequestForCsvMixin`/`MatchResponseHolder` (`models/ipsc/match/request/`,
-  `models/ipsc/match/response/`), mirroring `CompetitorRequestCsvMixIn`/`CompetitorResponseHolder`'s `UpperCamelCase`
+- [x] Introduce `MatchRequestForCSV`/`MatchResponseHolder` (`models/ipsc/match/request/`,
+  `models/ipsc/match/response/`), mirroring `CompetitorRequestForCSV`/`CompetitorResponseHolder`'s `UpperCamelCase`
   CSV/JSON `@JsonCreator` pattern — with stages represented as a single semicolon-separated
   `<stageNumber>:<stageName>` cell, since CSV has no native nested-row representation
 - [x] Add `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) and
@@ -125,7 +125,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Add a `parseStages` helper splitting the delimited `Stages` cell into `MatchStageRequest`s — new relative to
   the competitor flow, which has no equivalent nested-collection column to parse
 - [x] Add Mockito-based controller/service/impl unit tests per the `scaffold-unit-tests` conventions —
-  `IpscMatchControllerTest`/`IpscMatchServiceTest`/`IpscMatchServiceImplTest`/`MatchRequestForCsvMixinTest`
+  `IpscMatchControllerTest`/`IpscMatchServiceTest`/`IpscMatchServiceImplTest`/`MatchRequestForCSVTest`
 - [x] Update `ARCHITECTURE.md`'s stale "match bulk-import remains removed pending a rebuild" language and its
   competitor-only endpoint/service/data-flow documentation to reflect the new endpoint
 
