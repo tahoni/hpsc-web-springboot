@@ -80,8 +80,8 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   ├───ipsc/
 │   │   │   │   ├───competitor/request/  # IPSC competitor request DTOs
 │   │   │   │   ├───competitor/response/ # IPSC competitor response DTOs
-│   │   │   │   ├───match/request/       # IPSC match/stage request DTOs
-│   │   │   │   ├───match/response/      # IPSC match/stage response DTOs
+│   │   │   │   ├───match/request/       # IPSC match request DTOs
+│   │   │   │   ├───match/response/      # IPSC match response DTOs
 │   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
 │   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
 │   │   │   └───(root)          # Top-level request/response wrapper models
@@ -120,7 +120,7 @@ responsibilities:
 |----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
 | **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
-| **IPSC Competitors & Matches**   | Full CRUD for competitor and match (with stages) records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                  |
+| **IPSC Competitors & Matches**   | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                  |
 | **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
@@ -150,7 +150,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 | `AwardController`          | `/awards`           | Award CSV processing                                         |
 | `ImageController`          | `/images`           | Image CSV processing                                         |
 | `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import                       |
-| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD, together with its stages, + bulk CSV import |
+| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD + bulk CSV import |
 
 All controllers:
 
@@ -172,7 +172,7 @@ Contains all business logic.
 |-------------------------|-----------------------------|--------------------------------------------------------------|
 | `AwardService`          | `AwardServiceImpl`          | Award CSV processing (deliberately stateless — see below)    |
 | `ImageService`          | `ImageServiceImpl`          | Image CSV processing (deliberately stateless — see below)    |
-| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD, together with its stages, + bulk CSV import |
+| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD + bulk CSV import |
 | `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
 | `TransactionService`    | `TransactionServiceImpl`    | Commits competitor/match writes, each in its own transaction |
 
@@ -183,17 +183,16 @@ Contains all business logic.
 > Both IPSC domains support bulk CSV import, each building every row via the same validation/resolution logic
 > as its single-item `create` endpoint, then saving all rows in one transaction so a bad row leaves none
 > persisted: `IpscCompetitorController.createCompetitors` (`IpscCompetitorService`/`IpscCompetitorServiceImpl`)
-> and `IpscMatchController.createMatches` (`IpscMatchService`/`IpscMatchServiceImpl`), which additionally parses
-> a `Stages` CSV cell into `MatchStageRequest`s via `parseStages`.
+> and `IpscMatchController.createMatches` (`IpscMatchService`/`IpscMatchServiceImpl`).
 
 > `IpscMatchService`/`IpscCompetitorService` declare no `@Transactional`: they validate requests and build or modify
 > entities outside any transaction, then hand them to `TransactionService`, which commits each write (and each bulk
 > import as a whole) in its own explicit `TransactionTemplate` transaction. Everything it returns has the associations
 > a response reads already loaded, since `spring.jpa.open-in-view` is disabled.
 
-> Deleting a competitor or match only removes what it owns — a competitor's email addresses, a match's stages. A
-> record that match results, stage results or shooter logs still reference is refused with a `ValidationException`
-> (`400`) rather than deleted along with that scoring history.
+> Deleting a competitor only removes what it owns — their email addresses; a match owns nothing. A record that
+> match results or shooter logs still reference is refused with a `ValidationException` (`400`) rather than
+> deleted along with that scoring history.
 
 ---
 
@@ -207,17 +206,13 @@ The JPA entities map to database tables:
 |------------------------|--------------------------|--------------------------------------------------------------------------------------|
 | `Club`                 | `club`                   | No outgoing references; targeted by `Competitor`, `IpscMatch` and `ShooterLog` below |
 | `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                                           |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`; one-to-many → `IpscMatchStage` (cascaded)                      |
-| `IpscMatchStage`       | `ipsc_match_stage`       | Many-to-one → `IpscMatch`                                                            |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                                 |
 | `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                              |
-| `MatchStageCompetitor` | `match_stage_competitor` | Many-to-one → `MatchCompetitor`, `IpscMatchStage`                                    |
 | `ShooterLog`           | `shooter_log`            | Many-to-one → `Competitor`, `Club`                                                   |
 | `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `MatchCompetitor`, `IpscMatch`                           |
 
 Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, all `FetchType.LAZY` — the queries that
-build responses load what they need with `left join fetch` (see Repositories below). Only one relationship is
-bidirectional: `IpscMatch.stages` is a `@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)`
-collection, since a stage can't exist without its match — so deleting a match cascades to its stages. Every other
+build responses load what they need with `left join fetch` (see Repositories below). Every
 relationship is unidirectional, with no back-referencing collection and no cascade, so a record still referenced by
 results or shooter logs is refused on delete rather than cascaded (see the note above).
 
@@ -262,9 +257,8 @@ envelope.
 
 #### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
-DTOs for the IPSC module rebuild — `MatchRequest`/`MatchStageRequest` and `MatchResponse`/`MatchStageResponse`
-(consumed by `IpscMatchController`'s single-match CRUD endpoints) and `MatchRequestForCSV`/`MatchResponseHolder`
-(its bulk CSV import endpoint), `CompetitorRequest`/`CompetitorResponse` (consumed by
+DTOs for the IPSC module rebuild — `MatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
+single-match CRUD endpoints) and `MatchRequestForCSV`/`MatchResponseHolder` (its bulk CSV import endpoint), `CompetitorRequest`/`CompetitorResponse` (consumed by
 `IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorRequestForCSV`/`CompetitorResponseHolder`
 (its bulk CSV import endpoint), and, still groundwork only — not yet consumed by any controller —
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
@@ -394,8 +388,7 @@ Handled by `IpscMatchController` — same shape as the Competitor flow above:
 Client uploads CSV (Content-Type: text/csv)
     → IpscMatchController.createMatches
         → IpscMatchService.createMatches
-            (parses CSV via Jackson CsvMapper into MatchRequestForCSV rows, splits each row's semicolon-separated
-             Stages cell into MatchStageRequests via parseStages, then builds each row, stages included, with the
+            (parses CSV via Jackson CsvMapper into MatchRequestForCSV rows, then builds each row with the
              same validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
             → TransactionService.saveMatches
                 (saves every row in one transaction — a bad row fails before anything is saved)
@@ -415,7 +408,7 @@ Client uploads CSV (Content-Type: text/csv)
 | **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtils` null-safe helpers                      |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
 | **Extensibility**   | Firearm-type enums + division mappings, enum `AttributeConverter`s with `fromX` lookups                                               |
-| **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters   |
+| **Data Integrity**  | Reject-not-cascade deletes, `TransactionService` commits, attribute converters                                                        |
 | **Type Safety**     | Custom `AttributeConverter` implementations for all enum-typed columns replace `@Enumerated(EnumType.STRING)`                         |
 
 ---
