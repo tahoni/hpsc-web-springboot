@@ -5,9 +5,7 @@ import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.domain.MatchStageCompetitor;
 import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogCompetitor;
 import za.co.hpsc.web.enums.FirearmType;
@@ -41,15 +39,10 @@ final class ScoringFixtures {
         return competitor;
     }
 
-    static IpscMatch matchWithStage(EntityManager entityManager, String name) {
+    static IpscMatch match(EntityManager entityManager, String name) {
         IpscMatch match = new IpscMatch();
         match.setName(name);
         match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setMatch(match);
-        stage.setStageNumber(1);
-        stage.setStageName("Stage 1");
-        match.getStages().add(stage);
         entityManager.persist(match);
         return match;
     }
@@ -61,14 +54,6 @@ final class ScoringFixtures {
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         entityManager.persist(matchCompetitor);
         return matchCompetitor;
-    }
-
-    static MatchStageCompetitor matchStageCompetitor(EntityManager entityManager, MatchCompetitor matchCompetitor) {
-        MatchStageCompetitor matchStageCompetitor = new MatchStageCompetitor();
-        matchStageCompetitor.setMatchCompetitor(matchCompetitor);
-        matchStageCompetitor.setMatchStage(matchCompetitor.getMatch().getStages().getFirst());
-        entityManager.persist(matchStageCompetitor);
-        return matchStageCompetitor;
     }
 
     static ShooterLog shooterLog(EntityManager entityManager, Competitor competitor, Club club) {

@@ -32,7 +32,7 @@ class ShooterLogCompetitorRepositoryIntegrationTest {
     void testExistsByMatchId_whenMatchIsInAShooterLog_thenReturnsTrue() {
         // Arrange
         Competitor competitor = ScoringFixtures.competitor(entityManager, "Jane");
-        IpscMatch match = ScoringFixtures.matchWithStage(entityManager, "Match");
+        IpscMatch match = ScoringFixtures.match(entityManager, "Match");
         MatchCompetitor matchCompetitor = ScoringFixtures.matchCompetitor(entityManager, competitor, match);
         ScoringFixtures.shooterLogCompetitor(entityManager,
                 ScoringFixtures.shooterLog(entityManager, competitor, ScoringFixtures.club(entityManager)), matchCompetitor);
@@ -44,7 +44,7 @@ class ShooterLogCompetitorRepositoryIntegrationTest {
     @Test
     void testExistsByMatchId_whenMatchIsInNoShooterLog_thenReturnsFalse() {
         // Arrange
-        IpscMatch match = ScoringFixtures.matchWithStage(entityManager, "Match");
+        IpscMatch match = ScoringFixtures.match(entityManager, "Match");
         ScoringFixtures.matchCompetitor(entityManager, ScoringFixtures.competitor(entityManager, "Jane"), match);
 
         // Act & Assert
