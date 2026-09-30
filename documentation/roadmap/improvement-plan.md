@@ -331,13 +331,13 @@ unclosed, the asymmetry between "competitor bulk import exists, match bulk impor
 explaining whether it's intentional or simply not yet scheduled.
 
 **Proposed improvement:** Apply the same mirrored pattern Gap #1's Outcome already used for the competitor domain:
-introduce a `MatchRequestForCSV`/`MatchResponseHolder` pair alongside the existing `CompetitorRequestForCSV`/
+introduce a `MatchRequestForCsvMixin`/`MatchResponseHolder` pair alongside the existing `CompetitorRequestCsvMixIn`/
 `CompetitorResponseHolder`, and an `IpscMatchController.createMatches`/`IpscMatchService.createMatches` pair that
 persists each CSV row via the existing single-`createMatch` validation/club/firearm-type/category-resolution logic —
 no new cross-entity orchestration, per the discipline Gap #1 established.
 
-**Outcome:** Delivered in v8.3.0. `MatchRequestForCSV` (`models/ipsc/match/request/`) mirrors
-`CompetitorRequestForCSV`'s `UpperCamelCase` CSV/JSON `@JsonCreator` pattern, with its stages represented as a single
+**Outcome:** Delivered in v8.3.0. `MatchRequestForCsvMixin` (`models/ipsc/match/request/`) mirrors
+`CompetitorRequestCsvMixIn`'s `UpperCamelCase` CSV/JSON `@JsonCreator` pattern, with its stages represented as a single
 semicolon-separated `<stageNumber>:<stageName>` cell rather than a nested list (CSV has no native nested-row
 representation). `MatchResponseHolder` mirrors `CompetitorResponseHolder`. `IpscMatchController.createMatches`
 (`POST /ipsc/matches/bulk`, consumes `text/csv`) and `IpscMatchService`/`IpscMatchServiceImpl.createMatches` mirror
@@ -374,7 +374,7 @@ naming `"Eufees Clubs"`, remove the unused constant rather than leaving inert gr
 **Outcome:** Delivered option (a). `IpscMatchServiceImpl.validateForCreate` no longer rejects a missing/blank
 `club`; `resolveClub` now resolves it via `clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)`
 instead, mirroring `IpscCompetitorServiceImpl.resolveHomeClub`/`resolveClubNumber`'s "apply the domain default"
-pattern, and throwing `NonFatalException` if even the default club is missing. `MatchRequest`/`MatchRequestForCSV`'s
+pattern, and throwing `NonFatalException` if even the default club is missing. `MatchRequest`/`MatchRequestForCsvMixin`'s
 `club` field Javadoc now documents the default explicitly.
 
 #### 10. `HISTORY.md`'s Phase/Milestone entries haven't been extended since v8.4.0 — ✅ Closed in v8.5.1

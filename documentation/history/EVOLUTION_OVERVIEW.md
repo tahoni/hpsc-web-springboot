@@ -1380,15 +1380,15 @@ IPSC request models to date: without a matching `@JsonCreator` constructor, the 
 **Competitor Bulk CSV Import**
 
 - `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`, consumes `text/csv`) parses CSV data
-  into `CompetitorRequestForCSV` rows and creates each competitor via the existing `createCompetitor` logic — unlike
+  into `CompetitorRequestCsvMixIn` rows and creates each competitor via the existing `createCompetitor` logic — unlike
   `AwardController`/`ImageController`'s bulk endpoints, which only build response objects without persisting
-- New `CompetitorRequestForCSV` (CSV-mapped, `UpperCamelCase` headers) and `CompetitorResponseHolder` models
+- New `CompetitorRequestCsvMixIn` (CSV-mapped, `UpperCamelCase` headers) and `CompetitorResponseHolder` models
 
 **Required-Field Enforcement Fix**
 
 - Root cause: `@JsonProperty(required = true)` only fires for creator (constructor) parameters — a class deserialised
   via its default no-args constructor and setters silently accepts a missing "required" field as `null`
-- `CompetitorRequestForCSV`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest`, `MatchOverallScoresRequest`/
+- `CompetitorRequestCsvMixIn`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest`, `MatchOverallScoresRequest`/
   `MatchStageScoresRequest` and their CSV variants each gained a `@JsonCreator` constructor with every parameter
   bound via `@JsonProperty`, replacing their Lombok `@AllArgsConstructor`
 - `CompetitorRequest`'s required third field corrected from `competitorNumber` to `clubNumber`, matching
@@ -1410,7 +1410,7 @@ IPSC request models to date: without a matching `@JsonCreator` constructor, the 
 **Test Coverage:**
 
 - New unit tests across `IpscCompetitorController`/`Service`/`ServiceImpl`'s bulk import, and eight request-model
-  test classes (`CompetitorRequestTest`, `CompetitorRequestForCSVTest`, `MatchRequestTest`, `MatchStageRequestTest`,
+  test classes (`CompetitorRequestTest`, `CompetitorRequestCsvMixinTest`, `MatchRequestTest`, `MatchStageRequestTest`,
   `MatchOverallScoresRequestTest`, `MatchStageScoresRequestTest`, `MatchOverallScoresRequestForCSVTest`,
   `MatchStageScoresRequestForCSVTest`)
 
@@ -1500,7 +1500,7 @@ format is unified onto one separator convention.
   via `@ElementCollection`/`@CollectionTable` onto a new `competitor_email` child table
 - `V7_2_0__add_competitor_emails.sql` backfills the new table from any existing non-blank `email_address` values,
   then drops that column
-- `CompetitorRequest`/`CompetitorResponse` renamed `emailAddress` to `emailAddresses`; `CompetitorRequestForCSV`
+- `CompetitorRequest`/`CompetitorResponse` renamed `emailAddress` to `emailAddresses`; `CompetitorRequestCsvMixIn`
   keeps a single CSV cell but now holds zero or more semicolon-separated addresses, split via
   `IpscCompetitorServiceImpl`'s new `splitEmailAddresses` helper
 
@@ -1561,12 +1561,12 @@ existing pattern outright.
 **Match Bulk CSV Import**
 
 - `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) parses CSV data into
-  `MatchRequestForCSV` rows and creates each match via the existing `createMatch`
+  `MatchRequestForCsvMixin` rows and creates each match via the existing `createMatch`
   validation/club/firearm-type/category-resolution logic, matching `IpscCompetitorController.createCompetitors`'s
   bulk-import shape
-- New `MatchRequestForCSV` (CSV-mapped, `UpperCamelCase` headers, `@JsonCreator` constructor) and
+- New `MatchRequestForCsvMixin` (CSV-mapped, `UpperCamelCase` headers, `@JsonCreator` constructor) and
   `MatchResponseHolder` models (`models/ipsc/match/`)
-- `IpscMatchServiceImpl` gains three protected helpers: `readMatches` (CSV → `MatchRequestForCSV` rows, mirroring
+- `IpscMatchServiceImpl` gains three protected helpers: `readMatches` (CSV → `MatchRequestForCsvMixin` rows, mirroring
   `IpscCompetitorServiceImpl`'s CSV-parsing pattern), `toRequest` (row → `MatchRequest`), and `parseStages`, which
   splits each `Stages` cell entry on its first `-` into a `MatchStageRequest`
 
@@ -1590,7 +1590,7 @@ existing pattern outright.
 
 **Test Coverage:**
 
-- New unit tests across `IpscMatchController`/`Service`/`ServiceImpl`'s bulk import, and `MatchRequestForCSVTest`'s
+- New unit tests across `IpscMatchController`/`Service`/`ServiceImpl`'s bulk import, and `MatchRequestForCsvMixinTest`'s
   `UpperCamelCase` JSON/CSV (de)serialisation and required-field enforcement
 
 ---
@@ -1835,10 +1835,10 @@ response models, CSV bulk import and service layer, alongside a handful of Briti
 **Match Start/End Time Tracking**
 
 - `IpscMatch` gains nullable `startTime`/`endTime` (`LocalDateTime`) columns, alongside the existing `scheduledDate`,
-  via new `V7_5_0__add_ipsc_match_start_end_time.sql`; wired end-to-end through `MatchRequest`, `MatchRequestForCSV`
+  via new `V7_5_0__add_ipsc_match_start_end_time.sql`; wired end-to-end through `MatchRequest`, `MatchRequestForCsvMixin`
   and `MatchResponse`, and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/`toResponse`
 - CSV bulk import (`POST /matches/csv`) now requires `StartTime`/`EndTime` header columns, like every other
-  `MatchRequestForCSV` property, consistent with this endpoint's existing all-columns-required header validation —
+  `MatchRequestForCsvMixin` property, consistent with this endpoint's existing all-columns-required header validation —
   existing CSV templates need updating to add them (values may be left blank)
 
 **Documentation Fixes**
@@ -1954,7 +1954,7 @@ A domain correction release: adds a nullable `url` field to `IpscMatch`, correct
 
 - `IpscMatch` gains a new nullable `url` column via `V7_6_0__add_ipsc_match_url.sql` — a URL with more information
   about a match (e.g. a results page or event listing); wired end-to-end through `MatchRequest`,
-  `MatchRequestForCSV`, `MatchResponse` and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/
+  `MatchRequestForCsvMixin`, `MatchResponse` and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/
   `toResponse`, with a matching `Url` column added to the CSV bulk import header
 
 **Start/End Time Precision Fix**
@@ -1991,7 +1991,7 @@ A domain correction release: adds a nullable `url` field to `IpscMatch`, correct
 **Test Coverage:**
 
 - `IpscMatchServiceIntegrationTest`, `IpscMatchServiceTest`, `IpscMatchServiceImplTest`, `MatchRequestTest` and
-  `MatchRequestForCSVTest` updated so `url` round-trips through JSON, CSV import and the real H2/Hibernate/JPA
+  `MatchRequestForCsvMixinTest` updated so `url` round-trips through JSON, CSV import and the real H2/Hibernate/JPA
   layer, and `startTime`/`endTime` fixtures/CSV rows/JSON payloads reflect the new `LocalTime`/`HH:mm` shape
 
 ---
@@ -2150,7 +2150,7 @@ Spring Boot's default port and brings springdoc onto its Spring Boot 4 line.
 - `IpscMatchServiceImpl.parseStages` now splits each `Stages` entry on its first `:` instead of `-` (e.g.
   `"1:Stage One;2:Stage Two"`), so stage names may still contain a `:`; entries in the old `1-Stage One` form are
   rejected with a `ValidationException` — existing CSV templates and API clients need updating
-- `IpscMatchController`'s bulk CSV Swagger example, `MatchRequestForCSV`'s Javadoc and the roadmap documents
+- `IpscMatchController`'s bulk CSV Swagger example, `MatchRequestForCsvMixin`'s Javadoc and the roadmap documents
   updated to the `<stageNumber>:<stageName>` format
 
 **Eager Association Fetching**
@@ -2199,7 +2199,7 @@ Spring Boot's default port and brings springdoc onto its Spring Boot 4 line.
 
 - New `getAllCompetitors` tests across `IpscCompetitorControllerTest`, `IpscCompetitorServiceTest` and
   `IpscCompetitorServiceIntegrationTest`; `IpscMatchServiceImplTest`, `IpscMatchServiceTest`,
-  `MatchRequestForCSVTest` and `IpscMatchControllerTest` fixtures moved to the `:` stage delimiter
+  `MatchRequestForCsvMixinTest` and `IpscMatchControllerTest` fixtures moved to the `:` stage delimiter
 
 ---
 
@@ -2276,7 +2276,7 @@ associations are loaded through fetch-join queries and every competitor/match wr
 **Competitor Paid-Up Flags**
 
 - New nullable `Competitor.paidUpSapsa`/`paidUpClub` `Boolean` columns via `V7_8_0__add_competitor_paid_up_flags.sql`
-- `CompetitorRequest`, `CompetitorRequestForCSV` and `CompetitorResponse` gain matching fields; an omitted flag is
+- `CompetitorRequest`, `CompetitorRequestCsvMixIn` and `CompetitorResponse` gain matching fields; an omitted flag is
   stored as `null` on create/update and left unchanged on patch
 - The competitor CSV bulk import now requires trailing `PaidUpSapsa`/`PaidUpClub` header columns — a client-facing
   migration for existing CSV files
