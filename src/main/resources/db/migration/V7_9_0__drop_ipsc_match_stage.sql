@@ -4,5 +4,5 @@
 -- first, as it holds a foreign key to ipsc_match_stage.
 -- =============================================================================================
 
-DROP TABLE match_stage_competitor;
-DROP TABLE ipsc_match_stage;
+DROP TABLE IF EXISTS match_stage_competitor;
+DROP TABLE IF EXISTS ipsc_match_stage;

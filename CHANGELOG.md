@@ -85,8 +85,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **Breaking — `IpscMatchStage`, `MatchStageCompetitor`:** Both entities are removed, together with
   `IpscMatchStageRepository`, `MatchStageCompetitorRepository` and the `IpscMatch.stages` collection
 - **`V7_9_0__drop_ipsc_match_stage.sql`:** New Flyway migration dropping the `match_stage_competitor` and
-  `ipsc_match_stage` tables, in that order, since the former holds a foreign key to the latter. Any existing stage
-  data is discarded
+  `ipsc_match_stage` tables with `DROP TABLE IF EXISTS`, in that order, since the former holds a foreign key to the
+  latter. Any existing stage data is discarded
 
 ##### Match API
 
