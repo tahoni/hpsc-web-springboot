@@ -78,6 +78,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchService.deleteMatch`:** No longer checks for recorded stage results, as there are none to check — a
   match is still refused deletion while it has competitor results or is referenced by shooter logs
 
+#### 🔧 Configuration
+
+##### Database
+
+- **Breaking — `spring.datasource.username`, `MYSQL_USER`:** The username is no longer read from the `MYSQL_USER`
+  environment variable in `application.properties`; the `dev` and `prod` profiles now set it (`hpsc_dev`,
+  `hpsc_prod`), so a deployment that relied on `MYSQL_USER` must switch profile or set the property itself
+- **`application-dev.properties`:** The datasource URL now points at `127.0.0.1` rather than `localhost`
+- **`application-local.properties`:** Drops the `MYSQL_LOCAL_PASSWORD` override, so the local profile now uses
+  `MYSQL_PASSWORD` like the others
+
 #### 🗑️ Removed
 
 ##### Persistence
