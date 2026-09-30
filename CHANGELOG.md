@@ -66,6 +66,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Match API
+
+- **Breaking — `MatchRequest`, `MatchResponse`, `MatchRequestForCSV`:** The `stages` field is gone from all three. A
+  match request or response no longer carries stages, and the bulk CSV import no longer has a `Stages` column, so a CSV
+  that still includes one is rejected as invalid
+- **`TransactionService.saveMatch`:** The `saveMatch(IpscMatch, List, StageSaveMode)` overload and the `StageSaveMode`
+  enum are removed along with the stage replace/upsert logic — `saveMatch(IpscMatch)` is the only single-match save
+- **`IpscMatchService.deleteMatch`:** No longer checks for recorded stage results, as there are none to check — a
+  match is still refused deletion while it has competitor results or is referenced by shooter logs
+
+#### 🗑️ Removed
+
+##### Match API
+
+- **`MatchStageRequest`, `MatchStageResponse`:** Removed, along with `IpscMatchServiceImpl.toStages` and
+  `parseStages`
+
 ### 🧾 [8.12.0] - 2026-09-29
 
 #### ➕ Added

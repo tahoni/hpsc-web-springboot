@@ -105,8 +105,8 @@ class IpscMatchControllerTest {
 
     // createMatches()
     private static final String VALID_CSV = """
-            MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages
-            2026-04-10,Club Championship,Test Club,Pistol,Level 1,1:Stage One;2:Stage Two
+            MatchDate,MatchName,Club,MatchFirearmType,MatchCategory
+            2026-04-10,Club Championship,Test Club,Pistol,Level 1
             """;
 
     @Test

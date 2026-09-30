@@ -31,7 +31,7 @@ import java.util.List;
  *
  * <p>
  * Provides endpoints for creating, fully or partially updating, retrieving and deleting IPSC
- * matches together with their stages.
+ * matches.
  * </p>
  *
  * @since 8.0.0
@@ -47,10 +47,10 @@ public class IpscMatchController {
     }
 
     /**
-     * Creates a new IPSC match together with any stages supplied on the request.
+     * Creates a new IPSC match.
      *
      * @param request the match to create.
-     * @return the created {@link MatchResponse}, including its generated ID and any persisted stages.
+     * @return the created {@link MatchResponse}, including its generated ID.
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if the named club cannot be found.
      * @throws FatalException      if no club is named and
@@ -58,7 +58,7 @@ public class IpscMatchController {
      *                             is null.
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Create match", description = "Create a new IPSC match, optionally together with its stages.")
+    @Operation(summary = "Create match", description = "Create a new IPSC match.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Match created.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -79,7 +79,7 @@ public class IpscMatchController {
     }
 
     /**
-     * Creates a batch of new IPSC matches, together with their stages, from CSV data.
+     * Creates a batch of new IPSC matches from CSV data.
      *
      * @param csvData the CSV content as a string containing details about matches, formatted
      *                according to the expected schema. This parameter is required and cannot be
@@ -87,7 +87,7 @@ public class IpscMatchController {
      * @return a {@link MatchResponseHolder} containing the created matches.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
      *                             missing a required field, if a row's firearm type/category is
-     *                             unrecognised, or if a row's stages cell is malformed.
+     *                             unrecognised.
      * @throws NonFatalException   if a row's named club cannot be found.
      * @throws FatalException      if a critical error occurs during processing, that prevents the
      *                             operation from completing successfully — including a row naming no club while
@@ -95,13 +95,13 @@ public class IpscMatchController {
      *                             is null.
      */
     @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Create matches", description = "Create IPSC matches, together with their stages, in bulk from CSV data.")
+    @Operation(summary = "Create matches", description = "Create IPSC matches in bulk from CSV data.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Matches created.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = MatchResponseHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
-                    + "missing, the firearm type/category is unrecognised, or a stages cell is malformed.",
+                    + "missing or the firearm type/category is unrecognised.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "A row's named club could not be found.",
@@ -116,8 +116,8 @@ public class IpscMatchController {
                     content = @Content(mediaType = "text/csv",
                             schema = @Schema(implementation = MatchRequestForCSV.class),
                             examples = @ExampleObject("""
-                                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                                    yyyy-MM-dd,string,string,string,string,1:Stage 1;2:Stage 2,HH:mm,HH:mm,string
+                                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
+                                    yyyy-MM-dd,string,string,string,string,HH:mm,HH:mm,string
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, NonFatalException, FatalException {
@@ -125,11 +125,11 @@ public class IpscMatchController {
     }
 
     /**
-     * Fully replaces an existing IPSC match's fields and stages with those on the request.
+     * Fully replaces an existing IPSC match's fields with those on the request.
      *
      * @param matchId the identifier of the match to replace.
      * @param request the match's replacement fields.
-     * @return the updated {@link MatchResponse}, including its persisted stages.
+     * @return the updated {@link MatchResponse}.
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
@@ -138,7 +138,7 @@ public class IpscMatchController {
      *                             is null.
      */
     @PutMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Replace match", description = "Fully replace an existing IPSC match's fields and stages.")
+    @Operation(summary = "Replace match", description = "Fully replace an existing IPSC match's fields.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Match replaced.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -166,7 +166,7 @@ public class IpscMatchController {
      *
      * @param matchId the identifier of the match to update.
      * @param request the fields to change; any field left {@code null} is left unchanged.
-     * @return the updated {@link MatchResponse}, including its persisted stages.
+     * @return the updated {@link MatchResponse}.
      * @throws ValidationException if the named club is blank, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
@@ -198,14 +198,14 @@ public class IpscMatchController {
     }
 
     /**
-     * Retrieves an existing IPSC match together with its stages.
+     * Retrieves an existing IPSC match.
      *
      * @param matchId the identifier of the match to retrieve.
-     * @return the {@link MatchResponse}, including its persisted stages.
+     * @return the {@link MatchResponse}.
      * @throws NonFatalException if no match with {@code matchId} exists.
      */
     @GetMapping(value = "/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get match", description = "Retrieve an IPSC match by ID, together with its stages.")
+    @Operation(summary = "Get match", description = "Retrieve an IPSC match by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Match found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -221,12 +221,12 @@ public class IpscMatchController {
     }
 
     /**
-     * Retrieves every IPSC match together with its stages.
+     * Retrieves every IPSC match.
      *
-     * @return the list of {@link MatchResponse}, each including its persisted stages.
+     * @return the list of {@link MatchResponse}.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all matches", description = "Retrieve every IPSC match, together with its stages.")
+    @Operation(summary = "Get all matches", description = "Retrieve every IPSC match.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Matches retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -237,21 +237,21 @@ public class IpscMatchController {
     }
 
     /**
-     * Deletes an existing IPSC match, together with its stages.
+     * Deletes an existing IPSC match.
      *
      * @param matchId the identifier of the match to delete.
      * @return an empty {@code 204 No Content} response.
-     * @throws ValidationException if the match still has competitor results, stage results or
-     *                             shooter-log entries.
+     * @throws ValidationException if the match still has competitor results or shooter-log
+     *                             entries.
      * @throws NonFatalException   if no match with {@code matchId} exists.
      */
     @DeleteMapping(value = "/{matchId}")
-    @Operation(summary = "Delete match", description = "Delete an IPSC match by ID, together with its stages. A "
-            + "match with recorded competitor results, stage results or shooter-log entries can't be deleted.")
+    @Operation(summary = "Delete match", description = "Delete an IPSC match by ID. A match "
+            + "with recorded competitor results or shooter-log entries can't be deleted.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Match deleted."),
-            @ApiResponse(responseCode = "400", description = "The match has recorded competitor results, stage "
-                    + "results or shooter-log entries.",
+            @ApiResponse(responseCode = "400", description = "The match has recorded competitor results or "
+                    + "shooter-log entries.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID could be found.",

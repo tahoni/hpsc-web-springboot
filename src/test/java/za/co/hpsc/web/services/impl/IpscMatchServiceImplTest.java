@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
@@ -16,11 +15,9 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV;
-import za.co.hpsc.web.models.ipsc.match.request.MatchStageRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,12 +29,10 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link IpscMatchServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findMatchOrThrow}, {@code newMatch}, {@code parseStages},
- * {@code readMatches}, {@code resolveClub}, {@code resolveFirearmType},
- * {@code resolveMatchCategory}, {@code toRequest}, {@code toResponse}, {@code toStages},
- * {@code validateForCreate}) - not declared on {@link za.co.hpsc.web.services.IpscMatchService}.
- * Stage replacement/upsert now lives in {@link TransactionServiceImpl}, covered by
- * {@link TransactionServiceImplTest}.
+ * ({@code applyFields}, {@code findMatchOrThrow}, {@code newMatch}, {@code readMatches},
+ * {@code resolveClub}, {@code resolveFirearmType}, {@code resolveMatchCategory},
+ * {@code toRequest}, {@code toResponse}, {@code validateForCreate}) - not declared on
+ * {@link za.co.hpsc.web.services.IpscMatchService}.
  * The interface's create/update/patch/get/get-all contract is covered by
  * {@link za.co.hpsc.web.services.IpscMatchServiceTest}.
  */
@@ -46,9 +41,6 @@ class IpscMatchServiceImplTest {
 
     @Mock
     private IpscMatchRepository ipscMatchRepository;
-
-    @Mock
-    private IpscMatchStageRepository ipscMatchStageRepository;
 
     @Mock
     private ClubRepository clubRepository;
@@ -144,36 +136,19 @@ class IpscMatchServiceImplTest {
 
     // newMatch()
     @Test
-    void testNewMatch_whenRequestHasStages_thenBuildsMatchWithStagesOnItsCollection() {
+    void testNewMatch_whenRequestIsValid_thenBuildsUnpersistedMatchFromRequest() {
         // Arrange
         Club club = new Club();
         club.setName("Test Club");
         when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-        MatchRequest request = validRequest("Test Club");
-        request.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1"), new MatchStageRequest(null, 2, "Stage 2")));
-
-        // Act
-        IpscMatch match = assertDoesNotThrow(() -> ipscMatchServiceImpl.newMatch(request));
-
-        // Assert
-        assertNull(match.getId());
-        assertSame(club, match.getClub());
-        assertEquals("Club Championship", match.getName());
-        assertEquals(2, match.getStages().size());
-        assertTrue(match.getStages().stream().allMatch(stage -> stage.getMatch() == match));
-        assertEquals("Stage 2", match.getStages().get(1).getStageName());
-    }
-
-    @Test
-    void testNewMatch_whenRequestHasNoStages_thenBuildsMatchWithNoStages() {
-        // Arrange
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(new Club()));
 
         // Act
         IpscMatch match = assertDoesNotThrow(() -> ipscMatchServiceImpl.newMatch(validRequest("Test Club")));
 
         // Assert
-        assertTrue(match.getStages().isEmpty());
+        assertNull(match.getId());
+        assertSame(club, match.getClub());
+        assertEquals("Club Championship", match.getName());
     }
 
     @Test
@@ -187,91 +162,13 @@ class IpscMatchServiceImplTest {
         verifyNoInteractions(clubRepository);
     }
 
-    // parseStages()
-    @Test
-    void testParseStages_whenNull_thenReturnsEmptyList() {
-        assertEquals(List.of(), ipscMatchServiceImpl.parseStages(null));
-    }
-
-    @Test
-    void testParseStages_whenBlank_thenReturnsEmptyList() {
-        assertEquals(List.of(), ipscMatchServiceImpl.parseStages("  "));
-    }
-
-    @Test
-    void testParseStages_whenSingleEntry_thenReturnsSingletonList() {
-        // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One");
-
-        // Assert
-        assertEquals(1, stages.size());
-        assertEquals(1, stages.getFirst().getStageNumber());
-        assertEquals("Stage One", stages.getFirst().getStageName());
-    }
-
-    @Test
-    void testParseStages_whenMultipleEntries_thenReturnsAllInOrder() {
-        // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One;2:Stage Two");
-
-        // Assert
-        assertEquals(2, stages.size());
-        assertEquals(1, stages.get(0).getStageNumber());
-        assertEquals("Stage One", stages.get(0).getStageName());
-        assertEquals(2, stages.get(1).getStageNumber());
-        assertEquals("Stage Two", stages.get(1).getStageName());
-    }
-
-    @Test
-    void testParseStages_whenStageNameContainsColons_thenOnlyFirstColonSplitsNumberFromName() {
-        // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One: The Bank Job");
-
-        // Assert
-        assertEquals(1, stages.size());
-        assertEquals(1, stages.getFirst().getStageNumber());
-        assertEquals("Stage One: The Bank Job", stages.getFirst().getStageName());
-    }
-
-    @Test
-    void testParseStages_whenEntryHasSurroundingWhitespace_thenTrimsNumberAndName() {
-        // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages(" 1 : Stage One ");
-
-        // Assert
-        assertEquals(1, stages.getFirst().getStageNumber());
-        assertEquals("Stage One", stages.getFirst().getStageName());
-    }
-
-    @Test
-    void testParseStages_whenContainsBlankEntries_thenExcludesThem() {
-        // Act
-        List<MatchStageRequest> stages = ipscMatchServiceImpl.parseStages("1:Stage One;;  ");
-
-        // Assert
-        assertEquals(1, stages.size());
-        assertEquals("Stage One", stages.getFirst().getStageName());
-    }
-
-    @Test
-    void testParseStages_whenEntryHasNoSeparator_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.parseStages("StageWithoutSeparator"));
-    }
-
-    @Test
-    void testParseStages_whenStageNumberIsNonNumeric_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.parseStages("X:Stage One"));
-    }
-
     // readMatches()
     @Test
     void testReadMatches_whenValidCsv_thenReturnsMatchRequestForCSVList() {
         // Arrange
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                2026-04-10,Club Championship,Test Club,Pistol,Level 1,1:Stage One;2:Stage Two
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
+                2026-04-10,Club Championship,Test Club,Pistol,Level 1
                 2026-04-17,Second Match
                 """;
 
@@ -287,7 +184,6 @@ class IpscMatchServiceImplTest {
         assertEquals("Test Club", first.getClub());
         assertEquals("Pistol", first.getMatchFirearmType());
         assertEquals("Level 1", first.getMatchCategory());
-        assertEquals("1:Stage One;2:Stage Two", first.getStages());
 
         MatchRequestForCSV second = rows.get(1);
         assertEquals("Second Match", second.getMatchName());
@@ -298,8 +194,8 @@ class IpscMatchServiceImplTest {
     void testReadMatches_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
-                MatchName,MatchDate,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                Club Championship,2026-04-10,Test Club,,,
+                MatchName,MatchDate,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
+                Club Championship,2026-04-10,Test Club,,
                 """;
 
         // Act
@@ -315,7 +211,7 @@ class IpscMatchServiceImplTest {
     @Test
     void testReadMatches_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyList() {
         // Arrange
-        String csvData = "MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url\n";
+        String csvData = "MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url\n";
 
         // Act
         List<MatchRequestForCSV> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
@@ -468,7 +364,7 @@ class IpscMatchServiceImplTest {
         // Arrange
         MatchRequestForCSV matchRequestForCSV = new MatchRequestForCSV(
                 LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", "1:Stage One;2:Stage Two", LocalTime.of(8, 0), LocalTime.of(17, 0),
+                "Test Club", "Pistol", "Level 1", LocalTime.of(8, 0), LocalTime.of(17, 0),
                 "https://example.com/matches/1"
         );
 
@@ -485,18 +381,13 @@ class IpscMatchServiceImplTest {
         assertEquals("Pistol", request.getMatchFirearmType());
         assertEquals("Level 1", request.getMatchCategory());
         assertEquals("https://example.com/matches/1", request.getUrl());
-        assertEquals(2, request.getStages().size());
-        assertEquals(1, request.getStages().get(0).getStageNumber());
-        assertEquals("Stage One", request.getStages().get(0).getStageName());
-        assertEquals(2, request.getStages().get(1).getStageNumber());
-        assertEquals("Stage Two", request.getStages().get(1).getStageName());
     }
 
     @Test
-    void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThroughAndStagesIsEmpty() {
+    void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
         // Arrange
         MatchRequestForCSV matchRequestForCSV = new MatchRequestForCSV(
-                LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null, null);
+                LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null);
 
         // Act
         MatchRequest request = ipscMatchServiceImpl.toRequest(matchRequestForCSV);
@@ -509,7 +400,6 @@ class IpscMatchServiceImplTest {
         assertNull(request.getMatchFirearmType());
         assertNull(request.getMatchCategory());
         assertNull(request.getUrl());
-        assertTrue(request.getStages().isEmpty());
     }
 
     // toResponse()
@@ -530,7 +420,7 @@ class IpscMatchServiceImplTest {
         match.setUrl("https://example.com/matches/1");
 
         // Act
-        MatchResponse response = ipscMatchServiceImpl.toResponse(match, List.of());
+        MatchResponse response = ipscMatchServiceImpl.toResponse(match);
 
         // Assert
         assertEquals(1L, response.getMatchId());
@@ -549,78 +439,9 @@ class IpscMatchServiceImplTest {
         IpscMatch match = new IpscMatch();
         match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
 
-        MatchResponse response = ipscMatchServiceImpl.toResponse(match, List.of());
-
-        assertNull(response.getClub());
-    }
-
-    @Test
-    void testToResponse_whenOnlyMatchIsGiven_thenMapsItsStagesOrderedByStageNumber() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
-        for (int stageNumber : new int[]{2, 1}) {
-            IpscMatchStage stage = new IpscMatchStage();
-            stage.setStageNumber(stageNumber);
-            stage.setStageName("Stage " + stageNumber);
-            match.getStages().add(stage);
-        }
-
-        // Act
         MatchResponse response = ipscMatchServiceImpl.toResponse(match);
 
-        // Assert
-        assertEquals(2, response.getStages().size());
-        assertEquals("Stage 1", response.getStages().get(0).getStageName());
-        assertEquals("Stage 2", response.getStages().get(1).getStageName());
-    }
-
-    @Test
-    void testToResponse_whenStagesProvided_thenMapsStagesInOrder() {
-        // Arrange
-        IpscMatch match = new IpscMatch();
-        match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
-
-        IpscMatchStage stage1 = new IpscMatchStage();
-        stage1.setId(100L);
-        stage1.setStageNumber(1);
-        stage1.setStageName("Stage 1");
-        IpscMatchStage stage2 = new IpscMatchStage();
-        stage2.setId(101L);
-        stage2.setStageNumber(2);
-        stage2.setStageName("Stage 2");
-
-        // Act
-        MatchResponse response = ipscMatchServiceImpl.toResponse(match, List.of(stage1, stage2));
-
-        // Assert
-        assertEquals(2, response.getStages().size());
-        assertEquals(100L, response.getStages().get(0).getStageId());
-        assertEquals("Stage 1", response.getStages().get(0).getStageName());
-        assertEquals(101L, response.getStages().get(1).getStageId());
-        assertEquals("Stage 2", response.getStages().get(1).getStageName());
-    }
-
-    // toStages()
-    @Test
-    void testToStages_whenStageRequestsIsNull_thenReturnsNull() {
-        // Act & Assert
-        assertNull(ipscMatchServiceImpl.toStages(null));
-    }
-
-    @Test
-    void testToStages_whenStageRequestsProvided_thenMapsEachInOrderWithoutAMatch() {
-        // Act
-        List<IpscMatchStage> stages = ipscMatchServiceImpl.toStages(
-                List.of(new MatchStageRequest(null, 2, "Stage 2"), new MatchStageRequest(null, 1, "Stage 1")));
-
-        // Assert
-        assertEquals(2, stages.size());
-        assertEquals(2, stages.get(0).getStageNumber());
-        assertEquals("Stage 2", stages.get(0).getStageName());
-        assertEquals(1, stages.get(1).getStageNumber());
-        assertNull(stages.get(0).getMatch());
-        assertNull(stages.get(0).getId());
+        assertNull(response.getClub());
     }
 
     // validateForCreate()

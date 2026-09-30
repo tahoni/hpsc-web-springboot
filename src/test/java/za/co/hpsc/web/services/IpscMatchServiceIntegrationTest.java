@@ -19,12 +19,10 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchStageRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 
 import java.time.LocalDate;
@@ -57,9 +55,6 @@ class IpscMatchServiceIntegrationTest {
 
     @Autowired
     private IpscMatchRepository ipscMatchRepository;
-
-    @Autowired
-    private IpscMatchStageRepository ipscMatchStageRepository;
 
     @Autowired
     private MatchCompetitorRepository matchCompetitorRepository;
@@ -182,7 +177,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testCreateMatch_whenRequestIsValidWithNoStages_thenPersistsMatchWithEmptyStageList() {
+    void testCreateMatch_whenRequestIsValid_thenPersistsMatch() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
@@ -200,28 +195,6 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(LocalTime.of(8, 0), response.getStartTime());
         assertEquals(LocalTime.of(17, 0), response.getEndTime());
         assertEquals("https://example.com/matches/1", response.getUrl());
-        assertTrue(response.getStages().isEmpty());
-    }
-
-    @Test
-    void testCreateMatch_whenRequestIncludesStages_thenPersistsStagesInOrder() {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        MatchRequest request = validRequest("Test Club");
-        request.setStages(List.of(
-                new MatchStageRequest(null, 1, "Stage 1 - The Bank Job"),
-                new MatchStageRequest(null, 2, "Stage 2 - The Getaway")));
-
-        // Act
-        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
-
-        // Assert
-        assertEquals(2, response.getStages().size());
-        assertNotNull(response.getStages().getFirst().getStageId());
-        assertEquals(1, response.getStages().getFirst().getStageNumber());
-        assertEquals("Stage 1 - The Bank Job", response.getStages().getFirst().getStageName());
-        assertEquals(2, response.getStages().get(1).getStageNumber());
-        assertEquals("Stage 2 - The Getaway", response.getStages().get(1).getStageName());
     }
 
     // deleteMatch()
@@ -232,11 +205,10 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testDeleteMatch_whenMatchHasNoDependents_thenDeletesMatchAndStages() throws FatalException {
+    void testDeleteMatch_whenMatchHasNoDependents_thenDeletesMatch() throws FatalException {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
-        request.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1"), new MatchStageRequest(null, 2, "Stage 2")));
         MatchResponse created = ipscMatchService.createMatch(request);
 
         // Act
@@ -244,7 +216,6 @@ class IpscMatchServiceIntegrationTest {
 
         // Assert
         assertFalse(ipscMatchRepository.existsById(created.getMatchId()));
-        assertTrue(ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(created.getMatchId()).isEmpty());
         assertThrows(NonFatalException.class, () -> ipscMatchService.getMatch(created.getMatchId()));
     }
 
@@ -269,11 +240,10 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testGetMatch_whenMatchExists_thenReturnsMatchWithStages() throws FatalException {
+    void testGetMatch_whenMatchExists_thenReturnsMatch() throws FatalException {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
-        request.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
         MatchResponse created = ipscMatchService.createMatch(request);
 
         // Act
@@ -285,8 +255,6 @@ class IpscMatchServiceIntegrationTest {
         assertEquals(LocalTime.of(8, 0), fetched.getStartTime());
         assertEquals(LocalTime.of(17, 0), fetched.getEndTime());
         assertEquals("https://example.com/matches/1", fetched.getUrl());
-        assertEquals(1, fetched.getStages().size());
-        assertEquals("Stage 1", fetched.getStages().getFirst().getStageName());
     }
 
     // getAllMatches()
@@ -300,11 +268,10 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testGetAllMatches_whenMatchesExist_thenReturnsAllWithStages() throws FatalException {
+    void testGetAllMatches_whenMatchesExist_thenReturnsAll() throws FatalException {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest firstRequest = validRequest("Test Club");
-        firstRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
         MatchResponse first = ipscMatchService.createMatch(firstRequest);
 
         MatchRequest secondRequest = validRequest("Test Club");
@@ -316,8 +283,7 @@ class IpscMatchServiceIntegrationTest {
 
         // Assert
         assertEquals(2, matches.size());
-        assertTrue(matches.stream().anyMatch(match ->
-                match.getMatchId().equals(first.getMatchId()) && (match.getStages().size() == 1)));
+        assertTrue(matches.stream().anyMatch(match -> match.getMatchId().equals(first.getMatchId())));
         assertTrue(matches.stream().anyMatch(match -> match.getMatchId().equals(second.getMatchId())));
     }
 
@@ -416,66 +382,6 @@ class IpscMatchServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(created.getMatchId(), patch));
     }
 
-    @Test
-    void testPatchMatch_whenStagesAreOmitted_thenExistingStagesAreUnchanged() throws FatalException {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        MatchRequest createRequest = validRequest("Test Club");
-        createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
-        MatchResponse created = ipscMatchService.createMatch(createRequest);
-
-        MatchRequest patch = new MatchRequest();
-        patch.setMatchName("Renamed Championship");
-
-        // Act
-        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
-
-        // Assert
-        assertEquals(1, patched.getStages().size());
-        assertEquals("Stage 1", patched.getStages().getFirst().getStageName());
-    }
-
-    @Test
-    void testPatchMatch_whenStageNumberMatchesExisting_thenUpdatesThatStageInPlace() throws FatalException {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        MatchRequest createRequest = validRequest("Test Club");
-        createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Original Name")));
-        MatchResponse created = ipscMatchService.createMatch(createRequest);
-        Long originalStageId = created.getStages().getFirst().getStageId();
-
-        MatchRequest patch = new MatchRequest();
-        patch.setStages(List.of(new MatchStageRequest(null, 1, "Updated Name")));
-
-        // Act
-        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
-
-        // Assert
-        assertEquals(1, patched.getStages().size());
-        assertEquals(originalStageId, patched.getStages().getFirst().getStageId());
-        assertEquals("Updated Name", patched.getStages().getFirst().getStageName());
-    }
-
-    @Test
-    void testPatchMatch_whenStageNumberIsNew_thenAddsStageWithoutRemovingExisting() throws FatalException {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        MatchRequest createRequest = validRequest("Test Club");
-        createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
-        MatchResponse created = ipscMatchService.createMatch(createRequest);
-
-        MatchRequest patch = new MatchRequest();
-        patch.setStages(List.of(new MatchStageRequest(null, 2, "Stage 2")));
-
-        // Act
-        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
-
-        // Assert
-        assertEquals(2, patched.getStages().size());
-        assertEquals("Stage 1", patched.getStages().get(0).getStageName());
-        assertEquals("Stage 2", patched.getStages().get(1).getStageName());
-    }
-
     // updateMatch()
     @Test
     void testUpdateMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
@@ -542,44 +448,6 @@ class IpscMatchServiceIntegrationTest {
         assertEquals("https://example.com/matches/different", updated.getUrl());
     }
 
-    @Test
-    void testUpdateMatch_whenRequestOmitsPreviouslyPersistedStages_thenOldStagesAreRemoved() throws FatalException {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        MatchRequest createRequest = validRequest("Test Club");
-        createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Stage 1")));
-        MatchResponse created = ipscMatchService.createMatch(createRequest);
-
-        MatchRequest replacement = validRequest("Test Club");
-
-        // Act
-        MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
-
-        // Assert
-        assertTrue(updated.getStages().isEmpty());
-    }
-
-    @Test
-    void testUpdateMatch_whenRequestIncludesNewStages_thenOldStagesAreReplaced() throws FatalException {
-        // Arrange
-        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
-        MatchRequest createRequest = validRequest("Test Club");
-        createRequest.setStages(List.of(new MatchStageRequest(null, 1, "Original Stage")));
-        MatchResponse created = ipscMatchService.createMatch(createRequest);
-        Long originalStageId = created.getStages().getFirst().getStageId();
-
-        MatchRequest replacement = validRequest("Test Club");
-        replacement.setStages(List.of(new MatchStageRequest(null, 1, "Replacement Stage")));
-
-        // Act
-        MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
-
-        // Assert
-        assertEquals(1, updated.getStages().size());
-        assertNotEquals(originalStageId, updated.getStages().getFirst().getStageId());
-        assertEquals("Replacement Stage", updated.getStages().getFirst().getStageName());
-    }
-
     // Without a surrounding transaction
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -592,28 +460,23 @@ class IpscMatchServiceIntegrationTest {
             // Arrange
             createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
             MatchRequest request = validRequest("Test Club");
-            request.setStages(List.of(new MatchStageRequest(null, 2, "Stage 2"), new MatchStageRequest(null, 1, "Stage 1")));
 
             // Act & Assert - create, then read back in a separate call
             matchId = ipscMatchService.createMatch(request).getMatchId();
             MatchResponse fetched = ipscMatchService.getMatch(matchId);
             assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, fetched.getClub());
-            assertEquals(List.of("Stage 1", "Stage 2"),
-                    fetched.getStages().stream().map(stage -> stage.getStageName()).toList());
 
-            // Act & Assert - replace, reusing a stage number
+            // Act & Assert - replace
             MatchRequest update = validRequest("Test Club");
-            update.setStages(List.of(new MatchStageRequest(null, 1, "Replacement Stage")));
+            update.setMatchName("Replaced Championship");
             ipscMatchService.updateMatch(matchId, update);
-            assertEquals(List.of("Replacement Stage"),
-                    ipscMatchService.getMatch(matchId).getStages().stream().map(stage -> stage.getStageName()).toList());
+            assertEquals("Replaced Championship", ipscMatchService.getMatch(matchId).getMatchName());
 
-            // Act & Assert - upsert a new stage alongside the existing one
+            // Act & Assert - patch
             MatchRequest patch = new MatchRequest();
-            patch.setStages(List.of(new MatchStageRequest(null, 2, "Added Stage")));
+            patch.setMatchName("Patched Championship");
             ipscMatchService.patchMatch(matchId, patch);
-            assertEquals(List.of("Replacement Stage", "Added Stage"),
-                    ipscMatchService.getMatch(matchId).getStages().stream().map(stage -> stage.getStageName()).toList());
+            assertEquals("Patched Championship", ipscMatchService.getMatch(matchId).getMatchName());
 
             // Act & Assert - delete
             ipscMatchService.deleteMatch(matchId);
@@ -634,9 +497,9 @@ class IpscMatchServiceIntegrationTest {
             // Arrange
             createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
             String csvData = """
-                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,Stages,StartTime,EndTime,Url
-                    2026-09-12,First Match,Test Club,%1$s,%2$s,,,,
-                    2026-09-13,Second Match,No Such Club,%1$s,%2$s,,,,
+                    MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
+                    2026-09-12,First Match,Test Club,%1$s,%2$s,,,
+                    2026-09-13,Second Match,No Such Club,%1$s,%2$s,,,
                     """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
             // Act & Assert

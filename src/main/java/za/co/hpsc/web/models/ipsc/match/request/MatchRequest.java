@@ -10,15 +10,9 @@ import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 /**
- * Request to create or update an IPSC match together with its stages in a single call.
- *
- * <p>
- * The {@link MatchStageRequest}s that make it up have their own {@code matchId}, which is
- * typically unset when nested here for a new match, since the match doesn't exist yet.
- * </p>
+ * Request to create or update an IPSC match.
  *
  * @since 1.1.3
  */
@@ -53,8 +47,6 @@ public class MatchRequest {
     private String matchCategory;
     /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
     private String url;
-    /** The stages that make up this match. */
-    private List<MatchStageRequest> stages;
 
     /**
      * Constructs a {@code MatchRequest} from its JSON representation.
@@ -69,7 +61,6 @@ public class MatchRequest {
      *                         {@link za.co.hpsc.web.enums.FirearmType} by name.
      * @param matchCategory    the category/tier of this match; resolved against
      *                         {@link za.co.hpsc.web.enums.MatchCategory} by name.
-     * @param stages           the stages that make up this match.
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
      * @param url              a URL with more information about this match; may be null.
@@ -81,7 +72,6 @@ public class MatchRequest {
                         @JsonProperty("club") String club,
                         @JsonProperty("matchFirearmType") String matchFirearmType,
                         @JsonProperty("matchCategory") String matchCategory,
-                        @JsonProperty("stages") List<MatchStageRequest> stages,
                         @JsonProperty(value = "startTime") LocalTime startTime,
                         @JsonProperty(value = "endTime") LocalTime endTime,
                         @JsonProperty(value = "url") String url) {
@@ -94,6 +84,5 @@ public class MatchRequest {
         this.matchFirearmType = matchFirearmType;
         this.matchCategory = matchCategory;
         this.url = url;
-        this.stages = stages;
     }
 }

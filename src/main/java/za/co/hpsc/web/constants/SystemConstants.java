@@ -33,6 +33,6 @@ public class SystemConstants {
     /** Alias for {@link #ISO_DATE_TIME_FORMAT}, used where a request model's date/time field names its pattern generically. */
     public static final String DEFAULT_DATE_TIME_FORMAT = ISO_DATE_TIME_FORMAT;
 
-    /** Delimiter for CSV array-typed columns and semicolon-joined fields (e.g. email addresses, match stages). */
+    /** Delimiter for CSV array-typed columns and semicolon-joined fields (e.g. email addresses). */
     public static final String ARRAY_SEPARATOR = ";";
 }
