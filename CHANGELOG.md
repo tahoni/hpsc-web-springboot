@@ -78,6 +78,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchService.deleteMatch`:** No longer checks for recorded stage results, as there are none to check — a
   match is still refused deletion while it has competitor results or is referenced by shooter logs
 
+#### 📦 Dependencies
+
+##### Database
+
+- **`mysql-connector-j`:** Pinned to `9.4.0` in `pom.xml` instead of the Spring Boot-managed version
+
 #### 🔧 Configuration
 
 ##### Database
