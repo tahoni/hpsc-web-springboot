@@ -176,6 +176,8 @@ read it before writing or editing any documentation in this repository. Highligh
   "prose, comments, and Javadoc") — see [`AGENTS.md`'s Serial commas rule](AGENTS.md#serial-commas).
 - **Wrap prose lines between 100 and 120 characters**, except inside GFM tables, fenced code blocks and diagrams — see
   [`AGENTS.md`'s Line wrapping rule](AGENTS.md#line-wrapping).
+- **Align every Markdown table column**, padding cells so the `|` separators line up, and re-pad the whole table
+  after any edit — see [`AGENTS.md`'s Table alignment rule](AGENTS.md#table-alignment).
 - Every `##` heading gets a matching emoji, reused from the
   [established icon registry in `AGENTS.md`](AGENTS.md#icons-in-headings) rather than invented fresh.
 - **Javadoc** on every public method documents `@param`, `@return` and `@throws`, uses British English and doesn't
@@ -216,7 +218,9 @@ This repository follows [GitFlow](https://nvie.com/posts/a-successful-git-branch
 - **`develop`** is the current development branch — all day-to-day work lands here first; **`main`** is the
   production branch, updated only by promoting `develop`, or directly from a `hotfix/*` branch or a Dependabot
   security-update PR.
-- **`feature/<short-description>`** — day-to-day work. Branch from, and PR back into, `develop`.
+- **`feature/<short-description>`** — day-to-day new-functionality work. Branch from, and PR back into, `develop`.
+- **`bugfix/<short-description>`** — non-critical bug fixes not yet in production. Branch from, and PR back into,
+  `develop`, same as `feature/*`.
 - **`release/vX.Y.Z`** — cut from `develop` once ready to ship (see [🚢 Cutting a Release](#-cutting-a-release)
   below), PR'd into `develop`; once merged, a second PR promotes `develop` into `main` (see Merging below).
 - **`hotfix/<short-description>`** — urgent production fixes. Branch from, and PR directly into, `main`; also
@@ -230,8 +234,8 @@ directly against `main`.
 
 ### Merging
 
-- **`feature/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit (matching this
-  repo's existing history — no squashing or rebasing) and delete the branch afterwards.
+- **`feature/*`/`bugfix/*` → `develop`:** once the PR is approved and CI passes, merge with a standard merge commit
+  (matching this repo's existing history — no squashing or rebasing) and delete the branch afterwards.
 - **`hotfix/*` → `main` and `develop`:** merge the PR into `main` first so the fix ships immediately. Then open a second
   PR carrying the same commit(s) from the `hotfix/*` branch into `develop`, referencing the original `main` PR in its
   description. Only delete the branch once both merges have landed, so the fix isn't lost when the next
@@ -258,8 +262,9 @@ removed.
 ## 🔬 CI/CD & Quality Gates
 
 See [`ARCHITECTURE.md`'s CI/CD & Quality Gates table](ARCHITECTURE.md#-cicd--quality-gates) for the full gate/tool/
-trigger matrix (CodeQL security analysis, Maven build and tests, JaCoCo coverage, the Docker image build, Maven
-dependency submission, Claude Code automated review and the `@claude` assistant) rather than duplicating it here, so
+trigger matrix (CodeQL security analysis, Qodana static analysis, Maven build and tests, JaCoCo coverage, the Docker
+image build, Maven dependency submission, Claude Code automated review and the `@claude` assistant) rather than
+duplicating it here, so
 the two never drift out of sync.
 
 ---

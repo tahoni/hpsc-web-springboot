@@ -314,6 +314,15 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   without repeating the tests `build.yml` already runs
 - [x] List it in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
 
+**Static analysis returned to CI** *(improvement-plan.md → Gap #32)* — ✅ Closed in v8.12.0
+
+- [x] Provision the `QODANA_TOKEN` repository secret Gap #7's failed runs lacked, and add
+  `.github/workflows/code_quality.yml` running `JetBrains/qodana-action` on every GitFlow branch and on PRs into
+  `main`/`develop`
+- [x] List it in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
+- [x] Correct this plan's Goals & Constraints row and Success Criteria, which still described Qodana as removed
+- [x] ~~Add a `qodana.yaml`~~ — optional and left for later: the default profile passes, so it isn't needed yet
+
 ---
 
 ## 🟡 Partially Completed

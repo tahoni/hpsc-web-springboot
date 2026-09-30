@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValueUtilTest {
+class ValueUtilsTest {
 
     // nullAsDefault(Object, Object)
     @Test
@@ -18,7 +18,7 @@ class ValueUtilTest {
         String value = "Hello";
 
         // Act
-        String result = ValueUtil.nullAsDefault(value, "Default");
+        String result = ValueUtils.nullAsDefault(value, "Default");
 
         // Assert
         assertEquals("Hello", result);
@@ -27,7 +27,7 @@ class ValueUtilTest {
     @Test
     void testNullAsDefault_whenNullString_thenReturnsDefault() {
         // Act
-        String result = ValueUtil.nullAsDefault(null, "Default");
+        String result = ValueUtils.nullAsDefault(null, "Default");
 
         // Assert
         assertEquals("Default", result);
@@ -39,7 +39,7 @@ class ValueUtilTest {
         Integer value = 42;
 
         // Act
-        Integer result = ValueUtil.nullAsDefault(value, 0);
+        Integer result = ValueUtils.nullAsDefault(value, 0);
 
         // Assert
         assertEquals(42, result);
@@ -48,7 +48,7 @@ class ValueUtilTest {
     @Test
     void testNullAsDefault_whenNullInteger_thenReturnsDefault() {
         // Act
-        Integer result = ValueUtil.nullAsDefault(null, 0);
+        Integer result = ValueUtils.nullAsDefault(null, 0);
 
         // Assert
         assertEquals(0, result);
@@ -60,7 +60,7 @@ class ValueUtilTest {
         UUID value = UUID.randomUUID();
 
         // Act
-        UUID result = ValueUtil.nullAsDefault(value, UUID.fromString("00000000-0000-0000-0000-000000000000"));
+        UUID result = ValueUtils.nullAsDefault(value, UUID.fromString("00000000-0000-0000-0000-000000000000"));
 
         // Assert
         assertEquals(value, result);
@@ -69,7 +69,7 @@ class ValueUtilTest {
     @Test
     void testNullAsDefault_whenNullUUID_thenReturnsDefault() {
         // Act
-        UUID result = ValueUtil.nullAsDefault(null, UUID.fromString("00000000-0000-0000-0000-000000000000"));
+        UUID result = ValueUtils.nullAsDefault(null, UUID.fromString("00000000-0000-0000-0000-000000000000"));
 
         // Assert
         assertEquals(UUID.fromString("00000000-0000-0000-0000-000000000000"), result);
@@ -81,7 +81,7 @@ class ValueUtilTest {
         Object value = new Object();
 
         // Act
-        Object result = ValueUtil.nullAsDefault(value, new Object());
+        Object result = ValueUtils.nullAsDefault(value, new Object());
 
         // Assert
         assertEquals(value, result);
@@ -93,7 +93,7 @@ class ValueUtilTest {
         Object defaultValue = new Object();
 
         // Act
-        Object result = ValueUtil.nullAsDefault(null, defaultValue);
+        Object result = ValueUtils.nullAsDefault(null, defaultValue);
 
         // Assert
         assertEquals(defaultValue, result);
@@ -102,7 +102,7 @@ class ValueUtilTest {
     @Test
     void testNullAsDefault_whenNullDefaultValue_thenReturnsNull() {
         // Act
-        Object result = ValueUtil.nullAsDefault(null, null);
+        Object result = ValueUtils.nullAsDefault(null, null);
 
         // Assert
         assertNull(result);
@@ -116,7 +116,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("Hello", result);
@@ -129,7 +129,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("Default", result);
@@ -142,7 +142,7 @@ class ValueUtilTest {
         String defaultValue = null;
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("NonNull", result);
@@ -151,7 +151,7 @@ class ValueUtilTest {
     @Test
     void testNullAsDefaultString_whenValueAndDefaultValueAreNull_thenReturnsNull() {
         // Act
-        String result = ValueUtil.nullAsDefaultString(null, null);
+        String result = ValueUtils.nullAsDefaultString(null, null);
 
         // Assert
         assertNull(result);
@@ -164,7 +164,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("42", result);
@@ -177,7 +177,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("Default", result);
@@ -190,7 +190,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("", result);
@@ -203,7 +203,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("@#$%^&*", result);
@@ -221,7 +221,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("CustomObject", result);
@@ -239,7 +239,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("Default", result);
@@ -252,7 +252,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("true", result);
@@ -265,7 +265,7 @@ class ValueUtilTest {
         String defaultValue = "Default";
 
         // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
+        String result = ValueUtils.nullAsDefaultString(value, defaultValue);
 
         // Assert
         assertEquals("Default", result);
@@ -278,7 +278,7 @@ class ValueUtilTest {
         List<String> input = List.of("a", "b", "c");
 
         // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
+        List<String> result = ValueUtils.nullAsEmptyList(input);
 
         // Assert
         assertEquals(input, result);
@@ -290,7 +290,7 @@ class ValueUtilTest {
         List<String> input = new ArrayList<>();
 
         // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
+        List<String> result = ValueUtils.nullAsEmptyList(input);
 
         // Assert
         assertEquals(input, result);
@@ -302,7 +302,7 @@ class ValueUtilTest {
         List<String> input = new ArrayList<>(List.of("x", "y", "z"));
 
         // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
+        List<String> result = ValueUtils.nullAsEmptyList(input);
 
         // Assert
         assertEquals(input, result);
@@ -312,7 +312,7 @@ class ValueUtilTest {
     @Test
     void testNullAsEmptyList_whenNullList_thenReturnsEmptyList() {
         // Act
-        List<String> result = ValueUtil.nullAsEmptyList(null);
+        List<String> result = ValueUtils.nullAsEmptyList(null);
 
         // Assert
         assertEquals(new ArrayList<>(), result);
@@ -324,7 +324,7 @@ class ValueUtilTest {
         List<Integer> input = List.of(42);
 
         // Act
-        List<Integer> result = ValueUtil.nullAsEmptyList(input);
+        List<Integer> result = ValueUtils.nullAsEmptyList(input);
 
         // Assert
         assertEquals(input, result);
@@ -339,7 +339,7 @@ class ValueUtilTest {
         }
 
         // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
+        List<String> result = ValueUtils.nullAsEmptyList(input);
 
         // Assert
         assertEquals(input, result);
@@ -349,8 +349,8 @@ class ValueUtilTest {
     @Test
     void testNullAsEmptyList_whenReturnedFromNull_thenReturnsNewInstance() {
         // Act
-        List<String> result1 = ValueUtil.nullAsEmptyList(null);
-        List<String> result2 = ValueUtil.nullAsEmptyList(null);
+        List<String> result1 = ValueUtils.nullAsEmptyList(null);
+        List<String> result2 = ValueUtils.nullAsEmptyList(null);
 
         // Assert
         assertEquals(new ArrayList<>(), result1);
@@ -368,7 +368,7 @@ class ValueUtilTest {
         String expected = "123";
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(value);
+        String result = ValueUtils.nullAsEmptyString(value);
 
         // Assert
         assertEquals(expected, result);
@@ -386,7 +386,7 @@ class ValueUtilTest {
         String expected = "CustomObject";
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(value);
+        String result = ValueUtils.nullAsEmptyString(value);
 
         // Assert
         assertEquals(expected, result);
@@ -395,7 +395,7 @@ class ValueUtilTest {
     @Test
     void testNullAsEmptyString_whenNullObject_thenReturnsEmptyString() {
         // Act
-        String result = ValueUtil.nullAsEmptyString((Object) null);
+        String result = ValueUtils.nullAsEmptyString((Object) null);
 
         // Assert
         assertEquals("", result);
@@ -412,7 +412,7 @@ class ValueUtilTest {
         };
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(value);
+        String result = ValueUtils.nullAsEmptyString(value);
 
         // Assert
         assertEquals("CustomStringRepresentation", result);
@@ -421,7 +421,7 @@ class ValueUtilTest {
     @Test
     void testNullAsEmptyString_whenBoolean_thenReturnsStringValue() {
         // Act
-        String result = ValueUtil.nullAsEmptyString(true);
+        String result = ValueUtils.nullAsEmptyString(true);
 
         // Assert
         assertEquals("true", result);
@@ -433,7 +433,7 @@ class ValueUtilTest {
         Object value = 3.14159;
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(value);
+        String result = ValueUtils.nullAsEmptyString(value);
 
         // Assert
         assertEquals("3.14159", result);
@@ -446,7 +446,7 @@ class ValueUtilTest {
         String input = "Hello, World!";
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(input);
+        String result = ValueUtils.nullAsEmptyString(input);
 
         // Assert
         assertEquals(input, result);
@@ -458,7 +458,7 @@ class ValueUtilTest {
         String input = "";
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(input);
+        String result = ValueUtils.nullAsEmptyString(input);
 
         // Assert
         assertEquals(input, result);
@@ -470,7 +470,7 @@ class ValueUtilTest {
         String input = "   ";
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(input);
+        String result = ValueUtils.nullAsEmptyString(input);
 
         // Assert
         assertEquals(input, result);
@@ -482,7 +482,7 @@ class ValueUtilTest {
         String input = "@#$%^&*()";
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(input);
+        String result = ValueUtils.nullAsEmptyString(input);
 
         // Assert
         assertEquals(input, result);
@@ -491,7 +491,7 @@ class ValueUtilTest {
     @Test
     void testNullAsEmptyString_whenNullString_thenReturnsEmptyString() {
         // Act
-        String result = ValueUtil.nullAsEmptyString(null);
+        String result = ValueUtils.nullAsEmptyString(null);
 
         // Assert
         assertEquals("", result);
@@ -503,7 +503,7 @@ class ValueUtilTest {
         String input = "Hello 世界 🌍";
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(input);
+        String result = ValueUtils.nullAsEmptyString(input);
 
         // Assert
         assertEquals(input, result);
@@ -515,7 +515,7 @@ class ValueUtilTest {
         String input = "A".repeat(10000);
 
         // Act
-        String result = ValueUtil.nullAsEmptyString(input);
+        String result = ValueUtils.nullAsEmptyString(input);
 
         // Assert
         assertEquals(input, result);
@@ -528,7 +528,7 @@ class ValueUtilTest {
         UUID input = UUID.randomUUID();
 
         // Act
-        UUID result = ValueUtil.nullAsRandomUuid(input);
+        UUID result = ValueUtils.nullAsRandomUuid(input);
 
         // Assert
         assertEquals(input, result);
@@ -537,7 +537,7 @@ class ValueUtilTest {
     @Test
     void testNullAsRandomUuid_whenNullValue_thenReturnsRandomUuid() {
         // Act
-        UUID result = ValueUtil.nullAsRandomUuid(null);
+        UUID result = ValueUtils.nullAsRandomUuid(null);
 
         // Assert
         assertNotNull(result);
@@ -546,8 +546,8 @@ class ValueUtilTest {
     @Test
     void testNullAsRandomUuid_whenMultipleNullCalls_thenReturnsDifferentUuids() {
         // Act
-        UUID result1 = ValueUtil.nullAsRandomUuid(null);
-        UUID result2 = ValueUtil.nullAsRandomUuid(null);
+        UUID result1 = ValueUtils.nullAsRandomUuid(null);
+        UUID result2 = ValueUtils.nullAsRandomUuid(null);
 
         // Assert
         assertNotNull(result1);
@@ -564,7 +564,7 @@ class ValueUtilTest {
         Integer input = 42;
 
         // Act
-        int result = ValueUtil.nullAsZero(input);
+        int result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(42, result);
@@ -573,7 +573,7 @@ class ValueUtilTest {
     @Test
     void testNullAsZero_whenIntegerIsNull_thenReturnsZero() {
         // Act
-        int result = ValueUtil.nullAsZero((Integer) null);
+        int result = ValueUtils.nullAsZero((Integer) null);
 
         // Assert
         assertEquals(0, result);
@@ -586,7 +586,7 @@ class ValueUtilTest {
         Long input = 987654321L;
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(987654321L, result);
@@ -595,7 +595,7 @@ class ValueUtilTest {
     @Test
     void testNullAsZero_whenLongIsNull_thenReturnsZero() {
         // Act
-        long result = ValueUtil.nullAsZero((Long) null);
+        long result = ValueUtils.nullAsZero((Long) null);
 
         // Assert
         assertEquals(0L, result);
@@ -608,7 +608,7 @@ class ValueUtilTest {
         String input = "12345";
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(12345L, result);
@@ -620,7 +620,7 @@ class ValueUtilTest {
         String input = "-5000";
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(-5000L, result);
@@ -632,7 +632,7 @@ class ValueUtilTest {
         String input = "0";
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(0L, result);
@@ -641,7 +641,7 @@ class ValueUtilTest {
     @Test
     void testNullAsZero_whenNullString_thenReturnsZero() {
         // Act
-        long result = ValueUtil.nullAsZero((String) null);
+        long result = ValueUtils.nullAsZero((String) null);
 
         // Assert
         assertEquals(0L, result);
@@ -653,7 +653,7 @@ class ValueUtilTest {
         String input = "not a number";
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(0L, result);
@@ -665,7 +665,7 @@ class ValueUtilTest {
         String input = "   ";
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(0L, result);
@@ -677,7 +677,7 @@ class ValueUtilTest {
         String input = "";
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(0L, result);
@@ -689,7 +689,7 @@ class ValueUtilTest {
         String input = "123.45";
 
         // Act
-        long result = ValueUtil.nullAsZero(input);
+        long result = ValueUtils.nullAsZero(input);
 
         // Assert
         assertEquals(0L, result);
@@ -702,7 +702,7 @@ class ValueUtilTest {
         String input = "123.45";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(new BigDecimal("123.45"), result);
@@ -714,7 +714,7 @@ class ValueUtilTest {
         String input = "1E+3";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(new BigDecimal("1E+3"), result);
@@ -723,7 +723,7 @@ class ValueUtilTest {
     @Test
     void testNullAsZeroBigDecimal_whenNullString_thenReturnsZero() {
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(null);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(null);
 
         // Assert
         assertEquals(BigDecimal.ZERO, result);
@@ -735,7 +735,7 @@ class ValueUtilTest {
         String input = "abc123";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(BigDecimal.ZERO, result);
@@ -747,7 +747,7 @@ class ValueUtilTest {
         String input = "   ";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(BigDecimal.ZERO, result);
@@ -759,7 +759,7 @@ class ValueUtilTest {
         String input = "999999999999999.123456789";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(new BigDecimal("999999999999999.123456789"), result);
@@ -771,7 +771,7 @@ class ValueUtilTest {
         String input = "-42.5";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(new BigDecimal("-42.5"), result);
@@ -783,7 +783,7 @@ class ValueUtilTest {
         String input = "0";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(BigDecimal.ZERO, result);
@@ -795,7 +795,7 @@ class ValueUtilTest {
         String input = "12@34.56";
 
         // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
+        BigDecimal result = ValueUtils.nullAsZeroBigDecimal(input);
 
         // Assert
         assertEquals(BigDecimal.ZERO, result);

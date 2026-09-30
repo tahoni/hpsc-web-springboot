@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NumberUtilTest {
+public class NumberUtilsTest {
 
     // calculatePercentage(BigDecimal, BigDecimal)
     @Test
@@ -22,7 +22,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtils.calculatePercentage(part, total);
 
         // Assert
         assertEquals(expected, result);
@@ -37,7 +37,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtils.calculatePercentage(part, total);
 
         // Assert
         assertEquals(expected, result);
@@ -52,7 +52,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtils.calculatePercentage(part, total);
 
         // Assert
         assertEquals(expected, result);
@@ -67,7 +67,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtils.calculatePercentage(part, total);
 
         // Assert
         assertEquals(expected, result);
@@ -82,7 +82,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtils.calculatePercentage(part, total);
 
         // Assert
         assertEquals(expected, result);
@@ -96,7 +96,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, null);
+        BigDecimal result = NumberUtils.calculatePercentage(part, null);
 
         // Assert
         assertEquals(expected, result);
@@ -115,7 +115,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(values);
+        BigDecimal result = NumberUtils.calculateSum(values);
 
         // Assert
         assertEquals(expected, result);
@@ -133,7 +133,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(values);
+        BigDecimal result = NumberUtils.calculateSum(values);
 
         // Assert
         assertEquals(expected, result);
@@ -146,7 +146,7 @@ public class NumberUtilTest {
         BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(values);
+        BigDecimal result = NumberUtils.calculateSum(values);
 
         // Assert
         assertEquals(expected, result);
@@ -158,7 +158,7 @@ public class NumberUtilTest {
         BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(null);
+        BigDecimal result = NumberUtils.calculateSum(null);
 
         // Assert
         assertEquals(expected, result);
@@ -173,7 +173,7 @@ public class NumberUtilTest {
         String expected = "123.46";
 
         // Act
-        String result = NumberUtil.formatBigDecimal(value, scale);
+        String result = NumberUtils.formatBigDecimal(value, scale);
 
         // Assert
         assertEquals(expected, result);
@@ -187,7 +187,7 @@ public class NumberUtilTest {
         String expected = "100.00";
 
         // Act
-        String result = NumberUtil.formatBigDecimal(value, scale);
+        String result = NumberUtils.formatBigDecimal(value, scale);
 
         // Assert
         assertEquals(expected, result);
@@ -201,7 +201,7 @@ public class NumberUtilTest {
         String expected = "123.45";
 
         // Act
-        String result = NumberUtil.formatBigDecimal(value, scale);
+        String result = NumberUtils.formatBigDecimal(value, scale);
 
         // Assert
         assertEquals(expected, result);
@@ -215,7 +215,7 @@ public class NumberUtilTest {
         String expected = "124";
 
         // Act
-        String result = NumberUtil.formatBigDecimal(value, scale);
+        String result = NumberUtils.formatBigDecimal(value, scale);
 
         // Assert
         assertEquals(expected, result);
@@ -228,7 +228,7 @@ public class NumberUtilTest {
         String expected = "0.00";
 
         // Act
-        String result = NumberUtil.formatBigDecimal(null, scale);
+        String result = NumberUtils.formatBigDecimal(null, scale);
 
         // Assert
         assertEquals(expected, result);

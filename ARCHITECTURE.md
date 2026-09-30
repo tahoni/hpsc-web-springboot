@@ -57,7 +57,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   └───skills/                 # Claude Code skill definitions, one SKILL.md per skill
 ├───.github/
 │   ├───dependabot.yml          # Dependabot version updates (Maven, GitHub Actions) targeting develop
-│   └───workflows/              # GitHub Actions — CI/CD, security analysis, dependency submission and automated review
+│   └───workflows/              # GitHub Actions — CI/CD, security and static analysis, dependency submission and automated review
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
@@ -73,6 +73,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   ├───domain/             # JPA entities (database tables)
 │   │   ├───enums/              # Domain enumerations
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
+│   │   ├───helpers/            # Domain-specific normalisation helpers
 │   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response/shared models
 │   │   │   ├───image/          # Image gallery request/response models
@@ -100,6 +101,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───domain/                 # Entity unit tests (bidirectional toString/equals/hashCode safety)
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
+    ├───helpers/                # Helper unit tests
     ├───models/                 # DTO / model unit tests
     ├───repositories/           # Repository query and JPA mapping integration tests (H2)
     ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
@@ -286,12 +288,18 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 #### Utilities (`za.co.hpsc.web.utils`)
 
-| Class        | Responsibility                                              |
-|--------------|-------------------------------------------------------------|
-| `DateUtil`   | Date formatting and parsing helpers                         |
-| `NumberUtil` | Numeric parsing and formatting helpers                      |
-| `StringUtil` | String normalisation helpers                                |
-| `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
+| Class         | Responsibility                                              |
+|---------------|-------------------------------------------------------------|
+| `DateUtils`   | Date formatting and parsing helpers                         |
+| `NumberUtils` | Numeric parsing and formatting helpers                      |
+| `StringUtils` | String normalisation helpers                                |
+| `ValueUtils`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
+
+#### Helpers (`za.co.hpsc.web.helpers`)
+
+| Class               | Responsibility                                                 |
+|---------------------|----------------------------------------------------------------|
+| `CompetitorHelpers` | Competitor detail normalisation (e.g. last name particle case) |
 
 #### Constants (`za.co.hpsc.web.constants`)
 
@@ -404,7 +412,7 @@ Client uploads CSV (Content-Type: text/csv)
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | **Scalability**     | Stateless REST design; database-backed persistence allows horizontal scaling                                                          |
 | **Maintainability** | Strict layering, package-by-feature model structure, Javadoc and CLAUDE.md guidance                                                   |
-| **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
+| **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtils` null-safe helpers                      |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
 | **Extensibility**   | Firearm-type enums + division mappings, enum `AttributeConverter`s with `fromX` lookups                                               |
 | **Data Integrity**  | Cascade only `IpscMatch`→`IpscMatchStage`, reject-not-cascade deletes elsewhere, `TransactionService` commits, attribute converters   |
@@ -416,11 +424,12 @@ Client uploads CSV (Content-Type: text/csv)
 
 | Gate                      | Tool                                                                                                      | Trigger                                                                                  |
 |---------------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| **Security Analysis**     | CodeQL                                                                                                    | Push / PR to `main` / `develop`; weekly schedule                                         |
+| **Security Analysis**     | CodeQL                                                                                                    | Push to any GitFlow branch / PR to `main` / `develop`; weekly schedule                   |
+| **Static Analysis**       | Qodana (`JetBrains/qodana-action`), via `.github/workflows/code_quality.yml`                              | Push to any GitFlow branch / PR to `main` / `develop`; manual dispatch                   |
 | **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                                     | Push / PR to `main` / `develop`; H2 in-memory — no external DB required                  |
 | **Code Coverage**         | JaCoCo, minimum 97% line and branch coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)   | Enforced automatically as part of the `Build & Tests` gate above                         |
 | **Docker Image**          | `docker/build-push-action` (build only, never pushed), via `.github/workflows/docker.yml`                 | Push / PR to `main` / `develop`                                                          |
-| **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to `main` / `develop`; manual dispatch                                              |
+| **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to any GitFlow branch; manual dispatch                                              |
 | **Automated Code Review** | Claude Code's `code-review` plugin, via `.github/workflows/claude-code-review.yml`                        | Every PR opened, updated, marked ready or reopened, Dependabot's included; advisory only |
 | **AI Assistant**          | Claude Code, via `.github/workflows/claude.yml`                                                           | An `@claude` mention in an issue, PR comment or PR review                                |
 

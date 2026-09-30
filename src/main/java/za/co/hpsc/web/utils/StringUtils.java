@@ -1,19 +1,21 @@
 package za.co.hpsc.web.utils;
 
+import org.apache.commons.text.WordUtils;
+
 import java.util.Map;
 
 /**
  * Utility class for string operations.
  *
  * <p>
- * The {@code StringUtil} class offers static methods for common string-related tasks. These methods
+ * The {@code StringUtils} class offers static methods for common string-related tasks. These methods
  * are designed to handle various use cases where string manipulation is required.
  * </p>
  *
  * @since 1.1.3
  */
-public final class StringUtil {
-    private StringUtil() {
+public final class StringUtils {
+    private StringUtils() {
         // Utility class, not to be instantiated
     }
 
@@ -60,5 +62,22 @@ public final class StringUtil {
         }
 
         return object.toString();
+    }
+
+    /**
+     * Converts a string to proper case: the first letter of each word upper case, the rest lower
+     * case. Words are delimited by whitespace, hyphens and apostrophes (straight or curly, as spreadsheets often
+     * produce), so {@code "o'NEIL-smith"} becomes {@code "O'Neil-Smith"}.
+     *
+     * @param value the string to convert; may be null.
+     * @return the proper-cased string, or null if {@code value} is null.
+     * @since 8.12.0
+     */
+    public static String toProperCase(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return WordUtils.capitalizeFully(value, ' ', '\t', '-', '\'', '’');
     }
 }

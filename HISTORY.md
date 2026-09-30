@@ -21,6 +21,40 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 8.12.0 (September 29, 2026)
+
+**Theme:** Competitor CSV Import Casing Normalisation
+
+**Key Focus:**
+
+- New `StringUtils.toProperCase`, backed by the new `org.apache.commons:commons-text` dependency's `WordUtils`,
+  upper-cases the first letter of each word and lower-cases the rest, treating spaces, hyphens and apostrophes as
+  word breaks
+- New `za.co.hpsc.web.helpers` package and its first class, `CompetitorHelpers`, lower-cases surname particles
+  (`van`, `der`, `du`, `de`, `le` and the like) when they precede the surname proper, so `Van Der Merwe` becomes
+  `van der Merwe` (also after a hyphen), and capitalises the letter after a Gaelic `Mc` prefix (`McDonald`),
+  without touching a surname that merely starts with particle letters (`Dube`, `Vanderbilt`) or a Zulu `Mch`/`Mcu`
+  surname (`Mchunu`)
+- `IpscCompetitorServiceImpl.toRequest` now proper-cases the competitor CSV import's free-text columns
+  (`FirstName`, `LastName`, `MiddleNames`, `Nickname`, `Gender`) before passing the `LastName` through the new
+  particle-casing helper, so imported names read consistently regardless of how they were typed in the source
+  spreadsheet; `HomeClub`, `ClubNumber`, `CompetitorNumber`, `IdNumber`, `CellphoneNumber` and `EmailAddresses` are
+  kept as supplied, and the JSON create/update/patch endpoints are unaffected
+- `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` renamed to `DateUtils`, `NumberUtils`, `StringUtils` and
+  `ValueUtils` (and their test classes to match) — internal classes only, so there is no API change
+- New `.github/workflows/code_quality.yml` runs Qodana static analysis on every GitFlow branch and PRs into
+  `main`/`develop`, and the CodeQL and dependency-submission workflows' push triggers now cover `release/*`,
+  `feature/*`, `bugfix/*` and `hotfix/*` too
+- Dependabot's `github-actions` group update (PR #152) bumps `docker/setup-buildx-action` to `v4` and
+  `docker/build-push-action` to `v7` in `docker.yml`, merged into `develop` and then into the release branch
+- `AGENTS.md` and `CONTRIBUTING.md` add `bugfix/<short-description>` as its own standard GitFlow branch type
+- The release's improvement-plan sweep recorded Gap #32 for Qodana's return to CI, which the plan still described as
+  removed, and closed it — Gap #6 remains the only open gap, with #26 still waiting on a Spring Boot release that
+  manages Tomcat `11.0.25`
+- Scoped as `v8.12.0` **MINOR**: a backward-compatible new import-formatting capability, with no existing endpoint,
+  request/response contract or configuration property changed
+- Project version bumped to 8.12.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 8.11.1 (September 27, 2026)
 
 **Theme:** Docker Image Build in CI & Branch Coverage Gate
@@ -1410,6 +1444,20 @@ and fixed the schema migrations the documentation had long assumed were running.
 **Achievement:** Made a broken image fail a pull request rather than a deployment, and a branch-coverage regression
 fail the build rather than slip through.
 
+### Milestone 41: Competitor CSV Import Casing Normalisation (v8.12.0)
+
+- The competitor CSV import proper-cases its free-text columns and lower-cases surname particles, so imported names
+  read consistently regardless of how they were typed in the source spreadsheet
+- The new `za.co.hpsc.web.helpers` package establishes a home for competitor-specific normalisation logic, separate
+  from the general-purpose `za.co.hpsc.web.utils` classes it builds on
+- `Util` classes renamed to `Utils`, closing a naming inconsistency with the rest of the codebase's plural utility
+  class names
+- A Qodana static-analysis workflow, and CodeQL/dependency-submission triggers widened to every GitFlow branch, bring
+  CI feedback to the branch where a problem is introduced
+
+**Achievement:** Made bulk-imported competitor data consistent to read regardless of how the source spreadsheet was
+typed, without changing the CSV format or JSON endpoints consumers already rely on.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1984,7 +2032,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - **Version 7.x (v7.0.0 – v7.4.0):** Rebuild IPSC domain-layer groundwork deliberately ahead of the service/controller
   layer — which had since been removed pending a rebuild — while investing in process discipline: formalised test
   conventions, AI-agent tooling and increasingly rigorous documentation accuracy and consistency.
-- **Version 8.x (v8.0.0 – v8.11.1):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
+- **Version 8.x (v8.0.0 – v8.12.0):** Complete the IPSC module rebuild that v6.x–v7.x deliberately deferred — real
   competitor and match CRUD replacing the empty controller stub — while consolidating the project's own documentation
   (`AGENTS.md`/`CLAUDE.md` merge) and AI-agent tooling (commands → Skills) into a single, coherent source of truth.
   Extend that foundation with competitor bulk CSV import and a project-wide correctness fix ensuring
@@ -2012,7 +2060,9 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   with its own MySQL database and an Actuator health endpoint — and, in running it against an empty database, make
   Flyway's migrations actually run at startup as the documentation had always described, then build that image on
   every pull request so a broken `Dockerfile` fails CI rather than a deployment, and hold branch coverage to the same
-  97% floor as line coverage.
+  97% floor as line coverage. Then normalise the competitor CSV import's casing — proper-casing free-text columns and
+  lower-casing surname particles — so imported data reads consistently regardless of how it was typed, backed by a
+  new `helpers` package and an internal `Util` → `Utils` naming clean-up.
 
 ### Initial Phase (v1.0.0)
 
@@ -2276,7 +2326,7 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.11.1, the following areas are identified for future enhancement:
+Based on the evolution to v8.12.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2573,13 +2623,29 @@ Based on the evolution to v8.11.1, the following areas are identified for future
 - Gap #30 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.11.1)
+### Previously Completed (v8.11.1)
 
 - New `.github/workflows/docker.yml` builds the `Dockerfile` on every push and PR to `main`/`develop` (build only,
   never pushed, cached through GitHub Actions), listed in `ARCHITECTURE.md`'s CI/CD & Quality Gates table
 - The JaCoCo coverage gate enforces a 97% `BRANCH` minimum beside the `LINE` one
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Recently Completed (v8.12.0)
+
+- New `StringUtils.toProperCase` (backed by the new `commons-text` dependency) and `CompetitorHelpers.toSentenceCaseLastName`
+  (the new `za.co.hpsc.web.helpers` package's first class) normalise casing on competitor CSV import
+- `IpscCompetitorServiceImpl.toRequest` proper-cases the CSV import's free-text columns and lower-cases surname
+  particles, leaving `HomeClub`, `ClubNumber`, `CompetitorNumber` and `EmailAddresses` as supplied
+- `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` renamed to `DateUtils`, `NumberUtils`, `StringUtils` and
+  `ValueUtils`, closing a naming inconsistency
+- New Qodana workflow, CodeQL/dependency-submission triggers widened to every GitFlow branch, and `bugfix/*` documented
+  as a standard branch type
+- Dependabot bumps `docker/setup-buildx-action` to `v4` and `docker/build-push-action` to `v7` in `docker.yml`
+- Gap #32 (the plan still describing Qodana as removed, after `code_quality.yml` brought it back to CI) recorded and
+  closed — Gap #6 remains the only open gap, with #26 still waiting on a Spring Boot release that manages Tomcat
+  `11.0.25`
+- Project version bumped to 8.12.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Short-term (Minor Releases)
 
