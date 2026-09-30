@@ -30,7 +30,7 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public class MatchRequestForCSV {
+public class MatchRequestCsv {
     /**
      * Date the match was/will be shot.
      */
@@ -73,7 +73,7 @@ public class MatchRequestForCSV {
     private String url;
 
     /**
-     * Constructs a {@code MatchRequestForCSV} from its CSV/JSON representation.
+     * Constructs a {@code MatchRequestCsv} from its CSV/JSON representation.
      *
      * <p>
      * Each parameter is bound to its {@link PropertyNamingStrategies.UpperCamelCaseStrategy}
@@ -96,14 +96,14 @@ public class MatchRequestForCSV {
      * @param url              a URL with more information about this match; may be null.
      */
     @JsonCreator
-    public MatchRequestForCSV(@JsonProperty(value = "MatchDate", required = true) LocalDate matchDate,
-                              @JsonProperty(value = "MatchName", required = true) String matchName,
-                              @JsonProperty("Club") String club,
-                              @JsonProperty("MatchFirearmType") String matchFirearmType,
-                              @JsonProperty("MatchCategory") String matchCategory,
-                              @JsonProperty(value = "StartTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT) LocalTime startTime,
-                              @JsonProperty(value = "EndTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT) LocalTime endTime,
-                              @JsonProperty(value = "Url") String url) {
+    public MatchRequestCsv(@JsonProperty(value = "MatchDate", required = true) LocalDate matchDate,
+                           @JsonProperty(value = "MatchName", required = true) String matchName,
+                           @JsonProperty("Club") String club,
+                           @JsonProperty("MatchFirearmType") String matchFirearmType,
+                           @JsonProperty("MatchCategory") String matchCategory,
+                           @JsonProperty(value = "StartTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT) LocalTime startTime,
+                           @JsonProperty(value = "EndTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT) LocalTime endTime,
+                           @JsonProperty(value = "Url") String url) {
         this.matchDate = matchDate;
         this.startTime = startTime;
         this.endTime = endTime;

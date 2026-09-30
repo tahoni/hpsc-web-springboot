@@ -19,7 +19,7 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
-import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestForCSV;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsv;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.services.IpscCompetitorService;
@@ -115,7 +115,7 @@ public class IpscCompetitorController {
     ResponseEntity<CompetitorResponseHolder> createCompetitors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/csv",
-                            schema = @Schema(implementation = CompetitorRequestForCSV.class),
+                            schema = @Schema(implementation = CompetitorRequestCsv.class),
                             examples = @ExampleObject("""
                                     FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                                     string,string,string,string,yyyy-MM-dd,string,string,0,string,string,string,string,string;string,false,false

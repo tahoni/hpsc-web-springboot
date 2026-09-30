@@ -70,13 +70,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Match API
 
-- **Breaking — `MatchRequest`, `MatchResponse`, `MatchRequestForCSV`:** The `stages` field is gone from all three. A
+- **Breaking — `MatchRequest`, `MatchResponse`, `MatchRequestForCsvMixin`:** The `stages` field is gone from all three. A
   match request or response no longer carries stages, and the bulk CSV import no longer has a `Stages` column, so a CSV
   that still includes one is rejected as invalid
 - **`TransactionService.saveMatch`:** The `saveMatch(IpscMatch, List, StageSaveMode)` overload and the `StageSaveMode`
   enum are removed along with the stage replace/upsert logic — `saveMatch(IpscMatch)` is the only single-match save
 - **`IpscMatchService.deleteMatch`:** No longer checks for recorded stage results, as there are none to check — a
   match is still refused deletion while it has competitor results or is referenced by shooter logs
+- **`MatchRequestCsv`, `MatchRequestCsvMixIn`:** `MatchRequestForCSV` renamed to `MatchRequestCsv`, with a new Jackson
+  mix-in binding the CSV column headers onto `MatchRequest`'s constructor — the accepted CSV columns are unchanged
+
+##### Competitor API
+
+- **`CompetitorRequestCsv`, `CompetitorRequestCsvMixIn`:** `CompetitorRequestForCSV` renamed to
+  `CompetitorRequestCsv`, with a new Jackson mix-in binding the CSV column headers onto `CompetitorRequest`'s
+  constructor
+- **`IpscCompetitorServiceImpl.readCompetitors`:** The CSV schema now sets the shared array element separator
+  explicitly — `EmailAddresses` still splits on the same character
 
 #### 📦 Dependencies
 
@@ -453,7 +463,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### API Models
 
-- **`CompetitorRequest`, `CompetitorRequestForCSV`, `CompetitorResponse`:** New `paidUpSapsa`/`paidUpClub` fields;
+- **`CompetitorRequest`, `CompetitorRequestCsvMixIn`, `CompetitorResponse`:** New `paidUpSapsa`/`paidUpClub` fields;
   an omitted flag is stored as `null` on create/update and left unchanged on patch
 
 ##### Database
@@ -464,7 +474,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Tests
 
 - **`IpscCompetitorServiceIntegrationTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceImplTest`,
-  `CompetitorRequestTest`, `CompetitorRequestForCSVTest`:** Cover the new paid-up flags
+  `CompetitorRequestTest`, `CompetitorRequestCsvMixinTest`:** Cover the new paid-up flags
 - **`TransactionServiceImplTest`:** New unit tests for every commit method, including rollback on failure, and the
   stage replace/upsert logic moved from `IpscMatchServiceImplTest`
 - **`IpscMatchServiceIntegrationTest`, `IpscCompetitorServiceIntegrationTest`:** New tests run with no surrounding
@@ -696,7 +706,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
-- **`IpscMatchController`, `MatchRequestForCSV`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
+- **`IpscMatchController`, `MatchRequestForCsvMixin`, `improvement-plan.md`, `improvement-plan-tasks.md`:** Bulk CSV
   Swagger example, Javadoc and roadmap references updated to the `<stageNumber>:<stageName>` format
 - **`improvement-plan.md`:** "🌳 At a Glance" lists Gap #12 as a second ⚪ Open gap, the "🛤️ Roadmap" table's **Next** row
   points at it instead of the "no items currently scoped" placeholder and "☑️ Success Criteria" gains
@@ -841,7 +851,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### API Models
 
-- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** New nullable `url` field
+- **`MatchRequest`, `MatchRequestForCsvMixin`, `MatchResponse`:** New nullable `url` field
 
 ##### Database
 
@@ -850,7 +860,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Tests
 
 - **`IpscMatchServiceIntegrationTest`, `IpscMatchServiceTest`, `IpscMatchServiceImplTest`, `MatchRequestTest`,
-  `MatchRequestForCSVTest`:** `url` now flows through each fixture/CSV row and is asserted in the create/patch/
+  `MatchRequestForCsvMixinTest`:** `url` now flows through each fixture/CSV row and is asserted in the create/patch/
   update/get happy-path tests, proving it round-trips through JSON, CSV import and the real H2/Hibernate/JPA layer
 
 #### 🔄 Changed
@@ -862,7 +872,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### API Models
 
-- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** `startTime`/`endTime` changed from `LocalDateTime` to
+- **`MatchRequest`, `MatchRequestForCsvMixin`, `MatchResponse`:** `startTime`/`endTime` changed from `LocalDateTime` to
   `LocalTime`, now formatted per the new `IpscConstants.IPSC_INPUT_TIME_FORMAT` (`HH:mm`) instead of
   `IPSC_INPUT_DATE_TIME_FORMAT` (`yyyy-MM-dd HH:mm`)
 - **`IpscMatchController`:** `createMatches`'s OpenAPI CSV example's `StartTime`/`EndTime` columns updated to the
@@ -876,20 +886,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### API
 
 - **CSV bulk import (`POST /matches/csv`):** The header row must now include a `Url` column, like every other
-  `MatchRequestForCSV` property — existing CSV templates need updating to add it (values may be left blank)
+  `MatchRequestForCsvMixin` property — existing CSV templates need updating to add it (values may be left blank)
 - **JSON/CSV `startTime`/`endTime`:** Now accepted/returned as bare `HH:mm` time-of-day values instead of
   `yyyy-MM-dd HH:mm` — existing CSV templates and API clients need updating to drop the date component
 
 ##### Tests
 
 - **`IpscMatchServiceIntegrationTest`, `IpscMatchServiceTest`, `IpscMatchServiceImplTest`, `MatchRequestTest`,
-  `MatchRequestForCSVTest`:** `startTime`/`endTime` fixtures, CSV rows and JSON payloads updated from
+  `MatchRequestForCsvMixinTest`:** `startTime`/`endTime` fixtures, CSV rows and JSON payloads updated from
   `LocalDateTime`/`yyyy-MM-dd HH:mm` to `LocalTime`/`HH:mm`
 
 ##### Services
 
 - **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `url` through
-  between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
+  between `MatchRequest`/`MatchRequestForCsvMixin`, `IpscMatch` and `MatchResponse`
 
 ##### Documentation
 
@@ -977,7 +987,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### API Models
 
-- **`MatchRequest`, `MatchRequestForCSV`, `MatchResponse`:** New nullable `startTime`/`endTime` fields, formatted per
+- **`MatchRequest`, `MatchRequestForCsvMixin`, `MatchResponse`:** New nullable `startTime`/`endTime` fields, formatted per
   `IpscConstants.IPSC_INPUT_DATE_TIME_FORMAT` (`yyyy-MM-dd HH:mm`) on the two request DTOs
 - **`IpscMatchController`:** `createMatches`'s OpenAPI CSV example now includes the new `StartTime`/`EndTime` columns
 
@@ -1002,13 +1012,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### API
 
 - **CSV bulk import (`POST /matches/csv`):** The header row must now include `StartTime`/`EndTime` columns, like
-  every other `MatchRequestForCSV` property — consistent with this endpoint's existing all-columns-required header
+  every other `MatchRequestForCsvMixin` property — consistent with this endpoint's existing all-columns-required header
   validation, but existing CSV templates need updating to add them (values may be left blank)
 
 ##### Services
 
 - **`IpscMatchServiceImpl`:** `applyFields`, `patchMatch`, `toRequest` and `toResponse` now carry `startTime`/
-  `endTime` through between `MatchRequest`/`MatchRequestForCSV`, `IpscMatch` and `MatchResponse`
+  `endTime` through between `MatchRequest`/`MatchRequestForCsvMixin`, `IpscMatch` and `MatchResponse`
 
 ##### Documentation
 
@@ -1294,12 +1304,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Models
 
-- **`AwardRequestForCSV`, `CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`, `MatchRequestForCSV`:**
+- **`AwardRequestForCSV`, `CompetitorRequest`, `CompetitorRequestCsvMixIn`, `MatchRequest`, `MatchRequestForCsvMixin`:**
   Each `LocalDate` field's `@JsonFormat(pattern = ...)` now points at `SystemConstants.DEFAULT_DATE_FORMAT`
   (`AwardRequestForCSV.date`) or `IpscConstants.IPSC_INPUT_DATE_FORMAT` (the IPSC competitor/match classes'
   `dateOfBirth`/`matchDate`) instead of the now-removed `HpscConstants.HPSC_INPUT_DATE_FORMAT` — every constant
   resolves to the same `"yyyy-MM-dd"` pattern, so the accepted input format itself is unchanged
-- **`MatchRequest`/`MatchRequestForCSV`:** `club` field/constructor-param Javadoc now documents the new
+- **`MatchRequest`/`MatchRequestForCsvMixin`:** `club` field/constructor-param Javadoc now documents the new
   default-to-`IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER` behaviour above, instead of implying the name is
   always resolved against an existing club
 
@@ -1479,7 +1489,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Services
 
 - **`IpscMatchService`/`IpscMatchServiceImpl`:** New `createMatches` method that parses CSV data into
-  `MatchRequestForCSV` rows and creates each match via the existing `createMatch` validation/club/
+  `MatchRequestForCsvMixin` rows and creates each match via the existing `createMatch` validation/club/
   firearm-type/category-resolution logic; new `readMatches` and `toRequest` protected helpers mirror
   `IpscCompetitorServiceImpl`'s CSV-parsing pattern, and a new `parseStages` helper splits a row's
   semicolon-separated `Stages` cell into `MatchStageRequest`s, splitting each entry on its first `-` into
@@ -1487,9 +1497,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Models
 
-- **`MatchRequestForCSV`:** New class-level Javadoc and `@JsonCreator` constructor, binding `MatchDate`/
+- **`MatchRequestForCsvMixin`:** New class-level Javadoc and `@JsonCreator` constructor, binding `MatchDate`/
   `MatchName`/`Club`/`MatchFirearmType`/`MatchCategory`/`Stages` to their `UpperCamelCase`
-  column/property names for CSV/JSON deserialization — matching `CompetitorRequestForCSV`'s
+  column/property names for CSV/JSON deserialization — matching `CompetitorRequestCsvMixIn`'s
   pattern. The `stages` field is a single semicolon-separated CSV cell of
   `<stageNumber>-<stageName>` entries (e.g. `"1-Stage One;2-Stage Two"`)
 - **`MatchResponseHolder`:** New response container (`models/ipsc/match/response/`) holding the
@@ -1497,7 +1507,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
-- **`MatchRequestForCSVTest`:** New tests covering `MatchRequestForCSV`'s `UpperCamelCase` JSON (de)serialization, its
+- **`MatchRequestForCsvMixinTest`:** New tests covering `MatchRequestForCsvMixin`'s `UpperCamelCase` JSON (de)serialization, its
   CSV deserialization via `CsvMapper`/`CsvSchema`, and the `@JsonCreator`
   constructor's enforcement of `matchDate`/`matchName` as required creator properties
 - **`IpscMatchControllerTest`:** New tests covering `createMatches`'s `201` response, delegation to the
@@ -1522,7 +1532,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`CompetitorRequest`, `CompetitorResponse`:** `emailAddress` (`String`) renamed to `emailAddresses`
   (`List<String>`)
-- **`CompetitorRequestForCSV`:** `emailAddress` renamed to `emailAddresses`; still a single `String`
+- **`CompetitorRequestCsvMixIn`:** `emailAddress` renamed to `emailAddresses`; still a single `String`
   CSV cell, but now holding zero or more semicolon-separated email addresses (e.g.
   `"a@x.com;b@x.com"`), split into a list when mapped onto `CompetitorRequest`
 
@@ -1696,13 +1706,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Services
 
 - **`IpscCompetitorService`/`IpscCompetitorServiceImpl`:** New `createCompetitors` method that parses CSV data into
-  `CompetitorRequestForCSV` rows and creates each competitor via the existing `createCompetitor` validation/gender/
+  `CompetitorRequestCsvMixIn` rows and creates each competitor via the existing `createCompetitor` validation/gender/
   home-club-resolution logic — unlike `AwardService`/`ImageService`'s CSV endpoints, which only build response
   objects without persisting
 
 ##### Models
 
-- **`CompetitorRequestForCSV`:** New CSV-mapped request model (`models/ipsc/competitor/request/`) for bulk competitor
+- **`CompetitorRequestCsvMixIn`:** New CSV-mapped request model (`models/ipsc/competitor/request/`) for bulk competitor
   import, mirroring `CompetitorRequest`'s fields other than `competitorId`
 - **`CompetitorResponseHolder`:** New response container (`models/ipsc/competitor/response/`) holding the
   `CompetitorResponse`s created by a bulk CSV import
@@ -1716,7 +1726,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   repositories and against the real H2-backed Spring context
 - **`IpscCompetitorServiceImplTest`:** New tests covering the impl-only `readCompetitors`/`toRequest` protected
   helper methods
-- **`CompetitorRequestForCSVTest`:** New tests covering `CompetitorRequestForCSV`'s `UpperCamelCase` JSON
+- **`CompetitorRequestCsvMixinTest`:** New tests covering `CompetitorRequestCsvMixIn`'s `UpperCamelCase` JSON
   (de)serialization and `@JsonFormat`-patterned `dateOfBirth`, its CSV deserialization via `CsvMapper`/`CsvSchema`,
   and the `@JsonCreator` constructor's enforcement of `firstName`/`lastName` as required creator properties
 - **`CompetitorRequestTest`:** New tests covering `CompetitorRequest`'s `@JsonCreator` constructor — JSON
@@ -1752,15 +1762,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   replacing `@AllArgsConstructor` (same signature/order, so every existing positional `new MatchRequest(...)`/
   `new MatchStageRequest(...)` call is unaffected) — a missing `matchDate`, `matchName` or `stageNumber` now
   throws `MismatchedInputException` during parsing, matching the fix already applied to
-  `CompetitorRequestForCSV`/`CompetitorRequest`
-- **`CompetitorRequestForCSV`:** `firstName`/`lastName` switched from `@NotNull` to `@JsonProperty(required = true)`,
+  `CompetitorRequestCsvMixIn`/`CompetitorRequest`
+- **`CompetitorRequestCsvMixIn`:** `firstName`/`lastName` switched from `@NotNull` to `@JsonProperty(required = true)`,
   and a `@JsonCreator` constructor added with each of its 13 parameters bound to its
   `UpperCamelCase` column name explicitly (a multi-argument creator needs this, since `@JsonNaming` alone only
   governs serialisation) — so a CSV row or JSON payload missing either column now fails with
   `MismatchedInputException` during parsing, rather than only being caught later by
   `IpscCompetitorService.createCompetitor`'s validation. Matches the required-column enforcement
   `AwardRequestForCSV`/`ImageRequestForCsv` already have
-- **`CompetitorRequest`, `CompetitorRequestForCSV`, `MatchRequest`:** Added
+- **`CompetitorRequest`, `CompetitorRequestCsvMixIn`, `MatchRequest`:** Added
   `@JsonFormat(pattern = HpscConstants.HPSC_INPUT_DATE_FORMAT)` to their `LocalDate` fields (`dateOfBirth`/
   `matchDate`), making the accepted `yyyy-MM-dd` input format explicit rather than relying on Jackson's default
   `LocalDate` parsing — matching `AwardRequestForCSV`'s existing use of the same pattern on its `date` field
@@ -1785,7 +1795,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   are wired into a controller or service yet, so this only affects future consumers. `name`/`stageNumber`/
   `membershipNumber` also carry `@JsonProperty(required = true)` at the field level on the two CSV variants, matching
   the field-level annotation already present alongside the constructor-level one on
-  `CompetitorRequestForCSV`/`CompetitorRequest`
+  `CompetitorRequestCsvMixIn`/`CompetitorRequest`
 
 #### 🗑️ Removed
 

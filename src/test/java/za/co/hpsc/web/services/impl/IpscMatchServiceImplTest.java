@@ -14,7 +14,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV;
+import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsv;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscMatchServiceImpl}'s impl-only protected helper methods
@@ -173,19 +174,19 @@ class IpscMatchServiceImplTest {
                 """;
 
         // Act
-        List<MatchRequestForCSV> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
+        List<MatchRequestCsv> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
 
         // Assert
         assertEquals(2, rows.size());
 
-        MatchRequestForCSV first = rows.getFirst();
+        MatchRequestCsv first = rows.getFirst();
         assertEquals(LocalDate.of(2026, 4, 10), first.getMatchDate());
         assertEquals("Club Championship", first.getMatchName());
         assertEquals("Test Club", first.getClub());
         assertEquals("Pistol", first.getMatchFirearmType());
         assertEquals("Level 1", first.getMatchCategory());
 
-        MatchRequestForCSV second = rows.get(1);
+        MatchRequestCsv second = rows.get(1);
         assertEquals("Second Match", second.getMatchName());
         assertNull(second.getClub());
     }
@@ -199,7 +200,7 @@ class IpscMatchServiceImplTest {
                 """;
 
         // Act
-        List<MatchRequestForCSV> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
+        List<MatchRequestCsv> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
 
         // Assert
         assertEquals(1, rows.size());
@@ -214,7 +215,7 @@ class IpscMatchServiceImplTest {
         String csvData = "MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url\n";
 
         // Act
-        List<MatchRequestForCSV> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
+        List<MatchRequestCsv> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
 
         // Assert
         assertTrue(rows.isEmpty());
@@ -362,14 +363,14 @@ class IpscMatchServiceImplTest {
     @Test
     void testToRequest_whenAllFieldsPresent_thenMapsAllFieldsOntoMatchRequest() {
         // Arrange
-        MatchRequestForCSV matchRequestForCSV = new MatchRequestForCSV(
+        MatchRequestCsv matchRequestCsv = new MatchRequestCsv(
                 LocalDate.of(2026, 4, 10), "Club Championship",
                 "Test Club", "Pistol", "Level 1", LocalTime.of(8, 0), LocalTime.of(17, 0),
                 "https://example.com/matches/1"
         );
 
         // Act
-        MatchRequest request = ipscMatchServiceImpl.toRequest(matchRequestForCSV);
+        MatchRequest request = ipscMatchServiceImpl.toRequest(matchRequestCsv);
 
         // Assert
         assertNull(request.getMatchId());
@@ -386,11 +387,11 @@ class IpscMatchServiceImplTest {
     @Test
     void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
         // Arrange
-        MatchRequestForCSV matchRequestForCSV = new MatchRequestForCSV(
+        MatchRequestCsv matchRequestCsv = new MatchRequestCsv(
                 LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null);
 
         // Act
-        MatchRequest request = ipscMatchServiceImpl.toRequest(matchRequestForCSV);
+        MatchRequest request = ipscMatchServiceImpl.toRequest(matchRequestCsv);
 
         // Assert
         assertNull(request.getMatchId());

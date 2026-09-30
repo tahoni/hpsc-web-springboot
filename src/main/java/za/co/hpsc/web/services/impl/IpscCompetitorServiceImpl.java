@@ -22,7 +22,8 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
-import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestForCSV;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsv;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -73,13 +74,13 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
-        List<CompetitorRequestForCSV> competitorRequestForCSVList = readCompetitors(csvData);
+        List<CompetitorRequestCsv> competitorRequestCsvList = readCompetitors(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
         // transaction, so a bad row leaves none of them persisted.
         List<Competitor> competitors = new ArrayList<>();
-        for (CompetitorRequestForCSV competitorRequestForCSV : competitorRequestForCSVList) {
-            competitors.add(newCompetitor(toRequest(competitorRequestForCSV)));
+        for (CompetitorRequestCsv competitorRequestCsv : competitorRequestCsvList) {
+            competitors.add(newCompetitor(toRequest(competitorRequestCsv)));
         }
 
         List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
@@ -205,25 +206,27 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     /**
      * Reads competitor data from a CSV-formatted string and converts it into a list of
-     * {@link CompetitorRequestForCSV} objects.
+     * {@link CompetitorRequestCsv} objects.
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.
      *                Must not be null or blank.
-     * @return a list of {@link CompetitorRequestForCSV} objects parsed from the provided CSV data.
+     * @return a list of {@link CompetitorRequestCsv} objects parsed from the provided CSV data.
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<CompetitorRequestForCSV> readCompetitors(@NotNull @NotBlank String csvData)
+    protected List<CompetitorRequestCsv> readCompetitors(@NotNull @NotBlank String csvData)
             throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
         CsvSchema csvSchema = csvMapper
-                .schemaFor(CompetitorRequestForCSV.class)
+                .schemaFor(CompetitorRequestCsv.class)
+                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
                 .withColumnReordering(true)
                 .withHeader();
+        csvMapper.addMixIn(CompetitorRequestCsv.class, CompetitorRequestCsvMixIn.class);
 
-        try (MappingIterator<CompetitorRequestForCSV> requestMappingIterator =
-                     csvMapper.readerFor(CompetitorRequestForCSV.class)
+        try (MappingIterator<CompetitorRequestCsv> requestMappingIterator =
+                     csvMapper.readerFor(CompetitorRequestCsv.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
@@ -238,7 +241,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Maps a {@link CompetitorRequestForCSV} row onto a {@link CompetitorRequest}.
+     * Maps a {@link CompetitorRequestCsv} row onto a {@link CompetitorRequest}.
      *
      * <p>
      * Every name column and the gender are proper-cased (see {@link StringUtils#toProperCase(String)}). The
@@ -249,28 +252,28 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * "van der Merwe", and an "Mc" prefix is corrected, so "MCDONALD" becomes "McDonald".
      * </p>
      *
-     * @param competitorRequestForCSV the CSV row to map; must not be null.
+     * @param competitorRequestCsv the CSV row to map; must not be null.
      * @return the equivalent {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
      */
-    protected CompetitorRequest toRequest(@NotNull CompetitorRequestForCSV competitorRequestForCSV) {
+    protected CompetitorRequest toRequest(@NotNull CompetitorRequestCsv competitorRequestCsv) {
         return new CompetitorRequest(
                 null,
-                StringUtils.toProperCase(competitorRequestForCSV.getFirstName()),
+                StringUtils.toProperCase(competitorRequestCsv.getFirstName()),
                 CompetitorHelpers.toSentenceCaseLastName(
-                        StringUtils.toProperCase(competitorRequestForCSV.getLastName())),
-                StringUtils.toProperCase(competitorRequestForCSV.getMiddleNames()),
-                StringUtils.toProperCase(competitorRequestForCSV.getNickname()),
-                competitorRequestForCSV.getDateOfBirth(),
-                StringUtils.toProperCase(competitorRequestForCSV.getGender()),
-                competitorRequestForCSV.getHomeClub(),
-                competitorRequestForCSV.getSapsaNumber(),
-                competitorRequestForCSV.getCompetitorNumber(),
-                competitorRequestForCSV.getClubNumber(),
-                competitorRequestForCSV.getIdNumber(),
-                competitorRequestForCSV.getCellphoneNumber(),
-                competitorRequestForCSV.getPaidUpSapsa(),
-                competitorRequestForCSV.getPaidUpClub(),
-                splitEmailAddresses(competitorRequestForCSV.getEmailAddresses()));
+                        StringUtils.toProperCase(competitorRequestCsv.getLastName())),
+                StringUtils.toProperCase(competitorRequestCsv.getMiddleNames()),
+                StringUtils.toProperCase(competitorRequestCsv.getNickname()),
+                competitorRequestCsv.getDateOfBirth(),
+                StringUtils.toProperCase(competitorRequestCsv.getGender()),
+                competitorRequestCsv.getHomeClub(),
+                competitorRequestCsv.getSapsaNumber(),
+                competitorRequestCsv.getCompetitorNumber(),
+                competitorRequestCsv.getClubNumber(),
+                competitorRequestCsv.getIdNumber(),
+                competitorRequestCsv.getCellphoneNumber(),
+                competitorRequestCsv.getPaidUpSapsa(),
+                competitorRequestCsv.getPaidUpClub(),
+                splitEmailAddresses(competitorRequestCsv.getEmailAddresses()));
     }
 
     /**

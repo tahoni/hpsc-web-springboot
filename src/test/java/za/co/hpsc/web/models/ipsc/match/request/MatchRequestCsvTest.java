@@ -15,14 +15,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MatchRequestForCSVTest {
+class MatchRequestCsvTest {
 
     // JSON serialization
     @Test
     void testJsonSerialization_whenFullyPopulated_thenUsesUpperCamelCasePropertyNames() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        MatchRequestForCSV request = new MatchRequestForCSV(LocalDate.of(2026, 4, 10), "Club Championship",
+        MatchRequestCsv request = new MatchRequestCsv(LocalDate.of(2026, 4, 10), "Club Championship",
                 "Test Club", "Pistol", "Level 1", LocalTime.of(8, 0), LocalTime.of(17, 0),
                 "https://example.com/matches/1"
         );
@@ -46,7 +46,7 @@ class MatchRequestForCSVTest {
     void testJsonSerialization_whenOnlyRequiredFieldsSet_thenSerializesWithNullOptionalsAndZeroCount() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        MatchRequestForCSV request = new MatchRequestForCSV(
+        MatchRequestCsv request = new MatchRequestCsv(
                 LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null);
 
         // Act
@@ -82,7 +82,7 @@ class MatchRequestForCSVTest {
                 """;
 
         // Act
-        MatchRequestForCSV request = mapper.readValue(json, MatchRequestForCSV.class);
+        MatchRequestCsv request = mapper.readValue(json, MatchRequestCsv.class);
 
         // Assert
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
@@ -107,7 +107,7 @@ class MatchRequestForCSVTest {
                 """;
 
         // Act
-        MatchRequestForCSV request = mapper.readValue(json, MatchRequestForCSV.class);
+        MatchRequestCsv request = mapper.readValue(json, MatchRequestCsv.class);
 
         // Assert
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
@@ -132,7 +132,7 @@ class MatchRequestForCSVTest {
                 """;
 
         // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequestForCSV.class));
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequestCsv.class));
     }
 
     @Test
@@ -146,7 +146,7 @@ class MatchRequestForCSVTest {
                 """;
 
         // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequestForCSV.class));
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequestCsv.class));
     }
 
     @Test
@@ -155,7 +155,7 @@ class MatchRequestForCSVTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
         // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", MatchRequestForCSV.class));
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", MatchRequestCsv.class));
     }
 
     // CSV deserialization
@@ -164,7 +164,7 @@ class MatchRequestForCSVTest {
         // Arrange
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        CsvSchema csvSchema = csvMapper.schemaFor(MatchRequestForCSV.class)
+        CsvSchema csvSchema = csvMapper.schemaFor(MatchRequestCsv.class)
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
@@ -173,15 +173,15 @@ class MatchRequestForCSVTest {
                 """;
 
         // Act
-        List<MatchRequestForCSV> rows;
-        try (MappingIterator<MatchRequestForCSV> it =
-                     csvMapper.readerFor(MatchRequestForCSV.class).with(csvSchema).readValues(csvData)) {
+        List<MatchRequestCsv> rows;
+        try (MappingIterator<MatchRequestCsv> it =
+                     csvMapper.readerFor(MatchRequestCsv.class).with(csvSchema).readValues(csvData)) {
             rows = it.readAll();
         }
 
         // Assert
         assertEquals(1, rows.size());
-        MatchRequestForCSV row = rows.getFirst();
+        MatchRequestCsv row = rows.getFirst();
         assertEquals(LocalDate.of(2026, 4, 10), row.getMatchDate());
         assertEquals("Club Championship", row.getMatchName());
         assertEquals(LocalTime.of(8, 0), row.getStartTime());
@@ -198,7 +198,7 @@ class MatchRequestForCSVTest {
         // header, but doesn't require every row to supply a value for each of them
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        CsvSchema csvSchema = csvMapper.schemaFor(MatchRequestForCSV.class)
+        CsvSchema csvSchema = csvMapper.schemaFor(MatchRequestCsv.class)
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
@@ -207,9 +207,9 @@ class MatchRequestForCSVTest {
                 """;
 
         // Act
-        List<MatchRequestForCSV> rows;
-        try (MappingIterator<MatchRequestForCSV> it =
-                     csvMapper.readerFor(MatchRequestForCSV.class).with(csvSchema).readValues(csvData)) {
+        List<MatchRequestCsv> rows;
+        try (MappingIterator<MatchRequestCsv> it =
+                     csvMapper.readerFor(MatchRequestCsv.class).with(csvSchema).readValues(csvData)) {
             rows = it.readAll();
         }
 
@@ -231,7 +231,7 @@ class MatchRequestForCSVTest {
         // creator property check, same as a missing JSON key
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        CsvSchema csvSchema = csvMapper.schemaFor(MatchRequestForCSV.class)
+        CsvSchema csvSchema = csvMapper.schemaFor(MatchRequestCsv.class)
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
@@ -241,8 +241,8 @@ class MatchRequestForCSVTest {
 
         // Act & Assert
         assertThrows(MismatchedInputException.class, () -> {
-            try (MappingIterator<MatchRequestForCSV> it =
-                         csvMapper.readerFor(MatchRequestForCSV.class).with(csvSchema).readValues(csvData)) {
+            try (MappingIterator<MatchRequestCsv> it =
+                         csvMapper.readerFor(MatchRequestCsv.class).with(csvSchema).readValues(csvData)) {
                 it.readAll();
             }
         });

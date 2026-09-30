@@ -21,7 +21,8 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV;
+import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsv;
+import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -68,13 +69,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
-        List<MatchRequestForCSV> matchRequestForCSVList = readMatches(csvData);
+        List<MatchRequestCsv> matchRequestCsvList = readMatches(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
         // transaction, so a bad row leaves none of them persisted.
         List<IpscMatch> matches = new ArrayList<>();
-        for (MatchRequestForCSV matchRequestForCSV : matchRequestForCSVList) {
-            matches.add(newMatch(toRequest(matchRequestForCSV)));
+        for (MatchRequestCsv matchRequestCsv : matchRequestCsvList) {
+            matches.add(newMatch(toRequest(matchRequestCsv)));
         }
 
         List<MatchResponse> matchResponseList = transactionService.saveMatches(matches).stream()
@@ -182,24 +183,26 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     /**
      * Reads match data from a CSV-formatted string and converts it into a list of
-     * {@link MatchRequestForCSV} objects.
+     * {@link MatchRequest} objects, binding the {@link MatchRequestCsv} column headers onto each.
      *
      * @param csvData the CSV data containing match information, one match per row. Must not be
      *                null or blank.
-     * @return a list of {@link MatchRequestForCSV} objects parsed from the provided CSV data.
+     * @return a list of {@link MatchRequest} objects parsed from the provided CSV data.
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<MatchRequestForCSV> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
+    protected List<MatchRequestCsv> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
         CsvSchema csvSchema = csvMapper
-                .schemaFor(MatchRequestForCSV.class)
+                .schemaFor(MatchRequestCsv.class)
                 .withColumnReordering(true)
                 .withHeader();
+        csvMapper.addMixIn(MatchRequest.class, MatchRequestCsvMixIn.class);
 
-        try (MappingIterator<MatchRequestForCSV> requestMappingIterator =
-                     csvMapper.readerFor(MatchRequestForCSV.class)
+        // Read the CSV data using the mapper and schema
+        try (MappingIterator<MatchRequestCsv> requestMappingIterator =
+                     csvMapper.readerFor(MatchRequestCsv.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
@@ -214,22 +217,23 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Maps a {@link MatchRequestForCSV} row onto a {@link MatchRequest}.
+     * Copies a {@link MatchRequest} parsed from a CSV row into a new {@link MatchRequest}, dropping
+     * any {@code matchId}.
      *
-     * @param matchRequestForCSV the CSV row to map; must not be null.
+     * @param matchRequestCsv the CSV row to map; must not be null.
      * @return the equivalent {@link MatchRequest}, with a {@code null} {@code matchId}.
      */
-    protected MatchRequest toRequest(@NotNull MatchRequestForCSV matchRequestForCSV) {
+    protected MatchRequest toRequest(@NotNull MatchRequestCsv matchRequestCsv) {
         return new MatchRequest(
                 null,
-                matchRequestForCSV.getMatchDate(),
-                matchRequestForCSV.getMatchName(),
-                matchRequestForCSV.getClub(),
-                matchRequestForCSV.getMatchFirearmType(),
-                matchRequestForCSV.getMatchCategory(),
-                matchRequestForCSV.getStartTime(),
-                matchRequestForCSV.getEndTime(),
-                matchRequestForCSV.getUrl()
+                matchRequestCsv.getMatchDate(),
+                matchRequestCsv.getMatchName(),
+                matchRequestCsv.getClub(),
+                matchRequestCsv.getMatchFirearmType(),
+                matchRequestCsv.getMatchCategory(),
+                matchRequestCsv.getStartTime(),
+                matchRequestCsv.getEndTime(),
+                matchRequestCsv.getUrl()
         );
     }
 

@@ -19,7 +19,7 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV;
+import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsv;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
@@ -114,7 +114,7 @@ public class IpscMatchController {
     ResponseEntity<MatchResponseHolder> createMatches(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/csv",
-                            schema = @Schema(implementation = MatchRequestForCSV.class),
+                            schema = @Schema(implementation = MatchRequestCsv.class),
                             examples = @ExampleObject("""
                                     MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
                                     yyyy-MM-dd,string,string,string,string,HH:mm,HH:mm,string

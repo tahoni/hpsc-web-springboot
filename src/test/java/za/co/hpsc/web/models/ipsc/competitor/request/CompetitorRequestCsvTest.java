@@ -14,14 +14,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CompetitorRequestForCSVTest {
+class CompetitorRequestCsvTest {
 
     // JSON serialization
     @Test
     void testJsonSerialization_whenFullyPopulated_thenUsesUpperCamelCasePropertyNames() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        CompetitorRequestForCSV request = new CompetitorRequestForCSV(
+        CompetitorRequestCsv request = new CompetitorRequestCsv(
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
                 12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
                 "jane.doe@example.com;jane2.doe@example.com");
@@ -52,7 +52,7 @@ class CompetitorRequestForCSVTest {
     void testJsonSerialization_whenOnlyRequiredFieldsSet_thenSerializesWithNullOptionals() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        CompetitorRequestForCSV request = new CompetitorRequestForCSV(
+        CompetitorRequestCsv request = new CompetitorRequestCsv(
                 "Jane", "Doe", null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         // Act
@@ -93,7 +93,7 @@ class CompetitorRequestForCSVTest {
                 """;
 
         // Act
-        CompetitorRequestForCSV request = mapper.readValue(json, CompetitorRequestForCSV.class);
+        CompetitorRequestCsv request = mapper.readValue(json, CompetitorRequestCsv.class);
 
         // Assert
         assertEquals("Jane", request.getFirstName());
@@ -125,7 +125,7 @@ class CompetitorRequestForCSVTest {
                 """;
 
         // Act
-        CompetitorRequestForCSV request = mapper.readValue(json, CompetitorRequestForCSV.class);
+        CompetitorRequestCsv request = mapper.readValue(json, CompetitorRequestCsv.class);
 
         // Assert
         assertEquals("Jane", request.getFirstName());
@@ -147,7 +147,7 @@ class CompetitorRequestForCSVTest {
                 """;
 
         // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, CompetitorRequestForCSV.class));
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, CompetitorRequestCsv.class));
     }
 
     @Test
@@ -161,7 +161,7 @@ class CompetitorRequestForCSVTest {
                 """;
 
         // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, CompetitorRequestForCSV.class));
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, CompetitorRequestCsv.class));
     }
 
     @Test
@@ -170,7 +170,7 @@ class CompetitorRequestForCSVTest {
         ObjectMapper mapper = new ObjectMapper();
 
         // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", CompetitorRequestForCSV.class));
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", CompetitorRequestCsv.class));
     }
 
     // CSV deserialization
@@ -179,7 +179,7 @@ class CompetitorRequestForCSVTest {
         // Arrange
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestForCSV.class)
+        CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestCsv.class)
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
@@ -188,15 +188,15 @@ class CompetitorRequestForCSVTest {
                 """;
 
         // Act
-        List<CompetitorRequestForCSV> rows;
-        try (MappingIterator<CompetitorRequestForCSV> it =
-                     csvMapper.readerFor(CompetitorRequestForCSV.class).with(csvSchema).readValues(csvData)) {
+        List<CompetitorRequestCsv> rows;
+        try (MappingIterator<CompetitorRequestCsv> it =
+                     csvMapper.readerFor(CompetitorRequestCsv.class).with(csvSchema).readValues(csvData)) {
             rows = it.readAll();
         }
 
         // Assert
         assertEquals(1, rows.size());
-        CompetitorRequestForCSV row = rows.getFirst();
+        CompetitorRequestCsv row = rows.getFirst();
         assertEquals("Jane", row.getFirstName());
         assertEquals("Doe", row.getLastName());
         assertEquals(LocalDate.of(1990, 1, 1), row.getDateOfBirth());
@@ -209,7 +209,7 @@ class CompetitorRequestForCSVTest {
         // Arrange - CsvSchema.schemaFor(...).withHeader() requires every schema column in the
         // header, but doesn't require every row to supply a value for each of them
         CsvMapper csvMapper = new CsvMapper();
-        CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestForCSV.class)
+        CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestCsv.class)
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
@@ -218,9 +218,9 @@ class CompetitorRequestForCSVTest {
                 """;
 
         // Act
-        List<CompetitorRequestForCSV> rows;
-        try (MappingIterator<CompetitorRequestForCSV> it =
-                     csvMapper.readerFor(CompetitorRequestForCSV.class).with(csvSchema).readValues(csvData)) {
+        List<CompetitorRequestCsv> rows;
+        try (MappingIterator<CompetitorRequestCsv> it =
+                     csvMapper.readerFor(CompetitorRequestCsv.class).with(csvSchema).readValues(csvData)) {
             rows = it.readAll();
         }
 
@@ -237,7 +237,7 @@ class CompetitorRequestForCSVTest {
         // Arrange - a row missing LastName entirely (not just blank) still trips the required
         // creator property check, same as a missing JSON key
         CsvMapper csvMapper = new CsvMapper();
-        CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestForCSV.class)
+        CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestCsv.class)
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
@@ -247,8 +247,8 @@ class CompetitorRequestForCSVTest {
 
         // Act & Assert
         assertThrows(MismatchedInputException.class, () -> {
-            try (MappingIterator<CompetitorRequestForCSV> it =
-                         csvMapper.readerFor(CompetitorRequestForCSV.class).with(csvSchema).readValues(csvData)) {
+            try (MappingIterator<CompetitorRequestCsv> it =
+                         csvMapper.readerFor(CompetitorRequestCsv.class).with(csvSchema).readValues(csvData)) {
                 it.readAll();
             }
         });

@@ -29,7 +29,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public class CompetitorRequestForCSV {
+public class CompetitorRequestCsv {
     /** The competitor's first name. */
     @JsonProperty(required = true)
     private String firstName;
@@ -69,7 +69,7 @@ public class CompetitorRequestForCSV {
     private String emailAddresses;
 
     /**
-     * Constructs a {@code CompetitorRequestForCSV} from its CSV/JSON representation.
+     * Constructs a {@code CompetitorRequestCsv} from its CSV/JSON representation.
      *
      * <p>
      * Each parameter is bound to its {@link PropertyNamingStrategies.UpperCamelCaseStrategy}
@@ -99,21 +99,21 @@ public class CompetitorRequestForCSV {
      *                         semicolon-separated CSV cell (e.g. {@code "a@x.com;b@x.com"}).
      */
     @JsonCreator
-    public CompetitorRequestForCSV(@JsonProperty(value = "FirstName", required = true) String firstName,
-                                   @JsonProperty(value = "LastName", required = true) String lastName,
-                                   @JsonProperty("MiddleNames") String middleNames,
-                                   @JsonProperty("Nickname") String nickname,
-                                   @JsonProperty("DateOfBirth") LocalDate dateOfBirth,
-                                   @JsonProperty("Gender") String gender,
-                                   @JsonProperty("HomeClub") String homeClub,
-                                   @JsonProperty("SapsaNumber") Integer sapsaNumber,
-                                   @JsonProperty("CompetitorNumber") String competitorNumber,
-                                   @JsonProperty("ClubNumber") String clubNumber,
-                                   @JsonProperty("IdNumber") String idNumber,
-                                   @JsonProperty("CellphoneNumber") String cellphoneNumber,
-                                   @JsonProperty("PaidUpSapsa") Boolean paidUpSapsa,
-                                   @JsonProperty("PaidUpClub") Boolean paidUpClub,
-                                   @JsonProperty("EmailAddresses") String emailAddresses) {
+    public CompetitorRequestCsv(@JsonProperty(value = "FirstName", required = true) String firstName,
+                                @JsonProperty(value = "LastName", required = true) String lastName,
+                                @JsonProperty("MiddleNames") String middleNames,
+                                @JsonProperty("Nickname") String nickname,
+                                @JsonProperty("DateOfBirth") LocalDate dateOfBirth,
+                                @JsonProperty("Gender") String gender,
+                                @JsonProperty("HomeClub") String homeClub,
+                                @JsonProperty("SapsaNumber") Integer sapsaNumber,
+                                @JsonProperty("CompetitorNumber") String competitorNumber,
+                                @JsonProperty("ClubNumber") String clubNumber,
+                                @JsonProperty("IdNumber") String idNumber,
+                                @JsonProperty("CellphoneNumber") String cellphoneNumber,
+                                @JsonProperty("PaidUpSapsa") Boolean paidUpSapsa,
+                                @JsonProperty("PaidUpClub") Boolean paidUpClub,
+                                @JsonProperty("EmailAddresses") String emailAddresses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleNames = middleNames;

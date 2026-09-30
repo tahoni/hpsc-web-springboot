@@ -12,7 +12,7 @@ import java.util.List;
  * CSV-related operations.
  *
  * <p>
- * The {@code AwardRequestForCSV} abstract class encapsulates metadata about an image,
+ * The {@code ImageRequestForCsv} abstract class encapsulates metadata about an image,
  * including its title, summary, detailed description, category, associated tags, file
  * path and file name.
  * This class is specifically designed to handle structured data points required for
