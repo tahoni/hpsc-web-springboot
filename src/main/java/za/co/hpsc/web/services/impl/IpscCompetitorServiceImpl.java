@@ -257,7 +257,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      */
     protected CompetitorRequest normaliseCsvRequest(@NotNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
-                null,
+                csvRow.getCompetitorId(),
                 StringUtils.toProperCase(csvRow.getFirstName()),
                 CompetitorHelpers.toSentenceCaseLastName(StringUtils.toProperCase(csvRow.getLastName())),
                 StringUtils.toProperCase(csvRow.getMiddleNames()),

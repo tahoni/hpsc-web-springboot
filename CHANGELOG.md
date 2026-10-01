@@ -101,7 +101,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   constructor, so the bulk import reads each row straight into a `CompetitorRequest` — the accepted CSV columns are
   unchanged. The `CompetitorRequestForCSV` model is removed; `IpscCompetitorServiceImpl.toRequest`, which copied it into
   a `CompetitorRequest` while normalising name casing, becomes `normaliseCsvRequest` and takes the `CompetitorRequest`
-  directly
+  directly, keeping the row's `competitorId` rather than blanking it
 - **`CompetitorRequest.emailAddresses`:** Now defaults to an empty list rather than `null`. The CSV import splits the
   semicolon-separated `EmailAddresses` cell on the shared array element separator itself, so
   `IpscCompetitorServiceImpl.splitEmailAddresses` is removed. The accepted CSV format is unchanged
