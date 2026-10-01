@@ -40,7 +40,7 @@
 
 - [x] `./mvnw verify -Pcoverage` — 947 tests across 69 classes, 0 failures/errors/skipped; 98.32% line / 98.69% branch
   coverage, JaCoCo gate (97%) passing
-- [ ] Qodana, CodeQL and Docker workflows pass on this PR
+- [x] Qodana, CodeQL and Docker workflows pass on this PR
 - [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v9/RELEASE_NOTES_v9.0.0.md`
 - [x] No version-specific references leaked into `README.md`/`ARCHITECTURE.md`
 
