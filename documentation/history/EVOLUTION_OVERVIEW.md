@@ -2645,6 +2645,88 @@ CodeQL and dependency-submission triggers to every GitFlow branch.
 - New `IpscCompetitorServiceImplTest` `toRequest` tests for all-upper-case, all-lower-case and particle-bearing CSV
   rows, alongside tests for the two new helpers
 
+### Phase 42: Match Stage Removal & CSV Import via Jackson Mix-Ins (v9.0.0)
+
+**Duration:** October 1, 2026
+
+A major release: the match domain drops its stage model, and the two bulk CSV imports stop going through dedicated CSV
+models. The match request and response lose `stages`, two entities and their tables are removed, `matchFirearmType`
+and `matchCategory` become required and the `MYSQL_USER` variable is no longer read, so the release is MAJOR under
+the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Persistence**
+
+- `IpscMatchStage`, `MatchStageCompetitor`, `IpscMatchStageRepository`, `MatchStageCompetitorRepository` and the
+  `IpscMatch.stages` collection removed; the new `V7_9_0__drop_ipsc_match_stage.sql` migration drops the
+  `match_stage_competitor` and `ipsc_match_stage` tables with `DROP TABLE IF EXISTS`, discarding any existing stage
+  data
+
+**Match API**
+
+- `MatchStageRequest`, `MatchStageResponse` and the `stages` field on `MatchRequest`/`MatchResponse` removed, along
+  with the `Stages` CSV column; `TransactionService.saveMatch`'s stage overload and `StageSaveMode` go too, and
+  `IpscMatchService.deleteMatch` no longer checks for stage results
+- `MatchRequest.matchFirearmType` and `matchCategory` are required properties, so a JSON body that leaves either out
+  is rejected when it is read
+- New `MatchPatchRequest` for `PATCH /ipsc/matches/{matchId}`, with no required fields
+
+**Competitor API**
+
+- New `CompetitorPatchRequest` for `PATCH /ipsc/competitors/{competitorId}`, so a patch no longer repeats `firstName`
+  and `lastName`; its `emailAddresses` is `null` unless supplied, so omitting it keeps the existing addresses
+- `IpscCompetitorServiceImpl.resolveHomeClub` also resolves a home club by abbreviation
+- `IpscCompetitorServiceImpl.normaliseCsvRequest` (formerly `toRequest`) keeps the row's `competitorId`
+- `CompetitorRequest.emailAddresses` defaults to an empty list, and the CSV import splits the `EmailAddresses` cell on
+  the shared array element separator itself
+
+**CSV Import**
+
+- New `MatchRequestCsvMixIn` and `CompetitorRequestCsvMixIn` bind the CSV column headers onto the request models'
+  constructors, so each row is read straight into a `MatchRequest`/`CompetitorRequest`; `MatchRequestForCSV` and
+  `CompetitorRequestForCSV` are removed
+- A header may omit optional columns, and unknown columns are ignored; the `MatchId` and `CompetitorId` columns are
+  read but never used, since the imports only create records
+- The imports' Swagger request schemas are now plain text with an example header row
+
+**Configuration & Dependencies**
+
+- `spring.datasource.username` is set by the `dev` and `prod` profiles (`hpsc_dev`, `hpsc_prod`) and no longer read
+  from `MYSQL_USER`; the `dev` datasource URL points at `127.0.0.1` and the `local` profile drops its
+  `MYSQL_LOCAL_PASSWORD` override
+- `mysql-connector-j` pinned to `9.4.0`
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` drop stages from the match description, the entity and repository tables and the
+  Project Structure tree
+- Past `CHANGELOG.md`, `HISTORY.md` and `EVOLUTION_OVERVIEW.md` entries keep the class names they were written with
+
+**Roadmap**
+
+- No new gaps and none closed; Gap #6's evidence notes that the stage repositories it listed are gone, and Gap #6
+  remains the only open gap, with #26 still waiting on a Spring Boot release that manages Tomcat `11.0.25`
+
+**Build & Metadata**
+
+- Project version bumped to 9.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Security**
+
+- `tomcat.version` raised to `11.0.26`, `logback.version` pinned to `1.6.5`, the Jackson BOM properties raised, and
+  `flyway-mysql` pinned above the Spring Boot-managed versions
+
+**Technical Focus:**
+
+- Narrowing the match domain and giving each resource one request model for both its JSON and CSV entry points
+
+**Test Coverage:**
+
+- New `MatchRequestCsvMixInTest`, `CompetitorRequestCsvMixInTest`, `MatchPatchRequestTest` and
+  `CompetitorPatchRequestTest`, replacing `MatchRequestForCSVTest`, `CompetitorRequestForCSVTest` and
+  `MatchStageRequestTest`; stage coverage removed from the match, competitor, repository and transaction service tests
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

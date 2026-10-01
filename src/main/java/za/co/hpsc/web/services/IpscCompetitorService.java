@@ -3,6 +3,7 @@ package za.co.hpsc.web.services;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
@@ -96,7 +97,7 @@ public interface IpscCompetitorService {
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */
-    CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request)
+    CompetitorResponse patchCompetitor(Long competitorId, CompetitorPatchRequest request)
             throws ValidationException, NonFatalException;
 
     /**

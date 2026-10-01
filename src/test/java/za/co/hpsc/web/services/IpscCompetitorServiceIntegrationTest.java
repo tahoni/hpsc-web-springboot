@@ -17,6 +17,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
@@ -234,15 +235,15 @@ class IpscCompetitorServiceIntegrationTest {
     void testCreateCompetitors_whenCsvIsPlainText_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> ipscCompetitorService.createCompetitors("This is not valid CSV data"));
+                () -> ipscCompetitorService.createCompetitors("This is not valid CSV data\nJane\n"));
     }
 
     @Test
     void testCreateCompetitors_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
         // Arrange
         String csvData = """
-                FirstName,LastName
-                Jane,Doe
+                FirstName,Nickname
+                Jane,Janie
                 """;
 
         // Act & Assert
@@ -446,7 +447,7 @@ class IpscCompetitorServiceIntegrationTest {
     @Test
     void testPatchCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        CompetitorRequest request = new CompetitorRequest();
+        CompetitorPatchRequest request = new CompetitorPatchRequest();
         request.setFirstName("Renamed");
 
         // Act & Assert
@@ -461,7 +462,7 @@ class IpscCompetitorServiceIntegrationTest {
         createRequest.setHomeClub("Test Club");
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setFirstName("Janet");
 
         // Act
@@ -481,7 +482,7 @@ class IpscCompetitorServiceIntegrationTest {
         createRequest.setHomeClub("Test Club");
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setClubNumber("  ");
 
         // Act & Assert
@@ -497,7 +498,7 @@ class IpscCompetitorServiceIntegrationTest {
         createRequest.setHomeClub("Test Club");
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setHomeClub("Other Club");
 
         // Act
@@ -517,7 +518,7 @@ class IpscCompetitorServiceIntegrationTest {
         createRequest.setHomeClub("Other Club");
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setClubNumber("HPSC-002");
 
         // Act
@@ -533,7 +534,7 @@ class IpscCompetitorServiceIntegrationTest {
         // Arrange
         CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setHomeClub("No Such Club");
 
         // Act & Assert
@@ -545,7 +546,7 @@ class IpscCompetitorServiceIntegrationTest {
         // Arrange
         CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setGender("Not A Gender");
 
         // Act & Assert
@@ -557,7 +558,7 @@ class IpscCompetitorServiceIntegrationTest {
         // Arrange
         CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
 
         // Act
@@ -569,6 +570,25 @@ class IpscCompetitorServiceIntegrationTest {
         // Assert
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), patched.getEmailAddresses());
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), fetched.getEmailAddresses());
+    }
+
+    @Test
+    void testPatchCompetitor_whenEmailAddressesAreOmitted_thenExistingEmailAddressesAreKept() {
+        // Arrange
+        CompetitorRequest createRequest = validRequest("HPSC-001");
+        createRequest.setEmailAddresses(List.of("jane.doe@example.com"));
+        CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
+
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
+        patch.setNickname("Janie");
+
+        // Act
+        CompetitorResponse patched = assertDoesNotThrow(
+                () -> ipscCompetitorService.patchCompetitor(created.getCompetitorId(), patch));
+
+        // Assert
+        assertEquals("Janie", patched.getNickname());
+        assertEquals(List.of("jane.doe@example.com"), patched.getEmailAddresses());
     }
 
     // updateCompetitor()
@@ -682,7 +702,7 @@ class IpscCompetitorServiceIntegrationTest {
             assertEquals(List.of("jane.doe@example.com"), fetched.getEmailAddresses());
 
             // Act & Assert - patch the email addresses
-            CompetitorRequest patch = new CompetitorRequest();
+            CompetitorPatchRequest patch = new CompetitorPatchRequest();
             patch.setEmailAddresses(List.of("jane@example.org", "j.doe@example.net"));
             ipscCompetitorService.patchCompetitor(competitorId, patch);
             assertEquals(List.of("jane@example.org", "j.doe@example.net"),

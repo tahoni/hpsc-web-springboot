@@ -31,7 +31,7 @@ class MatchCompetitorRepositoryIntegrationTest {
     void testExistsByCompetitorId_whenCompetitorHasAResult_thenReturnsTrue() {
         // Arrange
         Competitor competitor = ScoringFixtures.competitor(entityManager, "Jane");
-        ScoringFixtures.matchCompetitor(entityManager, competitor, ScoringFixtures.matchWithStage(entityManager, "Match"));
+        ScoringFixtures.matchCompetitor(entityManager, competitor, ScoringFixtures.match(entityManager, "Match"));
 
         // Act & Assert
         assertTrue(matchCompetitorRepository.existsByCompetitorId(competitor.getId()));
@@ -42,7 +42,7 @@ class MatchCompetitorRepositoryIntegrationTest {
         // Arrange
         Competitor competitor = ScoringFixtures.competitor(entityManager, "Jane");
         Competitor other = ScoringFixtures.competitor(entityManager, "John");
-        ScoringFixtures.matchCompetitor(entityManager, other, ScoringFixtures.matchWithStage(entityManager, "Match"));
+        ScoringFixtures.matchCompetitor(entityManager, other, ScoringFixtures.match(entityManager, "Match"));
 
         // Act & Assert
         assertFalse(matchCompetitorRepository.existsByCompetitorId(competitor.getId()));
@@ -52,7 +52,7 @@ class MatchCompetitorRepositoryIntegrationTest {
     @Test
     void testExistsByMatchId_whenMatchHasAResult_thenReturnsTrue() {
         // Arrange
-        IpscMatch match = ScoringFixtures.matchWithStage(entityManager, "Match");
+        IpscMatch match = ScoringFixtures.match(entityManager, "Match");
         ScoringFixtures.matchCompetitor(entityManager, ScoringFixtures.competitor(entityManager, "Jane"), match);
 
         // Act & Assert
@@ -62,7 +62,7 @@ class MatchCompetitorRepositoryIntegrationTest {
     @Test
     void testExistsByMatchId_whenMatchHasNoResults_thenReturnsFalse() {
         // Arrange
-        IpscMatch match = ScoringFixtures.matchWithStage(entityManager, "Match");
+        IpscMatch match = ScoringFixtures.match(entityManager, "Match");
 
         // Act & Assert
         assertFalse(matchCompetitorRepository.existsByMatchId(match.getId()));

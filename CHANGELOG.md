@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.12.0](#-8120---2026-09-29) ← Current
+- [🧾 Version 9.0.0](#-900---2026-10-01) ← Current
+- [🧾 Version 8.12.0](#-8120---2026-09-29)
 - [🧾 Version 8.11.1](#-8111---2026-09-27)
 - [🧾 Version 8.11.0](#-8110---2026-09-27)
 - [🧾 Version 8.10.2](#-8102---2026-09-26)
@@ -65,6 +66,124 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [9.0.0] - 2026-10-01
+
+#### 🔄 Changed
+
+##### Match API
+
+- **Breaking — `MatchRequest`, `MatchResponse`:** The `stages` field is gone from both. A match request or response
+  no longer carries stages, and the bulk CSV import no longer has a `Stages` column
+- **`TransactionService.saveMatch`:** The `saveMatch(IpscMatch, List, StageSaveMode)` overload and the `StageSaveMode`
+  enum are removed along with the stage replace/upsert logic — `saveMatch(IpscMatch)` is the only single-match save
+- **`IpscMatchService.deleteMatch`:** No longer checks for recorded stage results, as there are none to check — a
+  match is still refused deletion while it has competitor results or is referenced by shooter logs
+- **`MatchRequestCsvMixIn`:** New Jackson mix-in binding the CSV column headers onto `MatchRequest`'s constructor, so
+  the bulk import reads each row straight into a `MatchRequest` — the accepted CSV columns are unchanged. The
+  `MatchRequestForCSV` model is removed along with `IpscMatchServiceImpl.toRequest`, which only copied it into a
+  `MatchRequest`
+- **Breaking — `MatchRequest.matchFirearmType`, `MatchRequest.matchCategory`:** Now required properties, like
+  `matchDate` and `matchName` — a JSON request body that leaves either out is rejected when it is read, instead of
+  reaching the service. They were already needed to create or replace a match, so only the error response changes
+- **`MatchPatchRequest`, `IpscMatchService.patchMatch`, `IpscMatchController.patchMatch`:** New request model for
+  `PATCH /ipsc/matches/{matchId}`, replacing `MatchRequest` there — no field is required, since the match is identified
+  by the path ID alone, and any field left out is left unchanged. This keeps a patch partial now that `MatchRequest`
+  requires its match date, name, firearm type and category. It has no `matchId`, so a body that sent one now has it
+  ignored
+- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns, and unknown columns are ignored —
+  `MatchDate`, `MatchName`, `MatchFirearmType` and `MatchCategory` must be present in the header and in every row, and
+  a CSV that lacks any of them is rejected as invalid. A `MatchId` column is read but never used, since the import only
+  creates matches
+- **`IpscMatchController.createMatches`:** The bulk import's Swagger request schema is now plain text, with its example
+  header row, rather than the removed CSV model
+
+##### Competitor API
+
+- **`CompetitorRequestCsvMixIn`:** New Jackson mix-in binding the CSV column headers onto `CompetitorRequest`'s
+  constructor, so the bulk import reads each row straight into a `CompetitorRequest` — the accepted CSV columns are
+  unchanged. The `CompetitorRequestForCSV` model is removed; `IpscCompetitorServiceImpl.toRequest`, which copied it into
+  a `CompetitorRequest` while normalising name casing, becomes `normaliseCsvRequest` and takes the `CompetitorRequest`
+  directly, keeping the row's `competitorId` rather than blanking it
+- **`CompetitorRequest.emailAddresses`:** Now defaults to an empty list rather than `null`. The CSV import splits the
+  semicolon-separated `EmailAddresses` cell on the shared array element separator itself, so
+  `IpscCompetitorServiceImpl.splitEmailAddresses` is removed. The accepted CSV format is unchanged
+- **`IpscCompetitorServiceImpl.readCompetitors`:** A CSV header may now omit optional columns, and unknown columns are
+  ignored — only `FirstName` and `LastName` are still required, and a row that lacks either is rejected as invalid. A
+  `CompetitorId` column is read but never used, since the import only creates competitors
+- **`IpscCompetitorController.createCompetitors`:** The bulk import's Swagger request schema is now plain text, with its
+  example header row, rather than the removed CSV model
+- **`CompetitorPatchRequest`, `IpscCompetitorService.patchCompetitor`, `IpscCompetitorController.patchCompetitor`:** New
+  request model for `PATCH /ipsc/competitors/{competitorId}`, replacing `CompetitorRequest` there — no field is
+  required, since the competitor is identified by the path ID alone, so a patch no longer has to repeat `firstName` and
+  `lastName`. Its `emailAddresses` is `null` unless supplied, so a patch that omits it keeps the competitor's addresses
+  instead of clearing them. It has no `competitorId`, so a body that sent one now has it ignored
+- **`IpscCompetitorServiceImpl.resolveHomeClub`:** A competitor's home club now also resolves by club abbreviation when
+  no club has a matching name, so a competitor request or CSV row may name the club either way
+
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`:** Stages dropped from the match description, the entity and repository tables and
+  the Project Structure tree, and the CSV models replaced by the new mix-ins and patch request models
+- **`CHANGELOG.md`, `HISTORY.md`, `documentation/history/EVOLUTION_OVERVIEW.md`:** Past-release entries keep the class
+  names they were written with, rather than the renamed CSV request models
+
+##### Tests
+
+- **`MatchRequestCsvMixInTest`, `CompetitorRequestCsvMixInTest`, `MatchPatchRequestTest`,
+  `CompetitorPatchRequestTest`:** New tests for the CSV mix-ins and the patch request models, replacing
+  `MatchRequestForCSVTest`, `CompetitorRequestForCSVTest` and `MatchStageRequestTest`
+- **Stage tests:** Stage coverage removed from the match, competitor, repository and transaction service tests, along
+  with `MatchStageCompetitorRepositoryIntegrationTest`
+
+#### 📦 Dependencies
+
+##### Database
+
+- **`mysql-connector-j`:** Pinned to `9.4.0` in `pom.xml` instead of the Spring Boot-managed version
+
+#### 🔧 Configuration
+
+##### Database
+
+- **Breaking — `spring.datasource.username`, `MYSQL_USER`:** The username is no longer read from the `MYSQL_USER`
+  environment variable in `application.properties`; the `dev` and `prod` profiles now set it (`hpsc_dev`,
+  `hpsc_prod`), so a deployment that relied on `MYSQL_USER` must switch profile or set the property itself
+- **`application-dev.properties`:** The datasource URL now points at `127.0.0.1` rather than `localhost`
+- **`application-local.properties`:** Drops the `MYSQL_LOCAL_PASSWORD` override, so the local profile now uses
+  `MYSQL_PASSWORD` like the others
+
+#### 🗑️ Removed
+
+##### Persistence
+
+- **Breaking — `IpscMatchStage`, `MatchStageCompetitor`:** Both entities are removed, together with
+  `IpscMatchStageRepository`, `MatchStageCompetitorRepository` and the `IpscMatch.stages` collection
+- **`V7_9_0__drop_ipsc_match_stage.sql`:** New Flyway migration dropping the `match_stage_competitor` and
+  `ipsc_match_stage` tables with `DROP TABLE IF EXISTS`, in that order, since the former holds a foreign key to the
+  latter. Any existing stage data is discarded
+
+##### Match API
+
+- **`MatchStageRequest`, `MatchStageResponse`:** Removed, along with `IpscMatchServiceImpl.toStages` and
+  `parseStages`
+
+##### Constants
+
+- **`IpscConstants.EXCLUDE_CLUB_IDENTIFIERS`, `IpscConstants.STAGE_POINTS_SCALE`:** Removed — nothing references
+  either any more
+
+#### 🔐 Security
+
+##### Dependencies
+
+- **`tomcat.version`:** Raised from `11.0.25` to `11.0.26` in `pom.xml`
+- **`logback.version`:** New `pom.xml` override pinning Logback to `1.6.5`
+- **`jackson-2-bom.version`, `jackson-bom.version`:** New `pom.xml` overrides raising the Jackson 2 BOM to `2.22.3`
+  and the Jackson 3 BOM to `3.2.3`, so `jackson-core` and `jackson-dataformat-csv` follow. They override the
+  properties Spring Boot imports the BOMs through, rather than importing a Jackson POM, whose parent chain would
+  re-pin `junit-bom`
+- **`flyway-mysql`:** Now pinned to `13.7.0` instead of the Spring Boot-managed version
 
 ### 🧾 [8.12.0] - 2026-09-29
 

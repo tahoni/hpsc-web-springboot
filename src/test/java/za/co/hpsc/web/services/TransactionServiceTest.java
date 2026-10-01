@@ -10,11 +10,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.repositories.IpscMatchStageRepository;
-import za.co.hpsc.web.services.TransactionService.StageSaveMode;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
 import java.util.List;
@@ -39,9 +36,6 @@ public class TransactionServiceTest {
     private IpscMatchRepository ipscMatchRepository;
 
     @Mock
-    private IpscMatchStageRepository ipscMatchStageRepository;
-
-    @Mock
     private PlatformTransactionManager transactionManager;
 
     @Mock
@@ -52,7 +46,7 @@ public class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         transactionService = new TransactionServiceImpl(competitorRepository, ipscMatchRepository,
-                ipscMatchStageRepository, transactionManager);
+                transactionManager);
     }
 
     // saveCompetitor()
@@ -134,7 +128,7 @@ public class TransactionServiceTest {
 
     // saveMatch(IpscMatch)
     @Test
-    void testSaveMatch_whenCalledWithMatchOnly_thenSavesWithoutTouchingStages() {
+    void testSaveMatch_whenCalledWithMatchOnly_thenSavesAndCommits() {
         // Arrange
         stubTransaction();
         IpscMatch match = new IpscMatch();
@@ -144,59 +138,8 @@ public class TransactionServiceTest {
         IpscMatch result = transactionService.saveMatch(match);
 
         // Assert
-        assertSame(match, result);
-        verifyNoInteractions(ipscMatchStageRepository);
         verify(transactionManager).commit(transactionStatus);
     }
-
-    // saveMatch(IpscMatch, List, StageSaveMode)
-    @Test
-    void testSaveMatch_whenModeIsReplace_thenReplacesStagesOnSavedMatch() {
-        // Arrange
-        stubTransaction();
-        IpscMatch match = matchWithStage(1, "Old Stage");
-        when(ipscMatchRepository.save(match)).thenReturn(match);
-        IpscMatchStage replacement = newStage(1, "New Stage");
-
-        // Act
-        IpscMatch result = transactionService.saveMatch(match, List.of(replacement), StageSaveMode.REPLACE);
-
-        // Assert
-        assertEquals(List.of(replacement), result.getStages());
-        verify(transactionManager).commit(transactionStatus);
-    }
-
-    @Test
-    void testSaveMatch_whenModeIsUpsert_thenUpsertsStagesOnSavedMatch() {
-        // Arrange
-        stubTransaction();
-        IpscMatch match = matchWithStage(1, "Stage 1");
-        when(ipscMatchRepository.save(match)).thenReturn(match);
-        IpscMatchStage added = newStage(2, "Stage 2");
-
-        // Act
-        IpscMatch result = transactionService.saveMatch(match, List.of(added), StageSaveMode.UPSERT);
-
-        // Assert
-        assertEquals(2, result.getStages().size());
-        assertTrue(result.getStages().contains(added));
-    }
-
-    @Test
-    void testSaveMatch_whenModeIsUpsertAndStagesIsNull_thenLeavesStagesUntouched() {
-        // Arrange
-        stubTransaction();
-        IpscMatch match = matchWithStage(1, "Stage 1");
-        when(ipscMatchRepository.save(match)).thenReturn(match);
-
-        // Act
-        IpscMatch result = transactionService.saveMatch(match, null, StageSaveMode.UPSERT);
-
-        // Assert
-        assertEquals(1, result.getStages().size());
-        verifyNoInteractions(ipscMatchStageRepository);
-    }
-
     // saveMatches()
     @Test
     void testSaveMatches_whenCalled_thenSavesEachInOneTransactionInOrder() {
@@ -247,22 +190,5 @@ public class TransactionServiceTest {
     // Helpers
     private void stubTransaction() {
         when(transactionManager.getTransaction(any())).thenReturn(transactionStatus);
-    }
-
-    private IpscMatch matchWithStage(int stageNumber, String stageName) {
-        IpscMatch match = new IpscMatch();
-        match.setId(1L);
-        IpscMatchStage stage = newStage(stageNumber, stageName);
-        stage.setId(100L);
-        stage.setMatch(match);
-        match.getStages().add(stage);
-        return match;
-    }
-
-    private IpscMatchStage newStage(int stageNumber, String stageName) {
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setStageNumber(stageNumber);
-        stage.setStageName(stageName);
-        return stage;
     }
 }

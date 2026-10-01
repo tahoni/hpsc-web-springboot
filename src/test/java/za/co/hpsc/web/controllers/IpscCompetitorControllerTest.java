@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
@@ -274,7 +275,7 @@ class IpscCompetitorControllerTest {
     @Test
     void testPatchCompetitor_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException {
         // Arrange
-        CompetitorRequest request = new CompetitorRequest();
+        CompetitorPatchRequest request = new CompetitorPatchRequest();
         CompetitorResponse response = new CompetitorResponse();
         when(ipscCompetitorService.patchCompetitor(1L, request)).thenReturn(response);
 
@@ -289,7 +290,7 @@ class IpscCompetitorControllerTest {
     @Test
     void testPatchCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
         // Arrange
-        CompetitorRequest request = new CompetitorRequest();
+        CompetitorPatchRequest request = new CompetitorPatchRequest();
         when(ipscCompetitorService.patchCompetitor(1L, request)).thenReturn(new CompetitorResponse());
 
         // Act
@@ -303,7 +304,7 @@ class IpscCompetitorControllerTest {
     @Test
     void testPatchCompetitor_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException {
         // Arrange
-        CompetitorRequest request = new CompetitorRequest();
+        CompetitorPatchRequest request = new CompetitorPatchRequest();
         when(ipscCompetitorService.patchCompetitor(99L, request)).thenThrow(new NonFatalException("No competitor found with ID 99"));
 
         // Act & Assert

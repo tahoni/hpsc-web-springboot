@@ -13,15 +13,12 @@ import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.services.TransactionService.StageSaveMode;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -57,9 +54,6 @@ class TransactionServiceIntegrationTest {
 
     @Autowired
     private IpscMatchRepository ipscMatchRepository;
-
-    @Autowired
-    private IpscMatchStageRepository ipscMatchStageRepository;
 
     @Autowired
     private MatchCompetitorRepository matchCompetitorRepository;
@@ -163,26 +157,22 @@ class TransactionServiceIntegrationTest {
 
     // saveMatch(IpscMatch)
     @Test
-    void testSaveMatch_whenMatchIsNewWithStages_thenCommitsMatchAndStagesTogether() {
+    void testSaveMatch_whenMatchIsNew_thenCommitsItWithAGeneratedId() {
         // Arrange
         IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
-        addStage(match, 2, "Stage 2");
 
         // Act
         IpscMatch saved = transactionService.saveMatch(match);
 
         // Assert
         assertNotNull(saved.getId());
-        assertTrue(saved.getStages().stream().allMatch(stage -> stage.getId() != null));
-        assertEquals(List.of("Stage 1", "Stage 2"), stageNames(saved.getId()));
+        assertTrue(ipscMatchRepository.existsById(saved.getId()));
     }
 
     @Test
-    void testSaveMatch_whenMatchExists_thenCommitsTheChangesAndLeavesStagesUntouched() {
+    void testSaveMatch_whenMatchExists_thenCommitsTheChanges() {
         // Arrange
         IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
         IpscMatch existing = ipscMatchRepository.findByIdWithClub(transactionService.saveMatch(match).getId())
                 .orElseThrow();
         existing.setName("Renamed Championship");
@@ -192,43 +182,6 @@ class TransactionServiceIntegrationTest {
 
         // Assert
         assertEquals("Renamed Championship", ipscMatchRepository.findById(saved.getId()).orElseThrow().getName());
-        assertEquals(List.of("Stage 1"), stageNames(saved.getId()));
-        assertEquals(1, saved.getStages().size());
-    }
-
-    // saveMatch(IpscMatch, List, StageSaveMode)
-    @Test
-    void testSaveMatch_whenReplacingWithAReusedStageNumber_thenCommitsOnlyTheNewStages() {
-        // Arrange
-        IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
-        addStage(match, 2, "Stage 2");
-        IpscMatch existing = ipscMatchRepository.findByIdWithClub(transactionService.saveMatch(match).getId())
-                .orElseThrow();
-
-        // Act
-        IpscMatch saved = transactionService.saveMatch(existing, List.of(newStage(1, "Replacement Stage")),
-                StageSaveMode.REPLACE);
-
-        // Assert
-        assertEquals(1, saved.getStages().size());
-        assertEquals(List.of("Replacement Stage"), stageNames(saved.getId()));
-    }
-
-    @Test
-    void testSaveMatch_whenUpserting_thenUpdatesMatchingStagesAndAddsTheRest() {
-        // Arrange
-        IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
-        IpscMatch existing = ipscMatchRepository.findByIdWithClub(transactionService.saveMatch(match).getId())
-                .orElseThrow();
-
-        // Act
-        transactionService.saveMatch(existing, List.of(newStage(1, "Renamed Stage"), newStage(2, "Added Stage")),
-                StageSaveMode.UPSERT);
-
-        // Assert
-        assertEquals(List.of("Renamed Stage", "Added Stage"), stageNames(existing.getId()));
     }
 
     // saveMatches()
@@ -236,30 +189,24 @@ class TransactionServiceIntegrationTest {
     void testSaveMatches_whenOneFails_thenRollsBackEveryOne() {
         // Arrange
         IpscMatch valid = newMatch("First Match");
-        IpscMatch invalid = newMatch("Second Match");
-        addStage(invalid, 1, "Stage 1");
-        addStage(invalid, 1, "Duplicate Stage 1");
+        IpscMatch invalid = newMatch(null);
 
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class, () -> transactionService.saveMatches(List.of(valid, invalid)));
         assertEquals(0, ipscMatchRepository.count());
-        assertEquals(0, ipscMatchStageRepository.count());
     }
 
     // deleteMatch()
     @Test
-    void testDeleteMatch_whenUnreferenced_thenCommitsTheDeleteWithItsStages() {
+    void testDeleteMatch_whenUnreferenced_thenCommitsTheDelete() {
         // Arrange
-        IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
-        IpscMatch saved = transactionService.saveMatch(match);
+        IpscMatch saved = transactionService.saveMatch(newMatch("Club Championship"));
 
         // Act
         transactionService.deleteMatch(saved);
 
         // Assert
         assertFalse(ipscMatchRepository.existsById(saved.getId()));
-        assertEquals(0, ipscMatchStageRepository.count());
     }
 
     @Test
@@ -293,25 +240,6 @@ class TransactionServiceIntegrationTest {
         match.setName(name);
         match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         return match;
-    }
-
-    private IpscMatchStage newStage(int stageNumber, String stageName) {
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setStageNumber(stageNumber);
-        stage.setStageName(stageName);
-        return stage;
-    }
-
-    private void addStage(IpscMatch match, int stageNumber, String stageName) {
-        IpscMatchStage stage = newStage(stageNumber, stageName);
-        stage.setMatch(match);
-        match.getStages().add(stage);
-    }
-
-    private List<String> stageNames(Long matchId) {
-        return ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId).stream()
-                .map(IpscMatchStage::getStageName)
-                .toList();
     }
 
     private void recordResult(Competitor competitor, IpscMatch match) {

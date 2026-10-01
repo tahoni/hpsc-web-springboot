@@ -21,8 +21,9 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.helpers.CompetitorHelpers;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
-import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestForCSV;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -35,9 +36,8 @@ import za.co.hpsc.web.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -73,13 +73,13 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
-        List<CompetitorRequestForCSV> competitorRequestForCSVList = readCompetitors(csvData);
+        List<CompetitorRequest> competitorRequests = readCompetitors(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
         // transaction, so a bad row leaves none of them persisted.
         List<Competitor> competitors = new ArrayList<>();
-        for (CompetitorRequestForCSV competitorRequestForCSV : competitorRequestForCSVList) {
-            competitors.add(newCompetitor(toRequest(competitorRequestForCSV)));
+        for (CompetitorRequest competitorRequest : competitorRequests) {
+            competitors.add(newCompetitor(normaliseCsvRequest(competitorRequest)));
         }
 
         List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
@@ -98,7 +98,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     @Override
-    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
+    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorPatchRequest request) {
         Competitor competitor = findCompetitorOrThrow(competitorId);
 
         if (request.getFirstName() != null) {
@@ -205,25 +205,27 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     /**
      * Reads competitor data from a CSV-formatted string and converts it into a list of
-     * {@link CompetitorRequestForCSV} objects.
+     * {@link CompetitorRequest} objects, binding the CSV column headers onto each through
+     * {@link CompetitorRequestCsvMixIn}. A header may omit optional columns and unknown columns are ignored.
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.
      *                Must not be null or blank.
-     * @return a list of {@link CompetitorRequestForCSV} objects parsed from the provided CSV data.
+     * @return a list of {@link CompetitorRequest} objects parsed from the provided CSV data.
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<CompetitorRequestForCSV> readCompetitors(@NotNull @NotBlank String csvData)
+    protected List<CompetitorRequest> readCompetitors(@NotNull @NotBlank String csvData)
             throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        CsvSchema csvSchema = csvMapper
-                .schemaFor(CompetitorRequestForCSV.class)
-                .withColumnReordering(true)
+        // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
+        CsvSchema csvSchema = CsvSchema.emptySchema()
+                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
                 .withHeader();
+        csvMapper.addMixIn(CompetitorRequest.class, CompetitorRequestCsvMixIn.class);
 
-        try (MappingIterator<CompetitorRequestForCSV> requestMappingIterator =
-                     csvMapper.readerFor(CompetitorRequestForCSV.class)
+        try (MappingIterator<CompetitorRequest> requestMappingIterator =
+                     csvMapper.readerFor(CompetitorRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
@@ -238,7 +240,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Maps a {@link CompetitorRequestForCSV} row onto a {@link CompetitorRequest}.
+     * Normalises a {@link CompetitorRequest} read from a CSV row into a new {@link CompetitorRequest}, dropping any
+     * {@code competitorId}.
      *
      * <p>
      * Every name column and the gender are proper-cased (see {@link StringUtils#toProperCase(String)}). The
@@ -246,49 +249,30 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * numbers, which are codes (club numbers must also stay unique), the ID and cellphone numbers and the
      * email addresses are kept as supplied. The last name then gets surname casing (see
      * {@link CompetitorHelpers#toSentenceCaseLastName(String)}): particles are lower-cased, so "VAN DER MERWE" becomes
-     * "van der Merwe", and an "Mc" prefix is corrected, so "MCDONALD" becomes "McDonald".
+     * "van der Merwe", and a "Mc" prefix is corrected, so "MCDONALD" becomes "McDonald".
      * </p>
      *
-     * @param competitorRequestForCSV the CSV row to map; must not be null.
-     * @return the equivalent {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
+     * @param csvRow the request read from the CSV row; must not be null.
+     * @return the normalised {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
      */
-    protected CompetitorRequest toRequest(@NotNull CompetitorRequestForCSV competitorRequestForCSV) {
+    protected CompetitorRequest normaliseCsvRequest(@NotNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
-                null,
-                StringUtils.toProperCase(competitorRequestForCSV.getFirstName()),
-                CompetitorHelpers.toSentenceCaseLastName(
-                        StringUtils.toProperCase(competitorRequestForCSV.getLastName())),
-                StringUtils.toProperCase(competitorRequestForCSV.getMiddleNames()),
-                StringUtils.toProperCase(competitorRequestForCSV.getNickname()),
-                competitorRequestForCSV.getDateOfBirth(),
-                StringUtils.toProperCase(competitorRequestForCSV.getGender()),
-                competitorRequestForCSV.getHomeClub(),
-                competitorRequestForCSV.getSapsaNumber(),
-                competitorRequestForCSV.getCompetitorNumber(),
-                competitorRequestForCSV.getClubNumber(),
-                competitorRequestForCSV.getIdNumber(),
-                competitorRequestForCSV.getCellphoneNumber(),
-                competitorRequestForCSV.getPaidUpSapsa(),
-                competitorRequestForCSV.getPaidUpClub(),
-                splitEmailAddresses(competitorRequestForCSV.getEmailAddresses()));
-    }
-
-    /**
-     * Splits a CSV cell of semicolon-separated email addresses into a list.
-     *
-     * @param rawEmailAddresses the raw CSV cell value (e.g. {@code "a@x.com;b@x.com"}); may be
-     *                          null or blank, in which case an empty list is returned.
-     * @return the individual, trimmed email addresses, excluding any blank entries.
-     */
-    protected List<String> splitEmailAddresses(String rawEmailAddresses) {
-        if ((rawEmailAddresses == null) || rawEmailAddresses.isBlank()) {
-            return new ArrayList<>();
-        }
-
-        return Arrays.stream(rawEmailAddresses.split(SystemConstants.ARRAY_SEPARATOR))
-                .map(String::trim)
-                .filter(email -> !email.isBlank())
-                .collect(Collectors.toList());
+                csvRow.getCompetitorId(),
+                StringUtils.toProperCase(csvRow.getFirstName()),
+                CompetitorHelpers.toSentenceCaseLastName(StringUtils.toProperCase(csvRow.getLastName())),
+                StringUtils.toProperCase(csvRow.getMiddleNames()),
+                StringUtils.toProperCase(csvRow.getNickname()),
+                csvRow.getDateOfBirth(),
+                StringUtils.toProperCase(csvRow.getGender()),
+                csvRow.getHomeClub(),
+                csvRow.getSapsaNumber(),
+                csvRow.getCompetitorNumber(),
+                csvRow.getClubNumber(),
+                csvRow.getIdNumber(),
+                csvRow.getCellphoneNumber(),
+                csvRow.getPaidUpSapsa(),
+                csvRow.getPaidUpClub(),
+                new ArrayList<>(csvRow.getEmailAddresses()));
     }
 
     /**
@@ -406,10 +390,10 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Resolves a competitor's home club by name.
+     * Resolves a competitor's home club by name or abbreviation.
      *
-     * @param clubName the club name to look up; may be null or blank, in which case no home
-     *                 club is set.
+     * @param clubName the club name/abbreviation to look up; may be null or blank, in which case
+     *                 no home club is set.
      * @return the matching {@link Club}, or {@code null} if {@code clubName} wasn't supplied.
      * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing club.
      */
@@ -418,8 +402,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             return null;
         }
 
-        return clubRepository.findByName(clubName)
-                .orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
+        Optional<Club> optionalClub = clubRepository.findByName(clubName).or(() -> clubRepository.findByAbbreviation(clubName));
+        return optionalClub.orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
     }
 
     /**

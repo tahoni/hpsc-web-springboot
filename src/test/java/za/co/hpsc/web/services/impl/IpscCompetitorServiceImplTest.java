@@ -13,7 +13,6 @@ import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
-import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestForCSV;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -23,6 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +33,7 @@ import static org.mockito.Mockito.when;
  * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code newCompetitor},
  * {@code readCompetitors},
  * {@code resolveClubNumber}, {@code resolveGender}, {@code resolveHomeClub},
- * {@code splitEmailAddresses}, {@code toRequest}, {@code toResponse}, {@code validateForCreate}) -
+ * {@code normaliseCsvRequest}, {@code toResponse}, {@code validateForCreate}) -
  * not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
  * The interface's create/update/patch/get contract is covered by
  * {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}.
@@ -281,6 +283,227 @@ class IpscCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.newCompetitor(request));
     }
 
+    // normaliseCsvRequest()
+    @Test
+    void testNormaliseCsvRequest_whenAllFieldsPresent_thenMapsAllFieldsOntoCompetitorRequest() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
+                List.of("jane.doe@example.com", "jane2.doe@example.com"));
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertNull(request.getCompetitorId());
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("Doe", request.getLastName());
+        assertEquals("Ann", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals(LocalDate.of(1990, 1, 1), request.getDateOfBirth());
+        assertEquals("Female", request.getGender());
+        assertEquals("Test Club", request.getHomeClub());
+        assertEquals(12345, request.getSapsaNumber());
+        assertEquals("C-1", request.getCompetitorNumber());
+        assertEquals("HPSC-001", request.getClubNumber());
+        assertEquals("9001015800083", request.getIdNumber());
+        assertEquals("0821234567", request.getCellphoneNumber());
+        assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
+        assertEquals(Boolean.FALSE, request.getPaidUpClub());
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenTextFieldsAreMixedCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "jANE", "o'NEIL-smith", "ann marie", "JANIE", null, "FEMALE", "test CLUB",
+                null, "c-1a", "hpsc-001", null, null, null, null, List.of("Jane.Doe@Example.com"));
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("O'Neil-Smith", request.getLastName());
+        assertEquals("Ann Marie", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals("Female", request.getGender());
+        assertEquals("test CLUB", request.getHomeClub());
+        assertEquals("c-1a", request.getCompetitorNumber());
+        assertEquals("hpsc-001", request.getClubNumber());
+        assertEquals(List.of("Jane.Doe@Example.com"), request.getEmailAddresses());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenTextFieldsAreAllUpperCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "JANE", "O'NEIL-SMITH", "ANN MARIE", "JANIE", LocalDate.of(1990, 1, 1), "FEMALE", "TEST CLUB",
+                12345, "C-1A", "HPSC-001", "9001015800083", "0821234567", true, false,
+                List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"));
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("O'Neil-Smith", request.getLastName());
+        assertEquals("Ann Marie", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals("Female", request.getGender());
+        assertEquals("TEST CLUB", request.getHomeClub());
+        assertEquals("C-1A", request.getCompetitorNumber());
+        assertEquals("HPSC-001", request.getClubNumber());
+        assertEquals("9001015800083", request.getIdNumber());
+        assertEquals("0821234567", request.getCellphoneNumber());
+        assertEquals(List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), request.getEmailAddresses());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenTextFieldsAreAllLowerCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "jane", "o'neil-smith", "ann marie", "janie", null, "female", "test club",
+                null, "c-1a", "hpsc-001", null, null, null, null, List.of("jane.doe@example.com"));
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("Jane", request.getFirstName());
+        assertEquals("O'Neil-Smith", request.getLastName());
+        assertEquals("Ann Marie", request.getMiddleNames());
+        assertEquals("Janie", request.getNickname());
+        assertEquals("Female", request.getGender());
+        assertEquals("test club", request.getHomeClub());
+        assertEquals("c-1a", request.getCompetitorNumber());
+        assertEquals("hpsc-001", request.getClubNumber());
+        assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenIdAndCellphoneNumbersAreLowerCase_thenKeepsThemAsSupplied() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "jane", "doe", null, null, null, null, null, null, null, null, "ab123456x", "+27 82 abc-1234", null,
+                null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("ab123456x", request.getIdNumber());
+        assertEquals("+27 82 abc-1234", request.getCellphoneNumber());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenIdAndCellphoneNumbersAreUpperCase_thenKeepsThemAsSupplied() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "JANE", "DOE", null, null, null, null, null, null, null, null, "AB123456X", "+27 82 ABC-1234", null,
+                null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("AB123456X", request.getIdNumber());
+        assertEquals("+27 82 ABC-1234", request.getCellphoneNumber());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenUpperCaseLastNameHasMultipleParticles_thenLowerCasesAllOfThem() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "JANE", "DE LA REY", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("de la Rey", request.getLastName());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenUpperCaseLastNameStartsWithParticleLetters_thenProperCasesItOnly() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "JANE", "DUBE", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("Dube", request.getLastName());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenLastNameIsHyphenatedWithParticles_thenLowerCasesThem() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "Jane", "SMITH-VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null,
+                null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("Smith-van der Merwe", request.getLastName());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenLastNameHasMcOrApostrophePrefix_thenCapitalisesCorrectly() {
+        // Arrange
+        CompetitorRequest mcRequest = new CompetitorRequest(null, 
+                "JANE", "MCDONALD", null, null, null, null, null, null, null, null, null, null, null, null, null);
+        CompetitorRequest apostropheRequest = new CompetitorRequest(null, 
+                "JANE", "o’NEIL", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act & Assert
+        assertEquals("McDonald", ipscCompetitorServiceImpl.normaliseCsvRequest(mcRequest).getLastName());
+        assertEquals("O’Neil", ipscCompetitorServiceImpl.normaliseCsvRequest(apostropheRequest).getLastName());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenLastNameHasParticles_thenLowerCasesThem() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "Jane", "VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertEquals("van der Merwe", request.getLastName());
+    }
+
+    @Test
+    void testNormaliseCsvRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
+        // Arrange
+        CompetitorRequest csvRow = new CompetitorRequest(null, 
+                "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null, null);
+
+        // Act
+        CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
+
+        // Assert
+        assertNull(request.getCompetitorId());
+        assertNull(request.getMiddleNames());
+        assertNull(request.getNickname());
+        assertNull(request.getDateOfBirth());
+        assertNull(request.getGender());
+        assertNull(request.getHomeClub());
+        assertNull(request.getSapsaNumber());
+        assertNull(request.getCompetitorNumber());
+        assertNull(request.getIdNumber());
+        assertNull(request.getCellphoneNumber());
+        assertNull(request.getPaidUpSapsa());
+        assertNull(request.getPaidUpClub());
+        assertEquals(List.of(), request.getEmailAddresses());
+    }
+
     // readCompetitors()
     @Test
     void testReadCompetitors_whenValidCsv_thenReturnsCompetitorRequestForCSVList() {
@@ -292,12 +515,12 @@ class IpscCompetitorServiceImplTest {
                 """;
 
         // Act
-        List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+        List<CompetitorRequest> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
 
         // Assert
         assertEquals(2, rows.size());
 
-        CompetitorRequestForCSV first = rows.getFirst();
+        CompetitorRequest first = rows.getFirst();
         assertEquals("Jane", first.getFirstName());
         assertEquals("Doe", first.getLastName());
         assertEquals("Ann", first.getMiddleNames());
@@ -310,9 +533,9 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", first.getClubNumber());
         assertEquals("9001015800083", first.getIdNumber());
         assertEquals("0821234567", first.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", first.getEmailAddresses());
+        assertEquals(List.of("jane.doe@example.com"), first.getEmailAddresses());
 
-        CompetitorRequestForCSV second = rows.get(1);
+        CompetitorRequest second = rows.get(1);
         assertEquals("John", second.getFirstName());
         assertEquals("Smith", second.getLastName());
         assertEquals("HPSC-002", second.getClubNumber());
@@ -327,7 +550,7 @@ class IpscCompetitorServiceImplTest {
                 """;
 
         // Act
-        List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+        List<CompetitorRequest> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
 
         // Assert
         assertEquals(1, rows.size());
@@ -337,22 +560,39 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testReadCompetitors_whenMiddleNamesColumnIsMissing_thenMiddleNamesIsNull() {
+        // Arrange
+        String csvData = """
+                FirstName,LastName,Nickname
+                Jane,Doe,Janie
+                """;
+
+        // Act
+        List<CompetitorRequest> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, rows.size());
+        assertEquals("Jane", rows.getFirst().getFirstName());
+        assertNull(rows.getFirst().getMiddleNames());
+    }
+
+    @Test
     void testReadCompetitors_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyList() {
         // Arrange
         String csvData =
                 "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
 
         // Act
-        List<CompetitorRequestForCSV> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+        List<CompetitorRequest> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
 
         // Assert
         assertTrue(rows.isEmpty());
     }
 
     @Test
-    void testReadCompetitors_whenHeaderIsMissingColumns_thenThrowsValidationException() {
+    void testReadCompetitors_whenHeaderIsMissingRequiredColumn_thenThrowsValidationException() {
         // Arrange
-        String csvData = "FirstName,LastName\nJane,Doe\n";
+        String csvData = "FirstName,Nickname\nJane,Janie\n";
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -361,7 +601,7 @@ class IpscCompetitorServiceImplTest {
     @Test
     void testReadCompetitors_whenCsvHasNoHeaderRow_thenThrowsValidationException() {
         // Arrange
-        String csvData = "Invalid CSV With One Column and no Header";
+        String csvData = "Invalid CSV With One Column and no Header\nJane\n";
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -455,9 +695,10 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
-    void testResolveHomeClub_whenClubNameDoesNotMatchExistingClub_thenThrowsNonFatalException() {
+    void testResolveHomeClub_whenClubNameMatchesNeitherNameNorAbbreviation_thenThrowsNonFatalException() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("No Such Club")).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorServiceImpl.resolveHomeClub("No Such Club"));
@@ -476,256 +717,23 @@ class IpscCompetitorServiceImplTest {
 
         // Assert
         assertSame(club, resolved);
-    }
-
-    // splitEmailAddresses()
-    @Test
-    void testSplitEmailAddresses_whenNull_thenReturnsEmptyList() {
-        assertEquals(List.of(), ipscCompetitorServiceImpl.splitEmailAddresses(null));
+        verify(clubRepository, never()).findByAbbreviation(anyString());
     }
 
     @Test
-    void testSplitEmailAddresses_whenBlank_thenReturnsEmptyList() {
-        assertEquals(List.of(), ipscCompetitorServiceImpl.splitEmailAddresses("  "));
-    }
-
-    @Test
-    void testSplitEmailAddresses_whenSingleEmail_thenReturnsSingletonList() {
-        assertEquals(List.of("jane.doe@example.com"),
-                ipscCompetitorServiceImpl.splitEmailAddresses("jane.doe@example.com"));
-    }
-
-    @Test
-    void testSplitEmailAddresses_whenMultipleEmails_thenReturnsTrimmedList() {
-        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"),
-                ipscCompetitorServiceImpl.splitEmailAddresses(" jane.doe@example.com ; jane2.doe@example.com "));
-    }
-
-    @Test
-    void testSplitEmailAddresses_whenContainsBlankEntries_thenExcludesThem() {
-        assertEquals(List.of("jane.doe@example.com"),
-                ipscCompetitorServiceImpl.splitEmailAddresses("jane.doe@example.com;;  "));
-    }
-
-    // toRequest()
-    @Test
-    void testToRequest_whenAllFieldsPresent_thenMapsAllFieldsOntoCompetitorRequest() {
+    void testResolveHomeClub_whenClubNameMatchesOnlyAnAbbreviation_thenReturnsClub() {
         // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
-                "jane.doe@example.com;jane2.doe@example.com");
+        Club club = new Club();
+        club.setId(10L);
+        club.setName("Test Club");
+        when(clubRepository.findByName("TC")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("TC")).thenReturn(Optional.of(club));
 
         // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
+        Club resolved = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.resolveHomeClub("TC"));
 
         // Assert
-        assertNull(request.getCompetitorId());
-        assertEquals("Jane", request.getFirstName());
-        assertEquals("Doe", request.getLastName());
-        assertEquals("Ann", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
-        assertEquals(LocalDate.of(1990, 1, 1), request.getDateOfBirth());
-        assertEquals("Female", request.getGender());
-        assertEquals("Test Club", request.getHomeClub());
-        assertEquals(12345, request.getSapsaNumber());
-        assertEquals("C-1", request.getCompetitorNumber());
-        assertEquals("HPSC-001", request.getClubNumber());
-        assertEquals("9001015800083", request.getIdNumber());
-        assertEquals("0821234567", request.getCellphoneNumber());
-        assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
-        assertEquals(Boolean.FALSE, request.getPaidUpClub());
-        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
-    }
-
-    @Test
-    void testToRequest_whenTextFieldsAreMixedCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "jANE", "o'NEIL-smith", "ann marie", "JANIE", null, "FEMALE", "test CLUB",
-                null, "c-1a", "hpsc-001", null, null, null, null, "Jane.Doe@Example.com");
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("Jane", request.getFirstName());
-        assertEquals("O'Neil-Smith", request.getLastName());
-        assertEquals("Ann Marie", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
-        assertEquals("Female", request.getGender());
-        assertEquals("test CLUB", request.getHomeClub());
-        assertEquals("c-1a", request.getCompetitorNumber());
-        assertEquals("hpsc-001", request.getClubNumber());
-        assertEquals(List.of("Jane.Doe@Example.com"), request.getEmailAddresses());
-    }
-
-    @Test
-    void testToRequest_whenTextFieldsAreAllUpperCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "JANE", "O'NEIL-SMITH", "ANN MARIE", "JANIE", LocalDate.of(1990, 1, 1), "FEMALE", "TEST CLUB",
-                12345, "C-1A", "HPSC-001", "9001015800083", "0821234567", true, false,
-                "JANE.DOE@EXAMPLE.COM;JANE2.DOE@EXAMPLE.COM");
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("Jane", request.getFirstName());
-        assertEquals("O'Neil-Smith", request.getLastName());
-        assertEquals("Ann Marie", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
-        assertEquals("Female", request.getGender());
-        assertEquals("TEST CLUB", request.getHomeClub());
-        assertEquals("C-1A", request.getCompetitorNumber());
-        assertEquals("HPSC-001", request.getClubNumber());
-        assertEquals("9001015800083", request.getIdNumber());
-        assertEquals("0821234567", request.getCellphoneNumber());
-        assertEquals(List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), request.getEmailAddresses());
-    }
-
-    @Test
-    void testToRequest_whenTextFieldsAreAllLowerCase_thenProperCasesAllButHomeClubNumbersAndEmailAddresses() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "jane", "o'neil-smith", "ann marie", "janie", null, "female", "test club",
-                null, "c-1a", "hpsc-001", null, null, null, null, "jane.doe@example.com");
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("Jane", request.getFirstName());
-        assertEquals("O'Neil-Smith", request.getLastName());
-        assertEquals("Ann Marie", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
-        assertEquals("Female", request.getGender());
-        assertEquals("test club", request.getHomeClub());
-        assertEquals("c-1a", request.getCompetitorNumber());
-        assertEquals("hpsc-001", request.getClubNumber());
-        assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
-    }
-
-    @Test
-    void testToRequest_whenIdAndCellphoneNumbersAreLowerCase_thenKeepsThemAsSupplied() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "jane", "doe", null, null, null, null, null, null, null, null, "ab123456x", "+27 82 abc-1234", null,
-                null, null);
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("ab123456x", request.getIdNumber());
-        assertEquals("+27 82 abc-1234", request.getCellphoneNumber());
-    }
-
-    @Test
-    void testToRequest_whenIdAndCellphoneNumbersAreUpperCase_thenKeepsThemAsSupplied() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "JANE", "DOE", null, null, null, null, null, null, null, null, "AB123456X", "+27 82 ABC-1234", null,
-                null, null);
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("AB123456X", request.getIdNumber());
-        assertEquals("+27 82 ABC-1234", request.getCellphoneNumber());
-    }
-
-    @Test
-    void testToRequest_whenUpperCaseLastNameHasMultipleParticles_thenLowerCasesAllOfThem() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "JANE", "DE LA REY", null, null, null, null, null, null, null, null, null, null, null, null, null);
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("de la Rey", request.getLastName());
-    }
-
-    @Test
-    void testToRequest_whenUpperCaseLastNameStartsWithParticleLetters_thenProperCasesItOnly() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "JANE", "DUBE", null, null, null, null, null, null, null, null, null, null, null, null, null);
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("Dube", request.getLastName());
-    }
-
-    @Test
-    void testToRequest_whenLastNameIsHyphenatedWithParticles_thenLowerCasesThem() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "Jane", "SMITH-VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null,
-                null);
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("Smith-van der Merwe", request.getLastName());
-    }
-
-    @Test
-    void testToRequest_whenLastNameHasMcOrApostrophePrefix_thenCapitalisesCorrectly() {
-        // Arrange
-        CompetitorRequestForCSV mcRequest = new CompetitorRequestForCSV(
-                "JANE", "MCDONALD", null, null, null, null, null, null, null, null, null, null, null, null, null);
-        CompetitorRequestForCSV apostropheRequest = new CompetitorRequestForCSV(
-                "JANE", "o’NEIL", null, null, null, null, null, null, null, null, null, null, null, null, null);
-
-        // Act & Assert
-        assertEquals("McDonald", ipscCompetitorServiceImpl.toRequest(mcRequest).getLastName());
-        assertEquals("O’Neil", ipscCompetitorServiceImpl.toRequest(apostropheRequest).getLastName());
-    }
-
-    @Test
-    void testToRequest_whenLastNameHasParticles_thenLowerCasesThem() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "Jane", "VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null, null);
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertEquals("van der Merwe", request.getLastName());
-    }
-
-    @Test
-    void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
-        // Arrange
-        CompetitorRequestForCSV competitorRequestForCSV = new CompetitorRequestForCSV(
-                "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null, null);
-
-        // Act
-        CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestForCSV);
-
-        // Assert
-        assertNull(request.getCompetitorId());
-        assertNull(request.getMiddleNames());
-        assertNull(request.getNickname());
-        assertNull(request.getDateOfBirth());
-        assertNull(request.getGender());
-        assertNull(request.getHomeClub());
-        assertNull(request.getSapsaNumber());
-        assertNull(request.getCompetitorNumber());
-        assertNull(request.getIdNumber());
-        assertNull(request.getCellphoneNumber());
-        assertNull(request.getPaidUpSapsa());
-        assertNull(request.getPaidUpClub());
-        assertEquals(List.of(), request.getEmailAddresses());
+        assertSame(club, resolved);
     }
 
     // toResponse()

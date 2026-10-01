@@ -21,6 +21,47 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 9.0.0 (October 1, 2026)
+
+**Theme:** Match Stage Removal & CSV Import via Jackson Mix-Ins
+
+**Key Focus:**
+
+- `IpscMatchStage` and `MatchStageCompetitor` removed together with their repositories, the `IpscMatch.stages`
+  collection, `MatchStageRequest`/`MatchStageResponse`, the `stages` field on `MatchRequest`/`MatchResponse` and the
+  match CSV import's `Stages` column; the new `V7_9_0__drop_ipsc_match_stage.sql` migration drops the
+  `match_stage_competitor` and `ipsc_match_stage` tables, discarding any existing stage data
+- `TransactionService.saveMatch(IpscMatch, List, StageSaveMode)` and the `StageSaveMode` enum removed with the stage
+  replace/upsert logic, leaving `saveMatch(IpscMatch)` as the only single-match save; `IpscMatchService.deleteMatch`
+  no longer checks for stage results
+- The CSV import models are replaced by Jackson mix-ins: new `MatchRequestCsvMixIn` and `CompetitorRequestCsvMixIn` bind
+  the CSV column headers onto `MatchRequest`'s and `CompetitorRequest`'s constructors, so each import reads a row
+  straight into the request model. `MatchRequestForCSV`, `CompetitorRequestForCSV` and the `toRequest` copy step in
+  `IpscMatchServiceImpl` go; `IpscCompetitorServiceImpl.toRequest` becomes `normaliseCsvRequest`, keeping the row's
+  `competitorId`
+- Both CSV imports now accept a header that omits optional columns and ignore unknown columns; only `MatchDate`,
+  `MatchName`, `MatchFirearmType` and `MatchCategory` (matches) and `FirstName` and `LastName` (competitors) must be
+  present. `CompetitorRequest.emailAddresses` defaults to an empty list and the import splits the `EmailAddresses`
+  cell itself
+- `MatchRequest.matchFirearmType` and `matchCategory` become required properties, so a JSON body that leaves either
+  out is rejected when it is read
+- New `MatchPatchRequest` and `CompetitorPatchRequest` replace the full request models on
+  `PATCH /ipsc/matches/{matchId}` and `PATCH /ipsc/competitors/{competitorId}`: no field is required, and a field
+  left out is left unchanged
+- `IpscCompetitorServiceImpl.resolveHomeClub` also resolves a home club by abbreviation when no club has a matching
+  name
+- The `MYSQL_USER` environment variable is no longer read by `application.properties`; the `dev` and `prod` profiles
+  set the datasource username themselves, and `mysql-connector-j` is pinned to `9.4.0`
+- The release's improvement-plan sweep found no new gaps and closed none; Gap #6's evidence now notes that the stage
+  repositories it listed are gone, and Gap #6 remains the only open gap, with #26 still waiting on a Spring Boot
+  release that manages Tomcat `11.0.25`
+- Scoped as `v9.0.0` **MAJOR**: `stages` is removed from the match request and response, two entities and their
+  tables are dropped, `matchFirearmType` and `matchCategory` become required and `MYSQL_USER` is no longer read
+- Project version bumped to 9.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Vulnerable dependencies addressed in `pom.xml`: `tomcat.version` raised to `11.0.26`, a new `logback.version`
+  override of `1.6.5`, the Jackson BOM properties raised, and `flyway-mysql` pinned above the
+  Spring Boot-managed versions
+
 ### Version 8.12.0 (September 29, 2026)
 
 **Theme:** Competitor CSV Import Casing Normalisation
@@ -1397,7 +1438,7 @@ while clearing the improvement plan of every documentation-accuracy gap.
   breaking changes land
 - Production gets its own `prod` profile, and the profile documentation matches the properties files
 - Manual dependency-version overrides are re-checked at every release
-- Gaps #25, #27 and #28 closed and #26 progressed, leaving Gap #6 the only open gap
+- Gaps #25, #27 and #28 closed, and #26 progressed, leaving Gap #6 the only open gap
 
 **Achievement:** Turned the project's version numbers from a matter of precedent into a rule the release process
 checks, and made the documented runtime profiles match the ones that actually exist.
@@ -1457,6 +1498,21 @@ fail the build rather than slip through.
 
 **Achievement:** Made bulk-imported competitor data consistent to read regardless of how the source spreadsheet was
 typed, without changing the CSV format or JSON endpoints consumers already rely on.
+
+### Milestone 42: Match Stage Removal & Mix-In CSV Binding (v9.0.0)
+
+- The stage model — `IpscMatchStage`, `MatchStageCompetitor`, their repositories, requests, responses and the
+  `IpscMatch.stages` collection — is removed, along with the tables behind it, so a match is described by its own
+  fields and its competitor results alone
+- The two bulk CSV imports bind their columns onto the request models through Jackson mix-ins instead of copying from
+  dedicated CSV models, so there is one request model per resource, and both tolerate optional columns being left out
+- `PATCH` on matches and competitors takes dedicated patch models with no required fields, keeping a partial update
+  partial now that the full request models require more
+- Project's first MAJOR release since v8.0.0, with its breaking changes flagged `**Breaking:**` in `CHANGELOG.md` as
+  they landed
+
+**Achievement:** Removed the match stage model and the duplicate CSV models in one release, flagging each
+backward-incompatible change as it landed so the MAJOR classification was visible before the release was cut.
 
 ---
 
@@ -1858,6 +1914,25 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
 - `IpscMatch.stages` is the domain model's single bidirectional, cascaded relationship — composition, since a stage
   can't exist without its match — while every other relationship stays unidirectional and reject-not-cascade
 
+### v9.0.0: Stage-Free Match Model & Mix-In CSV Binding
+
+```
+CSV row ──(CsvMapper + *RequestCsvMixIn)──→ MatchRequest / CompetitorRequest
+                                                     ↓
+IpscMatchController / IpscCompetitorController → IpscMatchService / IpscCompetitorService
+                                                     ↓
+                                    TransactionService.saveMatch(IpscMatch)
+```
+
+**Characteristics:**
+
+- `IpscMatch` no longer owns any child collection, so the one bidirectional, cascaded relationship that v8.9.0
+  described is gone, and every remaining relationship is unidirectional and reject-not-cascade
+- A CSV row is read straight into the same request model a JSON body uses, through a mix-in that supplies the column
+  names, so a field added to a request model is picked up by both entry points without a second model to keep in step
+- Each `PATCH` has its own request model with no required fields, while `POST` and `PUT` keep the full model with its
+  required fields
+
 ---
 
 ## ✨ Feature Timeline
@@ -2063,6 +2138,11 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
   97% floor as line coverage. Then normalise the competitor CSV import's casing — proper-casing free-text columns and
   lower-casing surname particles — so imported data reads consistently regardless of how it was typed, backed by a
   new `helpers` package and an internal `Util` → `Utils` naming clean-up.
+- **Version 9.x (v9.0.0):** Narrow the match domain to what the project actually uses — removing the stage model and
+  its tables — and collapse the duplicate CSV request models into the request models themselves through Jackson
+  mix-ins, so the bulk imports and the JSON endpoints share one contract. Because that tightens the public API (a
+  removed field, now-required properties, a configuration variable no longer read), the release is the project's
+  first MAJOR since v8.0.0, with each breaking change flagged in `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -2322,11 +2402,21 @@ CompetitorRepository               IpscMatchRepository / IpscMatchStageRepositor
     - Integration tests that are themselves `@Transactional` absorb the code's own transactions and hide commit and
       lazy-loading bugs — so the new tests that prove commits run without a surrounding transaction
 
+17. **Stage Removal & One Request Model per Resource (v9.0.0):** Removing a part of a domain model is cheaper done in
+    one release than left half-supported, and a second model for an entry point is a second contract to keep in step
+    - Dropping `IpscMatchStage`/`MatchStageCompetitor` took the replace/upsert logic, the `StageSaveMode` overload and
+      a large share of the match tests with it — and with the stage collection gone, so did the v8.9.0 reliance on a
+      single cascaded relationship
+    - Binding CSV columns onto the request model through a Jackson mix-in meant the CSV models and the copy step in
+      each service could go, and surfaced a genuine defect: the competitor CSV normalisation blanked `competitorId`
+    - Tightening a request model (`matchFirearmType`, `matchCategory` now required) broke `PATCH`, which reuses it,
+      so each `PATCH` got its own model with no required fields
+
 ---
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v8.12.0, the following areas are identified for future enhancement:
+Based on the evolution to v9.0.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2631,7 +2721,25 @@ Based on the evolution to v8.12.0, the following areas are identified for future
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v8.12.0)
+### Recently Completed (v9.0.0)
+
+- `IpscMatchStage`, `MatchStageCompetitor`, their repositories, `MatchStageRequest`/`MatchStageResponse` and the
+  `stages` field on `MatchRequest`/`MatchResponse` removed, with the `V7_9_0__drop_ipsc_match_stage.sql` migration
+  dropping their tables and `TransactionService.saveMatch`'s stage overload and `StageSaveMode` removed
+- New `MatchRequestCsvMixIn` and `CompetitorRequestCsvMixIn` read each CSV row straight into the request model, and
+  the imports tolerate omitted optional columns; `CompetitorRequestForCSV` and `MatchRequestForCSV` removed
+- New `MatchPatchRequest` and `CompetitorPatchRequest` for the `PATCH` endpoints, and `MatchRequest.matchFirearmType`
+  and `matchCategory` now required
+- `IpscCompetitorServiceImpl.resolveHomeClub` also resolves a club by abbreviation, and `normaliseCsvRequest` keeps
+  the row's `competitorId`
+- `MYSQL_USER` no longer read by `application.properties` (the `dev` and `prod` profiles set the username) and
+  `mysql-connector-j` pinned to `9.4.0`
+- Improvement plan: no new gaps and none closed; Gap #6's evidence notes the removed stage repositories
+- Project version bumped to 9.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+- Dependency vulnerabilities addressed: `tomcat.version` `11.0.26`, `logback.version` `1.6.5`, Jackson BOM properties raised and
+  `flyway-mysql` pinned
+
+### Previously Completed (v8.12.0)
 
 - New `StringUtils.toProperCase` (backed by the new `commons-text` dependency) and `CompetitorHelpers.toSentenceCaseLastName`
   (the new `za.co.hpsc.web.helpers` package's first class) normalise casing on competitor CSV import
@@ -2765,3 +2873,8 @@ largest test expansion since v5.4.0. Alongside the domain work, the release also
 single `AGENTS.md` reference. Also migrates the project's AI-agent tooling from slash commands to Skills and re-adds
 Qodana JVM static analysis — marking the transition from a project with significant architectural groundwork to one with
 a genuinely complete, if still growing, IPSC feature set.
+
+Version 9.0.0 narrows that feature set to what the project uses: the match stage model and its tables are removed, and
+the bulk CSV imports read straight into the request models through Jackson mix-ins instead of through duplicate CSV
+models. It is the project's first MAJOR release since v8.0.0, because the match request and response lose `stages`,
+`matchFirearmType` and `matchCategory` become required and `MYSQL_USER` is no longer read.
