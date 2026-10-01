@@ -27,8 +27,8 @@
 
 **Security**
 
-- `tomcat.version` raised to `11.0.26`; `logback.version` pinned to `1.6.5`; the Jackson BOMs imported and
-  `jackson-dataformat-csv`/`flyway-mysql` pinned above the Spring Boot-managed versions
+- `tomcat.version` raised to `11.0.26`; `logback.version` pinned to `1.6.5`; the Jackson BOM properties raised and
+  `flyway-mysql` pinned above the Spring Boot-managed versions
 
 **Removed**
 

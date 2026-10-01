@@ -59,7 +59,7 @@ evolution of architecture, features and design philosophy across all versions.
   tables are dropped, `matchFirearmType` and `matchCategory` become required and `MYSQL_USER` is no longer read
 - Project version bumped to 9.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 - Vulnerable dependencies addressed in `pom.xml`: `tomcat.version` raised to `11.0.26`, a new `logback.version`
-  override of `1.6.5`, the Jackson BOMs imported, and `jackson-dataformat-csv` and `flyway-mysql` pinned above the
+  override of `1.6.5`, the Jackson BOM properties raised, and `flyway-mysql` pinned above the
   Spring Boot-managed versions
 
 ### Version 8.12.0 (September 29, 2026)
@@ -2736,8 +2736,8 @@ Based on the evolution to v9.0.0, the following areas are identified for future 
   `mysql-connector-j` pinned to `9.4.0`
 - Improvement plan: no new gaps and none closed; Gap #6's evidence notes the removed stage repositories
 - Project version bumped to 9.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
-- Dependency vulnerabilities addressed: `tomcat.version` `11.0.26`, `logback.version` `1.6.5`, Jackson BOMs imported and
-  `jackson-dataformat-csv`/`flyway-mysql` pinned
+- Dependency vulnerabilities addressed: `tomcat.version` `11.0.26`, `logback.version` `1.6.5`, Jackson BOM properties raised and
+  `flyway-mysql` pinned
 
 ### Previously Completed (v8.12.0)
 

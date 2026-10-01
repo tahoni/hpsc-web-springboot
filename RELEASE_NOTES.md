@@ -136,10 +136,9 @@ a partial update no longer has to repeat the required fields. The datasource use
 
 - **`tomcat.version`:** Raised from `11.0.25` to `11.0.26` in `pom.xml`
 - **`logback.version`:** New `pom.xml` override pinning Logback to `1.6.5`
-- **`jackson-bom`, `jackson-core`:** `dependencyManagement` now imports `tools.jackson:jackson-bom` `3.2.3`, and
-  `jackson-core` `2.22.3` for the Jackson 2 line
-- **`jackson-dataformat-csv`, `flyway-mysql`:** Pinned to `2.22.3` and `13.7.0` instead of the Spring Boot-managed
-  versions
+- **`jackson-2-bom.version`, `jackson-bom.version`:** New `pom.xml` overrides raising the Jackson 2 BOM to `2.22.3`
+  and the Jackson 3 BOM to `3.2.3`, so `jackson-core` and `jackson-dataformat-csv` follow
+- **`flyway-mysql`:** Pinned to `13.7.0` instead of the Spring Boot-managed version
 
 ---
 
@@ -217,7 +216,7 @@ a partial update no longer has to repeat the required fields. The datasource use
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
 - `pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
-  `11.0.24` (Gap #26). `logback.version`, `jackson-dataformat-csv` and `flyway-mysql` are likewise pinned above
+  `11.0.24` (Gap #26). `logback.version`, the Jackson BOM properties and `flyway-mysql` are likewise set above
   Spring Boot's managed versions.
 - `mysql-connector-j` is pinned to `9.4.0`, below the `9.7.0` that Spring Boot 4.1.1 manages.
 
