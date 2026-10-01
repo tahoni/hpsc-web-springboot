@@ -42,8 +42,10 @@ public class MatchRequest {
      */
     private String club;
     /** The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
+    @JsonProperty(required = true)
     private String matchFirearmType;
     /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
+    @JsonProperty(required = true)
     private String matchCategory;
     /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
     private String url;
@@ -58,9 +60,9 @@ public class MatchRequest {
      *                         May be null or blank, in which case the match defaults to
      *                         {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      * @param matchFirearmType the firearm type this match is shot with; resolved against
-     *                         {@link za.co.hpsc.web.enums.FirearmType} by name.
+     *                         {@link za.co.hpsc.web.enums.FirearmType} by name. Must not be null or blank.
      * @param matchCategory    the category/tier of this match; resolved against
-     *                         {@link za.co.hpsc.web.enums.MatchCategory} by name.
+     *                         {@link za.co.hpsc.web.enums.MatchCategory} by name. Must not be null or blank.
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
      * @param url              a URL with more information about this match; may be null.
@@ -70,8 +72,8 @@ public class MatchRequest {
                         @JsonProperty(value = "matchDate", required = true) LocalDate matchDate,
                         @JsonProperty(value = "matchName", required = true) String matchName,
                         @JsonProperty("club") String club,
-                        @JsonProperty("matchFirearmType") String matchFirearmType,
-                        @JsonProperty("matchCategory") String matchCategory,
+                        @JsonProperty(value = "matchFirearmType", required = true) String matchFirearmType,
+                        @JsonProperty(value = "matchCategory", required = true) String matchCategory,
                         @JsonProperty(value = "startTime") LocalTime startTime,
                         @JsonProperty(value = "endTime") LocalTime endTime,
                         @JsonProperty(value = "url") String url) {

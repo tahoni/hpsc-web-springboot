@@ -103,7 +103,9 @@ class MatchRequestTest {
         String json = """
                 {
                   "matchDate": "2026-04-10",
-                  "matchName": "Club Championship"
+                  "matchName": "Club Championship",
+                  "matchFirearmType": "Pistol",
+                  "matchCategory": "Level 1"
                 }
                 """;
 
@@ -113,6 +115,8 @@ class MatchRequestTest {
         // Assert
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
         assertEquals("Club Championship", request.getMatchName());
+        assertEquals("Pistol", request.getMatchFirearmType());
+        assertEquals("Level 1", request.getMatchCategory());
         assertNull(request.getMatchId());
         assertNull(request.getStartTime());
         assertNull(request.getEndTime());
@@ -142,6 +146,38 @@ class MatchRequestTest {
         String json = """
                 {
                   "matchDate": "2026-04-10"
+                }
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequest.class));
+    }
+
+    @Test
+    void testJsonDeserialization_whenMatchFirearmTypeMissing_thenThrowsMismatchedInputException() {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String json = """
+                {
+                  "matchDate": "2026-04-10",
+                  "matchName": "Club Championship",
+                  "matchCategory": "Level 1"
+                }
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequest.class));
+    }
+
+    @Test
+    void testJsonDeserialization_whenMatchCategoryMissing_thenThrowsMismatchedInputException() {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String json = """
+                {
+                  "matchDate": "2026-04-10",
+                  "matchName": "Club Championship",
+                  "matchFirearmType": "Pistol"
                 }
                 """;
 

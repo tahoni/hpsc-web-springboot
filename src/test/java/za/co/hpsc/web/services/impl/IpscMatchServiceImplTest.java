@@ -167,9 +167,9 @@ class IpscMatchServiceImplTest {
     void testReadMatches_whenValidCsv_thenReturnsMatchRequestList() {
         // Arrange
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
-                2026-04-10,Club Championship,Test Club,Pistol,Level 1
-                2026-04-17,Second Match
+                MatchDate,MatchName,MatchFirearmType,MatchCategory,Club,StartTime,EndTime,Url
+                2026-04-10,Club Championship,Pistol,Level 1,Test Club
+                2026-04-17,Second Match,Rifle,Level 2
                 """;
 
         // Act

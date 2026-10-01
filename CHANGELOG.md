@@ -80,10 +80,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   the bulk import reads each row straight into a `MatchRequest` — the accepted CSV columns are unchanged. The
   `MatchRequestForCSV` model is removed along with `IpscMatchServiceImpl.toRequest`, which only copied it into a
   `MatchRequest`
-- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit columns and unknown columns are ignored — a header
-  without `MatchDate` or `MatchName`, or a row that lacks either, is rejected as invalid when read. Creating a match
-  still needs a firearm type and a category, so `MatchFirearmType` and `MatchCategory` must carry a value too, or the
-  import is rejected. A `MatchId` column is read but never used, since the import only creates matches
+- **Breaking — `MatchRequest.matchFirearmType`, `MatchRequest.matchCategory`:** Now required properties, like
+  `matchDate` and `matchName` — a JSON request body that leaves either out is rejected when it is read, instead of
+  reaching the service. They were already needed to create or replace a match, but `PATCH /ipsc/matches/{matchId}` is
+  affected too, since it takes a `MatchRequest`: a patch that omits them is no longer accepted
+- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns and unknown columns are ignored —
+  `MatchDate`, `MatchName`, `MatchFirearmType` and `MatchCategory` must be present in the header and in every row, and
+  a CSV that lacks any of them is rejected as invalid. A `MatchId` column is read but never used, since the import only
+  creates matches
 - **`IpscMatchController.createMatches`:** The bulk import's Swagger request schema is now plain text, with its example
   header row, rather than the removed CSV model
 

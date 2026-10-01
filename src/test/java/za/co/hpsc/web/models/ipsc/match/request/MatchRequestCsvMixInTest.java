@@ -46,8 +46,8 @@ class MatchRequestCsvMixInTest {
     void testCsvDeserialization_whenHeaderOmitsOptionalColumns_thenLeavesThemNull() throws Exception {
         // Arrange
         String csvData = """
-                MatchDate,MatchName
-                2026-04-10,Club Championship
+                MatchDate,MatchName,MatchFirearmType,MatchCategory
+                2026-04-10,Club Championship,Pistol,Level 1
                 """;
 
         // Act
@@ -57,11 +57,11 @@ class MatchRequestCsvMixInTest {
         assertEquals(1, rows.size());
         assertEquals(LocalDate.of(2026, 4, 10), rows.getFirst().getMatchDate());
         assertEquals("Club Championship", rows.getFirst().getMatchName());
+        assertEquals("Pistol", rows.getFirst().getMatchFirearmType());
+        assertEquals("Level 1", rows.getFirst().getMatchCategory());
         assertNull(rows.getFirst().getStartTime());
         assertNull(rows.getFirst().getEndTime());
         assertNull(rows.getFirst().getClub());
-        assertNull(rows.getFirst().getMatchFirearmType());
-        assertNull(rows.getFirst().getMatchCategory());
         assertNull(rows.getFirst().getUrl());
     }
 
@@ -69,8 +69,8 @@ class MatchRequestCsvMixInTest {
     void testCsvDeserialization_whenRowIsRaggedAndMissesOnlyOptionalTrailingColumns_thenLeavesThemNull() throws Exception {
         // Arrange - a row doesn't have to supply a value for every column in the header
         String csvData = """
-                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
-                2026-04-10,Club Championship
+                MatchDate,MatchName,MatchFirearmType,MatchCategory,Club,StartTime,EndTime,Url
+                2026-04-10,Club Championship,Pistol,Level 1
                 """;
 
         // Act
@@ -88,8 +88,8 @@ class MatchRequestCsvMixInTest {
     void testCsvDeserialization_whenColumnsAreReordered_thenMapsByHeaderName() throws Exception {
         // Arrange
         String csvData = """
-                Url,MatchName,Club,MatchDate
-                https://example.com/matches/1,Club Championship,Test Club,2026-04-10
+                Url,MatchCategory,MatchName,Club,MatchFirearmType,MatchDate
+                https://example.com/matches/1,Level 1,Club Championship,Test Club,Pistol,2026-04-10
                 """;
 
         // Act
@@ -100,6 +100,8 @@ class MatchRequestCsvMixInTest {
         assertEquals(LocalDate.of(2026, 4, 10), rows.getFirst().getMatchDate());
         assertEquals("Club Championship", rows.getFirst().getMatchName());
         assertEquals("Test Club", rows.getFirst().getClub());
+        assertEquals("Pistol", rows.getFirst().getMatchFirearmType());
+        assertEquals("Level 1", rows.getFirst().getMatchCategory());
         assertEquals("https://example.com/matches/1", rows.getFirst().getUrl());
     }
 
@@ -107,8 +109,8 @@ class MatchRequestCsvMixInTest {
     void testCsvDeserialization_whenCsvHasUnknownColumn_thenIgnoresIt() throws Exception {
         // Arrange
         String csvData = """
-                MatchDate,MatchName,Colour
-                2026-04-10,Club Championship,Blue
+                MatchDate,MatchName,MatchFirearmType,MatchCategory,Colour
+                2026-04-10,Club Championship,Pistol,Level 1,Blue
                 """;
 
         // Act
@@ -123,8 +125,8 @@ class MatchRequestCsvMixInTest {
     void testCsvDeserialization_whenCsvHasMatchIdColumn_thenBindsIt() throws Exception {
         // Arrange
         String csvData = """
-                MatchId,MatchDate,MatchName
-                7,2026-04-10,Club Championship
+                MatchId,MatchDate,MatchName,MatchFirearmType,MatchCategory
+                7,2026-04-10,Club Championship,Pistol,Level 1
                 """;
 
         // Act
@@ -151,8 +153,32 @@ class MatchRequestCsvMixInTest {
     void testCsvDeserialization_whenHeaderOmitsRequiredColumn_thenThrowsMismatchedInputException() {
         // Arrange
         String csvData = """
-                MatchDate,Club
-                2026-04-10,Test Club
+                MatchDate,MatchFirearmType,MatchCategory
+                2026-04-10,Pistol,Level 1
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> readRows(csvData));
+    }
+
+    @Test
+    void testCsvDeserialization_whenHeaderOmitsMatchFirearmType_thenThrowsMismatchedInputException() {
+        // Arrange
+        String csvData = """
+                MatchDate,MatchName,MatchCategory
+                2026-04-10,Club Championship,Level 1
+                """;
+
+        // Act & Assert
+        assertThrows(MismatchedInputException.class, () -> readRows(csvData));
+    }
+
+    @Test
+    void testCsvDeserialization_whenHeaderOmitsMatchCategory_thenThrowsMismatchedInputException() {
+        // Arrange
+        String csvData = """
+                MatchDate,MatchName,MatchFirearmType
+                2026-04-10,Club Championship,Pistol
                 """;
 
         // Act & Assert
