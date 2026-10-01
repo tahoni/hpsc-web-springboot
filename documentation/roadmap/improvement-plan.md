@@ -1018,7 +1018,8 @@ re-checked "per the Release Checklist", but no checklist step actually did so. `
 step 2 and the `prep-version-release` skill's matching step now re-check every manual `pom.xml` override against
 the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
 The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
-milestone) and still manages Tomcat `11.0.24`. The gap closes once a Spring Boot GA release manages `11.0.25` or
+milestone) and still manages Tomcat `11.0.24`; v9.0.0 raised it to `11.0.26` and added matching pins for Logback,
+Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA release manages `11.0.25` or
 later and the override is dropped.
 
 ### ⚪ Open
@@ -1034,7 +1035,9 @@ consumed by any controller". `README.md` and `CONTRIBUTING.md` independently res
 explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
 "ready" for wiring. (As of v8.9.0 that `repositories/` comment no longer says "not yet wired": since v8.8.0 the
 scoring/shooter-log repositories are injected for the delete-time `existsBy…` checks, but still no service or
-controller operates on them, so the gap itself stands.)
+controller operates on them, so the gap itself stands. As of v9.0.0 the stage-level half of that list is gone:
+`IpscMatchStage`, `MatchStageCompetitor` and their repositories were removed, so the scoring layer now sits on
+`MatchCompetitor` and the `ShooterLog*` repositories alone, and the gap still stands.)
 
 **Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
 controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated

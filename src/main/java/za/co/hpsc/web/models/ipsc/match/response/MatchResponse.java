@@ -11,11 +11,9 @@ import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 /**
- * A persisted IPSC match together with its stages, as returned by
- * {@code IpscMatchController}'s CRUD endpoints.
+ * A persisted IPSC match, as returned by {@code IpscMatchController}'s CRUD endpoints.
  *
  * @since 8.0.0
  */
@@ -45,6 +43,4 @@ public class MatchResponse {
     private MatchCategory matchCategory;
     /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
     private String url;
-    /** The stages that make up this match, ordered by stage number. */
-    private List<MatchStageResponse> stages;
 }

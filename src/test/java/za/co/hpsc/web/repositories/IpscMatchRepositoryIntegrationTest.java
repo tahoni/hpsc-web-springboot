@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.IpscMatchStage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Spring-context integration test for {@link IpscMatchRepository}'s custom queries and
- * {@link IpscMatch}'s cascaded {@link IpscMatch#getStages() stages} mapping, against the H2
- * {@code test} profile database. Each test flushes and clears the persistence context before
+ * against the H2 {@code test} profile database. Each test flushes and clears the persistence context before
  * reading back, so it observes what was really written rather than cached entities.
  */
 @ActiveProfiles("test")
@@ -30,9 +28,6 @@ class IpscMatchRepositoryIntegrationTest {
 
     @Autowired
     private IpscMatchRepository ipscMatchRepository;
-
-    @Autowired
-    private IpscMatchStageRepository ipscMatchStageRepository;
 
     @Autowired
     private ClubRepository clubRepository;
@@ -93,57 +88,6 @@ class IpscMatchRepositoryIntegrationTest {
         assertTrue(matches.stream().allMatch(match -> Hibernate.isInitialized(match.getClub())));
     }
 
-    // IpscMatch.stages cascade
-    @Test
-    void testSave_whenNewMatchHasStages_thenStagesArePersistedWithIt() {
-        // Arrange
-        IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
-        addStage(match, 2, "Stage 2");
-
-        // Act
-        Long matchId = ipscMatchRepository.save(match).getId();
-        flushAndClear();
-
-        // Assert
-        assertEquals(List.of("Stage 1", "Stage 2"), stageNames(matchId));
-    }
-
-    @Test
-    void testSave_whenStageIsRemovedFromCollection_thenOrphanRemovalDeletesIt() {
-        // Arrange
-        IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
-        addStage(match, 2, "Stage 2");
-        Long matchId = ipscMatchRepository.save(match).getId();
-        flushAndClear();
-        IpscMatch managed = ipscMatchRepository.findById(matchId).orElseThrow();
-
-        // Act
-        managed.getStages().removeIf(stage -> stage.getStageNumber() == 2);
-        flushAndClear();
-
-        // Assert
-        assertEquals(List.of("Stage 1"), stageNames(matchId));
-    }
-
-    @Test
-    void testDelete_whenMatchHasStages_thenStagesAreDeletedWithIt() {
-        // Arrange
-        IpscMatch match = newMatch("Club Championship");
-        addStage(match, 1, "Stage 1");
-        Long matchId = ipscMatchRepository.save(match).getId();
-        flushAndClear();
-
-        // Act
-        ipscMatchRepository.delete(ipscMatchRepository.findById(matchId).orElseThrow());
-        flushAndClear();
-
-        // Assert
-        assertFalse(ipscMatchRepository.existsById(matchId));
-        assertEquals(0, ipscMatchStageRepository.count());
-    }
-
     // Helpers
     private void flushAndClear() {
         entityManager.flush();
@@ -162,19 +106,5 @@ class IpscMatchRepositoryIntegrationTest {
         match.setName(name);
         match.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         return match;
-    }
-
-    private void addStage(IpscMatch match, int stageNumber, String stageName) {
-        IpscMatchStage stage = new IpscMatchStage();
-        stage.setMatch(match);
-        stage.setStageNumber(stageNumber);
-        stage.setStageName(stageName);
-        match.getStages().add(stage);
-    }
-
-    private List<String> stageNames(Long matchId) {
-        return ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId).stream()
-                .map(IpscMatchStage::getStageName)
-                .toList();
     }
 }

@@ -67,7 +67,7 @@ changed. Treat it as the single source of truth.
    file/class named, description still matches what the code does); flag any that have drifted, but don't rewrite
    entries that are still correct just to change their wording. An entry for a breaking change that lacks the
    `**Breaking:**` prefix counts as drifted — flag it rather than adding the prefix silently, since it changes the
-   next release's Semantic Versioning classification. Likewise flag a `**Breaking:**` entry whose change the diff
+   next release's Semantic Versioning classification. Likewise, flag a `**Breaking:**` entry whose change the diff
    shows is actually backward-compatible.
 6. **Do not remove or alter entries** for changes unrelated to this branch's diff — this skill only adds/corrects
    coverage for what this branch actually introduced.

@@ -10,15 +10,9 @@ import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 /**
- * Request to create or update an IPSC match together with its stages in a single call.
- *
- * <p>
- * The {@link MatchStageRequest}s that make it up have their own {@code matchId}, which is
- * typically unset when nested here for a new match, since the match doesn't exist yet.
- * </p>
+ * Request to create or update an IPSC match.
  *
  * @since 1.1.3
  */
@@ -48,13 +42,13 @@ public class MatchRequest {
      */
     private String club;
     /** The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
+    @JsonProperty(required = true)
     private String matchFirearmType;
     /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
+    @JsonProperty(required = true)
     private String matchCategory;
     /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
     private String url;
-    /** The stages that make up this match. */
-    private List<MatchStageRequest> stages;
 
     /**
      * Constructs a {@code MatchRequest} from its JSON representation.
@@ -66,10 +60,9 @@ public class MatchRequest {
      *                         May be null or blank, in which case the match defaults to
      *                         {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      * @param matchFirearmType the firearm type this match is shot with; resolved against
-     *                         {@link za.co.hpsc.web.enums.FirearmType} by name.
+     *                         {@link za.co.hpsc.web.enums.FirearmType} by name. Must not be null or blank.
      * @param matchCategory    the category/tier of this match; resolved against
-     *                         {@link za.co.hpsc.web.enums.MatchCategory} by name.
-     * @param stages           the stages that make up this match.
+     *                         {@link za.co.hpsc.web.enums.MatchCategory} by name. Must not be null or blank.
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
      * @param url              a URL with more information about this match; may be null.
@@ -79,9 +72,8 @@ public class MatchRequest {
                         @JsonProperty(value = "matchDate", required = true) LocalDate matchDate,
                         @JsonProperty(value = "matchName", required = true) String matchName,
                         @JsonProperty("club") String club,
-                        @JsonProperty("matchFirearmType") String matchFirearmType,
-                        @JsonProperty("matchCategory") String matchCategory,
-                        @JsonProperty("stages") List<MatchStageRequest> stages,
+                        @JsonProperty(value = "matchFirearmType", required = true) String matchFirearmType,
+                        @JsonProperty(value = "matchCategory", required = true) String matchCategory,
                         @JsonProperty(value = "startTime") LocalTime startTime,
                         @JsonProperty(value = "endTime") LocalTime endTime,
                         @JsonProperty(value = "url") String url) {
@@ -94,6 +86,5 @@ public class MatchRequest {
         this.matchFirearmType = matchFirearmType;
         this.matchCategory = matchCategory;
         this.url = url;
-        this.stages = stages;
     }
 }

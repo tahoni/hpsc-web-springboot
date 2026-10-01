@@ -346,7 +346,8 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 **Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)*
 
 - [ ] Introduce `MatchScoreService`/`MatchScoreServiceImpl` (interface + `impl/` split) over the existing
-  `MatchCompetitor`/`MatchStageCompetitor` repositories
+  `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
+  removed, so this now means the `MatchCompetitor` repository alone
 - [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories
 - [ ] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
   `scaffold-integration-tests` conventions

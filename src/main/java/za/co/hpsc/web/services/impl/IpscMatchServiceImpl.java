@@ -12,60 +12,47 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
-import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.domain.IpscMatchStage;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchRequestForCSV;
-import za.co.hpsc.web.models.ipsc.match.request.MatchStageRequest;
+import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
-import za.co.hpsc.web.models.ipsc.match.response.MatchStageResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.repositories.IpscMatchStageRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.repositories.MatchStageCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
-import za.co.hpsc.web.services.TransactionService.StageSaveMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
     private final IpscMatchRepository ipscMatchRepository;
-    private final IpscMatchStageRepository ipscMatchStageRepository;
     private final ClubRepository clubRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
-    private final MatchStageCompetitorRepository matchStageCompetitorRepository;
     private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
     private final TransactionService transactionService;
 
     public IpscMatchServiceImpl(IpscMatchRepository ipscMatchRepository,
-                                 IpscMatchStageRepository ipscMatchStageRepository,
                                  ClubRepository clubRepository,
                                  MatchCompetitorRepository matchCompetitorRepository,
-                                 MatchStageCompetitorRepository matchStageCompetitorRepository,
                                  ShooterLogCompetitorRepository shooterLogCompetitorRepository,
                                  TransactionService transactionService) {
         this.ipscMatchRepository = ipscMatchRepository;
-        this.ipscMatchStageRepository = ipscMatchStageRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
-        this.matchStageCompetitorRepository = matchStageCompetitorRepository;
         this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
         this.transactionService = transactionService;
     }
@@ -82,13 +69,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
-        List<MatchRequestForCSV> matchRequestForCSVList = readMatches(csvData);
+        List<MatchRequest> matchRequests = readMatches(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
         // transaction, so a bad row leaves none of them persisted.
         List<IpscMatch> matches = new ArrayList<>();
-        for (MatchRequestForCSV matchRequestForCSV : matchRequestForCSVList) {
-            matches.add(newMatch(toRequest(matchRequestForCSV)));
+        for (MatchRequest matchRequest : matchRequests) {
+            matches.add(newMatch(matchRequest));
         }
 
         List<MatchResponse> matchResponseList = transactionService.saveMatches(matches).stream()
@@ -103,11 +90,11 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         IpscMatch match = findMatchOrThrow(matchId);
 
         applyFields(match, request);
-        return toResponse(transactionService.saveMatch(match, toStages(request.getStages()), StageSaveMode.REPLACE));
+        return toResponse(transactionService.saveMatch(match));
     }
 
     @Override
-    public MatchResponse patchMatch(Long matchId, MatchRequest request) throws FatalException {
+    public MatchResponse patchMatch(Long matchId, MatchPatchRequest request) throws FatalException {
         IpscMatch match = findMatchOrThrow(matchId);
 
         if (request.getClub() != null) {
@@ -135,24 +122,18 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             match.setUrl(request.getUrl());
         }
 
-        IpscMatch saved = (request.getStages() != null)
-                ? transactionService.saveMatch(match, toStages(request.getStages()), StageSaveMode.UPSERT)
-                : transactionService.saveMatch(match);
-        return toResponse(saved);
+        return toResponse(transactionService.saveMatch(match));
     }
 
     @Override
     public MatchResponse getMatch(Long matchId) {
-        IpscMatch match = findMatchOrThrow(matchId);
-        List<IpscMatchStage> stages = ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(matchId);
-        return toResponse(match, stages);
+        return toResponse(findMatchOrThrow(matchId));
     }
 
     @Override
     public List<MatchResponse> getAllMatches() {
         return ipscMatchRepository.findAllWithClub().stream()
-                .map(match -> toResponse(match,
-                        ipscMatchStageRepository.findAllByMatchIdOrderByStageNumber(match.getId())))
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -160,8 +141,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     public void deleteMatch(Long matchId) {
         IpscMatch match = findMatchOrThrow(matchId);
 
-        if (matchCompetitorRepository.existsByMatchId(matchId)
-                || matchStageCompetitorRepository.existsByMatchStageMatchId(matchId)) {
+        if (matchCompetitorRepository.existsByMatchId(matchId)) {
             throw new ValidationException("Match with ID " + matchId
                     + " cannot be deleted: it has recorded competitor results.");
         }
@@ -170,7 +150,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                     + " cannot be deleted: it is referenced by shooter logs.");
         }
 
-        // TransactionService flushes the delete, stages included, before committing, so a reference
+        // TransactionService flushes the delete before committing, so a reference
         // added by another transaction since the checks above surfaces here and is reported as a
         // 400, not a 500.
         try {
@@ -182,8 +162,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Validates a request and builds the new, not yet persisted, match it describes, with the
-     * request's stages on its {@link IpscMatch#getStages() stages} collection.
+     * Validates a request and builds the new, not yet persisted, match it describes.
      *
      * @param request the match to build. Must carry a match name, date and firearm
      *                type/category.
@@ -199,58 +178,30 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         IpscMatch match = new IpscMatch();
         applyFields(match, request);
-        List<IpscMatchStage> stages = toStages(request.getStages());
-        if (stages != null) {
-            for (IpscMatchStage stage : stages) {
-                stage.setMatch(match);
-                match.getStages().add(stage);
-            }
-        }
         return match;
     }
 
     /**
-     * Maps a request's stages onto new, not yet persisted, {@link IpscMatchStage}s.
-     *
-     * @param stageRequests the stages to map; may be null.
-     * @return the equivalent stages, in the order given, or {@code null} if {@code stageRequests}
-     * is null.
-     */
-    protected List<IpscMatchStage> toStages(List<MatchStageRequest> stageRequests) {
-        if (stageRequests == null) {
-            return null;
-        }
-
-        return stageRequests.stream()
-                .map(stageRequest -> {
-                    IpscMatchStage stage = new IpscMatchStage();
-                    stage.setStageNumber(stageRequest.getStageNumber());
-                    stage.setStageName(stageRequest.getStageName());
-                    return stage;
-                })
-                .toList();
-    }
-
-    /**
      * Reads match data from a CSV-formatted string and converts it into a list of
-     * {@link MatchRequestForCSV} objects.
+     * {@link MatchRequest} objects, binding the CSV column headers onto each through
+     * {@link MatchRequestCsvMixIn}. A header may omit optional columns and unknown columns are ignored.
      *
      * @param csvData the CSV data containing match information, one match per row. Must not be
      *                null or blank.
-     * @return a list of {@link MatchRequestForCSV} objects parsed from the provided CSV data.
+     * @return a list of {@link MatchRequest} objects parsed from the provided CSV data.
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<MatchRequestForCSV> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
+    protected List<MatchRequest> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        CsvSchema csvSchema = csvMapper
-                .schemaFor(MatchRequestForCSV.class)
-                .withColumnReordering(true)
-                .withHeader();
+        // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
+        CsvSchema csvSchema = CsvSchema.emptySchema().withHeader();
+        csvMapper.addMixIn(MatchRequest.class, MatchRequestCsvMixIn.class);
 
-        try (MappingIterator<MatchRequestForCSV> requestMappingIterator =
-                     csvMapper.readerFor(MatchRequestForCSV.class)
+        // Read the CSV data using the mapper and schema
+        try (MappingIterator<MatchRequest> requestMappingIterator =
+                     csvMapper.readerFor(MatchRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
@@ -262,62 +213,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             log.error("Error reading CSV data: {}", e.getMessage(), e);
             throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * Maps a {@link MatchRequestForCSV} row onto a {@link MatchRequest}.
-     *
-     * @param matchRequestForCSV the CSV row to map; must not be null.
-     * @return the equivalent {@link MatchRequest}, with a {@code null} {@code matchId} and its
-     * {@code Stages} cell parsed into {@link MatchStageRequest}s.
-     */
-    protected MatchRequest toRequest(@NotNull MatchRequestForCSV matchRequestForCSV) {
-        return new MatchRequest(
-                null,
-                matchRequestForCSV.getMatchDate(),
-                matchRequestForCSV.getMatchName(),
-                matchRequestForCSV.getClub(), matchRequestForCSV.getMatchFirearmType(), matchRequestForCSV.getMatchCategory(), parseStages(matchRequestForCSV.getStages()), matchRequestForCSV.getStartTime(),
-                matchRequestForCSV.getEndTime(),
-                matchRequestForCSV.getUrl()
-        );
-    }
-
-    /**
-     * Parses a CSV cell of semicolon-separated {@code <stageNumber>:<stageName>} entries into a
-     * list of {@link MatchStageRequest}s.
-     *
-     * @param rawStages the raw CSV cell value (e.g. {@code "1:Stage One;2:Stage Two"}); may be
-     *                  null or blank, in which case an empty list is returned.
-     * @return the individual stages, in the order given.
-     * @throws ValidationException if an entry doesn't start with a numeric stage number followed
-     *                             by a {@code ":"}.
-     */
-    protected List<MatchStageRequest> parseStages(String rawStages) {
-        if ((rawStages == null) || rawStages.isBlank()) {
-            return new ArrayList<>();
-        }
-
-        List<MatchStageRequest> stages = new ArrayList<>();
-        for (String entry : rawStages.split(SystemConstants.ARRAY_SEPARATOR)) {
-            if (entry.isBlank()) {
-                continue;
-            }
-
-            int separatorIndex = entry.indexOf(':');
-            if (separatorIndex < 0) {
-                throw new ValidationException("Invalid stage entry (expected <stageNumber>:<stageName>): " + entry);
-            }
-
-            String stageNumber = entry.substring(0, separatorIndex).trim();
-            String stageName = entry.substring(separatorIndex + 1).trim();
-            try {
-                stages.add(new MatchStageRequest(null, Integer.valueOf(stageNumber), stageName));
-            } catch (NumberFormatException e) {
-                throw new ValidationException("Invalid stage number in entry: " + entry, e);
-            }
-        }
-
-        return stages;
     }
 
     /**
@@ -456,30 +351,12 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Maps a saved match, together with the stages on its {@link IpscMatch#getStages() stages}
-     * collection, to the response shape returned by the controller.
+     * Maps a match to the response shape returned by the controller.
      *
-     * @param match the match to map; its stages must already be loaded.
-     * @return the mapped {@link MatchResponse}, with its stages ordered by stage number.
-     */
-    protected MatchResponse toResponse(IpscMatch match) {
-        return toResponse(match, match.getStages().stream()
-                .sorted(Comparator.comparing(IpscMatchStage::getStageNumber))
-                .toList());
-    }
-
-    /**
-     * Maps a persisted match and its stages to the response shape returned by the controller.
-     *
-     * @param match  the match to map.
-     * @param stages the match's persisted stages.
+     * @param match the match to map.
      * @return the mapped {@link MatchResponse}.
      */
-    protected MatchResponse toResponse(IpscMatch match, List<IpscMatchStage> stages) {
-        List<MatchStageResponse> stageResponses = stages.stream()
-                .map(stage -> new MatchStageResponse(stage.getId(), stage.getStageNumber(), stage.getStageName()))
-                .toList();
-
+    protected MatchResponse toResponse(IpscMatch match) {
         return new MatchResponse(
                 match.getId(),
                 match.getName(),
@@ -489,7 +366,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
                 ((match.getClub() != null) ? match.getClub().getIdentifier() : null),
                 match.getMatchFirearmType(),
                 match.getMatchCategory(),
-                match.getUrl(),
-                stageResponses);
+                match.getUrl());
     }
 }
