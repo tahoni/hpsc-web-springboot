@@ -388,7 +388,7 @@ Handled by `IpscMatchController` — same shape as the Competitor flow above:
 Client uploads CSV (Content-Type: text/csv)
     → IpscMatchController.createMatches
         → IpscMatchService.createMatches
-            (parses CSV via Jackson CsvMapper into MatchRequestForCSV rows, then builds each row with the
+            (parses CSV via Jackson CsvMapper into MatchRequest rows, then builds each row with the
              same validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
             → TransactionService.saveMatches
                 (saves every row in one transaction — a bad row fails before anything is saved)
