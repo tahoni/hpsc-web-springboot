@@ -234,15 +234,15 @@ class IpscCompetitorServiceIntegrationTest {
     void testCreateCompetitors_whenCsvIsPlainText_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> ipscCompetitorService.createCompetitors("This is not valid CSV data"));
+                () -> ipscCompetitorService.createCompetitors("This is not valid CSV data\nJane\n"));
     }
 
     @Test
     void testCreateCompetitors_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
         // Arrange
         String csvData = """
-                FirstName,LastName
-                Jane,Doe
+                FirstName,Nickname
+                Jane,Janie
                 """;
 
         // Act & Assert

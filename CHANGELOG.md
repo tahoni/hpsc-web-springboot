@@ -87,6 +87,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   constructor
 - **`IpscCompetitorServiceImpl.readCompetitors`:** The CSV schema now sets the shared array element separator
   explicitly — `EmailAddresses` still splits on the same character
+- **`CompetitorRequestCsv.emailAddresses`, `CompetitorRequest.emailAddresses`:** Now a `List<String>` that defaults to
+  an empty list rather than `null` — Jackson splits the semicolon-separated `EmailAddresses` cell itself, so
+  `IpscCompetitorServiceImpl.splitEmailAddresses` is removed. The accepted CSV format is unchanged
+- **`IpscCompetitorServiceImpl.readCompetitors`:** A CSV header may now omit optional columns, and columns that are not
+  part of the competitor model are ignored — only `FirstName` and `LastName` are still required, and a row that
+  lacks either is rejected as invalid
 
 #### 📦 Dependencies
 

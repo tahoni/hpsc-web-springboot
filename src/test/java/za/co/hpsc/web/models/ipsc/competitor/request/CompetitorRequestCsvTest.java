@@ -8,6 +8,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.constants.SystemConstants;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +25,7 @@ class CompetitorRequestCsvTest {
         CompetitorRequestCsv request = new CompetitorRequestCsv(
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
                 12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
-                "jane.doe@example.com;jane2.doe@example.com");
+                List.of("jane.doe@example.com", "jane2.doe@example.com"));
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -45,7 +46,8 @@ class CompetitorRequestCsvTest {
         assertEquals("0821234567", node.get("CellphoneNumber").asText());
         assertTrue(node.get("PaidUpSapsa").asBoolean());
         assertFalse(node.get("PaidUpClub").asBoolean());
-        assertEquals("jane.doe@example.com;jane2.doe@example.com", node.get("EmailAddresses").asText());
+        assertEquals("jane.doe@example.com", node.get("EmailAddresses").get(0).asText());
+        assertEquals("jane2.doe@example.com", node.get("EmailAddresses").get(1).asText());
     }
 
     @Test
@@ -88,7 +90,7 @@ class CompetitorRequestCsvTest {
                   "CellphoneNumber": "0821234567",
                   "PaidUpSapsa": true,
                   "PaidUpClub": false,
-                  "EmailAddresses": "jane.doe@example.com;jane2.doe@example.com"
+                  "EmailAddresses": ["jane.doe@example.com", "jane2.doe@example.com"]
                 }
                 """;
 
@@ -110,7 +112,7 @@ class CompetitorRequestCsvTest {
         assertEquals("0821234567", request.getCellphoneNumber());
         assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
         assertEquals(Boolean.FALSE, request.getPaidUpClub());
-        assertEquals("jane.doe@example.com;jane2.doe@example.com", request.getEmailAddresses());
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
     }
 
     @Test
@@ -180,6 +182,7 @@ class CompetitorRequestCsvTest {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
         CsvSchema csvSchema = csvMapper.schemaFor(CompetitorRequestCsv.class)
+                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
                 .withColumnReordering(true)
                 .withHeader();
         String csvData = """
@@ -201,7 +204,7 @@ class CompetitorRequestCsvTest {
         assertEquals("Doe", row.getLastName());
         assertEquals(LocalDate.of(1990, 1, 1), row.getDateOfBirth());
         assertEquals("HPSC-001", row.getClubNumber());
-        assertEquals("jane.doe@example.com;jane2.doe@example.com", row.getEmailAddresses());
+        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), row.getEmailAddresses());
     }
 
     @Test
@@ -229,7 +232,7 @@ class CompetitorRequestCsvTest {
         assertEquals("Jane", rows.getFirst().getFirstName());
         assertEquals("Doe", rows.getFirst().getLastName());
         assertNull(rows.getFirst().getMiddleNames());
-        assertNull(rows.getFirst().getEmailAddresses());
+        assertTrue(rows.getFirst().getEmailAddresses().isEmpty());
     }
 
     @Test

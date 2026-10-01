@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Jackson mix-in binding {@link CompetitorRequest}'s constructor to the UpperCamelCase column
@@ -27,6 +28,6 @@ public abstract class CompetitorRequestCsvMixIn {
                               @JsonProperty("CellphoneNumber") String cellphoneNumber,
                               @JsonProperty("PaidUpSapsa") Boolean paidUpSapsa,
                               @JsonProperty("PaidUpClub") Boolean paidUpClub,
-                              @JsonProperty("EmailAddresses") String emailAddresses) {
+                              @JsonProperty("EmailAddresses") List<String> emailAddresses) {
     }
 }

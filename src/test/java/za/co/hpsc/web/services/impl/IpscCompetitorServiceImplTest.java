@@ -310,7 +310,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("HPSC-001", first.getClubNumber());
         assertEquals("9001015800083", first.getIdNumber());
         assertEquals("0821234567", first.getCellphoneNumber());
-        assertEquals("jane.doe@example.com", first.getEmailAddresses());
+        assertEquals(List.of("jane.doe@example.com"), first.getEmailAddresses());
 
         CompetitorRequestCsv second = rows.get(1);
         assertEquals("John", second.getFirstName());
@@ -337,6 +337,23 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testReadCompetitors_whenMiddleNamesColumnIsMissing_thenMiddleNamesIsNull() {
+        // Arrange
+        String csvData = """
+                FirstName,LastName,Nickname
+                Jane,Doe,Janie
+                """;
+
+        // Act
+        List<CompetitorRequestCsv> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, rows.size());
+        assertEquals("Jane", rows.getFirst().getFirstName());
+        assertNull(rows.getFirst().getMiddleNames());
+    }
+
+    @Test
     void testReadCompetitors_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyList() {
         // Arrange
         String csvData =
@@ -350,9 +367,9 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
-    void testReadCompetitors_whenHeaderIsMissingColumns_thenThrowsValidationException() {
+    void testReadCompetitors_whenHeaderIsMissingRequiredColumn_thenThrowsValidationException() {
         // Arrange
-        String csvData = "FirstName,LastName\nJane,Doe\n";
+        String csvData = "FirstName,Nickname\nJane,Janie\n";
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -361,7 +378,7 @@ class IpscCompetitorServiceImplTest {
     @Test
     void testReadCompetitors_whenCsvHasNoHeaderRow_thenThrowsValidationException() {
         // Arrange
-        String csvData = "Invalid CSV With One Column and no Header";
+        String csvData = "Invalid CSV With One Column and no Header\nJane\n";
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -478,35 +495,6 @@ class IpscCompetitorServiceImplTest {
         assertSame(club, resolved);
     }
 
-    // splitEmailAddresses()
-    @Test
-    void testSplitEmailAddresses_whenNull_thenReturnsEmptyList() {
-        assertEquals(List.of(), ipscCompetitorServiceImpl.splitEmailAddresses(null));
-    }
-
-    @Test
-    void testSplitEmailAddresses_whenBlank_thenReturnsEmptyList() {
-        assertEquals(List.of(), ipscCompetitorServiceImpl.splitEmailAddresses("  "));
-    }
-
-    @Test
-    void testSplitEmailAddresses_whenSingleEmail_thenReturnsSingletonList() {
-        assertEquals(List.of("jane.doe@example.com"),
-                ipscCompetitorServiceImpl.splitEmailAddresses("jane.doe@example.com"));
-    }
-
-    @Test
-    void testSplitEmailAddresses_whenMultipleEmails_thenReturnsTrimmedList() {
-        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"),
-                ipscCompetitorServiceImpl.splitEmailAddresses(" jane.doe@example.com ; jane2.doe@example.com "));
-    }
-
-    @Test
-    void testSplitEmailAddresses_whenContainsBlankEntries_thenExcludesThem() {
-        assertEquals(List.of("jane.doe@example.com"),
-                ipscCompetitorServiceImpl.splitEmailAddresses("jane.doe@example.com;;  "));
-    }
-
     // toRequest()
     @Test
     void testToRequest_whenAllFieldsPresent_thenMapsAllFieldsOntoCompetitorRequest() {
@@ -514,7 +502,7 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequestCsv competitorRequestCsv = new CompetitorRequestCsv(
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
                 12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
-                "jane.doe@example.com;jane2.doe@example.com");
+                List.of("jane.doe@example.com", "jane2.doe@example.com"));
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestCsv);
@@ -543,7 +531,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequestCsv competitorRequestCsv = new CompetitorRequestCsv(
                 "jANE", "o'NEIL-smith", "ann marie", "JANIE", null, "FEMALE", "test CLUB",
-                null, "c-1a", "hpsc-001", null, null, null, null, "Jane.Doe@Example.com");
+                null, "c-1a", "hpsc-001", null, null, null, null, List.of("Jane.Doe@Example.com"));
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestCsv);
@@ -566,7 +554,7 @@ class IpscCompetitorServiceImplTest {
         CompetitorRequestCsv competitorRequestCsv = new CompetitorRequestCsv(
                 "JANE", "O'NEIL-SMITH", "ANN MARIE", "JANIE", LocalDate.of(1990, 1, 1), "FEMALE", "TEST CLUB",
                 12345, "C-1A", "HPSC-001", "9001015800083", "0821234567", true, false,
-                "JANE.DOE@EXAMPLE.COM;JANE2.DOE@EXAMPLE.COM");
+                List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"));
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestCsv);
@@ -590,7 +578,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequestCsv competitorRequestCsv = new CompetitorRequestCsv(
                 "jane", "o'neil-smith", "ann marie", "janie", null, "female", "test club",
-                null, "c-1a", "hpsc-001", null, null, null, null, "jane.doe@example.com");
+                null, "c-1a", "hpsc-001", null, null, null, null, List.of("jane.doe@example.com"));
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.toRequest(competitorRequestCsv);

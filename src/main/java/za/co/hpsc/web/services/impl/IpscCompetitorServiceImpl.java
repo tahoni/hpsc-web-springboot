@@ -3,6 +3,7 @@ package za.co.hpsc.web.services.impl;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -36,9 +37,7 @@ import za.co.hpsc.web.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -218,6 +217,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
+        csvMapper.disable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS);
         CsvSchema csvSchema = csvMapper
                 .schemaFor(CompetitorRequestCsv.class)
                 .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
@@ -249,7 +249,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * numbers, which are codes (club numbers must also stay unique), the ID and cellphone numbers and the
      * email addresses are kept as supplied. The last name then gets surname casing (see
      * {@link CompetitorHelpers#toSentenceCaseLastName(String)}): particles are lower-cased, so "VAN DER MERWE" becomes
-     * "van der Merwe", and an "Mc" prefix is corrected, so "MCDONALD" becomes "McDonald".
+     * "van der Merwe", and a "Mc" prefix is corrected, so "MCDONALD" becomes "McDonald".
      * </p>
      *
      * @param competitorRequestCsv the CSV row to map; must not be null.
@@ -273,25 +273,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitorRequestCsv.getCellphoneNumber(),
                 competitorRequestCsv.getPaidUpSapsa(),
                 competitorRequestCsv.getPaidUpClub(),
-                splitEmailAddresses(competitorRequestCsv.getEmailAddresses()));
-    }
-
-    /**
-     * Splits a CSV cell of semicolon-separated email addresses into a list.
-     *
-     * @param rawEmailAddresses the raw CSV cell value (e.g. {@code "a@x.com;b@x.com"}); may be
-     *                          null or blank, in which case an empty list is returned.
-     * @return the individual, trimmed email addresses, excluding any blank entries.
-     */
-    protected List<String> splitEmailAddresses(String rawEmailAddresses) {
-        if ((rawEmailAddresses == null) || rawEmailAddresses.isBlank()) {
-            return new ArrayList<>();
-        }
-
-        return Arrays.stream(rawEmailAddresses.split(SystemConstants.ARRAY_SEPARATOR))
-                .map(String::trim)
-                .filter(email -> !email.isBlank())
-                .collect(Collectors.toList());
+                new ArrayList<>(competitorRequestCsv.getEmailAddresses()));
     }
 
     /**

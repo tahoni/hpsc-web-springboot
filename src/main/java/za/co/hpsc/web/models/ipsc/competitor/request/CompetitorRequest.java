@@ -9,6 +9,7 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,7 +60,7 @@ public class CompetitorRequest {
     /** Whether the competitor's club membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpClub;
     /** The competitor's email addresses, if any. */
-    private List<String> emailAddresses;
+    private List<String> emailAddresses = new ArrayList<>();
 
     /**
      * Constructs a {@code CompetitorRequest} from its JSON representation.
@@ -116,6 +117,9 @@ public class CompetitorRequest {
         this.cellphoneNumber = cellphoneNumber;
         this.paidUpSapsa = paidUpSapsa;
         this.paidUpClub = paidUpClub;
-        this.emailAddresses = emailAddresses;
+
+        if (emailAddresses != null) {
+            this.emailAddresses = emailAddresses;
+        }
     }
 }

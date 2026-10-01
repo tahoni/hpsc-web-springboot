@@ -2,6 +2,7 @@ package za.co.hpsc.web.models.ipsc.competitor.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -11,6 +12,8 @@ import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Request model for bulk-importing IPSC competitors from CSV data.
@@ -28,6 +31,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class CompetitorRequestCsv {
     /** The competitor's first name. */
@@ -65,8 +69,8 @@ public class CompetitorRequestCsv {
     private Boolean paidUpSapsa;
     /** Whether the competitor's club membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpClub;
-    /** The competitor's email addresses, if any, as a single semicolon-separated CSV cell (e.g. {@code "a@x.com;b@x.com"}). */
-    private String emailAddresses;
+    /** The competitor's email addresses */
+    private List<String> emailAddresses = new ArrayList<>();
 
     /**
      * Constructs a {@code CompetitorRequestCsv} from its CSV/JSON representation.
@@ -113,7 +117,7 @@ public class CompetitorRequestCsv {
                                 @JsonProperty("CellphoneNumber") String cellphoneNumber,
                                 @JsonProperty("PaidUpSapsa") Boolean paidUpSapsa,
                                 @JsonProperty("PaidUpClub") Boolean paidUpClub,
-                                @JsonProperty("EmailAddresses") String emailAddresses) {
+                                @JsonProperty("EmailAddresses") List<String> emailAddresses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleNames = middleNames;
@@ -128,6 +132,9 @@ public class CompetitorRequestCsv {
         this.cellphoneNumber = cellphoneNumber;
         this.paidUpSapsa = paidUpSapsa;
         this.paidUpClub = paidUpClub;
-        this.emailAddresses = emailAddresses;
+
+        if (emailAddresses != null) {
+            this.emailAddresses = emailAddresses;
+        }
     }
 }
