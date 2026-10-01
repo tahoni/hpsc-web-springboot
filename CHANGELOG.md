@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 8.12.0](#-8120---2026-09-29) ← Current
+- [🧾 Version 9.0.0](#-900---2026-10-01) ← Current
+- [🧾 Version 8.12.0](#-8120---2026-09-29)
 - [🧾 Version 8.11.1](#-8111---2026-09-27)
 - [🧾 Version 8.11.0](#-8110---2026-09-27)
 - [🧾 Version 8.10.2](#-8102---2026-09-26)
@@ -66,6 +67,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [9.0.0] - 2026-10-01
+
 #### 🔄 Changed
 
 ##### Match API
@@ -117,6 +120,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   instead of clearing them. It has no `competitorId`, so a body that sent one now has it ignored
 - **`IpscCompetitorServiceImpl.resolveHomeClub`:** A competitor's home club now also resolves by club abbreviation when
   no club has a matching name, so a competitor request or CSV row may name the club either way
+
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`:** Stages dropped from the match description, the entity and repository tables and
+  the Project Structure tree, and the CSV models replaced by the new mix-ins and patch request models
+- **`CHANGELOG.md`, `HISTORY.md`, `documentation/history/EVOLUTION_OVERVIEW.md`:** Past-release entries keep the class
+  names they were written with, rather than the renamed CSV request models
+
+##### Tests
+
+- **`MatchRequestCsvMixInTest`, `CompetitorRequestCsvMixInTest`, `MatchPatchRequestTest`,
+  `CompetitorPatchRequestTest`:** New tests for the CSV mix-ins and the patch request models, replacing
+  `MatchRequestForCSVTest`, `CompetitorRequestForCSVTest` and `MatchStageRequestTest`
+- **Stage tests:** Stage coverage removed from the match, competitor, repository and transaction service tests, along
+  with `MatchStageCompetitorRepositoryIntegrationTest`
 
 #### 📦 Dependencies
 
