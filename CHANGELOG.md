@@ -168,6 +168,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchStageRequest`, `MatchStageResponse`:** Removed, along with `IpscMatchServiceImpl.toStages` and
   `parseStages`
 
+#### 🔐 Security
+
+##### Dependencies
+
+- **`tomcat.version`:** Raised from `11.0.25` to `11.0.26` in `pom.xml`
+- **`logback.version`:** New `pom.xml` override pinning Logback to `1.6.5`
+- **`jackson-bom`, `jackson-core`:** `dependencyManagement` now imports `tools.jackson:jackson-bom` `3.2.3`, and
+  `jackson-core` `2.22.3` for the Jackson 2 line
+- **`jackson-dataformat-csv`, `flyway-mysql`:** Now pinned to `2.22.3` and `13.7.0` instead of the Spring Boot-managed
+  versions
+
 ### 🧾 [8.12.0] - 2026-09-29
 
 #### ➕ Added

@@ -45,7 +45,8 @@
         <jacoco.version>0.8.15</jacoco.version>
         <!-- Override spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs
              (GHSA-h3x4-894j-xpx5, GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25. -->
-        <tomcat.version>11.0.25</tomcat.version>
+        <tomcat.version>11.0.26</tomcat.version>
+        <logback.version>1.6.5</logback.version>
     </properties>
 
     <dependencyManagement>
@@ -55,6 +56,21 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-bom</artifactId>
                 <version>3.1.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Data -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.22.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>3.2.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -116,6 +132,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
+            <version>13.7.0</version>
         </dependency>
 
         <!-- Validation -->
@@ -132,6 +149,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
+            <version>2.22.3</version>
         </dependency>
 
         <!-- Apache Commons -->
