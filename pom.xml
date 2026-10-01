@@ -44,7 +44,8 @@
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.15</jacoco.version>
         <!-- Override spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs
-             (GHSA-h3x4-894j-xpx5, GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25. -->
+             (GHSA-h3x4-894j-xpx5, GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25; 11.0.26 is
+             the latest patch release. -->
         <tomcat.version>11.0.26</tomcat.version>
         <logback.version>1.6.5</logback.version>
     </properties>
