@@ -1034,7 +1034,9 @@ consumed by any controller". `README.md` and `CONTRIBUTING.md` independently res
 explicitly noting that the request DTOs' `@JsonCreator`/required-field fix (closed alongside Gap #1) leaves them
 "ready" for wiring. (As of v8.9.0 that `repositories/` comment no longer says "not yet wired": since v8.8.0 the
 scoring/shooter-log repositories are injected for the delete-time `existsBy…` checks, but still no service or
-controller operates on them, so the gap itself stands.)
+controller operates on them, so the gap itself stands. As of v9.0.0 the stage-level half of that list is gone:
+`IpscMatchStage`, `MatchStageCompetitor` and their repositories were removed, so the scoring layer now sits on
+`MatchCompetitor` and the `ShooterLog*` repositories alone, and the gap still stands.)
 
 **Why it matters:** This is the same shape of gap that closed Gap #1 — JPA/repository layer exists, service/
 controller layer doesn't — but for the scoring/shooter-log domain specifically, and it is now the most-repeated
