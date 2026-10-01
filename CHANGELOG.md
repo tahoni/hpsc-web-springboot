@@ -82,8 +82,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `MatchRequest`
 - **Breaking — `MatchRequest.matchFirearmType`, `MatchRequest.matchCategory`:** Now required properties, like
   `matchDate` and `matchName` — a JSON request body that leaves either out is rejected when it is read, instead of
-  reaching the service. They were already needed to create or replace a match, but `PATCH /ipsc/matches/{matchId}` is
-  affected too, since it takes a `MatchRequest`: a patch that omits them is no longer accepted
+  reaching the service. They were already needed to create or replace a match, so only the error response changes
+- **`MatchPatchRequest`, `IpscMatchService.patchMatch`, `IpscMatchController.patchMatch`:** New request model for
+  `PATCH /ipsc/matches/{matchId}`, replacing `MatchRequest` there — no field is required, since the match is identified
+  by the path ID alone, and any field left out is left unchanged. This keeps a patch partial now that `MatchRequest`
+  requires its match date, name, firearm type and category. It has no `matchId`, so a body that sent one now has it
+  ignored
 - **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns and unknown columns are ignored —
   `MatchDate`, `MatchName`, `MatchFirearmType` and `MatchCategory` must be present in the header and in every row, and
   a CSV that lacks any of them is rejected as invalid. A `MatchId` column is read but never used, since the import only

@@ -257,7 +257,7 @@ envelope.
 
 #### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
-DTOs for the IPSC module rebuild — `MatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
+DTOs for the IPSC module rebuild — `MatchRequest`, `MatchPatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
 single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`/`CompetitorResponse` (consumed by
 `IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
 (its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), and, still groundwork only — not yet consumed by any controller —
