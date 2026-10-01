@@ -79,6 +79,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   match is still refused deletion while it has competitor results or is referenced by shooter logs
 - **`MatchRequestCsv`, `MatchRequestCsvMixIn`:** `MatchRequestForCSV` renamed to `MatchRequestCsv`, with a new Jackson
   mix-in binding the CSV column headers onto `MatchRequest`'s constructor — the accepted CSV columns are unchanged
+- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns — only `MatchDate` and `MatchName`
+  are still required, and a row that lacks either is rejected as invalid. The CSV schema also sets the shared array
+  element separator, and the mix-in is now registered against `MatchRequestCsv`, the type the CSV is read into, rather
+  than `MatchRequest`
 
 ##### Competitor API
 

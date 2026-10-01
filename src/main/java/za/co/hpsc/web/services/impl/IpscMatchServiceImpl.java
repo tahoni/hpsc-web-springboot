@@ -3,6 +3,7 @@ package za.co.hpsc.web.services.impl;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.ClubIdentifier;
@@ -194,11 +196,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected List<MatchRequestCsv> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
+        csvMapper.disable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS);
         CsvSchema csvSchema = csvMapper
                 .schemaFor(MatchRequestCsv.class)
+                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
                 .withColumnReordering(true)
                 .withHeader();
-        csvMapper.addMixIn(MatchRequest.class, MatchRequestCsvMixIn.class);
+        csvMapper.addMixIn(MatchRequestCsv.class, MatchRequestCsvMixIn.class);
 
         // Read the CSV data using the mapper and schema
         try (MappingIterator<MatchRequestCsv> requestMappingIterator =

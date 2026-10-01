@@ -222,9 +222,9 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testReadMatches_whenHeaderIsMissingColumns_thenThrowsValidationException() {
+    void testReadMatches_whenHeaderIsMissingRequiredColumn_thenThrowsValidationException() {
         // Arrange
-        String csvData = "MatchDate,MatchName\n2026-04-10,Club Championship\n";
+        String csvData = "MatchDate\n2026-04-10\n";
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.readMatches(csvData));
@@ -233,7 +233,7 @@ class IpscMatchServiceImplTest {
     @Test
     void testReadMatches_whenCsvHasNoHeaderRow_thenThrowsValidationException() {
         // Arrange
-        String csvData = "Invalid CSV With One Column and no Header";
+        String csvData = "Invalid CSV With One Column and no Header\nClub Championship\n";
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.readMatches(csvData));
