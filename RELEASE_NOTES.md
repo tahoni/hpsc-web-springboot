@@ -130,6 +130,17 @@ a partial update no longer has to repeat the required fields. The datasource use
 
 - **`MatchStageRequest`, `MatchStageResponse`:** Removed, along with `IpscMatchServiceImpl.toStages` and `parseStages`
 
+### Security
+
+#### Dependencies
+
+- **`tomcat.version`:** Raised from `11.0.25` to `11.0.26` in `pom.xml`
+- **`logback.version`:** New `pom.xml` override pinning Logback to `1.6.5`
+- **`jackson-bom`, `jackson-core`:** `dependencyManagement` now imports `tools.jackson:jackson-bom` `3.2.3`, and
+  `jackson-core` `2.22.3` for the Jackson 2 line
+- **`jackson-dataformat-csv`, `flyway-mysql`:** Pinned to `2.22.3` and `13.7.0` instead of the Spring Boot-managed
+  versions
+
 ---
 
 ## 🚀 Migration Guide
@@ -159,7 +170,7 @@ a partial update no longer has to repeat the required fields. The datasource use
 - **Deleted Source Files:** 8 (`IpscMatchStage`, `MatchStageCompetitor`, `IpscMatchStageRepository`,
   `MatchStageCompetitorRepository`, `MatchRequestForCSV`, `CompetitorRequestForCSV`, `MatchStageRequest`,
   `MatchStageResponse`), plus their tests
-- **New Dependencies:** 0
+- **New Dependencies:** 0 (the Jackson BOMs are imported and four existing dependencies re-pinned — see Security)
 
 ---
 
@@ -205,8 +216,9 @@ a partial update no longer has to repeat the required fields. The datasource use
   over from v7.0.0 – v7.1.0).
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
-- `pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
-  `11.0.24` (Gap #26).
+- `pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
+  `11.0.24` (Gap #26). `logback.version`, `jackson-dataformat-csv` and `flyway-mysql` are likewise pinned above
+  Spring Boot's managed versions.
 - `mysql-connector-j` is pinned to `9.4.0`, below the `9.7.0` that Spring Boot 4.1.1 manages.
 
 ---
@@ -216,7 +228,8 @@ a partial update no longer has to repeat the required fields. The datasource use
 - Build a `MatchScoreService`/`ShooterLogService` over the existing repositories, committing through
   `TransactionService`, following the same phased pattern that closed Gap #1 (Gap #6).
 - Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) into an endpoint.
-- Drop the `tomcat.version` override once a Spring Boot release manages Tomcat `11.0.25` or later (Gap #26).
+- Drop the `tomcat.version` override once a Spring Boot release manages Tomcat `11.0.26` or later (Gap #26), and the
+  other dependency pins once Spring Boot manages versions at least as new.
 
 ---
 

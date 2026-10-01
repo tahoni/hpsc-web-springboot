@@ -25,6 +25,11 @@
   `MYSQL_LOCAL_PASSWORD`
 - Version bumped to 9.0.0 in `pom.xml` and `@OpenAPIDefinition`; `tomcat.version` override kept (Gap #26)
 
+**Security**
+
+- `tomcat.version` raised to `11.0.26`; `logback.version` pinned to `1.6.5`; the Jackson BOMs imported and
+  `jackson-dataformat-csv`/`flyway-mysql` pinned above the Spring Boot-managed versions
+
 **Removed**
 
 - **Breaking:** `IpscMatchStage`, `MatchStageCompetitor`, their repositories, `MatchStageRequest`/`MatchStageResponse`
