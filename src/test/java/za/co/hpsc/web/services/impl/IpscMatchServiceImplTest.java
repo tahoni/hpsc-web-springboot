@@ -14,7 +14,6 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsv;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for {@link IpscMatchServiceImpl}'s impl-only protected helper methods
  * ({@code applyFields}, {@code findMatchOrThrow}, {@code newMatch}, {@code readMatches},
  * {@code resolveClub}, {@code resolveFirearmType}, {@code resolveMatchCategory},
- * {@code toRequest}, {@code toResponse}, {@code validateForCreate}) - not declared on
+ * {@code toResponse}, {@code validateForCreate}) - not declared on
  * {@link za.co.hpsc.web.services.IpscMatchService}.
  * The interface's create/update/patch/get/get-all contract is covered by
  * {@link za.co.hpsc.web.services.IpscMatchServiceTest}.
@@ -165,7 +164,7 @@ class IpscMatchServiceImplTest {
 
     // readMatches()
     @Test
-    void testReadMatches_whenValidCsv_thenReturnsMatchRequestForCSVList() {
+    void testReadMatches_whenValidCsv_thenReturnsMatchRequestList() {
         // Arrange
         String csvData = """
                 MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
@@ -174,19 +173,19 @@ class IpscMatchServiceImplTest {
                 """;
 
         // Act
-        List<MatchRequestCsv> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
+        List<MatchRequest> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
 
         // Assert
         assertEquals(2, rows.size());
 
-        MatchRequestCsv first = rows.getFirst();
+        MatchRequest first = rows.getFirst();
         assertEquals(LocalDate.of(2026, 4, 10), first.getMatchDate());
         assertEquals("Club Championship", first.getMatchName());
         assertEquals("Test Club", first.getClub());
         assertEquals("Pistol", first.getMatchFirearmType());
         assertEquals("Level 1", first.getMatchCategory());
 
-        MatchRequestCsv second = rows.get(1);
+        MatchRequest second = rows.get(1);
         assertEquals("Second Match", second.getMatchName());
         assertNull(second.getClub());
     }
@@ -200,7 +199,7 @@ class IpscMatchServiceImplTest {
                 """;
 
         // Act
-        List<MatchRequestCsv> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
+        List<MatchRequest> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
 
         // Assert
         assertEquals(1, rows.size());
@@ -215,7 +214,7 @@ class IpscMatchServiceImplTest {
         String csvData = "MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url\n";
 
         // Act
-        List<MatchRequestCsv> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
+        List<MatchRequest> rows = assertDoesNotThrow(() -> ipscMatchServiceImpl.readMatches(csvData));
 
         // Assert
         assertTrue(rows.isEmpty());
@@ -357,50 +356,6 @@ class IpscMatchServiceImplTest {
     void testResolveMatchCategory_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.resolveMatchCategory("Not A Category"));
-    }
-
-    // toRequest()
-    @Test
-    void testToRequest_whenAllFieldsPresent_thenMapsAllFieldsOntoMatchRequest() {
-        // Arrange
-        MatchRequestCsv matchRequestCsv = new MatchRequestCsv(
-                LocalDate.of(2026, 4, 10), "Club Championship",
-                "Test Club", "Pistol", "Level 1", LocalTime.of(8, 0), LocalTime.of(17, 0),
-                "https://example.com/matches/1"
-        );
-
-        // Act
-        MatchRequest request = ipscMatchServiceImpl.toRequest(matchRequestCsv);
-
-        // Assert
-        assertNull(request.getMatchId());
-        assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
-        assertEquals("Club Championship", request.getMatchName());
-        assertEquals(LocalTime.of(8, 0), request.getStartTime());
-        assertEquals(LocalTime.of(17, 0), request.getEndTime());
-        assertEquals("Test Club", request.getClub());
-        assertEquals("Pistol", request.getMatchFirearmType());
-        assertEquals("Level 1", request.getMatchCategory());
-        assertEquals("https://example.com/matches/1", request.getUrl());
-    }
-
-    @Test
-    void testToRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
-        // Arrange
-        MatchRequestCsv matchRequestCsv = new MatchRequestCsv(
-                LocalDate.of(2026, 4, 10), "Club Championship", null, null, null, null, null, null);
-
-        // Act
-        MatchRequest request = ipscMatchServiceImpl.toRequest(matchRequestCsv);
-
-        // Assert
-        assertNull(request.getMatchId());
-        assertNull(request.getStartTime());
-        assertNull(request.getEndTime());
-        assertNull(request.getClub());
-        assertNull(request.getMatchFirearmType());
-        assertNull(request.getMatchCategory());
-        assertNull(request.getUrl());
     }
 
     // toResponse()

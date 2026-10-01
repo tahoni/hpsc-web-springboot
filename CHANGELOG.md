@@ -70,19 +70,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Match API
 
-- **Breaking — `MatchRequest`, `MatchResponse`, `MatchRequestCsv`:** The `stages` field is gone from all three. A
-  match request or response no longer carries stages, and the bulk CSV import no longer has a `Stages` column, so a CSV
-  that still includes one is rejected as invalid
+- **Breaking — `MatchRequest`, `MatchResponse`:** The `stages` field is gone from both. A match request or response
+  no longer carries stages, and the bulk CSV import no longer has a `Stages` column
 - **`TransactionService.saveMatch`:** The `saveMatch(IpscMatch, List, StageSaveMode)` overload and the `StageSaveMode`
   enum are removed along with the stage replace/upsert logic — `saveMatch(IpscMatch)` is the only single-match save
 - **`IpscMatchService.deleteMatch`:** No longer checks for recorded stage results, as there are none to check — a
   match is still refused deletion while it has competitor results or is referenced by shooter logs
-- **`MatchRequestCsv`, `MatchRequestCsvMixIn`:** `MatchRequestForCSV` renamed to `MatchRequestCsv`, with a new Jackson
-  mix-in binding the CSV column headers onto `MatchRequest`'s constructor — the accepted CSV columns are unchanged
-- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns — only `MatchDate` and `MatchName`
-  are still required, and a row that lacks either is rejected as invalid. The CSV schema also sets the shared array
-  element separator, and the mix-in is now registered against `MatchRequestCsv`, the type the CSV is read into, rather
-  than `MatchRequest`
+- **`MatchRequestCsvMixIn`:** New Jackson mix-in binding the CSV column headers onto `MatchRequest`'s constructor, so
+  the bulk import reads each row straight into a `MatchRequest` — the accepted CSV columns are unchanged. The
+  `MatchRequestForCSV` model is removed along with `IpscMatchServiceImpl.toRequest`, which only copied it into a
+  `MatchRequest`
+- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns and unknown columns are ignored —
+  only `MatchDate` and `MatchName` are still required, and a row that lacks either is rejected as invalid. A `MatchId`
+  column is read but never used, since the import only creates matches
+- **`IpscMatchController.createMatches`:** The bulk import's Swagger request schema is now plain text, with its example
+  header row, rather than the removed CSV model
 
 ##### Competitor API
 

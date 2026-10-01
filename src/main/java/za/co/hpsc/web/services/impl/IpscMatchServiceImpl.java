@@ -3,7 +3,6 @@ package za.co.hpsc.web.services.impl;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
-import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.ClubIdentifier;
@@ -23,7 +21,6 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsv;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
@@ -71,13 +68,13 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
-        List<MatchRequestCsv> matchRequestCsvList = readMatches(csvData);
+        List<MatchRequest> matchRequests = readMatches(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
         // transaction, so a bad row leaves none of them persisted.
         List<IpscMatch> matches = new ArrayList<>();
-        for (MatchRequestCsv matchRequestCsv : matchRequestCsvList) {
-            matches.add(newMatch(toRequest(matchRequestCsv)));
+        for (MatchRequest matchRequest : matchRequests) {
+            matches.add(newMatch(matchRequest));
         }
 
         List<MatchResponse> matchResponseList = transactionService.saveMatches(matches).stream()
@@ -185,7 +182,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     /**
      * Reads match data from a CSV-formatted string and converts it into a list of
-     * {@link MatchRequest} objects, binding the {@link MatchRequestCsv} column headers onto each.
+     * {@link MatchRequest} objects, binding the CSV column headers onto each through
+     * {@link MatchRequestCsvMixIn}. A header may omit optional columns and unknown columns are ignored.
      *
      * @param csvData the CSV data containing match information, one match per row. Must not be
      *                null or blank.
@@ -193,20 +191,16 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<MatchRequestCsv> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
+    protected List<MatchRequest> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        csvMapper.disable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS);
-        CsvSchema csvSchema = csvMapper
-                .schemaFor(MatchRequestCsv.class)
-                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
-                .withColumnReordering(true)
-                .withHeader();
-        csvMapper.addMixIn(MatchRequestCsv.class, MatchRequestCsvMixIn.class);
+        // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
+        CsvSchema csvSchema = CsvSchema.emptySchema().withHeader();
+        csvMapper.addMixIn(MatchRequest.class, MatchRequestCsvMixIn.class);
 
         // Read the CSV data using the mapper and schema
-        try (MappingIterator<MatchRequestCsv> requestMappingIterator =
-                     csvMapper.readerFor(MatchRequestCsv.class)
+        try (MappingIterator<MatchRequest> requestMappingIterator =
+                     csvMapper.readerFor(MatchRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
@@ -218,27 +212,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             log.error("Error reading CSV data: {}", e.getMessage(), e);
             throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * Copies a {@link MatchRequest} parsed from a CSV row into a new {@link MatchRequest}, dropping
-     * any {@code matchId}.
-     *
-     * @param matchRequestCsv the CSV row to map; must not be null.
-     * @return the equivalent {@link MatchRequest}, with a {@code null} {@code matchId}.
-     */
-    protected MatchRequest toRequest(@NotNull MatchRequestCsv matchRequestCsv) {
-        return new MatchRequest(
-                null,
-                matchRequestCsv.getMatchDate(),
-                matchRequestCsv.getMatchName(),
-                matchRequestCsv.getClub(),
-                matchRequestCsv.getMatchFirearmType(),
-                matchRequestCsv.getMatchCategory(),
-                matchRequestCsv.getStartTime(),
-                matchRequestCsv.getEndTime(),
-                matchRequestCsv.getUrl()
-        );
     }
 
     /**
