@@ -120,7 +120,7 @@ responsibilities:
 |----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
 | **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
-| **IPSC Competitors & Matches**   | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                  |
+| **IPSC Competitors & Matches**   | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                                |
 | **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
@@ -145,12 +145,12 @@ Layer notes below).
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                 | Mapping             | Responsibility                                               |
-|----------------------------|---------------------|--------------------------------------------------------------|
-| `AwardController`          | `/awards`           | Award CSV processing                                         |
-| `ImageController`          | `/images`           | Image CSV processing                                         |
-| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import                       |
-| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD + bulk CSV import |
+| Controller                 | Mapping             | Responsibility                         |
+|----------------------------|---------------------|----------------------------------------|
+| `AwardController`          | `/awards`           | Award CSV processing                   |
+| `ImageController`          | `/images`           | Image CSV processing                   |
+| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import |
+| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD + bulk CSV import      |
 
 All controllers:
 
@@ -172,7 +172,7 @@ Contains all business logic.
 |-------------------------|-----------------------------|--------------------------------------------------------------|
 | `AwardService`          | `AwardServiceImpl`          | Award CSV processing (deliberately stateless — see below)    |
 | `ImageService`          | `ImageServiceImpl`          | Image CSV processing (deliberately stateless — see below)    |
-| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD + bulk CSV import |
+| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD + bulk CSV import                            |
 | `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
 | `TransactionService`    | `TransactionServiceImpl`    | Commits competitor/match writes, each in its own transaction |
 

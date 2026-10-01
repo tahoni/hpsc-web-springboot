@@ -1438,7 +1438,7 @@ while clearing the improvement plan of every documentation-accuracy gap.
   breaking changes land
 - Production gets its own `prod` profile, and the profile documentation matches the properties files
 - Manual dependency-version overrides are re-checked at every release
-- Gaps #25, #27 and #28 closed and #26 progressed, leaving Gap #6 the only open gap
+- Gaps #25, #27 and #28 closed, and #26 progressed, leaving Gap #6 the only open gap
 
 **Achievement:** Turned the project's version numbers from a matter of precedent into a rule the release process
 checks, and made the documented runtime profiles match the ones that actually exist.
@@ -1927,7 +1927,7 @@ IpscMatchController / IpscCompetitorController → IpscMatchService / IpscCompet
 **Characteristics:**
 
 - `IpscMatch` no longer owns any child collection, so the one bidirectional, cascaded relationship that v8.9.0
-  described is gone and every remaining relationship is unidirectional and reject-not-cascade
+  described is gone, and every remaining relationship is unidirectional and reject-not-cascade
 - A CSV row is read straight into the same request model a JSON body uses, through a mix-in that supplies the column
   names, so a field added to a request model is picked up by both entry points without a second model to keep in step
 - Each `PATCH` has its own request model with no required fields, while `POST` and `PUT` keep the full model with its

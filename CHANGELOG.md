@@ -91,7 +91,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   by the path ID alone, and any field left out is left unchanged. This keeps a patch partial now that `MatchRequest`
   requires its match date, name, firearm type and category. It has no `matchId`, so a body that sent one now has it
   ignored
-- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns and unknown columns are ignored —
+- **`IpscMatchServiceImpl.readMatches`:** A CSV header may now omit optional columns, and unknown columns are ignored —
   `MatchDate`, `MatchName`, `MatchFirearmType` and `MatchCategory` must be present in the header and in every row, and
   a CSV that lacks any of them is rejected as invalid. A `MatchId` column is read but never used, since the import only
   creates matches
@@ -108,7 +108,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorRequest.emailAddresses`:** Now defaults to an empty list rather than `null`. The CSV import splits the
   semicolon-separated `EmailAddresses` cell on the shared array element separator itself, so
   `IpscCompetitorServiceImpl.splitEmailAddresses` is removed. The accepted CSV format is unchanged
-- **`IpscCompetitorServiceImpl.readCompetitors`:** A CSV header may now omit optional columns and unknown columns are
+- **`IpscCompetitorServiceImpl.readCompetitors`:** A CSV header may now omit optional columns, and unknown columns are
   ignored — only `FirstName` and `LastName` are still required, and a row that lacks either is rejected as invalid. A
   `CompetitorId` column is read but never used, since the import only creates competitors
 - **`IpscCompetitorController.createCompetitors`:** The bulk import's Swagger request schema is now plain text, with its

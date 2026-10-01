@@ -2686,7 +2686,7 @@ the Semantic Versioning rules.
 - New `MatchRequestCsvMixIn` and `CompetitorRequestCsvMixIn` bind the CSV column headers onto the request models'
   constructors, so each row is read straight into a `MatchRequest`/`CompetitorRequest`; `MatchRequestForCSV` and
   `CompetitorRequestForCSV` are removed
-- A header may omit optional columns and unknown columns are ignored; the `MatchId` and `CompetitorId` columns are
+- A header may omit optional columns, and unknown columns are ignored; the `MatchId` and `CompetitorId` columns are
   read but never used, since the imports only create records
 - The imports' Swagger request schemas are now plain text with an example header row
 
