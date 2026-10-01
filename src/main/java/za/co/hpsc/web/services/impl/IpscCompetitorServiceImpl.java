@@ -3,7 +3,6 @@ package za.co.hpsc.web.services.impl;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -23,7 +22,6 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
-import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsv;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
@@ -74,13 +72,13 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
-        List<CompetitorRequestCsv> competitorRequestCsvList = readCompetitors(csvData);
+        List<CompetitorRequest> competitorRequests = readCompetitors(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
         // transaction, so a bad row leaves none of them persisted.
         List<Competitor> competitors = new ArrayList<>();
-        for (CompetitorRequestCsv competitorRequestCsv : competitorRequestCsvList) {
-            competitors.add(newCompetitor(toRequest(competitorRequestCsv)));
+        for (CompetitorRequest competitorRequest : competitorRequests) {
+            competitors.add(newCompetitor(normaliseCsvRequest(competitorRequest)));
         }
 
         List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
@@ -206,28 +204,27 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     /**
      * Reads competitor data from a CSV-formatted string and converts it into a list of
-     * {@link CompetitorRequestCsv} objects.
+     * {@link CompetitorRequest} objects, binding the CSV column headers onto each through
+     * {@link CompetitorRequestCsvMixIn}. A header may omit optional columns and unknown columns are ignored.
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.
      *                Must not be null or blank.
-     * @return a list of {@link CompetitorRequestCsv} objects parsed from the provided CSV data.
+     * @return a list of {@link CompetitorRequest} objects parsed from the provided CSV data.
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<CompetitorRequestCsv> readCompetitors(@NotNull @NotBlank String csvData)
+    protected List<CompetitorRequest> readCompetitors(@NotNull @NotBlank String csvData)
             throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
-        csvMapper.disable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS);
-        CsvSchema csvSchema = csvMapper
-                .schemaFor(CompetitorRequestCsv.class)
+        // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
+        CsvSchema csvSchema = CsvSchema.emptySchema()
                 .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
-                .withColumnReordering(true)
                 .withHeader();
-        csvMapper.addMixIn(CompetitorRequestCsv.class, CompetitorRequestCsvMixIn.class);
+        csvMapper.addMixIn(CompetitorRequest.class, CompetitorRequestCsvMixIn.class);
 
-        try (MappingIterator<CompetitorRequestCsv> requestMappingIterator =
-                     csvMapper.readerFor(CompetitorRequestCsv.class)
+        try (MappingIterator<CompetitorRequest> requestMappingIterator =
+                     csvMapper.readerFor(CompetitorRequest.class)
                              .with(csvSchema)
                              .readValues(csvData)) {
             return requestMappingIterator.readAll();
@@ -242,7 +239,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Maps a {@link CompetitorRequestCsv} row onto a {@link CompetitorRequest}.
+     * Normalises a {@link CompetitorRequest} read from a CSV row into a new {@link CompetitorRequest}, dropping any
+     * {@code competitorId}.
      *
      * <p>
      * Every name column and the gender are proper-cased (see {@link StringUtils#toProperCase(String)}). The
@@ -253,28 +251,27 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * "van der Merwe", and a "Mc" prefix is corrected, so "MCDONALD" becomes "McDonald".
      * </p>
      *
-     * @param competitorRequestCsv the CSV row to map; must not be null.
-     * @return the equivalent {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
+     * @param csvRow the request read from the CSV row; must not be null.
+     * @return the normalised {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
      */
-    protected CompetitorRequest toRequest(@NotNull CompetitorRequestCsv competitorRequestCsv) {
+    protected CompetitorRequest normaliseCsvRequest(@NotNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
                 null,
-                StringUtils.toProperCase(competitorRequestCsv.getFirstName()),
-                CompetitorHelpers.toSentenceCaseLastName(
-                        StringUtils.toProperCase(competitorRequestCsv.getLastName())),
-                StringUtils.toProperCase(competitorRequestCsv.getMiddleNames()),
-                StringUtils.toProperCase(competitorRequestCsv.getNickname()),
-                competitorRequestCsv.getDateOfBirth(),
-                StringUtils.toProperCase(competitorRequestCsv.getGender()),
-                competitorRequestCsv.getHomeClub(),
-                competitorRequestCsv.getSapsaNumber(),
-                competitorRequestCsv.getCompetitorNumber(),
-                competitorRequestCsv.getClubNumber(),
-                competitorRequestCsv.getIdNumber(),
-                competitorRequestCsv.getCellphoneNumber(),
-                competitorRequestCsv.getPaidUpSapsa(),
-                competitorRequestCsv.getPaidUpClub(),
-                new ArrayList<>(competitorRequestCsv.getEmailAddresses()));
+                StringUtils.toProperCase(csvRow.getFirstName()),
+                CompetitorHelpers.toSentenceCaseLastName(StringUtils.toProperCase(csvRow.getLastName())),
+                StringUtils.toProperCase(csvRow.getMiddleNames()),
+                StringUtils.toProperCase(csvRow.getNickname()),
+                csvRow.getDateOfBirth(),
+                StringUtils.toProperCase(csvRow.getGender()),
+                csvRow.getHomeClub(),
+                csvRow.getSapsaNumber(),
+                csvRow.getCompetitorNumber(),
+                csvRow.getClubNumber(),
+                csvRow.getIdNumber(),
+                csvRow.getCellphoneNumber(),
+                csvRow.getPaidUpSapsa(),
+                csvRow.getPaidUpClub(),
+                new ArrayList<>(csvRow.getEmailAddresses()));
     }
 
     /**

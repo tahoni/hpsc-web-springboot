@@ -259,8 +259,8 @@ envelope.
 
 DTOs for the IPSC module rebuild — `MatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
 single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`/`CompetitorResponse` (consumed by
-`IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorRequestCsv`/`CompetitorResponseHolder`
-(its bulk CSV import endpoint), and, still groundwork only — not yet consumed by any controller —
+`IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
+(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), and, still groundwork only — not yet consumed by any controller —
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
@@ -371,7 +371,7 @@ Handled by `IpscCompetitorController` — unlike the Award/Image flow above, the
 Client uploads CSV (Content-Type: text/csv)
     → IpscCompetitorController.createCompetitors
         → IpscCompetitorService.createCompetitors
-            (parses CSV via Jackson CsvMapper into CompetitorRequestForCSV rows, then builds each row with the same
+            (parses CSV via Jackson CsvMapper into CompetitorRequest rows, then builds each row with the same
              validation/gender/home-club-resolution logic the single-competitor endpoint uses)
             → TransactionService.saveCompetitors
                 (saves every row in one transaction — a bad row fails before anything is saved)

@@ -88,17 +88,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Competitor API
 
-- **`CompetitorRequestCsv`, `CompetitorRequestCsvMixIn`:** `CompetitorRequestForCSV` renamed to
-  `CompetitorRequestCsv`, with a new Jackson mix-in binding the CSV column headers onto `CompetitorRequest`'s
-  constructor
-- **`IpscCompetitorServiceImpl.readCompetitors`:** The CSV schema now sets the shared array element separator
-  explicitly — `EmailAddresses` still splits on the same character
-- **`CompetitorRequestCsv.emailAddresses`, `CompetitorRequest.emailAddresses`:** Now a `List<String>` that defaults to
-  an empty list rather than `null` — Jackson splits the semicolon-separated `EmailAddresses` cell itself, so
+- **`CompetitorRequestCsvMixIn`:** New Jackson mix-in binding the CSV column headers onto `CompetitorRequest`'s
+  constructor, so the bulk import reads each row straight into a `CompetitorRequest` — the accepted CSV columns are
+  unchanged. The `CompetitorRequestForCSV` model is removed; `IpscCompetitorServiceImpl.toRequest`, which copied it into
+  a `CompetitorRequest` while normalising name casing, becomes `normaliseCsvRequest` and takes the `CompetitorRequest`
+  directly
+- **`CompetitorRequest.emailAddresses`:** Now defaults to an empty list rather than `null`. The CSV import splits the
+  semicolon-separated `EmailAddresses` cell on the shared array element separator itself, so
   `IpscCompetitorServiceImpl.splitEmailAddresses` is removed. The accepted CSV format is unchanged
-- **`IpscCompetitorServiceImpl.readCompetitors`:** A CSV header may now omit optional columns, and columns that are not
-  part of the competitor model are ignored — only `FirstName` and `LastName` are still required, and a row that
-  lacks either is rejected as invalid
+- **`IpscCompetitorServiceImpl.readCompetitors`:** A CSV header may now omit optional columns and unknown columns are
+  ignored — only `FirstName` and `LastName` are still required, and a row that lacks either is rejected as invalid. A
+  `CompetitorId` column is read but never used, since the import only creates competitors
+- **`IpscCompetitorController.createCompetitors`:** The bulk import's Swagger request schema is now plain text, with its
+  example header row, rather than the removed CSV model
 - **`IpscCompetitorServiceImpl.resolveHomeClub`:** A competitor's home club now also resolves by club abbreviation when
   no club has a matching name, so a competitor request or CSV row may name the club either way
 
