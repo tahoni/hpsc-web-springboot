@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -472,9 +475,10 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
-    void testResolveHomeClub_whenClubNameDoesNotMatchExistingClub_thenThrowsNonFatalException() {
+    void testResolveHomeClub_whenClubNameMatchesNeitherNameNorAbbreviation_thenThrowsNonFatalException() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("No Such Club")).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscCompetitorServiceImpl.resolveHomeClub("No Such Club"));
@@ -490,6 +494,23 @@ class IpscCompetitorServiceImplTest {
 
         // Act
         Club resolved = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.resolveHomeClub("Test Club"));
+
+        // Assert
+        assertSame(club, resolved);
+        verify(clubRepository, never()).findByAbbreviation(anyString());
+    }
+
+    @Test
+    void testResolveHomeClub_whenClubNameMatchesOnlyAnAbbreviation_thenReturnsClub() {
+        // Arrange
+        Club club = new Club();
+        club.setId(10L);
+        club.setName("Test Club");
+        when(clubRepository.findByName("TC")).thenReturn(Optional.empty());
+        when(clubRepository.findByAbbreviation("TC")).thenReturn(Optional.of(club));
+
+        // Act
+        Club resolved = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.resolveHomeClub("TC"));
 
         // Assert
         assertSame(club, resolved);

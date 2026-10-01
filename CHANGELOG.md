@@ -93,6 +93,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorServiceImpl.readCompetitors`:** A CSV header may now omit optional columns, and columns that are not
   part of the competitor model are ignored — only `FirstName` and `LastName` are still required, and a row that
   lacks either is rejected as invalid
+- **`IpscCompetitorServiceImpl.resolveHomeClub`:** A competitor's home club now also resolves by club abbreviation when
+  no club has a matching name, so a competitor request or CSV row may name the club either way
 
 #### 📦 Dependencies
 

@@ -39,7 +39,7 @@ public class CompetitorRequest {
     private LocalDate dateOfBirth;
     /** The competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name. */
     private String gender;
-    /** The name of the competitor's home club; resolved against existing clubs by name. */
+    /** The abbreviation of the competitor's home club; resolved against existing clubs by name or abbreviation. */
     private String homeClub;
     /** The competitor's SAPSA membership number. */
     private Integer sapsaNumber;

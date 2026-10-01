@@ -38,6 +38,7 @@ import za.co.hpsc.web.utils.StringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -391,10 +392,10 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Resolves a competitor's home club by name.
+     * Resolves a competitor's home club by name or abbreviation.
      *
-     * @param clubName the club name to look up; may be null or blank, in which case no home
-     *                 club is set.
+     * @param clubName the club name/abbreviation to look up; may be null or blank, in which case
+     *                 no home club is set.
      * @return the matching {@link Club}, or {@code null} if {@code clubName} wasn't supplied.
      * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing club.
      */
@@ -403,8 +404,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             return null;
         }
 
-        return clubRepository.findByName(clubName)
-                .orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
+        Optional<Club> optionalClub = clubRepository.findByName(clubName).or(() -> clubRepository.findByAbbreviation(clubName));
+        return optionalClub.orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
     }
 
     /**
