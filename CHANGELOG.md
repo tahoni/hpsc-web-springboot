@@ -179,10 +179,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`tomcat.version`:** Raised from `11.0.25` to `11.0.26` in `pom.xml`
 - **`logback.version`:** New `pom.xml` override pinning Logback to `1.6.5`
-- **`jackson-bom`, `jackson-core`:** `dependencyManagement` now imports `tools.jackson:jackson-bom` `3.2.3`, and
-  `jackson-core` `2.22.3` for the Jackson 2 line
-- **`jackson-dataformat-csv`, `flyway-mysql`:** Now pinned to `2.22.3` and `13.7.0` instead of the Spring Boot-managed
-  versions
+- **`jackson-2-bom.version`, `jackson-bom.version`:** New `pom.xml` overrides raising the Jackson 2 BOM to `2.22.3`
+  and the Jackson 3 BOM to `3.2.3`, so `jackson-core` and `jackson-dataformat-csv` follow. They override the
+  properties Spring Boot imports the BOMs through, rather than importing a Jackson POM, whose parent chain would
+  re-pin `junit-bom`
+- **`flyway-mysql`:** Now pinned to `13.7.0` instead of the Spring Boot-managed version
 
 ### 🧾 [8.12.0] - 2026-09-29
 
