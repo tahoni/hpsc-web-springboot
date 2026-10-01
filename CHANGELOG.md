@@ -168,6 +168,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchStageRequest`, `MatchStageResponse`:** Removed, along with `IpscMatchServiceImpl.toStages` and
   `parseStages`
 
+##### Constants
+
+- **`IpscConstants.EXCLUDE_CLUB_IDENTIFIERS`, `IpscConstants.STAGE_POINTS_SCALE`:** Removed — nothing references
+  either any more
+
 #### 🔐 Security
 
 ##### Dependencies

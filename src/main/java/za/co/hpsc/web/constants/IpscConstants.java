@@ -28,12 +28,10 @@ public final class IpscConstants {
     public static final String IPSC_INPUT_TIME_FORMAT = SystemConstants.TIME_FORMAT;
 
     public static final List<String> EXCLUDE_ICS_ALIAS = List.of("15000", "16000");
-    public static final List<ClubIdentifier> EXCLUDE_CLUB_IDENTIFIERS = List.of(ClubIdentifier.UNKNOWN);
     public static final Integer MAX_SAPSA_NUMBER = 99_999;
 
     public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|RO)$";
 
-    public static final int STAGE_POINTS_SCALE = 4;
     public static final int MATCH_POINTS_SCALE = 4;
     public static final int HIT_FACTOR_SCALE = 4;
     public static final int TIME_SCALE = 2;
