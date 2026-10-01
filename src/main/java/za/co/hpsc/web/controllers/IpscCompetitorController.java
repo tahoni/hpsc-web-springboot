@@ -18,6 +18,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
@@ -192,7 +193,7 @@ public class IpscCompetitorController {
     })
     ResponseEntity<CompetitorResponse> patchCompetitor(
             @Parameter(description = "Identifier of the competitor to update.") @PathVariable Long competitorId,
-            @RequestBody CompetitorRequest request)
+            @RequestBody CompetitorPatchRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.ok(ipscCompetitorService.patchCompetitor(competitorId, request));
     }

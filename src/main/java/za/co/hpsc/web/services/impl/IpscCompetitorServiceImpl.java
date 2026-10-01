@@ -21,6 +21,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.helpers.CompetitorHelpers;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
@@ -97,7 +98,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     @Override
-    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorRequest request) {
+    public CompetitorResponse patchCompetitor(Long competitorId, CompetitorPatchRequest request) {
         Competitor competitor = findCompetitorOrThrow(competitorId);
 
         if (request.getFirstName() != null) {

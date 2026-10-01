@@ -14,6 +14,7 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
@@ -521,7 +522,7 @@ public class IpscCompetitorServiceTest {
     void testPatchCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L)).thenReturn(Optional.empty());
-        CompetitorRequest request = new CompetitorRequest();
+        CompetitorPatchRequest request = new CompetitorPatchRequest();
         request.setFirstName("Renamed");
 
         // Act & Assert
@@ -538,7 +539,7 @@ public class IpscCompetitorServiceTest {
         existing.setHomeClub(club);
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setClubNumber("  ");
 
         // Act & Assert
@@ -554,7 +555,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setFirstName("Janet");
 
         // Act
@@ -582,7 +583,7 @@ public class IpscCompetitorServiceTest {
         when(clubRepository.findByName("Other Club")).thenReturn(Optional.of(otherClub));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setHomeClub("Other Club");
 
         // Act
@@ -604,7 +605,7 @@ public class IpscCompetitorServiceTest {
         club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("HPSC")).thenReturn(Optional.of(club));
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setHomeClub("HPSC");
 
         // Act & Assert
@@ -618,7 +619,7 @@ public class IpscCompetitorServiceTest {
         existing.setId(1L);
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setGender("Not A Gender");
 
         // Act & Assert
@@ -633,7 +634,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setHomeClub("No Such Club");
 
         // Act & Assert
@@ -651,7 +652,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setFirstName("Janet");
 
         // Act
@@ -677,7 +678,7 @@ public class IpscCompetitorServiceTest {
         when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setHomeClub("Test Club");
         patch.setClubNumber("HPSC-010");
 
@@ -697,7 +698,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setGender(Gender.Female.toString());
 
         // Act
@@ -719,7 +720,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setClubNumber("HPSC-002");
 
         // Act
@@ -740,7 +741,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setClubNumber("HPSC-002");
 
         // Act
@@ -760,7 +761,7 @@ public class IpscCompetitorServiceTest {
         stubSaveReturnsSameEntity();
 
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setLastName("Smith");
         patch.setMiddleNames("Ann");
         patch.setNickname("Janie");
@@ -798,7 +799,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
         stubSaveReturnsSameEntity();
 
-        CompetitorRequest patch = new CompetitorRequest();
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
         patch.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
 
         // Act

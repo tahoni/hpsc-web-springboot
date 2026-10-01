@@ -110,6 +110,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `CompetitorId` column is read but never used, since the import only creates competitors
 - **`IpscCompetitorController.createCompetitors`:** The bulk import's Swagger request schema is now plain text, with its
   example header row, rather than the removed CSV model
+- **`CompetitorPatchRequest`, `IpscCompetitorService.patchCompetitor`, `IpscCompetitorController.patchCompetitor`:** New
+  request model for `PATCH /ipsc/competitors/{competitorId}`, replacing `CompetitorRequest` there — no field is
+  required, since the competitor is identified by the path ID alone, so a patch no longer has to repeat `firstName` and
+  `lastName`. Its `emailAddresses` is `null` unless supplied, so a patch that omits it keeps the competitor's addresses
+  instead of clearing them. It has no `competitorId`, so a body that sent one now has it ignored
 - **`IpscCompetitorServiceImpl.resolveHomeClub`:** A competitor's home club now also resolves by club abbreviation when
   no club has a matching name, so a competitor request or CSV row may name the club either way
 
