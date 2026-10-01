@@ -2712,6 +2712,11 @@ the Semantic Versioning rules.
 
 - Project version bumped to 9.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
+**Security**
+
+- `tomcat.version` raised to `11.0.26`, `logback.version` pinned to `1.6.5`, the Jackson BOMs imported, and
+  `jackson-dataformat-csv` and `flyway-mysql` pinned above the Spring Boot-managed versions
+
 **Technical Focus:**
 
 - Narrowing the match domain and giving each resource one request model for both its JSON and CSV entry points
