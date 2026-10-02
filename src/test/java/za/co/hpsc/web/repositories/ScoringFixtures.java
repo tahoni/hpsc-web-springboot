@@ -8,6 +8,8 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogCompetitor;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 
@@ -51,7 +53,9 @@ final class ScoringFixtures {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitor.setDivision(Division.OPEN);
         entityManager.persist(matchCompetitor);
         return matchCompetitor;
     }
@@ -71,8 +75,10 @@ final class ScoringFixtures {
                                                      MatchCompetitor matchCompetitor) {
         ShooterLogCompetitor shooterLogCompetitor = new ShooterLogCompetitor();
         shooterLogCompetitor.setShooterLog(shooterLog);
+        shooterLogCompetitor.setCompetitor(matchCompetitor.getCompetitor());
         shooterLogCompetitor.setMatchCompetitor(matchCompetitor);
-        shooterLogCompetitor.setMatch(matchCompetitor.getMatch());
+        shooterLogCompetitor.setCompetitorCategory(matchCompetitor.getCompetitorCategory());
+        shooterLogCompetitor.setDivision(matchCompetitor.getDivision());
         entityManager.persist(shooterLogCompetitor);
         return shooterLogCompetitor;
     }
