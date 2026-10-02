@@ -84,6 +84,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`ShooterLogOverallRepository`:** New repository for `ShooterLogOverall`, with `findAllByShooterLogId` and
   `existsByCompetitorId`
+- **`ShooterLogRepository.existsByMatchesId`:** New query — whether a match is linked to any shooter log through
+  `shooter_log_match`, for the match delete check
 
 ##### Database
 
@@ -128,6 +130,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscMatchServiceImpl.deleteMatch`:** Also refuses a match that is linked to a shooter log through
+  `shooter_log_match`, using the new `ShooterLogRepository.existsByMatchesId`, as well as one with shooter log
+  competitors
 - **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
   `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own, and
   also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall

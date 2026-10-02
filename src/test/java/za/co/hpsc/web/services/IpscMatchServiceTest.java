@@ -24,6 +24,7 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
@@ -55,6 +56,9 @@ public class IpscMatchServiceTest {
     private MatchCompetitorRepository matchCompetitorRepository;
 
     @Mock
+    private ShooterLogRepository shooterLogRepository;
+
+    @Mock
     private ShooterLogCompetitorRepository shooterLogCompetitorRepository;
 
     @Mock
@@ -70,7 +74,7 @@ public class IpscMatchServiceTest {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, transactionManager);
         ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository, clubRepository,
-                matchCompetitorRepository, shooterLogCompetitorRepository, transactionService);
+                matchCompetitorRepository, shooterLogRepository, shooterLogCompetitorRepository, transactionService);
     }
 
     // createMatch()
@@ -344,6 +348,18 @@ public class IpscMatchServiceTest {
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(newMatch(1L)));
         when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
         when(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(1L));
+        verify(ipscMatchRepository, never()).delete(any(IpscMatch.class));
+    }
+
+    @Test
+    void testDeleteMatch_whenMatchIsLinkedToAShooterLog_thenThrowsValidationException() {
+        // Arrange
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(newMatch(1L)));
+        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(shooterLogRepository.existsByMatchesId(1L)).thenReturn(true);
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(1L));

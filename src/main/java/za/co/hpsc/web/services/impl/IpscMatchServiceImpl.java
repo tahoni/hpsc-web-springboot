@@ -29,6 +29,7 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -42,17 +43,20 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     private final IpscMatchRepository ipscMatchRepository;
     private final ClubRepository clubRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
+    private final ShooterLogRepository shooterLogRepository;
     private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
     private final TransactionService transactionService;
 
     public IpscMatchServiceImpl(IpscMatchRepository ipscMatchRepository,
                                  ClubRepository clubRepository,
                                  MatchCompetitorRepository matchCompetitorRepository,
+                                 ShooterLogRepository shooterLogRepository,
                                  ShooterLogCompetitorRepository shooterLogCompetitorRepository,
                                  TransactionService transactionService) {
         this.ipscMatchRepository = ipscMatchRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
+        this.shooterLogRepository = shooterLogRepository;
         this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
         this.transactionService = transactionService;
     }
@@ -145,7 +149,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throw new ValidationException("Match with ID " + matchId
                     + " cannot be deleted: it has recorded competitor results.");
         }
-        if (shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(matchId)) {
+        if (shooterLogRepository.existsByMatchesId(matchId)
+                || shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(matchId)) {
             throw new ValidationException("Match with ID " + matchId
                     + " cannot be deleted: it is referenced by shooter logs.");
         }
