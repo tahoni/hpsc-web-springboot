@@ -29,7 +29,7 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.repositories.ShooterLogRepository;
+import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.utils.StringUtils;
@@ -45,17 +45,17 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final CompetitorRepository competitorRepository;
     private final ClubRepository clubRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
-    private final ShooterLogRepository shooterLogRepository;
+    private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
     private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
-                                     ShooterLogRepository shooterLogRepository,
+                                     ShooterLogCompetitorRepository shooterLogCompetitorRepository,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
-        this.shooterLogRepository = shooterLogRepository;
+        this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
         this.transactionService = transactionService;
     }
 
@@ -171,7 +171,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have recorded match results.");
         }
-        if (shooterLogRepository.existsByCompetitorId(competitorId)) {
+        if (shooterLogCompetitorRepository.existsByCompetitorId(competitorId)) {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have shooter logs.");
         }

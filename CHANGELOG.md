@@ -117,6 +117,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V8_5_0__create_shooter_log_match`:** Creates the `shooter_log_match` join table, with foreign keys to
   `shooter_log` and `ipsc_match`, linking shooter logs and matches many-to-many
 
+##### Services
+
+- **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
+  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own — a
+  competitor in any shooter log is still refused deletion
+
 ### 🧾 [9.0.0] - 2026-10-01
 
 #### 🔄 Changed
