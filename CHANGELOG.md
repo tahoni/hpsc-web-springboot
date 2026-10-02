@@ -116,6 +116,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `start_date` and `end_date` `DATE` columns
 - **`V8_5_0__create_shooter_log_match`:** Creates the `shooter_log_match` join table, with foreign keys to
   `shooter_log` and `ipsc_match`, linking shooter logs and matches many-to-many
+- **`V8_6_0__add_shooter_log_competitor_and_overall_links`:** Adds the `NOT NULL` `competitor_id` column, with a
+  foreign key, to `shooter_log_competitor`, and `shooter_log_id` and `competitor_id` columns, with foreign keys, to
+  `shooter_log_overall`; both tables become unique per shooter log and competitor (replacing
+  `shooter_log_competitor`'s unique key on shooter log and match competitor). Fails if either table already has rows
 
 ##### Services
 
