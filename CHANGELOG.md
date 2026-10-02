@@ -75,6 +75,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   points were calculated, separately from `dateCreated` and `dateUpdated`
 - **`ShooterLogCompetitor.competitorCategory`, `ShooterLogCompetitor.division`:** New required columns — each row now
   records the competitor's category and division
+- **`ShooterLogOverall`:** New entity mirroring `ShooterLogCompetitor` (shooter log, match competitor, match, rank and
+  points) for overall log standings
 
 ##### Database
 
