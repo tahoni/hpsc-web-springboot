@@ -99,6 +99,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ShooterLogCompetitor.competitor`, `ShooterLogCompetitor.match`:** A shooter log competitor now links to its
   `Competitor` directly and is unique per shooter log and competitor, rather than per match competitor. The direct `match`
   link is removed — the match is reached through `matchCompetitor`
+- **`ShooterLog`:** Reworked to a date range and its matches — the `competitor`, `club`, `firearmType`, `powerFactor`,
+  `logValue` and `calculatedDate` fields are removed, and `startDate` and `endDate` are added. `matches` is a new
+  many-to-many link to `IpscMatch` through `shooter_log_match`: a shooter log covers many matches and a match can be in
+  many shooter logs
 
 ##### Database
 
@@ -107,6 +111,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   changes fail if any existing row has a null in either column
 - **`V8_3_0__drop_shooter_log_competitor_match_id`:** Drops `shooter_log_competitor.match_id` and its foreign key —
   the match is reached through `match_competitor_id`
+- **`V8_4_0__rework_shooter_log_columns`:** Drops `shooter_log`'s `competitor_id`, `club_id`, `firearm_type`,
+  `power_factor`, `log_value` and `calculated_date` columns (and the competitor and club foreign keys), and adds nullable
+  `start_date` and `end_date` `DATE` columns
+- **`V8_5_0__create_shooter_log_match`:** Creates the `shooter_log_match` join table, with foreign keys to
+  `shooter_log` and `ipsc_match`, linking shooter logs and matches many-to-many
 
 ### 🧾 [9.0.0] - 2026-10-01
 
