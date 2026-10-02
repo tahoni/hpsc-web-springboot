@@ -81,6 +81,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V8_0_0__add_shooter_log_competitor_date_calculated`:** Adds the nullable `date_calculated` column to
   `shooter_log_competitor`
 
+#### 🔄 Changed
+
+##### Domain
+
+- **`MatchCompetitor.division`, `MatchCompetitor.competitorCategory`:** Both are now required. `division` is also
+  mapped with `DivisionConverter` — previously it had no explicit mapping and the column was nullable
+- **`MatchCompetitor.firearmType`:** Now optional. The `(competitor_id, match_id, firearm_type)` unique constraint no
+  longer limits rows with a null `firearm_type`, since MySQL treats NULLs as distinct
+
+##### Database
+
+- **`V8_1_0__update_match_competitor_column_nullability`:** Makes `match_competitor.division` and
+  `match_competitor.competitor_category` `NOT NULL`, and `match_competitor.firearm_type` nullable; the `NOT NULL`
+  changes fail if any existing row has a null in either column
+
 ### 🧾 [9.0.0] - 2026-10-01
 
 #### 🔄 Changed

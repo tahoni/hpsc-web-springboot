@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import za.co.hpsc.web.converters.ClubIdentifierConverter;
-import za.co.hpsc.web.converters.CompetitorCategoryConverter;
-import za.co.hpsc.web.converters.FirearmTypeConverter;
-import za.co.hpsc.web.converters.PowerFactorConverter;
+import za.co.hpsc.web.converters.*;
 import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
@@ -38,13 +35,15 @@ public class MatchCompetitor {
     private ClubIdentifier matchClub;
 
     @Convert(converter = CompetitorCategoryConverter.class)
-    @Column(name = "competitor_category")
+    @Column(name = "competitor_category", nullable = false)
     private CompetitorCategory competitorCategory;
 
     @Convert(converter = FirearmTypeConverter.class)
-    @Column(name = "firearm_type", nullable = false)
+    @Column(name = "firearm_type")
     private FirearmType firearmType;
 
+    @Convert(converter = DivisionConverter.class)
+    @Column(name = "division", nullable = false)
     private Division division;
 
     @Convert(converter = PowerFactorConverter.class)
