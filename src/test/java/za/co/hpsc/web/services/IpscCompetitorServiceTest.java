@@ -23,6 +23,7 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
@@ -57,6 +58,9 @@ public class IpscCompetitorServiceTest {
     private ShooterLogCompetitorRepository shooterLogCompetitorRepository;
 
     @Mock
+    private ShooterLogOverallRepository shooterLogOverallRepository;
+
+    @Mock
     private IpscMatchRepository ipscMatchRepository;
 
     @Mock
@@ -69,7 +73,8 @@ public class IpscCompetitorServiceTest {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, transactionManager);
         ipscCompetitorService = new IpscCompetitorServiceImpl(competitorRepository, clubRepository,
-                matchCompetitorRepository, shooterLogCompetitorRepository, transactionService);
+                matchCompetitorRepository, shooterLogCompetitorRepository, shooterLogOverallRepository,
+                transactionService);
     }
 
     // createCompetitor()
@@ -413,6 +418,19 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
         when(shooterLogCompetitorRepository.existsByCompetitorId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.deleteCompetitor(1L));
+        verify(competitorRepository, never()).delete(any(Competitor.class));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenCompetitorHasOverallShooterLogRows_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogOverallRepository.existsByCompetitorId(1L)).thenReturn(true);
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.deleteCompetitor(1L));

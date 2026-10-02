@@ -30,6 +30,7 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.utils.StringUtils;
@@ -46,16 +47,19 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final ClubRepository clubRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
+    private final ShooterLogOverallRepository shooterLogOverallRepository;
     private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
                                      ShooterLogCompetitorRepository shooterLogCompetitorRepository,
+                                     ShooterLogOverallRepository shooterLogOverallRepository,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
+        this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.transactionService = transactionService;
     }
 
@@ -171,7 +175,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have recorded match results.");
         }
-        if (shooterLogCompetitorRepository.existsByCompetitorId(competitorId)) {
+        if (shooterLogCompetitorRepository.existsByCompetitorId(competitorId)
+                || shooterLogOverallRepository.existsByCompetitorId(competitorId)) {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have shooter logs.");
         }

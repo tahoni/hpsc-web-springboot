@@ -80,6 +80,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ShooterLogOverall.shooterLog`, `ShooterLogOverall.competitor`:** Required links to the `ShooterLog` and `Competitor` a
   row belongs to; a competitor has one row per shooter log
 
+##### Repositories
+
+- **`ShooterLogOverallRepository`:** New repository for `ShooterLogOverall`, with `findAllByShooterLogId` and
+  `existsByCompetitorId`
+
 ##### Database
 
 - **`V8_0_0__add_shooter_log_competitor_date_calculated`:** Adds the nullable `date_calculated` column to
@@ -124,8 +129,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Services
 
 - **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
-  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own — a
-  competitor in any shooter log is still refused deletion
+  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own, and
+  also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall
+  shooter log row, is refused deletion
 
 ### 🧾 [9.0.0] - 2026-10-01
 
