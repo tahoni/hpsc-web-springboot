@@ -11,7 +11,6 @@ import za.co.hpsc.web.domain.ShooterLogCompetitor;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
 
 import java.time.LocalDate;
 
@@ -60,13 +59,10 @@ final class ScoringFixtures {
         return matchCompetitor;
     }
 
-    static ShooterLog shooterLog(EntityManager entityManager, Competitor competitor, Club club) {
+    static ShooterLog shooterLog(EntityManager entityManager) {
         ShooterLog shooterLog = new ShooterLog();
-        shooterLog.setCompetitor(competitor);
-        shooterLog.setClub(club);
-        shooterLog.setFirearmType(FirearmType.HANDGUN);
-        shooterLog.setPowerFactor(PowerFactor.MINOR);
-        shooterLog.setCalculatedDate(LocalDate.of(2026, 9, 30).atStartOfDay());
+        shooterLog.setStartDate(LocalDate.of(2026, 9, 1));
+        shooterLog.setEndDate(LocalDate.of(2026, 9, 30));
         entityManager.persist(shooterLog);
         return shooterLog;
     }

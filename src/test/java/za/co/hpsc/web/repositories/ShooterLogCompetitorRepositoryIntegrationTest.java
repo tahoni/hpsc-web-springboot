@@ -13,7 +13,7 @@ import za.co.hpsc.web.domain.MatchCompetitor;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Spring-context integration test for {@link ShooterLogCompetitorRepository}'s {@code existsByMatchId} query — the checks behind the
+ * Spring-context integration test for {@link ShooterLogCompetitorRepository}'s {@code existsByCompetitorId}/{@code existsByMatchCompetitorMatchId} queries — the checks behind the
  * reject-not-cascade competitor/match deletes — against the H2 {@code test} profile database.
  */
 @ActiveProfiles("test")
@@ -27,27 +27,53 @@ class ShooterLogCompetitorRepositoryIntegrationTest {
     @Autowired
     private EntityManager entityManager;
 
-    // existsByMatchId()
+    // existsByCompetitorId()
     @Test
-    void testExistsByMatchId_whenMatchIsInAShooterLog_thenReturnsTrue() {
+    void testExistsByCompetitorId_whenCompetitorIsInAShooterLog_thenReturnsTrue() {
+        // Arrange
+        Competitor competitor = ScoringFixtures.competitor(entityManager, "Jane");
+        IpscMatch match = ScoringFixtures.match(entityManager, "Match");
+        MatchCompetitor matchCompetitor = ScoringFixtures.matchCompetitor(entityManager, competitor, match);
+        ScoringFixtures.shooterLogCompetitor(entityManager, ScoringFixtures.shooterLog(entityManager), matchCompetitor);
+
+        // Act & Assert
+        assertTrue(shooterLogCompetitorRepository.existsByCompetitorId(competitor.getId()));
+    }
+
+    @Test
+    void testExistsByCompetitorId_whenOnlyAnotherCompetitorIsInAShooterLog_thenReturnsFalse() {
+        // Arrange
+        Competitor competitor = ScoringFixtures.competitor(entityManager, "Jane");
+        Competitor other = ScoringFixtures.competitor(entityManager, "John");
+        IpscMatch match = ScoringFixtures.match(entityManager, "Match");
+        MatchCompetitor otherEntry = ScoringFixtures.matchCompetitor(entityManager, other, match);
+        ScoringFixtures.shooterLogCompetitor(entityManager, ScoringFixtures.shooterLog(entityManager), otherEntry);
+
+        // Act & Assert
+        assertFalse(shooterLogCompetitorRepository.existsByCompetitorId(competitor.getId()));
+    }
+
+    // existsByMatchCompetitorMatchId()
+    @Test
+    void testExistsByMatchCompetitorMatchId_whenMatchIsInAShooterLog_thenReturnsTrue() {
         // Arrange
         Competitor competitor = ScoringFixtures.competitor(entityManager, "Jane");
         IpscMatch match = ScoringFixtures.match(entityManager, "Match");
         MatchCompetitor matchCompetitor = ScoringFixtures.matchCompetitor(entityManager, competitor, match);
         ScoringFixtures.shooterLogCompetitor(entityManager,
-                ScoringFixtures.shooterLog(entityManager, competitor, ScoringFixtures.club(entityManager)), matchCompetitor);
+                ScoringFixtures.shooterLog(entityManager), matchCompetitor);
 
         // Act & Assert
-        assertTrue(shooterLogCompetitorRepository.existsByMatchId(match.getId()));
+        assertTrue(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(match.getId()));
     }
 
     @Test
-    void testExistsByMatchId_whenMatchIsInNoShooterLog_thenReturnsFalse() {
+    void testExistsByMatchCompetitorMatchId_whenMatchIsInNoShooterLog_thenReturnsFalse() {
         // Arrange
         IpscMatch match = ScoringFixtures.match(entityManager, "Match");
         ScoringFixtures.matchCompetitor(entityManager, ScoringFixtures.competitor(entityManager, "Jane"), match);
 
         // Act & Assert
-        assertFalse(shooterLogCompetitorRepository.existsByMatchId(match.getId()));
+        assertFalse(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(match.getId()));
     }
 }
