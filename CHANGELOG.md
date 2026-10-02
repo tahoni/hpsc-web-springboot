@@ -77,6 +77,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   records the competitor's category and division
 - **`ShooterLogOverall`:** New entity holding a rank and points per competitor category and division, with the date
   they were calculated, for overall log standings
+- **`ShooterLogOverall.shooterLog`, `ShooterLogOverall.competitor`:** Required links to the `ShooterLog` and `Competitor` a
+  row belongs to; a competitor has one row per shooter log
 
 ##### Database
 

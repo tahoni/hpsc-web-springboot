@@ -16,11 +16,20 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "shooter_log_overall")
+@Table(name = "shooter_log_overall",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"shooter_log_id", "competitor_id"}))
 public class ShooterLogOverall {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shooter_log_id", nullable = false)
+    private ShooterLog shooterLog;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "competitor_id", nullable = false)
+    private Competitor competitor;
 
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)
