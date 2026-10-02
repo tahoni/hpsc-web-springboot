@@ -67,6 +67,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Domain
+
+- **`ShooterLogCompetitor.dateCalculated`:** New nullable `LocalDateTime` column — records when a row's rank and
+  points were calculated, separately from `dateCreated` and `dateUpdated`
+- **`ShooterLogCompetitor.competitorCategory`, `ShooterLogCompetitor.division`:** New required columns — each row now
+  records the competitor's category and division
+
+##### Database
+
+- **`V8_0_0__add_shooter_log_competitor_date_calculated`:** Adds the nullable `date_calculated` column to
+  `shooter_log_competitor`
+
 ### 🧾 [9.0.0] - 2026-10-01
 
 #### 🔄 Changed
