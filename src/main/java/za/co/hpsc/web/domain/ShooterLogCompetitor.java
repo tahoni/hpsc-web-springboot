@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "shooter_log_competitor",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"shooter_log_id", "match_competitor_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"shooter_log_id", "competitor_id"}))
 public class ShooterLogCompetitor {
 
     @Id
@@ -29,12 +29,12 @@ public class ShooterLogCompetitor {
     private ShooterLog shooterLog;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "match_competitor_id", nullable = false)
-    private MatchCompetitor matchCompetitor;
+    @JoinColumn(name = "competitor_id", nullable = false)
+    private Competitor competitor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "match_id", nullable = false)
-    private IpscMatch match;
+    @JoinColumn(name = "match_competitor_id", nullable = false)
+    private MatchCompetitor matchCompetitor;
 
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)

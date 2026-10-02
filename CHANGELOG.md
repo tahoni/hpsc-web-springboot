@@ -94,12 +94,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   mapped with `DivisionConverter` — previously it had no explicit mapping and the column was nullable
 - **`MatchCompetitor.firearmType`:** Now optional. The `(competitor_id, match_id, firearm_type)` unique constraint no
   longer limits rows with a null `firearm_type`, since MySQL treats NULLs as distinct
+- **`ShooterLogCompetitor.competitor`, `ShooterLogCompetitor.match`:** A shooter log competitor now links to its
+  `Competitor` directly and is unique per shooter log and competitor, rather than per match competitor. The direct `match`
+  link is removed — the match is reached through `matchCompetitor`
 
 ##### Database
 
 - **`V8_1_0__update_match_competitor_column_nullability`:** Makes `match_competitor.division` and
   `match_competitor.competitor_category` `NOT NULL`, and `match_competitor.firearm_type` nullable; the `NOT NULL`
   changes fail if any existing row has a null in either column
+- **`V8_3_0__drop_shooter_log_competitor_match_id`:** Drops `shooter_log_competitor.match_id` and its foreign key —
+  the match is reached through `match_competitor_id`
 
 ### 🧾 [9.0.0] - 2026-10-01
 

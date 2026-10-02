@@ -343,7 +343,7 @@ public class IpscMatchServiceTest {
         // Arrange
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(newMatch(1L)));
         when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
-        when(shooterLogCompetitorRepository.existsByMatchId(1L)).thenReturn(true);
+        when(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(1L)).thenReturn(true);
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(1L));
@@ -356,7 +356,7 @@ public class IpscMatchServiceTest {
         IpscMatch match = newMatch(1L);
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(match));
         when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
-        when(shooterLogCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(1L)).thenReturn(false);
 
         // Act
         assertDoesNotThrow(() -> ipscMatchService.deleteMatch(1L));
@@ -371,7 +371,7 @@ public class IpscMatchServiceTest {
         // Arrange
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(newMatch(1L)));
         when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
-        when(shooterLogCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(1L)).thenReturn(false);
         doThrow(new DataIntegrityViolationException("FK violation")).when(ipscMatchRepository).flush();
 
         // Act & Assert

@@ -145,7 +145,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
             throw new ValidationException("Match with ID " + matchId
                     + " cannot be deleted: it has recorded competitor results.");
         }
-        if (shooterLogCompetitorRepository.existsByMatchId(matchId)) {
+        if (shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(matchId)) {
             throw new ValidationException("Match with ID " + matchId
                     + " cannot be deleted: it is referenced by shooter logs.");
         }
