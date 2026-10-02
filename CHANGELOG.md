@@ -82,6 +82,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`V8_0_0__add_shooter_log_competitor_date_calculated`:** Adds the nullable `date_calculated` column to
   `shooter_log_competitor`
+- **`V8_0_1__add_shooter_log_competitor_category_and_division`:** Adds the `NOT NULL` `competitor_category` and
+  `division` columns to `shooter_log_competitor`, after `match_id`; fails if the table already has rows
 
 #### 🔄 Changed
 
