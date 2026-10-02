@@ -75,8 +75,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   points were calculated, separately from `dateCreated` and `dateUpdated`
 - **`ShooterLogCompetitor.competitorCategory`, `ShooterLogCompetitor.division`:** New required columns — each row now
   records the competitor's category and division
-- **`ShooterLogOverall`:** New entity mirroring `ShooterLogCompetitor` (shooter log, match competitor, match, rank and
-  points) for overall log standings
+- **`ShooterLogOverall`:** New entity holding a rank and points per competitor category and division, with the date
+  they were calculated, for overall log standings
 
 ##### Database
 
@@ -84,6 +84,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `shooter_log_competitor`
 - **`V8_0_1__add_shooter_log_competitor_category_and_division`:** Adds the `NOT NULL` `competitor_category` and
   `division` columns to `shooter_log_competitor`, after `match_id`; fails if the table already has rows
+- **`V8_2_0__create_shooter_log_overall`:** Creates the `shooter_log_overall` table behind `ShooterLogOverall`
 
 #### 🔄 Changed
 
