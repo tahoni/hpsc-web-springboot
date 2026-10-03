@@ -92,13 +92,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   categories — `competitorCategory` is a list in all three
 - **`MatchCompetitorRequestCsvMixIn`:** New Jackson mix-in binding UpperCamelCase CSV column headers onto
   `MatchCompetitorRequest`'s constructor, with `CompetitorCategory` as one cell of categories split on the shared array
-  separator and unknown columns ignored. No endpoint reads match competitor CSV yet
+  separator and unknown columns ignored
+- **`IpscMatchCompetitorController.createMatchCompetitors`:** New `POST /ipsc/match-competitors/bulk` endpoint taking
+  `text/csv` and returning a `MatchCompetitorResponseHolder` with `201`; every row is checked before any is saved, so
+  either every row is created or none is. A `MatchCompetitorId` column is read but ignored, since the import only
+  creates entries
 
 ##### Services
 
 - **`IpscMatchCompetitorService`:** New service behind the match competitor endpoints; validates required fields, resolves
   the competitor, match and enumerated values, and refuses an entry that duplicates another for the same competitor,
   match and firearm type
+- **`IpscMatchCompetitorService.createMatchCompetitors`:** Reads the CSV through `MatchCompetitorRequestCsvMixIn`,
+  builds every row by the rules of `createMatchCompetitor`, and refuses a row that duplicates an existing entry, or
+  another row, for the same competitor, match and firearm type
+- **`TransactionService.saveMatchCompetitors`:** New transactional batch write for match competitors; it flushes inside
+  the transaction so a unique constraint violation is reported as a 400
 - **`TransactionService.saveMatchCompetitor`, `TransactionService.deleteMatchCompetitor`:** New transactional writes
   for match competitors; the delete flushes inside the transaction so a foreign-key violation is reported as a 400
 

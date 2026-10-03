@@ -1,10 +1,12 @@
 package za.co.hpsc.web.services;
 
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 
 import java.util.List;
 
@@ -32,6 +34,29 @@ public interface IpscMatchCompetitorService {
      */
     MatchCompetitorResponse createMatchCompetitor(MatchCompetitorRequest request)
             throws ValidationException, NonFatalException;
+
+    /**
+     * Creates a batch of new match competitors from CSV data.
+     *
+     * <p>
+     * Each row is validated and built by the same rules as
+     * {@link #createMatchCompetitor(MatchCompetitorRequest)}. Every row is checked before any is saved, and all
+     * are then saved in a single transaction, so either every row is created or none is. The import only ever
+     * creates entries, so a {@code MatchCompetitorId} column is read but ignored.
+     * </p>
+     *
+     * @param csvData the CSV data containing match competitor information, one match competitor per row.
+     *                Must not be null or blank.
+     * @return a {@link MatchCompetitorResponseHolder} containing the created match competitors, in the same order
+     * as the CSV rows.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is missing a
+     *                             required field or has an unrecognised enumerated value, or if a row duplicates
+     *                             another row, or an existing entry, for the competitor, match and firearm type.
+     * @throws NonFatalException   if a row's competitor or match cannot be found.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     */
+    MatchCompetitorResponseHolder createMatchCompetitors(String csvData)
+            throws ValidationException, NonFatalException, FatalException;
 
     /**
      * Fully replaces an existing match competitor's fields with those on the request.

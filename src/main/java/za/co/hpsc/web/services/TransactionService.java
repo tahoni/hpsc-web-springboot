@@ -88,6 +88,18 @@ public interface TransactionService {
     MatchCompetitor saveMatchCompetitor(MatchCompetitor matchCompetitor);
 
     /**
+     * Creates or updates a batch of match competitors in a single transaction, so either every one is
+     * saved or none is.
+     *
+     * @param matchCompetitors the match competitors to save. Must not be null.
+     * @return the saved match competitors, in the order given.
+     * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
+     *                                                                  a duplicate competitor, match and firearm
+     *                                                                  type.
+     */
+    List<MatchCompetitor> saveMatchCompetitors(List<MatchCompetitor> matchCompetitors);
+
+    /**
      * Deletes a match competitor.
      *
      * @param matchCompetitor the match competitor to delete. Must not be null and must already be

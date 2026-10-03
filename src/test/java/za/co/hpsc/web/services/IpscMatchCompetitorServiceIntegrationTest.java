@@ -17,6 +17,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
@@ -124,6 +125,62 @@ class IpscMatchCompetitorServiceIntegrationTest {
 
         // Assert
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
+    }
+
+    // createMatchCompetitors()
+    @Test
+    void testCreateMatchCompetitors_whenRowsAreValid_thenPersistsEachInOrder() throws Exception {
+        // Arrange
+        Competitor first = createCompetitor("HPSC-MC-010");
+        Competitor second = createCompetitor("HPSC-MC-011");
+        IpscMatch match = createMatch();
+        String csvData = String.format("""
+                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                %d,%d,Junior;Lady,Handgun,Open Division
+                %d,%d,Senior,Handgun,Production Division
+                """, first.getId(), match.getId(), second.getId(), match.getId());
+
+        // Act
+        MatchCompetitorResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+
+        // Assert
+        assertEquals(2, holder.getMatchCompetitors().size());
+        assertEquals(first.getId(), holder.getMatchCompetitors().get(0).getCompetitorId());
+        assertEquals(second.getId(), holder.getMatchCompetitors().get(1).getCompetitorId());
+        assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY),
+                holder.getMatchCompetitors().get(0).getCompetitorCategory());
+        assertEquals(2, matchCompetitorRepository.count());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenALaterRowIsInvalid_thenPersistsNone() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-012");
+        IpscMatch match = createMatch();
+        String csvData = String.format("""
+                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                %d,%d,Junior,Handgun,Open Division
+                %d,%d,Junior,Handgun,Open Division
+                """, competitor.getId(), match.getId(), competitor.getId() + 1000, match.getId());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(csvData));
+        assertEquals(0, matchCompetitorRepository.count());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenRowDuplicatesAnExistingEntry_thenThrowsValidationException() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-013");
+        IpscMatch match = createMatch();
+        ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
+        String csvData = String.format("""
+                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                %d,%d,Junior,Handgun,Open Division
+                """, competitor.getId(), match.getId());
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(csvData));
     }
 
     // updateMatchCompetitor()

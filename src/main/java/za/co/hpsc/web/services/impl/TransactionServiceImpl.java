@@ -81,6 +81,19 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public List<MatchCompetitor> saveMatchCompetitors(List<MatchCompetitor> matchCompetitors) {
+        // Flushed inside the transaction rather than at commit, so a unique constraint violation
+        // surfaces from this call as a DataIntegrityViolationException the caller can handle.
+        return transactionTemplate.execute(status -> {
+            List<MatchCompetitor> saved = matchCompetitors.stream()
+                    .map(matchCompetitorRepository::save)
+                    .toList();
+            matchCompetitorRepository.flush();
+            return saved;
+        });
+    }
+
+    @Override
     public void deleteMatchCompetitor(MatchCompetitor matchCompetitor) {
         // Flushed inside the transaction rather than at commit, so a foreign-key violation
         // surfaces from this call as a DataIntegrityViolationException the caller can handle.

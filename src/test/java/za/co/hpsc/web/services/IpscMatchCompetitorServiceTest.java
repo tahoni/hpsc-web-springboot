@@ -20,6 +20,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
@@ -272,6 +273,150 @@ public class IpscMatchCompetitorServiceTest {
         assertNull(response.getOverallRanking());
         assertNull(response.getClubRanking());
         assertNull(response.getIsVisitor());
+    }
+
+    // createMatchCompetitors()
+    private static final String VALID_CSV = """
+            CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+            1,2,Junior;Lady,Handgun,Open Division
+            """;
+
+    @Test
+    void testCreateMatchCompetitors_whenCsvIsNull_thenThrowsValidationException() throws Exception {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(null));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenCsvIsBlank_thenThrowsValidationException() throws Exception {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors("  \t\n "));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenCsvCannotBeParsed_thenThrowsValidationException() throws Exception {
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> ipscMatchCompetitorService.createMatchCompetitors("This is not valid CSV data\nJane\n"));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenRowIsValid_thenSavesAndMapsIt() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> {
+            MatchCompetitor saved = invocation.getArgument(0);
+            saved.setId(5L);
+            return saved;
+        });
+
+        // Act
+        MatchCompetitorResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV);
+
+        // Assert
+        assertEquals(1, holder.getMatchCompetitors().size());
+        MatchCompetitorResponse response = holder.getMatchCompetitors().getFirst();
+        assertEquals(5L, response.getMatchCompetitorId());
+        assertEquals(1L, response.getCompetitorId());
+        assertEquals(2L, response.getMatchId());
+        assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY), response.getCompetitorCategory());
+        assertEquals(FirearmType.HANDGUN, response.getFirearmType());
+        assertEquals(Division.OPEN, response.getDivision());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenRowHasMatchCompetitorId_thenIgnoresItAndCreates() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> {
+            MatchCompetitor saved = invocation.getArgument(0);
+            saved.setId(5L);
+            return saved;
+        });
+        String csvData = """
+                MatchCompetitorId,CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                99,1,2,Junior,Handgun,Open Division
+                """;
+
+        // Act
+        MatchCompetitorResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+
+        // Assert
+        assertEquals(5L, holder.getMatchCompetitors().getFirst().getMatchCompetitorId());
+        verify(matchCompetitorRepository, never()).findByIdWithCompetitorAndMatch(any());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenRowIsMissingRequiredColumn_thenThrowsValidationException() throws Exception {
+        // Arrange - Division is absent from the header
+        String csvData = """
+                CompetitorId,MatchId,CompetitorCategory,FirearmType
+                1,2,Junior,Handgun
+                """;
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(csvData));
+        verify(matchCompetitorRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenRowHasBlankRequiredValue_thenThrowsValidationException() throws Exception {
+        // Arrange
+        String csvData = """
+                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                1,2,Junior,Handgun,
+                """;
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(csvData));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenCompetitorDoesNotExist_thenThrowsNonFatalExceptionAndSavesNone() throws Exception {
+        // Arrange
+        when(competitorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV));
+        verify(matchCompetitorRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenRowDuplicatesAnExistingEntry_thenThrowsValidationExceptionAndSavesNone() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        when(matchCompetitorRepository.findByCompetitorIdAndMatchIdAndFirearmType(1L, 2L, FirearmType.HANDGUN))
+                .thenReturn(Optional.of(new MatchCompetitor()));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV));
+        verify(matchCompetitorRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenTwoRowsDuplicateEachOther_thenThrowsValidationExceptionAndSavesNone() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        String csvData = """
+                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                1,2,Junior,Handgun,Open Division
+                1,2,Lady,Handgun,Production Division
+                """;
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(csvData));
+        verify(matchCompetitorRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenSaveViolatesAnIntegrityConstraint_thenThrowsValidationException() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate"));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV));
     }
 
     // updateMatchCompetitor()

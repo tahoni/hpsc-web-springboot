@@ -1,8 +1,16 @@
 package za.co.hpsc.web.services.impl;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvReadException;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -11,20 +19,27 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@Slf4j
 @Service
 public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorService {
     private final MatchCompetitorRepository matchCompetitorRepository;
@@ -49,6 +64,46 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         applyFields(matchCompetitor, request);
         return toResponse(save(matchCompetitor));
+    }
+
+    @Override
+    public MatchCompetitorResponseHolder createMatchCompetitors(String csvData) throws FatalException {
+        if (csvData == null || csvData.isBlank()) {
+            log.error("The provided csv data is null or empty.");
+            throw new ValidationException("CSV data cannot be null or blank.");
+        }
+
+        List<MatchCompetitorRequest> requests = readMatchCompetitors(csvData);
+
+        // Every row is validated and built before any is saved, then all are saved in one
+        // transaction, so a bad row leaves none of them persisted.
+        List<MatchCompetitor> matchCompetitors = new ArrayList<>();
+        Set<List<Object>> entries = new HashSet<>();
+        for (MatchCompetitorRequest request : requests) {
+            validateForCreate(request);
+
+            MatchCompetitor matchCompetitor = new MatchCompetitor();
+            applyFields(matchCompetitor, request);
+
+            boolean duplicate = matchCompetitorRepository.findByCompetitorIdAndMatchIdAndFirearmType(
+                            matchCompetitor.getCompetitor().getId(), matchCompetitor.getMatch().getId(),
+                            matchCompetitor.getFirearmType())
+                    .isPresent()
+                    || !entries.add(List.of(matchCompetitor.getCompetitor().getId(),
+                    matchCompetitor.getMatch().getId(), matchCompetitor.getFirearmType()));
+            if (duplicate) {
+                throw duplicateEntry(matchCompetitor, null);
+            }
+            matchCompetitors.add(matchCompetitor);
+        }
+
+        List<MatchCompetitor> saved;
+        try {
+            saved = transactionService.saveMatchCompetitors(matchCompetitors);
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException("A match competitor in the CSV data duplicates an existing entry.", e);
+        }
+        return new MatchCompetitorResponseHolder(new ArrayList<>(saved.stream().map(this::toResponse).toList()));
     }
 
     @Override
@@ -124,6 +179,41 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         } catch (DataIntegrityViolationException e) {
             throw new ValidationException("Match competitor with ID " + matchCompetitorId
                     + " cannot be deleted: it is referenced by other records.", e);
+        }
+    }
+
+    /**
+     * Reads match competitor data from a CSV-formatted string and converts it into a list of
+     * {@link MatchCompetitorRequest} objects, binding the CSV column headers onto each through
+     * {@link MatchCompetitorRequestCsvMixIn}. A header may omit optional columns and unknown columns are ignored.
+     *
+     * @param csvData the CSV data containing match competitor information, one match competitor per row.
+     *                Must not be null or blank.
+     * @return a list of {@link MatchCompetitorRequest} objects parsed from the provided CSV data.
+     * @throws ValidationException if the CSV data cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     */
+    protected List<MatchCompetitorRequest> readMatchCompetitors(@NotNull @NotBlank String csvData)
+            throws FatalException {
+        CsvMapper csvMapper = new CsvMapper();
+        // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
+        CsvSchema csvSchema = CsvSchema.emptySchema()
+                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
+                .withHeader();
+        csvMapper.addMixIn(MatchCompetitorRequest.class, MatchCompetitorRequestCsvMixIn.class);
+
+        try (MappingIterator<MatchCompetitorRequest> requestMappingIterator =
+                     csvMapper.readerFor(MatchCompetitorRequest.class)
+                             .with(csvSchema)
+                             .readValues(csvData)) {
+            return requestMappingIterator.readAll();
+
+        } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
+            log.error("Error parsing CSV data: {}", e.getMessage(), e);
+            throw new ValidationException("Invalid CSV data format: " + e.getMessage(), e);
+        } catch (IOException e) {
+            log.error("Error reading CSV data: {}", e.getMessage(), e);
+            throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
         }
     }
 

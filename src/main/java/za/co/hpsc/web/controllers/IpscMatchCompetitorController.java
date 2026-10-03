@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,12 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 
 import java.util.List;
@@ -68,6 +71,51 @@ public class IpscMatchCompetitorController {
     ResponseEntity<MatchCompetitorResponse> createMatchCompetitor(@RequestBody MatchCompetitorRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchCompetitorService.createMatchCompetitor(request));
+    }
+
+    /**
+     * Creates a batch of new match competitors from CSV data.
+     *
+     * @param csvData the CSV content as a string containing details about match competitors, formatted according
+     *                to the expected schema. This parameter is required and cannot be null.
+     * @return a {@link MatchCompetitorResponseHolder} containing the created match competitors.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is missing a
+     *                             required field or has an unrecognised enumerated value, or if a row duplicates
+     *                             another row, or an existing entry, for the competitor, match and firearm type.
+     * @throws NonFatalException   if a row's competitor or match cannot be found.
+     * @throws FatalException      if a critical error occurs during processing, that prevents the operation from
+     *                             completing successfully.
+     */
+    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create match competitors", description = "Create competitors' entries in matches in bulk "
+            + "from CSV data. Every row is checked before any is saved, so either every row is created or none is.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Match competitors created.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MatchCompetitorResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
+                    + "missing, an enumerated value is unrecognised, or a row duplicates another entry for the "
+                    + "competitor, match and firearm type.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "404", description = "A row's competitor or match could not be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while processing the CSV data.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<MatchCompetitorResponseHolder> createMatchCompetitors(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "text/csv",
+                            schema = @Schema(implementation = String.class),
+                            examples = @ExampleObject("""
+                                    CompetitorId,MatchId,MatchClub,CompetitorCategory,FirearmType,Division,PowerFactor,MatchPoints,OverallRanking,ClubRanking,IsVisitor
+                                    0,0,string,string;string,string,string,string,0,0,0,false
+                                    """)))
+            @RequestBody String csvData)
+            throws ValidationException, NonFatalException, FatalException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchCompetitorService.createMatchCompetitors(csvData));
     }
 
     /**

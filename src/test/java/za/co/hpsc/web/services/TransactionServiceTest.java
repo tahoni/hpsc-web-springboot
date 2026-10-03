@@ -222,6 +222,41 @@ public class TransactionServiceTest {
         verify(transactionManager, never()).commit(any());
     }
 
+    // saveMatchCompetitors()
+    @Test
+    void testSaveMatchCompetitors_whenCalled_thenSavesEachFlushesAndCommitsInOneTransaction() {
+        // Arrange
+        stubTransaction();
+        MatchCompetitor first = new MatchCompetitor();
+        MatchCompetitor second = new MatchCompetitor();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        List<MatchCompetitor> result = transactionService.saveMatchCompetitors(List.of(first, second));
+
+        // Assert
+        assertEquals(List.of(first, second), result);
+        verify(matchCompetitorRepository).flush();
+        verify(transactionManager, times(1)).getTransaction(any());
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testSaveMatchCompetitors_whenFlushFails_thenRollsBackAndPropagates() {
+        // Arrange
+        stubTransaction();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        doThrow(new DataIntegrityViolationException("duplicate")).when(matchCompetitorRepository).flush();
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.saveMatchCompetitors(List.of(new MatchCompetitor())));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
     // deleteMatchCompetitor()
     @Test
     void testDeleteMatchCompetitor_whenCalled_thenDeletesFlushesAndCommits() {
