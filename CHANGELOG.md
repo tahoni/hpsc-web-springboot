@@ -64,6 +64,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns in UpperCamelCase), carried
   through `IpscMatchCompetitorServiceImpl` to and from `MatchCompetitor`
 
+#### 🗑️ Removed
+
+##### Models
+
+- **`MatchOverallScoresRequest`, `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`,
+  `MatchStageScoresRequestForCSV`:** The `ipsc.scores.request` package and its tests are deleted — they modelled
+  per-stage and overall match scores for the `MatchStage` table and entities, which were removed, and nothing
+  references them any more; the overall-score fields now live on `MatchCompetitor`
+
 #### 🔄 Changed
 
 ##### Documentation
