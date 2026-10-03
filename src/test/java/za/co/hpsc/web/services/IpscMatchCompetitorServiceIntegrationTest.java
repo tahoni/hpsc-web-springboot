@@ -127,6 +127,34 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
     }
 
+    @Test
+    void testCreateMatchCompetitor_whenOnlyNameGiven_thenFindsCompetitorByNameIgnoringCase() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-002");
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(null, match.getId());
+        request.setName("jane DOE");
+
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
+
+        // Assert
+        assertEquals(competitor.getId(), response.getCompetitorId());
+    }
+
+    @Test
+    void testCreateMatchCompetitor_whenNameMatchesSeveralCompetitors_thenThrowsValidationException() {
+        // Arrange
+        createCompetitor("HPSC-MC-003");
+        createCompetitor("HPSC-MC-004");
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(null, match.getId());
+        request.setName("Jane Doe");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
+    }
+
     // createMatchCompetitors()
     @Test
     void testCreateMatchCompetitors_whenRowsAreValid_thenPersistsEachInOrder() throws Exception {

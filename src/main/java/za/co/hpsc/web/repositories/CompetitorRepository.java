@@ -11,6 +11,10 @@ import java.util.Optional;
 public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
     Optional<Competitor> findByClubNumber(String clubNumber);
 
+    // Matches the competitor's "First Last" full name, ignoring case.
+    @Query("select c from Competitor c where lower(concat(c.firstName, ' ', c.lastName)) = lower(:name)")
+    List<Competitor> findByFullNameIgnoreCase(@Param("name") String name);
+
     // Fetch-joins the lazy homeClub and emailAddresses read when mapping a competitor to its
     // response, so they're usable outside a transaction (open-in-view is disabled).
     @Query("select c from Competitor c left join fetch c.homeClub left join fetch c.emailAddresses where c.id = :id")

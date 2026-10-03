@@ -56,9 +56,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `no_penalty_misses`, `no_shoots`, `procedural_errors` and `additional_penalties`, added by
   `V10_1_0__add_match_competitor_overall_scores.sql`
 
-
 ##### API
 
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** New optional `name`
+  (CSV `Name`) — the competitor's full name, "First Last", matched case-insensitively against `Competitor` to find the
+  competitor when `competitorId` is omitted; `competitorId` wins when both are given, and a name that matches no
+  competitor, or more than one, is refused
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** New optional overall-score
   fields — `percentage`, `time`, `percentageOfPossiblePoints`, `hitFactor`, `alpha`, `charlie`, `delta`, `misses`,
   `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns in UpperCamelCase), carried
@@ -97,6 +100,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** **Breaking:**
   `matchPoints` renamed to `points` in the JSON contract, and the `MatchPoints` CSV column to `Points` — existing
   callers and import files must use the new names
+- **`MatchCompetitorRequest`, `MatchCompetitorRequestCsvMixIn`:** `competitorId` (CSV `CompetitorId`) is no longer
+  required — a request must carry it or a `name`, which `IpscMatchCompetitorServiceImpl` resolves through
+  `CompetitorRepository.findByFullNameIgnoreCase`
 
 ### 🧾 [9.1.0] - 2026-10-03
 

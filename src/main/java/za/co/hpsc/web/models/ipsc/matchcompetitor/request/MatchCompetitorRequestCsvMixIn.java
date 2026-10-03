@@ -22,7 +22,8 @@ import java.util.List;
 public abstract class MatchCompetitorRequestCsvMixIn {
     @JsonCreator
     MatchCompetitorRequestCsvMixIn(@JsonProperty("MatchCompetitorId") Long matchCompetitorId,
-                                   @JsonProperty(value = "CompetitorId", required = true) Long competitorId,
+                                   @JsonProperty("CompetitorId") Long competitorId,
+                                   @JsonProperty("Name") String name,
                                    @JsonProperty(value = "MatchId", required = true) Long matchId,
                                    @JsonProperty("MatchClub") String matchClub,
                                    @JsonProperty(value = "CompetitorCategory", required = true)

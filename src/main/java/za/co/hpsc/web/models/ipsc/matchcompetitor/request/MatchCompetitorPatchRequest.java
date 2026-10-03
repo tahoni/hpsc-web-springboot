@@ -24,6 +24,8 @@ import java.util.List;
 public class MatchCompetitorPatchRequest {
     /** The identifier of the competitor who shot the match; may be null. */
     private Long competitorId;
+    /** The competitor's full name, "First Last", matched case-insensitively; only used when {@link #competitorId} is null; may be null. */
+    private String name;
     /** The identifier of the match the competitor shot; may be null. */
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. May be null. */

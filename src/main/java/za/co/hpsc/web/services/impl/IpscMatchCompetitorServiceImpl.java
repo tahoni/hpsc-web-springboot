@@ -119,8 +119,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     public MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request) {
         MatchCompetitor matchCompetitor = findMatchCompetitorOrThrow(matchCompetitorId);
 
-        if (request.getCompetitorId() != null) {
-            matchCompetitor.setCompetitor(findCompetitorOrThrow(request.getCompetitorId()));
+        if ((request.getCompetitorId() != null) || hasText(request.getName())) {
+            matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getName()));
         }
         if (request.getMatchId() != null) {
             matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
@@ -303,7 +303,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     protected void applyFields(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchCompetitorRequest request) {
-        matchCompetitor.setCompetitor(findCompetitorOrThrow(request.getCompetitorId()));
+        matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getName()));
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         matchCompetitor.setCompetitorCategories(resolveCompetitorCategories(request.getCompetitorCategory()));
@@ -350,6 +350,38 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     protected Competitor findCompetitorOrThrow(Long competitorId) {
         return competitorRepository.findById(competitorId)
                 .orElseThrow(() -> new NonFatalException("No competitor found with ID " + competitorId));
+    }
+
+    /**
+     * Resolves the competitor a request refers to: by ID when one is given, otherwise by full name.
+     *
+     * @param competitorId the identifier to look up; takes precedence over {@code name} when not null.
+     * @param name         the competitor's full name, "First Last", matched case-insensitively; only used when
+     *                     {@code competitorId} is null.
+     * @return the matching {@link Competitor}.
+     * @throws ValidationException if neither is given, or {@code name} matches more than one competitor.
+     * @throws NonFatalException   if no competitor matches.
+     */
+    protected Competitor resolveCompetitor(Long competitorId, String name) {
+        if (competitorId != null) {
+            return findCompetitorOrThrow(competitorId);
+        }
+        if (!hasText(name)) {
+            throw new ValidationException("Competitor ID or name is required.");
+        }
+        List<Competitor> matches = competitorRepository.findByFullNameIgnoreCase(name.trim());
+        if (matches.isEmpty()) {
+            throw new NonFatalException("No competitor found with name " + name.trim());
+        }
+        if (matches.size() > 1) {
+            throw new ValidationException("More than one competitor is named " + name.trim()
+                    + "; use the competitor ID instead.");
+        }
+        return matches.getFirst();
+    }
+
+    private static boolean hasText(String value) {
+        return (value != null) && !value.isBlank();
     }
 
     /**
@@ -465,8 +497,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request == null) {
             throw new ValidationException("Match competitor request cannot be null.");
         }
-        if (request.getCompetitorId() == null) {
-            throw new ValidationException("Competitor ID is required.");
+        if ((request.getCompetitorId() == null) && !hasText(request.getName())) {
+            throw new ValidationException("Competitor ID or name is required.");
         }
         if (request.getMatchId() == null) {
             throw new ValidationException("Match ID is required.");

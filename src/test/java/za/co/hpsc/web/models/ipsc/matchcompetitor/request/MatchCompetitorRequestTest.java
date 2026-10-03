@@ -17,7 +17,7 @@ class MatchCompetitorRequestTest {
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
-        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, 2L, "HPSC", List.of("Junior", "Lady"),
+        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", 2L, "HPSC", List.of("Junior", "Lady"),
                 "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
                 new BigDecimal("41.5"), new BigDecimal("93.75"), new BigDecimal("5.2"), 30, 4, 1, 2, 1, 0, 3, 0,
                 new BigDecimal("2"), new BigDecimal("1"), false);
@@ -28,6 +28,7 @@ class MatchCompetitorRequestTest {
         // Assert
         assertEquals(7, node.get("matchCompetitorId").asInt());
         assertEquals(1, node.get("competitorId").asInt());
+        assertEquals("Jane Doe", node.get("name").asText());
         assertEquals(2, node.get("matchId").asInt());
         assertEquals("HPSC", node.get("matchClub").asText());
         assertEquals(2, node.get("competitorCategory").size());
@@ -58,7 +59,7 @@ class MatchCompetitorRequestTest {
     void testJsonSerialization_whenOnlyRequiredFieldsSet_thenSerializesWithNullOptionals() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
-        MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, 2L, null, List.of("Junior"), null,
+        MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, null, 2L, null, List.of("Junior"), null,
                 "Open Division", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null);
 
@@ -184,19 +185,23 @@ class MatchCompetitorRequestTest {
     }
 
     @Test
-    void testJsonDeserialization_whenCompetitorIdMissing_thenThrowsMismatchedInputException() {
+    void testJsonDeserialization_whenCompetitorIdMissingAndNameGiven_thenDeserializesWithNameOnly() throws Exception {
         // Arrange
         String json = """
                 {
+                  "name": "Jane Doe",
                   "matchId": 2,
                   "competitorCategory": ["Junior"],
                   "division": "Open Division"
                 }
                 """;
 
-        // Act & Assert
-        assertThrows(MismatchedInputException.class,
-                () -> new ObjectMapper().readValue(json, MatchCompetitorRequest.class));
+        // Act
+        MatchCompetitorRequest request = new ObjectMapper().readValue(json, MatchCompetitorRequest.class);
+
+        // Assert
+        assertNull(request.getCompetitorId());
+        assertEquals("Jane Doe", request.getName());
     }
 
     @Test

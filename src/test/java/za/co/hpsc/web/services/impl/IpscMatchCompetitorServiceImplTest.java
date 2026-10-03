@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -137,6 +140,55 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.findMatchCompetitorOrThrow(5L));
+    }
+
+    // resolveCompetitor()
+    @Test
+    void testResolveCompetitor_whenIdGiven_thenUsesIdAndIgnoresName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(1L, "Someone Else"));
+        verify(competitorRepository, never()).findByFullNameIgnoreCase(anyString());
+    }
+
+    @Test
+    void testResolveCompetitor_whenOnlyNameGiven_thenFindsCompetitorByTrimmedName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(3L);
+        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, "  Jane Doe "));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNameMatchesNobody_thenThrowsNonFatalException() {
+        // Arrange
+        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "Jane Doe"));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNameMatchesSeveral_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe"))
+                .thenReturn(List.of(new Competitor(), new Competitor()));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "Jane Doe"));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNeitherIdNorNameGiven_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "  "));
     }
 
     // findCompetitorOrThrow()

@@ -27,9 +27,10 @@ import java.util.List;
 public class MatchCompetitorRequest {
     /** Identifier of the match competitor to update, or {@code null} when creating a new match competitor. */
     private Long matchCompetitorId;
-    /** The identifier of the competitor who shot the match. */
-    @JsonProperty(required = true)
+    /** The identifier of the competitor who shot the match; when {@code null}, {@link #name} is used to find the competitor. */
     private Long competitorId;
+    /** The competitor's full name, "First Last", matched case-insensitively; only used when {@link #competitorId} is {@code null}. */
+    private String name;
     /** The identifier of the match the competitor shot. */
     @JsonProperty(required = true)
     private Long matchId;
@@ -83,7 +84,10 @@ public class MatchCompetitorRequest {
      *
      * @param matchCompetitorId  the identifier of the match competitor to update; {@code null} when creating a new
      *                           match competitor.
-     * @param competitorId       the identifier of the competitor who shot the match. Must not be null.
+     * @param competitorId       the identifier of the competitor who shot the match; when null, {@code name} is used
+     *                           to find the competitor.
+     * @param name               the competitor's full name, "First Last", matched case-insensitively; only used
+     *                           when {@code competitorId} is null.
      * @param matchId            the identifier of the match the competitor shot. Must not be null.
      * @param matchClub          the club the competitor represented at the match; resolved against
      *                           {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation.
@@ -115,7 +119,8 @@ public class MatchCompetitorRequest {
      */
     @JsonCreator
     public MatchCompetitorRequest(@JsonProperty("matchCompetitorId") Long matchCompetitorId,
-                                  @JsonProperty(value = "competitorId", required = true) Long competitorId,
+                                  @JsonProperty("competitorId") Long competitorId,
+                                  @JsonProperty("name") String name,
                                   @JsonProperty(value = "matchId", required = true) Long matchId,
                                   @JsonProperty("matchClub") String matchClub,
                                   @JsonProperty(value = "competitorCategory", required = true)
@@ -141,6 +146,7 @@ public class MatchCompetitorRequest {
                                   @JsonProperty("isVisitor") Boolean isVisitor) {
         this.matchCompetitorId = matchCompetitorId;
         this.competitorId = competitorId;
+        this.name = name;
         this.matchId = matchId;
         this.matchClub = matchClub;
         this.competitorCategory = competitorCategory;
