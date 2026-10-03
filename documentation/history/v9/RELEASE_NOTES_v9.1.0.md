@@ -138,6 +138,11 @@ existing callers keep working.
 
 - Project version bumped to **9.1.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
+#### Documentation
+
+- **`AGENTS.md` Release Checklist, `prep-version-release` skill:** New step to align the Markdown tables in the files a
+  release touches, run before `RELEASE_NOTES.md` is archived; the later steps are renumbered
+
 ### Dependencies
 
 #### Database

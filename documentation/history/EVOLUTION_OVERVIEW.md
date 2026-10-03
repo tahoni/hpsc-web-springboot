@@ -2788,6 +2788,12 @@ removes or tightens nothing, so it is MINOR under the Semantic Versioning rules.
 
 - The `mysql-connector-j` pin is dropped, since Spring Boot `4.1.1` now manages `9.7.0`
 
+**Documentation**
+
+- `AGENTS.md`'s Release Checklist and the `prep-version-release` skill gain a step that aligns the Markdown tables in
+  the files a release touches, measured in display columns and run before `RELEASE_NOTES.md` is archived; the later
+  steps are renumbered
+
 **Technical Focus:**
 
 - Extending the request-model-plus-mix-in pattern to a third resource, with an all-or-nothing batch import

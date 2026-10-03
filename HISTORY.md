@@ -56,6 +56,8 @@ evolution of architecture, features and design philosophy across all versions.
 - Scoped as `v9.1.0` **MINOR**: new endpoints and new optional fields with nothing removed or made stricter
 - Project version bumped to 9.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 - The `mysql-connector-j` pin is dropped, since Spring Boot `4.1.1` now manages the newer `9.7.0`
+- `AGENTS.md`'s Release Checklist and the `prep-version-release` skill gain a step that aligns the Markdown tables in
+  the files a release touches, before `RELEASE_NOTES.md` is archived
 
 ### Version 9.0.0 (October 1, 2026)
 
@@ -2821,6 +2823,7 @@ Based on the evolution to v9.1.0, the following areas are identified for future 
 - Improvement plan: no new gaps and none closed; Gap #6 moves to partially completed, with no open gap left, and
   Gap #26 now waits on a Spring Boot release that manages Tomcat `11.0.26`
 - `mysql-connector-j` pin dropped now that Spring Boot manages a newer version
+- New table-alignment step in `AGENTS.md`'s Release Checklist and the `prep-version-release` skill
 - Project version bumped to 9.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Previously Completed (v9.0.0)

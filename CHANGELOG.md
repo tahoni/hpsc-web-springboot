@@ -223,6 +223,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `shooter_log_overall`; both tables become unique per shooter log and competitor (replacing
   `shooter_log_competitor`'s unique key on shooter log and match competitor). Fails if either table already has rows
 
+##### Documentation
+
+- **`AGENTS.md` Release Checklist, `prep-version-release` skill:** New step to align the Markdown tables in the files a
+  release touches — `README.md` and `ARCHITECTURE.md`, the new release's sections of `CHANGELOG.md` and `HISTORY.md`,
+  and `RELEASE_NOTES.md` — measured in display columns so emoji line up, and run before `RELEASE_NOTES.md` is
+  archived. The later checklist and skill steps are renumbered
+
 #### 📦 Dependencies
 
 ##### Database

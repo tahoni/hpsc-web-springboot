@@ -32,6 +32,7 @@
 - Deleting a match or competitor is also refused while a shooter log references it
 - `emailAddresses` follows `cellphoneNumber` in the competitor models; JSON and CSV formats are unchanged
 - Version bumped to 9.1.0 in `pom.xml` and `@OpenAPIDefinition`
+- `AGENTS.md`'s Release Checklist and the `prep-version-release` skill gain a table-alignment step
 
 **Dependencies**
 
