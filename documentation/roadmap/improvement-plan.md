@@ -110,7 +110,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v9.1.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
-    re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
+    re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
 - **⚪ Open (0):**
   - *None.*
 
@@ -1055,8 +1055,9 @@ step 2 and the `prep-version-release` skill's matching step now re-check every m
 the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
 The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
 milestone) and still manages Tomcat `11.0.24`; v9.0.0 raised it to `11.0.26` and added matching pins for Logback,
-Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA release manages `11.0.25` or
-later and the override is dropped.
+Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA
+release manages `11.0.26` or later and the override is dropped (the threshold was `11.0.25` until v9.0.0 raised the
+pin).
 
 ### ⚪ Open
 
@@ -1147,7 +1148,7 @@ later and the override is dropped.
 - ✅ Met in v8.12.0: `.github/workflows/code_quality.yml` runs Qodana on every GitFlow branch and on PRs into
   `main`/`develop` with a provisioned `QODANA_TOKEN`, `ARCHITECTURE.md`'s CI/CD & Quality Gates table lists it, and this
   plan no longer describes Qodana as removed, closing Gap #32.
-- `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
+- `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.26` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from

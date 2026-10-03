@@ -354,7 +354,8 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 - [x] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later —
   made a standing step instead: `AGENTS.md`'s Release Checklist step 2 and `prep-version-release` now re-check every
   manual `pom.xml` override against the parent's own `spring-boot-dependencies` POM
-- [ ] Once it has, drop the `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
+- [ ] Once it has — the target is now `11.0.26` or later, since v9.0.0 raised the pin from `11.0.25` — drop the
+  `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
   bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
 
 ---
