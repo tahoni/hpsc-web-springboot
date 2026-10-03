@@ -95,7 +95,7 @@ a partial update no longer has to repeat the required fields. The datasource use
 
 - **`README.md`, `ARCHITECTURE.md`:** Stages dropped from the match description, the entity and repository tables and
   the Project Structure tree; the CSV models replaced by the mix-ins and patch request models
-- **`CHANGELOG.md`, `HISTORY.md`, `documentation/history/EVOLUTION_OVERVIEW.md`:** Past-release entries keep the class
+- **`CHANGELOG.md`, `HISTORY.md`, `../../../EVOLUTION_OVERVIEW.md`:** Past-release entries keep the class
   names they were written with
 
 #### Tests

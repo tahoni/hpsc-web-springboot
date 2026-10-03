@@ -10,8 +10,6 @@ import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -36,11 +34,9 @@ public class MatchCompetitor {
     @Column(name = "match_club")
     private ClubIdentifier matchClub;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "match_competitor_category", joinColumns = @JoinColumn(name = "match_competitor_id"))
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)
-    private List<CompetitorCategory> competitorCategory = new ArrayList<>();
+    private CompetitorCategory competitorCategory;
 
     @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "firearm_type")
@@ -54,8 +50,41 @@ public class MatchCompetitor {
     @Column(name = "power_factor")
     private PowerFactor powerFactor;
 
-    @Column(name = "match_points", precision = 19, scale = 6)
-    private BigDecimal matchPoints;
+    @Column(name = "points", precision = 19, scale = 6)
+    private BigDecimal points;
+
+    @Column(name = "percentage", precision = 19, scale = 6)
+    private BigDecimal percentage;
+
+    @Column(name = "time", precision = 19, scale = 6)
+    private BigDecimal time;
+
+    @Column(name = "percentage_of_possible_points", precision = 19, scale = 6)
+    private BigDecimal percentageOfPossiblePoints;
+
+    @Column(name = "alpha")
+    private Integer alpha;
+
+    @Column(name = "charlie")
+    private Integer charlie;
+
+    @Column(name = "delta")
+    private Integer delta;
+
+    @Column(name = "misses")
+    private Integer misses;
+
+    @Column(name = "no_penalty_misses")
+    private Integer noPenaltyMisses;
+
+    @Column(name = "no_shoots")
+    private Integer noShoots;
+
+    @Column(name = "procedural_errors")
+    private Integer proceduralErrors;
+
+    @Column(name = "additional_penalties")
+    private Integer additionalPenalties;
 
     @Column(name = "overall_ranking", precision = 19, scale = 6)
     private BigDecimal overallRanking;

@@ -119,8 +119,10 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     public MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request) {
         MatchCompetitor matchCompetitor = findMatchCompetitorOrThrow(matchCompetitorId);
 
-        if (request.getCompetitorId() != null) {
-            matchCompetitor.setCompetitor(findCompetitorOrThrow(request.getCompetitorId()));
+        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber())
+                || hasText(request.getCompetitorName())) {
+            matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
+                    request.getCompetitorName()));
         }
         if (request.getMatchId() != null) {
             matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
@@ -128,8 +130,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getMatchClub() != null) {
             matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         }
-        if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isEmpty()) {
-            matchCompetitor.setCompetitorCategory(resolveCompetitorCategories(request.getCompetitorCategory()));
+        if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isBlank()) {
+            matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         }
         if ((request.getFirearmType() != null) && !request.getFirearmType().isBlank()) {
             matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
@@ -140,8 +142,41 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getPowerFactor() != null) {
             matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
         }
-        if (request.getMatchPoints() != null) {
-            matchCompetitor.setMatchPoints(request.getMatchPoints());
+        if (request.getPoints() != null) {
+            matchCompetitor.setPoints(request.getPoints());
+        }
+        if (request.getPercentage() != null) {
+            matchCompetitor.setPercentage(request.getPercentage());
+        }
+        if (request.getTime() != null) {
+            matchCompetitor.setTime(request.getTime());
+        }
+        if (request.getPercentageOfPossiblePoints() != null) {
+            matchCompetitor.setPercentageOfPossiblePoints(request.getPercentageOfPossiblePoints());
+        }
+        if (request.getAlpha() != null) {
+            matchCompetitor.setAlpha(request.getAlpha());
+        }
+        if (request.getCharlie() != null) {
+            matchCompetitor.setCharlie(request.getCharlie());
+        }
+        if (request.getDelta() != null) {
+            matchCompetitor.setDelta(request.getDelta());
+        }
+        if (request.getMisses() != null) {
+            matchCompetitor.setMisses(request.getMisses());
+        }
+        if (request.getNoPenaltyMisses() != null) {
+            matchCompetitor.setNoPenaltyMisses(request.getNoPenaltyMisses());
+        }
+        if (request.getNoShoots() != null) {
+            matchCompetitor.setNoShoots(request.getNoShoots());
+        }
+        if (request.getProceduralErrors() != null) {
+            matchCompetitor.setProceduralErrors(request.getProceduralErrors());
+        }
+        if (request.getAdditionalPenalties() != null) {
+            matchCompetitor.setAdditionalPenalties(request.getAdditionalPenalties());
         }
         if (request.getOverallRanking() != null) {
             matchCompetitor.setOverallRanking(request.getOverallRanking());
@@ -267,14 +302,26 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     protected void applyFields(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchCompetitorRequest request) {
-        matchCompetitor.setCompetitor(findCompetitorOrThrow(request.getCompetitorId()));
+        matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
+                request.getCompetitorName()));
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
-        matchCompetitor.setCompetitorCategory(resolveCompetitorCategories(request.getCompetitorCategory()));
+        matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
-        matchCompetitor.setMatchPoints(request.getMatchPoints());
+        matchCompetitor.setPoints(request.getPoints());
+        matchCompetitor.setPercentage(request.getPercentage());
+        matchCompetitor.setTime(request.getTime());
+        matchCompetitor.setPercentageOfPossiblePoints(request.getPercentageOfPossiblePoints());
+        matchCompetitor.setAlpha(request.getAlpha());
+        matchCompetitor.setCharlie(request.getCharlie());
+        matchCompetitor.setDelta(request.getDelta());
+        matchCompetitor.setMisses(request.getMisses());
+        matchCompetitor.setNoPenaltyMisses(request.getNoPenaltyMisses());
+        matchCompetitor.setNoShoots(request.getNoShoots());
+        matchCompetitor.setProceduralErrors(request.getProceduralErrors());
+        matchCompetitor.setAdditionalPenalties(request.getAdditionalPenalties());
         matchCompetitor.setOverallRanking(request.getOverallRanking());
         matchCompetitor.setClubRanking(request.getClubRanking());
         matchCompetitor.setIsVisitor(request.getIsVisitor());
@@ -302,6 +349,52 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     protected Competitor findCompetitorOrThrow(Long competitorId) {
         return competitorRepository.findById(competitorId)
                 .orElseThrow(() -> new NonFatalException("No competitor found with ID " + competitorId));
+    }
+
+    /**
+     * Resolves the competitor a request refers to: by ID when one is given, otherwise by competitor number,
+     * otherwise by full name.
+     *
+     * @param competitorId     the identifier to look up; takes precedence over the number and name when not null.
+     * @param competitorNumber the competitor's number, matched exactly; takes precedence over {@code name}, and is
+     *                         only used when {@code competitorId} is null.
+     * @param name             the competitor's full name, "First Last", matched case-insensitively; only used when
+     *                         {@code competitorId} and {@code competitorNumber} are both null or blank.
+     * @return the matching {@link Competitor}.
+     * @throws ValidationException if none is given, or the number or name matches more than one competitor.
+     * @throws NonFatalException   if no competitor matches.
+     */
+    protected Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
+        if (competitorId != null) {
+            return findCompetitorOrThrow(competitorId);
+        }
+        if (hasText(competitorNumber)) {
+            List<Competitor> numberMatches = competitorRepository.findByCompetitorNumber(competitorNumber.trim());
+            if (numberMatches.isEmpty()) {
+                throw new NonFatalException("No competitor found with number " + competitorNumber.trim());
+            }
+            if (numberMatches.size() > 1) {
+                throw new ValidationException("More than one competitor has the number " + competitorNumber.trim()
+                        + "; use the competitor ID instead.");
+            }
+            return numberMatches.getFirst();
+        }
+        if (!hasText(name)) {
+            throw new ValidationException("Competitor ID, number or name is required.");
+        }
+        List<Competitor> matches = competitorRepository.findByFullNameIgnoreCase(name.trim());
+        if (matches.isEmpty()) {
+            throw new NonFatalException("No competitor found with name " + name.trim());
+        }
+        if (matches.size() > 1) {
+            throw new ValidationException("More than one competitor is named " + name.trim()
+                    + "; use the competitor ID instead.");
+        }
+        return matches.getFirst();
+    }
+
+    private static boolean hasText(String value) {
+        return (value != null) && !value.isBlank();
     }
 
     /**
@@ -346,25 +439,6 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         return CompetitorCategory.fromName(competitorCategory)
                 .filter(category -> category != CompetitorCategory.NONE)
                 .orElseThrow(() -> new ValidationException("Unknown competitor category: " + competitorCategory));
-    }
-
-    /**
-     * Resolves a list of competitor categories by name, dropping any repeated category.
-     *
-     * @param competitorCategories the category names to look up; must contain at least one.
-     * @return the matching {@link CompetitorCategory} values, in the order first given, as a new mutable list.
-     * @throws ValidationException if the list is null or empty, or a name doesn't match a category (see
-     *                             {@link #resolveCompetitorCategory(String)}).
-     */
-    protected List<CompetitorCategory> resolveCompetitorCategories(List<String> competitorCategories) {
-        if ((competitorCategories == null) || competitorCategories.isEmpty()) {
-            throw new ValidationException("At least one competitor category is required.");
-        }
-
-        return new ArrayList<>(competitorCategories.stream()
-                .map(this::resolveCompetitorCategory)
-                .distinct()
-                .toList());
     }
 
     /**
@@ -417,13 +491,14 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request == null) {
             throw new ValidationException("Match competitor request cannot be null.");
         }
-        if (request.getCompetitorId() == null) {
-            throw new ValidationException("Competitor ID is required.");
+        if ((request.getCompetitorId() == null) && !hasText(request.getCompetitorNumber())
+                && !hasText(request.getCompetitorName())) {
+            throw new ValidationException("Competitor ID, number or name is required.");
         }
         if (request.getMatchId() == null) {
             throw new ValidationException("Match ID is required.");
         }
-        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isEmpty()) {
+        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isBlank()) {
             throw new ValidationException("Competitor category is required.");
         }
         if ((request.getFirearmType() == null) || request.getFirearmType().isBlank()) {
@@ -446,11 +521,22 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getCompetitor().getId(),
                 matchCompetitor.getMatch().getId(),
                 matchCompetitor.getMatchClub(),
-                new ArrayList<>(matchCompetitor.getCompetitorCategory()),
+                matchCompetitor.getCompetitorCategory(),
                 matchCompetitor.getFirearmType(),
                 matchCompetitor.getDivision(),
                 matchCompetitor.getPowerFactor(),
-                matchCompetitor.getMatchPoints(),
+                matchCompetitor.getPoints(),
+                matchCompetitor.getPercentage(),
+                matchCompetitor.getTime(),
+                matchCompetitor.getPercentageOfPossiblePoints(),
+                matchCompetitor.getAlpha(),
+                matchCompetitor.getCharlie(),
+                matchCompetitor.getDelta(),
+                matchCompetitor.getMisses(),
+                matchCompetitor.getNoPenaltyMisses(),
+                matchCompetitor.getNoShoots(),
+                matchCompetitor.getProceduralErrors(),
+                matchCompetitor.getAdditionalPenalties(),
                 matchCompetitor.getOverallRanking(),
                 matchCompetitor.getClubRanking(),
                 matchCompetitor.getIsVisitor());

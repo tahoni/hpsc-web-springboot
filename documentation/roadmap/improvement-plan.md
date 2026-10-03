@@ -39,7 +39,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 |-----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational — 🟡 match competitor half delivered in v9.1.0 as `IpscMatchCompetitorService` and its controller; the shooter-log half is outstanding (Gap #6)                                                                                                                                                                                                                                            |
+| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational — 🟡 match competitor half delivered in v9.1.0 as `IpscMatchCompetitorService` and its controller, extended in v10.0.0; the shooter-log half is outstanding (Gap #6)                                                                                                                                                                                                                       |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real baseline in v8.4.0 (Gap #4 closed; 98.77% line as of v8.9.0), and a matching 97% branch minimum since v8.11.1; Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7), then returned in v8.12.0 as `code_quality.yml`, now passing with a `QODANA_TOKEN` secret (Gap #32); the `Dockerfile` has been built on push/PR since v8.11.1 (Gap #31) |
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (30):**
+- **✅ Completed (32):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -106,13 +106,17 @@ number or a newly met precondition on an existing gap — see the `update-improv
     (`docker.yml`)
   - #32 Static analysis returned to CI in v8.12.0, but the plan still records it as removed — closed v8.12.0
     (`code_quality.yml`)
+  - #33 `flyway-migration-versioning.md`'s Current State table stops at `V7_8_0`, sixteen migrations short — closed
+    v10.0.0 (rows added; the Release Checklist now checks the table)
+  - #34 `ARCHITECTURE.md` still describes the deleted `models/ipsc/scores/request/` DTOs as groundwork — closed
+    v10.0.0 (tree and section corrected)
 - **🟡 Partially Completed (2):**
-  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v9.1.0 (the
-    match competitor service and `/ipsc/match-competitors` controller are built; the shooter-log layer is not)
+  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
+    match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
+    competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (0):**
-  - *None.*
+- **⚪ Open (0):** none
 
 ### ✅ Completed
 
@@ -991,13 +995,60 @@ row for `code_quality.yml` and `CONTRIBUTING.md`'s summary names Qodana. The Goa
 Criteria now describe Qodana as returned in v8.12.0 (Gap #7 stays closed as not applicable for the v8.2.0 removal it
 describes). The workflow's `QODANA_TOKEN` secret is provisioned and its runs on the release branch pass.
 
+#### 33. `flyway-migration-versioning.md`'s Current State table stops at `V7_8_0`, sixteen migrations short — ✅ Closed in v10.0.0
+
+**Evidence:** `documentation/recommendations/flyway-migration-versioning.md`'s "🔍 Current State in This Codebase"
+table ends at `V7_8_0__add_competitor_paid_up_flags.sql`, yet `src/main/resources/db/migration/` now holds sixteen
+more: `V7_9_0__drop_ipsc_match_stage.sql`, `V8_0_0` to `V8_9_0` (eleven files, `V8_0_1` among them) and
+`V10_0_0` to `V10_3_0` (four files). This is the drift Gap #14 closed in v8.9.0 — and the new step 5 in the
+document's own "🔢 Choosing the Next Version" section, which tells whoever adds a migration to add its row, was not
+followed for any of the sixteen.
+
+**Why it matters:** The table exists to show that migration versions and app versions diverge, and it now omits the
+`V8_x` and `V10_x` files that make that argument most plainly (the `V10_x` migrations ship alongside app v10.0.0
+but number independently of it); a step that is documented but unenforced has already failed once.
+
+**Proposed improvement:** Add a row per missing migration, in the existing "Shipped in app version"/"Notes" shape, and
+fold a check of the table against `db/migration/` into the Release Checklist (alongside its `ARCHITECTURE.md` Project
+Structure check), so the gap is caught at release time rather than relying on each author remembering step 5.
+
+**Outcome:** Done as proposed in v10.0.0. `flyway-migration-versioning.md`'s Current State table gained a row for
+each of the sixteen missing migrations (`V7_9_0`, `V8_0_0` to `V8_9_0` and `V10_0_0` to `V10_3_0`), and `AGENTS.md`'s
+Release Checklist step 9 and the `prep-version-release` skill now cross-check the table against `db/migration/` at
+every release, alongside the `ARCHITECTURE.md` Project Structure check.
+
+#### 34. `ARCHITECTURE.md` still describes the deleted `models/ipsc/scores/request/` DTOs as groundwork — ✅ Closed in v10.0.0
+
+**Evidence:** v10.0.0 deleted the `ipsc.scores.request` package (`MatchOverallScoresRequest`,
+`MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`, `MatchStageScoresRequestForCSV`) and its tests, so
+`src/main/java/za/co/hpsc/web/models/ipsc/` now holds only `competitor`, `match`, `matchcompetitor` and `shared`. But
+`ARCHITECTURE.md`'s Project Structure tree still lists `scores/request/` ("IPSC competitor scores request DTOs
+(groundwork)"), and its `models/ipsc/…` section heading and body still name the package and say
+`MatchOverallScoresRequest`/`MatchStageScoresRequest` are "still groundwork only — not yet consumed by any
+controller". The overall-score fields now live on `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and
+`MatchCompetitorResponse`.
+
+**Why it matters:** `ARCHITECTURE.md` is the evergreen design reference, and it now documents classes that no longer
+exist — the same doc-vs-code disagreement as Gaps #15, #19 and #21 — and points readers at a "groundwork"
+package that Gap #6's remaining work no longer depends on.
+
+**Proposed improvement:** Remove the `scores/request/` line from the Project Structure tree and the package from the
+`models/ipsc/…` section heading, replace the "groundwork only" sentence with a note that `MatchCompetitor`'s
+overall-score fields travel on the match competitor request/response DTOs, and keep the `shared/` description. No
+code change is needed.
+
+**Outcome:** Done as proposed in v10.0.0. `ARCHITECTURE.md`'s Project Structure tree no longer lists
+`scores/request/`, the `models/ipsc/…` section heading drops the package, and the "groundwork only" sentence is gone;
+the `shared/` description is unchanged. No code change was needed. The `prep-version-release` skill now also
+cross-checks that tree at release time, as `AGENTS.md`'s Release Checklist already did.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
 
-#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v9.1.0
+#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v10.0.0
 
 **Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
 match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
@@ -1028,7 +1079,12 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 entry in a match, over `MatchCompetitorRepository` and the new `TransactionService` match competitor writes, with
 Mockito controller tests, mocked-repository service tests and `@SpringBootTest` integration tests. The shooter-log half
 is not: `ShooterLog`, `ShooterLogCompetitor` and the new `ShooterLogOverall` entities and their repositories were
-reworked, but no `ShooterLogService` or controller operates on them yet. The gap closes once a shooter-log service and
+reworked, but no `ShooterLogService` or controller operates on them yet. v10.0.0 deepens the match-competitor half
+without finishing the gap: a request can identify its competitor by number or name (through new
+`CompetitorRepository` finders), `MatchCompetitor` carries the PractiScore-style overall-score columns
+(`V10_1_0__add_match_competitor_overall_scores.sql`) and its CSV headers follow a PractiScore export, and the unused
+`MatchOverallScoresRequest`/`MatchStageScoresRequest` DTOs quoted in the Evidence above are deleted, so the overall
+scores now live on `MatchCompetitor` itself. The gap closes once a shooter-log service and
 controller exist, and the docs drop their "still being built" language.
 
 #### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
@@ -1069,8 +1125,8 @@ pin).
 
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0, the shooter-log service and controller remain                                                                                                      |
-| **Next**    | No items currently scoped — #32 closed in v8.12.0                                                                                                                                                                                                  |
+| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
+| **Next**    | No items currently scoped — #33 and #34 closed in v10.0.0                                                                                                                                                                                          |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1150,6 +1206,10 @@ pin).
   plan no longer describes Qodana as removed, closing Gap #32.
 - `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.26` or later itself,
   closing Gap #26.
+- ✅ Met in v10.0.0: `flyway-migration-versioning.md`'s Current State table has a row for every file in
+  `db/migration/`, and the Release Checklist checks it, closing Gap #33.
+- ✅ Met in v10.0.0: `ARCHITECTURE.md` no longer names the deleted `models/ipsc/scores/request/` package or calls its
+  DTOs groundwork, closing Gap #34.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

@@ -67,7 +67,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertNotNull(response.getMatchCompetitorId());
         assertEquals(competitor.getId(), response.getCompetitorId());
         assertEquals(match.getId(), response.getMatchId());
-        assertEquals(List.of(CompetitorCategory.JUNIOR), response.getCompetitorCategory());
+        assertEquals(CompetitorCategory.JUNIOR, response.getCompetitorCategory());
         assertEquals(FirearmType.HANDGUN, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
         assertTrue(matchCompetitorRepository.existsById(response.getMatchCompetitorId()));
@@ -79,14 +79,14 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-002");
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(competitor.getId(), match.getId());
-        request.setCompetitorCategory(List.of("Junior", "Lady", "Junior"));
+        request.setCompetitorCategory("Junior");
 
         // Act
         MatchCompetitorResponse created = ipscMatchCompetitorService.createMatchCompetitor(request);
         MatchCompetitorResponse fetched = ipscMatchCompetitorService.getMatchCompetitor(created.getMatchCompetitorId());
 
         // Assert
-        assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY), fetched.getCompetitorCategory());
+        assertEquals(CompetitorCategory.JUNIOR, fetched.getCompetitorCategory());
     }
 
     @Test
@@ -127,6 +127,51 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
     }
 
+    @Test
+    void testCreateMatchCompetitor_whenOnlyNameGiven_thenFindsCompetitorByNameIgnoringCase() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-002");
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(null, match.getId());
+        request.setCompetitorName("jane DOE");
+
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
+
+        // Assert
+        assertEquals(competitor.getId(), response.getCompetitorId());
+    }
+
+    @Test
+    void testCreateMatchCompetitor_whenOnlyCompetitorNumberGiven_thenFindsCompetitorByNumber() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-005");
+        competitor.setCompetitorNumber("A123");
+        competitorRepository.save(competitor);
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(null, match.getId());
+        request.setCompetitorNumber("A123");
+
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
+
+        // Assert
+        assertEquals(competitor.getId(), response.getCompetitorId());
+    }
+
+    @Test
+    void testCreateMatchCompetitor_whenNameMatchesSeveralCompetitors_thenThrowsValidationException() {
+        // Arrange
+        createCompetitor("HPSC-MC-003");
+        createCompetitor("HPSC-MC-004");
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(null, match.getId());
+        request.setCompetitorName("Jane Doe");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
+    }
+
     // createMatchCompetitors()
     @Test
     void testCreateMatchCompetitors_whenRowsAreValid_thenPersistsEachInOrder() throws Exception {
@@ -135,8 +180,8 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor second = createCompetitor("HPSC-MC-011");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
-                %d,%d,Junior;Lady,Handgun,Open Division
+                CompetitorId,MatchId,Cats,FirearmType,Div
+                %d,%d,Junior,Handgun,Open Division
                 %d,%d,Senior,Handgun,Production Division
                 """, first.getId(), match.getId(), second.getId(), match.getId());
 
@@ -147,7 +192,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertEquals(2, holder.getMatchCompetitors().size());
         assertEquals(first.getId(), holder.getMatchCompetitors().get(0).getCompetitorId());
         assertEquals(second.getId(), holder.getMatchCompetitors().get(1).getCompetitorId());
-        assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY),
+        assertEquals(CompetitorCategory.JUNIOR,
                 holder.getMatchCompetitors().get(0).getCompetitorCategory());
         assertEquals(2, matchCompetitorRepository.count());
     }
@@ -158,7 +203,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-012");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                CompetitorId,MatchId,Cats,FirearmType,Div
                 %d,%d,Junior,Handgun,Open Division
                 %d,%d,Junior,Handgun,Open Division
                 """, competitor.getId(), match.getId(), competitor.getId() + 1000, match.getId());
@@ -175,7 +220,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         String csvData = String.format("""
-                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                CompetitorId,MatchId,Cats,FirearmType,Div
                 %d,%d,Junior,Handgun,Open Division
                 """, competitor.getId(), match.getId());
 
@@ -193,7 +238,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 .getMatchCompetitorId();
         MatchCompetitorRequest replacement = validRequest(competitor.getId(), match.getId());
         replacement.setDivision("Standard Division");
-        replacement.setMatchPoints(new BigDecimal("12.5"));
+        replacement.setPoints(new BigDecimal("12.5"));
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.updateMatchCompetitor(id, replacement);
@@ -201,7 +246,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         // Assert
         assertEquals(id, response.getMatchCompetitorId());
         assertEquals(Division.STANDARD, response.getDivision());
-        assertEquals(0, new BigDecimal("12.5").compareTo(response.getMatchPoints()));
+        assertEquals(0, new BigDecimal("12.5").compareTo(response.getPoints()));
     }
 
     @Test
@@ -316,7 +361,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(competitorId);
         request.setMatchId(matchId);
-        request.setCompetitorCategory(List.of("Junior"));
+        request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
         return request;

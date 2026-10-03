@@ -747,7 +747,7 @@ class IpscCompetitorServiceIntegrationTest {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitorRepository.findById(competitorId).orElseThrow());
         matchCompetitor.setMatch(match);
-        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
         matchCompetitorRepository.save(matchCompetitor);

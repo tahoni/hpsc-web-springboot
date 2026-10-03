@@ -323,6 +323,24 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Correct this plan's Goals & Constraints row and Success Criteria, which still described Qodana as removed
 - [x] ~~Add a `qodana.yaml`~~ — optional and left for later: the default profile passes, so it isn't needed yet
 
+**Flyway migration table refresh, again** *(improvement-plan.md → Gap #33)* — ✅ Closed in v10.0.0
+
+- [x] Add a row to `documentation/recommendations/flyway-migration-versioning.md`'s Current State table for each of
+  the sixteen migrations after `V7_8_0` — `V7_9_0`, `V8_0_0` to `V8_9_0` (including `V8_0_1`) and `V10_0_0` to
+  `V10_3_0`
+- [x] Add a Release Checklist step (in `AGENTS.md` and the `prep-version-release` skill) comparing that table with
+  `src/main/resources/db/migration/`, so the drift is caught at release time — done as a sentence added to the
+  existing `ARCHITECTURE.md` tree-check step (`AGENTS.md` step 9, `prep-version-release` step 9) rather than a
+  separate step, so
+  the numbering is unchanged
+
+**`ARCHITECTURE.md` and the deleted `scores/request/` DTOs** *(improvement-plan.md → Gap #34)* — ✅ Closed in v10.0.0
+
+- [x] Remove the `scores/request/` line from `ARCHITECTURE.md`'s Project Structure tree and the package from the
+  `models/ipsc/…` section heading
+- [x] Replace that section's "groundwork only — not yet consumed by any controller" sentence with a note that the
+  overall-score fields travel on the match competitor request/response DTOs
+
 ---
 
 ## 🟡 Partially Completed
@@ -332,7 +350,7 @@ matching `improvement-plan.md`'s "🟡 Partially Completed" section — and move
 checked and the gap's own header there carries a "✅ Closed" suffix.
 
 **Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)* —
-🟡 Partially completed in v9.1.0
+🟡 Partially completed in v10.0.0
 
 - [x] Introduce `MatchScoreService`/`MatchScoreServiceImpl` (interface + `impl/` split) over the existing
   `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
@@ -341,7 +359,8 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 - [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories
 - [ ] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
   `scaffold-integration-tests` conventions — `IpscMatchCompetitorController` and its integration tests shipped in
-  v9.1.0; the shooter-log endpoints remain
+  v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields); the shooter-log
+  endpoints remain
 - [ ] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions — done for
   `IpscMatchCompetitorController` in v9.1.0; the shooter-log controller remains
 - [ ] Hold off on cross-entity orchestration (e.g. a full Practiscore results import) until a concrete need

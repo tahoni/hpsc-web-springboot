@@ -25,5 +25,5 @@
 ## 🔗 Related Documentation
 
 - [RELEASE_NOTES.md](/RELEASE_NOTES.md)
-- [CHANGELOG.md](/CHANGELOG.md#-730---2026-08-25)
+- [CHANGELOG.md](/documentation/history/CHANGELOG_v1-v7.md#-730---2026-08-25)
 - [HISTORY.md](/HISTORY.md)

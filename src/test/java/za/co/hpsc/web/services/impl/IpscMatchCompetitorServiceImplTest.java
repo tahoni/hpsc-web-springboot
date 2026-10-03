@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -68,11 +71,22 @@ class IpscMatchCompetitorServiceImplTest {
         request.setCompetitorId(1L);
         request.setMatchId(2L);
         request.setMatchClub("HPSC");
-        request.setCompetitorCategory(List.of("Lady"));
+        request.setCompetitorCategory("Lady");
         request.setFirearmType("PCC");
         request.setDivision("Production Division");
         request.setPowerFactor("Minor");
-        request.setMatchPoints(new BigDecimal("50"));
+        request.setPoints(new BigDecimal("50"));
+        request.setPercentage(new BigDecimal("98.25"));
+        request.setTime(new BigDecimal("41.5"));
+        request.setPercentageOfPossiblePoints(new BigDecimal("93.75"));
+        request.setAlpha(30);
+        request.setCharlie(4);
+        request.setDelta(1);
+        request.setMisses(2);
+        request.setNoPenaltyMisses(1);
+        request.setNoShoots(0);
+        request.setProceduralErrors(3);
+        request.setAdditionalPenalties(5);
         request.setOverallRanking(new BigDecimal("3"));
         request.setClubRanking(new BigDecimal("2"));
         request.setIsVisitor(true);
@@ -85,11 +99,22 @@ class IpscMatchCompetitorServiceImplTest {
         assertSame(competitor, matchCompetitor.getCompetitor());
         assertSame(match, matchCompetitor.getMatch());
         assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
-        assertEquals(List.of(CompetitorCategory.LADY), matchCompetitor.getCompetitorCategory());
+        assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
         assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
         assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
         assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
-        assertEquals(new BigDecimal("50"), matchCompetitor.getMatchPoints());
+        assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
+        assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
+        assertEquals(new BigDecimal("41.5"), matchCompetitor.getTime());
+        assertEquals(new BigDecimal("93.75"), matchCompetitor.getPercentageOfPossiblePoints());
+        assertEquals(30, matchCompetitor.getAlpha());
+        assertEquals(4, matchCompetitor.getCharlie());
+        assertEquals(1, matchCompetitor.getDelta());
+        assertEquals(2, matchCompetitor.getMisses());
+        assertEquals(1, matchCompetitor.getNoPenaltyMisses());
+        assertEquals(0, matchCompetitor.getNoShoots());
+        assertEquals(3, matchCompetitor.getProceduralErrors());
+        assertEquals(5, matchCompetitor.getAdditionalPenalties());
         assertEquals(new BigDecimal("3"), matchCompetitor.getOverallRanking());
         assertEquals(new BigDecimal("2"), matchCompetitor.getClubRanking());
         assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
@@ -113,6 +138,87 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.findMatchCompetitorOrThrow(5L));
+    }
+
+    // resolveCompetitor()
+    @Test
+    void testResolveCompetitor_whenIdGiven_thenUsesIdAndIgnoresName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(1L, "A1", "Someone Else"));
+        verify(competitorRepository, never()).findByFullNameIgnoreCase(anyString());
+    }
+
+    @Test
+    void testResolveCompetitor_whenOnlyNameGiven_thenFindsCompetitorByTrimmedName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(3L);
+        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, null, "  Jane Doe "));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNumberGiven_thenFindsCompetitorByTrimmedNumberBeforeName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(4L);
+        when(competitorRepository.findByCompetitorNumber("A123")).thenReturn(List.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, " A123 ", "Someone Else"));
+        verify(competitorRepository, never()).findByFullNameIgnoreCase(anyString());
+    }
+
+    @Test
+    void testResolveCompetitor_whenNumberMatchesNobody_thenThrowsNonFatalException() {
+        // Arrange
+        when(competitorRepository.findByCompetitorNumber("A123")).thenReturn(List.of());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "A123", null));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNumberMatchesSeveral_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findByCompetitorNumber("A123"))
+                .thenReturn(List.of(new Competitor(), new Competitor()));
+
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "A123", null));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNameMatchesNobody_thenThrowsNonFatalException() {
+        // Arrange
+        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, null, "Jane Doe"));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNameMatchesSeveral_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe"))
+                .thenReturn(List.of(new Competitor(), new Competitor()));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, null, "Jane Doe"));
+    }
+
+    @Test
+    void testResolveCompetitor_whenNeitherIdNorNameGiven_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "  ", "  "));
     }
 
     // findCompetitorOrThrow()
@@ -160,31 +266,6 @@ class IpscMatchCompetitorServiceImplTest {
     void testResolveMatchClub_whenUnknown_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveMatchClub("Nope"));
-    }
-
-    // resolveCompetitorCategories()
-    @Test
-    void testResolveCompetitorCategories_whenSeveralKnown_thenReturnsThemInOrderWithoutDuplicates() {
-        // Act
-        List<CompetitorCategory> result = matchCompetitorServiceImpl.resolveCompetitorCategories(
-                List.of("Lady", "Junior", "Lady"));
-
-        // Assert
-        assertEquals(List.of(CompetitorCategory.LADY, CompetitorCategory.JUNIOR), result);
-    }
-
-    @Test
-    void testResolveCompetitorCategories_whenEmptyOrNull_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorCategories(List.of()));
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorCategories(null));
-    }
-
-    @Test
-    void testResolveCompetitorCategories_whenAnyUnknown_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> matchCompetitorServiceImpl.resolveCompetitorCategories(List.of("Lady", "Nope")));
     }
 
     // resolveCompetitorCategory()
@@ -262,7 +343,7 @@ class IpscMatchCompetitorServiceImplTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(1L);
         request.setMatchId(2L);
-        request.setCompetitorCategory(List.of("Junior"));
+        request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
 
@@ -305,11 +386,22 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
         matchCompetitor.setMatchClub(ClubIdentifier.HPSC);
-        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.JUNIOR));
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.JUNIOR);
         matchCompetitor.setFirearmType(FirearmType.RIFLE);
         matchCompetitor.setDivision(Division.OPEN);
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
-        matchCompetitor.setMatchPoints(new BigDecimal("10"));
+        matchCompetitor.setPoints(new BigDecimal("10"));
+        matchCompetitor.setPercentage(new BigDecimal("98.25"));
+        matchCompetitor.setTime(new BigDecimal("41.5"));
+        matchCompetitor.setPercentageOfPossiblePoints(new BigDecimal("93.75"));
+        matchCompetitor.setAlpha(30);
+        matchCompetitor.setCharlie(4);
+        matchCompetitor.setDelta(1);
+        matchCompetitor.setMisses(2);
+        matchCompetitor.setNoPenaltyMisses(1);
+        matchCompetitor.setNoShoots(0);
+        matchCompetitor.setProceduralErrors(3);
+        matchCompetitor.setAdditionalPenalties(5);
         matchCompetitor.setOverallRanking(new BigDecimal("2"));
         matchCompetitor.setClubRanking(new BigDecimal("1"));
         matchCompetitor.setIsVisitor(false);
@@ -322,11 +414,22 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(1L, response.getCompetitorId());
         assertEquals(2L, response.getMatchId());
         assertEquals(ClubIdentifier.HPSC, response.getMatchClub());
-        assertEquals(List.of(CompetitorCategory.JUNIOR), response.getCompetitorCategory());
+        assertEquals(CompetitorCategory.JUNIOR, response.getCompetitorCategory());
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
         assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
-        assertEquals(new BigDecimal("10"), response.getMatchPoints());
+        assertEquals(new BigDecimal("10"), response.getPoints());
+        assertEquals(new BigDecimal("98.25"), response.getPercentage());
+        assertEquals(new BigDecimal("41.5"), response.getTime());
+        assertEquals(new BigDecimal("93.75"), response.getPercentageOfPossiblePoints());
+        assertEquals(30, response.getAlpha());
+        assertEquals(4, response.getCharlie());
+        assertEquals(1, response.getDelta());
+        assertEquals(2, response.getMisses());
+        assertEquals(1, response.getNoPenaltyMisses());
+        assertEquals(0, response.getNoShoots());
+        assertEquals(3, response.getProceduralErrors());
+        assertEquals(5, response.getAdditionalPenalties());
         assertEquals(new BigDecimal("2"), response.getOverallRanking());
         assertEquals(new BigDecimal("1"), response.getClubRanking());
         assertEquals(Boolean.FALSE, response.getIsVisitor());
@@ -337,7 +440,7 @@ class IpscMatchCompetitorServiceImplTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(1L);
         request.setMatchId(2L);
-        request.setCompetitorCategory(List.of("Junior"));
+        request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
         return request;

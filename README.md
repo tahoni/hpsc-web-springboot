@@ -194,30 +194,33 @@ A detailed explanation of the architecture can be found in the [`ARCHITECTURE.md
 
 This project's documentation is spread across a few files, each with a distinct purpose.
 
-| File                                   | Purpose                                                                                         |
-|----------------------------------------|-------------------------------------------------------------------------------------------------|
-| [`README.md`](README.md)               | Project overview, setup and links to the rest of the documentation (this file)                  |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Detailed architectural design, layered structure and CI/CD quality gates                        |
-| [`CLAUDE.md`](CLAUDE.md)               | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                          |
-| [`AGENTS.md`](AGENTS.md)               | Project overview, build/run commands, architecture and cross-tool conventions for AI agents     |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md)   | New-developer onboarding: setup, database profiles, testing, workflow                           |
-| [`CHANGELOG.md`](CHANGELOG.md)         | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
-| [`HISTORY.md`](HISTORY.md)             | Narrative history of the project's evolution across all versions                                |
-| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Detailed release notes for the current/latest version                                           |
-| [`LICENSE.md`](LICENSE.md)             | MIT License                                                                                     |
-| [`HELP.md`](HELP.md)                   | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
+| File                                             | Purpose                                                                                         |
+|--------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| [`README.md`](README.md)                         | Project overview, setup and links to the rest of the documentation (this file)                  |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)             | Detailed architectural design, layered structure and CI/CD quality gates                        |
+| [`CLAUDE.md`](CLAUDE.md)                         | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                          |
+| [`AGENTS.md`](AGENTS.md)                         | Project overview, build/run commands, architecture and cross-tool conventions for AI agents     |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)             | New-developer onboarding: setup, database profiles, testing, workflow                           |
+| [`CHANGELOG.md`](CHANGELOG.md)                   | Notable changes per release, in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format |
+| [`HISTORY.md`](HISTORY.md)                       | Narrative history of the project's evolution across all versions                                |
+| [`EVOLUTION_OVERVIEW.md`](EVOLUTION_OVERVIEW.md) | Phase-by-phase narrative of the project's evolution — `HISTORY.md`'s companion                  |
+| [`RELEASE_NOTES.md`](RELEASE_NOTES.md)           | Detailed release notes for the current/latest version                                           |
+| [`LICENSE.md`](LICENSE.md)                       | MIT License                                                                                     |
+| [`HELP.md`](HELP.md)                             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version, so past
 releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version,
-grouped into one subdirectory per major version (e.g. `documentation/history/v8/`), plus one standing exception
-living directly in `documentation/history/` — `EVOLUTION_OVERVIEW.md`, a single file rather than a per-version
-archive:
+grouped into one subdirectory per major version (e.g. `documentation/history/v8/`), plus three standing exceptions
+living directly in `documentation/history/` — `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md` and
+`EVOLUTION_OVERVIEW_v1-v7.md`, single files rather than per-version archives:
 
-| File                                                                   | Purpose                                                                                                        |
-|------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| `RELEASE_NOTES_vX.Y.Z.md`                                              | Archived snapshot of `RELEASE_NOTES.md` at release time                                                        |
-| `PR_DESCRIPTION_vX.Y.Z.md`                                             | The release pull request's body, archived for that version (not archived for every early release)              |
-| [`EVOLUTION_OVERVIEW.md`](documentation/history/EVOLUTION_OVERVIEW.md) | `HISTORY.md`'s companion — the full Phase-by-phase narrative, split out to keep `HISTORY.md` a manageable size |
+| File                                                                               | Purpose                                                                                                          |
+|------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| `RELEASE_NOTES_vX.Y.Z.md`                                                          | Archived snapshot of `RELEASE_NOTES.md` at release time                                                          |
+| `PR_DESCRIPTION_vX.Y.Z.md`                                                         | The release pull request's body, archived for that version (not archived for every early release)                |
+| [`CHANGELOG_v1-v7.md`](documentation/history/CHANGELOG_v1-v7.md)                   | `CHANGELOG.md`'s archive of versions 1.0.0 – 7.4.1, moved unchanged and not edited by releases                   |
+| [`HISTORY_v1-v7.md`](documentation/history/HISTORY_v1-v7.md)                       | `HISTORY.md`'s archive of the per-version v1.0.0 – v7.4.1 entries, moved unchanged and not edited by releases    |
+| [`EVOLUTION_OVERVIEW_v1-v7.md`](documentation/history/EVOLUTION_OVERVIEW_v1-v7.md) | `EVOLUTION_OVERVIEW.md`'s archive of Phases 1 – 18 (v1.0.0 – v7.4.1), moved unchanged and not edited by releases |
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases
 from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version
