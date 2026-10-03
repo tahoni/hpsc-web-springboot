@@ -120,6 +120,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V8_8_0__move_match_competitor_category_to_child_table`:** Creates the `match_competitor_category` table — a
   `competitor_category` per `match_competitor`, unique per pair — copies each existing row's category into it, then
   drops `match_competitor.competitor_category`
+- **`V8_9_0__move_shooter_log_competitor_category_to_child_table`:** Creates the `shooter_log_competitor_category`
+  table — a `competitor_category` per `shooter_log_competitor`, unique per pair — copies each existing row's category
+  into it, then drops `shooter_log_competitor.competitor_category`
 
 #### 🔄 Changed
 
@@ -147,6 +150,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   mapped with `DivisionConverter` — previously it had no explicit mapping and the column was nullable
 - **`MatchCompetitor.competitorCategory`:** Now a `List<CompetitorCategory>` — a match competitor can have several
   categories, stored in the new `match_competitor_category` table rather than a column, and must have at least one
+- **`ShooterLogCompetitor.competitorCategory`:** Now a `List<CompetitorCategory>` too, stored in the new
+  `shooter_log_competitor_category` table rather than a column, and must have at least one
 - **`MatchCompetitor.firearmType`:** Now optional. The `(competitor_id, match_id, firearm_type)` unique constraint no
   longer limits rows with a null `firearm_type`, since MySQL treats NULLs as distinct
 - **`ShooterLogCompetitor.competitor`, `ShooterLogCompetitor.match`:** A shooter log competitor now links to its

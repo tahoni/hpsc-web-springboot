@@ -9,6 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterLog;
+import za.co.hpsc.web.domain.ShooterLogCompetitor;
+import za.co.hpsc.web.enums.CompetitorCategory;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,5 +80,27 @@ class ShooterLogCompetitorRepositoryIntegrationTest {
 
         // Act & Assert
         assertFalse(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(match.getId()));
+    }
+
+    // findAllByShooterLogId()
+    @Test
+    void testFindAllByShooterLogId_whenSeveralCategories_thenReturnsThemAllFromTheDatabase() {
+        // Arrange
+        Competitor competitor = ScoringFixtures.competitor(entityManager, "Jane");
+        IpscMatch match = ScoringFixtures.match(entityManager, "Match");
+        MatchCompetitor matchCompetitor = ScoringFixtures.matchCompetitor(entityManager, competitor, match);
+        ShooterLog shooterLog = ScoringFixtures.shooterLog(entityManager);
+        ShooterLogCompetitor entry = ScoringFixtures.shooterLogCompetitor(entityManager, shooterLog, matchCompetitor);
+        entry.setCompetitorCategory(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY));
+        entityManager.flush();
+        entityManager.clear();
+
+        // Act
+        List<ShooterLogCompetitor> result = shooterLogCompetitorRepository.findAllByShooterLogId(shooterLog.getId());
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY),
+                result.getFirst().getCompetitorCategory());
     }
 }

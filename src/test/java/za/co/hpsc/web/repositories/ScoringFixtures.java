@@ -13,6 +13,7 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,7 +75,7 @@ final class ScoringFixtures {
         shooterLogCompetitor.setShooterLog(shooterLog);
         shooterLogCompetitor.setCompetitor(matchCompetitor.getCompetitor());
         shooterLogCompetitor.setMatchCompetitor(matchCompetitor);
-        shooterLogCompetitor.setCompetitorCategory(matchCompetitor.getCompetitorCategory().getFirst());
+        shooterLogCompetitor.setCompetitorCategory(new ArrayList<>(matchCompetitor.getCompetitorCategory()));
         shooterLogCompetitor.setDivision(matchCompetitor.getDivision());
         entityManager.persist(shooterLogCompetitor);
         return shooterLogCompetitor;
