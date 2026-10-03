@@ -142,6 +142,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getCellphoneNumber() != null) {
             competitor.setCellphoneNumber(request.getCellphoneNumber());
         }
+        if (request.getEmailAddresses() != null) {
+            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
+        }
         if (request.getPaidUpSapsa() != null) {
             competitor.setPaidUpSapsa(request.getPaidUpSapsa());
         }
@@ -150,9 +153,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         }
         if (request.getIsVerified() != null) {
             competitor.setIsVerified(request.getIsVerified());
-        }
-        if (request.getEmailAddresses() != null) {
-            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
         }
 
         return toResponse(transactionService.saveCompetitor(competitor));
@@ -278,10 +278,10 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 csvRow.getClubNumber(),
                 csvRow.getIdNumber(),
                 csvRow.getCellphoneNumber(),
+                new ArrayList<>(csvRow.getEmailAddresses()),
                 csvRow.getPaidUpSapsa(),
                 csvRow.getPaidUpClub(),
-                csvRow.getIsVerified(),
-                new ArrayList<>(csvRow.getEmailAddresses()));
+                csvRow.getIsVerified());
     }
 
     /**
@@ -310,11 +310,11 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setClubNumber(resolveClubNumber(homeClub, request.getClubNumber()));
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
+        competitor.setEmailAddresses(
+                (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
         competitor.setPaidUpSapsa(request.getPaidUpSapsa());
         competitor.setPaidUpClub(request.getPaidUpClub());
         competitor.setIsVerified(request.getIsVerified());
-        competitor.setEmailAddresses(
-                (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
     }
 
     /**
@@ -456,9 +456,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getClubNumber(),
                 competitor.getIdNumber(),
                 competitor.getCellphoneNumber(),
+                competitor.getEmailAddresses(),
                 competitor.getPaidUpSapsa(),
                 competitor.getPaidUpClub(),
-                competitor.getIsVerified(),
-                competitor.getEmailAddresses());
+                competitor.getIsVerified());
     }
 }

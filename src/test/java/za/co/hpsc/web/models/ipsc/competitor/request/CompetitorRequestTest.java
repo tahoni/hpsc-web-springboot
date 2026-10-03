@@ -20,8 +20,8 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false, true,
-                List.of("jane.doe@example.com"));
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com"), true, false,
+                true);
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -54,8 +54,8 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false, null,
-                List.of("jane.doe@example.com", "jane2.doe@example.com"));
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
+                null);
 
         // Act
         String json = mapper.writeValueAsString(request);

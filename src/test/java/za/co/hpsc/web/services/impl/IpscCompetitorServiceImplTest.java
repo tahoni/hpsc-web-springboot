@@ -293,8 +293,8 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false, true,
-                List.of("jane.doe@example.com", "jane2.doe@example.com"));
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
+                true);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -324,7 +324,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "jANE", "o'NEIL-smith", "ann marie", "JANIE", null, "FEMALE", "test CLUB",
-                null, "c-1a", "hpsc-001", null, null, null, null, null, List.of("Jane.Doe@Example.com"));
+                null, "c-1a", "hpsc-001", null, null, List.of("Jane.Doe@Example.com"), null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -346,8 +346,8 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "JANE", "O'NEIL-SMITH", "ANN MARIE", "JANIE", LocalDate.of(1990, 1, 1), "FEMALE", "TEST CLUB",
-                12345, "C-1A", "HPSC-001", "9001015800083", "0821234567", true, false, null,
-                List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"));
+                12345, "C-1A", "HPSC-001", "9001015800083", "0821234567", List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), true, false,
+                null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -371,7 +371,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "jane", "o'neil-smith", "ann marie", "janie", null, "female", "test club",
-                null, "c-1a", "hpsc-001", null, null, null, null, null, List.of("jane.doe@example.com"));
+                null, "c-1a", "hpsc-001", null, null, List.of("jane.doe@example.com"), null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);

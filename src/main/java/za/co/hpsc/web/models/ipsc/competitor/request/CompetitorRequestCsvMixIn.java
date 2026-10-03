@@ -37,9 +37,9 @@ public abstract class CompetitorRequestCsvMixIn {
                               @JsonProperty("ClubNumber") String clubNumber,
                               @JsonProperty("IdNumber") String idNumber,
                               @JsonProperty("CellphoneNumber") String cellphoneNumber,
+                              @JsonProperty("EmailAddresses") List<String> emailAddresses,
                               @JsonProperty("PaidUpSapsa") Boolean paidUpSapsa,
                               @JsonProperty("PaidUpClub") Boolean paidUpClub,
-                              @JsonProperty("IsVerified") Boolean isVerified,
-                              @JsonProperty("EmailAddresses") List<String> emailAddresses) {
+                              @JsonProperty("IsVerified") Boolean isVerified) {
     }
 }

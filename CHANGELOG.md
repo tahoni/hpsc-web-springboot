@@ -138,6 +138,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall
   shooter log row, is refused deletion
 
+##### API
+
+- **`CompetitorRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** `emailAddresses` now follows
+  `cellphoneNumber` in the constructor parameters, rather than coming last. The JSON and CSV formats are unchanged,
+  since both read by name
+
 ##### Repositories
 
 - **`ShooterLogCompetitorRepository`:** `existsByMatchId` is replaced by `existsByCompetitorId` and
@@ -147,6 +153,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Domain
 
+- **`Competitor`, `CompetitorPatchRequest`:** `emailAddresses` moved to follow `cellphoneNumber`, matching the order
+  of the request and response models. Only the Java field order changes, not the table's columns
 - **`MatchCompetitor.division`, `MatchCompetitor.competitorCategory`:** Both are now required. `division` is also
   mapped with `DivisionConverter` — previously it had no explicit mapping and the column was nullable
 - **`MatchCompetitor.competitorCategory`:** Now a `List<CompetitorCategory>` — a match competitor can have several
