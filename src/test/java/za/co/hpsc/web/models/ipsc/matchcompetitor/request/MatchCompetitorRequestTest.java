@@ -71,23 +71,4 @@ class MatchCompetitorRequestTest {
         assertNull(request.getClubRanking());
         assertNull(request.getIsVisitor());
     }
-
-    @Test
-    void testJsonDeserialization_whenRequiredFieldIsMissing_thenLeavesItNullForTheServiceToReject() throws Exception {
-        // Arrange
-        String json = """
-                {
-                  "competitorId": 1,
-                  "competitorCategory": ["Junior"],
-                  "firearmType": "Handgun",
-                  "division": "Open Division"
-                }
-                """;
-
-        // Act
-        MatchCompetitorRequest request = new ObjectMapper().readValue(json, MatchCompetitorRequest.class);
-
-        // Assert
-        assertNull(request.getMatchId());
-    }
 }

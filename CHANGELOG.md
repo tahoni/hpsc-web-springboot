@@ -146,6 +146,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchRequest`, `MatchRequestCsvMixIn`:** `matchFirearmType` and `matchCategory` are no longer required at
   deserialization, so a request or CSV file that omits them is read rather than rejected with a
   `MismatchedInputException`
+- **`MatchCompetitorRequest`:** New `@JsonCreator` constructor with a `@JsonProperty` on every parameter, and a
+  `matchCompetitorId` field, `null` when creating a new match competitor. `firearmType` is no longer required at
+  deserialization, and a missing required field is now rejected when the request is read
 
 ##### Repositories
 
