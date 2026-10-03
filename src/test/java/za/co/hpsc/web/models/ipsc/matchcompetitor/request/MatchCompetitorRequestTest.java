@@ -19,7 +19,7 @@ class MatchCompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper();
         MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", "A123", 2L, "HPSC", "Junior",
                 "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
-                new BigDecimal("41.5"), new BigDecimal("93.75"), new BigDecimal("5.2"), 30, 4, 1, 2, 1, 0, 3, 0,
+                new BigDecimal("41.5"), new BigDecimal("93.75"), 30, 4, 1, 2, 1, 0, 3, 0,
                 new BigDecimal("2"), new BigDecimal("1"), false);
 
         // Act
@@ -40,7 +40,6 @@ class MatchCompetitorRequestTest {
         assertEquals(0, new BigDecimal("98.25").compareTo(node.get("percentage").decimalValue()));
         assertEquals(0, new BigDecimal("41.5").compareTo(node.get("time").decimalValue()));
         assertEquals(0, new BigDecimal("93.75").compareTo(node.get("percentageOfPossiblePoints").decimalValue()));
-        assertEquals(0, new BigDecimal("5.2").compareTo(node.get("hitFactor").decimalValue()));
         assertEquals(30, node.get("alpha").asInt());
         assertEquals(4, node.get("charlie").asInt());
         assertEquals(1, node.get("delta").asInt());
@@ -59,7 +58,7 @@ class MatchCompetitorRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, null, null, 2L, null, "Junior", null,
-                "Open Division", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                "Open Division", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null);
 
         // Act

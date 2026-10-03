@@ -79,7 +79,6 @@ class IpscMatchCompetitorServiceImplTest {
         request.setPercentage(new BigDecimal("98.25"));
         request.setTime(new BigDecimal("41.5"));
         request.setPercentageOfPossiblePoints(new BigDecimal("93.75"));
-        request.setHitFactor(new BigDecimal("5.2"));
         request.setAlpha(30);
         request.setCharlie(4);
         request.setDelta(1);
@@ -108,7 +107,6 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
         assertEquals(new BigDecimal("41.5"), matchCompetitor.getTime());
         assertEquals(new BigDecimal("93.75"), matchCompetitor.getPercentageOfPossiblePoints());
-        assertEquals(new BigDecimal("5.2"), matchCompetitor.getHitFactor());
         assertEquals(30, matchCompetitor.getAlpha());
         assertEquals(4, matchCompetitor.getCharlie());
         assertEquals(1, matchCompetitor.getDelta());
@@ -396,7 +394,6 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setPercentage(new BigDecimal("98.25"));
         matchCompetitor.setTime(new BigDecimal("41.5"));
         matchCompetitor.setPercentageOfPossiblePoints(new BigDecimal("93.75"));
-        matchCompetitor.setHitFactor(new BigDecimal("5.2"));
         matchCompetitor.setAlpha(30);
         matchCompetitor.setCharlie(4);
         matchCompetitor.setDelta(1);
@@ -425,7 +422,6 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(new BigDecimal("98.25"), response.getPercentage());
         assertEquals(new BigDecimal("41.5"), response.getTime());
         assertEquals(new BigDecimal("93.75"), response.getPercentageOfPossiblePoints());
-        assertEquals(new BigDecimal("5.2"), response.getHitFactor());
         assertEquals(30, response.getAlpha());
         assertEquals(4, response.getCharlie());
         assertEquals(1, response.getDelta());

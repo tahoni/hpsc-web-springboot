@@ -33,7 +33,6 @@ public abstract class MatchCompetitorRequestCsvMixIn {
                                    @JsonProperty("%") BigDecimal percentage,
                                    @JsonProperty("Time") BigDecimal time,
                                    @JsonProperty("% psbl") BigDecimal percentageOfPossiblePoints,
-                                   @JsonProperty("HitFactor") BigDecimal hitFactor,
                                    @JsonProperty("A") Integer alpha,
                                    @JsonProperty("C") Integer charlie,
                                    @JsonProperty("D") Integer delta,

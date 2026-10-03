@@ -59,8 +59,6 @@ public class MatchCompetitorPatchRequest {
     private BigDecimal time;
     /** The competitor's total hits as a percentage of the maximum points available in the match; may be null. */
     private BigDecimal percentageOfPossiblePoints;
-    /** The competitor's hit factor — raw score divided by time; may be null. */
-    private BigDecimal hitFactor;
     /** The competitor's total A-zone (alpha) hits across the match; may be null. */
     private Integer alpha;
     /** The competitor's total C-zone (charlie) hits across the match; may be null. */

@@ -71,6 +71,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🗑️ Removed
 
+##### Domain
+
+- **`MatchCompetitor.hitFactor`:** Removed, with the `hit_factor` column, by
+  `V10_3_0__remove_match_competitor_hit_factor.sql`
+
+##### API
+
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`,
+  `MatchCompetitorRequestCsvMixIn`:** `hitFactor` (CSV `HitFactor`) removed — it never shipped, so no released caller
+  is affected
+
 ##### Models
 
 - **`MatchOverallScoresRequest`, `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`,

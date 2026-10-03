@@ -62,9 +62,6 @@ public class MatchCompetitor {
     @Column(name = "percentage_of_possible_points", precision = 19, scale = 6)
     private BigDecimal percentageOfPossiblePoints;
 
-    @Column(name = "hit_factor", precision = 19, scale = 6)
-    private BigDecimal hitFactor;
-
     @Column(name = "alpha")
     private Integer alpha;
 

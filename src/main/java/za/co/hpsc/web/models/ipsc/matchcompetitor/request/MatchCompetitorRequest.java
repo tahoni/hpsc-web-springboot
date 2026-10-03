@@ -66,8 +66,6 @@ public class MatchCompetitorRequest {
     private BigDecimal time;
     /** The competitor's total hits as a percentage of the maximum points available in the match. */
     private BigDecimal percentageOfPossiblePoints;
-    /** The competitor's hit factor — raw score divided by time. */
-    private BigDecimal hitFactor;
     /** The competitor's total A-zone (alpha) hits across the match. */
     private Integer alpha;
     /** The competitor's total C-zone (charlie) hits across the match. */
@@ -117,7 +115,6 @@ public class MatchCompetitorRequest {
      * @param percentage                  the competitor's overall match score as a percentage of the match winner's score.
      * @param time                        the competitor's total time, in seconds, taken across the match's stages.
      * @param percentageOfPossiblePoints  the competitor's total hits as a percentage of the maximum points available in the match.
-     * @param hitFactor                   the competitor's hit factor — raw score divided by time.
      * @param alpha                       the competitor's total A-zone (alpha) hits across the match.
      * @param charlie                     the competitor's total C-zone (charlie) hits across the match.
      * @param delta                       the competitor's total D-zone (delta) hits across the match.
@@ -146,7 +143,6 @@ public class MatchCompetitorRequest {
                                   @JsonProperty("percentage") BigDecimal percentage,
                                   @JsonProperty("time") BigDecimal time,
                                   @JsonProperty("percentageOfPossiblePoints") BigDecimal percentageOfPossiblePoints,
-                                  @JsonProperty("hitFactor") BigDecimal hitFactor,
                                   @JsonProperty("alpha") Integer alpha,
                                   @JsonProperty("charlie") Integer charlie,
                                   @JsonProperty("delta") Integer delta,
@@ -172,7 +168,6 @@ public class MatchCompetitorRequest {
         this.percentage = percentage;
         this.time = time;
         this.percentageOfPossiblePoints = percentageOfPossiblePoints;
-        this.hitFactor = hitFactor;
         this.alpha = alpha;
         this.charlie = charlie;
         this.delta = delta;

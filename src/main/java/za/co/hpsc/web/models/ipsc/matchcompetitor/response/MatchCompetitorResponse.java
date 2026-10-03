@@ -51,8 +51,6 @@ public class MatchCompetitorResponse {
     private BigDecimal time;
     /** The competitor's total hits as a percentage of the maximum points available in the match, if any. */
     private BigDecimal percentageOfPossiblePoints;
-    /** The competitor's hit factor — raw score divided by time, if any. */
-    private BigDecimal hitFactor;
     /** The competitor's total A-zone (alpha) hits across the match, if any. */
     private Integer alpha;
     /** The competitor's total C-zone (charlie) hits across the match, if any. */

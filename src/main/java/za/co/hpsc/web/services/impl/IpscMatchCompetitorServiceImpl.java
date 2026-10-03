@@ -154,9 +154,6 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getPercentageOfPossiblePoints() != null) {
             matchCompetitor.setPercentageOfPossiblePoints(request.getPercentageOfPossiblePoints());
         }
-        if (request.getHitFactor() != null) {
-            matchCompetitor.setHitFactor(request.getHitFactor());
-        }
         if (request.getAlpha() != null) {
             matchCompetitor.setAlpha(request.getAlpha());
         }
@@ -317,7 +314,6 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         matchCompetitor.setPercentage(request.getPercentage());
         matchCompetitor.setTime(request.getTime());
         matchCompetitor.setPercentageOfPossiblePoints(request.getPercentageOfPossiblePoints());
-        matchCompetitor.setHitFactor(request.getHitFactor());
         matchCompetitor.setAlpha(request.getAlpha());
         matchCompetitor.setCharlie(request.getCharlie());
         matchCompetitor.setDelta(request.getDelta());
@@ -533,7 +529,6 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getPercentage(),
                 matchCompetitor.getTime(),
                 matchCompetitor.getPercentageOfPossiblePoints(),
-                matchCompetitor.getHitFactor(),
                 matchCompetitor.getAlpha(),
                 matchCompetitor.getCharlie(),
                 matchCompetitor.getDelta(),
