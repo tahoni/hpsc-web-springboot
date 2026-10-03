@@ -125,11 +125,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   table — a `competitor_category` per `shooter_log_competitor`, unique per pair — copies each existing row's category
   into it, then drops `shooter_log_competitor.competitor_category`
 
+##### Tests
+
+- **`IpscMatchCompetitorControllerTest`, `IpscMatchCompetitorServiceTest`, `IpscMatchCompetitorServiceImplTest`,
+  `IpscMatchCompetitorServiceIntegrationTest`:** New tests for the match competitor controller and service
+- **`MatchCompetitorRequestTest`, `MatchCompetitorPatchRequestTest`:** New tests for the match competitor request
+  models — JSON serialization and deserialization, including each required field being rejected when missing
+- **`ShooterLogOverallRepositoryIntegrationTest`:** New integration tests for `ShooterLogOverallRepository`
+
 #### 🔄 Changed
 
 ##### Services
 
 - **`TransactionServiceImpl`:** Constructor now also takes a `MatchCompetitorRepository`
+- **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** Constructors now take the repositories their delete checks
+  need — a `ShooterLogRepository` for the match service, and a `ShooterLogCompetitorRepository` and
+  `ShooterLogOverallRepository` in place of the `ShooterLogRepository` for the competitor service
 - **`IpscMatchServiceImpl.deleteMatch`:** Also refuses a match that is linked to a shooter log through
   `shooter_log_match`, using the new `ShooterLogRepository.existsByMatchesId`, as well as one with shooter log
   competitors
