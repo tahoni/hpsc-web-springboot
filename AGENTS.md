@@ -622,11 +622,16 @@ anything downstream references them:
    (above) still lets drift slip through, so treat every release as a backstop: cross-check the tree against the
    actual repository structure and correct any directory that's missing, renamed or gone stale, including tracked
    tooling directories (`.claude/`, `.github/`) — not just `src/`.
-10. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
+10. **Align the Markdown tables in the files this release touched.** Per the [Table alignment](#table-alignment) rule,
+    re-pad every table in `README.md` and `ARCHITECTURE.md`, in `CHANGELOG.md`'s new `### 🧾 [X.Y.Z]` and fresh
+    `### 🧪 [Unreleased]` sections only, in `HISTORY.md`'s entries for the new version only, and in
+    `RELEASE_NOTES.md` — measuring each cell in display columns so emoji line up, and leaving every older release
+    section and archived file alone. Do this before the next step, since the archive is a byte-for-byte copy.
+11. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
     `documentation/history/v<major>/RELEASE_NOTES_vX.Y.Z.md`, where `<major>` is the leading number of `X.Y.Z`
     before the first `.` (e.g. `7.2.0` → `v7`) — create that `v<major>/` directory first if this is the first
     release of a new major version.
-11. **Write `documentation/history/v<major>/PR_DESCRIPTION_vX.Y.Z.md`** (same `v<major>/` subdirectory as step 10).
+12. **Write `documentation/history/v<major>/PR_DESCRIPTION_vX.Y.Z.md`** (same `v<major>/` subdirectory as step 11).
     The body text for the release pull request. Keep it
     small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only, no line-by-line
     detail. Structure:

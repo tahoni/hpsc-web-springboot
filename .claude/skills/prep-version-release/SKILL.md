@@ -109,12 +109,25 @@ Steps:
    Documentation rules).
 10. **Update `CONTRIBUTING.md`** only if this version's changes affect developer setup, database profiles, workflow or
     testing conventions documented there.
-11. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
+11. **Align the Markdown tables in the files this release touched.** Per AGENTS.md's Table alignment rule (pad each
+    cell with trailing spaces so the `|` separators line up across the header, delimiter and body rows, sized to the
+    widest cell; re-pad the whole table, not only the edited row), re-pad every table in:
+    - `README.md` and `ARCHITECTURE.md` — every table in each file, since step 9 may have lengthened any cell;
+    - `CHANGELOG.md` — the new `### 🧾 [$VERSION]` section and the fresh `### 🧪 [Unreleased]` section only;
+    - `HISTORY.md` — the `$VERSION` entries only (the Historical Timeline entry, the Milestone, the Architectural
+      Evolution entry if one was added, and the Future Roadmap Implications `Recently Completed ($VERSION)` entry);
+    - `RELEASE_NOTES.md`.
+
+    Leave every other file and every older release section alone — past entries, the archived `RELEASE_NOTES_v*.md`
+    files and `AGENTS.md`'s emoji icon tables are not part of this step. Measure each cell in display columns, not
+    characters, so a cell holding an emoji (two columns wide, plus any variation selector) lines up visually, and skip
+    tables inside fenced code blocks. Do this before archiving: the next step copies `RELEASE_NOTES.md` byte-for-byte.
+12. **Archive `RELEASE_NOTES.md`.** Once finalised, copy it byte-for-byte (no edits, no trimming) to
     `documentation/history/v<major>/RELEASE_NOTES_v$VERSION.md`, where `<major>` is `$VERSION`'s leading number
     before the first `.` (e.g. `7.2.0` → `v7`) — create that `v<major>/` directory first if this is the first
     release of a new major version.
-12. **Write `documentation/history/v<major>/PR_DESCRIPTION_v$VERSION.md`** (same `v<major>/` subdirectory as
-    step 11) — the body text for the release pull request. Keep it
+13. **Write `documentation/history/v<major>/PR_DESCRIPTION_v$VERSION.md`** (same `v<major>/` subdirectory as
+    step 12) — the body text for the release pull request. Keep it
     small — a PR body, not a second `RELEASE_NOTES.md`: a few bullets per section, high-level only. Structure:
     - `## 🎯 Summary` — two to four bullets on what the release is and why
     - `## 📦 Key Changes` — condensed from the CHANGELOG entry's categories (Added/Changed/Fixed/Removed), high-level
@@ -124,6 +137,8 @@ Steps:
     - End the file with the standard Claude Code attribution footer (a blank line, then
       `🤖 Generated with [Claude Code](https://claude.com/claude-code)`) — this is a PR description drafted by Claude
       Code and should be marked as such, same as any other PR description it opens.
+
+    The PR description is written after step 11, so align any table in it the same way before finishing.
 
 Commit these in logical chunks per AGENTS.md's Git Workflow — the version bump, the CHANGELOG/HISTORY/RELEASE_NOTES
 documentation and the PR description are separate concerns. Do not run `git commit`, `git push` or open the PR
@@ -138,4 +153,4 @@ promoting `develop` into `main` is still needed to actually ship the release —
 `v$VERSION`.
 
 Remind the user to verify all tests still pass (`./mvnw test`) before finishing and confirm no version-specific info
-leaked into `README.md`/`ARCHITECTURE.md`.
+leaked into `README.md`/`ARCHITECTURE.md`, and that the tables in the files step 11 covers are aligned.
