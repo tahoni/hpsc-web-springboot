@@ -19,7 +19,7 @@ import java.util.List;
  * it duplicates another is refused.
  * </p>
  */
-public interface MatchCompetitorService {
+public interface IpscMatchCompetitorService {
     /**
      * Creates a new match competitor.
      *

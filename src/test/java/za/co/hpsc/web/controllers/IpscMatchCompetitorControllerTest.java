@@ -12,7 +12,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.services.MatchCompetitorService;
+import za.co.hpsc.web.services.IpscMatchCompetitorService;
 
 import java.util.List;
 
@@ -20,23 +20,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MatchCompetitorControllerTest {
+class IpscMatchCompetitorControllerTest {
 
     @Mock
-    private MatchCompetitorService matchCompetitorService;
+    private IpscMatchCompetitorService ipscMatchCompetitorService;
 
     @InjectMocks
-    private MatchCompetitorController matchCompetitorController;
+    private IpscMatchCompetitorController ipscMatchCompetitorController;
 
     // createMatchCompetitor()
     @Test
     void testCreateMatchCompetitor_whenServiceSucceeds_thenReturns201() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
-        when(matchCompetitorService.createMatchCompetitor(request)).thenReturn(new MatchCompetitorResponse());
+        when(ipscMatchCompetitorService.createMatchCompetitor(request)).thenReturn(new MatchCompetitorResponse());
 
         // Act
-        ResponseEntity<MatchCompetitorResponse> result = matchCompetitorController.createMatchCompetitor(request);
+        ResponseEntity<MatchCompetitorResponse> result = ipscMatchCompetitorController.createMatchCompetitor(request);
 
         // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -47,10 +47,10 @@ class MatchCompetitorControllerTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         MatchCompetitorResponse response = new MatchCompetitorResponse();
-        when(matchCompetitorService.createMatchCompetitor(request)).thenReturn(response);
+        when(ipscMatchCompetitorService.createMatchCompetitor(request)).thenReturn(response);
 
         // Act
-        ResponseEntity<MatchCompetitorResponse> result = matchCompetitorController.createMatchCompetitor(request);
+        ResponseEntity<MatchCompetitorResponse> result = ipscMatchCompetitorController.createMatchCompetitor(request);
 
         // Assert
         assertSame(response, result.getBody());
@@ -60,20 +60,20 @@ class MatchCompetitorControllerTest {
     void testCreateMatchCompetitor_whenServiceThrowsValidationException_thenPropagates() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
-        when(matchCompetitorService.createMatchCompetitor(request)).thenThrow(new ValidationException("invalid"));
+        when(ipscMatchCompetitorService.createMatchCompetitor(request)).thenThrow(new ValidationException("invalid"));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorController.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorController.createMatchCompetitor(request));
     }
 
     @Test
     void testCreateMatchCompetitor_whenServiceThrowsNonFatalException_thenPropagates() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
-        when(matchCompetitorService.createMatchCompetitor(request)).thenThrow(new NonFatalException("not found"));
+        when(ipscMatchCompetitorService.createMatchCompetitor(request)).thenThrow(new NonFatalException("not found"));
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorController.createMatchCompetitor(request));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorController.createMatchCompetitor(request));
     }
 
     // updateMatchCompetitor()
@@ -82,10 +82,10 @@ class MatchCompetitorControllerTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         MatchCompetitorResponse response = new MatchCompetitorResponse();
-        when(matchCompetitorService.updateMatchCompetitor(1L, request)).thenReturn(response);
+        when(ipscMatchCompetitorService.updateMatchCompetitor(1L, request)).thenReturn(response);
 
         // Act
-        ResponseEntity<MatchCompetitorResponse> result = matchCompetitorController.updateMatchCompetitor(1L, request);
+        ResponseEntity<MatchCompetitorResponse> result = ipscMatchCompetitorController.updateMatchCompetitor(1L, request);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -96,20 +96,20 @@ class MatchCompetitorControllerTest {
     void testUpdateMatchCompetitor_whenServiceThrowsNonFatalException_thenPropagates() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
-        when(matchCompetitorService.updateMatchCompetitor(1L, request)).thenThrow(new NonFatalException("not found"));
+        when(ipscMatchCompetitorService.updateMatchCompetitor(1L, request)).thenThrow(new NonFatalException("not found"));
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorController.updateMatchCompetitor(1L, request));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorController.updateMatchCompetitor(1L, request));
     }
 
     @Test
     void testUpdateMatchCompetitor_whenServiceThrowsValidationException_thenPropagates() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
-        when(matchCompetitorService.updateMatchCompetitor(1L, request)).thenThrow(new ValidationException("invalid"));
+        when(ipscMatchCompetitorService.updateMatchCompetitor(1L, request)).thenThrow(new ValidationException("invalid"));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorController.updateMatchCompetitor(1L, request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorController.updateMatchCompetitor(1L, request));
     }
 
     // patchMatchCompetitor()
@@ -118,10 +118,10 @@ class MatchCompetitorControllerTest {
         // Arrange
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         MatchCompetitorResponse response = new MatchCompetitorResponse();
-        when(matchCompetitorService.patchMatchCompetitor(1L, request)).thenReturn(response);
+        when(ipscMatchCompetitorService.patchMatchCompetitor(1L, request)).thenReturn(response);
 
         // Act
-        ResponseEntity<MatchCompetitorResponse> result = matchCompetitorController.patchMatchCompetitor(1L, request);
+        ResponseEntity<MatchCompetitorResponse> result = ipscMatchCompetitorController.patchMatchCompetitor(1L, request);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -132,20 +132,20 @@ class MatchCompetitorControllerTest {
     void testPatchMatchCompetitor_whenServiceThrowsNonFatalException_thenPropagates() {
         // Arrange
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-        when(matchCompetitorService.patchMatchCompetitor(1L, request)).thenThrow(new NonFatalException("not found"));
+        when(ipscMatchCompetitorService.patchMatchCompetitor(1L, request)).thenThrow(new NonFatalException("not found"));
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorController.patchMatchCompetitor(1L, request));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorController.patchMatchCompetitor(1L, request));
     }
 
     @Test
     void testPatchMatchCompetitor_whenServiceThrowsValidationException_thenPropagates() {
         // Arrange
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-        when(matchCompetitorService.patchMatchCompetitor(1L, request)).thenThrow(new ValidationException("invalid"));
+        when(ipscMatchCompetitorService.patchMatchCompetitor(1L, request)).thenThrow(new ValidationException("invalid"));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorController.patchMatchCompetitor(1L, request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorController.patchMatchCompetitor(1L, request));
     }
 
     // getMatchCompetitor()
@@ -153,10 +153,10 @@ class MatchCompetitorControllerTest {
     void testGetMatchCompetitor_whenServiceSucceeds_thenReturns200WithServiceBody() {
         // Arrange
         MatchCompetitorResponse response = new MatchCompetitorResponse();
-        when(matchCompetitorService.getMatchCompetitor(1L)).thenReturn(response);
+        when(ipscMatchCompetitorService.getMatchCompetitor(1L)).thenReturn(response);
 
         // Act
-        ResponseEntity<MatchCompetitorResponse> result = matchCompetitorController.getMatchCompetitor(1L);
+        ResponseEntity<MatchCompetitorResponse> result = ipscMatchCompetitorController.getMatchCompetitor(1L);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -166,10 +166,10 @@ class MatchCompetitorControllerTest {
     @Test
     void testGetMatchCompetitor_whenServiceThrowsNonFatalException_thenPropagates() {
         // Arrange
-        when(matchCompetitorService.getMatchCompetitor(1L)).thenThrow(new NonFatalException("not found"));
+        when(ipscMatchCompetitorService.getMatchCompetitor(1L)).thenThrow(new NonFatalException("not found"));
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorController.getMatchCompetitor(1L));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorController.getMatchCompetitor(1L));
     }
 
     // getAllMatchCompetitors()
@@ -177,10 +177,10 @@ class MatchCompetitorControllerTest {
     void testGetAllMatchCompetitors_whenServiceSucceeds_thenReturns200WithServiceBody() {
         // Arrange
         List<MatchCompetitorResponse> response = List.of(new MatchCompetitorResponse());
-        when(matchCompetitorService.getAllMatchCompetitors()).thenReturn(response);
+        when(ipscMatchCompetitorService.getAllMatchCompetitors()).thenReturn(response);
 
         // Act
-        ResponseEntity<List<MatchCompetitorResponse>> result = matchCompetitorController.getAllMatchCompetitors();
+        ResponseEntity<List<MatchCompetitorResponse>> result = ipscMatchCompetitorController.getAllMatchCompetitors();
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -190,10 +190,10 @@ class MatchCompetitorControllerTest {
     @Test
     void testGetAllMatchCompetitors_whenNoneExist_thenReturnsEmptyList() {
         // Arrange
-        when(matchCompetitorService.getAllMatchCompetitors()).thenReturn(List.of());
+        when(ipscMatchCompetitorService.getAllMatchCompetitors()).thenReturn(List.of());
 
         // Act
-        ResponseEntity<List<MatchCompetitorResponse>> result = matchCompetitorController.getAllMatchCompetitors();
+        ResponseEntity<List<MatchCompetitorResponse>> result = ipscMatchCompetitorController.getAllMatchCompetitors();
 
         // Assert
         assertNotNull(result.getBody());
@@ -204,29 +204,29 @@ class MatchCompetitorControllerTest {
     @Test
     void testDeleteMatchCompetitor_whenServiceSucceeds_thenReturns204WithNoBody() {
         // Act
-        ResponseEntity<Void> result = matchCompetitorController.deleteMatchCompetitor(1L);
+        ResponseEntity<Void> result = ipscMatchCompetitorController.deleteMatchCompetitor(1L);
 
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
         assertNull(result.getBody());
-        verify(matchCompetitorService).deleteMatchCompetitor(1L);
+        verify(ipscMatchCompetitorService).deleteMatchCompetitor(1L);
     }
 
     @Test
     void testDeleteMatchCompetitor_whenServiceThrowsNonFatalException_thenPropagates() {
         // Arrange
-        doThrow(new NonFatalException("not found")).when(matchCompetitorService).deleteMatchCompetitor(1L);
+        doThrow(new NonFatalException("not found")).when(ipscMatchCompetitorService).deleteMatchCompetitor(1L);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorController.deleteMatchCompetitor(1L));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorController.deleteMatchCompetitor(1L));
     }
 
     @Test
     void testDeleteMatchCompetitor_whenServiceThrowsValidationException_thenPropagates() {
         // Arrange
-        doThrow(new ValidationException("referenced")).when(matchCompetitorService).deleteMatchCompetitor(1L);
+        doThrow(new ValidationException("referenced")).when(ipscMatchCompetitorService).deleteMatchCompetitor(1L);
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorController.deleteMatchCompetitor(1L));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorController.deleteMatchCompetitor(1L));
     }
 }

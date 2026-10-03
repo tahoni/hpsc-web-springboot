@@ -23,7 +23,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRespon
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.services.impl.MatchCompetitorServiceImpl;
+import za.co.hpsc.web.services.impl.IpscMatchCompetitorServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
 import java.math.BigDecimal;
@@ -35,12 +35,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for the {@link MatchCompetitorService} contract, exercised entirely through the interface type, with
+ * Unit tests for the {@link IpscMatchCompetitorService} contract, exercised entirely through the interface type, with
  * the repositories mocked, and a real {@link TransactionServiceImpl} committing through those mocks under a mocked
  * {@link PlatformTransactionManager}.
  */
 @ExtendWith(MockitoExtension.class)
-public class MatchCompetitorServiceTest {
+public class IpscMatchCompetitorServiceTest {
 
     @Mock
     private MatchCompetitorRepository matchCompetitorRepository;
@@ -54,13 +54,13 @@ public class MatchCompetitorServiceTest {
     @Mock
     private PlatformTransactionManager transactionManager;
 
-    private MatchCompetitorService matchCompetitorService;
+    private IpscMatchCompetitorService ipscMatchCompetitorService;
 
     @BeforeEach
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
-        matchCompetitorService = new MatchCompetitorServiceImpl(matchCompetitorRepository, competitorRepository,
+        ipscMatchCompetitorService = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository, competitorRepository,
                 ipscMatchRepository, transactionService);
     }
 
@@ -68,7 +68,7 @@ public class MatchCompetitorServiceTest {
     @Test
     void testCreateMatchCompetitor_whenRequestIsNull_thenThrowsValidationException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(null));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(null));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class MatchCompetitorServiceTest {
         request.setCompetitorId(null);
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class MatchCompetitorServiceTest {
         request.setMatchId(null);
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class MatchCompetitorServiceTest {
         request.setCompetitorCategory(List.of());
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class MatchCompetitorServiceTest {
         request.setFirearmType("  ");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class MatchCompetitorServiceTest {
         request.setDivision("  ");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class MatchCompetitorServiceTest {
         when(competitorRepository.findById(1L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.createMatchCompetitor(validRequest()));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(validRequest()));
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -138,7 +138,7 @@ public class MatchCompetitorServiceTest {
         when(ipscMatchRepository.findById(2L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.createMatchCompetitor(validRequest()));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(validRequest()));
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -150,7 +150,7 @@ public class MatchCompetitorServiceTest {
         request.setDivision("Not A Division");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class MatchCompetitorServiceTest {
         request.setCompetitorCategory(List.of("Not A Category"));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -172,7 +172,7 @@ public class MatchCompetitorServiceTest {
         request.setFirearmType("Not A Firearm");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class MatchCompetitorServiceTest {
         request.setPowerFactor("Not A Power Factor");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class MatchCompetitorServiceTest {
         request.setMatchClub("Not A Club");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(request));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     @Test
@@ -205,7 +205,7 @@ public class MatchCompetitorServiceTest {
                 .thenReturn(Optional.of(matchCompetitor(9L)));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.createMatchCompetitor(validRequest()));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(validRequest()));
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -218,7 +218,7 @@ public class MatchCompetitorServiceTest {
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> matchCompetitorService.createMatchCompetitor(validRequest()));
+                () -> ipscMatchCompetitorService.createMatchCompetitor(validRequest()));
         assertInstanceOf(DataIntegrityViolationException.class, exception.getCause());
     }
 
@@ -233,7 +233,7 @@ public class MatchCompetitorServiceTest {
         });
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.createMatchCompetitor(validRequest());
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(validRequest());
 
         // Assert
         assertEquals(5L, response.getMatchCompetitorId());
@@ -263,7 +263,7 @@ public class MatchCompetitorServiceTest {
         request.setDivision("Open Division");
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.createMatchCompetitor(request);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
 
         // Assert
         assertNull(response.getMatchClub());
@@ -278,7 +278,7 @@ public class MatchCompetitorServiceTest {
     @Test
     void testUpdateMatchCompetitor_whenRequestIsNull_thenThrowsValidationException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.updateMatchCompetitor(5L, null));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.updateMatchCompetitor(5L, null));
     }
 
     @Test
@@ -287,7 +287,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.updateMatchCompetitor(999L, validRequest()));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.updateMatchCompetitor(999L, validRequest()));
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -302,7 +302,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.save(existing)).thenReturn(existing);
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.updateMatchCompetitor(5L, validRequest());
+        MatchCompetitorResponse response = ipscMatchCompetitorService.updateMatchCompetitor(5L, validRequest());
 
         // Assert
         assertEquals(5L, response.getMatchCompetitorId());
@@ -321,7 +321,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.save(existing)).thenReturn(existing);
 
         // Act & Assert
-        assertDoesNotThrow(() -> matchCompetitorService.updateMatchCompetitor(5L, validRequest()));
+        assertDoesNotThrow(() -> ipscMatchCompetitorService.updateMatchCompetitor(5L, validRequest()));
     }
 
     @Test
@@ -333,7 +333,7 @@ public class MatchCompetitorServiceTest {
                 .thenReturn(Optional.of(matchCompetitor(9L)));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.updateMatchCompetitor(5L, validRequest()));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.updateMatchCompetitor(5L, validRequest()));
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -345,7 +345,7 @@ public class MatchCompetitorServiceTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class,
-                () -> matchCompetitorService.patchMatchCompetitor(999L, new MatchCompetitorPatchRequest()));
+                () -> ipscMatchCompetitorService.patchMatchCompetitor(999L, new MatchCompetitorPatchRequest()));
     }
 
     @Test
@@ -358,7 +358,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.save(existing)).thenReturn(existing);
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.patchMatchCompetitor(5L,
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(5L,
                 new MatchCompetitorPatchRequest());
 
         // Assert
@@ -376,7 +376,7 @@ public class MatchCompetitorServiceTest {
         patch.setCompetitorCategory(List.of());
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.patchMatchCompetitor(5L, patch));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
     }
 
     @Test
@@ -389,7 +389,7 @@ public class MatchCompetitorServiceTest {
         patch.setCompetitorCategory(List.of("Senior", "Lady"));
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.patchMatchCompetitor(5L, patch);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(5L, patch);
 
         // Assert
         assertEquals(List.of(CompetitorCategory.SENIOR, CompetitorCategory.LADY), response.getCompetitorCategory());
@@ -412,7 +412,7 @@ public class MatchCompetitorServiceTest {
         patch.setIsVisitor(true);
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.patchMatchCompetitor(5L, patch);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(5L, patch);
 
         // Assert
         assertEquals(ClubIdentifier.HPSC, response.getMatchClub());
@@ -436,7 +436,7 @@ public class MatchCompetitorServiceTest {
         patch.setCompetitorId(7L);
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.patchMatchCompetitor(5L, patch);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(5L, patch);
 
         // Assert
         assertEquals(7L, response.getCompetitorId());
@@ -451,7 +451,7 @@ public class MatchCompetitorServiceTest {
         patch.setCompetitorId(7L);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.patchMatchCompetitor(5L, patch));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
     }
 
     @Test
@@ -464,7 +464,7 @@ public class MatchCompetitorServiceTest {
         patch.setMatchId(8L);
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.patchMatchCompetitor(5L, patch);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(5L, patch);
 
         // Assert
         assertEquals(8L, response.getMatchId());
@@ -479,7 +479,7 @@ public class MatchCompetitorServiceTest {
         patch.setMatchId(8L);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.patchMatchCompetitor(5L, patch));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
     }
 
     @Test
@@ -490,7 +490,7 @@ public class MatchCompetitorServiceTest {
         patch.setDivision("Not A Division");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.patchMatchCompetitor(5L, patch));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -504,7 +504,7 @@ public class MatchCompetitorServiceTest {
         patch.setFirearmType("Rifle");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorService.patchMatchCompetitor(5L, patch));
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -515,7 +515,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(matchCompetitor(5L)));
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.getMatchCompetitor(5L);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.getMatchCompetitor(5L);
 
         // Assert
         assertEquals(5L, response.getMatchCompetitorId());
@@ -529,7 +529,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.getMatchCompetitor(999L));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.getMatchCompetitor(999L));
     }
 
     // getAllMatchCompetitors()
@@ -540,7 +540,7 @@ public class MatchCompetitorServiceTest {
                 .thenReturn(List.of(matchCompetitor(5L), matchCompetitor(6L)));
 
         // Act
-        List<MatchCompetitorResponse> responses = matchCompetitorService.getAllMatchCompetitors();
+        List<MatchCompetitorResponse> responses = ipscMatchCompetitorService.getAllMatchCompetitors();
 
         // Assert
         assertEquals(2, responses.size());
@@ -554,7 +554,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.findAllWithCompetitorAndMatch()).thenReturn(List.of());
 
         // Act & Assert
-        assertTrue(matchCompetitorService.getAllMatchCompetitors().isEmpty());
+        assertTrue(ipscMatchCompetitorService.getAllMatchCompetitors().isEmpty());
     }
 
     // deleteMatchCompetitor()
@@ -564,7 +564,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.deleteMatchCompetitor(999L));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.deleteMatchCompetitor(999L));
         verify(matchCompetitorRepository, never()).delete(any(MatchCompetitor.class));
     }
 
@@ -575,7 +575,7 @@ public class MatchCompetitorServiceTest {
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
 
         // Act
-        assertDoesNotThrow(() -> matchCompetitorService.deleteMatchCompetitor(5L));
+        assertDoesNotThrow(() -> ipscMatchCompetitorService.deleteMatchCompetitor(5L));
 
         // Assert
         verify(matchCompetitorRepository).delete(existing);
@@ -590,7 +590,7 @@ public class MatchCompetitorServiceTest {
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> matchCompetitorService.deleteMatchCompetitor(5L));
+                () -> ipscMatchCompetitorService.deleteMatchCompetitor(5L));
         assertInstanceOf(DataIntegrityViolationException.class, exception.getCause());
     }
 

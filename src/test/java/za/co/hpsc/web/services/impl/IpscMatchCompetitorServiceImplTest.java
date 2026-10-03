@@ -20,6 +20,8 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRespon
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.services.IpscMatchCompetitorService;
+import za.co.hpsc.web.services.IpscMatchCompetitorServiceTest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,16 +31,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for {@link MatchCompetitorServiceImpl}'s impl-only protected helper methods
+ * Unit tests for {@link IpscMatchCompetitorServiceImpl}'s impl-only protected helper methods
  * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code findMatchCompetitorOrThrow},
  * {@code findMatchOrThrow}, {@code resolveMatchClub}, {@code resolveCompetitorCategory},
  * {@code resolveFirearmType}, {@code resolveDivision}, {@code resolvePowerFactor}, {@code toResponse},
- * {@code validateForCreate}) - not declared on {@link za.co.hpsc.web.services.MatchCompetitorService}.
+ * {@code validateForCreate}) - not declared on {@link IpscMatchCompetitorService}.
  * The interface's create/update/patch/get/delete contract is covered by
- * {@link za.co.hpsc.web.services.MatchCompetitorServiceTest}.
+ * {@link IpscMatchCompetitorServiceTest}.
  */
 @ExtendWith(MockitoExtension.class)
-class MatchCompetitorServiceImplTest {
+class IpscMatchCompetitorServiceImplTest {
 
     @Mock
     private MatchCompetitorRepository matchCompetitorRepository;
@@ -50,7 +52,7 @@ class MatchCompetitorServiceImplTest {
     private IpscMatchRepository ipscMatchRepository;
 
     @InjectMocks
-    private MatchCompetitorServiceImpl matchCompetitorServiceImpl;
+    private IpscMatchCompetitorServiceImpl matchCompetitorServiceImpl;
 
     // applyFields()
     @Test

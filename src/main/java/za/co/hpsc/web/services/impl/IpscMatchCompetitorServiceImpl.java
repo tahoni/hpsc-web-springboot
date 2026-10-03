@@ -19,23 +19,23 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRespon
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.services.MatchCompetitorService;
+import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class MatchCompetitorServiceImpl implements MatchCompetitorService {
+public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorService {
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final CompetitorRepository competitorRepository;
     private final IpscMatchRepository ipscMatchRepository;
     private final TransactionService transactionService;
 
-    public MatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository,
-                                      CompetitorRepository competitorRepository,
-                                      IpscMatchRepository ipscMatchRepository,
-                                      TransactionService transactionService) {
+    public IpscMatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository,
+                                          CompetitorRepository competitorRepository,
+                                          IpscMatchRepository ipscMatchRepository,
+                                          TransactionService transactionService) {
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;

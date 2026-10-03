@@ -19,7 +19,7 @@ import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.services.MatchCompetitorService;
+import za.co.hpsc.web.services.IpscMatchCompetitorService;
 
 import java.util.List;
 
@@ -34,11 +34,11 @@ import java.util.List;
 @Controller
 @RequestMapping("/ipsc/match-competitors")
 @Tag(name = "IPSC Match Competitor", description = "IPSC Match Competitor API")
-public class MatchCompetitorController {
-    private final MatchCompetitorService matchCompetitorService;
+public class IpscMatchCompetitorController {
+    private final IpscMatchCompetitorService ipscMatchCompetitorService;
 
-    public MatchCompetitorController(MatchCompetitorService matchCompetitorService) {
-        this.matchCompetitorService = matchCompetitorService;
+    public IpscMatchCompetitorController(IpscMatchCompetitorService ipscMatchCompetitorService) {
+        this.ipscMatchCompetitorService = ipscMatchCompetitorService;
     }
 
     /**
@@ -67,7 +67,7 @@ public class MatchCompetitorController {
     })
     ResponseEntity<MatchCompetitorResponse> createMatchCompetitor(@RequestBody MatchCompetitorRequest request)
             throws ValidationException, NonFatalException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(matchCompetitorService.createMatchCompetitor(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchCompetitorService.createMatchCompetitor(request));
     }
 
     /**
@@ -104,7 +104,7 @@ public class MatchCompetitorController {
             @PathVariable Long matchCompetitorId,
             @RequestBody MatchCompetitorRequest request)
             throws ValidationException, NonFatalException {
-        return ResponseEntity.ok(matchCompetitorService.updateMatchCompetitor(matchCompetitorId, request));
+        return ResponseEntity.ok(ipscMatchCompetitorService.updateMatchCompetitor(matchCompetitorId, request));
     }
 
     /**
@@ -140,7 +140,7 @@ public class MatchCompetitorController {
             @PathVariable Long matchCompetitorId,
             @RequestBody MatchCompetitorPatchRequest request)
             throws ValidationException, NonFatalException {
-        return ResponseEntity.ok(matchCompetitorService.patchMatchCompetitor(matchCompetitorId, request));
+        return ResponseEntity.ok(ipscMatchCompetitorService.patchMatchCompetitor(matchCompetitorId, request));
     }
 
     /**
@@ -164,7 +164,7 @@ public class MatchCompetitorController {
             @Parameter(description = "Identifier of the match competitor to retrieve.")
             @PathVariable Long matchCompetitorId)
             throws NonFatalException {
-        return ResponseEntity.ok(matchCompetitorService.getMatchCompetitor(matchCompetitorId));
+        return ResponseEntity.ok(ipscMatchCompetitorService.getMatchCompetitor(matchCompetitorId));
     }
 
     /**
@@ -180,7 +180,7 @@ public class MatchCompetitorController {
                             array = @ArraySchema(schema = @Schema(implementation = MatchCompetitorResponse.class))))
     })
     ResponseEntity<List<MatchCompetitorResponse>> getAllMatchCompetitors() {
-        return ResponseEntity.ok(matchCompetitorService.getAllMatchCompetitors());
+        return ResponseEntity.ok(ipscMatchCompetitorService.getAllMatchCompetitors());
     }
 
     /**
@@ -208,7 +208,7 @@ public class MatchCompetitorController {
             @Parameter(description = "Identifier of the match competitor to delete.")
             @PathVariable Long matchCompetitorId)
             throws ValidationException, NonFatalException {
-        matchCompetitorService.deleteMatchCompetitor(matchCompetitorId);
+        ipscMatchCompetitorService.deleteMatchCompetitor(matchCompetitorId);
         return ResponseEntity.noContent().build();
     }
 }

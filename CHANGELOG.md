@@ -86,14 +86,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`isVerified` on competitors:** Optional field on `CompetitorRequest` (JSON and CSV `IsVerified` column),
   `CompetitorPatchRequest` (`null` leaves it unchanged) and `CompetitorResponse`
-- **`MatchCompetitorController`:** New `/ipsc/match-competitors` endpoints to create, replace (`PUT`), patch, get (one
+- **`IpscMatchCompetitorController`:** New `/ipsc/match-competitors` endpoints to create, replace (`PUT`), patch, get (one
   or all) and delete a competitor's entry in a match, with `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and
   `MatchCompetitorResponse`; a competitor can have one entry per match and firearm type, under one or more
   categories — `competitorCategory` is a list in all three
 
 ##### Services
 
-- **`MatchCompetitorService`:** New service behind the match competitor endpoints; validates required fields, resolves
+- **`IpscMatchCompetitorService`:** New service behind the match competitor endpoints; validates required fields, resolves
   the competitor, match and enumerated values, and refuses an entry that duplicates another for the same competitor,
   match and firearm type
 - **`TransactionService.saveMatchCompetitor`, `TransactionService.deleteMatchCompetitor`:** New transactional writes

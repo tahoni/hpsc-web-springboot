@@ -28,7 +28,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Spring-context integration test for {@link MatchCompetitorService} - exercised through the
+ * Spring-context integration test for {@link IpscMatchCompetitorService} - exercised through the
  * interface type, with a real Spring-wired {@code MatchCompetitorServiceImpl} bean backed by the
  * H2 {@code test} profile database.
  */
@@ -37,10 +37,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAutoConfiguration(excludeName = "org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration")
 @SpringBootTest
 @Transactional
-class MatchCompetitorServiceIntegrationTest {
+class IpscMatchCompetitorServiceIntegrationTest {
 
     @Autowired
-    private MatchCompetitorService matchCompetitorService;
+    private IpscMatchCompetitorService ipscMatchCompetitorService;
 
     @Autowired
     private CompetitorRepository competitorRepository;
@@ -59,7 +59,7 @@ class MatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.createMatchCompetitor(
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(
                 validRequest(competitor.getId(), match.getId()));
 
         // Assert
@@ -81,8 +81,8 @@ class MatchCompetitorServiceIntegrationTest {
         request.setCompetitorCategory(List.of("Junior", "Lady", "Junior"));
 
         // Act
-        MatchCompetitorResponse created = matchCompetitorService.createMatchCompetitor(request);
-        MatchCompetitorResponse fetched = matchCompetitorService.getMatchCompetitor(created.getMatchCompetitorId());
+        MatchCompetitorResponse created = ipscMatchCompetitorService.createMatchCompetitor(request);
+        MatchCompetitorResponse fetched = ipscMatchCompetitorService.getMatchCompetitor(created.getMatchCompetitorId());
 
         // Assert
         assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY), fetched.getCompetitorCategory());
@@ -95,7 +95,7 @@ class MatchCompetitorServiceIntegrationTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class,
-                () -> matchCompetitorService.createMatchCompetitor(validRequest(999_999L, match.getId())));
+                () -> ipscMatchCompetitorService.createMatchCompetitor(validRequest(999_999L, match.getId())));
     }
 
     @Test
@@ -103,11 +103,11 @@ class MatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-002");
         IpscMatch match = createMatch();
-        matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
+        ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
 
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId())));
+                () -> ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId())));
     }
 
     @Test
@@ -115,12 +115,12 @@ class MatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-003");
         IpscMatch match = createMatch();
-        matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
+        ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         MatchCompetitorRequest rifle = validRequest(competitor.getId(), match.getId());
         rifle.setFirearmType("Rifle");
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.createMatchCompetitor(rifle);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(rifle);
 
         // Assert
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
@@ -132,14 +132,14 @@ class MatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-004");
         IpscMatch match = createMatch();
-        Long id = matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
+        Long id = ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
                 .getMatchCompetitorId();
         MatchCompetitorRequest replacement = validRequest(competitor.getId(), match.getId());
         replacement.setDivision("Standard Division");
         replacement.setMatchPoints(new BigDecimal("12.5"));
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.updateMatchCompetitor(id, replacement);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.updateMatchCompetitor(id, replacement);
 
         // Assert
         assertEquals(id, response.getMatchCompetitorId());
@@ -154,7 +154,7 @@ class MatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.updateMatchCompetitor(
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.updateMatchCompetitor(
                 999_999L, validRequest(competitor.getId(), match.getId())));
     }
 
@@ -164,14 +164,14 @@ class MatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-006");
         IpscMatch match = createMatch();
-        Long id = matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
+        Long id = ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
                 .getMatchCompetitorId();
         MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
         patch.setIsVisitor(true);
         patch.setOverallRanking(new BigDecimal("7"));
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.patchMatchCompetitor(id, patch);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(id, patch);
 
         // Assert
         assertEquals(Boolean.TRUE, response.getIsVisitor());
@@ -186,11 +186,11 @@ class MatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-007");
         IpscMatch match = createMatch();
-        Long id = matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
+        Long id = ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
                 .getMatchCompetitorId();
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorService.getMatchCompetitor(id);
+        MatchCompetitorResponse response = ipscMatchCompetitorService.getMatchCompetitor(id);
 
         // Assert
         assertEquals(id, response.getMatchCompetitorId());
@@ -201,7 +201,7 @@ class MatchCompetitorServiceIntegrationTest {
     @Test
     void testGetMatchCompetitor_whenItDoesNotExist_thenThrowsNonFatalException() {
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.getMatchCompetitor(999_999L));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.getMatchCompetitor(999_999L));
     }
 
     @Test
@@ -209,11 +209,11 @@ class MatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-008");
         IpscMatch match = createMatch();
-        Long id = matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
+        Long id = ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
                 .getMatchCompetitorId();
 
         // Act & Assert
-        assertTrue(matchCompetitorService.getAllMatchCompetitors().stream()
+        assertTrue(ipscMatchCompetitorService.getAllMatchCompetitors().stream()
                 .anyMatch(response -> id.equals(response.getMatchCompetitorId())));
     }
 
@@ -223,11 +223,11 @@ class MatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-009");
         IpscMatch match = createMatch();
-        Long id = matchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
+        Long id = ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
                 .getMatchCompetitorId();
 
         // Act
-        matchCompetitorService.deleteMatchCompetitor(id);
+        ipscMatchCompetitorService.deleteMatchCompetitor(id);
 
         // Assert
         assertFalse(matchCompetitorRepository.existsById(id));
@@ -236,7 +236,7 @@ class MatchCompetitorServiceIntegrationTest {
     @Test
     void testDeleteMatchCompetitor_whenItDoesNotExist_thenThrowsNonFatalException() {
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorService.deleteMatchCompetitor(999_999L));
+        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.deleteMatchCompetitor(999_999L));
     }
 
     // Helpers
