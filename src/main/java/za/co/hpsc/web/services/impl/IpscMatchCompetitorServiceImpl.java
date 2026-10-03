@@ -129,7 +129,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         }
         if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isEmpty()) {
-            matchCompetitor.setCompetitorCategory(resolveCompetitorCategories(request.getCompetitorCategory()));
+            matchCompetitor.setCompetitorCategories(resolveCompetitorCategories(request.getCompetitorCategory()));
         }
         if ((request.getFirearmType() != null) && !request.getFirearmType().isBlank()) {
             matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
@@ -270,7 +270,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         matchCompetitor.setCompetitor(findCompetitorOrThrow(request.getCompetitorId()));
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
-        matchCompetitor.setCompetitorCategory(resolveCompetitorCategories(request.getCompetitorCategory()));
+        matchCompetitor.setCompetitorCategories(resolveCompetitorCategories(request.getCompetitorCategory()));
         matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
@@ -446,7 +446,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getCompetitor().getId(),
                 matchCompetitor.getMatch().getId(),
                 matchCompetitor.getMatchClub(),
-                new ArrayList<>(matchCompetitor.getCompetitorCategory()),
+                new ArrayList<>(matchCompetitor.getCompetitorCategories()),
                 matchCompetitor.getFirearmType(),
                 matchCompetitor.getDivision(),
                 matchCompetitor.getPowerFactor(),

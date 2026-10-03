@@ -85,7 +85,7 @@ class IpscMatchCompetitorServiceImplTest {
         assertSame(competitor, matchCompetitor.getCompetitor());
         assertSame(match, matchCompetitor.getMatch());
         assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
-        assertEquals(List.of(CompetitorCategory.LADY), matchCompetitor.getCompetitorCategory());
+        assertEquals(List.of(CompetitorCategory.LADY), matchCompetitor.getCompetitorCategories());
         assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
         assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
         assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
@@ -305,7 +305,7 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
         matchCompetitor.setMatchClub(ClubIdentifier.HPSC);
-        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.JUNIOR));
+        matchCompetitor.setCompetitorCategories(List.of(CompetitorCategory.JUNIOR));
         matchCompetitor.setFirearmType(FirearmType.RIFLE);
         matchCompetitor.setDivision(Division.OPEN);
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);

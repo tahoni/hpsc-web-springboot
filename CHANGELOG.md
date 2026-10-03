@@ -68,6 +68,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Domain
+
+- **`MatchCompetitor.competitorCategory`, `ShooterLogCompetitor.competitorCategory`:** Renamed to `competitorCategories` —
+  both hold a list of categories, so the plural name is clearer; the `competitor_category` column and the child
+  tables are unchanged, so no migration is needed
+
 ### 🧾 [9.1.0] - 2026-10-03
 
 #### ➕ Added

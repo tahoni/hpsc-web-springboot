@@ -786,7 +786,7 @@ public class IpscMatchCompetitorServiceTest {
         matchCompetitor.setId(id);
         matchCompetitor.setCompetitor(competitor(1L));
         matchCompetitor.setMatch(match(2L));
-        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.JUNIOR));
+        matchCompetitor.setCompetitorCategories(List.of(CompetitorCategory.JUNIOR));
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
         return matchCompetitor;

@@ -43,7 +43,7 @@ public class ShooterLogCompetitor {
             joinColumns = @JoinColumn(name = "shooter_log_competitor_id"))
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)
-    private List<CompetitorCategory> competitorCategory = new ArrayList<>();
+    private List<CompetitorCategory> competitorCategories = new ArrayList<>();
 
     @Convert(converter = DivisionConverter.class)
     @Column(name = "division", nullable = false)

@@ -248,7 +248,7 @@ class TransactionServiceIntegrationTest {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
-        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
+        matchCompetitor.setCompetitorCategories(List.of(CompetitorCategory.NONE));
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
         matchCompetitorRepository.save(matchCompetitor);

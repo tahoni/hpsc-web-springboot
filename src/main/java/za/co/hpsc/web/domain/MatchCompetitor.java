@@ -40,7 +40,7 @@ public class MatchCompetitor {
     @CollectionTable(name = "match_competitor_category", joinColumns = @JoinColumn(name = "match_competitor_id"))
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)
-    private List<CompetitorCategory> competitorCategory = new ArrayList<>();
+    private List<CompetitorCategory> competitorCategories = new ArrayList<>();
 
     @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "firearm_type")
