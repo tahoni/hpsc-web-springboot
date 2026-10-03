@@ -72,7 +72,7 @@ public class IpscMatchServiceTest {
     @BeforeEach
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
-                ipscMatchRepository, transactionManager);
+                ipscMatchRepository, matchCompetitorRepository, transactionManager);
         ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository, clubRepository,
                 matchCompetitorRepository, shooterLogRepository, shooterLogCompetitorRepository, transactionService);
     }

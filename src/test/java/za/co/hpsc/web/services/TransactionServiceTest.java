@@ -10,8 +10,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
 import java.util.List;
@@ -36,6 +38,9 @@ public class TransactionServiceTest {
     private IpscMatchRepository ipscMatchRepository;
 
     @Mock
+    private MatchCompetitorRepository matchCompetitorRepository;
+
+    @Mock
     private PlatformTransactionManager transactionManager;
 
     @Mock
@@ -46,7 +51,7 @@ public class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         transactionService = new TransactionServiceImpl(competitorRepository, ipscMatchRepository,
-                transactionManager);
+                matchCompetitorRepository, transactionManager);
     }
 
     // saveCompetitor()
@@ -184,6 +189,64 @@ public class TransactionServiceTest {
 
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class, () -> transactionService.deleteMatch(new IpscMatch()));
+        verify(transactionManager).rollback(transactionStatus);
+    }
+
+    // saveMatchCompetitor()
+    @Test
+    void testSaveMatchCompetitor_whenCalled_thenSavesAndCommits() {
+        // Arrange
+        stubTransaction();
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        when(matchCompetitorRepository.save(matchCompetitor)).thenReturn(matchCompetitor);
+
+        // Act
+        MatchCompetitor result = transactionService.saveMatchCompetitor(matchCompetitor);
+
+        // Assert
+        assertSame(matchCompetitor, result);
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testSaveMatchCompetitor_whenSaveFails_thenRollsBackAndRethrows() {
+        // Arrange
+        stubTransaction();
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        when(matchCompetitorRepository.save(matchCompetitor)).thenThrow(new DataIntegrityViolationException("duplicate"));
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.saveMatchCompetitor(matchCompetitor));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
+    // deleteMatchCompetitor()
+    @Test
+    void testDeleteMatchCompetitor_whenCalled_thenDeletesFlushesAndCommits() {
+        // Arrange
+        stubTransaction();
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        transactionService.deleteMatchCompetitor(matchCompetitor);
+
+        // Assert
+        verify(matchCompetitorRepository).delete(matchCompetitor);
+        verify(matchCompetitorRepository).flush();
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testDeleteMatchCompetitor_whenFlushFails_thenRollsBackAndRethrows() {
+        // Arrange
+        stubTransaction();
+        doThrow(new DataIntegrityViolationException("FK violation")).when(matchCompetitorRepository).flush();
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.deleteMatchCompetitor(new MatchCompetitor()));
         verify(transactionManager).rollback(transactionStatus);
     }
 

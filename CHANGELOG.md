@@ -86,9 +86,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`isVerified` on competitors:** Optional field on `CompetitorRequest` (JSON and CSV `IsVerified` column),
   `CompetitorPatchRequest` (`null` leaves it unchanged) and `CompetitorResponse`
+- **`MatchCompetitorController`:** New `/ipsc/match-competitors` endpoints to create, replace (`PUT`), patch, get (one
+  or all) and delete a competitor's entry in a match, with `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and
+  `MatchCompetitorResponse`; a competitor can have one entry per match and firearm type
+
+##### Services
+
+- **`MatchCompetitorService`:** New service behind the match competitor endpoints; validates required fields, resolves
+  the competitor, match and enumerated values, and refuses an entry that duplicates another for the same competitor,
+  match and firearm type
+- **`TransactionService.saveMatchCompetitor`, `TransactionService.deleteMatchCompetitor`:** New transactional writes
+  for match competitors; the delete flushes inside the transaction so a foreign-key violation is reported as a 400
 
 ##### Repositories
 
+- **`MatchCompetitorRepository`:** New `findByCompetitorIdAndMatchIdAndFirearmType`,
+  `findByIdWithCompetitorAndMatch` and `findAllWithCompetitorAndMatch` queries
 - **`ShooterLogOverallRepository`:** New repository for `ShooterLogOverall`, with `findAllByShooterLogId` and
   `existsByCompetitorId`
 - **`ShooterLogRepository.existsByMatchesId`:** New query — whether a match is linked to any shooter log through
@@ -105,6 +118,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `paid_up_club`, and sets it to `true` for every existing row
 
 #### 🔄 Changed
+
+##### Services
+
+- **`TransactionServiceImpl`:** Constructor now also takes a `MatchCompetitorRepository`
 
 ##### Domain
 
