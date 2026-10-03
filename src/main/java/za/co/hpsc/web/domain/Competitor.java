@@ -70,6 +70,9 @@ public class Competitor {
     @Column(name = "email_address")
     private List<String> emailAddresses = new ArrayList<>();
 
+    @Column(name = "is_verified")
+    private Boolean isVerified;
+
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
     private LocalDateTime dateCreated;

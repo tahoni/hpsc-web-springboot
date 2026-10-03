@@ -59,6 +59,8 @@ public class CompetitorRequest {
     private Boolean paidUpSapsa;
     /** Whether the competitor's club membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpClub;
+    /** Whether the competitor has been verified; stored as {@code null} when omitted. */
+    private Boolean isVerified;
     /** The competitor's email addresses, if any. */
     private List<String> emailAddresses = new ArrayList<>();
 
@@ -83,6 +85,7 @@ public class CompetitorRequest {
      *                         omitted.
      * @param paidUpClub       whether the competitor's club membership is paid up; stored as {@code null} when
      *                         omitted.
+     * @param isVerified       whether the competitor has been verified; stored as {@code null} when omitted.
      * @param emailAddresses   the competitor's email addresses, if any.
      */
     @JsonCreator
@@ -101,6 +104,7 @@ public class CompetitorRequest {
                              @JsonProperty("cellphoneNumber") String cellphoneNumber,
                              @JsonProperty("paidUpSapsa") Boolean paidUpSapsa,
                              @JsonProperty("paidUpClub") Boolean paidUpClub,
+                             @JsonProperty("isVerified") Boolean isVerified,
                              @JsonProperty("emailAddresses") List<String> emailAddresses) {
         this.competitorId = competitorId;
         this.firstName = firstName;
@@ -117,6 +121,7 @@ public class CompetitorRequest {
         this.cellphoneNumber = cellphoneNumber;
         this.paidUpSapsa = paidUpSapsa;
         this.paidUpClub = paidUpClub;
+        this.isVerified = isVerified;
 
         if (emailAddresses != null) {
             this.emailAddresses = emailAddresses;

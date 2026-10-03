@@ -54,6 +54,8 @@ public class CompetitorResponse {
     private Boolean paidUpSapsa;
     /** Whether the competitor's club membership is paid up. */
     private Boolean paidUpClub;
+    /** Whether the competitor has been verified. */
+    private Boolean isVerified;
     /** The competitor's email addresses, if any. */
     private List<String> emailAddresses;
 }

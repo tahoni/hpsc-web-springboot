@@ -20,7 +20,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false, true,
                 List.of("jane.doe@example.com"));
 
         // Act
@@ -43,6 +43,7 @@ class CompetitorRequestTest {
         assertEquals("0821234567", node.get("cellphoneNumber").asText());
         assertTrue(node.get("paidUpSapsa").asBoolean());
         assertFalse(node.get("paidUpClub").asBoolean());
+        assertTrue(node.get("isVerified").asBoolean());
         assertEquals(1, node.get("emailAddresses").size());
         assertEquals("jane.doe@example.com", node.get("emailAddresses").get(0).asText());
     }
@@ -53,7 +54,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false,
+                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", true, false, null,
                 List.of("jane.doe@example.com", "jane2.doe@example.com"));
 
         // Act
@@ -71,7 +72,7 @@ class CompetitorRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
-                null, "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null,
+                null, "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null, null,
                 null);
 
         // Act
@@ -88,6 +89,7 @@ class CompetitorRequestTest {
         assertTrue(node.get("competitorNumber").isNull());
         assertTrue(node.get("paidUpSapsa").isNull());
         assertTrue(node.get("paidUpClub").isNull());
+        assertTrue(node.get("isVerified").isNull());
     }
 
     // JSON deserialization
@@ -112,6 +114,7 @@ class CompetitorRequestTest {
                   "cellphoneNumber": "0821234567",
                   "paidUpSapsa": true,
                   "paidUpClub": false,
+                  "isVerified": true,
                   "emailAddresses": ["jane.doe@example.com"]
                 }
                 """;
@@ -135,6 +138,7 @@ class CompetitorRequestTest {
         assertEquals("0821234567", request.getCellphoneNumber());
         assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
         assertEquals(Boolean.FALSE, request.getPaidUpClub());
+        assertEquals(Boolean.TRUE, request.getIsVerified());
         assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
     }
 

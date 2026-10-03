@@ -79,6 +79,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   they were calculated, for overall log standings
 - **`ShooterLogOverall.shooterLog`, `ShooterLogOverall.competitor`:** Required links to the `ShooterLog` and `Competitor` a
   row belongs to; a competitor has one row per shooter log
+- **`Competitor.isVerified`:** New optional `Boolean` flag — whether the competitor has been verified; existing
+  competitors are backfilled to `true`
+
+##### API
+
+- **`isVerified` on competitors:** Optional field on `CompetitorRequest` (JSON and CSV `IsVerified` column),
+  `CompetitorPatchRequest` (`null` leaves it unchanged) and `CompetitorResponse`
 
 ##### Repositories
 
@@ -94,6 +101,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V8_0_1__add_shooter_log_competitor_category_and_division`:** Adds the `NOT NULL` `competitor_category` and
   `division` columns to `shooter_log_competitor`, after `match_id`; fails if the table already has rows
 - **`V8_2_0__create_shooter_log_overall`:** Creates the `shooter_log_overall` table behind `ShooterLogOverall`
+- **`V8_7_0__add_competitor_is_verified`:** Adds the nullable `is_verified` column to `competitor`, after
+  `paid_up_club`, and sets it to `true` for every existing row
 
 #### 🔄 Changed
 

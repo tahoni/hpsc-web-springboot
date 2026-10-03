@@ -148,6 +148,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getPaidUpClub() != null) {
             competitor.setPaidUpClub(request.getPaidUpClub());
         }
+        if (request.getIsVerified() != null) {
+            competitor.setIsVerified(request.getIsVerified());
+        }
         if (request.getEmailAddresses() != null) {
             competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
         }
@@ -277,13 +280,14 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 csvRow.getCellphoneNumber(),
                 csvRow.getPaidUpSapsa(),
                 csvRow.getPaidUpClub(),
+                csvRow.getIsVerified(),
                 new ArrayList<>(csvRow.getEmailAddresses()));
     }
 
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
      * gender and named home club in the process. An omitted {@code paidUpSapsa} or
-     * {@code paidUpClub} is stored as {@code null}.
+     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}.
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
@@ -308,6 +312,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setCellphoneNumber(request.getCellphoneNumber());
         competitor.setPaidUpSapsa(request.getPaidUpSapsa());
         competitor.setPaidUpClub(request.getPaidUpClub());
+        competitor.setIsVerified(request.getIsVerified());
         competitor.setEmailAddresses(
                 (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
     }
@@ -453,6 +458,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getCellphoneNumber(),
                 competitor.getPaidUpSapsa(),
                 competitor.getPaidUpClub(),
+                competitor.getIsVerified(),
                 competitor.getEmailAddresses());
     }
 }

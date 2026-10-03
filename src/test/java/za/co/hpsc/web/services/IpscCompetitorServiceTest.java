@@ -790,6 +790,7 @@ public class IpscCompetitorServiceTest {
         patch.setCellphoneNumber("0821234567");
         patch.setPaidUpSapsa(true);
         patch.setPaidUpClub(true);
+        patch.setIsVerified(true);
         patch.setEmailAddresses(List.of("jane@example.com"));
 
         // Act
@@ -806,6 +807,7 @@ public class IpscCompetitorServiceTest {
         assertEquals("0821234567", patched.getCellphoneNumber());
         assertEquals(Boolean.TRUE, patched.getPaidUpSapsa());
         assertEquals(Boolean.TRUE, patched.getPaidUpClub());
+        assertEquals(Boolean.TRUE, patched.getIsVerified());
         assertEquals(List.of("jane@example.com"), patched.getEmailAddresses());
     }
 

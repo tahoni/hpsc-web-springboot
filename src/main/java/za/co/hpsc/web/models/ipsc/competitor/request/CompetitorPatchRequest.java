@@ -58,6 +58,8 @@ public class CompetitorPatchRequest {
     private Boolean paidUpSapsa;
     /** Whether the competitor's club membership is paid up; may be null. */
     private Boolean paidUpClub;
+    /** Whether the competitor has been verified; may be null. */
+    private Boolean isVerified;
     /** The competitor's email addresses, replacing any existing ones; {@code null} leaves them unchanged. */
     private List<String> emailAddresses;
 }
