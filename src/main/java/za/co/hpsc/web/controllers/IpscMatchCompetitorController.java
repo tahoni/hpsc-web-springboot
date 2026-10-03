@@ -110,7 +110,7 @@ public class IpscMatchCompetitorController {
                     content = @Content(mediaType = "text/csv",
                             schema = @Schema(implementation = String.class),
                             examples = @ExampleObject("""
-                                    CompetitorId,MatchId,MatchClub,CompetitorCategory,FirearmType,Division,PowerFactor,MatchPoints,OverallRanking,ClubRanking,IsVisitor
+                                    CompetitorId,MatchId,MatchClub,CompetitorCategory,FirearmType,Division,PowerFactor,Points,OverallRanking,ClubRanking,IsVisitor
                                     0,0,string,string;string,string,string,string,0,0,0,false
                                     """)))
             @RequestBody String csvData)

@@ -23,7 +23,7 @@ class MatchCompetitorPatchRequestTest {
         assertNull(request.getFirearmType());
         assertNull(request.getDivision());
         assertNull(request.getPowerFactor());
-        assertNull(request.getMatchPoints());
+        assertNull(request.getPoints());
         assertNull(request.getOverallRanking());
         assertNull(request.getClubRanking());
         assertNull(request.getIsVisitor());
@@ -52,7 +52,7 @@ class MatchCompetitorPatchRequestTest {
                   "firearmType": "Handgun",
                   "division": "Open Division",
                   "powerFactor": "Major",
-                  "matchPoints": 95.5,
+                  "points": 95.5,
                   "overallRanking": 2,
                   "clubRanking": 1,
                   "isVisitor": true
@@ -70,7 +70,7 @@ class MatchCompetitorPatchRequestTest {
         assertEquals("Handgun", request.getFirearmType());
         assertEquals("Open Division", request.getDivision());
         assertEquals("Major", request.getPowerFactor());
-        assertEquals(0, new BigDecimal("95.5").compareTo(request.getMatchPoints()));
+        assertEquals(0, new BigDecimal("95.5").compareTo(request.getPoints()));
         assertEquals(0, new BigDecimal("2").compareTo(request.getOverallRanking()));
         assertEquals(0, new BigDecimal("1").compareTo(request.getClubRanking()));
         assertEquals(Boolean.TRUE, request.getIsVisitor());

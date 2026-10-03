@@ -140,8 +140,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getPowerFactor() != null) {
             matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
         }
-        if (request.getMatchPoints() != null) {
-            matchCompetitor.setMatchPoints(request.getMatchPoints());
+        if (request.getPoints() != null) {
+            matchCompetitor.setPoints(request.getPoints());
         }
         if (request.getOverallRanking() != null) {
             matchCompetitor.setOverallRanking(request.getOverallRanking());
@@ -274,7 +274,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
-        matchCompetitor.setMatchPoints(request.getMatchPoints());
+        matchCompetitor.setPoints(request.getPoints());
         matchCompetitor.setOverallRanking(request.getOverallRanking());
         matchCompetitor.setClubRanking(request.getClubRanking());
         matchCompetitor.setIsVisitor(request.getIsVisitor());
@@ -450,7 +450,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getFirearmType(),
                 matchCompetitor.getDivision(),
                 matchCompetitor.getPowerFactor(),
-                matchCompetitor.getMatchPoints(),
+                matchCompetitor.getPoints(),
                 matchCompetitor.getOverallRanking(),
                 matchCompetitor.getClubRanking(),
                 matchCompetitor.getIsVisitor());

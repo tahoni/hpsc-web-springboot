@@ -37,7 +37,7 @@ public class MatchCompetitorPatchRequest {
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. May be null. */
     private String powerFactor;
     /** The competitor's match points; may be null. */
-    private BigDecimal matchPoints;
+    private BigDecimal points;
     /** The competitor's overall ranking in the match; may be null. */
     private BigDecimal overallRanking;
     /** The competitor's ranking among their club's competitors in the match; may be null. */

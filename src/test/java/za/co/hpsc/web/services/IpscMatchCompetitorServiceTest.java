@@ -245,7 +245,7 @@ public class IpscMatchCompetitorServiceTest {
         assertEquals(FirearmType.HANDGUN, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
         assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
-        assertEquals(new BigDecimal("95.5"), response.getMatchPoints());
+        assertEquals(new BigDecimal("95.5"), response.getPoints());
         assertEquals(new BigDecimal("2"), response.getOverallRanking());
         assertEquals(new BigDecimal("1"), response.getClubRanking());
         assertEquals(Boolean.FALSE, response.getIsVisitor());
@@ -269,7 +269,7 @@ public class IpscMatchCompetitorServiceTest {
         // Assert
         assertNull(response.getMatchClub());
         assertNull(response.getPowerFactor());
-        assertNull(response.getMatchPoints());
+        assertNull(response.getPoints());
         assertNull(response.getOverallRanking());
         assertNull(response.getClubRanking());
         assertNull(response.getIsVisitor());
@@ -442,7 +442,7 @@ public class IpscMatchCompetitorServiceTest {
         stubCompetitorAndMatch();
         MatchCompetitor existing = matchCompetitor(5L);
         existing.setDivision(Division.STANDARD);
-        existing.setMatchPoints(new BigDecimal("1"));
+        existing.setPoints(new BigDecimal("1"));
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
         when(matchCompetitorRepository.save(existing)).thenReturn(existing);
 
@@ -452,7 +452,7 @@ public class IpscMatchCompetitorServiceTest {
         // Assert
         assertEquals(5L, response.getMatchCompetitorId());
         assertEquals(Division.OPEN, response.getDivision());
-        assertEquals(new BigDecimal("95.5"), response.getMatchPoints());
+        assertEquals(new BigDecimal("95.5"), response.getPoints());
     }
 
     @Test
@@ -497,7 +497,7 @@ public class IpscMatchCompetitorServiceTest {
     void testPatchMatchCompetitor_whenAllFieldsAreNull_thenLeavesEverythingUnchanged() {
         // Arrange
         MatchCompetitor existing = matchCompetitor(5L);
-        existing.setMatchPoints(new BigDecimal("80"));
+        existing.setPoints(new BigDecimal("80"));
         existing.setIsVisitor(true);
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
         when(matchCompetitorRepository.save(existing)).thenReturn(existing);
@@ -508,7 +508,7 @@ public class IpscMatchCompetitorServiceTest {
 
         // Assert
         assertEquals(Division.OPEN, response.getDivision());
-        assertEquals(new BigDecimal("80"), response.getMatchPoints());
+        assertEquals(new BigDecimal("80"), response.getPoints());
         assertEquals(Boolean.TRUE, response.getIsVisitor());
     }
 
@@ -559,7 +559,7 @@ public class IpscMatchCompetitorServiceTest {
         patch.setCompetitorCategory(List.of("Senior"));
         patch.setDivision("Standard Division");
         patch.setPowerFactor("Minor");
-        patch.setMatchPoints(new BigDecimal("70"));
+        patch.setPoints(new BigDecimal("70"));
         patch.setOverallRanking(new BigDecimal("4"));
         patch.setClubRanking(new BigDecimal("3"));
         patch.setIsVisitor(true);
@@ -572,7 +572,7 @@ public class IpscMatchCompetitorServiceTest {
         assertEquals(List.of(CompetitorCategory.SENIOR), response.getCompetitorCategory());
         assertEquals(Division.STANDARD, response.getDivision());
         assertEquals(PowerFactor.MINOR, response.getPowerFactor());
-        assertEquals(new BigDecimal("70"), response.getMatchPoints());
+        assertEquals(new BigDecimal("70"), response.getPoints());
         assertEquals(new BigDecimal("4"), response.getOverallRanking());
         assertEquals(new BigDecimal("3"), response.getClubRanking());
         assertEquals(Boolean.TRUE, response.getIsVisitor());
@@ -762,7 +762,7 @@ public class IpscMatchCompetitorServiceTest {
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
         request.setPowerFactor("Major");
-        request.setMatchPoints(new BigDecimal("95.5"));
+        request.setPoints(new BigDecimal("95.5"));
         request.setOverallRanking(new BigDecimal("2"));
         request.setClubRanking(new BigDecimal("1"));
         request.setIsVisitor(false);

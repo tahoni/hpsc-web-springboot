@@ -30,7 +30,7 @@ public abstract class MatchCompetitorRequestCsvMixIn {
                                    @JsonProperty("FirearmType") String firearmType,
                                    @JsonProperty(value = "Division", required = true) String division,
                                    @JsonProperty("PowerFactor") String powerFactor,
-                                   @JsonProperty("MatchPoints") BigDecimal matchPoints,
+                                   @JsonProperty("Points") BigDecimal points,
                                    @JsonProperty("OverallRanking") BigDecimal overallRanking,
                                    @JsonProperty("ClubRanking") BigDecimal clubRanking,
                                    @JsonProperty("IsVisitor") Boolean isVisitor) {

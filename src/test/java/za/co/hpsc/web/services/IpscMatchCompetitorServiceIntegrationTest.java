@@ -193,7 +193,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 .getMatchCompetitorId();
         MatchCompetitorRequest replacement = validRequest(competitor.getId(), match.getId());
         replacement.setDivision("Standard Division");
-        replacement.setMatchPoints(new BigDecimal("12.5"));
+        replacement.setPoints(new BigDecimal("12.5"));
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.updateMatchCompetitor(id, replacement);
@@ -201,7 +201,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         // Assert
         assertEquals(id, response.getMatchCompetitorId());
         assertEquals(Division.STANDARD, response.getDivision());
-        assertEquals(0, new BigDecimal("12.5").compareTo(response.getMatchPoints()));
+        assertEquals(0, new BigDecimal("12.5").compareTo(response.getPoints()));
     }
 
     @Test

@@ -54,8 +54,8 @@ public class MatchCompetitor {
     @Column(name = "power_factor")
     private PowerFactor powerFactor;
 
-    @Column(name = "match_points", precision = 19, scale = 6)
-    private BigDecimal matchPoints;
+    @Column(name = "points", precision = 19, scale = 6)
+    private BigDecimal points;
 
     @Column(name = "overall_ranking", precision = 19, scale = 6)
     private BigDecimal overallRanking;

@@ -72,9 +72,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Domain
 
+- **`MatchCompetitor.matchPoints`:** Renamed to `points` — the `match_points` column is renamed to `points` by
+  `V10_0_0__rename_match_competitor_match_points_to_points.sql`, keeping its type and values
 - **`MatchCompetitor.competitorCategory`, `ShooterLogCompetitor.competitorCategory`:** Renamed to `competitorCategories` —
   both hold a list of categories, so the plural name is clearer; the `competitor_category` column and the child
   tables are unchanged, so no migration is needed
+
+##### API
+
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** **Breaking:**
+  `matchPoints` renamed to `points` in the JSON contract, and the `MatchPoints` CSV column to `Points` — existing
+  callers and import files must use the new names
 
 ### 🧾 [9.1.0] - 2026-10-03
 

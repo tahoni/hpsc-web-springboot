@@ -46,7 +46,7 @@ public class MatchCompetitorRequest {
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. */
     private String powerFactor;
     /** The competitor's match points. */
-    private BigDecimal matchPoints;
+    private BigDecimal points;
     /** The competitor's overall ranking in the match. */
     private BigDecimal overallRanking;
     /** The competitor's ranking among their club's competitors in the match. */
@@ -71,7 +71,7 @@ public class MatchCompetitorRequest {
      *                           {@link za.co.hpsc.web.enums.Division} by name. Must not be null or blank.
      * @param powerFactor        the competitor's power factor; resolved against
      *                           {@link za.co.hpsc.web.enums.PowerFactor} by name.
-     * @param matchPoints        the competitor's match points.
+     * @param points             the competitor's match points.
      * @param overallRanking     the competitor's overall ranking in the match.
      * @param clubRanking        the competitor's ranking among their club's competitors in the match.
      * @param isVisitor          whether the competitor was a visitor at the match; stored as {@code null} when
@@ -87,7 +87,7 @@ public class MatchCompetitorRequest {
                                   @JsonProperty("firearmType") String firearmType,
                                   @JsonProperty(value = "division", required = true) String division,
                                   @JsonProperty("powerFactor") String powerFactor,
-                                  @JsonProperty("matchPoints") BigDecimal matchPoints,
+                                  @JsonProperty("points") BigDecimal points,
                                   @JsonProperty("overallRanking") BigDecimal overallRanking,
                                   @JsonProperty("clubRanking") BigDecimal clubRanking,
                                   @JsonProperty("isVisitor") Boolean isVisitor) {
@@ -99,7 +99,7 @@ public class MatchCompetitorRequest {
         this.firearmType = firearmType;
         this.division = division;
         this.powerFactor = powerFactor;
-        this.matchPoints = matchPoints;
+        this.points = points;
         this.overallRanking = overallRanking;
         this.clubRanking = clubRanking;
         this.isVisitor = isVisitor;

@@ -35,7 +35,7 @@ class MatchCompetitorRequestTest {
         assertEquals("Handgun", node.get("firearmType").asText());
         assertEquals("Open Division", node.get("division").asText());
         assertEquals("Major", node.get("powerFactor").asText());
-        assertEquals(0, new BigDecimal("95.5").compareTo(node.get("matchPoints").decimalValue()));
+        assertEquals(0, new BigDecimal("95.5").compareTo(node.get("points").decimalValue()));
         assertEquals(2, node.get("overallRanking").asInt());
         assertEquals(1, node.get("clubRanking").asInt());
         assertFalse(node.get("isVisitor").asBoolean());
@@ -60,7 +60,7 @@ class MatchCompetitorRequestTest {
         assertTrue(node.get("matchClub").isNull());
         assertTrue(node.get("firearmType").isNull());
         assertTrue(node.get("powerFactor").isNull());
-        assertTrue(node.get("matchPoints").isNull());
+        assertTrue(node.get("points").isNull());
         assertTrue(node.get("overallRanking").isNull());
         assertTrue(node.get("clubRanking").isNull());
         assertTrue(node.get("isVisitor").isNull());
@@ -80,7 +80,7 @@ class MatchCompetitorRequestTest {
                   "firearmType": "Handgun",
                   "division": "Open Division",
                   "powerFactor": "Major",
-                  "matchPoints": 95.5,
+                  "points": 95.5,
                   "overallRanking": 2,
                   "clubRanking": 1,
                   "isVisitor": false
@@ -99,7 +99,7 @@ class MatchCompetitorRequestTest {
         assertEquals("Handgun", request.getFirearmType());
         assertEquals("Open Division", request.getDivision());
         assertEquals("Major", request.getPowerFactor());
-        assertEquals(0, new BigDecimal("95.5").compareTo(request.getMatchPoints()));
+        assertEquals(0, new BigDecimal("95.5").compareTo(request.getPoints()));
         assertEquals(0, new BigDecimal("2").compareTo(request.getOverallRanking()));
         assertEquals(0, new BigDecimal("1").compareTo(request.getClubRanking()));
         assertEquals(Boolean.FALSE, request.getIsVisitor());
@@ -125,7 +125,7 @@ class MatchCompetitorRequestTest {
         assertNull(request.getMatchCompetitorId());
         assertNull(request.getMatchClub());
         assertNull(request.getPowerFactor());
-        assertNull(request.getMatchPoints());
+        assertNull(request.getPoints());
         assertNull(request.getOverallRanking());
         assertNull(request.getClubRanking());
         assertNull(request.getIsVisitor());

@@ -45,7 +45,7 @@ public class MatchCompetitorResponse {
     /** The competitor's power factor, if any. */
     private PowerFactor powerFactor;
     /** The competitor's match points, if any. */
-    private BigDecimal matchPoints;
+    private BigDecimal points;
     /** The competitor's overall ranking in the match, if any. */
     private BigDecimal overallRanking;
     /** The competitor's ranking among their club's competitors in the match, if any. */

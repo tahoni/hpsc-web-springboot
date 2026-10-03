@@ -72,7 +72,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setFirearmType("PCC");
         request.setDivision("Production Division");
         request.setPowerFactor("Minor");
-        request.setMatchPoints(new BigDecimal("50"));
+        request.setPoints(new BigDecimal("50"));
         request.setOverallRanking(new BigDecimal("3"));
         request.setClubRanking(new BigDecimal("2"));
         request.setIsVisitor(true);
@@ -89,7 +89,7 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
         assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
         assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
-        assertEquals(new BigDecimal("50"), matchCompetitor.getMatchPoints());
+        assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
         assertEquals(new BigDecimal("3"), matchCompetitor.getOverallRanking());
         assertEquals(new BigDecimal("2"), matchCompetitor.getClubRanking());
         assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
@@ -309,7 +309,7 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setFirearmType(FirearmType.RIFLE);
         matchCompetitor.setDivision(Division.OPEN);
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
-        matchCompetitor.setMatchPoints(new BigDecimal("10"));
+        matchCompetitor.setPoints(new BigDecimal("10"));
         matchCompetitor.setOverallRanking(new BigDecimal("2"));
         matchCompetitor.setClubRanking(new BigDecimal("1"));
         matchCompetitor.setIsVisitor(false);
@@ -326,7 +326,7 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
         assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
-        assertEquals(new BigDecimal("10"), response.getMatchPoints());
+        assertEquals(new BigDecimal("10"), response.getPoints());
         assertEquals(new BigDecimal("2"), response.getOverallRanking());
         assertEquals(new BigDecimal("1"), response.getClubRanking());
         assertEquals(Boolean.FALSE, response.getIsVisitor());
