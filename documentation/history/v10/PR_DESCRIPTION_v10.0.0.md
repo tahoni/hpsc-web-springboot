@@ -35,8 +35,7 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw test` — 1,101 tests, no failures, errors or skips
-- [ ] `./mvnw verify -Pcoverage` — **to be run** on the release branch before merging
+- [x] `./mvnw verify -Pcoverage` — 1,068 tests, no failures, errors or skips; coverage gate met (98.6% of branches)
 - [x] Flyway migrations applied cleanly to an empty MySQL 8.4 database, `V7_0_0` through `V10_3_0` (25 migrations)
 - [ ] Qodana, CodeQL and Docker workflows pass on this PR
 - [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v10/RELEASE_NOTES_v10.0.0.md`

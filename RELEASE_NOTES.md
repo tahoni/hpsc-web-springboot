@@ -155,8 +155,8 @@ returns to a single value. Three of these changes break existing callers — see
 
 ## 🧪 Testing
 
-- `./mvnw test` passes: 1,101 tests, with no failures, errors or skips.
-- `./mvnw verify -Pcoverage` has **not yet been run** for this release; run it on the release branch before merging.
+- `./mvnw verify -Pcoverage` passes: 1,068 tests with no failures, errors or skips, and the coverage gate is met —
+  98.6% of branches (428 of 434), 98.2% of lines and 98.3% of instructions.
 - The migrations were run against an empty MySQL 8.4 database through the Flyway Maven plugin: all 25 applied.
 - Updated controller, service, implementation, integration and request-model tests cover the renamed fields, the
   single category, the competitor lookup by number and name, and the overall-score fields.
