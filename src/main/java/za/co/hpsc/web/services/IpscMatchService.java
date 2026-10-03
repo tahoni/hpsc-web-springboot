@@ -87,13 +87,18 @@ public interface IpscMatchService {
      *
      * @param matchId the identifier of the match to update.
      * @param request the fields to change. Must not be null; any field left {@code null} is
-     *                left unchanged.
+     *                left unchanged. A supplied but blank {@code club} resets the match's club
+     *                to {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
+     *                rather than being rejected. A supplied {@code matchDate} sets the match's
+     *                scheduled date to the start of that day.
      * @return the updated match.
-     * @throws ValidationException if the named club is blank, or the firearm type/category
-     *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
+     * @throws ValidationException if the firearm type/category doesn't match a known
+     *                             {@link za.co.hpsc.web.enums.FirearmType}/
      *                             {@link za.co.hpsc.web.enums.MatchCategory}.
-     * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
-     *                             cannot be found.
+     * @throws NonFatalException   if no match with {@code matchId} exists, the named club
+     *                             cannot be found, or the request's {@code club} is blank and no
+     *                             club exists for
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      * @throws FatalException      if the request's {@code club} is blank and
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
