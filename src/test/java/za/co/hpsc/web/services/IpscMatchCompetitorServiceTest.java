@@ -564,6 +564,42 @@ public class IpscMatchCompetitorServiceTest {
     }
 
     @Test
+    void testPatchMatchCompetitor_whenOverallScoresAreProvided_thenTheyAreCopiedOntoTheEntry() {
+        // Arrange
+        MatchCompetitor existing = matchCompetitor(5L);
+        when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
+        when(matchCompetitorRepository.save(existing)).thenReturn(existing);
+        MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
+        patch.setPercentage(new BigDecimal("98.25"));
+        patch.setTime(new BigDecimal("41.5"));
+        patch.setPercentageOfPossiblePoints(new BigDecimal("93.75"));
+        patch.setAlpha(40);
+        patch.setCharlie(5);
+        patch.setDelta(1);
+        patch.setMisses(2);
+        patch.setNoPenaltyMisses(1);
+        patch.setNoShoots(1);
+        patch.setProceduralErrors(3);
+        patch.setAdditionalPenalties(4);
+
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(5L, patch);
+
+        // Assert
+        assertEquals(new BigDecimal("98.25"), response.getPercentage());
+        assertEquals(new BigDecimal("41.5"), response.getTime());
+        assertEquals(new BigDecimal("93.75"), response.getPercentageOfPossiblePoints());
+        assertEquals(40, response.getAlpha());
+        assertEquals(5, response.getCharlie());
+        assertEquals(1, response.getDelta());
+        assertEquals(2, response.getMisses());
+        assertEquals(1, response.getNoPenaltyMisses());
+        assertEquals(1, response.getNoShoots());
+        assertEquals(3, response.getProceduralErrors());
+        assertEquals(4, response.getAdditionalPenalties());
+    }
+
+    @Test
     void testPatchMatchCompetitor_whenCompetitorIdChanges_thenResolvesNewCompetitor() {
         // Arrange
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(matchCompetitor(5L)));
