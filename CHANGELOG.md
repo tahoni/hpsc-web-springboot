@@ -52,9 +52,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Domain
 
 - **`MatchCompetitor` overall scores:** New optional columns after `points` — `percentage`, `time`,
-  `percentage_of_possible_points`, `hit_factor`, the `alpha`, `charlie` and `delta` hit counts, `misses`,
+  `percentage_of_possible_points`, the `alpha`, `charlie` and `delta` hit counts, `misses`,
   `no_penalty_misses`, `no_shoots`, `procedural_errors` and `additional_penalties`, added by
-  `V10_1_0__add_match_competitor_overall_scores.sql`
+  `V10_1_0__add_match_competitor_overall_scores.sql` (which also created a `hit_factor` column that
+  `V10_3_0__remove_match_competitor_hit_factor.sql` drops again, so none remains)
 
 ##### API
 
@@ -64,23 +65,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   case-insensitively; `competitorId` wins over the number, and the number over the name, and a number or name that
   matches no competitor, or more than one, is refused
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** New optional overall-score
-  fields — `percentage`, `time`, `percentageOfPossiblePoints`, `hitFactor`, `alpha`, `charlie`, `delta`, `misses`,
-  `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns named as in a PractiScore export — `%`, `Time`,
-  `% psbl`, `HitFactor`, `A`, `C`, `D`, `M`, `NPM`, `NS`, `Proc` and `Apen`), carried
+  fields — `percentage`, `time`, `percentageOfPossiblePoints`, `alpha`, `charlie`, `delta`, `misses`,
+  `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns named as in a PractiScore
+  export — `%`, `Time`, `% psbl`, `A`, `C`, `D`, `M`, `NPM`, `NS`, `Proc` and `Apen`), carried
   through `IpscMatchCompetitorServiceImpl` to and from `MatchCompetitor`
 
+##### Repositories
+
+- **`CompetitorRepository.findByCompetitorNumber`, `CompetitorRepository.findByFullNameIgnoreCase`:** New finders —
+  the first matches `Competitor.competitorNumber` exactly, the second the competitor's "First Last" full name,
+  ignoring case; both return a list so a match on several competitors can be refused
+
 #### 🗑️ Removed
-
-##### Domain
-
-- **`MatchCompetitor.hitFactor`:** Removed, with the `hit_factor` column, by
-  `V10_3_0__remove_match_competitor_hit_factor.sql`
-
-##### API
-
-- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`,
-  `MatchCompetitorRequestCsvMixIn`:** `hitFactor` (CSV `HitFactor`) removed — it never shipped, so no released caller
-  is affected
 
 ##### Models
 
@@ -122,8 +118,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   than a list — a JSON string instead of an array, and one value per CSV cell instead of a `;`-separated list;
   `IpscMatchCompetitorServiceImpl` no longer resolves several categories
 - **`MatchCompetitorRequest`, `MatchCompetitorRequestCsvMixIn`:** `competitorId` (CSV `CompetitorId`) is no longer
-  required — a request must carry it, a `competitorNumber` or a `name`, which `IpscMatchCompetitorServiceImpl` resolves through
-  `CompetitorRepository.findByFullNameIgnoreCase`
+  required — a request must carry it, a `competitorNumber` or a `name`, which `IpscMatchCompetitorServiceImpl`
+  resolves through `CompetitorRepository.findByFullNameIgnoreCase`
+- **`IpscMatchCompetitorController`:** The CSV import's Swagger example now shows the new PractiScore-style headers,
+  including `Name`, `Mem #` and the overall-score columns
 
 ### 🧾 [9.1.0] - 2026-10-03
 
