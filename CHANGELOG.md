@@ -124,15 +124,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`TransactionServiceImpl`:** Constructor now also takes a `MatchCompetitorRepository`
 - **`IpscMatchService.patchMatch`:** Takes a `MatchRequest` instead of a `MatchPatchRequest`; the unused
   `MatchPatchRequest` is removed
-- **`IpscMatchServiceImpl.patchMatch`:** Rejects a supplied but blank club or match name with a validation error, rather
-  than resolving a blank club to the default match club
-- **`IpscMatchServiceImpl.deleteMatch`:** Also refuses a match that is linked to a shooter log through
-  `shooter_log_match`, using the new `ShooterLogRepository.existsByMatchesId`, as well as one with shooter log
-  competitors
-- **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
-  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own, and
-  also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall
-  shooter log row, is refused deletion
 
 ##### Domain
 
@@ -147,11 +138,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `logValue` and `calculatedDate` fields are removed, and `startDate` and `endDate` are added. `matches` is a new
   many-to-many link to `IpscMatch` through `shooter_log_match`: a shooter log covers many matches and a match can be in
   many shooter logs
-
-##### Repositories
-
-- **`ShooterLogCompetitorRepository`:** `existsByMatchId` is replaced by `existsByMatchCompetitorMatchId`, since a
-  shooter log competitor no longer links to a match directly, and `existsByCompetitorId` is new
 
 ##### Database
 
@@ -170,12 +156,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `shooter_log_overall`; both tables become unique per shooter log and competitor (replacing
   `shooter_log_competitor`'s unique key on shooter log and match competitor). Fails if either table already has rows
 
-#### 🗑️ Removed
+##### Services
 
-##### Repositories
-
-- **`ShooterLogRepository.findAllByCompetitorIdAndFirearmTypeAndPowerFactor`, `ShooterLogRepository.existsByCompetitorId`:**
-  Removed along with the `ShooterLog` fields they queried, now that a shooter log is a date range of matches
+- **`IpscMatchServiceImpl.deleteMatch`:** Also refuses a match that is linked to a shooter log through
+  `shooter_log_match`, using the new `ShooterLogRepository.existsByMatchesId`, as well as one with shooter log
+  competitors
+- **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
+  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own, and
+  also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall
+  shooter log row, is refused deletion
 
 ### 🧾 [9.0.0] - 2026-10-01
 
@@ -1507,7 +1496,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceImplTest`, `IpscMatchServiceTest`, `IpscMatchServiceIntegrationTest`:** `whenClubIsBlank`/
   `whenClubIsMissing` cases that previously asserted `ValidationException` now assert the club defaults to
   `IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER`, matching the behaviour change above; new cases cover
-  `resolveClubAndThrow`/`createMatch` throwing `NonFatalException` when even the default club is missing
+  `resolveClub`/`createMatch` throwing `NonFatalException` when even the default club is missing
 - **`IpscMatchServiceImplTest`, `IpscMatchServiceIntegrationTest`, `IpscMatchControllerTest`:** Test methods that
   call `createMatch`/`updateMatch`/`patchMatch`/`applyFields` directly (as fixture setup or the method under
   test) now declare/wrap for the new checked `FatalException`, matching the production signature changes above;
@@ -2044,7 +2033,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   from the H2-backed Spring context for faster, focused coverage
 - **`IpscMatchServiceImplTest`, `IpscCompetitorServiceImplTest`:** New Mockito-based unit tests for
   `IpscMatchServiceImpl`'s/`IpscCompetitorServiceImpl`'s impl-only protected helper methods (`applyFields`,
-  `resolveClubAndThrow`/`resolveHomeClub`, `resolveFirearmTypeAndThrow`/`resolveGender`, `resolveMatchCategoryAndThrow`, `toResponse`,
+  `resolveClub`/`resolveHomeClub`, `resolveFirearmType`/`resolveGender`, `resolveMatchCategory`, `toResponse`,
   `validateForCreate`, plus `findMatchOrThrow`/`findCompetitorOrThrow` and, for matches,
   `replaceStages`/`upsertStages`) — not declared on the `IpscMatchService`/`IpscCompetitorService` interfaces, so not
   covered by `IpscMatchServiceTest`/`IpscCompetitorServiceTest`, matching the existing
