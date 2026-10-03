@@ -141,6 +141,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscMatchCompetitorControllerTest`, `IpscMatchCompetitorServiceTest`, `IpscMatchCompetitorServiceImplTest`,
   `IpscMatchCompetitorServiceIntegrationTest`:** New tests for the match competitor controller and service
+- **`TransactionServiceTest`:** New tests for `saveMatchCompetitors`, committing the batch in one transaction and
+  rolling it back when the flush fails
 - **`MatchCompetitorRequestTest`, `MatchCompetitorPatchRequestTest`:** New tests for the match competitor request
   models — JSON serialization and deserialization, including each required field being rejected when missing
 - **`MatchCompetitorRequestCsvMixInTest`:** New tests for the match competitor CSV mix-in
