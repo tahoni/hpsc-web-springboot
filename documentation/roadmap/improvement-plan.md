@@ -1028,7 +1028,10 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 entry in a match, over `MatchCompetitorRepository` and the new `TransactionService` match competitor writes, with
 Mockito controller tests, mocked-repository service tests and `@SpringBootTest` integration tests. The shooter-log half
 is not: `ShooterLog`, `ShooterLogCompetitor` and the new `ShooterLogOverall` entities and their repositories were
-reworked, but no `ShooterLogService` or controller operates on them yet. The gap closes once a shooter-log service and
+reworked, but no `ShooterLogService` or controller operates on them yet. Unreleased work on `feature/extend-columns`
+deepens the match-competitor half without finishing the gap: a request can identify its competitor by number or name,
+`MatchCompetitor` carries the PractiScore-style overall-score columns, and the unused `MatchOverallScoresRequest`/
+`MatchStageScoresRequest` DTOs quoted in the Evidence above are deleted. The gap closes once a shooter-log service and
 controller exist, and the docs drop their "still being built" language.
 
 #### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
