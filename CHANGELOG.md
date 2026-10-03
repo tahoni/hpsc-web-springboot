@@ -73,8 +73,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`ShooterLogCompetitor.dateCalculated`:** New nullable `LocalDateTime` column — records when a row's rank and
   points were calculated, separately from `dateCreated` and `dateUpdated`
-- **`ShooterLogCompetitor.competitorCategory`, `ShooterLogCompetitor.division`:** New required columns — each row now
-  records the competitor's category and division
+- **`ShooterLogCompetitor.competitorCategory`, `ShooterLogCompetitor.division`:** New required fields — each row now
+  records the competitor's categories, a list held in the `shooter_log_competitor_category` table, and their division
 - **`ShooterLogOverall`:** New entity holding a rank and points per competitor category and division, with the date
   they were calculated, for overall log standings
 - **`ShooterLogOverall.shooterLog`, `ShooterLogOverall.competitor`:** Required links to the `ShooterLog` and `Competitor` a
@@ -113,7 +113,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V8_0_0__add_shooter_log_competitor_date_calculated`:** Adds the nullable `date_calculated` column to
   `shooter_log_competitor`
 - **`V8_0_1__add_shooter_log_competitor_category_and_division`:** Adds the `NOT NULL` `competitor_category` and
-  `division` columns to `shooter_log_competitor`, after `match_id`; fails if the table already has rows
+  `division` columns to `shooter_log_competitor`, after `match_id`; fails if the table already has rows. `V8_9_0` later
+  moves `competitor_category` into its own table
 - **`V8_2_0__create_shooter_log_overall`:** Creates the `shooter_log_overall` table behind `ShooterLogOverall`
 - **`V8_7_0__add_competitor_is_verified`:** Adds the nullable `is_verified` column to `competitor`, after
   `paid_up_club`, and sets it to `true` for every existing row
