@@ -166,8 +166,8 @@ existing callers keep working.
 
 ## 📊 Statistics
 
-- **Files Changed:** 67 on the release branch against `main` (counted before the release documentation was written);
-  4,310 insertions and 237 deletions
+- **Files Changed:** 68 on the release branch against `main` (29 added, 0 deleted, 39 modified, counted before the
+  release documentation was written); 4,463 insertions and 237 deletions
 - **New Source Files:** 10 (`IpscMatchCompetitorController`, `IpscMatchCompetitorService`,
   `IpscMatchCompetitorServiceImpl`, `MatchCompetitorRequest`, `MatchCompetitorPatchRequest`,
   `MatchCompetitorRequestCsvMixIn`, `MatchCompetitorResponse`, `MatchCompetitorResponseHolder`, `ShooterLogOverall`,
