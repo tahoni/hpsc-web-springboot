@@ -73,13 +73,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getMatchClub() != null) {
             matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         }
-        if (request.getCompetitorCategory() != null) {
+        if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isEmpty()) {
             matchCompetitor.setCompetitorCategory(resolveCompetitorCategories(request.getCompetitorCategory()));
         }
-        if (request.getFirearmType() != null) {
+        if ((request.getFirearmType() != null) && !request.getFirearmType().isBlank()) {
             matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         }
-        if (request.getDivision() != null) {
+        if ((request.getDivision() != null) && !request.getDivision().isBlank()) {
             matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         }
         if (request.getPowerFactor() != null) {

@@ -50,7 +50,12 @@ public interface IpscMatchCompetitorService {
             throws ValidationException, NonFatalException;
 
     /**
-     * Partially updates an existing match competitor, applying only the non-null fields on the request.
+     * Partially updates an existing match competitor, applying only the fields the request supplies.
+     *
+     * <p>
+     * No field on the request is required. A {@code null} field is left unchanged, and so is a required field
+     * (competitor category, firearm type or division) that is blank or empty — a patch never clears one.
+     * </p>
      *
      * @param matchCompetitorId the identifier of the match competitor to update.
      * @param request           the fields to change. Must not be null; any field left {@code null} is left

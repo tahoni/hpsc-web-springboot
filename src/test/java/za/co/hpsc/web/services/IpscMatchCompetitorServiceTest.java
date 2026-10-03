@@ -368,15 +368,23 @@ public class IpscMatchCompetitorServiceTest {
     }
 
     @Test
-    void testPatchMatchCompetitor_whenCompetitorCategoryIsEmpty_thenThrowsValidationException() {
+    void testPatchMatchCompetitor_whenRequiredFieldsAreEmptyOrBlank_thenLeavesThemUnchanged() {
         // Arrange
         MatchCompetitor existing = matchCompetitor(5L);
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
+        when(matchCompetitorRepository.save(existing)).thenReturn(existing);
         MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
         patch.setCompetitorCategory(List.of());
+        patch.setFirearmType("  ");
+        patch.setDivision("");
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(5L, patch);
+
+        // Assert
+        assertEquals(List.of(CompetitorCategory.JUNIOR), response.getCompetitorCategory());
+        assertEquals(FirearmType.HANDGUN, response.getFirearmType());
+        assertEquals(Division.OPEN, response.getDivision());
     }
 
     @Test

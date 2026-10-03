@@ -28,7 +28,7 @@ public class MatchCompetitorPatchRequest {
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. May be null. */
     private String matchClub;
-    /** The competitor's categories at the match, replacing any existing ones; each resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. May be null, but not empty. */
+    /** The competitor's categories at the match, replacing any existing ones; each resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. May be null, in which case — like an empty list — the existing categories are kept. */
     private List<String> competitorCategory;
     /** The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. May be null. */
     private String firearmType;
