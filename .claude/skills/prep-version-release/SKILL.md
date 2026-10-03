@@ -82,9 +82,11 @@ Steps:
 7. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for `$VERSION`, at the same narrative
    depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
    reverse chronological order, plus a matching Phase entry at the end of
-   `documentation/history/EVOLUTION_OVERVIEW.md` (that file is `HISTORY.md`'s Evolution Overview section, split out
+   `EVOLUTION_OVERVIEW.md` in the repository root (that file is `HISTORY.md`'s Evolution Overview section, split out
    once it grew to roughly half of `HISTORY.md`'s size — one paired Phase/Milestone entry still lands per release,
-   just in two files now). If the release is significant enough to have shifted the project's trajectory, also
+   just in two files now; the v1.0.0 – v7.4.1 entries live in the frozen archives
+   `documentation/history/CHANGELOG_v1-v7.md` and `documentation/history/HISTORY_v1-v7.md`, which a release never
+   edits). If the release is significant enough to have shifted the project's trajectory, also
    thread it through the other version-by-version sections (Architectural Evolution, Feature Timeline, Key Learnings,
    Conclusion/footer), using the immediately preceding version's treatment as the template. Regardless of
    significance, always rename the Future Roadmap Implications section's current `### Recently Completed (vX.Y.Z)`

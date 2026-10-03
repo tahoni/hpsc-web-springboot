@@ -61,7 +61,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
-│   ├───history/                # Archived release notes/PR descriptions by major version, plus EVOLUTION_OVERVIEW.md
+│   ├───history/                # Archived release notes/PR descriptions by major version, plus the v1–v7 archives
 │   ├───recommendations/        # Fuller rationale/examples behind condensed AGENTS.md conventions
 │   └───roadmap/                # improvement-plan.md and its checkbox-level task breakdown
 ├───src/

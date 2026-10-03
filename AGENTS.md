@@ -314,31 +314,34 @@ section — README.md is the canonical version if the two ever drift). Of these,
 truth for this project's conventions — every other file's workflow/convention guidance (`CONTRIBUTING.md` included)
 points back to it rather than restating it, so it's the one to update first when a convention changes:
 
-| File               | Purpose                                                                                   |
-|--------------------|-------------------------------------------------------------------------------------------|
-| `README.md`        | Project overview, setup and links to the rest of the documentation                        |
-| `ARCHITECTURE.md`  | Detailed architectural design, layered structure and CI/CD quality gates                  |
-| `CLAUDE.md`        | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                    |
-| `AGENTS.md`        | Project overview, build/run commands, architecture and cross-tool conventions (this file) |
-| `CONTRIBUTING.md`  | New-developer onboarding: setup, database profiles, testing, workflow                     |
-| `CHANGELOG.md`     | Notable changes per release, in Keep a Changelog format                                   |
-| `HISTORY.md`       | Narrative history of the project's evolution across all versions                          |
-| `RELEASE_NOTES.md` | Detailed release notes for the current/latest version                                     |
-| `LICENSE.md`       | MIT License                                                                               |
-| `HELP.md`          | Spring Initializr reference links (Maven, Spring Boot docs, guides)                       |
+| File                    | Purpose                                                                                   |
+|-------------------------|-------------------------------------------------------------------------------------------|
+| `README.md`             | Project overview, setup and links to the rest of the documentation                        |
+| `ARCHITECTURE.md`       | Detailed architectural design, layered structure and CI/CD quality gates                  |
+| `CLAUDE.md`             | Thin pointer to `AGENTS.md`, kept for Claude Code's filename discovery                    |
+| `AGENTS.md`             | Project overview, build/run commands, architecture and cross-tool conventions (this file) |
+| `CONTRIBUTING.md`       | New-developer onboarding: setup, database profiles, testing, workflow                     |
+| `CHANGELOG.md`          | Notable changes per release, in Keep a Changelog format                                   |
+| `HISTORY.md`            | Narrative history of the project's evolution across all versions                          |
+| `EVOLUTION_OVERVIEW.md` | Phase-by-phase narrative of the project's evolution — `HISTORY.md`'s companion            |
+| `RELEASE_NOTES.md`      | Detailed release notes for the current/latest version                                     |
+| `LICENSE.md`            | MIT License                                                                               |
+| `HELP.md`               | Spring Initializr reference links (Maven, Spring Boot docs, guides)                       |
 
 Four documentation-only folders supplement these:
 
 - **`documentation/history/`** holds one of each of the following files per released version, grouped into
-  `v1/` – `v8/` subdirectories by major version (e.g. `documentation/history/v8/RELEASE_NOTES_v8.6.0.md`), plus one
-  standing exception living directly in `documentation/history/` — `EVOLUTION_OVERVIEW.md`, a single file rather
-  than a per-version archive:
+  `v1/` – `v9/` subdirectories by major version (e.g. `documentation/history/v8/RELEASE_NOTES_v8.6.0.md`), plus
+  three standing exceptions living directly in `documentation/history/` — `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md`
+  and `EVOLUTION_OVERVIEW_v1-v7.md`, single files rather than per-version archives:
 
-  | File                       | Purpose                                                                                                        |
-  |----------------------------|----------------------------------------------------------------------------------------------------------------|
-  | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time                                                        |
-  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version, from v7.0.0 onward only                            |
-  | `EVOLUTION_OVERVIEW.md`    | `HISTORY.md`'s companion — the full Phase-by-phase narrative, split out to keep `HISTORY.md` a manageable size |
+  | File                          | Purpose                                                                                                          |
+  |-------------------------------|------------------------------------------------------------------------------------------------------------------|
+  | `RELEASE_NOTES_vX.Y.Z.md`     | Archived snapshot of `RELEASE_NOTES.md` at release time                                                          |
+  | `PR_DESCRIPTION_vX.Y.Z.md`    | The release pull request's body, archived for that version, from v7.0.0 onward only                              |
+  | `CHANGELOG_v1-v7.md`          | `CHANGELOG.md`'s archive of versions 1.0.0 – 7.4.1, moved unchanged and not edited by releases                   |
+  | `HISTORY_v1-v7.md`            | `HISTORY.md`'s archive of the per-version v1.0.0 – v7.4.1 entries, moved unchanged and not edited by releases    |
+  | `EVOLUTION_OVERVIEW_v1-v7.md` | `EVOLUTION_OVERVIEW.md`'s archive of Phases 1 – 18 (v1.0.0 – v7.4.1), moved unchanged and not edited by releases |
 
 - **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
@@ -593,7 +596,7 @@ anything downstream references them:
    any that are empty). Update the Table of Contents and move the "← Current" marker to the new version.
 6. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for the new version, at the same
    narrative depth and in the same style as the existing entries, plus a matching Phase entry in
-   `documentation/history/EVOLUTION_OVERVIEW.md` — `HISTORY.md`'s Evolution Overview section was split out into that
+   `EVOLUTION_OVERVIEW.md` — `HISTORY.md`'s Evolution Overview section was split out into that
    file once it grew to roughly half of `HISTORY.md`'s size, but the two still gain one paired entry per release. If
    the release is significant enough to have shifted the project's trajectory, also thread it through the other
    sections that already track version-by-version state (Architectural Evolution, Feature Timeline, Key Learnings,
@@ -607,7 +610,8 @@ anything downstream references them:
    goal into that entry's narrative, or adding a new `Version N.x` entry for a new major version. Then check whether
    `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
    synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that table
-   stale.
+   stale. Versions 1.0.0 – 7.4.1 are archived in `documentation/history/CHANGELOG_v1-v7.md` and
+   `documentation/history/HISTORY_v1-v7.md`; a release never edits those two files.
 7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent
