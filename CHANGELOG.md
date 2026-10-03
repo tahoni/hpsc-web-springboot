@@ -68,6 +68,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Domain
+
+- **`MatchCompetitor` overall scores:** New optional columns after `points` — `percentage`, `time`,
+  `percentage_of_possible_points`, `hit_factor`, the `alpha`, `charlie` and `delta` hit counts, `misses`,
+  `no_penalty_misses`, `no_shoots`, `procedural_errors` and `additional_penalties`, added by
+  `V10_1_0__add_match_competitor_overall_scores.sql`
+
+##### API
+
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** New optional overall-score
+  fields — `percentage`, `time`, `percentageOfPossiblePoints`, `hitFactor`, `alpha`, `charlie`, `delta`, `misses`,
+  `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns in UpperCamelCase), carried
+  through `IpscMatchCompetitorServiceImpl` to and from `MatchCompetitor`
+
 #### 🔄 Changed
 
 ##### Domain

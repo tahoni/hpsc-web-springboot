@@ -18,8 +18,9 @@ class MatchCompetitorRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, 2L, "HPSC", List.of("Junior", "Lady"),
-                "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("2"),
-                new BigDecimal("1"), false);
+                "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
+                new BigDecimal("41.5"), new BigDecimal("93.75"), new BigDecimal("5.2"), 30, 4, 1, 2, 1, 0, 3, 0,
+                new BigDecimal("2"), new BigDecimal("1"), false);
 
         // Act
         JsonNode node = mapper.readTree(mapper.writeValueAsString(request));
@@ -36,6 +37,18 @@ class MatchCompetitorRequestTest {
         assertEquals("Open Division", node.get("division").asText());
         assertEquals("Major", node.get("powerFactor").asText());
         assertEquals(0, new BigDecimal("95.5").compareTo(node.get("points").decimalValue()));
+        assertEquals(0, new BigDecimal("98.25").compareTo(node.get("percentage").decimalValue()));
+        assertEquals(0, new BigDecimal("41.5").compareTo(node.get("time").decimalValue()));
+        assertEquals(0, new BigDecimal("93.75").compareTo(node.get("percentageOfPossiblePoints").decimalValue()));
+        assertEquals(0, new BigDecimal("5.2").compareTo(node.get("hitFactor").decimalValue()));
+        assertEquals(30, node.get("alpha").asInt());
+        assertEquals(4, node.get("charlie").asInt());
+        assertEquals(1, node.get("delta").asInt());
+        assertEquals(2, node.get("misses").asInt());
+        assertEquals(1, node.get("noPenaltyMisses").asInt());
+        assertEquals(0, node.get("noShoots").asInt());
+        assertEquals(3, node.get("proceduralErrors").asInt());
+        assertEquals(0, node.get("additionalPenalties").asInt());
         assertEquals(2, node.get("overallRanking").asInt());
         assertEquals(1, node.get("clubRanking").asInt());
         assertFalse(node.get("isVisitor").asBoolean());
@@ -46,7 +59,8 @@ class MatchCompetitorRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, 2L, null, List.of("Junior"), null,
-                "Open Division", null, null, null, null, null);
+                "Open Division", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null);
 
         // Act
         JsonNode node = mapper.readTree(mapper.writeValueAsString(request));

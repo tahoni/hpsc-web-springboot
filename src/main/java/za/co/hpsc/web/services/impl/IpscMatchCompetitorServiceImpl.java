@@ -143,6 +143,42 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getPoints() != null) {
             matchCompetitor.setPoints(request.getPoints());
         }
+        if (request.getPercentage() != null) {
+            matchCompetitor.setPercentage(request.getPercentage());
+        }
+        if (request.getTime() != null) {
+            matchCompetitor.setTime(request.getTime());
+        }
+        if (request.getPercentageOfPossiblePoints() != null) {
+            matchCompetitor.setPercentageOfPossiblePoints(request.getPercentageOfPossiblePoints());
+        }
+        if (request.getHitFactor() != null) {
+            matchCompetitor.setHitFactor(request.getHitFactor());
+        }
+        if (request.getAlpha() != null) {
+            matchCompetitor.setAlpha(request.getAlpha());
+        }
+        if (request.getCharlie() != null) {
+            matchCompetitor.setCharlie(request.getCharlie());
+        }
+        if (request.getDelta() != null) {
+            matchCompetitor.setDelta(request.getDelta());
+        }
+        if (request.getMisses() != null) {
+            matchCompetitor.setMisses(request.getMisses());
+        }
+        if (request.getNoPenaltyMisses() != null) {
+            matchCompetitor.setNoPenaltyMisses(request.getNoPenaltyMisses());
+        }
+        if (request.getNoShoots() != null) {
+            matchCompetitor.setNoShoots(request.getNoShoots());
+        }
+        if (request.getProceduralErrors() != null) {
+            matchCompetitor.setProceduralErrors(request.getProceduralErrors());
+        }
+        if (request.getAdditionalPenalties() != null) {
+            matchCompetitor.setAdditionalPenalties(request.getAdditionalPenalties());
+        }
         if (request.getOverallRanking() != null) {
             matchCompetitor.setOverallRanking(request.getOverallRanking());
         }
@@ -275,6 +311,18 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
         matchCompetitor.setPoints(request.getPoints());
+        matchCompetitor.setPercentage(request.getPercentage());
+        matchCompetitor.setTime(request.getTime());
+        matchCompetitor.setPercentageOfPossiblePoints(request.getPercentageOfPossiblePoints());
+        matchCompetitor.setHitFactor(request.getHitFactor());
+        matchCompetitor.setAlpha(request.getAlpha());
+        matchCompetitor.setCharlie(request.getCharlie());
+        matchCompetitor.setDelta(request.getDelta());
+        matchCompetitor.setMisses(request.getMisses());
+        matchCompetitor.setNoPenaltyMisses(request.getNoPenaltyMisses());
+        matchCompetitor.setNoShoots(request.getNoShoots());
+        matchCompetitor.setProceduralErrors(request.getProceduralErrors());
+        matchCompetitor.setAdditionalPenalties(request.getAdditionalPenalties());
         matchCompetitor.setOverallRanking(request.getOverallRanking());
         matchCompetitor.setClubRanking(request.getClubRanking());
         matchCompetitor.setIsVisitor(request.getIsVisitor());
@@ -451,6 +499,18 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getDivision(),
                 matchCompetitor.getPowerFactor(),
                 matchCompetitor.getPoints(),
+                matchCompetitor.getPercentage(),
+                matchCompetitor.getTime(),
+                matchCompetitor.getPercentageOfPossiblePoints(),
+                matchCompetitor.getHitFactor(),
+                matchCompetitor.getAlpha(),
+                matchCompetitor.getCharlie(),
+                matchCompetitor.getDelta(),
+                matchCompetitor.getMisses(),
+                matchCompetitor.getNoPenaltyMisses(),
+                matchCompetitor.getNoShoots(),
+                matchCompetitor.getProceduralErrors(),
+                matchCompetitor.getAdditionalPenalties(),
                 matchCompetitor.getOverallRanking(),
                 matchCompetitor.getClubRanking(),
                 matchCompetitor.getIsVisitor());

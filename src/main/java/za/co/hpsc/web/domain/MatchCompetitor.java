@@ -57,6 +57,42 @@ public class MatchCompetitor {
     @Column(name = "points", precision = 19, scale = 6)
     private BigDecimal points;
 
+    @Column(name = "percentage", precision = 19, scale = 6)
+    private BigDecimal percentage;
+
+    @Column(name = "time", precision = 19, scale = 6)
+    private BigDecimal time;
+
+    @Column(name = "percentage_of_possible_points", precision = 19, scale = 6)
+    private BigDecimal percentageOfPossiblePoints;
+
+    @Column(name = "hit_factor", precision = 19, scale = 6)
+    private BigDecimal hitFactor;
+
+    @Column(name = "alpha")
+    private Integer alpha;
+
+    @Column(name = "charlie")
+    private Integer charlie;
+
+    @Column(name = "delta")
+    private Integer delta;
+
+    @Column(name = "misses")
+    private Integer misses;
+
+    @Column(name = "no_penalty_misses")
+    private Integer noPenaltyMisses;
+
+    @Column(name = "no_shoots")
+    private Integer noShoots;
+
+    @Column(name = "procedural_errors")
+    private Integer proceduralErrors;
+
+    @Column(name = "additional_penalties")
+    private Integer additionalPenalties;
+
     @Column(name = "overall_ranking", precision = 19, scale = 6)
     private BigDecimal overallRanking;
 

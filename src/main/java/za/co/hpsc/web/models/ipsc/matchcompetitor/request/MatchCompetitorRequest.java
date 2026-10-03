@@ -47,6 +47,30 @@ public class MatchCompetitorRequest {
     private String powerFactor;
     /** The competitor's match points. */
     private BigDecimal points;
+    /** The competitor's overall match score as a percentage of the match winner's score. */
+    private BigDecimal percentage;
+    /** The competitor's total time, in seconds, taken across the match's stages. */
+    private BigDecimal time;
+    /** The competitor's total hits as a percentage of the maximum points available in the match. */
+    private BigDecimal percentageOfPossiblePoints;
+    /** The competitor's hit factor — raw score divided by time. */
+    private BigDecimal hitFactor;
+    /** The competitor's total A-zone (alpha) hits across the match. */
+    private Integer alpha;
+    /** The competitor's total C-zone (charlie) hits across the match. */
+    private Integer charlie;
+    /** The competitor's total D-zone (delta) hits across the match. */
+    private Integer delta;
+    /** The competitor's total required hits not scored (misses) across the match. */
+    private Integer misses;
+    /** The competitor's total misses that did not attract the usual miss penalty. */
+    private Integer noPenaltyMisses;
+    /** The competitor's total no-shoot penalty hits across the match. */
+    private Integer noShoots;
+    /** The competitor's total procedural penalties applied across the match. */
+    private Integer proceduralErrors;
+    /** The competitor's total additional penalties applied across the match. */
+    private Integer additionalPenalties;
     /** The competitor's overall ranking in the match. */
     private BigDecimal overallRanking;
     /** The competitor's ranking among their club's competitors in the match. */
@@ -72,6 +96,18 @@ public class MatchCompetitorRequest {
      * @param powerFactor        the competitor's power factor; resolved against
      *                           {@link za.co.hpsc.web.enums.PowerFactor} by name.
      * @param points             the competitor's match points.
+     * @param percentage                  the competitor's overall match score as a percentage of the match winner's score.
+     * @param time                        the competitor's total time, in seconds, taken across the match's stages.
+     * @param percentageOfPossiblePoints  the competitor's total hits as a percentage of the maximum points available in the match.
+     * @param hitFactor                   the competitor's hit factor — raw score divided by time.
+     * @param alpha                       the competitor's total A-zone (alpha) hits across the match.
+     * @param charlie                     the competitor's total C-zone (charlie) hits across the match.
+     * @param delta                       the competitor's total D-zone (delta) hits across the match.
+     * @param misses                      the competitor's total required hits not scored (misses) across the match.
+     * @param noPenaltyMisses             the competitor's total misses that did not attract the usual miss penalty.
+     * @param noShoots                    the competitor's total no-shoot penalty hits across the match.
+     * @param proceduralErrors            the competitor's total procedural penalties applied across the match.
+     * @param additionalPenalties         the competitor's total additional penalties applied across the match.
      * @param overallRanking     the competitor's overall ranking in the match.
      * @param clubRanking        the competitor's ranking among their club's competitors in the match.
      * @param isVisitor          whether the competitor was a visitor at the match; stored as {@code null} when
@@ -88,6 +124,18 @@ public class MatchCompetitorRequest {
                                   @JsonProperty(value = "division", required = true) String division,
                                   @JsonProperty("powerFactor") String powerFactor,
                                   @JsonProperty("points") BigDecimal points,
+                                  @JsonProperty("percentage") BigDecimal percentage,
+                                  @JsonProperty("time") BigDecimal time,
+                                  @JsonProperty("percentageOfPossiblePoints") BigDecimal percentageOfPossiblePoints,
+                                  @JsonProperty("hitFactor") BigDecimal hitFactor,
+                                  @JsonProperty("alpha") Integer alpha,
+                                  @JsonProperty("charlie") Integer charlie,
+                                  @JsonProperty("delta") Integer delta,
+                                  @JsonProperty("misses") Integer misses,
+                                  @JsonProperty("noPenaltyMisses") Integer noPenaltyMisses,
+                                  @JsonProperty("noShoots") Integer noShoots,
+                                  @JsonProperty("proceduralErrors") Integer proceduralErrors,
+                                  @JsonProperty("additionalPenalties") Integer additionalPenalties,
                                   @JsonProperty("overallRanking") BigDecimal overallRanking,
                                   @JsonProperty("clubRanking") BigDecimal clubRanking,
                                   @JsonProperty("isVisitor") Boolean isVisitor) {
@@ -100,6 +148,18 @@ public class MatchCompetitorRequest {
         this.division = division;
         this.powerFactor = powerFactor;
         this.points = points;
+        this.percentage = percentage;
+        this.time = time;
+        this.percentageOfPossiblePoints = percentageOfPossiblePoints;
+        this.hitFactor = hitFactor;
+        this.alpha = alpha;
+        this.charlie = charlie;
+        this.delta = delta;
+        this.misses = misses;
+        this.noPenaltyMisses = noPenaltyMisses;
+        this.noShoots = noShoots;
+        this.proceduralErrors = proceduralErrors;
+        this.additionalPenalties = additionalPenalties;
         this.overallRanking = overallRanking;
         this.clubRanking = clubRanking;
         this.isVisitor = isVisitor;
