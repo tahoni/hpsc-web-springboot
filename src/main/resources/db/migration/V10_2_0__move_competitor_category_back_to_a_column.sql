@@ -23,7 +23,7 @@ ALTER TABLE match_competitor
 DROP TABLE match_competitor_category;
 
 ALTER TABLE shooter_log_competitor
-    ADD COLUMN competitor_category VARCHAR(255) NULL AFTER match_id;
+    ADD COLUMN competitor_category VARCHAR(255) NULL AFTER match_competitor_id;
 
 UPDATE shooter_log_competitor slc
 SET slc.competitor_category = COALESCE((SELECT MIN(c.competitor_category)
