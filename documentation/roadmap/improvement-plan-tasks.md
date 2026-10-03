@@ -331,6 +331,24 @@ A gap moves here once at least one of its items is checked, but the block as a w
 matching `improvement-plan.md`'s "🟡 Partially Completed" section — and moves on to ✅ Completed once every item is
 checked and the gap's own header there carries a "✅ Closed" suffix.
 
+**Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)* —
+🟡 Partially completed in v9.1.0
+
+- [x] Introduce `MatchScoreService`/`MatchScoreServiceImpl` (interface + `impl/` split) over the existing
+  `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
+  removed, so this now means the `MatchCompetitor` repository alone — done differently: shipped in v9.1.0 as
+  `IpscMatchCompetitorService`/`IpscMatchCompetitorServiceImpl`
+- [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories
+- [ ] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
+  `scaffold-integration-tests` conventions — `IpscMatchCompetitorController` and its integration tests shipped in
+  v9.1.0; the shooter-log endpoints remain
+- [ ] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions — done for
+  `IpscMatchCompetitorController` in v9.1.0; the shooter-log controller remains
+- [ ] Hold off on cross-entity orchestration (e.g. a full Practiscore results import) until a concrete need
+  reappears, per the same discipline that closed Gap #1
+- [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
+  to drop the "still being built" language
+
 **`tomcat.version` override** *(improvement-plan.md → Gap #26)* — 🟡 Partially completed in v8.10.0
 
 - [x] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later —
@@ -343,19 +361,7 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-**Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)*
-
-- [ ] Introduce `MatchScoreService`/`MatchScoreServiceImpl` (interface + `impl/` split) over the existing
-  `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
-  removed, so this now means the `MatchCompetitor` repository alone
-- [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories
-- [ ] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
-  `scaffold-integration-tests` conventions
-- [ ] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions
-- [ ] Hold off on cross-entity orchestration (e.g. a full Practiscore results import) until a concrete need
-  reappears, per the same discipline that closed Gap #1
-- [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
-  to drop the "still being built" language
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
