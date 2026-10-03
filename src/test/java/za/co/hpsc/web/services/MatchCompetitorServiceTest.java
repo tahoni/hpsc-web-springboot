@@ -368,6 +368,34 @@ public class MatchCompetitorServiceTest {
     }
 
     @Test
+    void testPatchMatchCompetitor_whenCompetitorCategoryIsEmpty_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitor existing = matchCompetitor(5L);
+        when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
+        MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
+        patch.setCompetitorCategory(List.of());
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorService.patchMatchCompetitor(5L, patch));
+    }
+
+    @Test
+    void testPatchMatchCompetitor_whenSeveralCompetitorCategories_thenReplacesThem() {
+        // Arrange
+        MatchCompetitor existing = matchCompetitor(5L);
+        when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
+        when(matchCompetitorRepository.save(existing)).thenReturn(existing);
+        MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
+        patch.setCompetitorCategory(List.of("Senior", "Lady"));
+
+        // Act
+        MatchCompetitorResponse response = matchCompetitorService.patchMatchCompetitor(5L, patch);
+
+        // Assert
+        assertEquals(List.of(CompetitorCategory.SENIOR, CompetitorCategory.LADY), response.getCompetitorCategory());
+    }
+
+    @Test
     void testPatchMatchCompetitor_whenFieldsAreProvided_thenOnlyTheyChange() {
         // Arrange
         MatchCompetitor existing = matchCompetitor(5L);

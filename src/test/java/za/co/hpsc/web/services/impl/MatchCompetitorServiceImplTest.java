@@ -160,6 +160,31 @@ class MatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveMatchClub("Nope"));
     }
 
+    // resolveCompetitorCategories()
+    @Test
+    void testResolveCompetitorCategories_whenSeveralKnown_thenReturnsThemInOrderWithoutDuplicates() {
+        // Act
+        List<CompetitorCategory> result = matchCompetitorServiceImpl.resolveCompetitorCategories(
+                List.of("Lady", "Junior", "Lady"));
+
+        // Assert
+        assertEquals(List.of(CompetitorCategory.LADY, CompetitorCategory.JUNIOR), result);
+    }
+
+    @Test
+    void testResolveCompetitorCategories_whenEmptyOrNull_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorCategories(List.of()));
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorCategories(null));
+    }
+
+    @Test
+    void testResolveCompetitorCategories_whenAnyUnknown_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> matchCompetitorServiceImpl.resolveCompetitorCategories(List.of("Lady", "Nope")));
+    }
+
     // resolveCompetitorCategory()
     @Test
     void testResolveCompetitorCategory_whenKnown_thenReturnsCategory() {

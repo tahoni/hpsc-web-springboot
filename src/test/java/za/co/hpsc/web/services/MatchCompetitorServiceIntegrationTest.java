@@ -73,6 +73,22 @@ class MatchCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testCreateMatchCompetitor_whenSeveralCategories_thenPersistsAllWithoutDuplicates() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-002");
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(competitor.getId(), match.getId());
+        request.setCompetitorCategory(List.of("Junior", "Lady", "Junior"));
+
+        // Act
+        MatchCompetitorResponse created = matchCompetitorService.createMatchCompetitor(request);
+        MatchCompetitorResponse fetched = matchCompetitorService.getMatchCompetitor(created.getMatchCompetitorId());
+
+        // Assert
+        assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY), fetched.getCompetitorCategory());
+    }
+
+    @Test
     void testCreateMatchCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
         IpscMatch match = createMatch();
