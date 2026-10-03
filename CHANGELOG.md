@@ -122,6 +122,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Services
 
 - **`TransactionServiceImpl`:** Constructor now also takes a `MatchCompetitorRepository`
+- **`IpscMatchServiceImpl.deleteMatch`:** Also refuses a match that is linked to a shooter log through
+  `shooter_log_match`, using the new `ShooterLogRepository.existsByMatchesId`, as well as one with shooter log
+  competitors
+- **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
+  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own, and
+  also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall
+  shooter log row, is refused deletion
+
+##### Repositories
+
+- **`ShooterLogCompetitorRepository`:** `existsByMatchId` is replaced by `existsByCompetitorId` and
+  `existsByMatchCompetitorMatchId`, since a shooter log competitor no longer has a direct `match`
+- **`ShooterLogRepository`:** `findAllByCompetitorIdAndFirearmTypeAndPowerFactor` and `existsByCompetitorId` are
+  removed, since a shooter log no longer has a competitor, firearm type or power factor of its own
 
 ##### Domain
 
@@ -153,16 +167,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   foreign key, to `shooter_log_competitor`, and `shooter_log_id` and `competitor_id` columns, with foreign keys, to
   `shooter_log_overall`; both tables become unique per shooter log and competitor (replacing
   `shooter_log_competitor`'s unique key on shooter log and match competitor). Fails if either table already has rows
-
-##### Services
-
-- **`IpscMatchServiceImpl.deleteMatch`:** Also refuses a match that is linked to a shooter log through
-  `shooter_log_match`, using the new `ShooterLogRepository.existsByMatchesId`, as well as one with shooter log
-  competitors
-- **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
-  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own, and
-  also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall
-  shooter log row, is refused deletion
 
 ### 🧾 [9.0.0] - 2026-10-01
 
