@@ -21,6 +21,40 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 10.0.0 (October 3, 2026)
+
+**Theme:** PractiScore-Style Match Competitor Import & Overall Scores
+
+**Key Focus:**
+
+- `MatchCompetitor` gains the overall-score columns a PractiScore export carries — `percentage`, `time`,
+  `percentage_of_possible_points`, the `alpha`, `charlie` and `delta` hit counts, `misses`, `no_penalty_misses`,
+  `no_shoots`, `procedural_errors` and `additional_penalties` — as optional fields on `MatchCompetitorRequest`,
+  `MatchCompetitorPatchRequest` and `MatchCompetitorResponse`, and `matchPoints` is renamed `points` in the JSON
+  contract and the table
+- The match competitor CSV import takes a PractiScore export's headers (`Class`, `Cats`, `Div`, `PF`, `Pts`, `%`,
+  `Time`, `% psbl`, `A`, `C`, `D`, `M`, `NPM`, `NS`, `Proc`, `Apen`), so a results export can be imported without
+  renaming its columns
+- `competitorId` is no longer required: a request can identify its competitor by `competitorNumber` (CSV `Mem #`),
+  matched exactly, or by `name` (CSV `Name`), matched as "First Last" ignoring case, through new
+  `CompetitorRepository.findByCompetitorNumber` and `findByFullNameIgnoreCase` finders; a number or name that matches no
+  competitor, or several, is refused
+- `competitorCategory` returns to a single category in a `competitor_category` column on `MatchCompetitor` and
+  `ShooterLogCompetitor`, replacing the list and the two child tables that v9.1.0 introduced; `V10_2_0` collapses
+  existing rows to their alphabetically first category
+- The unused `ipsc.scores.request` package — `MatchOverallScoresRequest`, `MatchStageScoresRequest` and their CSV
+  forms, which modelled the removed stage tables — is deleted, its overall-score fields now living on
+  `MatchCompetitor`
+- Four Flyway migrations, `V10_0_0` to `V10_3_0`; running them against an empty MySQL 8.4 database exposed that
+  `V10_2_0` placed a column `AFTER` one that `V8_3_0` had already dropped, so it failed on every database, and it now
+  places the column after `match_competitor_id`
+- The release's improvement-plan sweep recorded Gaps #33 and #34 — the Flyway versioning document's table and
+  `ARCHITECTURE.md`'s deleted DTO package — and closed both, leaving no open gap; Gap #6 stays partially completed
+- Scoped as `v10.0.0` **MAJOR**: three changes are backward-incompatible and flagged `**Breaking:**` in `CHANGELOG.md`
+  — `matchPoints` renamed to `points`, the renamed CSV headers, and `competitorCategory` a single value rather than a
+  list
+- Project version bumped to 10.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 9.1.0 (October 3, 2026)
 
 **Theme:** Match Competitor API & Shooter Log Rework
@@ -1067,6 +1101,21 @@ backward-incompatible change as it landed so the MAJOR classification was visibl
 **Achievement:** Built the match competitor endpoints on the existing pattern and extended the CSV imports to a third
 resource, without breaking any existing caller.
 
+### Milestone 44: PractiScore-Style Match Competitor Import (v10.0.0)
+
+- A PractiScore results export imports into the match competitor endpoints without renaming its columns, and carries
+  its overall scores — percentage, time, hit counts, misses and penalties — onto `MatchCompetitor`
+- A row no longer needs a database id: the competitor is found by membership number or by name, and an ambiguous or
+  unknown match is refused rather than guessed
+- `competitorCategory` goes back to a single column, undoing the child tables v9.1.0 added once a PractiScore row was
+  seen to carry one category
+- Project's second MAJOR release in a row, with three breaking changes flagged `**Breaking:**` in `CHANGELOG.md` as
+  they landed
+
+**Achievement:** Aligned the match competitor model and CSV import to the format the data actually arrives in, and
+proved the full migration chain by running it against an empty database, which caught a migration that could never
+have run.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1164,6 +1213,25 @@ IpscMatchCompetitorController → IpscMatchCompetitorService → MatchCompetitor
 - Competitor categories are a child table per entity rather than a column, so one entry can carry several
 - `ShooterLog` no longer owns a competitor, club or firearm type; it is a date range linked to matches, with
   `ShooterLogCompetitor` and `ShooterLogOverall` linked to `Competitor` directly
+
+### v10.0.0: PractiScore-Style Match Competitor Import
+
+```
+PractiScore CSV ──(CsvMapper + MatchCompetitorRequestCsvMixIn)──→ MatchCompetitorRequest
+                                                                       ↓
+                 IpscMatchCompetitorServiceImpl: competitorId → competitorNumber → name
+                                                                       ↓
+                                   CompetitorRepository.findByCompetitorNumber / findByFullNameIgnoreCase
+```
+
+**Characteristics:**
+
+- A request identifies its competitor in priority order — id, then number, then name — and the service refuses a
+  number or name that matches none or several, so an import never attaches a result to a guessed competitor
+- The CSV mix-in's column names follow a PractiScore export, so the import format is the export format; the JSON field
+  names stay descriptive (`points`, `percentageOfPossiblePoints`)
+- `MatchCompetitor` holds its overall scores as optional columns, and `competitorCategory` is a single value again on
+  both `MatchCompetitor` and `ShooterLogCompetitor`, with no child tables
 
 ---
 
@@ -1378,6 +1446,11 @@ IpscMatchCompetitorController → IpscMatchCompetitorService → MatchCompetitor
   first half of the scoring layer — match competitors, with their own service, controller and bulk CSV import — and
   rework the shooter log entities beneath it, as backward-compatible additions that leave every existing endpoint
   unchanged.
+- **Version 10.x (v10.0.0):** Make the match competitor import accept the format the data arrives in — a PractiScore
+  export's headers and overall scores, with the competitor found by membership number or name instead of a database id
+  — and settle `competitorCategory` back to a single value. Because that renames a JSON field, renames the CSV headers
+  and turns a list back into a single value, the release is the project's second consecutive MAJOR, with each breaking
+  change flagged in `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -1656,11 +1729,18 @@ IpscMatchCompetitorController → IpscMatchCompetitorService → MatchCompetitor
     - A batch import is only atomic if every row is checked first: refusing a duplicate against the database does not
       catch two rows in the same file that duplicate each other
 
+19. **A Migration Chain Is Only Proven From Empty (v10.0.0):** Each migration is written against the schema as it
+    stood then, so an edit that names an earlier column can pass review and still never run
+    - `V10_2_0` added a column `AFTER match_id`, which `V8_3_0` had dropped; no developer database had applied it, so
+      nothing had failed, and only migrating an empty MySQL 8.4 database from `V7_0_0` onward exposed it
+    - A refactor that returns a column to its earlier shape (`competitorCategory` back from a child table) needs the
+      same check, because the migration reverses several earlier ones
+
 ---
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v9.1.0, the following areas are identified for future enhancement:
+Based on the evolution to v10.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
@@ -1900,7 +1980,21 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v9.1.0)
+### Recently Completed (v10.0.0)
+
+- `MatchCompetitor` gains the overall-score columns and `MatchCompetitorRequest`/`MatchCompetitorPatchRequest`/
+  `MatchCompetitorResponse` the matching optional fields, with `matchPoints` renamed `points`, by `V10_0_0` and
+  `V10_1_0`
+- `MatchCompetitorRequestCsvMixIn` takes a PractiScore export's headers, and the controller's CSV example shows them
+- `competitorId` optional: `competitorNumber` and `name` resolve the competitor through the new
+  `CompetitorRepository.findByCompetitorNumber` and `findByFullNameIgnoreCase`
+- `competitorCategory` a single value again on `MatchCompetitor` and `ShooterLogCompetitor`, replacing the child tables
+  by `V10_2_0`, whose column placement is fixed so the migration chain runs from an empty database
+- `MatchOverallScoresRequest`, `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest` and
+  `MatchStageScoresRequestForCSV` and their tests deleted
+- Project version bumped to 10.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v9.1.0)
 
 - New `IpscMatchCompetitorController`, `IpscMatchCompetitorService` and implementation, and
   `MatchCompetitorRequest`/`MatchCompetitorPatchRequest`/`MatchCompetitorResponse` for `/ipsc/match-competitors`,
@@ -2082,3 +2176,8 @@ Version 9.1.0 builds on that narrowed model with the first half of the scoring l
 service, controller and bulk CSV import, and the shooter log entities are reworked to a date range of matches ready
 for the service that remains. It is a MINOR release, since it adds endpoints and optional fields and removes or
 tightens nothing.
+
+Version 10.0.0 reshapes that first half of the scoring layer around the format the data arrives in: match competitors
+carry a PractiScore export's overall scores and headers, are found by membership number or name, and hold a single
+competitor category again. It is a MAJOR release, because the JSON field `matchPoints`, the CSV headers and the shape of
+`competitorCategory` all change for existing callers.

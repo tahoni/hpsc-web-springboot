@@ -1518,6 +1518,69 @@ removes or tightens nothing, so it is MINOR under the Semantic Versioning rules.
 - New controller, service, implementation and integration tests for the match competitor endpoints, request model and
   CSV mix-in, and for `ShooterLogOverallRepository`; new `TransactionServiceTest` cases for `saveMatchCompetitors`
 
+### Phase 44: PractiScore-Style Match Competitor Import (v10.0.0)
+
+**Duration:** October 3, 2026
+
+A major release: the match competitor model and CSV import are reshaped around a PractiScore results export. Match
+competitors carry the export's overall scores, are found by membership number or name, and hold a single competitor
+category again. Three changes are backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Match Competitor API**
+
+- `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` gain optional `percentage`,
+  `time`, `percentageOfPossiblePoints`, `alpha`, `charlie`, `delta`, `misses`, `noPenaltyMisses`, `noShoots`,
+  `proceduralErrors` and `additionalPenalties`, carried through `IpscMatchCompetitorServiceImpl` to and from
+  `MatchCompetitor`
+- **Breaking:** `matchPoints` is renamed `points` in the JSON contract
+- **Breaking:** `MatchCompetitorRequestCsvMixIn`'s columns follow a PractiScore export — `MatchClub` → `Class`,
+  `CompetitorCategory` → `Cats`, `Division` → `Div`, `PowerFactor` → `PF`, `MatchPoints` → `Pts`, plus `%`,
+  `Time`, `% psbl`, `A`, `C`, `D`, `M`, `NPM`, `NS`, `Proc` and `Apen` for the overall scores; the controller's
+  CSV example shows them
+- **Breaking:** `competitorCategory` (CSV `Cats`) is a single category again, a JSON string rather than an array and one
+  value per CSV cell rather than a `;`-separated list
+
+**Competitor Resolution**
+
+- `competitorId` is no longer required: a request carries it, a `competitorNumber` (CSV `Mem #`) or a `name` (CSV
+  `Name`), and `IpscMatchCompetitorServiceImpl` resolves them in that order; the number is matched exactly against
+  `Competitor.competitorNumber` and the name as "First Last", ignoring case
+- New `CompetitorRepository.findByCompetitorNumber` and `findByFullNameIgnoreCase` return a list, so a number or name
+  that matches no competitor, or more than one, is refused
+
+**Persistence**
+
+- `V10_0_0` renames `match_competitor.match_points` to `points`; `V10_1_0` adds the overall-score columns;
+  `V10_2_0` returns `competitor_category` to a single column on `match_competitor` and `shooter_log_competitor`,
+  dropping `match_competitor_category` and `shooter_log_competitor_category`, with a row that had several categories
+  keeping the alphabetically first and one with none an empty category; `V10_3_0` drops the `hit_factor` column that
+  `V10_1_0` had created
+- Migrating an empty MySQL 8.4 database from `V7_0_0` found that `V10_2_0` placed `shooter_log_competitor`'s new column
+  `AFTER match_id`, which `V8_3_0` had dropped, so the migration failed on every database; it now places the column
+  after `match_competitor_id`, and all 25 migrations apply from empty
+
+**Removals**
+
+- `MatchOverallScoresRequest`, `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest` and
+  `MatchStageScoresRequestForCSV` and their tests are deleted — they modelled scores for the removed stage tables and
+  nothing referenced them; the overall-score fields now live on `MatchCompetitor`
+
+**Build & Metadata**
+
+- Project version bumped to 10.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Matching the import format to the source data, and resolving a record's owner by a natural key rather than a
+  database id, refusing a missing or ambiguous match
+
+**Test Coverage:**
+
+- Updated request, patch request, CSV mix-in, service, implementation and integration tests for the renamed and new
+  fields, the single category and competitor resolution; the deleted request models' tests are removed
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

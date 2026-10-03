@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 9.1.0](#-910---2026-10-03) ← Current
+- [🧾 Version 10.0.0](#-1000---2026-10-03) ← Current
+- [🧾 Version 9.1.0](#-910---2026-10-03)
 - [🧾 Version 9.0.0](#-900---2026-10-01)
 - [🧾 Version 8.12.0](#-8120---2026-09-29)
 - [🧾 Version 8.11.1](#-8111---2026-09-27)
@@ -47,6 +48,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+### 🧾 [10.0.0] - 2026-10-03
+
 #### ➕ Added
 
 ##### Domain
@@ -76,15 +79,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   the first matches `Competitor.competitorNumber` exactly, the second the competitor's "First Last" full name,
   ignoring case; both return a list so a match on several competitors can be refused
 
-#### 🗑️ Removed
-
-##### Models
-
-- **`MatchOverallScoresRequest`, `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`,
-  `MatchStageScoresRequestForCSV`:** The `ipsc.scores.request` package and its tests are deleted — they modelled
-  per-stage and overall match scores for the `MatchStage` table and entities, which were removed, and nothing
-  references them any more; the overall-score fields now live on `MatchCompetitor`
-
 #### 🔄 Changed
 
 ##### Documentation
@@ -95,6 +89,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `documentation/history/EVOLUTION_OVERVIEW_v1-v7.md` (Phases 1 – 18) to keep the files a manageable size; the
   cross-version sections stay in `HISTORY.md`. `AGENTS.md`, `README.md` and the `prep-version-release` skill list the
   new files, and the v7.2.0 and v7.3.0 PR descriptions link to the archive
+- **`ARCHITECTURE.md`:** The deleted `models/ipsc/scores/request/` package and its "groundwork only" DTOs are dropped
+  from the Project Structure tree and the `models/ipsc/…` section
+- **`flyway-migration-versioning.md`:** The Current State table gains the sixteen migrations it was missing —
+  `V7_9_0`, `V8_0_0` to `V8_9_0` and `V10_0_0` to `V10_3_0`
+- **`AGENTS.md`, `prep-version-release` skill:** The reverse-sync step now also checks that table against
+  `db/migration/`, and the skill checks `ARCHITECTURE.md`'s Project Structure tree
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gaps #33 and #34 recorded and closed, and Gap #6 progress
+  noted
 
 ##### Domain
 
@@ -122,6 +124,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   resolves through `CompetitorRepository.findByFullNameIgnoreCase`
 - **`IpscMatchCompetitorController`:** The CSV import's Swagger example now shows the new PractiScore-style headers,
   including `Name`, `Mem #` and the overall-score columns
+
+#### 🗑️ Removed
+
+##### Models
+
+- **`MatchOverallScoresRequest`, `MatchOverallScoresRequestForCSV`, `MatchStageScoresRequest`,
+  `MatchStageScoresRequestForCSV`:** The `ipsc.scores.request` package and its tests are deleted — they modelled
+  per-stage and overall match scores for the `MatchStage` table and entities, which were removed, and nothing
+  references them any more; the overall-score fields now live on `MatchCompetitor`
 
 ### 🧾 [9.1.0] - 2026-10-03
 
