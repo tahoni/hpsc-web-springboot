@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 9.0.0](#-900---2026-10-01) ← Current
+- [🧾 Version 9.1.0](#-910---2026-10-03) ← Current
+- [🧾 Version 9.0.0](#-900---2026-10-01)
 - [🧾 Version 8.12.0](#-8120---2026-09-29)
 - [🧾 Version 8.11.1](#-8111---2026-09-27)
 - [🧾 Version 8.11.0](#-8110---2026-09-27)
@@ -66,6 +67,175 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [9.1.0] - 2026-10-03
+
+#### ➕ Added
+
+##### Domain
+
+- **`ShooterLogCompetitor.dateCalculated`:** New nullable `LocalDateTime` column — records when a row's rank and
+  points were calculated, separately from `dateCreated` and `dateUpdated`
+- **`ShooterLogCompetitor.competitorCategory`, `ShooterLogCompetitor.division`:** New required fields — each row now
+  records the competitor's categories, a list held in the `shooter_log_competitor_category` table, and their division
+- **`ShooterLogOverall`:** New entity holding a rank and points per competitor category and division, with the date
+  they were calculated, for overall log standings
+- **`ShooterLogOverall.shooterLog`, `ShooterLogOverall.competitor`:** Required links to the `ShooterLog` and `Competitor` a
+  row belongs to; a competitor has one row per shooter log
+- **`Competitor.isVerified`:** New optional `Boolean` flag — whether the competitor has been verified; existing
+  competitors are backfilled to `true`
+
+##### API
+
+- **`isVerified` on competitors:** Optional field on `CompetitorRequest` (JSON and CSV `IsVerified` column),
+  `CompetitorPatchRequest` (`null` leaves it unchanged) and `CompetitorResponse`
+- **`IpscMatchCompetitorController`:** New `/ipsc/match-competitors` endpoints to create, replace (`PUT`), patch, get (one
+  or all) and delete a competitor's entry in a match, with `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and
+  `MatchCompetitorResponse`; a competitor can have one entry per match and firearm type, under one or more
+  categories — `competitorCategory` is a list in all three
+- **`MatchCompetitorRequestCsvMixIn`:** New Jackson mix-in binding UpperCamelCase CSV column headers onto
+  `MatchCompetitorRequest`'s constructor, with `CompetitorCategory` as one cell of categories split on the shared array
+  separator and unknown columns ignored
+- **`IpscMatchCompetitorController.createMatchCompetitors`:** New `POST /ipsc/match-competitors/bulk` endpoint taking
+  `text/csv` and returning a `MatchCompetitorResponseHolder` with `201`; every row is checked before any is saved, so
+  either every row is created or none is. A `MatchCompetitorId` column is read but ignored, since the import only
+  creates entries
+
+##### Services
+
+- **`IpscMatchCompetitorService`:** New service behind the match competitor endpoints; validates required fields, resolves
+  the competitor, match and enumerated values, and refuses an entry that duplicates another for the same competitor,
+  match and firearm type
+- **`IpscMatchCompetitorService.createMatchCompetitors`:** Reads the CSV through `MatchCompetitorRequestCsvMixIn`,
+  builds every row by the rules of `createMatchCompetitor`, and refuses a row that duplicates an existing entry, or
+  another row, for the same competitor, match and firearm type
+- **`TransactionService.saveMatchCompetitors`:** New transactional batch write for match competitors; it flushes inside
+  the transaction so a unique constraint violation is reported as a 400
+- **`TransactionService.saveMatchCompetitor`, `TransactionService.deleteMatchCompetitor`:** New transactional writes
+  for match competitors; the delete flushes inside the transaction so a foreign-key violation is reported as a 400
+
+##### Repositories
+
+- **`MatchCompetitorRepository`:** New `findByCompetitorIdAndMatchIdAndFirearmType`,
+  `findByIdWithCompetitorAndMatch` and `findAllWithCompetitorAndMatch` queries
+- **`ShooterLogOverallRepository`:** New repository for `ShooterLogOverall`, with `findAllByShooterLogId` and
+  `existsByCompetitorId`
+- **`ShooterLogRepository.existsByMatchesId`:** New query — whether a match is linked to any shooter log through
+  `shooter_log_match`, for the match delete check
+
+##### Database
+
+- **`V8_0_0__add_shooter_log_competitor_date_calculated`:** Adds the nullable `date_calculated` column to
+  `shooter_log_competitor`
+- **`V8_0_1__add_shooter_log_competitor_category_and_division`:** Adds the `NOT NULL` `competitor_category` and
+  `division` columns to `shooter_log_competitor`, after `match_id`; fails if the table already has rows. `V8_9_0` later
+  moves `competitor_category` into its own table
+- **`V8_2_0__create_shooter_log_overall`:** Creates the `shooter_log_overall` table behind `ShooterLogOverall`
+- **`V8_7_0__add_competitor_is_verified`:** Adds the nullable `is_verified` column to `competitor`, after
+  `paid_up_club`, and sets it to `true` for every existing row
+- **`V8_8_0__move_match_competitor_category_to_child_table`:** Creates the `match_competitor_category` table — a
+  `competitor_category` per `match_competitor`, unique per pair — copies each existing row's category into it, then
+  drops `match_competitor.competitor_category`
+- **`V8_9_0__move_shooter_log_competitor_category_to_child_table`:** Creates the `shooter_log_competitor_category`
+  table — a `competitor_category` per `shooter_log_competitor`, unique per pair — copies each existing row's category
+  into it, then drops `shooter_log_competitor.competitor_category`
+
+##### Tests
+
+- **`IpscMatchCompetitorControllerTest`, `IpscMatchCompetitorServiceTest`, `IpscMatchCompetitorServiceImplTest`,
+  `IpscMatchCompetitorServiceIntegrationTest`:** New tests for the match competitor controller and service
+- **`TransactionServiceTest`:** New tests for `saveMatchCompetitors`, committing the batch in one transaction and
+  rolling it back when the flush fails
+- **`MatchCompetitorRequestTest`, `MatchCompetitorPatchRequestTest`:** New tests for the match competitor request
+  models — JSON serialization and deserialization, including each required field being rejected when missing
+- **`MatchCompetitorRequestCsvMixInTest`:** New tests for the match competitor CSV mix-in
+- **`ShooterLogOverallRepositoryIntegrationTest`:** New integration tests for `ShooterLogOverallRepository`
+
+#### 🔄 Changed
+
+##### Services
+
+- **`TransactionServiceImpl`:** Constructor now also takes a `MatchCompetitorRepository`
+- **`IpscMatchServiceImpl`, `IpscCompetitorServiceImpl`:** Constructors now take the repositories their delete checks
+  need — a `ShooterLogRepository` for the match service, and a `ShooterLogCompetitorRepository` and
+  `ShooterLogOverallRepository` in place of the `ShooterLogRepository` for the competitor service
+- **`IpscMatchServiceImpl.deleteMatch`:** Also refuses a match that is linked to a shooter log through
+  `shooter_log_match`, using the new `ShooterLogRepository.existsByMatchesId`, as well as one with shooter log
+  competitors
+- **`IpscCompetitorServiceImpl.deleteCompetitor`:** The check for shooter logs now asks
+  `ShooterLogCompetitorRepository.existsByCompetitorId`, since a shooter log no longer has a competitor of its own, and
+  also checks `ShooterLogOverallRepository.existsByCompetitorId` — a competitor in any shooter log, or with an overall
+  shooter log row, is refused deletion
+
+##### API
+
+- **`CompetitorRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** `emailAddresses` now follows
+  `cellphoneNumber` in the constructor parameters, rather than coming last. The JSON and CSV formats are unchanged,
+  since both read by name
+- **`MatchRequest`, `MatchRequestCsvMixIn`:** `matchFirearmType` and `matchCategory` are no longer required at
+  deserialization — a JSON body, or a CSV header or row, that omits them is read rather than rejected with a
+  `MismatchedInputException`
+- **`MatchCompetitorRequest`:** New `@JsonCreator` constructor with a `@JsonProperty` on every parameter, and a
+  `matchCompetitorId` field, `null` when creating a new match competitor. `firearmType` is no longer required at
+  deserialization, and a missing required field is now rejected when the request is read
+
+##### Repositories
+
+- **`ShooterLogCompetitorRepository`:** `existsByMatchId` is replaced by `existsByCompetitorId` and
+  `existsByMatchCompetitorMatchId`, since a shooter log competitor no longer has a direct `match`
+- **`ShooterLogRepository`:** `findAllByCompetitorIdAndFirearmTypeAndPowerFactor` and `existsByCompetitorId` are
+  removed, since a shooter log no longer has a competitor, firearm type or power factor of its own
+
+##### Domain
+
+- **`Competitor`, `CompetitorPatchRequest`:** `emailAddresses` moved to follow `cellphoneNumber`, matching the order
+  of the request and response models. Only the Java field order changes, not the table's columns
+- **`MatchCompetitor.division`, `MatchCompetitor.competitorCategory`:** Both are now required. `division` is also
+  mapped with `DivisionConverter` — previously it had no explicit mapping and the column was nullable
+- **`MatchCompetitor.competitorCategory`:** Now a `List<CompetitorCategory>` — a match competitor can have several
+  categories, stored in the new `match_competitor_category` table rather than a column, and must have at least one
+- **`ShooterLogCompetitor.competitorCategory`:** Now a `List<CompetitorCategory>` too, stored in the new
+  `shooter_log_competitor_category` table rather than a column, and must have at least one
+- **`MatchCompetitor.firearmType`:** Now optional. The `(competitor_id, match_id, firearm_type)` unique constraint no
+  longer limits rows with a null `firearm_type`, since MySQL treats NULLs as distinct
+- **`ShooterLogCompetitor.competitor`, `ShooterLogCompetitor.match`:** A shooter log competitor now links to its
+  `Competitor` directly and is unique per shooter log and competitor, rather than per match competitor. The direct `match`
+  link is removed — the match is reached through `matchCompetitor`
+- **`ShooterLog`:** Reworked to a date range and its matches — the `competitor`, `club`, `firearmType`, `powerFactor`,
+  `logValue` and `calculatedDate` fields are removed, and `startDate` and `endDate` are added. `matches` is a new
+  many-to-many link to `IpscMatch` through `shooter_log_match`: a shooter log covers many matches and a match can be in
+  many shooter logs
+
+##### Database
+
+- **`V8_1_0__update_match_competitor_column_nullability`:** Makes `match_competitor.division` and
+  `match_competitor.competitor_category` `NOT NULL`, and `match_competitor.firearm_type` nullable; the `NOT NULL`
+  changes fail if any existing row has a null in either column
+- **`V8_3_0__drop_shooter_log_competitor_match_id`:** Drops `shooter_log_competitor.match_id` and its foreign key —
+  the match is reached through `match_competitor_id`
+- **`V8_4_0__rework_shooter_log_columns`:** Drops `shooter_log`'s `competitor_id`, `club_id`, `firearm_type`,
+  `power_factor`, `log_value` and `calculated_date` columns (and the competitor and club foreign keys), and adds nullable
+  `start_date` and `end_date` `DATE` columns
+- **`V8_5_0__create_shooter_log_match`:** Creates the `shooter_log_match` join table, with foreign keys to
+  `shooter_log` and `ipsc_match`, linking shooter logs and matches many-to-many
+- **`V8_6_0__add_shooter_log_competitor_and_overall_links`:** Adds the `NOT NULL` `competitor_id` column, with a
+  foreign key, to `shooter_log_competitor`, and `shooter_log_id` and `competitor_id` columns, with foreign keys, to
+  `shooter_log_overall`; both tables become unique per shooter log and competitor (replacing
+  `shooter_log_competitor`'s unique key on shooter log and match competitor). Fails if either table already has rows
+
+##### Documentation
+
+- **`AGENTS.md` Release Checklist, `prep-version-release` skill:** New step to align the Markdown tables in the files a
+  release touches — `README.md` and `ARCHITECTURE.md`, the new release's sections of `CHANGELOG.md` and `HISTORY.md`,
+  and `RELEASE_NOTES.md` — measured in display columns so emoji line up, and run before `RELEASE_NOTES.md` is
+  archived. The later checklist and skill steps are renumbered
+
+#### 📦 Dependencies
+
+##### Database
+
+- **`mysql-connector-j`:** The `9.4.0` pin in `pom.xml` is dropped, since Spring Boot `4.1.1` now manages `9.7.0`, which
+  is newer — the connector follows the parent again
 
 ### 🧾 [9.0.0] - 2026-10-01
 

@@ -29,7 +29,8 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.repositories.ShooterLogRepository;
+import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 import za.co.hpsc.web.utils.StringUtils;
@@ -45,17 +46,20 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final CompetitorRepository competitorRepository;
     private final ClubRepository clubRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
-    private final ShooterLogRepository shooterLogRepository;
+    private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
+    private final ShooterLogOverallRepository shooterLogOverallRepository;
     private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
-                                     ShooterLogRepository shooterLogRepository,
+                                     ShooterLogCompetitorRepository shooterLogCompetitorRepository,
+                                     ShooterLogOverallRepository shooterLogOverallRepository,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
-        this.shooterLogRepository = shooterLogRepository;
+        this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
+        this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.transactionService = transactionService;
     }
 
@@ -138,14 +142,17 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getCellphoneNumber() != null) {
             competitor.setCellphoneNumber(request.getCellphoneNumber());
         }
+        if (request.getEmailAddresses() != null) {
+            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
+        }
         if (request.getPaidUpSapsa() != null) {
             competitor.setPaidUpSapsa(request.getPaidUpSapsa());
         }
         if (request.getPaidUpClub() != null) {
             competitor.setPaidUpClub(request.getPaidUpClub());
         }
-        if (request.getEmailAddresses() != null) {
-            competitor.setEmailAddresses(new ArrayList<>(request.getEmailAddresses()));
+        if (request.getIsVerified() != null) {
+            competitor.setIsVerified(request.getIsVerified());
         }
 
         return toResponse(transactionService.saveCompetitor(competitor));
@@ -171,7 +178,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have recorded match results.");
         }
-        if (shooterLogRepository.existsByCompetitorId(competitorId)) {
+        if (shooterLogCompetitorRepository.existsByCompetitorId(competitorId)
+                || shooterLogOverallRepository.existsByCompetitorId(competitorId)) {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have shooter logs.");
         }
@@ -270,15 +278,16 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 csvRow.getClubNumber(),
                 csvRow.getIdNumber(),
                 csvRow.getCellphoneNumber(),
+                new ArrayList<>(csvRow.getEmailAddresses()),
                 csvRow.getPaidUpSapsa(),
                 csvRow.getPaidUpClub(),
-                new ArrayList<>(csvRow.getEmailAddresses()));
+                csvRow.getIsVerified());
     }
 
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
      * gender and named home club in the process. An omitted {@code paidUpSapsa} or
-     * {@code paidUpClub} is stored as {@code null}.
+     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}.
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
@@ -301,10 +310,11 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setClubNumber(resolveClubNumber(homeClub, request.getClubNumber()));
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
-        competitor.setPaidUpSapsa(request.getPaidUpSapsa());
-        competitor.setPaidUpClub(request.getPaidUpClub());
         competitor.setEmailAddresses(
                 (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
+        competitor.setPaidUpSapsa(request.getPaidUpSapsa());
+        competitor.setPaidUpClub(request.getPaidUpClub());
+        competitor.setIsVerified(request.getIsVerified());
     }
 
     /**
@@ -446,8 +456,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getClubNumber(),
                 competitor.getIdNumber(),
                 competitor.getCellphoneNumber(),
+                competitor.getEmailAddresses(),
                 competitor.getPaidUpSapsa(),
                 competitor.getPaidUpClub(),
-                competitor.getEmailAddresses());
+                competitor.getIsVerified());
     }
 }

@@ -39,7 +39,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 |-----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational                                                                                                                                                                                                                                                                                                                                                                                            |
+| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational — 🟡 match competitor half delivered in v9.1.0 as `IpscMatchCompetitorService` and its controller; the shooter-log half is outstanding (Gap #6)                                                                                                                                                                                                                                            |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real baseline in v8.4.0 (Gap #4 closed; 98.77% line as of v8.9.0), and a matching 97% branch minimum since v8.11.1; Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7), then returned in v8.12.0 as `code_quality.yml`, now passing with a `QODANA_TOKEN` secret (Gap #32); the `Dockerfile` has been built on push/PR since v8.11.1 (Gap #31) |
@@ -106,11 +106,13 @@ number or a newly met precondition on an existing gap — see the `update-improv
     (`docker.yml`)
   - #32 Static analysis returned to CI in v8.12.0, but the plan still records it as removed — closed v8.12.0
     (`code_quality.yml`)
-- **🟡 Partially Completed (1):**
+- **🟡 Partially Completed (2):**
+  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v9.1.0 (the
+    match competitor service and `/ipsc/match-competitors` controller are built; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
-    re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.25`)
-- **⚪ Open (1):**
-  - #6 Match scoring / shooter-log service and controller layer are not yet built — current **Now** roadmap focus
+    re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
+- **⚪ Open (0):**
+  - *None.*
 
 ### ✅ Completed
 
@@ -995,36 +997,7 @@ A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
 
-#### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
-
-**Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
-spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
-GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25" — added in v8.3.1 (commit `28af4d1`). Boot 4.1.1 is
-still the latest 4.1.x release on Maven Central, and its `spring-boot-dependencies` POM still manages `tomcat.version`
-at `11.0.24`, so the override is still needed. Yet this plan's "🛤️ Roadmap" Ongoing row says "#5's overrides are
-gone as of v8.1.1", and the "⚙️ Goals & Constraints" `pom.xml` row mentions no override at all.
-
-**Why it matters:** This is exactly the shape of Gap #5 — a manually tracked, easy-to-forget pin that nothing flags
-once the upstream BOM catches up — but the plan currently reads as though no such override remains, so the Ongoing
-check has nothing concrete pointing it at this one.
-
-**Proposed improvement:** No code change needed now. Record the override in the Ongoing roadmap row and the
-Goals & Constraints table, and at each release check whether the parent's managed `tomcat.version` has reached
-`11.0.25` or later; drop the override in the same pass the parent is bumped, as Gap #5 did for `jackson-databind`.
-
-**Progress:** The tracking half is done. The plan now records the override in its Ongoing roadmap row and
-Goals & Constraints table, and the root cause behind it being missed is fixed: the Ongoing row said overrides were
-re-checked "per the Release Checklist", but no checklist step actually did so. `AGENTS.md`'s Release Checklist
-step 2 and the `prep-version-release` skill's matching step now re-check every manual `pom.xml` override against
-the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
-The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
-milestone) and still manages Tomcat `11.0.24`; v9.0.0 raised it to `11.0.26` and added matching pins for Logback,
-Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA release manages `11.0.25` or
-later and the override is dropped.
-
-### ⚪ Open
-
-#### 6. Match scoring / shooter-log service and controller layer are not yet built
+#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v9.1.0
 
 **Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
 match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
@@ -1049,13 +1022,54 @@ controller layer doesn't — but for the scoring/shooter-log domain specifically
 Practiscore results export) once a concrete need reappears. The request DTOs' required-field enforcement is already
 fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller layer alone.
 
+**Progress:** The match-competitor half of the scoring layer is built. `IpscMatchCompetitorService` (interface +
+`impl/` split, standing in for the proposed `MatchScoreService`) and `IpscMatchCompetitorController` now expose
+`/ipsc/match-competitors` endpoints to create, bulk-import from CSV, replace, patch, get and delete a competitor's
+entry in a match, over `MatchCompetitorRepository` and the new `TransactionService` match competitor writes, with
+Mockito controller tests, mocked-repository service tests and `@SpringBootTest` integration tests. The shooter-log half
+is not: `ShooterLog`, `ShooterLogCompetitor` and the new `ShooterLogOverall` entities and their repositories were
+reworked, but no `ShooterLogService` or controller operates on them yet. The gap closes once a shooter-log service and
+controller exist, and the docs drop their "still being built" language.
+
+#### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
+
+**Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
+spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
+GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25" — added in v8.3.1 (commit `28af4d1`). Boot 4.1.1 is
+still the latest 4.1.x release on Maven Central, and its `spring-boot-dependencies` POM still manages `tomcat.version`
+at `11.0.24`, so the override is still needed. Yet this plan's "🛤️ Roadmap" Ongoing row says "#5's overrides are
+gone as of v8.1.1", and the "⚙️ Goals & Constraints" `pom.xml` row mentions no override at all.
+
+**Why it matters:** This is exactly the shape of Gap #5 — a manually tracked, easy-to-forget pin that nothing flags
+once the upstream BOM catches up — but the plan currently reads as though no such override remains, so the Ongoing
+check has nothing concrete pointing it at this one.
+
+**Proposed improvement:** No code change needed now. Record the override in the Ongoing roadmap row and the
+Goals & Constraints table, and at each release check whether the parent's managed `tomcat.version` has reached
+`11.0.25` or later; drop the override in the same pass the parent is bumped, as Gap #5 did for `jackson-databind`.
+
+**Progress:** The tracking half is done. The plan now records the override in its Ongoing roadmap row and
+Goals & Constraints table, and the root cause behind it being missed is fixed: the Ongoing row said overrides were
+re-checked "per the Release Checklist", but no checklist step actually did so. `AGENTS.md`'s Release Checklist
+step 2 and the `prep-version-release` skill's matching step now re-check every manual `pom.xml` override against
+the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
+The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
+milestone) and still manages Tomcat `11.0.24`; v9.0.0 raised it to `11.0.26` and added matching pins for Logback,
+Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA
+release manages `11.0.26` or later and the override is dropped (the threshold was `11.0.25` until v9.0.0 raised the
+pin).
+
+### ⚪ Open
+
+*No gaps are currently open.*
+
 ---
 
 ## 🛤️ Roadmap
 
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Begin the match scoring / shooter-log service and controller layer (#6), following the same phased pattern that closed #1                                                                                                                          |
+| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0, the shooter-log service and controller remain                                                                                                      |
 | **Next**    | No items currently scoped — #32 closed in v8.12.0                                                                                                                                                                                                  |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1134,7 +1148,7 @@ fixed (see Gap #1's Outcome), so this gap is scoped to the service/controller la
 - ✅ Met in v8.12.0: `.github/workflows/code_quality.yml` runs Qodana on every GitFlow branch and on PRs into
   `main`/`develop` with a provisioned `QODANA_TOKEN`, `ARCHITECTURE.md`'s CI/CD & Quality Gates table lists it, and this
   plan no longer describes Qodana as removed, closing Gap #32.
-- `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.25` or later itself,
+- `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.26` or later itself,
   closing Gap #26.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from

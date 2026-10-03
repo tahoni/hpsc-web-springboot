@@ -14,6 +14,8 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -246,7 +248,9 @@ class TransactionServiceIntegrationTest {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
+        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitor.setDivision(Division.OPEN);
         matchCompetitorRepository.save(matchCompetitor);
     }
 }

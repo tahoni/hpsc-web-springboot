@@ -154,7 +154,7 @@ class MatchRequestTest {
     }
 
     @Test
-    void testJsonDeserialization_whenMatchFirearmTypeMissing_thenThrowsMismatchedInputException() {
+    void testJsonDeserialization_whenMatchFirearmTypeMissing_thenMatchFirearmTypeIsNull() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String json = """
@@ -165,12 +165,15 @@ class MatchRequestTest {
                 }
                 """;
 
-        // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequest.class));
+        // Act
+        MatchRequest request = mapper.readValue(json, MatchRequest.class);
+
+        // Assert
+        assertNull(request.getMatchFirearmType());
     }
 
     @Test
-    void testJsonDeserialization_whenMatchCategoryMissing_thenThrowsMismatchedInputException() {
+    void testJsonDeserialization_whenMatchCategoryMissing_thenMatchCategoryIsNull() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String json = """
@@ -181,8 +184,11 @@ class MatchRequestTest {
                 }
                 """;
 
-        // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> mapper.readValue(json, MatchRequest.class));
+        // Act
+        MatchRequest request = mapper.readValue(json, MatchRequest.class);
+
+        // Assert
+        assertNull(request.getMatchCategory());
     }
 
     @Test

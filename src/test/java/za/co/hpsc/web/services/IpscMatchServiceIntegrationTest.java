@@ -13,6 +13,8 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
@@ -541,7 +543,9 @@ class IpscMatchServiceIntegrationTest {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(ipscMatchRepository.findById(matchId).orElseThrow());
+        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitor.setDivision(Division.OPEN);
         matchCompetitorRepository.save(matchCompetitor);
     }
 }

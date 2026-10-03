@@ -59,16 +59,19 @@ public class Competitor {
     @Column(name = "cellphone_number")
     private String cellphoneNumber;
 
+    @ElementCollection
+    @CollectionTable(name = "competitor_email", joinColumns = @JoinColumn(name = "competitor_id"))
+    @Column(name = "email_address")
+    private List<String> emailAddresses = new ArrayList<>();
+
     @Column(name = "paid_up_sapsa")
     private Boolean paidUpSapsa;
 
     @Column(name = "paid_up_club")
     private Boolean paidUpClub;
 
-    @ElementCollection
-    @CollectionTable(name = "competitor_email", joinColumns = @JoinColumn(name = "competitor_id"))
-    @Column(name = "email_address")
-    private List<String> emailAddresses = new ArrayList<>();
+    @Column(name = "is_verified")
+    private Boolean isVerified;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)

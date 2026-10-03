@@ -84,16 +84,20 @@ public interface IpscCompetitorService {
      *
      * @param competitorId the identifier of the competitor to update.
      * @param request      the fields to change. Must not be null; any field left {@code null}
-     *                     is left unchanged. Touching either {@code homeClub} or
-     *                     {@code clubNumber} re-applies the club number rule: required when the
-     *                     resulting home club is
+     *                     is left unchanged. A supplied but blank {@code gender} or
+     *                     {@code homeClub} clears that field, and a supplied
+     *                     {@code emailAddresses} list replaces the competitor's existing email
+     *                     addresses rather than being merged into them. Touching either
+     *                     {@code homeClub} or {@code clubNumber} re-applies the club number rule
+     *                     (falling back to the competitor's existing club number if the request
+     *                     has none): required when the resulting home club is
      *                     {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION},
      *                     forced to {@code null} otherwise.
      * @return the updated competitor.
      * @throws ValidationException if the resulting home club is
      *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
-     *                             without a club number, or the gender doesn't match a known
-     *                             {@link za.co.hpsc.web.enums.Gender}.
+     *                             without a (non-blank) club number, or the gender doesn't match a
+     *                             known {@link za.co.hpsc.web.enums.Gender}.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists, or the
      *                             named home club cannot be found.
      */

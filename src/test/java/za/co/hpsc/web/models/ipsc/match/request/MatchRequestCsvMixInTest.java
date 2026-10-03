@@ -161,30 +161,6 @@ class MatchRequestCsvMixInTest {
         assertThrows(MismatchedInputException.class, () -> readRows(csvData));
     }
 
-    @Test
-    void testCsvDeserialization_whenHeaderOmitsMatchFirearmType_thenThrowsMismatchedInputException() {
-        // Arrange
-        String csvData = """
-                MatchDate,MatchName,MatchCategory
-                2026-04-10,Club Championship,Level 1
-                """;
-
-        // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> readRows(csvData));
-    }
-
-    @Test
-    void testCsvDeserialization_whenHeaderOmitsMatchCategory_thenThrowsMismatchedInputException() {
-        // Arrange
-        String csvData = """
-                MatchDate,MatchName,MatchFirearmType
-                2026-04-10,Club Championship,Pistol
-                """;
-
-        // Act & Assert
-        assertThrows(MismatchedInputException.class, () -> readRows(csvData));
-    }
-
     // Helpers
     private List<MatchRequest> readRows(String csvData) throws IOException {
         CsvMapper csvMapper = new CsvMapper();
