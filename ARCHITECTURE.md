@@ -82,6 +82,8 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   │   ├───competitor/response/ # IPSC competitor response DTOs
 │   │   │   │   ├───match/request/       # IPSC match request DTOs
 │   │   │   │   ├───match/response/      # IPSC match response DTOs
+│   │   │   │   ├───matchcompetitor/request/  # IPSC match competitor request DTOs
+│   │   │   │   ├───matchcompetitor/response/ # IPSC match competitor response DTOs
 │   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
 │   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
 │   │   │   └───(root)          # Top-level request/response wrapper models
@@ -116,12 +118,13 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting club operations. Core
 responsibilities:
 
-| Domain                           | Description                                                                                                                                                    |
-|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Award Ceremonies**             | Award data and ceremony grouping, processed from CSV                                                                                                           |
-| **Image Gallery**                | Image metadata processing from CSV                                                                                                                             |
-| **IPSC Competitors & Matches**   | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                                |
-| **Match Scoring & Shooter Logs** | JPA entities and repositories exist for match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being built |
+| Domain                         | Description                                                                                                                       |
+|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Award Ceremonies**           | Award data and ceremony grouping, processed from CSV                                                                              |
+| **Image Gallery**              | Image metadata processing from CSV                                                                                                |
+| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`   |
+| **IPSC Match Competitors**     | Full CRUD for a competitor's entry in a match, plus bulk CSV import, via `IpscMatchCompetitorController`                          |
+| **Shooter Logs**               | JPA entities and repositories exist for shooter logs, but the service/controller layer that operates on them is still being built |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 
@@ -129,7 +132,7 @@ The application follows a strict **N-Tier Layered Architecture** with unidirecti
 HTTP Request
     → Controller
         → Service
-            → TransactionService (competitor/match writes only)
+            → TransactionService (competitor/match/match competitor writes only)
                 → Repository
                     → Database
 ```
@@ -145,12 +148,13 @@ Layer notes below).
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                 | Mapping             | Responsibility                         |
-|----------------------------|---------------------|----------------------------------------|
-| `AwardController`          | `/awards`           | Award CSV processing                   |
-| `ImageController`          | `/images`           | Image CSV processing                   |
-| `IpscCompetitorController` | `/ipsc/competitors` | IPSC competitor CRUD + bulk CSV import |
-| `IpscMatchController`      | `/ipsc/matches`     | IPSC match CRUD + bulk CSV import      |
+| Controller                      | Mapping                   | Responsibility                               |
+|---------------------------------|---------------------------|----------------------------------------------|
+| `AwardController`               | `/awards`                 | Award CSV processing                         |
+| `ImageController`               | `/images`                 | Image CSV processing                         |
+| `IpscCompetitorController`      | `/ipsc/competitors`       | IPSC competitor CRUD + bulk CSV import       |
+| `IpscMatchController`           | `/ipsc/matches`           | IPSC match CRUD + bulk CSV import            |
+| `IpscMatchCompetitorController` | `/ipsc/match-competitors` | IPSC match competitor CRUD + bulk CSV import |
 
 All controllers:
 
@@ -168,13 +172,14 @@ All controllers:
 
 Contains all business logic.
 
-| Interface               | Implementation              | Role                                                         |
-|-------------------------|-----------------------------|--------------------------------------------------------------|
-| `AwardService`          | `AwardServiceImpl`          | Award CSV processing (deliberately stateless — see below)    |
-| `ImageService`          | `ImageServiceImpl`          | Image CSV processing (deliberately stateless — see below)    |
-| `IpscMatchService`      | `IpscMatchServiceImpl`      | IPSC match CRUD + bulk CSV import                            |
-| `IpscCompetitorService` | `IpscCompetitorServiceImpl` | IPSC competitor CRUD + bulk CSV import                       |
-| `TransactionService`    | `TransactionServiceImpl`    | Commits competitor/match writes, each in its own transaction |
+| Interface                    | Implementation                   | Role                                                                          |
+|------------------------------|----------------------------------|-------------------------------------------------------------------------------|
+| `AwardService`               | `AwardServiceImpl`               | Award CSV processing (deliberately stateless — see below)                     |
+| `ImageService`               | `ImageServiceImpl`               | Image CSV processing (deliberately stateless — see below)                     |
+| `IpscMatchService`           | `IpscMatchServiceImpl`           | IPSC match CRUD + bulk CSV import                                             |
+| `IpscCompetitorService`      | `IpscCompetitorServiceImpl`      | IPSC competitor CRUD + bulk CSV import                                        |
+| `IpscMatchCompetitorService` | `IpscMatchCompetitorServiceImpl` | IPSC match competitor CRUD + bulk CSV import                                  |
+| `TransactionService`         | `TransactionServiceImpl`         | Commits competitor/match/match competitor writes, each in its own transaction |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
@@ -202,14 +207,15 @@ Contains all business logic.
 
 The JPA entities map to database tables:
 
-| Entity                 | Table                    | Key Relationships                                                                    |
-|------------------------|--------------------------|--------------------------------------------------------------------------------------|
-| `Club`                 | `club`                   | No outgoing references; targeted by `Competitor`, `IpscMatch` and `ShooterLog` below |
-| `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                                           |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                                 |
-| `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                              |
-| `ShooterLog`           | `shooter_log`            | Many-to-one → `Competitor`, `Club`                                                   |
-| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `MatchCompetitor`, `IpscMatch`                           |
+| Entity                 | Table                    | Key Relationships                                                      |
+|------------------------|--------------------------|------------------------------------------------------------------------|
+| `Club`                 | `club`                   | No outgoing references; targeted by `Competitor` and `IpscMatch` below |
+| `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                             |
+| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                   |
+| `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                |
+| `ShooterLog`           | `shooter_log`            | Many-to-many → `IpscMatch` (through `shooter_log_match`)               |
+| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `Competitor`, `MatchCompetitor`            |
+| `ShooterLogOverall`    | `shooter_log_overall`    | Many-to-one → `ShooterLog`, `Competitor`                               |
 
 Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, all `FetchType.LAZY` — the queries that
 build responses load what they need with `left join fetch` (see Repositories below). Every
@@ -255,12 +261,12 @@ Request/response models for the award and image CSV pipelines. `models/award/sha
 `Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON
 envelope.
 
-#### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
+#### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/matchcompetitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
 
 DTOs for the IPSC module rebuild — `MatchRequest`, `MatchPatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
 single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` (consumed by
 `IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
-(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), and, still groundwork only — not yet consumed by any controller —
+(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints) and `MatchCompetitorResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchCompetitorRequest` through a Jackson mix-in), and, still groundwork only — not yet consumed by any controller —
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
@@ -318,15 +324,15 @@ response. Structured logging is applied in every handler — do not catch and re
 
 ## 🧭 Key Design Patterns
 
-| Pattern                   | Where Used                                                                                          |
-|---------------------------|-----------------------------------------------------------------------------------------------------|
-| **Layered Architecture**  | Controller → Service → Repository → DB — no layer may skip the one below it                         |
-| **Repository Pattern**    | Spring Data JPA repos abstract all DB access                                                        |
-| **Service Layer Pattern** | All business logic lives in service classes; controllers and repos are kept thin                    |
-| **DTO Pattern**           | `models/` DTOs decouple external API contracts from JPA entities                                    |
-| **Transaction Boundary**  | `TransactionService` alone commits competitor/match writes, each in an explicit transaction         |
-| **Custom JPA Converters** | `AttributeConverter` implementations replace `@Enumerated` for type-safe, testable enum persistence |
-| **Global Error Handling** | `ControllerAdvice` translates domain exceptions to HTTP responses with structured logging           |
+| Pattern                   | Where Used                                                                                                   |
+|---------------------------|--------------------------------------------------------------------------------------------------------------|
+| **Layered Architecture**  | Controller → Service → Repository → DB — no layer may skip the one below it                                  |
+| **Repository Pattern**    | Spring Data JPA repos abstract all DB access                                                                 |
+| **Service Layer Pattern** | All business logic lives in service classes; controllers and repos are kept thin                             |
+| **DTO Pattern**           | `models/` DTOs decouple external API contracts from JPA entities                                             |
+| **Transaction Boundary**  | `TransactionService` alone commits competitor/match/match competitor writes, each in an explicit transaction |
+| **Custom JPA Converters** | `AttributeConverter` implementations replace `@Enumerated` for type-safe, testable enum persistence          |
+| **Global Error Handling** | `ControllerAdvice` translates domain exceptions to HTTP responses with structured logging                    |
 
 ---
 
@@ -393,6 +399,23 @@ Client uploads CSV (Content-Type: text/csv)
             → TransactionService.saveMatches
                 (saves every row in one transaction — a bad row fails before anything is saved)
         ← MatchResponseHolder
+    ← ResponseEntity<...>
+← JSON response
+```
+
+### 📥 Match Competitor Bulk CSV Import Flow
+
+Handled by `IpscMatchCompetitorController` — same shape as the flows above, with every row also checked against the other rows and the existing entries before anything is saved:
+
+```
+Client uploads CSV (Content-Type: text/csv)
+    → IpscMatchCompetitorController.createMatchCompetitors
+        → IpscMatchCompetitorService.createMatchCompetitors
+            (parses CSV via Jackson CsvMapper into MatchCompetitorRequest rows, then builds each row with the
+             same validation/competitor/match/enum-resolution logic the single-entry endpoint uses)
+            → TransactionService.saveMatchCompetitors
+                (saves every row in one transaction — a bad or duplicate row fails before anything is saved)
+        ← MatchCompetitorResponseHolder
     ← ResponseEntity<...>
 ← JSON response
 ```

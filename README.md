@@ -31,10 +31,11 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **IPSC Competitors**: Competitor record CRUD, including optional home club, gender and SAPSA/club paid-up status,
   plus bulk CSV import
 - **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import
+- **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and category resolution, plus bulk CSV import
 
-JPA entities and repositories also exist for match/competitor scoring and shooter logs. Request DTOs exist for
-competitor scores submission, laying the groundwork for match result processing and ranking calculations — the
-service and controller layer that will operate on that remaining domain is still being built.
+JPA entities and repositories also exist for shooter logs. Request DTOs exist for competitor scores submission,
+laying the groundwork for match result processing and ranking calculations — the service and controller layer
+that will operate on that remaining domain is still being built.
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA
 and Hibernate.
@@ -67,10 +68,10 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 
 - **CSV Data Processing**: Jackson-based CSV parsing for award ceremony and image gallery data, plus bulk competitor
   and match import that persists each row.
-- **IPSC Competitor & Match Management**: Full CRUD for competitors and matches, including club, gender,
-  firearm-type and match-category resolution by name.
+- **IPSC Competitor, Match & Match Competitor Management**: Full CRUD for competitors, matches and competitors'
+  entries in matches, including club, gender, firearm-type and match-category resolution by name.
 - **Match Scoring Domain Model**: JPA entities, repositories, type-safe enum converters and request DTOs for
-  match/competitor scoring and shooter logs, ready for the upcoming result-processing service/controller layer.
+  shooter logs and competitor scoring, ready for the upcoming result-processing service/controller layer.
 - **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm
   types.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.
