@@ -61,7 +61,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
-│   ├───history/                # Archived release notes/PR descriptions by major version, plus EVOLUTION_OVERVIEW.md
+│   ├───history/                # Archived release notes/PR descriptions by major version, plus the v1–v7 archives
 │   ├───recommendations/        # Fuller rationale/examples behind condensed AGENTS.md conventions
 │   └───roadmap/                # improvement-plan.md and its checkbox-level task breakdown
 ├───src/
@@ -84,7 +84,6 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   │   ├───match/response/      # IPSC match response DTOs
 │   │   │   │   ├───matchcompetitor/request/  # IPSC match competitor request DTOs
 │   │   │   │   ├───matchcompetitor/response/ # IPSC match competitor response DTOs
-│   │   │   │   ├───scores/request/      # IPSC competitor scores request DTOs (groundwork)
 │   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
 │   │   │   └───(root)          # Top-level request/response wrapper models
 │   │   ├───repositories/       # Spring Data JPA interfaces, one per entity
@@ -261,13 +260,12 @@ Request/response models for the award and image CSV pipelines. `models/award/sha
 `Request` and `Response` base wrappers provide common metadata fields. `ControllerResponse` is the standard JSON
 envelope.
 
-#### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/matchcompetitor/`, `models/ipsc/scores/request/` and `models/ipsc/shared/`
+#### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/matchcompetitor/` and `models/ipsc/shared/`
 
 DTOs for the IPSC module rebuild — `MatchRequest`, `MatchPatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
 single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` (consumed by
 `IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
-(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints) and `MatchCompetitorResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchCompetitorRequest` through a Jackson mix-in), and, still groundwork only — not yet consumed by any controller —
-`MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus CSV variants) for competitor scores submission and the
+(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints) and `MatchCompetitorResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchCompetitorRequest` through a Jackson mix-in), and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
 ---

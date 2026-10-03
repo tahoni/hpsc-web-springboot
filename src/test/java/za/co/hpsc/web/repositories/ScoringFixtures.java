@@ -54,7 +54,7 @@ final class ScoringFixtures {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
-        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
         entityManager.persist(matchCompetitor);
@@ -75,7 +75,7 @@ final class ScoringFixtures {
         shooterLogCompetitor.setShooterLog(shooterLog);
         shooterLogCompetitor.setCompetitor(matchCompetitor.getCompetitor());
         shooterLogCompetitor.setMatchCompetitor(matchCompetitor);
-        shooterLogCompetitor.setCompetitorCategory(new ArrayList<>(matchCompetitor.getCompetitorCategory()));
+        shooterLogCompetitor.setCompetitorCategory(matchCompetitor.getCompetitorCategory());
         shooterLogCompetitor.setDivision(matchCompetitor.getDivision());
         entityManager.persist(shooterLogCompetitor);
         return shooterLogCompetitor;

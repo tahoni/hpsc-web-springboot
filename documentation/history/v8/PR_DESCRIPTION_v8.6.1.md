@@ -1,7 +1,7 @@
 ## 🎯 Summary
 
 - Splits `HISTORY.md`'s "📖 Evolution Overview" section — the Phase-by-phase narrative, roughly half the file's
-  4,095 lines — out into new `documentation/history/EVOLUTION_OVERVIEW.md`, leaving a short pointer under the same
+  4,095 lines — out into new `../../../EVOLUTION_OVERVIEW.md`, leaving a short pointer under the same
   heading/anchor in `HISTORY.md`.
 - Regroups all 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files from a flat
   `documentation/history/` directory into `v1/` – `v8/` subdirectories by major version, moved with `git mv` to
@@ -13,7 +13,7 @@
 
 ## 📦 Key Changes
 
-- **Changed:** `HISTORY.md`'s Evolution Overview split into `documentation/history/EVOLUTION_OVERVIEW.md`;
+- **Changed:** `HISTORY.md`'s Evolution Overview split into `../../../EVOLUTION_OVERVIEW.md`;
   `documentation/history/`'s 52 versioned archive files regrouped into `v1/`–`v8/` subdirectories; `AGENTS.md`
   (Documentation File Map and both Release Checklist archive-path steps), `README.md`, and the
   `prep-version-release`/`generate-pr-summary`/`update-improvement-plan-gaps` skills updated to match.

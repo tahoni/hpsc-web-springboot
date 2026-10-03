@@ -80,7 +80,7 @@ class IpscMatchCompetitorControllerTest {
 
     // createMatchCompetitors()
     private static final String VALID_CSV = """
-            CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+            CompetitorId,MatchId,Cats,FirearmType,Div
             1,2,Junior,Handgun,Open Division
             """;
 

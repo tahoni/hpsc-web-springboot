@@ -23,7 +23,7 @@ a doc/tooling-only diff against `main` scopes this as a **PATCH** version, not a
 ### 📖 Evolution Overview Split
 
 - `HISTORY.md`'s "📖 Evolution Overview" section (the Phase-by-phase narrative) split out into new
-  `documentation/history/EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s 4,095 lines,
+  `../../../EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s 4,095 lines,
   making the file unwieldy. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its
   Table of Contents entry still resolves; every other section stays in `HISTORY.md` unchanged
 
@@ -44,14 +44,14 @@ a doc/tooling-only diff against `main` scopes this as a **PATCH** version, not a
 
 #### Documentation
 
-- **`HISTORY.md`:** "📖 Evolution Overview" section split out into new `documentation/history/EVOLUTION_OVERVIEW.md`
+- **`HISTORY.md`:** "📖 Evolution Overview" section split out into new `../../../EVOLUTION_OVERVIEW.md`
   — a short pointer under the same heading/anchor keeps the Table of Contents entry resolving; every other section
   unchanged
 - **`AGENTS.md`, `README.md`:** Documentation File Map/Documentation tables updated to list `EVOLUTION_OVERVIEW.md`
   as a standing exception in `documentation/history/` living directly there, and to describe the new `v1/` – `v8/`
   subdirectory grouping for the versioned archive files
 - **`AGENTS.md`'s Release Checklist, `prep-version-release` skill:** The "Extend `HISTORY.md`" step now specifies
-  that the Phase entry lands in `documentation/history/EVOLUTION_OVERVIEW.md` while the Historical Timeline entry
+  that the Phase entry lands in `../../../EVOLUTION_OVERVIEW.md` while the Historical Timeline entry
   and Milestone stay in `HISTORY.md`; the archive/PR-description steps target the new `v<major>/` subdirectory
 - **`documentation/history/`:** All 52 archived files regrouped from a flat directory into `v1/` – `v8/`
   subdirectories by major version, moved with `git mv` to preserve history
