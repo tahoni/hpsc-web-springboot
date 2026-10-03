@@ -8,10 +8,13 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogCompetitor;
+import za.co.hpsc.web.enums.CompetitorCategory;
+import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Persists the minimal valid scoring and shooter-log records the repository integration tests
@@ -51,18 +54,17 @@ final class ScoringFixtures {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
+        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitor.setDivision(Division.OPEN);
         entityManager.persist(matchCompetitor);
         return matchCompetitor;
     }
 
-    static ShooterLog shooterLog(EntityManager entityManager, Competitor competitor, Club club) {
+    static ShooterLog shooterLog(EntityManager entityManager) {
         ShooterLog shooterLog = new ShooterLog();
-        shooterLog.setCompetitor(competitor);
-        shooterLog.setClub(club);
-        shooterLog.setFirearmType(FirearmType.HANDGUN);
-        shooterLog.setPowerFactor(PowerFactor.MINOR);
-        shooterLog.setCalculatedDate(LocalDate.of(2026, 9, 30).atStartOfDay());
+        shooterLog.setStartDate(LocalDate.of(2026, 9, 1));
+        shooterLog.setEndDate(LocalDate.of(2026, 9, 30));
         entityManager.persist(shooterLog);
         return shooterLog;
     }
@@ -71,8 +73,10 @@ final class ScoringFixtures {
                                                      MatchCompetitor matchCompetitor) {
         ShooterLogCompetitor shooterLogCompetitor = new ShooterLogCompetitor();
         shooterLogCompetitor.setShooterLog(shooterLog);
+        shooterLogCompetitor.setCompetitor(matchCompetitor.getCompetitor());
         shooterLogCompetitor.setMatchCompetitor(matchCompetitor);
-        shooterLogCompetitor.setMatch(matchCompetitor.getMatch());
+        shooterLogCompetitor.setCompetitorCategory(new ArrayList<>(matchCompetitor.getCompetitorCategory()));
+        shooterLogCompetitor.setDivision(matchCompetitor.getDivision());
         entityManager.persist(shooterLogCompetitor);
         return shooterLogCompetitor;
     }

@@ -5,13 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import za.co.hpsc.web.converters.FirearmTypeConverter;
-import za.co.hpsc.web.converters.PowerFactorConverter;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,27 +20,16 @@ public class ShooterLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "competitor_id", nullable = false)
-    private Competitor competitor;
+    @Column(name = "start_date")
+    private LocalDate startDate;
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_id", nullable = false)
-    private Club club;
-
-    @Convert(converter = FirearmTypeConverter.class)
-    @Column(name = "firearm_type", nullable = false)
-    private FirearmType firearmType;
-
-    @Convert(converter = PowerFactorConverter.class)
-    @Column(name = "power_factor", nullable = false)
-    private PowerFactor powerFactor;
-
-    @Column(name = "log_value", precision = 19, scale = 6)
-    private BigDecimal logValue;
-
-    @Column(name = "calculated_date", nullable = false)
-    private LocalDateTime calculatedDate;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "shooter_log_match",
+            joinColumns = @JoinColumn(name = "shooter_log_id"),
+            inverseJoinColumns = @JoinColumn(name = "match_id"))
+    private List<IpscMatch> matches;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)

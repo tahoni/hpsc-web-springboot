@@ -28,6 +28,7 @@ class CompetitorPatchRequestTest {
         assertNull(request.getClubNumber());
         assertNull(request.getPaidUpSapsa());
         assertNull(request.getPaidUpClub());
+        assertNull(request.getIsVerified());
     }
 
     @Test
@@ -68,6 +69,7 @@ class CompetitorPatchRequestTest {
                   "cellphoneNumber": "0821234567",
                   "paidUpSapsa": true,
                   "paidUpClub": false,
+                  "isVerified": true,
                   "emailAddresses": ["jane.doe@example.com", "jane2.doe@example.com"]
                 }
                 """;
@@ -90,6 +92,7 @@ class CompetitorPatchRequestTest {
         assertEquals("0821234567", request.getCellphoneNumber());
         assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
         assertEquals(Boolean.FALSE, request.getPaidUpClub());
+        assertEquals(Boolean.TRUE, request.getIsVerified());
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
     }
 }

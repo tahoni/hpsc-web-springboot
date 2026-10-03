@@ -22,7 +22,8 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.repositories.ShooterLogRepository;
+import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
@@ -54,7 +55,10 @@ public class IpscCompetitorServiceTest {
     private MatchCompetitorRepository matchCompetitorRepository;
 
     @Mock
-    private ShooterLogRepository shooterLogRepository;
+    private ShooterLogCompetitorRepository shooterLogCompetitorRepository;
+
+    @Mock
+    private ShooterLogOverallRepository shooterLogOverallRepository;
 
     @Mock
     private IpscMatchRepository ipscMatchRepository;
@@ -67,9 +71,10 @@ public class IpscCompetitorServiceTest {
     @BeforeEach
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
-                ipscMatchRepository, transactionManager);
+                ipscMatchRepository, matchCompetitorRepository, transactionManager);
         ipscCompetitorService = new IpscCompetitorServiceImpl(competitorRepository, clubRepository,
-                matchCompetitorRepository, shooterLogRepository, transactionService);
+                matchCompetitorRepository, shooterLogCompetitorRepository, shooterLogOverallRepository,
+                transactionService);
     }
 
     // createCompetitor()
@@ -412,7 +417,20 @@ public class IpscCompetitorServiceTest {
         // Arrange
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
-        when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(true);
+        when(shooterLogCompetitorRepository.existsByCompetitorId(1L)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.deleteCompetitor(1L));
+        verify(competitorRepository, never()).delete(any(Competitor.class));
+    }
+
+    @Test
+    void testDeleteCompetitor_whenCompetitorHasOverallShooterLogRows_thenThrowsValidationException() {
+        // Arrange
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
+        when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogOverallRepository.existsByCompetitorId(1L)).thenReturn(true);
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorService.deleteCompetitor(1L));
@@ -425,7 +443,7 @@ public class IpscCompetitorServiceTest {
         Competitor competitor = newCompetitor(1L);
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(competitor));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
-        when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
 
         // Act
         assertDoesNotThrow(() -> ipscCompetitorService.deleteCompetitor(1L));
@@ -440,7 +458,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(newCompetitor(1L)));
         when(matchCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
-        when(shooterLogRepository.existsByCompetitorId(1L)).thenReturn(false);
+        when(shooterLogCompetitorRepository.existsByCompetitorId(1L)).thenReturn(false);
         doThrow(new DataIntegrityViolationException("FK violation")).when(competitorRepository).flush();
 
         // Act & Assert
@@ -772,6 +790,7 @@ public class IpscCompetitorServiceTest {
         patch.setCellphoneNumber("0821234567");
         patch.setPaidUpSapsa(true);
         patch.setPaidUpClub(true);
+        patch.setIsVerified(true);
         patch.setEmailAddresses(List.of("jane@example.com"));
 
         // Act
@@ -788,6 +807,7 @@ public class IpscCompetitorServiceTest {
         assertEquals("0821234567", patched.getCellphoneNumber());
         assertEquals(Boolean.TRUE, patched.getPaidUpSapsa());
         assertEquals(Boolean.TRUE, patched.getPaidUpClub());
+        assertEquals(Boolean.TRUE, patched.getIsVerified());
         assertEquals(List.of("jane@example.com"), patched.getEmailAddresses());
     }
 

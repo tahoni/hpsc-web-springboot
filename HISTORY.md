@@ -21,6 +21,44 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 9.1.0 (October 3, 2026)
+
+**Theme:** Match Competitor API & Shooter Log Rework
+
+**Key Focus:**
+
+- New `IpscMatchCompetitorController` at `/ipsc/match-competitors`, backed by `IpscMatchCompetitorService` and its
+  implementation, with `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse`: create,
+  replace (`PUT`), patch, get one or all, and delete a competitor's entry in a match. A competitor can have one entry
+  per match and firearm type, and `competitorCategory` is a list in all three models
+- A bulk `POST /ipsc/match-competitors/bulk` endpoint takes `text/csv` through the new `MatchCompetitorRequestCsvMixIn`
+  and returns a `MatchCompetitorResponseHolder`; every row is checked before any is saved, so either every row is
+  created or none is, and a row that duplicates an existing entry, or another row, is refused
+- `MatchCompetitorRequest` gains a `@JsonCreator` constructor with a `@JsonProperty` on every parameter, and a
+  `matchCompetitorId`; `MatchRequest`'s constructor and the match CSV mix-in stop requiring `matchFirearmType` and
+  `matchCategory`, so a JSON body or CSV row that omits them is read rather than rejected
+- A match competitor can have several competitor categories, held in the new `match_competitor_category` table, and a
+  shooter log competitor likewise in `shooter_log_competitor_category`; `MatchCompetitor.division` and
+  `competitorCategory` are required and `firearmType` becomes optional
+- `ShooterLog` is reworked to a date range linked to many matches through `shooter_log_match`; the new
+  `ShooterLogOverall` entity holds a rank and points per competitor category and division; `ShooterLogCompetitor`
+  links to its `Competitor` directly and gains `dateCalculated`, `competitorCategory` and `division`
+- New optional `Competitor.isVerified` flag, on `CompetitorRequest` (JSON and CSV), `CompetitorPatchRequest` and
+  `CompetitorResponse`, with existing competitors backfilled to `true`; `emailAddresses` now follows
+  `cellphoneNumber` in the competitor models
+- `TransactionService` gains `saveMatchCompetitor`, `saveMatchCompetitors` and `deleteMatchCompetitor`; deleting a
+  match is also refused while it is linked to a shooter log, and deleting a competitor while they are in a shooter
+  log or have an overall row
+- Eleven Flyway migrations, `V8_0_0` to `V8_9_0`, carry the schema changes
+- The release's improvement-plan sweep found no new gaps and closed none; Gap #6 moves to partially completed, since the
+  match competitor half of the scoring layer now exists and the shooter-log half does not, leaving no open gap, and
+  Gap #26 now waits on a Spring Boot release that manages Tomcat `11.0.26`
+- Scoped as `v9.1.0` **MINOR**: new endpoints and new optional fields with nothing removed or made stricter
+- Project version bumped to 9.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- The `mysql-connector-j` pin is dropped, since Spring Boot `4.1.1` now manages the newer `9.7.0`
+- `AGENTS.md`'s Release Checklist and the `prep-version-release` skill gain a step that aligns the Markdown tables in
+  the files a release touches, before `RELEASE_NOTES.md` is archived
+
 ### Version 9.0.0 (October 1, 2026)
 
 **Theme:** Match Stage Removal & CSV Import via Jackson Mix-Ins
@@ -1514,6 +1552,20 @@ typed, without changing the CSV format or JSON endpoints consumers already rely 
 **Achievement:** Removed the match stage model and the duplicate CSV models in one release, flagging each
 backward-incompatible change as it landed so the MAJOR classification was visible before the release was cut.
 
+### Milestone 43: Match Competitor API (v9.1.0)
+
+- Match competitors, the entries that hold a competitor's results in a match, get their own service and controller,
+  with create, replace, patch, get, delete and a bulk CSV import, closing the first half of the scoring layer that
+  Gap #6 tracks
+- The bulk import reuses the pattern the competitor and match imports established — a Jackson mix-in binding the CSV
+  columns onto the request model — and adds an all-or-nothing batch save that refuses a duplicate within the file
+- A match competitor and a shooter log competitor can each have several competitor categories, and the shooter log
+  entities are reworked around a date range of matches, ready for the shooter-log service that remains
+- Project's first MINOR release since v8.12.0, with nothing removed or made stricter
+
+**Achievement:** Built the match competitor endpoints on the existing pattern and extended the CSV imports to a third
+resource, without breaking any existing caller.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1933,6 +1985,27 @@ IpscMatchController / IpscCompetitorController → IpscMatchService / IpscCompet
 - Each `PATCH` has its own request model with no required fields, while `POST` and `PUT` keep the full model with its
   required fields
 
+### v9.1.0: Match Competitor API & Shooter Log Rework
+
+```
+CSV row ──(CsvMapper + MatchCompetitorRequestCsvMixIn)──→ MatchCompetitorRequest
+                                                              ↓
+IpscMatchCompetitorController → IpscMatchCompetitorService → MatchCompetitorRepository
+                                                              ↓
+              TransactionService.saveMatchCompetitor / saveMatchCompetitors / deleteMatchCompetitor
+```
+
+**Characteristics:**
+
+- A third resource, the match competitor, follows the competitor and match pattern: an interface and implementation
+  service, a controller, a full request model for `POST` and `PUT`, a patch request model with no required fields, and
+  a CSV mix-in over the same request model
+- A batch import checks every row, including against the other rows, before saving, and commits through one
+  `TransactionService` transaction that flushes inside it, so a constraint violation surfaces as a 400
+- Competitor categories are a child table per entity rather than a column, so one entry can carry several
+- `ShooterLog` no longer owns a competitor, club or firearm type; it is a date range linked to matches, with
+  `ShooterLogCompetitor` and `ShooterLogOverall` linked to `Competitor` directly
+
 ---
 
 ## ✨ Feature Timeline
@@ -2138,11 +2211,14 @@ IpscMatchController / IpscCompetitorController → IpscMatchService / IpscCompet
   97% floor as line coverage. Then normalise the competitor CSV import's casing — proper-casing free-text columns and
   lower-casing surname particles — so imported data reads consistently regardless of how it was typed, backed by a
   new `helpers` package and an internal `Util` → `Utils` naming clean-up.
-- **Version 9.x (v9.0.0):** Narrow the match domain to what the project actually uses — removing the stage model and
-  its tables — and collapse the duplicate CSV request models into the request models themselves through Jackson
-  mix-ins, so the bulk imports and the JSON endpoints share one contract. Because that tightens the public API (a
-  removed field, now-required properties, a configuration variable no longer read), the release is the project's
-  first MAJOR since v8.0.0, with each breaking change flagged in `CHANGELOG.md` as it landed.
+- **Version 9.x (v9.0.0 – v9.1.0):** Narrow the match domain to what the project actually uses — removing the
+  stage model and its tables — and collapse the duplicate CSV request models into the request models themselves
+  through Jackson mix-ins, so the bulk imports and the JSON endpoints share one contract. Because that tightens the
+  public API (a removed field, now-required properties, a configuration variable no longer read), the release is the
+  project's first MAJOR since v8.0.0, with each breaking change flagged in `CHANGELOG.md` as it landed. Then build the
+  first half of the scoring layer — match competitors, with their own service, controller and bulk CSV import — and
+  rework the shooter log entities beneath it, as backward-compatible additions that leave every existing endpoint
+  unchanged.
 
 ### Initial Phase (v1.0.0)
 
@@ -2412,11 +2488,20 @@ IpscMatchController / IpscCompetitorController → IpscMatchService / IpscCompet
     - Tightening a request model (`matchFirearmType`, `matchCategory` now required) broke `PATCH`, which reuses it,
       so each `PATCH` got its own model with no required fields
 
+18. **Constructor Annotations Govern a `@JsonCreator` (v9.1.0):** With a creator constructor, a property's
+    requirement is decided by the constructor parameter, not the field it ends up in
+    - Marking a field `@JsonProperty(required = true)` while the creator's parameter was unannotated left a request
+      model reading a missing value as `null`, so the field annotation and the constructor have to be kept in step
+    - Relaxing `matchFirearmType` and `matchCategory` on `MatchRequest` took the constructor and the CSV mix-in as well
+      as the fields, and a test per property proved each of the three entry points agreed
+    - A batch import is only atomic if every row is checked first: refusing a duplicate against the database does not
+      catch two rows in the same file that duplicate each other
+
 ---
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v9.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v9.1.0, the following areas are identified for future enhancement:
 
 ### Previously Completed (v5.4.0 and earlier)
 
@@ -2721,7 +2806,27 @@ Based on the evolution to v9.0.0, the following areas are identified for future 
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v9.0.0)
+### Recently Completed (v9.1.0)
+
+- New `IpscMatchCompetitorController`, `IpscMatchCompetitorService` and implementation, and
+  `MatchCompetitorRequest`/`MatchCompetitorPatchRequest`/`MatchCompetitorResponse` for `/ipsc/match-competitors`,
+  with a bulk `POST /ipsc/match-competitors/bulk` CSV import through the new `MatchCompetitorRequestCsvMixIn` and
+  `MatchCompetitorResponseHolder`
+- `TransactionService.saveMatchCompetitor`, `saveMatchCompetitors` and `deleteMatchCompetitor`; the match and
+  competitor delete checks also cover shooter logs and the new overall rows
+- `MatchCompetitor` and `ShooterLogCompetitor` hold a list of competitor categories in child tables, and
+  `MatchCompetitor.firearmType` is optional
+- `ShooterLog` reworked to a date range linked to matches, with the new `ShooterLogOverall` entity and
+  `ShooterLogOverallRepository`, and eleven `V8_0_0` to `V8_9_0` Flyway migrations
+- `Competitor.isVerified` added, and `emailAddresses` moved after `cellphoneNumber` in the competitor models
+- `MatchRequest.matchFirearmType` and `matchCategory` no longer required, in JSON and CSV
+- Improvement plan: no new gaps and none closed; Gap #6 moves to partially completed, with no open gap left, and
+  Gap #26 now waits on a Spring Boot release that manages Tomcat `11.0.26`
+- `mysql-connector-j` pin dropped now that Spring Boot manages a newer version
+- New table-alignment step in `AGENTS.md`'s Release Checklist and the `prep-version-release` skill
+- Project version bumped to 9.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v9.0.0)
 
 - `IpscMatchStage`, `MatchStageCompetitor`, their repositories, `MatchStageRequest`/`MatchStageResponse` and the
   `stages` field on `MatchRequest`/`MatchResponse` removed, with the `V7_9_0__drop_ipsc_match_stage.sql` migration
@@ -2878,3 +2983,8 @@ Version 9.0.0 narrows that feature set to what the project uses: the match stage
 the bulk CSV imports read straight into the request models through Jackson mix-ins instead of through duplicate CSV
 models. It is the project's first MAJOR release since v8.0.0, because the match request and response lose `stages`,
 `matchFirearmType` and `matchCategory` become required and `MYSQL_USER` is no longer read.
+
+Version 9.1.0 builds on that narrowed model with the first half of the scoring layer: match competitors get their own
+service, controller and bulk CSV import, and the shooter log entities are reworked to a date range of matches ready
+for the service that remains. It is a MINOR release, since it adds endpoints and optional fields and removes or
+tightens nothing.

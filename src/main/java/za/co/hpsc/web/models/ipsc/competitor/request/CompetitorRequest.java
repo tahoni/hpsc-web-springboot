@@ -55,12 +55,14 @@ public class CompetitorRequest {
     private String idNumber;
     /** The competitor's cellphone number. */
     private String cellphoneNumber;
+    /** The competitor's email addresses, if any. */
+    private List<String> emailAddresses = new ArrayList<>();
     /** Whether the competitor's SAPSA membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpSapsa;
     /** Whether the competitor's club membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpClub;
-    /** The competitor's email addresses, if any. */
-    private List<String> emailAddresses = new ArrayList<>();
+    /** Whether the competitor has been verified; stored as {@code null} when omitted. */
+    private Boolean isVerified;
 
     /**
      * Constructs a {@code CompetitorRequest} from its JSON representation.
@@ -79,11 +81,12 @@ public class CompetitorRequest {
      *                         Required when {@code homeClub} is HPSC, ignored (forced to {@code null}) otherwise.
      * @param idNumber         the competitor's national identity number.
      * @param cellphoneNumber  the competitor's cellphone number.
+     * @param emailAddresses   the competitor's email addresses, if any.
      * @param paidUpSapsa      whether the competitor's SAPSA membership is paid up; stored as {@code null} when
      *                         omitted.
      * @param paidUpClub       whether the competitor's club membership is paid up; stored as {@code null} when
      *                         omitted.
-     * @param emailAddresses   the competitor's email addresses, if any.
+     * @param isVerified       whether the competitor has been verified; stored as {@code null} when omitted.
      */
     @JsonCreator
     public CompetitorRequest(@JsonProperty("competitorId") Long competitorId,
@@ -99,9 +102,10 @@ public class CompetitorRequest {
                              @JsonProperty("clubNumber") String clubNumber,
                              @JsonProperty("idNumber") String idNumber,
                              @JsonProperty("cellphoneNumber") String cellphoneNumber,
+                             @JsonProperty("emailAddresses") List<String> emailAddresses,
                              @JsonProperty("paidUpSapsa") Boolean paidUpSapsa,
                              @JsonProperty("paidUpClub") Boolean paidUpClub,
-                             @JsonProperty("emailAddresses") List<String> emailAddresses) {
+                             @JsonProperty("isVerified") Boolean isVerified) {
         this.competitorId = competitorId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -115,11 +119,11 @@ public class CompetitorRequest {
         this.clubNumber = clubNumber;
         this.idNumber = idNumber;
         this.cellphoneNumber = cellphoneNumber;
-        this.paidUpSapsa = paidUpSapsa;
-        this.paidUpClub = paidUpClub;
-
         if (emailAddresses != null) {
             this.emailAddresses = emailAddresses;
         }
+        this.paidUpSapsa = paidUpSapsa;
+        this.paidUpClub = paidUpClub;
+        this.isVerified = isVerified;
     }
 }

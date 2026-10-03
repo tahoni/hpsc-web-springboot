@@ -5,14 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import za.co.hpsc.web.converters.ClubIdentifierConverter;
-import za.co.hpsc.web.converters.CompetitorCategoryConverter;
-import za.co.hpsc.web.converters.FirearmTypeConverter;
-import za.co.hpsc.web.converters.PowerFactorConverter;
+import za.co.hpsc.web.converters.*;
 import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -37,14 +36,18 @@ public class MatchCompetitor {
     @Column(name = "match_club")
     private ClubIdentifier matchClub;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "match_competitor_category", joinColumns = @JoinColumn(name = "match_competitor_id"))
     @Convert(converter = CompetitorCategoryConverter.class)
-    @Column(name = "competitor_category")
-    private CompetitorCategory competitorCategory;
+    @Column(name = "competitor_category", nullable = false)
+    private List<CompetitorCategory> competitorCategory = new ArrayList<>();
 
     @Convert(converter = FirearmTypeConverter.class)
-    @Column(name = "firearm_type", nullable = false)
+    @Column(name = "firearm_type")
     private FirearmType firearmType;
 
+    @Convert(converter = DivisionConverter.class)
+    @Column(name = "division", nullable = false)
     private Division division;
 
     @Convert(converter = PowerFactorConverter.class)

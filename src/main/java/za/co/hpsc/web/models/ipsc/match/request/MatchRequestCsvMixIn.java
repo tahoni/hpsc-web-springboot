@@ -27,8 +27,8 @@ public abstract class MatchRequestCsvMixIn {
                          @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT) LocalDate matchDate,
                          @JsonProperty(value = "MatchName", required = true) String matchName,
                          @JsonProperty("Club") String club,
-                         @JsonProperty(value = "MatchFirearmType", required = true) String matchFirearmType,
-                         @JsonProperty(value = "MatchCategory", required = true) String matchCategory,
+                         @JsonProperty("MatchFirearmType") String matchFirearmType,
+                         @JsonProperty("MatchCategory") String matchCategory,
                          @JsonProperty("StartTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT)
                          LocalTime startTime,
                          @JsonProperty("EndTime") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT)
