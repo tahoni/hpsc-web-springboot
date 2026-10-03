@@ -108,7 +108,9 @@ Steps:
 9. **Apply the reverse sync rule**: check whether any of this version's changes are relevant to `README.md` (goal, tech
    stack, project structure, quick start) or `ARCHITECTURE.md` (system design, layering, data flows) and update those
    files accordingly — keeping both release-agnostic (no version numbers or counts that drift, per AGENTS.md's Evergreen
-   Documentation rules).
+   Documentation rules). Also cross-check `ARCHITECTURE.md`'s Project Structure tree against the repository on disk, and
+   `documentation/recommendations/flyway-migration-versioning.md`'s Current State table against
+   `src/main/resources/db/migration/`, correcting any stale directory or adding a row for any missing migration.
 10. **Update `CONTRIBUTING.md`** only if this version's changes affect developer setup, database profiles, workflow or
     testing conventions documented there.
 11. **Align the Markdown tables in the files this release touched.** Per AGENTS.md's Table alignment rule (pad each
