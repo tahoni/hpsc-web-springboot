@@ -18,7 +18,6 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
-import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
@@ -192,7 +191,7 @@ public class IpscMatchController {
     })
     ResponseEntity<MatchResponse> patchMatch(
             @Parameter(description = "Identifier of the match to update.") @PathVariable Long matchId,
-            @RequestBody MatchPatchRequest request)
+            @RequestBody MatchRequest request)
             throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.ok(ipscMatchService.patchMatch(matchId, request));
     }

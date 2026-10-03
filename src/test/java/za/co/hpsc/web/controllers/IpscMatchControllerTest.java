@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
@@ -286,7 +285,7 @@ class IpscMatchControllerTest {
     @Test
     void testPatchMatch_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        MatchPatchRequest request = new MatchPatchRequest();
+        MatchRequest request = new MatchRequest();
         MatchResponse response = new MatchResponse();
         when(ipscMatchService.patchMatch(1L, request)).thenReturn(response);
 
@@ -301,7 +300,7 @@ class IpscMatchControllerTest {
     @Test
     void testPatchMatch_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        MatchPatchRequest request = new MatchPatchRequest();
+        MatchRequest request = new MatchRequest();
         when(ipscMatchService.patchMatch(1L, request)).thenReturn(new MatchResponse());
 
         // Act
@@ -315,7 +314,7 @@ class IpscMatchControllerTest {
     @Test
     void testPatchMatch_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        MatchPatchRequest request = new MatchPatchRequest();
+        MatchRequest request = new MatchRequest();
         when(ipscMatchService.patchMatch(99L, request)).thenThrow(new NonFatalException("No IPSC match found with ID 99"));
 
         // Act & Assert
@@ -325,7 +324,7 @@ class IpscMatchControllerTest {
     @Test
     void testPatchMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        MatchPatchRequest request = new MatchPatchRequest();
+        MatchRequest request = new MatchRequest();
         when(ipscMatchService.patchMatch(1L, request))
                 .thenThrow(new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured."));
 
