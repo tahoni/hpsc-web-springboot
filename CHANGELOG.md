@@ -90,6 +90,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   or all) and delete a competitor's entry in a match, with `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and
   `MatchCompetitorResponse`; a competitor can have one entry per match and firearm type, under one or more
   categories — `competitorCategory` is a list in all three
+- **`MatchCompetitorRequestCsvMixIn`:** New Jackson mix-in binding UpperCamelCase CSV column headers onto
+  `MatchCompetitorRequest`'s constructor, with `CompetitorCategory` as one cell of categories split on the shared array
+  separator and unknown columns ignored. No endpoint reads match competitor CSV yet
 
 ##### Services
 
@@ -131,6 +134,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchCompetitorServiceIntegrationTest`:** New tests for the match competitor controller and service
 - **`MatchCompetitorRequestTest`, `MatchCompetitorPatchRequestTest`:** New tests for the match competitor request
   models — JSON serialization and deserialization, including each required field being rejected when missing
+- **`MatchCompetitorRequestCsvMixInTest`:** New tests for the match competitor CSV mix-in
 - **`ShooterLogOverallRepositoryIntegrationTest`:** New integration tests for `ShooterLogOverallRepository`
 
 #### 🔄 Changed
