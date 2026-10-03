@@ -42,10 +42,10 @@ public class MatchRequest {
      */
     private String club;
     /** The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
-    @JsonProperty(required = true)
+    @JsonProperty
     private String matchFirearmType;
     /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
-    @JsonProperty(required = true)
+    @JsonProperty
     private String matchCategory;
     /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
     private String url;

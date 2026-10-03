@@ -143,6 +143,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** `emailAddresses` now follows
   `cellphoneNumber` in the constructor parameters, rather than coming last. The JSON and CSV formats are unchanged,
   since both read by name
+- **`MatchRequest`, `MatchRequestCsvMixIn`:** `matchFirearmType` and `matchCategory` are no longer required at
+  deserialization, so a request or CSV file that omits them is read rather than rejected with a
+  `MismatchedInputException`
 
 ##### Repositories
 
