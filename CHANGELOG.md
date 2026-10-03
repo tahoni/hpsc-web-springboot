@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 9.0.0](#-900---2026-10-01) ← Current
+- [🧾 Version 9.1.0](#-910---2026-10-03) ← Current
+- [🧾 Version 9.0.0](#-900---2026-10-01)
 - [🧾 Version 8.12.0](#-8120---2026-09-29)
 - [🧾 Version 8.11.1](#-8111---2026-09-27)
 - [🧾 Version 8.11.0](#-8110---2026-09-27)
@@ -66,6 +67,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [9.1.0] - 2026-10-03
 
 #### ➕ Added
 
@@ -219,6 +222,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   foreign key, to `shooter_log_competitor`, and `shooter_log_id` and `competitor_id` columns, with foreign keys, to
   `shooter_log_overall`; both tables become unique per shooter log and competitor (replacing
   `shooter_log_competitor`'s unique key on shooter log and match competitor). Fails if either table already has rows
+
+#### 📦 Dependencies
+
+##### Database
+
+- **`mysql-connector-j`:** The `9.4.0` pin in `pom.xml` is dropped, since Spring Boot `4.1.1` now manages `9.7.0`, which
+  is newer — the connector follows the parent again
 
 ### 🧾 [9.0.0] - 2026-10-01
 

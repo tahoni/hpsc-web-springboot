@@ -2727,6 +2727,76 @@ the Semantic Versioning rules.
   `CompetitorPatchRequestTest`, replacing `MatchRequestForCSVTest`, `CompetitorRequestForCSVTest` and
   `MatchStageRequestTest`; stage coverage removed from the match, competitor, repository and transaction service tests
 
+### Phase 43: Match Competitor API & Shooter Log Rework (v9.1.0)
+
+**Duration:** October 3, 2026
+
+A minor release: match competitors, the entries holding a competitor's results in a match, get their own endpoints and
+bulk CSV import, and the shooter log entities are reworked beneath them. It adds endpoints and optional fields and
+removes or tightens nothing, so it is MINOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Match Competitor API**
+
+- New `IpscMatchCompetitorController` at `/ipsc/match-competitors` and `IpscMatchCompetitorService` with its
+  implementation: create, replace (`PUT`), patch, get one or all, and delete, with `MatchCompetitorRequest`,
+  `MatchCompetitorPatchRequest` and `MatchCompetitorResponse`; a competitor can have one entry per match and firearm
+  type, under one or more categories
+- A patch applies only the fields it supplies and never clears a required one; a duplicate entry is refused on create,
+  replace and patch
+- New `POST /ipsc/match-competitors/bulk` takes `text/csv` through `MatchCompetitorRequestCsvMixIn` and returns a
+  `MatchCompetitorResponseHolder`; every row is checked, including against the other rows and the existing entries,
+  before any is saved, and all are saved in one transaction
+- `MatchCompetitorRequest` has a `@JsonCreator` constructor with a `@JsonProperty` on every parameter, and a
+  `matchCompetitorId`
+
+**Match & Competitor API**
+
+- `MatchRequest.matchFirearmType` and `matchCategory` are no longer required in JSON or CSV
+- New optional `Competitor.isVerified` on `CompetitorRequest` (JSON and CSV), `CompetitorPatchRequest` and
+  `CompetitorResponse`; `emailAddresses` follows `cellphoneNumber` in the competitor models
+
+**Persistence**
+
+- `MatchCompetitor.competitorCategory` and `ShooterLogCompetitor.competitorCategory` are lists held in the
+  `match_competitor_category` and `shooter_log_competitor_category` tables; `division` is required on both, and
+  `MatchCompetitor.firearmType` is optional
+- `ShooterLog` is a date range linked to matches through `shooter_log_match`; new `ShooterLogOverall` entity and
+  `ShooterLogOverallRepository`; `ShooterLogCompetitor` links to `Competitor` directly and gains `dateCalculated`
+- `Competitor.isVerified` column, backfilled to `true`
+- Eleven Flyway migrations, `V8_0_0` to `V8_9_0`
+
+**Services**
+
+- `TransactionService.saveMatchCompetitor`, `saveMatchCompetitors` and `deleteMatchCompetitor`, the delete and batch
+  save flushing inside the transaction so a constraint violation is reported as a 400
+- `IpscMatchService.deleteMatch` also refuses a match linked to a shooter log, and
+  `IpscCompetitorService.deleteCompetitor` a competitor in a shooter log or with an overall row
+
+**Roadmap**
+
+- No new gaps and none closed; Gap #6 moves to partially completed, with the match competitor half built and the
+  shooter-log half not, leaving no open gap, and Gap #26 now waits on a Spring Boot release that manages Tomcat
+  `11.0.26`
+
+**Build & Metadata**
+
+- Project version bumped to 9.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Dependencies**
+
+- The `mysql-connector-j` pin is dropped, since Spring Boot `4.1.1` now manages `9.7.0`
+
+**Technical Focus:**
+
+- Extending the request-model-plus-mix-in pattern to a third resource, with an all-or-nothing batch import
+
+**Test Coverage:**
+
+- New controller, service, implementation and integration tests for the match competitor endpoints, request model and
+  CSV mix-in, and for `ShooterLogOverallRepository`; new `TransactionServiceTest` cases for `saveMatchCompetitors`
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
