@@ -20,6 +20,7 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
@@ -97,7 +98,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public MatchResponse patchMatch(Long matchId, MatchRequest request) throws FatalException {
+    public MatchResponse patchMatch(Long matchId, MatchPatchRequest request) throws FatalException {
         IpscMatch match = findMatchOrThrow(matchId);
 
         if (request.getClub() != null) {

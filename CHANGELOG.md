@@ -122,8 +122,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Services
 
 - **`TransactionServiceImpl`:** Constructor now also takes a `MatchCompetitorRepository`
-- **`IpscMatchService.patchMatch`:** Takes a `MatchRequest` instead of a `MatchPatchRequest`; the unused
-  `MatchPatchRequest` is removed
 
 ##### Domain
 

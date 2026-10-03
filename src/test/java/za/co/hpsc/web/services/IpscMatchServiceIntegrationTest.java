@@ -20,6 +20,7 @@ import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -293,7 +294,7 @@ class IpscMatchServiceIntegrationTest {
     @Test
     void testPatchMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        MatchRequest request = new MatchRequest();
+        MatchPatchRequest request = new MatchPatchRequest();
         request.setMatchName("Renamed");
 
         // Act & Assert
@@ -306,7 +307,7 @@ class IpscMatchServiceIntegrationTest {
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchName("Renamed Championship");
 
         // Act
@@ -328,7 +329,7 @@ class IpscMatchServiceIntegrationTest {
 
         LocalTime newStartTime = LocalTime.of(9, 30);
         LocalTime newEndTime = LocalTime.of(18, 30);
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setStartTime(newStartTime);
         patch.setEndTime(newEndTime);
 
@@ -347,7 +348,7 @@ class IpscMatchServiceIntegrationTest {
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setUrl("https://example.com/matches/updated");
 
         // Act
@@ -364,7 +365,7 @@ class IpscMatchServiceIntegrationTest {
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setClub("No Such Club");
 
         // Act & Assert
@@ -377,7 +378,7 @@ class IpscMatchServiceIntegrationTest {
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchFirearmType("Not A Firearm Type");
 
         // Act & Assert
@@ -475,7 +476,7 @@ class IpscMatchServiceIntegrationTest {
             assertEquals("Replaced Championship", ipscMatchService.getMatch(matchId).getMatchName());
 
             // Act & Assert - patch
-            MatchRequest patch = new MatchRequest();
+            MatchPatchRequest patch = new MatchPatchRequest();
             patch.setMatchName("Patched Championship");
             ipscMatchService.patchMatch(matchId, patch);
             assertEquals("Patched Championship", ipscMatchService.getMatch(matchId).getMatchName());

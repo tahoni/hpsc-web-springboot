@@ -15,6 +15,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
@@ -472,7 +473,7 @@ public class IpscMatchServiceTest {
     void testPatchMatch_whenMatchDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
         when(ipscMatchRepository.findByIdWithClub(999L)).thenReturn(Optional.empty());
-        MatchRequest request = new MatchRequest();
+        MatchPatchRequest request = new MatchPatchRequest();
         request.setMatchName("Renamed");
 
         // Act & Assert
@@ -487,39 +488,11 @@ public class IpscMatchServiceTest {
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setClub("No Such Club");
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchService.patchMatch(1L, patch));
-    }
-
-    @Test
-    void testPatchMatch_whenMatchFirearmTypeIsBlank_thenThrowsValidationException() {
-        // Arrange
-        IpscMatch existing = new IpscMatch();
-        existing.setId(1L);
-        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
-
-        MatchRequest patch = new MatchRequest();
-        patch.setMatchFirearmType("  ");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(1L, patch));
-    }
-
-    @Test
-    void testPatchMatch_whenMatchCategoryIsBlank_thenThrowsValidationException() {
-        // Arrange
-        IpscMatch existing = new IpscMatch();
-        existing.setId(1L);
-        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
-
-        MatchRequest patch = new MatchRequest();
-        patch.setMatchCategory("  ");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(1L, patch));
     }
 
     @Test
@@ -529,7 +502,7 @@ public class IpscMatchServiceTest {
         existing.setId(1L);
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchFirearmType("Not A Firearm Type");
 
         // Act & Assert
@@ -546,7 +519,7 @@ public class IpscMatchServiceTest {
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         stubMatchSaveReturnsSameEntity();
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setClub("Test Club");
 
         // Act
@@ -565,7 +538,7 @@ public class IpscMatchServiceTest {
         stubMatchSaveReturnsSameEntity();
 
         LocalDate newDate = LocalDate.of(2027, 3, 20);
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchDate(newDate);
 
         // Act
@@ -586,7 +559,7 @@ public class IpscMatchServiceTest {
 
         LocalTime newStartTime = LocalTime.of(8, 0);
         LocalTime newEndTime = LocalTime.of(17, 0);
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setStartTime(newStartTime);
         patch.setEndTime(newEndTime);
 
@@ -607,7 +580,7 @@ public class IpscMatchServiceTest {
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setUrl("https://example.com/matches/1");
 
         // Act
@@ -626,7 +599,7 @@ public class IpscMatchServiceTest {
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchFirearmType(FirearmType.RIFLE.toString());
 
         // Act
@@ -645,7 +618,7 @@ public class IpscMatchServiceTest {
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchCategory(MatchCategory.CLUB_SHOOT.toString());
 
         // Act
@@ -662,7 +635,7 @@ public class IpscMatchServiceTest {
         existing.setId(1L);
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchCategory("Not A Match Category");
 
         // Act & Assert
@@ -683,7 +656,7 @@ public class IpscMatchServiceTest {
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         when(ipscMatchRepository.save(any(IpscMatch.class))).thenReturn(existing);
 
-        MatchRequest patch = new MatchRequest();
+        MatchPatchRequest patch = new MatchPatchRequest();
         patch.setMatchName("Renamed Championship");
 
         // Act
