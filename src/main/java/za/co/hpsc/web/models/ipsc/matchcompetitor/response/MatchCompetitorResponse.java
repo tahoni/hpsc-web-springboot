@@ -12,6 +12,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * A persisted IPSC match competitor, as returned by {@code MatchCompetitorController}'s CRUD endpoints.
@@ -32,9 +33,9 @@ public class MatchCompetitorResponse {
     private Long matchId;
     /** The club the competitor represented at the match, if any. */
     private ClubIdentifier matchClub;
-    /** The competitor's category at the match. */
+    /** The competitor's categories at the match. */
     @NotNull
-    private CompetitorCategory competitorCategory;
+    private List<CompetitorCategory> competitorCategory;
     /** The firearm type the competitor shot. */
     @NotNull
     private FirearmType firearmType;

@@ -13,6 +13,7 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Persists the minimal valid scoring and shooter-log records the repository integration tests
@@ -52,7 +53,7 @@ final class ScoringFixtures {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
-        matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
+        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
         entityManager.persist(matchCompetitor);
@@ -73,7 +74,7 @@ final class ScoringFixtures {
         shooterLogCompetitor.setShooterLog(shooterLog);
         shooterLogCompetitor.setCompetitor(matchCompetitor.getCompetitor());
         shooterLogCompetitor.setMatchCompetitor(matchCompetitor);
-        shooterLogCompetitor.setCompetitorCategory(matchCompetitor.getCompetitorCategory());
+        shooterLogCompetitor.setCompetitorCategory(matchCompetitor.getCompetitorCategory().getFirst());
         shooterLogCompetitor.setDivision(matchCompetitor.getDivision());
         entityManager.persist(shooterLogCompetitor);
         return shooterLogCompetitor;

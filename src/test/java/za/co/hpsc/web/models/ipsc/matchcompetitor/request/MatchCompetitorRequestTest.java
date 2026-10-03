@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +19,7 @@ class MatchCompetitorRequestTest {
                   "competitorId": 1,
                   "matchId": 2,
                   "matchClub": "HPSC",
-                  "competitorCategory": "Junior",
+                  "competitorCategory": ["Junior"],
                   "firearmType": "Handgun",
                   "division": "Open Division",
                   "powerFactor": "Major",
@@ -36,7 +37,7 @@ class MatchCompetitorRequestTest {
         assertEquals(1L, request.getCompetitorId());
         assertEquals(2L, request.getMatchId());
         assertEquals("HPSC", request.getMatchClub());
-        assertEquals("Junior", request.getCompetitorCategory());
+        assertEquals(List.of("Junior"), request.getCompetitorCategory());
         assertEquals("Handgun", request.getFirearmType());
         assertEquals("Open Division", request.getDivision());
         assertEquals("Major", request.getPowerFactor());
@@ -53,7 +54,7 @@ class MatchCompetitorRequestTest {
                 {
                   "competitorId": 1,
                   "matchId": 2,
-                  "competitorCategory": "Junior",
+                  "competitorCategory": ["Junior"],
                   "firearmType": "Handgun",
                   "division": "Open Division"
                 }
@@ -77,7 +78,7 @@ class MatchCompetitorRequestTest {
         String json = """
                 {
                   "competitorId": 1,
-                  "competitorCategory": "Junior",
+                  "competitorCategory": ["Junior"],
                   "firearmType": "Handgun",
                   "division": "Open Division"
                 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Request to create or fully replace an IPSC match competitor: one competitor's entry in one match, in one firearm
@@ -30,9 +31,9 @@ public class MatchCompetitorRequest {
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. */
     private String matchClub;
-    /** The competitor's category at the match; resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
+    /** The competitor's categories at the match, at least one; each resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
     @JsonProperty(required = true)
-    private String competitorCategory;
+    private List<String> competitorCategory;
     /** The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
     @JsonProperty(required = true)
     private String firearmType;

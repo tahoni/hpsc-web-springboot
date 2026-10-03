@@ -543,7 +543,7 @@ class IpscMatchServiceIntegrationTest {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(ipscMatchRepository.findById(matchId).orElseThrow());
-        matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
+        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.NONE));
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
         matchCompetitorRepository.save(matchCompetitor);

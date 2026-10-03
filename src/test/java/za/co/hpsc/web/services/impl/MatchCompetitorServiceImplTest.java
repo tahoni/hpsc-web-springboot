@@ -22,6 +22,7 @@ import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,7 +66,7 @@ class MatchCompetitorServiceImplTest {
         request.setCompetitorId(1L);
         request.setMatchId(2L);
         request.setMatchClub("HPSC");
-        request.setCompetitorCategory("Lady");
+        request.setCompetitorCategory(List.of("Lady"));
         request.setFirearmType("PCC");
         request.setDivision("Production Division");
         request.setPowerFactor("Minor");
@@ -82,7 +83,7 @@ class MatchCompetitorServiceImplTest {
         assertSame(competitor, matchCompetitor.getCompetitor());
         assertSame(match, matchCompetitor.getMatch());
         assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
-        assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
+        assertEquals(List.of(CompetitorCategory.LADY), matchCompetitor.getCompetitorCategory());
         assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
         assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
         assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
@@ -234,7 +235,7 @@ class MatchCompetitorServiceImplTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(1L);
         request.setMatchId(2L);
-        request.setCompetitorCategory("Junior");
+        request.setCompetitorCategory(List.of("Junior"));
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
 
@@ -277,7 +278,7 @@ class MatchCompetitorServiceImplTest {
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
         matchCompetitor.setMatchClub(ClubIdentifier.HPSC);
-        matchCompetitor.setCompetitorCategory(CompetitorCategory.JUNIOR);
+        matchCompetitor.setCompetitorCategory(List.of(CompetitorCategory.JUNIOR));
         matchCompetitor.setFirearmType(FirearmType.RIFLE);
         matchCompetitor.setDivision(Division.OPEN);
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
@@ -294,7 +295,7 @@ class MatchCompetitorServiceImplTest {
         assertEquals(1L, response.getCompetitorId());
         assertEquals(2L, response.getMatchId());
         assertEquals(ClubIdentifier.HPSC, response.getMatchClub());
-        assertEquals(CompetitorCategory.JUNIOR, response.getCompetitorCategory());
+        assertEquals(List.of(CompetitorCategory.JUNIOR), response.getCompetitorCategory());
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
         assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
@@ -309,7 +310,7 @@ class MatchCompetitorServiceImplTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(1L);
         request.setMatchId(2L);
-        request.setCompetitorCategory("Junior");
+        request.setCompetitorCategory(List.of("Junior"));
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
         return request;

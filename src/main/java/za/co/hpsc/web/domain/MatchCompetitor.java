@@ -10,6 +10,8 @@ import za.co.hpsc.web.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -34,9 +36,11 @@ public class MatchCompetitor {
     @Column(name = "match_club")
     private ClubIdentifier matchClub;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "match_competitor_category", joinColumns = @JoinColumn(name = "match_competitor_id"))
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)
-    private CompetitorCategory competitorCategory;
+    private List<CompetitorCategory> competitorCategory = new ArrayList<>();
 
     @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "firearm_type")

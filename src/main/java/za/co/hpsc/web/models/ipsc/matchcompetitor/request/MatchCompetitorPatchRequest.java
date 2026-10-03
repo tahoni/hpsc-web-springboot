@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Request to partially update an existing IPSC match competitor.
@@ -27,8 +28,8 @@ public class MatchCompetitorPatchRequest {
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. May be null. */
     private String matchClub;
-    /** The competitor's category at the match; resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. May be null. */
-    private String competitorCategory;
+    /** The competitor's categories at the match, replacing any existing ones; each resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. May be null, but not empty. */
+    private List<String> competitorCategory;
     /** The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. May be null. */
     private String firearmType;
     /** The division the competitor shot; resolved against {@link za.co.hpsc.web.enums.Division} by name. May be null. */

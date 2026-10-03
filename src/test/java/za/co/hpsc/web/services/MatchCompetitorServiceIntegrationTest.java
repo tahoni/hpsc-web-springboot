@@ -23,6 +23,7 @@ import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,7 +66,7 @@ class MatchCompetitorServiceIntegrationTest {
         assertNotNull(response.getMatchCompetitorId());
         assertEquals(competitor.getId(), response.getCompetitorId());
         assertEquals(match.getId(), response.getMatchId());
-        assertEquals(CompetitorCategory.JUNIOR, response.getCompetitorCategory());
+        assertEquals(List.of(CompetitorCategory.JUNIOR), response.getCompetitorCategory());
         assertEquals(FirearmType.HANDGUN, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
         assertTrue(matchCompetitorRepository.existsById(response.getMatchCompetitorId()));
@@ -242,7 +243,7 @@ class MatchCompetitorServiceIntegrationTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(competitorId);
         request.setMatchId(matchId);
-        request.setCompetitorCategory("Junior");
+        request.setCompetitorCategory(List.of("Junior"));
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
         return request;

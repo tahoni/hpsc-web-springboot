@@ -22,6 +22,7 @@ import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.services.MatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -73,7 +74,7 @@ public class MatchCompetitorServiceImpl implements MatchCompetitorService {
             matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         }
         if (request.getCompetitorCategory() != null) {
-            matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
+            matchCompetitor.setCompetitorCategory(resolveCompetitorCategories(request.getCompetitorCategory()));
         }
         if (request.getFirearmType() != null) {
             matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
@@ -179,7 +180,7 @@ public class MatchCompetitorServiceImpl implements MatchCompetitorService {
         matchCompetitor.setCompetitor(findCompetitorOrThrow(request.getCompetitorId()));
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
-        matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
+        matchCompetitor.setCompetitorCategory(resolveCompetitorCategories(request.getCompetitorCategory()));
         matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
@@ -258,6 +259,25 @@ public class MatchCompetitorServiceImpl implements MatchCompetitorService {
     }
 
     /**
+     * Resolves a list of competitor categories by name, dropping any repeated category.
+     *
+     * @param competitorCategories the category names to look up; must contain at least one.
+     * @return the matching {@link CompetitorCategory} values, in the order first given, as a new mutable list.
+     * @throws ValidationException if the list is null or empty, or a name doesn't match a category (see
+     *                             {@link #resolveCompetitorCategory(String)}).
+     */
+    protected List<CompetitorCategory> resolveCompetitorCategories(List<String> competitorCategories) {
+        if ((competitorCategories == null) || competitorCategories.isEmpty()) {
+            throw new ValidationException("At least one competitor category is required.");
+        }
+
+        return new ArrayList<>(competitorCategories.stream()
+                .map(this::resolveCompetitorCategory)
+                .distinct()
+                .toList());
+    }
+
+    /**
      * Resolves a firearm type by name.
      *
      * @param firearmType the firearm type name to look up.
@@ -313,7 +333,7 @@ public class MatchCompetitorServiceImpl implements MatchCompetitorService {
         if (request.getMatchId() == null) {
             throw new ValidationException("Match ID is required.");
         }
-        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isBlank()) {
+        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isEmpty()) {
             throw new ValidationException("Competitor category is required.");
         }
         if ((request.getFirearmType() == null) || request.getFirearmType().isBlank()) {
@@ -336,7 +356,7 @@ public class MatchCompetitorServiceImpl implements MatchCompetitorService {
                 matchCompetitor.getCompetitor().getId(),
                 matchCompetitor.getMatch().getId(),
                 matchCompetitor.getMatchClub(),
-                matchCompetitor.getCompetitorCategory(),
+                new ArrayList<>(matchCompetitor.getCompetitorCategory()),
                 matchCompetitor.getFirearmType(),
                 matchCompetitor.getDivision(),
                 matchCompetitor.getPowerFactor(),
