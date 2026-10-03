@@ -201,7 +201,7 @@ class MatchCompetitorRequestTest {
 
         // Assert
         assertNull(request.getCompetitorId());
-        assertEquals("Jane Doe", request.getName());
+        assertEquals("Jane Doe", request.getCompetitorName());
     }
 
     @Test

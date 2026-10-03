@@ -133,7 +133,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-002");
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(null, match.getId());
-        request.setName("jane DOE");
+        request.setCompetitorName("jane DOE");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
@@ -149,7 +149,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         createCompetitor("HPSC-MC-004");
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(null, match.getId());
-        request.setName("Jane Doe");
+        request.setCompetitorName("Jane Doe");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
@@ -163,7 +163,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor second = createCompetitor("HPSC-MC-011");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                CompetitorId,MatchId,Cats,FirearmType,Div
                 %d,%d,Junior;Lady,Handgun,Open Division
                 %d,%d,Senior,Handgun,Production Division
                 """, first.getId(), match.getId(), second.getId(), match.getId());
@@ -186,7 +186,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-012");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                CompetitorId,MatchId,Cats,FirearmType,Div
                 %d,%d,Junior,Handgun,Open Division
                 %d,%d,Junior,Handgun,Open Division
                 """, competitor.getId(), match.getId(), competitor.getId() + 1000, match.getId());
@@ -203,7 +203,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         String csvData = String.format("""
-                CompetitorId,MatchId,CompetitorCategory,FirearmType,Division
+                CompetitorId,MatchId,Cats,FirearmType,Div
                 %d,%d,Junior,Handgun,Open Division
                 """, competitor.getId(), match.getId());
 

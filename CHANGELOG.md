@@ -64,7 +64,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   competitor, or more than one, is refused
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** New optional overall-score
   fields — `percentage`, `time`, `percentageOfPossiblePoints`, `hitFactor`, `alpha`, `charlie`, `delta`, `misses`,
-  `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns in UpperCamelCase), carried
+  `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns named as in a PractiScore export — `%`, `Time`,
+  `% psbl`, `HitFactor`, `A`, `C`, `D`, `M`, `NPM`, `NS`, `Proc` and `Apen`), carried
   through `IpscMatchCompetitorServiceImpl` to and from `MatchCompetitor`
 
 #### 🗑️ Removed
@@ -98,8 +99,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### API
 
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** **Breaking:**
-  `matchPoints` renamed to `points` in the JSON contract, and the `MatchPoints` CSV column to `Points` — existing
-  callers and import files must use the new names
+  `matchPoints` renamed to `points` in the JSON contract — existing callers must use the new name
+- **`MatchCompetitorRequestCsvMixIn`:** **Breaking:** CSV columns renamed to match a PractiScore export —
+  `MatchClub` → `Class`, `CompetitorCategory` → `Cats`, `Division` → `Div`, `PowerFactor` → `PF` and `MatchPoints` →
+  `Pts` — existing import files must use the new headers
 - **`MatchCompetitorRequest`, `MatchCompetitorRequestCsvMixIn`:** `competitorId` (CSV `CompetitorId`) is no longer
   required — a request must carry it or a `name`, which `IpscMatchCompetitorServiceImpl` resolves through
   `CompetitorRepository.findByFullNameIgnoreCase`

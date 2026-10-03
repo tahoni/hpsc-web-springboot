@@ -119,8 +119,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     public MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request) {
         MatchCompetitor matchCompetitor = findMatchCompetitorOrThrow(matchCompetitorId);
 
-        if ((request.getCompetitorId() != null) || hasText(request.getName())) {
-            matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getName()));
+        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorName())) {
+            matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorName()));
         }
         if (request.getMatchId() != null) {
             matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
@@ -303,7 +303,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     protected void applyFields(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchCompetitorRequest request) {
-        matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getName()));
+        matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorName()));
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         matchCompetitor.setCompetitorCategories(resolveCompetitorCategories(request.getCompetitorCategory()));
@@ -497,7 +497,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request == null) {
             throw new ValidationException("Match competitor request cannot be null.");
         }
-        if ((request.getCompetitorId() == null) && !hasText(request.getName())) {
+        if ((request.getCompetitorId() == null) && !hasText(request.getCompetitorName())) {
             throw new ValidationException("Competitor ID or name is required.");
         }
         if (request.getMatchId() == null) {

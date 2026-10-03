@@ -20,7 +20,7 @@ class MatchCompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenValidRow_thenMapsAllFields() throws Exception {
         // Arrange
         String csvData = """
-                MatchCompetitorId,CompetitorId,MatchId,MatchClub,CompetitorCategory,FirearmType,Division,PowerFactor,Points,OverallRanking,ClubRanking,IsVisitor
+                MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF,Pts,OverallRanking,ClubRanking,IsVisitor
                 7,1,2,HPSC,Junior;Lady,Handgun,Open Division,Major,95.5,2,1,false
                 """;
 
@@ -48,7 +48,7 @@ class MatchCompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenHeaderOmitsOptionalColumns_thenLeavesThemNull() throws Exception {
         // Arrange
         String csvData = """
-                CompetitorId,MatchId,CompetitorCategory,Division
+                CompetitorId,MatchId,Cats,Div
                 1,2,Junior,Open Division
                 """;
 
@@ -76,7 +76,7 @@ class MatchCompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenRowIsRaggedAndMissesOnlyOptionalTrailingColumns_thenLeavesThemNull() throws Exception {
         // Arrange - a row doesn't have to supply a value for every column in the header
         String csvData = """
-                CompetitorId,MatchId,CompetitorCategory,Division,MatchClub,FirearmType,PowerFactor,Points
+                CompetitorId,MatchId,Cats,Div,Class,FirearmType,PF,Pts
                 1,2,Junior,Open Division
                 """;
 
@@ -95,7 +95,7 @@ class MatchCompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenColumnsAreReordered_thenMapsByHeaderName() throws Exception {
         // Arrange
         String csvData = """
-                Division,CompetitorCategory,MatchId,CompetitorId,FirearmType
+                Div,Cats,MatchId,CompetitorId,FirearmType
                 Open Division,Junior,2,1,Handgun
                 """;
 
@@ -115,7 +115,7 @@ class MatchCompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenCsvHasUnknownColumn_thenIgnoresIt() throws Exception {
         // Arrange
         String csvData = """
-                CompetitorId,MatchId,CompetitorCategory,Division,Colour
+                CompetitorId,MatchId,Cats,Div,Colour
                 1,2,Junior,Open Division,Blue
                 """;
 
@@ -132,7 +132,7 @@ class MatchCompetitorRequestCsvMixInTest {
             throws Exception {
         // Arrange
         String csvData = """
-                CompetitorId,MatchId,CompetitorCategory,Division
+                CompetitorId,MatchId,Cats,Div
                 1,2,Junior;Lady;Senior,Open Division
                 """;
 
@@ -148,7 +148,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange - a row missing Division entirely (not just blank) still trips the required
         // creator property check
         String csvData = """
-                CompetitorId,MatchId,CompetitorCategory,Division
+                CompetitorId,MatchId,Cats,Div
                 1,2,Junior
                 """;
 
@@ -160,7 +160,7 @@ class MatchCompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenHeaderOmitsRequiredColumn_thenThrowsMismatchedInputException() {
         // Arrange
         String csvData = """
-                CompetitorId,CompetitorCategory,Division
+                CompetitorId,Cats,Div
                 1,Junior,Open Division
                 """;
 
