@@ -91,7 +91,7 @@ class ShooterLogCompetitorRepositoryIntegrationTest {
         MatchCompetitor matchCompetitor = ScoringFixtures.matchCompetitor(entityManager, competitor, match);
         ShooterLog shooterLog = ScoringFixtures.shooterLog(entityManager);
         ShooterLogCompetitor entry = ScoringFixtures.shooterLogCompetitor(entityManager, shooterLog, matchCompetitor);
-        entry.setCompetitorCategories(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY));
+        entry.setCompetitorCategory(CompetitorCategory.JUNIOR);
         entityManager.flush();
         entityManager.clear();
 
@@ -100,7 +100,6 @@ class ShooterLogCompetitorRepositoryIntegrationTest {
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals(List.of(CompetitorCategory.JUNIOR, CompetitorCategory.LADY),
-                result.getFirst().getCompetitorCategories());
+        assertEquals(CompetitorCategory.JUNIOR, result.getFirst().getCompetitorCategory());
     }
 }

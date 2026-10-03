@@ -59,9 +59,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### API
 
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** New optional `name`
-  (CSV `Name`) — the competitor's full name, "First Last", matched case-insensitively against `Competitor` to find the
-  competitor when `competitorId` is omitted; `competitorId` wins when both are given, and a name that matches no
-  competitor, or more than one, is refused
+  (CSV `Name`) and `competitorNumber` (CSV `Mem #`) — find the competitor when `competitorId` is omitted: the number
+  is matched exactly against `Competitor.competitorNumber`, otherwise the full name, "First Last", is matched
+  case-insensitively; `competitorId` wins over the number, and the number over the name, and a number or name that
+  matches no competitor, or more than one, is refused
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`:** New optional overall-score
   fields — `percentage`, `time`, `percentageOfPossiblePoints`, `hitFactor`, `alpha`, `charlie`, `delta`, `misses`,
   `noPenaltyMisses`, `noShoots`, `proceduralErrors` and `additionalPenalties` (CSV columns named as in a PractiScore export — `%`, `Time`,
@@ -92,9 +93,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`MatchCompetitor.matchPoints`:** Renamed to `points` — the `match_points` column is renamed to `points` by
   `V10_0_0__rename_match_competitor_match_points_to_points.sql`, keeping its type and values
-- **`MatchCompetitor.competitorCategory`, `ShooterLogCompetitor.competitorCategory`:** Renamed to `competitorCategories` —
-  both hold a list of categories, so the plural name is clearer; the `competitor_category` column and the child
-  tables are unchanged, so no migration is needed
+- **`MatchCompetitor.competitorCategory`, `ShooterLogCompetitor.competitorCategory`:** Back to a single
+  `CompetitorCategory` held in a `competitor_category` column, replacing the list and the
+  `match_competitor_category` and `shooter_log_competitor_category` child tables, by
+  `V10_2_0__move_competitor_category_back_to_a_column.sql` — a row that had several categories keeps the
+  alphabetically first, and one with none keeps an empty category
 
 ##### API
 
@@ -103,8 +106,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorRequestCsvMixIn`:** **Breaking:** CSV columns renamed to match a PractiScore export —
   `MatchClub` → `Class`, `CompetitorCategory` → `Cats`, `Division` → `Div`, `PowerFactor` → `PF` and `MatchPoints` →
   `Pts` — existing import files must use the new headers
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`,
+  `MatchCompetitorResponse`:** **Breaking:** `competitorCategory` (CSV `Cats`) is a single category again rather
+  than a list — a JSON string instead of an array, and one value per CSV cell instead of a `;`-separated list;
+  `IpscMatchCompetitorServiceImpl` no longer resolves several categories
 - **`MatchCompetitorRequest`, `MatchCompetitorRequestCsvMixIn`:** `competitorId` (CSV `CompetitorId`) is no longer
-  required — a request must carry it or a `name`, which `IpscMatchCompetitorServiceImpl` resolves through
+  required — a request must carry it, a `competitorNumber` or a `name`, which `IpscMatchCompetitorServiceImpl` resolves through
   `CompetitorRepository.findByFullNameIgnoreCase`
 
 ### 🧾 [9.1.0] - 2026-10-03

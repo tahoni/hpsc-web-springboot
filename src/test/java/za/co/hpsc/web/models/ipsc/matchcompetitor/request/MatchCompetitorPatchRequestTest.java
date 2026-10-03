@@ -48,7 +48,7 @@ class MatchCompetitorPatchRequestTest {
                   "competitorId": 1,
                   "matchId": 2,
                   "matchClub": "HPSC",
-                  "competitorCategory": ["Junior"],
+                  "competitorCategory": "Junior",
                   "firearmType": "Handgun",
                   "division": "Open Division",
                   "powerFactor": "Major",
@@ -66,7 +66,7 @@ class MatchCompetitorPatchRequestTest {
         assertEquals(1L, request.getCompetitorId());
         assertEquals(2L, request.getMatchId());
         assertEquals("HPSC", request.getMatchClub());
-        assertEquals(List.of("Junior"), request.getCompetitorCategory());
+        assertEquals("Junior", request.getCompetitorCategory());
         assertEquals("Handgun", request.getFirearmType());
         assertEquals("Open Division", request.getDivision());
         assertEquals("Major", request.getPowerFactor());

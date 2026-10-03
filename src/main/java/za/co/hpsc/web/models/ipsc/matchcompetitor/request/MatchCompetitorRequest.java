@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * Request to create or fully replace an IPSC match competitor: one competitor's entry in one match, in one firearm
@@ -27,19 +26,31 @@ import java.util.List;
 public class MatchCompetitorRequest {
     /** Identifier of the match competitor to update, or {@code null} when creating a new match competitor. */
     private Long matchCompetitorId;
-    /** The identifier of the competitor who shot the match; when {@code null}, {@link #competitorName} is used to find the competitor. */
+    /**
+     * The identifier of the competitor who shot the match. When {@code null}, the competitor is found by
+     * {@link #competitorNumber}, then by {@link #competitorName}.
+     */
     private Long competitorId;
-    /** The competitor's full name, "First Last", matched case-insensitively; only used when {@link #competitorId} is {@code null}. */
+    /**
+     * The competitor's full name, "First Last", matched case-insensitively; only used when {@link #competitorId}
+     * and {@link #competitorNumber} are both {@code null}.
+     */
     @JsonProperty("name")
     private String competitorName;
+    /**
+     * The competitor's number, as assigned for competition (CSV {@code Mem #}), matched exactly; only used when
+     * {@link #competitorId} is {@code null}.
+     */
+    @JsonProperty("competitorNumber")
+    private String competitorNumber;
     /** The identifier of the match the competitor shot. */
     @JsonProperty(required = true)
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. */
     private String matchClub;
-    /** The competitor's categories at the match, at least one; each resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
+    /** The competitor's category at the match; resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
     @JsonProperty(required = true)
-    private List<String> competitorCategory;
+    private String competitorCategory;
     /** The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
     private String firearmType;
     /** The division the competitor shot; resolved against {@link za.co.hpsc.web.enums.Division} by name. */
@@ -85,15 +96,17 @@ public class MatchCompetitorRequest {
      *
      * @param matchCompetitorId  the identifier of the match competitor to update; {@code null} when creating a new
      *                           match competitor.
-     * @param competitorId       the identifier of the competitor who shot the match; when null, {@code name} is used
-     *                           to find the competitor.
-     * @param competitorName               the competitor's full name, "First Last", matched case-insensitively; only used
-     *                           when {@code competitorId} is null.
+     * @param competitorId       the identifier of the competitor who shot the match; when null, the competitor is
+     *                           found by {@code competitorNumber}, then by {@code competitorName}.
+     * @param competitorName     the competitor's full name, "First Last", matched case-insensitively; only used when
+     *                           {@code competitorId} and {@code competitorNumber} are both null.
+     * @param competitorNumber   the competitor's number, as assigned for competition, matched exactly; only used when
+     *                           {@code competitorId} is null.
      * @param matchId            the identifier of the match the competitor shot. Must not be null.
      * @param matchClub          the club the competitor represented at the match; resolved against
      *                           {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation.
-     * @param competitorCategory the competitor's categories at the match, at least one; each resolved against
-     *                           {@link za.co.hpsc.web.enums.CompetitorCategory} by name. Must not be null.
+     * @param competitorCategory the competitor's category at the match; resolved against
+     *                           {@link za.co.hpsc.web.enums.CompetitorCategory} by name. Must not be null or blank.
      * @param firearmType        the firearm type the competitor shot; resolved against
      *                           {@link za.co.hpsc.web.enums.FirearmType} by name.
      * @param division           the division the competitor shot; resolved against
@@ -122,10 +135,10 @@ public class MatchCompetitorRequest {
     public MatchCompetitorRequest(@JsonProperty("matchCompetitorId") Long matchCompetitorId,
                                   @JsonProperty("competitorId") Long competitorId,
                                   @JsonProperty("name") String competitorName,
+                                  @JsonProperty("competitorNumber") String competitorNumber,
                                   @JsonProperty(value = "matchId", required = true) Long matchId,
                                   @JsonProperty("matchClub") String matchClub,
-                                  @JsonProperty(value = "competitorCategory", required = true)
-                                  List<String> competitorCategory,
+                                  @JsonProperty(value = "competitorCategory", required = true) String competitorCategory,
                                   @JsonProperty("firearmType") String firearmType,
                                   @JsonProperty(value = "division", required = true) String division,
                                   @JsonProperty("powerFactor") String powerFactor,
@@ -148,6 +161,7 @@ public class MatchCompetitorRequest {
         this.matchCompetitorId = matchCompetitorId;
         this.competitorId = competitorId;
         this.competitorName = competitorName;
+        this.competitorNumber = competitorNumber;
         this.matchId = matchId;
         this.matchClub = matchClub;
         this.competitorCategory = competitorCategory;

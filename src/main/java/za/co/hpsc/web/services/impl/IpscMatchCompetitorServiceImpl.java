@@ -119,8 +119,10 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     public MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request) {
         MatchCompetitor matchCompetitor = findMatchCompetitorOrThrow(matchCompetitorId);
 
-        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorName())) {
-            matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorName()));
+        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber())
+                || hasText(request.getCompetitorName())) {
+            matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
+                    request.getCompetitorName()));
         }
         if (request.getMatchId() != null) {
             matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
@@ -128,8 +130,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getMatchClub() != null) {
             matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         }
-        if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isEmpty()) {
-            matchCompetitor.setCompetitorCategories(resolveCompetitorCategories(request.getCompetitorCategory()));
+        if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isBlank()) {
+            matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         }
         if ((request.getFirearmType() != null) && !request.getFirearmType().isBlank()) {
             matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
@@ -303,10 +305,11 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     protected void applyFields(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchCompetitorRequest request) {
-        matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorName()));
+        matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
+                request.getCompetitorName()));
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
-        matchCompetitor.setCompetitorCategories(resolveCompetitorCategories(request.getCompetitorCategory()));
+        matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
@@ -353,21 +356,35 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
-     * Resolves the competitor a request refers to: by ID when one is given, otherwise by full name.
+     * Resolves the competitor a request refers to: by ID when one is given, otherwise by competitor number,
+     * otherwise by full name.
      *
-     * @param competitorId the identifier to look up; takes precedence over {@code name} when not null.
-     * @param name         the competitor's full name, "First Last", matched case-insensitively; only used when
-     *                     {@code competitorId} is null.
+     * @param competitorId     the identifier to look up; takes precedence over the number and name when not null.
+     * @param competitorNumber the competitor's number, matched exactly; takes precedence over {@code name}, and is
+     *                         only used when {@code competitorId} is null.
+     * @param name             the competitor's full name, "First Last", matched case-insensitively; only used when
+     *                         {@code competitorId} and {@code competitorNumber} are both null or blank.
      * @return the matching {@link Competitor}.
-     * @throws ValidationException if neither is given, or {@code name} matches more than one competitor.
+     * @throws ValidationException if none is given, or the number or name matches more than one competitor.
      * @throws NonFatalException   if no competitor matches.
      */
-    protected Competitor resolveCompetitor(Long competitorId, String name) {
+    protected Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
         if (competitorId != null) {
             return findCompetitorOrThrow(competitorId);
         }
+        if (hasText(competitorNumber)) {
+            List<Competitor> numberMatches = competitorRepository.findByCompetitorNumber(competitorNumber.trim());
+            if (numberMatches.isEmpty()) {
+                throw new NonFatalException("No competitor found with number " + competitorNumber.trim());
+            }
+            if (numberMatches.size() > 1) {
+                throw new ValidationException("More than one competitor has the number " + competitorNumber.trim()
+                        + "; use the competitor ID instead.");
+            }
+            return numberMatches.getFirst();
+        }
         if (!hasText(name)) {
-            throw new ValidationException("Competitor ID or name is required.");
+            throw new ValidationException("Competitor ID, number or name is required.");
         }
         List<Competitor> matches = competitorRepository.findByFullNameIgnoreCase(name.trim());
         if (matches.isEmpty()) {
@@ -429,25 +446,6 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
-     * Resolves a list of competitor categories by name, dropping any repeated category.
-     *
-     * @param competitorCategories the category names to look up; must contain at least one.
-     * @return the matching {@link CompetitorCategory} values, in the order first given, as a new mutable list.
-     * @throws ValidationException if the list is null or empty, or a name doesn't match a category (see
-     *                             {@link #resolveCompetitorCategory(String)}).
-     */
-    protected List<CompetitorCategory> resolveCompetitorCategories(List<String> competitorCategories) {
-        if ((competitorCategories == null) || competitorCategories.isEmpty()) {
-            throw new ValidationException("At least one competitor category is required.");
-        }
-
-        return new ArrayList<>(competitorCategories.stream()
-                .map(this::resolveCompetitorCategory)
-                .distinct()
-                .toList());
-    }
-
-    /**
      * Resolves a firearm type by name.
      *
      * @param firearmType the firearm type name to look up.
@@ -497,13 +495,14 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request == null) {
             throw new ValidationException("Match competitor request cannot be null.");
         }
-        if ((request.getCompetitorId() == null) && !hasText(request.getCompetitorName())) {
-            throw new ValidationException("Competitor ID or name is required.");
+        if ((request.getCompetitorId() == null) && !hasText(request.getCompetitorNumber())
+                && !hasText(request.getCompetitorName())) {
+            throw new ValidationException("Competitor ID, number or name is required.");
         }
         if (request.getMatchId() == null) {
             throw new ValidationException("Match ID is required.");
         }
-        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isEmpty()) {
+        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isBlank()) {
             throw new ValidationException("Competitor category is required.");
         }
         if ((request.getFirearmType() == null) || request.getFirearmType().isBlank()) {
@@ -526,7 +525,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getCompetitor().getId(),
                 matchCompetitor.getMatch().getId(),
                 matchCompetitor.getMatchClub(),
-                new ArrayList<>(matchCompetitor.getCompetitorCategories()),
+                matchCompetitor.getCompetitorCategory(),
                 matchCompetitor.getFirearmType(),
                 matchCompetitor.getDivision(),
                 matchCompetitor.getPowerFactor(),

@@ -12,8 +12,6 @@ import za.co.hpsc.web.enums.Division;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -38,12 +36,9 @@ public class ShooterLogCompetitor {
     @JoinColumn(name = "match_competitor_id", nullable = false)
     private MatchCompetitor matchCompetitor;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "shooter_log_competitor_category",
-            joinColumns = @JoinColumn(name = "shooter_log_competitor_id"))
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)
-    private List<CompetitorCategory> competitorCategories = new ArrayList<>();
+    private CompetitorCategory competitorCategory;
 
     @Convert(converter = DivisionConverter.class)
     @Column(name = "division", nullable = false)

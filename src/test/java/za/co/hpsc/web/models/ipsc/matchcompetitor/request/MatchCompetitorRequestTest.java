@@ -17,7 +17,7 @@ class MatchCompetitorRequestTest {
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
-        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", 2L, "HPSC", List.of("Junior", "Lady"),
+        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", "A123", 2L, "HPSC", "Junior",
                 "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
                 new BigDecimal("41.5"), new BigDecimal("93.75"), new BigDecimal("5.2"), 30, 4, 1, 2, 1, 0, 3, 0,
                 new BigDecimal("2"), new BigDecimal("1"), false);
@@ -29,11 +29,10 @@ class MatchCompetitorRequestTest {
         assertEquals(7, node.get("matchCompetitorId").asInt());
         assertEquals(1, node.get("competitorId").asInt());
         assertEquals("Jane Doe", node.get("name").asText());
+        assertEquals("A123", node.get("competitorNumber").asText());
         assertEquals(2, node.get("matchId").asInt());
         assertEquals("HPSC", node.get("matchClub").asText());
-        assertEquals(2, node.get("competitorCategory").size());
-        assertEquals("Junior", node.get("competitorCategory").get(0).asText());
-        assertEquals("Lady", node.get("competitorCategory").get(1).asText());
+        assertEquals("Junior", node.get("competitorCategory").asText());
         assertEquals("Handgun", node.get("firearmType").asText());
         assertEquals("Open Division", node.get("division").asText());
         assertEquals("Major", node.get("powerFactor").asText());
@@ -59,7 +58,7 @@ class MatchCompetitorRequestTest {
     void testJsonSerialization_whenOnlyRequiredFieldsSet_thenSerializesWithNullOptionals() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
-        MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, null, 2L, null, List.of("Junior"), null,
+        MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, null, null, 2L, null, "Junior", null,
                 "Open Division", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null);
 
@@ -69,7 +68,7 @@ class MatchCompetitorRequestTest {
         // Assert
         assertEquals(1, node.get("competitorId").asInt());
         assertEquals(2, node.get("matchId").asInt());
-        assertEquals("Junior", node.get("competitorCategory").get(0).asText());
+        assertEquals("Junior", node.get("competitorCategory").asText());
         assertEquals("Open Division", node.get("division").asText());
         assertTrue(node.get("matchCompetitorId").isNull());
         assertTrue(node.get("matchClub").isNull());
@@ -91,7 +90,7 @@ class MatchCompetitorRequestTest {
                   "competitorId": 1,
                   "matchId": 2,
                   "matchClub": "HPSC",
-                  "competitorCategory": ["Junior"],
+                  "competitorCategory": "Junior",
                   "firearmType": "Handgun",
                   "division": "Open Division",
                   "powerFactor": "Major",
@@ -110,7 +109,7 @@ class MatchCompetitorRequestTest {
         assertEquals(1L, request.getCompetitorId());
         assertEquals(2L, request.getMatchId());
         assertEquals("HPSC", request.getMatchClub());
-        assertEquals(List.of("Junior"), request.getCompetitorCategory());
+        assertEquals("Junior", request.getCompetitorCategory());
         assertEquals("Handgun", request.getFirearmType());
         assertEquals("Open Division", request.getDivision());
         assertEquals("Major", request.getPowerFactor());
@@ -127,7 +126,7 @@ class MatchCompetitorRequestTest {
                 {
                   "competitorId": 1,
                   "matchId": 2,
-                  "competitorCategory": ["Junior"],
+                  "competitorCategory": "Junior",
                   "firearmType": "Handgun",
                   "division": "Open Division"
                 }
@@ -147,32 +146,13 @@ class MatchCompetitorRequestTest {
     }
 
     @Test
-    void testJsonDeserialization_whenMultipleCompetitorCategoriesProvided_thenMapsAllOfThem() throws Exception {
-        // Arrange
-        String json = """
-                {
-                  "competitorId": 1,
-                  "matchId": 2,
-                  "competitorCategory": ["Junior", "Lady"],
-                  "division": "Open Division"
-                }
-                """;
-
-        // Act
-        MatchCompetitorRequest request = new ObjectMapper().readValue(json, MatchCompetitorRequest.class);
-
-        // Assert
-        assertEquals(List.of("Junior", "Lady"), request.getCompetitorCategory());
-    }
-
-    @Test
     void testJsonDeserialization_whenFirearmTypeMissing_thenFirearmTypeIsNull() throws Exception {
         // Arrange - firearmType isn't a Jackson-required property
         String json = """
                 {
                   "competitorId": 1,
                   "matchId": 2,
-                  "competitorCategory": ["Junior"],
+                  "competitorCategory": "Junior",
                   "division": "Open Division"
                 }
                 """;
@@ -191,7 +171,7 @@ class MatchCompetitorRequestTest {
                 {
                   "name": "Jane Doe",
                   "matchId": 2,
-                  "competitorCategory": ["Junior"],
+                  "competitorCategory": "Junior",
                   "division": "Open Division"
                 }
                 """;
@@ -210,7 +190,7 @@ class MatchCompetitorRequestTest {
         String json = """
                 {
                   "competitorId": 1,
-                  "competitorCategory": ["Junior"],
+                  "competitorCategory": "Junior",
                   "division": "Open Division"
                 }
                 """;
@@ -243,7 +223,7 @@ class MatchCompetitorRequestTest {
                 {
                   "competitorId": 1,
                   "matchId": 2,
-                  "competitorCategory": ["Junior"]
+                  "competitorCategory": "Junior"
                 }
                 """;
 
