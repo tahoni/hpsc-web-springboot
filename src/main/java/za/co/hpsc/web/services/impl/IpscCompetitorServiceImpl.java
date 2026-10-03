@@ -306,7 +306,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         Club homeClub = resolveHomeClub(request.getHomeClub());
         competitor.setHomeClub(homeClub);
         competitor.setSapsaNumber(request.getSapsaNumber());
-        competitor.setCompetitorNumber(request.getCompetitorNumber());
+        competitor.setCompetitorNumber(resolveCompetitorNumber(request.getCompetitorNumber(), request.getSapsaNumber()));
         competitor.setClubNumber(resolveClubNumber(homeClub, request.getClubNumber()));
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
@@ -414,6 +414,28 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
         Optional<Club> optionalClub = clubRepository.findByName(clubName).or(() -> clubRepository.findByAbbreviation(clubName));
         return optionalClub.orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
+    }
+
+    /**
+     * Resolves the competitor number to use for a competitor, preferring an explicit competitor
+     * number and falling back to the SAPSA number.
+     * <p>
+     * A blank competitor number is treated the same as a {@code null} one, and so triggers the
+     * fallback.
+     * </p>
+     *
+     * @param competitorNumber the explicit competitor number; may be null or blank.
+     * @param sapsaNumber      the SAPSA number to fall back on; may be null.
+     * @return {@code competitorNumber} if it was supplied, otherwise {@code sapsaNumber} as a string,
+     * or {@code null} if neither was supplied.
+     */
+    protected String resolveCompetitorNumber(String competitorNumber, Integer sapsaNumber) {
+        if ((competitorNumber != null) && !competitorNumber.isBlank()) {
+            return competitorNumber;
+        } else if (sapsaNumber != null) {
+            return String.valueOf(sapsaNumber);
+        }
+        return null;
     }
 
     /**

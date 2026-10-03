@@ -48,6 +48,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.applyFields`, `IpscCompetitorServiceImpl.resolveCompetitorNumber`:** A competitor's
+  `competitorNumber` is no longer copied straight from the request — the new `resolveCompetitorNumber` helper uses the
+  request's `competitorNumber` when it is non-blank, otherwise falls back to the request's `sapsaNumber` as a string,
+  and resolves to `null` when neither is supplied; a blank `competitorNumber` is treated the same as a `null` one
+
+##### Documentation
+
+- **`IpscCompetitorServiceImpl.resolveCompetitorNumber`:** Javadoc describing the competitor-number-first,
+  SAPSA-number-fallback resolution and the blank-as-`null` handling
+
 ### 🧾 [10.0.0] - 2026-10-03
 
 #### ➕ Added
