@@ -62,6 +62,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorServiceImpl.resolveCompetitorNumber`:** Javadoc describing the competitor-number-first,
   SAPSA-number-fallback resolution and the blank-as-`null` handling
 
+##### Testing
+
+- **`IpscCompetitorServiceImplTest`:** New `resolveCompetitorNumber` tests covering both arguments `null`, only the
+  competitor number, only the SAPSA number, both supplied (competitor number wins), and a blank competitor number with
+  and without a SAPSA number
+
 ### 🧾 [10.0.0] - 2026-10-03
 
 #### ➕ Added

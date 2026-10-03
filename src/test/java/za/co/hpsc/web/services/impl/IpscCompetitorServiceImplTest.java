@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
  * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code newCompetitor},
  * {@code readCompetitors},
- * {@code resolveClubNumber}, {@code resolveGender}, {@code resolveHomeClub},
+ * {@code resolveClubNumber}, {@code resolveCompetitorNumber}, {@code resolveGender}, {@code resolveHomeClub},
  * {@code normaliseCsvRequest}, {@code toResponse}, {@code validateForCreate}) -
  * not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
  * The interface's create/update/patch/get contract is covered by
@@ -739,6 +739,37 @@ class IpscCompetitorServiceImplTest {
 
         // Assert
         assertSame(club, resolved);
+    }
+
+    // resolveCompetitorNumber()
+    @Test
+    void testResolveCompetitorNumber_whenBothAreNull_thenReturnsNull() {
+        assertNull(ipscCompetitorServiceImpl.resolveCompetitorNumber(null, null));
+    }
+
+    @Test
+    void testResolveCompetitorNumber_whenOnlyCompetitorNumberIsSupplied_thenReturnsCompetitorNumber() {
+        assertEquals("C123", ipscCompetitorServiceImpl.resolveCompetitorNumber("C123", null));
+    }
+
+    @Test
+    void testResolveCompetitorNumber_whenOnlySapsaNumberIsSupplied_thenReturnsSapsaNumberAsString() {
+        assertEquals("4567", ipscCompetitorServiceImpl.resolveCompetitorNumber(null, 4567));
+    }
+
+    @Test
+    void testResolveCompetitorNumber_whenBothAreSupplied_thenCompetitorNumberTakesPrecedence() {
+        assertEquals("C123", ipscCompetitorServiceImpl.resolveCompetitorNumber("C123", 4567));
+    }
+
+    @Test
+    void testResolveCompetitorNumber_whenCompetitorNumberIsBlank_thenFallsBackToSapsaNumber() {
+        assertEquals("4567", ipscCompetitorServiceImpl.resolveCompetitorNumber("  ", 4567));
+    }
+
+    @Test
+    void testResolveCompetitorNumber_whenCompetitorNumberIsBlankAndSapsaNumberIsNull_thenReturnsNull() {
+        assertNull(ipscCompetitorServiceImpl.resolveCompetitorNumber("  ", null));
     }
 
     // toResponse()
