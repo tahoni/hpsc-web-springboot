@@ -97,6 +97,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   competitor number, only the SAPSA number, both supplied (competitor number wins), and a blank competitor number with
   and without a SAPSA number
 
+#### 🐛 Fixed
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** The "RO" suffix is now stripped from a full name that has
+  leading or trailing whitespace — the name is trimmed before the suffix is removed, so `"Jane Doe (RO) "` no longer
+  misses the competitor it names
+
 ### 🧾 [10.0.0] - 2026-10-03
 
 #### ➕ Added

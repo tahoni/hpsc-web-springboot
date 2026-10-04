@@ -22,7 +22,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         // Normalised competitor number
         String competitorNumberString = String.valueOf(competitorNumber);
         // Normalise full name
-        String competitorFullName = fullName.replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, "").trim();
+        String competitorFullName = fullName.trim().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, "").trim();
 
         // First try to match using competitor number (SAPSA or club number)
         List<Competitor> competitorsWithCompetitorNumberList =
