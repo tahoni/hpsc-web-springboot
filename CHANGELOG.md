@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 10.0.0](#-1000---2026-10-03) ← Current
+- [🧾 Version 11.0.0](#-1100---2026-10-04) ← Current
+- [🧾 Version 10.0.0](#-1000---2026-10-03)
 - [🧾 Version 9.1.0](#-910---2026-10-03)
 - [🧾 Version 9.0.0](#-900---2026-10-01)
 - [🧾 Version 8.12.0](#-8120---2026-09-29)
@@ -47,6 +48,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [11.0.0] - 2026-10-04
 
 #### ➕ Added
 
@@ -105,14 +108,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `findAllByCompetitorNumber` and `findAllByFullNameIgnoreCase` (callers in `IpscMatchCompetitorServiceImpl` and its
   tests updated), and the new `findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase` matches a competitor's
   "FirstName LastName" or "Nickname LastName" full name, ignoring case; `findAllByFullNameIgnoreCase` still matches
-  only "FirstName LastName"
+  only "FirstName LastName", and `findAllByCompetitorNumber` now takes an `Integer`
 
 ##### Services
 
 - **`IpscCompetitorServiceImpl.applyFields`, `IpscCompetitorServiceImpl.resolveCompetitorNumber`:** A competitor's
   `competitorNumber` is no longer copied straight from the request — the new `resolveCompetitorNumber` helper uses the
   request's `competitorNumber` when it is supplied, otherwise falls back to the request's `sapsaNumber`, and resolves
-  to `null` when neither is supplied
+  to `null` when neither is supplied; the new `parseCompetitorNumber` reads the request's text as a whole number (a
+  blank value is `null`, anything else that is not a whole number is refused with a `ValidationException`), and a
+  patch with a blank `competitorNumber` leaves the stored number unchanged
+- **`IpscMatchCompetitorServiceImpl.resolveCompetitor`:** Reads the request's `competitorNumber` as a whole number
+  before looking the competitor up, ignoring surrounding whitespace and refusing a value that is not a whole number
+  with a `ValidationException`
 
 ##### Documentation
 
