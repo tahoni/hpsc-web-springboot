@@ -51,6 +51,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Repositories
+
+- **`CompetitorRepository.findAllByIdNumber`:** New derived query returning every competitor with a given ID number,
+  used by `findCompetitor` to match a supplied value against ID numbers
+
 ##### Utils
 
 - **`StringUtil.hasText`:** New helper that returns `true` only when a string is neither null nor blank, replacing the
@@ -61,6 +66,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`EntityIpscCompetitorService.findCompetitor`:** The competitor number is now a `String` that may also be an ID
+  number — the lookup tries the competitor number, then the ID number, then the full name, narrowing several number
+  matches by name. `null` is accepted for either argument when the other is given, a `ValidationException` is thrown
+  when both are null or blank, and an exception is thrown, rather than an empty `Optional` returned, when no single
+  competitor matches — a `NonFatalException` when none do, a `ValidationException` when several do, including
+  several that share the number but not the name
 - **`EntityIpscCompetitorService.findCompetitor`:** Parameters reordered to `(competitorNumber, fullName)`.
   `IpscMatchCompetitorServiceImpl` now takes an `EntityIpscCompetitorService`, and its `resolveCompetitor` resolves a
   competitor by ID, otherwise through the new `findCompetitorOrThrow(String, String)`, which trims the competitor
@@ -76,6 +87,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **`EntityIpscCompetitorService`, `IpscMatchCompetitorServiceImpl`:** `findCompetitor`'s interface Javadoc now
+  describes the lookup order, the accepted null and blank arguments and the exceptions thrown, and
+  `findCompetitorOrThrow(String, String)` and `resolveCompetitor` gain matching Javadoc
+- **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Methods gain `@since` tags, and the class-level Javadoc
+  and usage examples name the renamed classes
 - **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` gains Javadoc that inherits the interface documentation
   (`{@inheritDoc}`) and adds implementation notes on the lookup stages — competitor number, ID number, then full
   name — the name normalisation, and the exception thrown when no single competitor is found
