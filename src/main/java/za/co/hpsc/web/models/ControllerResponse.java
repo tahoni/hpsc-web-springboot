@@ -50,6 +50,7 @@ public class ControllerResponse {
      *                  Can be null.
      * @param error     a description of any error associated with the response.
      *                  Can be null.
+     * @since 1.1.3
      */
     public ControllerResponse(@NotNull LocalDateTime timestamp, String message, String error) {
         this.timestamp = timestamp;

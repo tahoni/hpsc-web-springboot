@@ -52,6 +52,7 @@ public enum CompetitorCategory {
      *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code CompetitorCategory} if found,
      * or {@link CompetitorCategory#NONE} otherwise.
+     * @since 1.1.3
      */
     public static Optional<CompetitorCategory> fromName(String name) {
         if ((name == null) || (name.isBlank())) {

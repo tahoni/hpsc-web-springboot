@@ -56,6 +56,7 @@ public enum ClubIdentifier {
      *             Can be null or blank.
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
+     * @since 5.0.0
      */
     public static Optional<ClubIdentifier> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
@@ -103,6 +104,7 @@ public enum ClubIdentifier {
      *             Can be null or blank.
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
+     * @since 5.0.0
      */
     public static Optional<ClubIdentifier> fromCode(String code) {
         if ((code == null) || (code.isBlank())) {

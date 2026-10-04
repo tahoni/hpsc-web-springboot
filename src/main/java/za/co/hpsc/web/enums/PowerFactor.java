@@ -40,6 +40,7 @@ public enum PowerFactor {
      *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
+     * @since 1.1.3
      */
     public static Optional<PowerFactor> fromName(String name) {
         if ((name == null) || (name.isBlank())) {
@@ -64,6 +65,7 @@ public enum PowerFactor {
      *                     Can be null or empty.
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
+     * @since 1.1.3
      */
     public static Optional<PowerFactor> fromAbbreviation(String abbreviation) {
         if ((abbreviation == null) || (abbreviation.isBlank())) {

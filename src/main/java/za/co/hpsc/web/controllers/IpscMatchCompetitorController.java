@@ -54,6 +54,7 @@ public class IpscMatchCompetitorController {
      * @throws ValidationException if a required field is missing, an enumerated value is unrecognised, or the
      *                             competitor already has an entry for the match and firearm type.
      * @throws NonFatalException   if the competitor or match cannot be found.
+     * @since 9.1.0
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match competitor", description = "Create a competitor's entry in a match. A "
@@ -221,6 +222,7 @@ public class IpscMatchCompetitorController {
      * Retrieves every match competitor.
      *
      * @return the list of {@link MatchCompetitorResponse}.
+     * @since 9.1.0
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all match competitors", description = "Retrieve every match competitor.")

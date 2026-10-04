@@ -56,6 +56,7 @@ public class IpscCompetitorController {
      *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
      *                             without a club number.
      * @throws NonFatalException   if the named home club cannot be found.
+     * @since 8.0.0
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create competitor", description = "Create a new IPSC competitor. A club number is "
@@ -225,6 +226,7 @@ public class IpscCompetitorController {
      * Retrieves every IPSC competitor.
      *
      * @return the list of {@link CompetitorResponse}.
+     * @since 8.0.0
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all competitors", description = "Retrieve every IPSC competitor.")

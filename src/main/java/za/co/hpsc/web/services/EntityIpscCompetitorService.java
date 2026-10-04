@@ -42,6 +42,7 @@ public interface EntityIpscCompetitorService {
      *                             number or name, including when the name matches none of the
      *                             competitors that share the number.
      * @throws NonFatalException   if no competitor matches the number, ID number or name.
+     * @since 11.0.0
      */
     Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
         throws ValidationException, NonFatalException;

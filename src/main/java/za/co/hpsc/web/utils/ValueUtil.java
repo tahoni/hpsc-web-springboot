@@ -152,6 +152,7 @@ public final class ValueUtil {
      * @param <T>   the element type of the list
      * @param value the list to be checked; may be {@code null}
      * @return the original list if non-null; otherwise a new empty {@code ArrayList}
+     * @since 1.1.0
      */
     public static <T> List<T> nullAsEmptyList(List<T> value) {
         return nullAsDefault(value, new ArrayList<>());

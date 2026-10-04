@@ -33,6 +33,8 @@ public class Response extends Request {
      * <p>
      * As no UUID is provided, a random UUID is generated.
      * </p>
+     *
+     * @since 1.1.0
      */
     public Response() {
         this.uuid = ValueUtil.nullAsRandomUuid(null);
@@ -46,6 +48,7 @@ public class Response extends Request {
      * </p>
      *
      * @param uuid the unique identifier for the response. If null, a random UUID is generated.
+     * @since 1.1.0
      */
     public Response(UUID uuid) {
         this.uuid = ValueUtil.nullAsRandomUuid(uuid);

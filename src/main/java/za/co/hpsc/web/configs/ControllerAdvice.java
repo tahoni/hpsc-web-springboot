@@ -43,6 +43,7 @@ public class ControllerAdvice {
      * @param ex      the fatal exception that was thrown.
      * @param request the current web request, used to log the request URL.
      * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     * @since 1.0.0
      */
     @ExceptionHandler(FatalException.class)
     public ResponseEntity<ControllerResponse> handleGeneralException(FatalException ex,

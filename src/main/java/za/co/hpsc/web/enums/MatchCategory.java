@@ -38,6 +38,7 @@ public enum MatchCategory {
      *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code MatchCategory} if found,
      * or empty otherwise.
+     * @since 1.1.3
      */
     public static Optional<MatchCategory> fromName(String name) {
         if ((name == null) || (name.isBlank())) {

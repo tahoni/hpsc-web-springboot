@@ -33,6 +33,7 @@ public interface IpscMatchCompetitorService {
      * @throws ValidationException if a required field is missing, an enumerated value is unrecognised, or the
      *                             competitor already has an entry for the match and firearm type.
      * @throws NonFatalException   if the competitor or match cannot be found.
+     * @since 9.1.0
      */
     MatchCompetitorResponse createMatchCompetitor(MatchCompetitorRequest request)
             throws ValidationException, NonFatalException;
@@ -56,6 +57,7 @@ public interface IpscMatchCompetitorService {
      *                             another row, or an existing entry, for the competitor, match and firearm type.
      * @throws NonFatalException   if a row's competitor or match cannot be found.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 9.1.0
      */
     MatchCompetitorResponseHolder createMatchCompetitors(String csvData)
             throws ValidationException, NonFatalException, FatalException;
@@ -72,6 +74,7 @@ public interface IpscMatchCompetitorService {
      *                             type.
      * @throws NonFatalException   if no match competitor with {@code matchCompetitorId} exists, or the competitor
      *                             or match cannot be found.
+     * @since 9.1.0
      */
     MatchCompetitorResponse updateMatchCompetitor(Long matchCompetitorId, MatchCompetitorRequest request)
             throws ValidationException, NonFatalException;
@@ -92,6 +95,7 @@ public interface IpscMatchCompetitorService {
      *                             entry for the competitor, match and firearm type.
      * @throws NonFatalException   if no match competitor with {@code matchCompetitorId} exists, or a changed
      *                             competitor or match cannot be found.
+     * @since 9.1.0
      */
     MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request)
             throws ValidationException, NonFatalException;
@@ -102,6 +106,7 @@ public interface IpscMatchCompetitorService {
      * @param matchCompetitorId the identifier of the match competitor to retrieve.
      * @return the match competitor.
      * @throws NonFatalException if no match competitor with {@code matchCompetitorId} exists.
+     * @since 9.1.0
      */
     MatchCompetitorResponse getMatchCompetitor(Long matchCompetitorId)
             throws NonFatalException;
@@ -110,6 +115,7 @@ public interface IpscMatchCompetitorService {
      * Retrieves every match competitor.
      *
      * @return all persisted match competitors; empty if there are none.
+     * @since 9.1.0
      */
     List<MatchCompetitorResponse> getAllMatchCompetitors();
 
@@ -125,6 +131,7 @@ public interface IpscMatchCompetitorService {
      * @param matchCompetitorId the identifier of the match competitor to delete.
      * @throws ValidationException if the match competitor is still referenced when the delete is flushed.
      * @throws NonFatalException   if no match competitor with {@code matchCompetitorId} exists.
+     * @since 9.1.0
      */
     void deleteMatchCompetitor(Long matchCompetitorId)
             throws ValidationException, NonFatalException;

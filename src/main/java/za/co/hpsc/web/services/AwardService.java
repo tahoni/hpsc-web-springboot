@@ -26,6 +26,7 @@ public interface AwardService {
      * parsed from the CSV data.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 1.1.0
      */
     AwardCeremonyResponseHolder createAwards(String csvData)
             throws FatalException;

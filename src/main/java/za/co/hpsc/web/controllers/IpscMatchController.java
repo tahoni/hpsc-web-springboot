@@ -56,6 +56,7 @@ public class IpscMatchController {
      * @throws FatalException      if no club is named and
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
+     * @since 8.0.0
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match", description = "Create a new IPSC match.")
@@ -224,6 +225,7 @@ public class IpscMatchController {
      * Retrieves every IPSC match.
      *
      * @return the list of {@link MatchResponse}.
+     * @since 8.0.0
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all matches", description = "Retrieve every IPSC match.")
