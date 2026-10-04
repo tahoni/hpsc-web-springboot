@@ -153,7 +153,7 @@ class IpscCompetitorServiceIntegrationTest {
         CompetitorRequest request = validRequest("HPSC-001");
         request.setHomeClub("Test Club");
         request.setMiddleNames("Ann");
-        request.setNickname("Janie");
+        request.setNickName("Janie");
         request.setDateOfBirth(LocalDate.of(1990, 1, 1));
         request.setGender(Gender.Female.toString());
         request.setSapsaNumber(12345);
@@ -172,7 +172,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("Jane", response.getFirstName());
         assertEquals("Doe", response.getLastName());
         assertEquals("Ann", response.getMiddleNames());
-        assertEquals("Janie", response.getNickname());
+        assertEquals("Janie", response.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), response.getDateOfBirth());
         assertEquals(Gender.Female, response.getGender());
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getHomeClub());
@@ -219,7 +219,7 @@ class IpscCompetitorServiceIntegrationTest {
 
     // createCompetitors()
     private static final String CSV_HEADER =
-            "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
+            "FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
 
     @Test
     void testCreateCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
@@ -244,7 +244,7 @@ class IpscCompetitorServiceIntegrationTest {
     void testCreateCompetitors_whenRequiredColumnsAreMissing_thenThrowsValidationException() {
         // Arrange
         String csvData = """
-                FirstName,Nickname
+                FirstName,NickName
                 Jane,Janie
                 """;
 
@@ -323,7 +323,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("Jane", response.getFirstName());
         assertEquals("Doe", response.getLastName());
         assertEquals("Ann", response.getMiddleNames());
-        assertEquals("Janie", response.getNickname());
+        assertEquals("Janie", response.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), response.getDateOfBirth());
         assertEquals(Gender.Female, response.getGender());
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getHomeClub());
@@ -582,14 +582,14 @@ class IpscCompetitorServiceIntegrationTest {
         CompetitorResponse created = ipscCompetitorService.createCompetitor(createRequest);
 
         CompetitorPatchRequest patch = new CompetitorPatchRequest();
-        patch.setNickname("Janie");
+        patch.setNickName("Janie");
 
         // Act
         CompetitorResponse patched = assertDoesNotThrow(
                 () -> ipscCompetitorService.patchCompetitor(created.getCompetitorId(), patch));
 
         // Assert
-        assertEquals("Janie", patched.getNickname());
+        assertEquals("Janie", patched.getNickName());
         assertEquals(List.of("jane.doe@example.com"), patched.getEmailAddresses());
     }
 

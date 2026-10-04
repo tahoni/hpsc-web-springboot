@@ -32,7 +32,7 @@ class CompetitorRequestTest {
         assertEquals("Jane", node.get("firstName").asText());
         assertEquals("Doe", node.get("lastName").asText());
         assertEquals("Ann", node.get("middleNames").asText());
-        assertEquals("Janie", node.get("nickname").asText());
+        assertEquals("Janie", node.get("nickName").asText());
         assertEquals("1990-01-01", node.get("dateOfBirth").asText());
         assertEquals("Female", node.get("gender").asText());
         assertEquals("Test Club", node.get("homeClub").asText());
@@ -103,7 +103,7 @@ class CompetitorRequestTest {
                   "firstName": "Jane",
                   "lastName": "Doe",
                   "middleNames": "Ann",
-                  "nickname": "Janie",
+                  "nickName": "Janie",
                   "dateOfBirth": "1990-01-01",
                   "gender": "Female",
                   "homeClub": "Test Club",
@@ -127,7 +127,7 @@ class CompetitorRequestTest {
         assertEquals("Jane", request.getFirstName());
         assertEquals("Doe", request.getLastName());
         assertEquals("Ann", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
+        assertEquals("Janie", request.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), request.getDateOfBirth());
         assertEquals("Female", request.getGender());
         assertEquals("Test Club", request.getHomeClub());

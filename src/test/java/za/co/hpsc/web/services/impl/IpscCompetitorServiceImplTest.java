@@ -64,7 +64,7 @@ class IpscCompetitorServiceImplTest {
         request.setFirstName("Jane");
         request.setLastName("Doe");
         request.setMiddleNames("Ann");
-        request.setNickname("Janie");
+        request.setNickName("Janie");
         request.setDateOfBirth(LocalDate.of(1990, 1, 1));
         request.setGender(Gender.Female.toString());
         request.setHomeClub("Test Club");
@@ -87,7 +87,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Jane", competitor.getFirstName());
         assertEquals("Doe", competitor.getLastName());
         assertEquals("Ann", competitor.getMiddleNames());
-        assertEquals("Janie", competitor.getNickname());
+        assertEquals("Janie", competitor.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), competitor.getDateOfBirth());
         assertEquals(Gender.Female, competitor.getGender());
         assertSame(club, competitor.getHomeClub());
@@ -304,7 +304,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Jane", request.getFirstName());
         assertEquals("Doe", request.getLastName());
         assertEquals("Ann", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
+        assertEquals("Janie", request.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), request.getDateOfBirth());
         assertEquals("Female", request.getGender());
         assertEquals("Test Club", request.getHomeClub());
@@ -333,7 +333,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Jane", request.getFirstName());
         assertEquals("O'Neil-Smith", request.getLastName());
         assertEquals("Ann Marie", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
+        assertEquals("Janie", request.getNickName());
         assertEquals("Female", request.getGender());
         assertEquals("test CLUB", request.getHomeClub());
         assertEquals("c-1a", request.getCompetitorNumber());
@@ -356,7 +356,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Jane", request.getFirstName());
         assertEquals("O'Neil-Smith", request.getLastName());
         assertEquals("Ann Marie", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
+        assertEquals("Janie", request.getNickName());
         assertEquals("Female", request.getGender());
         assertEquals("TEST CLUB", request.getHomeClub());
         assertEquals("C-1A", request.getCompetitorNumber());
@@ -380,7 +380,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Jane", request.getFirstName());
         assertEquals("O'Neil-Smith", request.getLastName());
         assertEquals("Ann Marie", request.getMiddleNames());
-        assertEquals("Janie", request.getNickname());
+        assertEquals("Janie", request.getNickName());
         assertEquals("Female", request.getGender());
         assertEquals("test club", request.getHomeClub());
         assertEquals("c-1a", request.getCompetitorNumber());
@@ -496,7 +496,7 @@ class IpscCompetitorServiceImplTest {
         // Assert
         assertNull(request.getCompetitorId());
         assertNull(request.getMiddleNames());
-        assertNull(request.getNickname());
+        assertNull(request.getNickName());
         assertNull(request.getDateOfBirth());
         assertNull(request.getGender());
         assertNull(request.getHomeClub());
@@ -514,7 +514,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenValidCsv_thenReturnsCompetitorRequestForCSVList() {
         // Arrange
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com
                 John,Smith,,,,,,,,HPSC-002,,,
                 """;
@@ -529,7 +529,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Jane", first.getFirstName());
         assertEquals("Doe", first.getLastName());
         assertEquals("Ann", first.getMiddleNames());
-        assertEquals("Janie", first.getNickname());
+        assertEquals("Janie", first.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), first.getDateOfBirth());
         assertEquals("Female", first.getGender());
         assertEquals("Test Club", first.getHomeClub());
@@ -550,7 +550,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenColumnsAreReordered_thenMapsAllFieldsCorrectly() {
         // Arrange
         String csvData = """
-                ClubNumber,LastName,FirstName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                ClubNumber,LastName,FirstName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 HPSC-001,Doe,Jane,,,,,,,,,,
                 """;
 
@@ -568,7 +568,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenMiddleNamesColumnIsMissing_thenMiddleNamesIsNull() {
         // Arrange
         String csvData = """
-                FirstName,LastName,Nickname
+                FirstName,LastName,NickName
                 Jane,Doe,Janie
                 """;
 
@@ -585,7 +585,7 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyList() {
         // Arrange
         String csvData =
-                "FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
+                "FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
 
         // Act
         List<CompetitorRequest> rows = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -597,7 +597,7 @@ class IpscCompetitorServiceImplTest {
     @Test
     void testReadCompetitors_whenHeaderIsMissingRequiredColumn_thenThrowsValidationException() {
         // Arrange
-        String csvData = "FirstName,Nickname\nJane,Janie\n";
+        String csvData = "FirstName,NickName\nJane,Janie\n";
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(csvData));
@@ -805,7 +805,7 @@ class IpscCompetitorServiceImplTest {
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
         competitor.setMiddleNames("Ann");
-        competitor.setNickname("Janie");
+        competitor.setNickName("Janie");
         competitor.setDateOfBirth(LocalDate.of(1990, 1, 1));
         competitor.setGender(Gender.Female);
         competitor.setSapsaNumber(12345);
@@ -826,7 +826,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Jane", response.getFirstName());
         assertEquals("Doe", response.getLastName());
         assertEquals("Ann", response.getMiddleNames());
-        assertEquals("Janie", response.getNickname());
+        assertEquals("Janie", response.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), response.getDateOfBirth());
         assertEquals(Gender.Female, response.getGender());
         assertEquals(12345, response.getSapsaNumber());

@@ -183,7 +183,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         Competitor competitor = new Competitor();
         competitor.setFirstName(firstName);
         competitor.setLastName(lastName);
-        competitor.setNickname(nickname);
+        competitor.setNickName(nickname);
         competitor.setCompetitorNumber(competitorNumber);
         return competitorRepository.save(competitor);
     }
