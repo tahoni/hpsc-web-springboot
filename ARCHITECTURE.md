@@ -21,6 +21,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     - [📥 Award / Image CSV Processing Flow](#-award--image-csv-processing-flow)
     - [📥 Competitor Bulk CSV Import Flow](#-competitor-bulk-csv-import-flow)
     - [📥 Match Bulk CSV Import Flow](#-match-bulk-csv-import-flow)
+    - [📥 Match Competitor Bulk CSV Import Flow](#-match-competitor-bulk-csv-import-flow)
 - [✅ Quality Attributes](#-quality-attributes)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [🛠️ Development Guidelines](#-development-guidelines)
@@ -99,7 +100,6 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───configs/                # ControllerAdvice tests
     ├───controllers/            # Controller unit tests (Mockito, no Spring context)
     ├───converters/             # AttributeConverter unit tests
-    ├───domain/                 # Entity unit tests (bidirectional toString/equals/hashCode safety)
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
     ├───helpers/                # Helper unit tests
@@ -171,14 +171,15 @@ All controllers:
 
 Contains all business logic.
 
-| Interface                    | Implementation                   | Role                                                                          |
-|------------------------------|----------------------------------|-------------------------------------------------------------------------------|
-| `AwardService`               | `AwardServiceImpl`               | Award CSV processing (deliberately stateless — see below)                     |
-| `ImageService`               | `ImageServiceImpl`               | Image CSV processing (deliberately stateless — see below)                     |
-| `IpscMatchService`           | `IpscMatchServiceImpl`           | IPSC match CRUD + bulk CSV import                                             |
-| `IpscCompetitorService`      | `IpscCompetitorServiceImpl`      | IPSC competitor CRUD + bulk CSV import                                        |
-| `IpscMatchCompetitorService` | `IpscMatchCompetitorServiceImpl` | IPSC match competitor CRUD + bulk CSV import                                  |
-| `TransactionService`         | `TransactionServiceImpl`         | Commits competitor/match/match competitor writes, each in its own transaction |
+| Interface                     | Implementation                    | Role                                                                                 |
+|-------------------------------|-----------------------------------|--------------------------------------------------------------------------------------|
+| `AwardService`                | `AwardServiceImpl`                | Award CSV processing (deliberately stateless — see below)                            |
+| `ImageService`                | `ImageServiceImpl`                | Image CSV processing (deliberately stateless — see below)                            |
+| `IpscMatchService`            | `IpscMatchServiceImpl`            | IPSC match CRUD + bulk CSV import                                                    |
+| `IpscCompetitorService`       | `IpscCompetitorServiceImpl`       | IPSC competitor CRUD + bulk CSV import                                               |
+| `IpscMatchCompetitorService`  | `IpscMatchCompetitorServiceImpl`  | IPSC match competitor CRUD + bulk CSV import                                         |
+| `EntityIpscCompetitorService` | `EntityIpscCompetitorServiceImpl` | Looks up a persisted competitor from the loosely-specified identity in imported data |
+| `TransactionService`          | `TransactionServiceImpl`          | Commits competitor/match/match competitor writes, each in its own transaction        |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
@@ -265,7 +266,7 @@ envelope.
 DTOs for the IPSC module rebuild — `MatchRequest`, `MatchPatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
 single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` (consumed by
 `IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
-(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints) and `MatchCompetitorResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchCompetitorRequest` through a Jackson mix-in), and the
+(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints) and `MatchCompetitorResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchCompetitorRequest` through a Jackson mix-in), `MatchCompetitorResult` and `MatchCompetitorResultHolder` (the per-row outcome of a match competitor bulk import), and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
 ---
@@ -355,10 +356,11 @@ Client → HTTP Request
 ### 📥 Award / Image CSV Processing Flow
 
 Handled by `AwardController` and `ImageController` — deliberately stateless by design, parsing CSV into response
-records without persisting anything:
+records without persisting anything. Every bulk CSV flow below sends the CSV text as the request body with
+`Content-Type: text/plain`:
 
 ```
-Client uploads CSV (Content-Type: text/csv)
+Client uploads CSV (Content-Type: text/plain)
     → AwardController / ImageController
         → AwardService.createAwards() / ImageService.createImages()
             (parses CSV via Jackson CsvMapper, maps to response records — deliberately no persistence)
@@ -372,7 +374,7 @@ Client uploads CSV (Content-Type: text/csv)
 Handled by `IpscCompetitorController` — unlike the Award/Image flow above, the rows are actually persisted:
 
 ```
-Client uploads CSV (Content-Type: text/csv)
+Client uploads CSV (Content-Type: text/plain)
     → IpscCompetitorController.createCompetitors
         → IpscCompetitorService.createCompetitors
             (parses CSV via Jackson CsvMapper into CompetitorRequest rows, then builds each row with the same
@@ -389,7 +391,7 @@ Client uploads CSV (Content-Type: text/csv)
 Handled by `IpscMatchController` — same shape as the Competitor flow above:
 
 ```
-Client uploads CSV (Content-Type: text/csv)
+Client uploads CSV (Content-Type: text/plain)
     → IpscMatchController.createMatches
         → IpscMatchService.createMatches
             (parses CSV via Jackson CsvMapper into MatchRequest rows, then builds each row with the
@@ -406,7 +408,7 @@ Client uploads CSV (Content-Type: text/csv)
 Handled by `IpscMatchCompetitorController` — same shape as the flows above, with every row also checked against the other rows and the existing entries before anything is saved:
 
 ```
-Client uploads CSV (Content-Type: text/csv)
+Client uploads CSV (Content-Type: text/plain)
     → IpscMatchCompetitorController.createMatchCompetitors
         → IpscMatchCompetitorService.createMatchCompetitors
             (parses CSV via Jackson CsvMapper into MatchCompetitorRequest rows, then builds each row with the
