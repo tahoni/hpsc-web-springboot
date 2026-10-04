@@ -38,8 +38,9 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
                 ? competitorRepository.findAllByFullNameIgnoreCase(competitorFullName)
                 : competitorsWithCompetitorNumberList
                 .stream()
-                .filter(competitor -> competitorFullName.equalsIgnoreCase(
-                        competitor.getFirstName() + " " + competitor.getLastName()))
+                .filter(competitor -> (
+                        (competitorFullName.equalsIgnoreCase(competitor.getFirstName() + " " + competitor.getLastName())) ||
+                        (competitorFullName.equalsIgnoreCase(competitor.getNickname() + " " + competitor.getLastName()))))
                 .toList();
         return competitorsWithFullNameList.size() == 1
                 ? Optional.of(competitorsWithFullNameList.getFirst())
