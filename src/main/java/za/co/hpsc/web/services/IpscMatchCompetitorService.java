@@ -5,6 +5,7 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 
@@ -59,7 +60,8 @@ public interface IpscMatchCompetitorService {
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 9.1.0
      */
-    MatchCompetitorResponseHolder createMatchCompetitors(String csvData)
+    // TODO: fix this method interface, implementation and tests
+    MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData)
             throws ValidationException, NonFatalException, FatalException;
 
     /**

@@ -25,6 +25,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequestCsvMixIn;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -74,7 +75,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     @Override
-    public MatchCompetitorResponseHolder createMatchCompetitors(String csvData) throws FatalException {
+    public MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData) throws FatalException {
         if (csvData == null || csvData.isBlank()) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
@@ -364,7 +365,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      *
      * <p>
      * The lookup is delegated to {@link EntityIpscCompetitorService#findCompetitor(String, String)}, which tries the
-     * competitor number first, then the ID number, then the full name, and itself throws when it does not find
+     * competitor number first, then the ID number, then the full name and itself throws when it does not find
      * exactly one competitor. The {@link NonFatalException} thrown here is therefore a safeguard for an empty result.
      * </p>
      *
