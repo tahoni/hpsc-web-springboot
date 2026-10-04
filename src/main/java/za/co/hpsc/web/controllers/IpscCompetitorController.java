@@ -114,7 +114,7 @@ public class IpscCompetitorController {
     })
     ResponseEntity<CompetitorResponseHolder> createCompetitors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "text/csv",
+                    content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
                             examples = @ExampleObject("""
                                     FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub

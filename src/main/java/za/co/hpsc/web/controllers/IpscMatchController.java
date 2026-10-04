@@ -113,7 +113,7 @@ public class IpscMatchController {
     })
     ResponseEntity<MatchResponseHolder> createMatches(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "text/csv",
+                    content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
                             examples = @ExampleObject("""
                                     MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
