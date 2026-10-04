@@ -6,8 +6,8 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.services.EntityIpscCompetitorService;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorService {
@@ -19,58 +19,30 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
 
     @Override
     public Optional<Competitor> findCompetitor(String fullName, int competitorNumber) {
-        List<Competitor> competitorsWithCompetitorNumberList = new ArrayList<>();
-        List<Competitor> competitorsWithFullNameList = new ArrayList<>();
-        List<Competitor> combinedCompetitorList = new ArrayList<>();
-
         // Normalised competitor number
         String competitorNumberString = String.valueOf(competitorNumber);
         // Normalise full name
         String competitorFullName = fullName.replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, "").trim();
 
-        try {
-            // First try to match using competitor number (SAPSA or club number)
-            if (!IpscConstants.EXCLUDE_ICS_ALIAS.contains(competitorNumberString)) {
-                competitorsWithCompetitorNumberList = competitorRepository.findAllByCompetitorNumber(competitorNumberString);
-            }
-            if (competitorsWithCompetitorNumberList.size() == 1) {
-                return Optional.of(competitorsWithCompetitorNumberList.getFirst());
-            }
-
-            // Then try to match using exact full name
-            if (competitorsWithCompetitorNumberList.isEmpty()) {
-                competitorsWithFullNameList = competitorRepository.findAllByFullNameIgnoreCase(competitorFullName);
-            } else {
-                competitorsWithFullNameList = competitorsWithCompetitorNumberList
-                        .stream()
-                        .filter( c -> competitorFullName.equalsIgnoreCase(
-                                c.getFirstName() + " " + c.getLastName()))
-                        .collect(Collectors.toList());
-            }
-            if (competitorsWithFullNameList.size() == 1) {
-                return Optional.of(competitorsWithFullNameList.getFirst());
-            }
-
-            // Find all competitors that are in the competitor number and full name lists
-            combinedCompetitorList.addAll(competitorsWithCompetitorNumberList);
-            combinedCompetitorList.retainAll(competitorsWithFullNameList);
-            if (combinedCompetitorList.size() == 1) {
-                return Optional.of(combinedCompetitorList.getFirst());
-            }
-
-            // Find all competitors that are in the competitor full name and number lists
-            combinedCompetitorList.clear();
-            combinedCompetitorList.addAll(competitorsWithFullNameList);
-            combinedCompetitorList.retainAll(competitorsWithCompetitorNumberList);
-            if (combinedCompetitorList.size() == 1) {
-                return Optional.of(combinedCompetitorList.getFirst());
-            }
-
-            return Optional.empty();
-        } finally {
-            competitorsWithCompetitorNumberList.clear();
-            competitorsWithFullNameList.clear();
-            combinedCompetitorList.clear();
+        // First try to match using competitor number (SAPSA or club number)
+        List<Competitor> competitorsWithCompetitorNumberList =
+                IpscConstants.EXCLUDE_ICS_ALIAS.contains(competitorNumberString)
+                        ? List.of()
+                        : competitorRepository.findAllByCompetitorNumber(competitorNumberString);
+        if (competitorsWithCompetitorNumberList.size() == 1) {
+            return Optional.of(competitorsWithCompetitorNumberList.getFirst());
         }
+
+        // Then try to match using exact full name, narrowed to the number matches when there are any
+        List<Competitor> competitorsWithFullNameList = competitorsWithCompetitorNumberList.isEmpty()
+                ? competitorRepository.findAllByFullNameIgnoreCase(competitorFullName)
+                : competitorsWithCompetitorNumberList
+                .stream()
+                .filter(competitor -> competitorFullName.equalsIgnoreCase(
+                        competitor.getFirstName() + " " + competitor.getLastName()))
+                .toList();
+        return competitorsWithFullNameList.size() == 1
+                ? Optional.of(competitorsWithFullNameList.getFirst())
+                : Optional.empty();
     }
 }
