@@ -87,6 +87,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   only if the name matches, and a number that is not a whole number is looked up as an ID number, answering `404`
   when nothing matches, instead of being rejected up front with a `400`
 
+##### Models
+
+- **`MatchCompetitorResult`, `MatchCompetitorResultHolder`:** Renamed to `MatchCompetitorBulkResponse` and
+  `MatchCompetitorBulkResponseHolder`, and the holder's `matchCompetitorResults` field to `matchCompetitors`, so the
+  bulk import's response models follow the `*Response`/`*ResponseHolder` naming — a bulk match competitor import's
+  response body now carries `matchCompetitors` instead of `matchCompetitorResults`
+
 ##### Utils
 
 - **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Renamed back from `DateUtils`, `NumberUtils`, `StringUtils`
