@@ -1,6 +1,7 @@
 package za.co.hpsc.web.services.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
@@ -43,7 +44,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
      * is thrown rather than returning an empty {@link Optional}.</p>
      */
     @Override
-    public Optional<Competitor> findCompetitor(String fullName, String competitorNumber)
+    public Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
             throws ValidationException, NonFatalException {
         // Either the competitor number or full name must be supplied
         if (((fullName == null) || (fullName.isBlank())) &&
@@ -57,7 +58,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         // A numeric value too long for an int (such as an ID number) is not a competitor number
         int competitorNumberInt = 0;
         if (StringUtils.isNumeric(competitorNumber)) {
-            competitorNumberInt = org.apache.commons.lang3.math.NumberUtils.toInt(competitorNumber, 0);
+            competitorNumberInt = NumberUtils.toInt(competitorNumber, 0);
         }
 
         List<Competitor> competitorsWithCompetitorNumberList = new ArrayList<>();
@@ -97,10 +98,12 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
             return Optional.of(competitorsMatchWithFullNameList.getFirst());
         }
 
+        String errorMessage = "";
         if (competitorsMatchWithFullNameList.isEmpty()) {
-            throw new NonFatalException("No competitors with the same competitor number or full name were found");
+            errorMessage = "No competitors with the same competitor number or full name were found";
         } else {
-            throw new NonFatalException("Two or more competitors with the same competitor number or name were found");
+            errorMessage = "Two or more competitors with the same competitor number or name were found";
         }
+        throw new NonFatalException(errorMessage);
     }
 }

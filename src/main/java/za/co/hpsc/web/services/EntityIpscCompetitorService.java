@@ -31,10 +31,10 @@ public interface EntityIpscCompetitorService {
      *     narrows those matches; when they matched none, all competitors are searched by name.</li>
      * </ol>
      *
-     * @param fullName         the competitor's full name. May be null or blank when a competitor
-     *                         number is supplied.
      * @param competitorNumber the competitor's number (SAPSA or club number) or ID number. May be
      *                         null or blank when a full name is supplied.
+     * @param fullName         the competitor's full name. May be null or blank when a competitor
+     *                         number is supplied.
      * @return the single matching competitor. Never empty: when no unique match is found, an
      * exception is thrown instead.
      * @throws ValidationException if both the full name and the competitor number are null or
@@ -42,7 +42,6 @@ public interface EntityIpscCompetitorService {
      * @throws NonFatalException   if no competitor matches, or if more than one competitor
      *                             matches.
      */
-    // TODO: wire this into MatchCompetitorServiceImpl
-    Optional<Competitor> findCompetitor(String fullName, String competitorNumber)
+    Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
         throws ValidationException, NonFatalException;
 }

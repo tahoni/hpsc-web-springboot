@@ -37,7 +37,7 @@ public class EntityIpscCompetitorServiceImplTest {
         when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", "42");
+        entityIpscCompetitorService.findCompetitor("42", "Jane Doe");
 
         // Assert
         verify(competitorRepository).findAllByCompetitorNumber(42);
@@ -50,7 +50,7 @@ public class EntityIpscCompetitorServiceImplTest {
                 .thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe RO", "42");
+        entityIpscCompetitorService.findCompetitor("42", "Jane Doe RO");
 
         // Assert
         verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
@@ -63,7 +63,7 @@ public class EntityIpscCompetitorServiceImplTest {
                 .thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("  Jane Doe (RO)  ", "42");
+        entityIpscCompetitorService.findCompetitor("42", "  Jane Doe (RO)  ");
 
         // Assert
         verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
@@ -76,7 +76,7 @@ public class EntityIpscCompetitorServiceImplTest {
                 .thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor(null, "42");
+        entityIpscCompetitorService.findCompetitor("42", null);
 
         // Assert
         verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("");
@@ -90,7 +90,7 @@ public class EntityIpscCompetitorServiceImplTest {
                 .thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", String.valueOf(excludedNumber));
+        entityIpscCompetitorService.findCompetitor(String.valueOf(excludedNumber), "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByCompetitorNumber(any());
@@ -104,7 +104,7 @@ public class EntityIpscCompetitorServiceImplTest {
         when(competitorRepository.findAllByIdNumber("AB123456")).thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", "AB123456");
+        entityIpscCompetitorService.findCompetitor("AB123456", "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByCompetitorNumber(any());
@@ -117,7 +117,7 @@ public class EntityIpscCompetitorServiceImplTest {
         when(competitorRepository.findAllByIdNumber("8001015009087")).thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", "8001015009087");
+        entityIpscCompetitorService.findCompetitor("8001015009087", "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByCompetitorNumber(any());
@@ -131,7 +131,7 @@ public class EntityIpscCompetitorServiceImplTest {
                 .thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", "0");
+        entityIpscCompetitorService.findCompetitor("0", "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByCompetitorNumber(any());
@@ -144,7 +144,7 @@ public class EntityIpscCompetitorServiceImplTest {
                 .thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", null);
+        entityIpscCompetitorService.findCompetitor(null, "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByCompetitorNumber(any());
@@ -157,7 +157,7 @@ public class EntityIpscCompetitorServiceImplTest {
         when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", "42");
+        entityIpscCompetitorService.findCompetitor("42", "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByIdNumber(anyString());
@@ -170,7 +170,7 @@ public class EntityIpscCompetitorServiceImplTest {
         when(competitorRepository.findAllByIdNumber("AB123456")).thenReturn(List.of(new Competitor()));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", "AB123456");
+        entityIpscCompetitorService.findCompetitor("AB123456", "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(anyString());
@@ -188,7 +188,7 @@ public class EntityIpscCompetitorServiceImplTest {
         when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(jane, john));
 
         // Act
-        entityIpscCompetitorService.findCompetitor("Jane Doe", "42");
+        entityIpscCompetitorService.findCompetitor("42", "Jane Doe");
 
         // Assert
         verify(competitorRepository, never()).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(anyString());

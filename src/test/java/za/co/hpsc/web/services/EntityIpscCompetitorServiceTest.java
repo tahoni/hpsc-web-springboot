@@ -49,7 +49,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Someone Else", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "Someone Else");
 
         // Assert
         assertTrue(result.isPresent());
@@ -64,7 +64,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor(null, "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", null);
 
         // Assert
         assertTrue(result.isPresent());
@@ -78,7 +78,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByIdNumber("AB123456")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Someone Else", "AB123456");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("AB123456", "Someone Else");
 
         // Assert
         assertTrue(result.isPresent());
@@ -94,7 +94,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "Jane Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -109,7 +109,7 @@ public class EntityIpscCompetitorServiceTest {
 
         // Act & Assert
         NonFatalException exception = assertThrows(NonFatalException.class,
-                () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "1234"));
+                () -> entityIpscCompetitorService.findCompetitor("1234", "Jane Doe"));
         assertTrue(exception.getMessage().startsWith("No competitors"));
     }
 
@@ -122,7 +122,7 @@ public class EntityIpscCompetitorServiceTest {
 
         // Act & Assert
         NonFatalException exception = assertThrows(NonFatalException.class,
-                () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "1234"));
+                () -> entityIpscCompetitorService.findCompetitor("1234", "Jane Doe"));
         assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
@@ -134,7 +134,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(jane, john));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "Jane Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -150,7 +150,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(janet, john));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "Jane Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -165,7 +165,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(jane, john));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("jANE dOE", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "jANE dOE");
 
         // Assert
         assertTrue(result.isPresent());
@@ -180,7 +180,7 @@ public class EntityIpscCompetitorServiceTest {
 
         // Act & Assert
         NonFatalException exception = assertThrows(NonFatalException.class,
-                () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "1234"));
+                () -> entityIpscCompetitorService.findCompetitor("1234", "Jane Doe"));
         assertTrue(exception.getMessage().startsWith("No competitors"));
     }
 
@@ -192,7 +192,7 @@ public class EntityIpscCompetitorServiceTest {
 
         // Act & Assert
         NonFatalException exception = assertThrows(NonFatalException.class,
-                () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "1234"));
+                () -> entityIpscCompetitorService.findCompetitor("1234", "Jane Doe"));
         assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
@@ -204,7 +204,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByIdNumber("AB123456")).thenReturn(List.of(jane, john));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "AB123456");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("AB123456", "Jane Doe");
 
         // Assert
         assertSame(jane, result.orElseThrow());
@@ -219,7 +219,7 @@ public class EntityIpscCompetitorServiceTest {
 
         // Act & Assert
         NonFatalException exception = assertThrows(NonFatalException.class,
-                () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "AB123456"));
+                () -> entityIpscCompetitorService.findCompetitor("AB123456", "Jane Doe"));
         assertTrue(exception.getMessage().startsWith("No competitors"));
     }
 
@@ -230,7 +230,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "AB123456");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("AB123456", "Jane Doe");
 
         // Assert
         assertSame(competitor, result.orElseThrow());
@@ -246,7 +246,7 @@ public class EntityIpscCompetitorServiceTest {
                 .thenReturn(List.of(competitor("Jack", "Doe", null), competitor("Jill", "Doe", null)));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "Jane Doe");
 
         // Assert
         assertSame(jane, result.orElseThrow());
@@ -259,7 +259,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "15000");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("15000", "Jane Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -274,7 +274,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "ABC");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("ABC", "Jane Doe");
 
         // Assert
         assertSame(competitor, result.orElseThrow());
@@ -288,7 +288,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "0");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("0", "Jane Doe");
 
         // Assert
         assertSame(competitor, result.orElseThrow());
@@ -302,7 +302,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", null);
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor(null, "Jane Doe");
 
         // Assert
         assertSame(competitor, result.orElseThrow());
@@ -316,7 +316,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "  ");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("  ", "Jane Doe");
 
         // Assert
         assertSame(competitor, result.orElseThrow());
@@ -331,7 +331,7 @@ public class EntityIpscCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe RO", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "Jane Doe RO");
 
         // Assert
         assertTrue(result.isPresent());
@@ -346,7 +346,7 @@ public class EntityIpscCompetitorServiceTest {
                 .thenReturn(List.of(jane, competitor("John", "Doe", null)));
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe (RO)", "1234");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("1234", "Jane Doe (RO)");
 
         // Assert
         assertSame(jane, result.orElseThrow());
@@ -359,7 +359,7 @@ public class EntityIpscCompetitorServiceTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class,
-                () -> entityIpscCompetitorService.findCompetitor(null, "1234"));
+                () -> entityIpscCompetitorService.findCompetitor("1234", null));
     }
 
     @Test
@@ -374,7 +374,7 @@ public class EntityIpscCompetitorServiceTest {
     void testFindCompetitor_whenTheNameAndNumberAreBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> entityIpscCompetitorService.findCompetitor(" ", ""));
+                () -> entityIpscCompetitorService.findCompetitor("", " "));
         verifyNoInteractions(competitorRepository);
     }
 
@@ -382,7 +382,7 @@ public class EntityIpscCompetitorServiceTest {
     void testFindCompetitor_whenTheNameIsNullAndTheNumberIsBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> entityIpscCompetitorService.findCompetitor(null, " "));
+                () -> entityIpscCompetitorService.findCompetitor(" ", null));
         verifyNoInteractions(competitorRepository);
     }
 
@@ -390,7 +390,7 @@ public class EntityIpscCompetitorServiceTest {
     void testFindCompetitor_whenTheNameIsBlankAndTheNumberIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> entityIpscCompetitorService.findCompetitor("", null));
+                () -> entityIpscCompetitorService.findCompetitor(null, ""));
         verifyNoInteractions(competitorRepository);
     }
 

@@ -59,6 +59,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Services
+
+- **`EntityIpscCompetitorService.findCompetitor`:** Parameters reordered to `(competitorNumber, fullName)`.
+  `IpscMatchCompetitorServiceImpl` now takes an `EntityIpscCompetitorService`, and its `resolveCompetitor` resolves a
+  competitor by ID, otherwise through the new `findCompetitorOrThrow(String, String)`, which trims the competitor
+  number and matches it, then the ID number, then the full name — an unmatched or ambiguous number and name now
+  throws a `NonFatalException` rather than a `ValidationException`
+
 ##### Utils
 
 - **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Renamed back from `DateUtils`, `NumberUtils`, `StringUtils`
@@ -77,6 +85,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `EntityIpscCompetitorServiceIntegrationTest`:** Brought up to date with the `String` competitor number and the
   `NonFatalException`/`ValidationException` behaviour of `findCompetitor`, and extended to cover the ID number
   lookup, non-numeric, zero, null and blank numbers, null names and the blank-input validation
+- **`IpscMatchCompetitorServiceImplTest`, `IpscMatchCompetitorServiceTest`,
+  `IpscMatchCompetitorServiceIntegrationTest`:** Cover `resolveCompetitor` delegating to `EntityIpscCompetitorService`
+  and the `NonFatalException` thrown for an ambiguous name
 
 #### 🐛 Fixed
 

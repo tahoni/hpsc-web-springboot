@@ -30,6 +30,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRespon
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.services.EntityIpscCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -47,15 +48,19 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final CompetitorRepository competitorRepository;
     private final IpscMatchRepository ipscMatchRepository;
+
+    private final EntityIpscCompetitorService entityIpscCompetitorService;
     private final TransactionService transactionService;
 
     public IpscMatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository,
                                           CompetitorRepository competitorRepository,
                                           IpscMatchRepository ipscMatchRepository,
+                                          EntityIpscCompetitorService entityIpscCompetitorService,
                                           TransactionService transactionService) {
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
+        this.entityIpscCompetitorService = entityIpscCompetitorService;
         this.transactionService = transactionService;
     }
 
@@ -354,6 +359,31 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
+     * Retrieves the single existing competitor that matches the given competitor number and name, or throws if
+     * there is none.
+     *
+     * <p>
+     * The lookup is delegated to {@link EntityIpscCompetitorService#findCompetitor(String, String)}, which tries the
+     * competitor number first, then the ID number, then the full name, and itself throws when it does not find
+     * exactly one competitor. The {@link NonFatalException} thrown here is therefore a safeguard for an empty result.
+     * </p>
+     *
+     * @param competitorNumber the competitor's number (SAPSA or club number); surrounding whitespace is ignored.
+     * @param competitorName   the competitor's full name, "FirstName LastName" or "NickName LastName", matched
+     *                         ignoring case.
+     * @return the matching {@link Competitor}.
+     * @throws ValidationException if both the competitor number and the name are null or blank.
+     * @throws NonFatalException   if no competitor matches, or more than one competitor matches.
+     */
+    protected Competitor findCompetitorOrThrow(String competitorNumber, String competitorName) {
+        String trimmedCompetitorNumber = (competitorNumber == null) ? null : competitorNumber.trim();
+        return entityIpscCompetitorService.findCompetitor(trimmedCompetitorNumber, competitorName)
+                .orElseThrow(() ->  new NonFatalException(
+                        String.format("No competitor found with competitor number of %s or name %s ",
+                                competitorNumber, competitorName)));
+    }
+
+    /**
      * Converts a competitor number received as text to the whole number it is stored as.
      *
      * @param competitorNumber the competitor number as text; surrounding whitespace is ignored.
@@ -369,46 +399,27 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
-     * Resolves the competitor a request refers to: by ID when one is given, otherwise by competitor number,
-     * otherwise by full name.
+     * Resolves the competitor a request refers to: by ID when one is given, otherwise by competitor number and
+     * name through {@link #findCompetitorOrThrow(String, String)}.
      *
      * @param competitorId     the identifier to look up; takes precedence over the number and name when not null.
-     * @param competitorNumber the competitor's number, a whole number, matched exactly; takes precedence over {@code name}, and is
-     *                         only used when {@code competitorId} is null.
-     * @param name             the competitor's full name, "First Last", matched case-insensitively; only used when
-     *                         {@code competitorId} and {@code competitorNumber} are both null or blank.
+     * @param competitorNumber the competitor's number (SAPSA or club number) or ID number; only used when
+     *                         {@code competitorId} is null. May be null or blank when {@code name} is given.
+     * @param name             the competitor's full name, "FirstName LastName" or "NickName LastName", matched
+     *                         ignoring case; only used when {@code competitorId} is null. May be null or blank when
+     *                         {@code competitorNumber} is given.
      * @return the matching {@link Competitor}.
-     * @throws ValidationException if none is given, the number is not a whole number, or the number or name matches
-     *                             more than one competitor.
-     * @throws NonFatalException   if no competitor matches.
+     * @throws ValidationException if {@code competitorId}, {@code competitorNumber} and {@code name} are all null
+     *                             or blank.
+     * @throws NonFatalException   if no competitor matches, or if more than one competitor matches the number
+     *                             and name.
      */
     protected Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
         if (competitorId != null) {
             return findCompetitorOrThrow(competitorId);
         }
-        if (hasText(competitorNumber)) {
-            List<Competitor> numberMatches = competitorRepository.findAllByCompetitorNumber(parseCompetitorNumber(competitorNumber));
-            if (numberMatches.isEmpty()) {
-                throw new NonFatalException("No competitor found with number " + competitorNumber.trim());
-            }
-            if (numberMatches.size() > 1) {
-                throw new ValidationException("More than one competitor has the number " + competitorNumber.trim()
-                        + "; use the competitor ID instead.");
-            }
-            return numberMatches.getFirst();
-        }
-        if (!hasText(name)) {
-            throw new ValidationException("Competitor ID, number or name is required.");
-        }
-        List<Competitor> matches = competitorRepository.findAllByFullNameIgnoreCase(name.trim());
-        if (matches.isEmpty()) {
-            throw new NonFatalException("No competitor found with name " + name.trim());
-        }
-        if (matches.size() > 1) {
-            throw new ValidationException("More than one competitor is named " + name.trim()
-                    + "; use the competitor ID instead.");
-        }
-        return matches.getFirst();
+
+        return findCompetitorOrThrow(competitorNumber, name);
     }
 
     /**

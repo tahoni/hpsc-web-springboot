@@ -41,7 +41,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         Competitor saved = saveCompetitor("Jane", "Doe", null, 880001);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Someone Else", "880001");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880001", "Someone Else");
 
         // Assert
         assertTrue(result.isPresent());
@@ -54,7 +54,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         Competitor saved = saveCompetitor("Jane", "Doe", null, 880002);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("jane doe", "880099");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880099", "jane doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -67,7 +67,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         Competitor saved = saveCompetitor("Janet", "Doe", "Jenny", 880003);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jenny Doe", "880099");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880099", "Jenny Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -80,7 +80,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         Competitor saved = saveCompetitor("Jane", "Doe", null, 880004);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe RO", "880099");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880099", "Jane Doe RO");
 
         // Assert
         assertTrue(result.isPresent());
@@ -93,7 +93,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         saveCompetitor("Jane", "Doe", null, 880005);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("Nobody Here", "880099"));
+        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880099", "Nobody Here"));
     }
 
     @Test
@@ -103,7 +103,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         saveCompetitor("Janet", "Doe", "Jane", 880007);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "880099"));
+        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880099", "Jane Doe"));
     }
 
     @Test
@@ -113,7 +113,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         saveCompetitor("John", "Doe", null, 880008);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "880008");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880008", "Jane Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -127,7 +127,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         saveCompetitor("John", "Doe", null, 880009);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jenny Doe", "880009");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880009", "Jenny Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -141,7 +141,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         saveCompetitor("Jack", "Doe", null, 880010);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "880010"));
+        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880010", "Jane Doe"));
     }
 
     @Test
@@ -151,7 +151,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         saveCompetitor("Janet", "Doe", "Jane", 880011);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("Jane Doe", "880011"));
+        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880011", "Jane Doe"));
     }
 
     @Test
@@ -161,7 +161,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         Competitor jane = saveCompetitor("Jane", "Doe", null, 880012);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", "15000");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("15000", "Jane Doe");
 
         // Assert
         assertTrue(result.isPresent());
@@ -176,7 +176,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         competitorRepository.save(saved);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Someone Else", "ZZ880013");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("ZZ880013", "Someone Else");
 
         // Assert
         assertTrue(result.isPresent());
@@ -191,7 +191,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         competitorRepository.save(saved);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Someone Else", "8001015009087");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("8001015009087", "Someone Else");
 
         // Assert
         assertEquals(saved.getId(), result.orElseThrow().getId());
@@ -200,7 +200,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenOnlyTheNumberIsGivenAndNoCompetitorHasIt_thenThrowsNonFatalException() {
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor(null, "880098"));
+        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880098", null));
     }
 
     @Test
@@ -209,7 +209,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
         Competitor saved = saveCompetitor("Jane", "Doe", null, 880014);
 
         // Act
-        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor(null, "880014");
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880014", null);
 
         // Assert
         assertEquals(saved.getId(), result.orElseThrow().getId());
@@ -218,7 +218,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenTheNameAndNumberAreBlank_thenThrowsValidationException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> entityIpscCompetitorService.findCompetitor("", " "));
+        assertThrows(ValidationException.class, () -> entityIpscCompetitorService.findCompetitor(" ", ""));
     }
 
     // Helpers

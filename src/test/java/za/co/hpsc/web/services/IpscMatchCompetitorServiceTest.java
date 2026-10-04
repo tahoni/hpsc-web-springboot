@@ -53,6 +53,9 @@ public class IpscMatchCompetitorServiceTest {
     private IpscMatchRepository ipscMatchRepository;
 
     @Mock
+    private EntityIpscCompetitorService entityIpscCompetitorService;
+
+    @Mock
     private PlatformTransactionManager transactionManager;
 
     private IpscMatchCompetitorService ipscMatchCompetitorService;
@@ -62,7 +65,7 @@ public class IpscMatchCompetitorServiceTest {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
         ipscMatchCompetitorService = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository, competitorRepository,
-                ipscMatchRepository, transactionService);
+                ipscMatchRepository, entityIpscCompetitorService, transactionService);
     }
 
     // createMatchCompetitor()
