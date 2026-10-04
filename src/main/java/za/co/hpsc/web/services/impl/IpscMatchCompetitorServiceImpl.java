@@ -39,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 @Slf4j
 @Service
 public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorService {
@@ -407,10 +409,6 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                     + "; use the competitor ID instead.");
         }
         return matches.getFirst();
-    }
-
-    private static boolean hasText(String value) {
-        return (value != null) && !value.isBlank();
     }
 
     /**

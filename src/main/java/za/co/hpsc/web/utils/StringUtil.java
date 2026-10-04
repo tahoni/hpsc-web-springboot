@@ -81,4 +81,18 @@ public final class StringUtil {
 
         return WordUtils.capitalizeFully(value, ' ', '\t', '-', '\'', '’');
     }
+
+    /**
+     * Checks whether a string contains at least one non-whitespace character.
+     *
+     * <p>A string made up only of whitespace characters, as defined by {@link String#isBlank()},
+     * is treated as having no text.</p>
+     *
+     * @param value the string to check; may be null.
+     * @return {@code true} if {@code value} is not null and not blank, {@code false} otherwise.
+     * @since 11.1.0
+     */
+    public static boolean hasText(String value) {
+        return (value != null) && !value.isBlank();
+    }
 }

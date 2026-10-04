@@ -240,4 +240,37 @@ public class StringUtilTest {
         // Act & Assert
         assertEquals("", StringUtil.toProperCase(""));
     }
+
+    // hasText(String)
+    @Test
+    void testHasText_whenNull_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(StringUtil.hasText(null));
+    }
+
+    @Test
+    void testHasText_whenEmpty_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(StringUtil.hasText(""));
+    }
+
+    @Test
+    void testHasText_whenOnlyWhitespace_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(StringUtil.hasText("   "));
+        assertFalse(StringUtil.hasText(" \t\r\n "));
+    }
+
+    @Test
+    void testHasText_whenNonBlank_thenReturnsTrue() {
+        // Act & Assert
+        assertTrue(StringUtil.hasText("text"));
+        assertTrue(StringUtil.hasText("0"));
+    }
+
+    @Test
+    void testHasText_whenTextSurroundedByWhitespace_thenReturnsTrue() {
+        // Act & Assert
+        assertTrue(StringUtil.hasText("  text \t"));
+    }
 }

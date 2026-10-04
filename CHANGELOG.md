@@ -49,6 +49,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Utils
+
+- **`StringUtil.hasText`:** New helper that returns `true` only when a string is neither null nor blank, replacing the
+  private copy in `IpscMatchCompetitorServiceImpl` that checks the competitor number and name on a request; includes
+  Javadoc and unit tests
+
 #### 🔄 Changed
 
 ##### Utils
