@@ -73,8 +73,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### API
 
 - **`AwardController`, `ImageController`, `IpscCompetitorController`, `IpscMatchController`,
-  `IpscMatchCompetitorController`:** The `POST /bulk` endpoints now consume `text/plain` instead of `text/csv`, and
-  their OpenAPI request-body content type matches; the CSV body is unchanged
+  `IpscMatchCompetitorController`:** **Breaking:** The `POST /bulk` endpoints now consume `text/plain` instead of
+  `text/csv`, so a request sent with `Content-Type: text/csv` is refused with a 415 error; their OpenAPI request-body
+  content type matches, and the CSV body is unchanged
 
 ##### Repositories
 
