@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @see MatchCompetitorResult
  * @see MatchCompetitorResponseHolder
- * @since 10.1.0
+ * @since 11.0.0
  */
 @Getter
 @Setter

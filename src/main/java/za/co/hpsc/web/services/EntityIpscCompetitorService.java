@@ -9,7 +9,7 @@ import java.util.Optional;
  * {@link Competitor} from the loosely-specified identity found in imported data, such as a
  * member's full name and competitor number.
  *
- * @since 10.1.0
+ * @since 11.0.0
  */
 public interface EntityIpscCompetitorService {
     /**
