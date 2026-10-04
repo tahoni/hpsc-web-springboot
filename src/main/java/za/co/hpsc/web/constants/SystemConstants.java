@@ -1,6 +1,6 @@
 package za.co.hpsc.web.constants;
 
-import za.co.hpsc.web.utils.NumberUtils;
+import za.co.hpsc.web.utils.NumberUtil;
 
 /**
  * Provides system-wide constants for various commonly used configurations,
@@ -19,7 +19,7 @@ public class SystemConstants {
         // Prevent instantiation of this utility class
     }
 
-    /** Decimal scale {@link NumberUtils}'s calculations round/format to by default. */
+    /** Decimal scale {@link NumberUtil}'s calculations round/format to by default. */
     public static final int DEFAULT_SCALE = 5;
 
     /** Bare time-of-day pattern (e.g. {@code "14:30"}), composed into {@link #ISO_DATE_TIME_FORMAT}. */

@@ -49,15 +49,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
-#### 🐛 Fixed
-
-##### Services
-
-- **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` no longer throws a `NumberFormatException` for a numeric
-  value too long for an `int`, such as a 13-digit ID number — it skips the competitor number lookup and matches the
-  value against ID numbers instead
-
 #### 🔄 Changed
+
+##### Utils
+
+- **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Renamed back from `DateUtils`, `NumberUtils`, `StringUtils`
+  and `ValueUtils`, the plural names introduced in 8.12.0 (and their test classes to match) — internal classes
+  only, so there is no API change
 
 ##### Documentation
 
@@ -71,6 +69,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `EntityIpscCompetitorServiceIntegrationTest`:** Brought up to date with the `String` competitor number and the
   `NonFatalException`/`ValidationException` behaviour of `findCompetitor`, and extended to cover the ID number
   lookup, non-numeric, zero, null and blank numbers, null names and the blank-input validation
+
+#### 🐛 Fixed
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` no longer throws a `NumberFormatException` for a numeric
+  value too long for an `int`, such as a 13-digit ID number — it skips the competitor number lookup and matches the
+  value against ID numbers instead
 
 ### 🧾 [11.0.0] - 2026-10-04
 

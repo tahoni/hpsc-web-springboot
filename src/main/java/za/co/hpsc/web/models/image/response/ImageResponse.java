@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.springframework.http.MediaTypeFactory;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.image.request.ImageRequest;
-import za.co.hpsc.web.utils.ValueUtils;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.net.URLConnection;
 import java.util.List;
@@ -68,8 +68,8 @@ public class ImageResponse extends Response {
     public ImageResponse(UUID uuid, @NotNull @NotBlank String title, String filePath, String fileName,
                          String mimeType) {
         super(uuid, title);
-        this.filePath = ValueUtils.nullAsEmptyString(filePath);
-        this.fileName = ValueUtils.nullAsEmptyString(fileName);
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType(mimeType);
     }
 
@@ -108,8 +108,8 @@ public class ImageResponse extends Response {
                          String description, String category, List<String> tags, String filePath,
                          String fileName, String mimeType) {
         super(uuid, title, summary, description, category, tags);
-        this.filePath = ValueUtils.nullAsEmptyString(filePath);
-        this.fileName = ValueUtils.nullAsEmptyString(fileName);
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType(mimeType);
     }
 
@@ -142,8 +142,8 @@ public class ImageResponse extends Response {
     public ImageResponse(@NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, String filePath, String fileName) {
         super(null, title, summary, description, category, tags);
-        this.filePath = ValueUtils.nullAsEmptyString(filePath);
-        this.fileName = ValueUtils.nullAsEmptyString(fileName);
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType();
     }
 

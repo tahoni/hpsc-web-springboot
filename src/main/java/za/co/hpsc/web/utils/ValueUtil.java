@@ -19,9 +19,9 @@ import java.util.UUID;
  * <b>Usage:</b>
  * </p>
  * <pre>{@code
- *   String name = ValueUtils.nullAsEmptyString(nullableName);  // "" if null
- *   int count = ValueUtils.nullAsZero(nullableCount);          // 0 if null
- *   List<T> items = ValueUtils.nullAsEmptyList(nullableList);  // [] if null
+ *   String name = ValueUtil.nullAsEmptyString(nullableName);  // "" if null
+ *   int count = ValueUtil.nullAsZero(nullableCount);          // 0 if null
+ *   List<T> items = ValueUtil.nullAsEmptyList(nullableList);  // [] if null
  * }</pre>
  *
  * @see java.util.UUID
@@ -29,9 +29,9 @@ import java.util.UUID;
  *
  * @since 1.1.0
  */
-public final class ValueUtils {
+public final class ValueUtil {
 
-    private ValueUtils() {
+    private ValueUtil() {
         // Utility class, not to be instantiated
     }
 
@@ -40,6 +40,7 @@ public final class ValueUtils {
      *
      * @param value the string value to be checked; may be {@code null}
      * @return the original string if non-null; otherwise {@code ""}
+     * @since 1.1.0
      */
     public static String nullAsEmptyString(String value) {
         return nullAsDefaultString(value, "");
@@ -136,6 +137,7 @@ public final class ValueUtils {
      * @param value the UUID to be checked; may be {@code null}
      * @return the original UUID if non-null; otherwise a newly generated random UUID
      * @see UUID#randomUUID()
+     * @since 1.1.0
      */
     public static UUID nullAsRandomUuid(UUID value) {
         return nullAsDefault(value, UUID.randomUUID());

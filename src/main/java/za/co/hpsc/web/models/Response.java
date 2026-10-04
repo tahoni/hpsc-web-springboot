@@ -3,7 +3,7 @@ package za.co.hpsc.web.models;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import za.co.hpsc.web.utils.ValueUtils;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +35,7 @@ public class Response extends Request {
      * </p>
      */
     public Response() {
-        this.uuid = ValueUtils.nullAsRandomUuid(null);
+        this.uuid = ValueUtil.nullAsRandomUuid(null);
     }
 
     /**
@@ -48,7 +48,7 @@ public class Response extends Request {
      * @param uuid the unique identifier for the response. If null, a random UUID is generated.
      */
     public Response(UUID uuid) {
-        this.uuid = ValueUtils.nullAsRandomUuid(uuid);
+        this.uuid = ValueUtil.nullAsRandomUuid(uuid);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Response extends Request {
      */
     public Response(UUID uuid, @NotNull @NotBlank String title) {
         super(title);
-        this.uuid = ValueUtils.nullAsRandomUuid(uuid);
+        this.uuid = ValueUtil.nullAsRandomUuid(uuid);
     }
 
     /**
@@ -96,7 +96,7 @@ public class Response extends Request {
     public Response(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {
         super(title, summary, description, category, tags);
-        this.uuid = ValueUtils.nullAsRandomUuid(uuid);
+        this.uuid = ValueUtil.nullAsRandomUuid(uuid);
     }
 
     /**
@@ -123,6 +123,6 @@ public class Response extends Request {
     public Response(@NotNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {
         super(title, summary, description, category, tags);
-        this.uuid = ValueUtils.nullAsRandomUuid(null);
+        this.uuid = ValueUtil.nullAsRandomUuid(null);
     }
 }

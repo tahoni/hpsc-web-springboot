@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.award.request.AwardRequest;
-import za.co.hpsc.web.utils.ValueUtils;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,8 +60,8 @@ public class AwardCeremonyResponse extends Response {
      */
     public AwardCeremonyResponse(LocalDate date, String imageFilePath, List<AwardResponse> awards) {
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -92,8 +92,8 @@ public class AwardCeremonyResponse extends Response {
                                  List<AwardResponse> awards) {
         super(uuid);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -127,8 +127,8 @@ public class AwardCeremonyResponse extends Response {
                                  List<AwardResponse> awards) {
         super(uuid, title);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -169,8 +169,8 @@ public class AwardCeremonyResponse extends Response {
                                  List<AwardResponse> awards) {
         super(uuid, title, summary, description, category, tags);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -208,8 +208,8 @@ public class AwardCeremonyResponse extends Response {
                                  List<AwardResponse> awards) {
         super(title, summary, description, category, tags);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**

@@ -135,7 +135,7 @@ Within a class, order members: constructors first, then public methods, then —
 every protected method, regardless of where they were originally declared; a class with no private helpers simply
 ends after its last protected method. Within each visibility group, keep the existing relative order rather than
 alphabetising — that stricter, alphabetised ordering is specific to test classes, per the Test Conventions below. A
-`final` utility class (e.g. `NumberUtils`, `IpscConstants`) can't be subclassed, so it has no protected members to
+`final` utility class (e.g. `NumberUtil`, `IpscConstants`) can't be subclassed, so it has no protected members to
 place; its private helpers, if any, still go after every public method.
 
 ---
@@ -184,7 +184,7 @@ shortens a cell, re-pad the whole table rather than only the edited row.
 - Class-level Javadoc should carry `@see` references to closely related types and `@since` where the codebase already
   tracks it.
 - Include a `<pre>{@code …}</pre>` usage example on utility classes and non-obvious constructors, matching the style in
-  `ValueUtils`.
+  `ValueUtil`.
 - Don't duplicate an interface method's Javadoc on its implementation unless the implementation has behaviour the
   interface contract doesn't already describe.
 
