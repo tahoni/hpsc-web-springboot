@@ -91,6 +91,8 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V10_1_0__add_match_competitor_overall_scores.sql`                | v10.0.0                | —                                                                                                                                                                             |
 | `V10_2_0__move_competitor_category_back_to_a_column.sql`          | v10.0.0                | Reverses `V8_8_0` and `V8_9_0`, collapsing the child tables back into single columns                                                                                          |
 | `V10_3_0__remove_match_competitor_hit_factor.sql`                 | v10.0.0                | Drops the `hit_factor` column `V10_1_0` added                                                                                                                                 |
+| `V11_0_0__rename_competitor_nickname_to_nick_name.sql`            | v11.0.0                | Renames `competitor.nickname` to `nick_name`                                                                                                                                  |
+| `V11_1_0__change_competitor_number_to_int.sql`                    | v11.0.0                | Changes `competitor.competitor_number` from `VARCHAR(255)` to `INT`; refused if a value is not a whole number                                                                 |
 
 ---
 

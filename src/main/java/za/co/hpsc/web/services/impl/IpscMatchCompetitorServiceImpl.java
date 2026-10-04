@@ -352,16 +352,32 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
+     * Converts a competitor number received as text to the whole number it is stored as.
+     *
+     * @param competitorNumber the competitor number as text; surrounding whitespace is ignored.
+     * @return the competitor number as a whole number.
+     * @throws ValidationException if the competitor number is not a whole number.
+     */
+    protected Integer parseCompetitorNumber(String competitorNumber) {
+        try {
+            return Integer.valueOf(competitorNumber.trim());
+        } catch (NumberFormatException e) {
+            throw new ValidationException("Competitor number must be a whole number: " + competitorNumber.trim());
+        }
+    }
+
+    /**
      * Resolves the competitor a request refers to: by ID when one is given, otherwise by competitor number,
      * otherwise by full name.
      *
      * @param competitorId     the identifier to look up; takes precedence over the number and name when not null.
-     * @param competitorNumber the competitor's number, matched exactly; takes precedence over {@code name}, and is
+     * @param competitorNumber the competitor's number, a whole number, matched exactly; takes precedence over {@code name}, and is
      *                         only used when {@code competitorId} is null.
      * @param name             the competitor's full name, "First Last", matched case-insensitively; only used when
      *                         {@code competitorId} and {@code competitorNumber} are both null or blank.
      * @return the matching {@link Competitor}.
-     * @throws ValidationException if none is given, or the number or name matches more than one competitor.
+     * @throws ValidationException if none is given, the number is not a whole number, or the number or name matches
+     *                             more than one competitor.
      * @throws NonFatalException   if no competitor matches.
      */
     protected Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
@@ -369,7 +385,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             return findCompetitorOrThrow(competitorId);
         }
         if (hasText(competitorNumber)) {
-            List<Competitor> numberMatches = competitorRepository.findByCompetitorNumber(competitorNumber.trim());
+            List<Competitor> numberMatches = competitorRepository.findAllByCompetitorNumber(parseCompetitorNumber(competitorNumber));
             if (numberMatches.isEmpty()) {
                 throw new NonFatalException("No competitor found with number " + competitorNumber.trim());
             }
@@ -382,7 +398,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (!hasText(name)) {
             throw new ValidationException("Competitor ID, number or name is required.");
         }
-        List<Competitor> matches = competitorRepository.findByFullNameIgnoreCase(name.trim());
+        List<Competitor> matches = competitorRepository.findAllByFullNameIgnoreCase(name.trim());
         if (matches.isEmpty()) {
             throw new NonFatalException("No competitor found with name " + name.trim());
         }

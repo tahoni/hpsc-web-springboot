@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 
 import java.math.BigDecimal;
 
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
  * </p>
  *
  * @see MatchCompetitorPatchRequest
- * @see za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse
+ * @see MatchCompetitorResponse
  * @since 9.1.0
  */
 @Getter

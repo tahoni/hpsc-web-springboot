@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 10.0.0](#-1000---2026-10-03) ← Current
+- [🧾 Version 11.0.0](#-1100---2026-10-04) ← Current
+- [🧾 Version 10.0.0](#-1000---2026-10-03)
 - [🧾 Version 9.1.0](#-910---2026-10-03)
 - [🧾 Version 9.0.0](#-900---2026-10-01)
 - [🧾 Version 8.12.0](#-8120---2026-09-29)
@@ -47,6 +48,108 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+### 🧾 [11.0.0] - 2026-10-04
+
+#### ➕ Added
+
+##### Models
+
+- **`MatchCompetitorResult`, `MatchCompetitorResultHolder`:** New response models for a bulk match competitor import —
+  a `MatchCompetitorResult` records whether one row succeeded, a message and the `MatchCompetitorResponse` it relates
+  to, and the holder carries the results in import order
+
+##### Services
+
+- **`EntityIpscCompetitorService`, `EntityIpscCompetitorServiceImpl`:** New `findCompetitor(fullName, competitorNumber)`
+  lookup, registered as a Spring `@Service`, that resolves a single `Competitor` — by competitor number when exactly
+  one matches (numbers in `IpscConstants.EXCLUDE_ICS_ALIAS` are skipped), otherwise by full name (narrowed to the number
+  matches when there are any), where the full name is either "FirstName LastName" or "Nickname LastName" — returning an
+  empty `Optional` when no single competitor can be determined
+
+#### 🔄 Changed
+
+##### Domain
+
+- **`Competitor`:** **Breaking:** The `nickname` field is renamed `nickName` and its column `nickname` is renamed
+  `nick_name`, by `V11_0_0__rename_competitor_nickname_to_nick_name.sql` (type, nullability and existing values are
+  preserved); `getNickname`/`setNickname` become `getNickName`/`setNickName`, and the repository query and
+  `EntityIpscCompetitorServiceImpl` follow
+- **`Competitor`:** **Breaking:** `competitorNumber` changes from a `String` to an `Integer` and its column
+  `competitor_number` from `VARCHAR(255)` to `INT`, by `V11_1_0__change_competitor_number_to_int.sql` (still
+  optional); the migration is refused, and the column left as it was, if any existing value is not a whole number
+
+##### Constants
+
+- **`IpscConstants.MAX_SAPSA_NUMBER`:** Raised from `99_999` to `999_999`
+- **`IpscConstants.EXCLUDE_ICS_ALIAS`:** Now a `List<Integer>` (`15000`, `16000`) instead of a `List<String>`, to
+  match the numeric competitor number
+
+##### API
+
+- **`AwardController`, `ImageController`, `IpscCompetitorController`, `IpscMatchController`,
+  `IpscMatchCompetitorController`:** **Breaking:** The `POST /bulk` endpoints now consume `text/plain` instead of
+  `text/csv`, so a request sent with `Content-Type: text/csv` is refused with a 415 error; their OpenAPI request-body
+  content type matches, and the CSV body is unchanged
+- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorRequestCsvMixIn`, `MatchCompetitorRequest`,
+  `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** **Breaking:** `competitorNumber` (CSV
+  `CompetitorNumber`, and `Mem #` for match competitors) stays a string in requests, but must now be a whole number:
+  it is read as one, and a value that is not, such as `C-1`, is refused with a validation error; a blank value is
+  treated as not supplied
+- **`CompetitorResponse`:** **Breaking:** `competitorNumber` is now a whole number instead of a string
+- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** **Breaking:**
+  The competitor's nickname property is renamed from `nickname` to `nickName` in JSON, and its CSV column from
+  `Nickname` to `NickName`; a CSV that still has a `Nickname` column imports without a nickname, because unknown
+  columns are ignored
+
+##### Repositories
+
+- **`CompetitorRepository`:** `findByCompetitorNumber` and `findByFullNameIgnoreCase` renamed to
+  `findAllByCompetitorNumber` and `findAllByFullNameIgnoreCase` (callers in `IpscMatchCompetitorServiceImpl` and its
+  tests updated), and the new `findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase` matches a competitor's
+  "FirstName LastName" or "Nickname LastName" full name, ignoring case; `findAllByFullNameIgnoreCase` still matches
+  only "FirstName LastName", and `findAllByCompetitorNumber` now takes an `Integer`
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.applyFields`, `IpscCompetitorServiceImpl.resolveCompetitorNumber`:** A competitor's
+  `competitorNumber` is no longer copied straight from the request — the new `resolveCompetitorNumber` helper uses the
+  request's `competitorNumber` when it is supplied, otherwise falls back to the request's `sapsaNumber`, and resolves
+  to `null` when neither is supplied; the new `parseCompetitorNumber` reads the request's text as a whole number (a
+  blank value is `null`, anything else that is not a whole number is refused with a `ValidationException`), and a
+  patch with a blank `competitorNumber` leaves the stored number unchanged
+- **`IpscMatchCompetitorServiceImpl.resolveCompetitor`:** Reads the request's `competitorNumber` as a whole number
+  before looking the competitor up, ignoring surrounding whitespace and refusing a value that is not a whole number
+  with a `ValidationException`
+
+##### Documentation
+
+- **Class-level `@since` tags:** Added to `IpscMatchCompetitorController`, `CompetitorPatchRequest`,
+  `CompetitorRequestCsvMixIn`, `MatchPatchRequest`, `MatchRequestCsvMixIn`, `MatchCompetitorPatchRequest`,
+  `MatchCompetitorRequestCsvMixIn`, `MatchCompetitorResponse`, `MatchCompetitorResponseHolder`,
+  `IpscMatchCompetitorService` and `TransactionService`, which had none
+- **`EntityIpscCompetitorService`:** Javadoc describing the number-first, full-name-second lookup in `findCompetitor`,
+  including the "RO" suffix handling and the empty result for no match or an ambiguous one
+- **`IpscCompetitorServiceImpl.resolveCompetitorNumber`:** Javadoc describing the competitor-number-first,
+  SAPSA-number-fallback resolution and the `null` result when neither is supplied
+
+##### Testing
+
+- **`EntityIpscCompetitorServiceTest`, `EntityIpscCompetitorServiceImplTest`, `EntityIpscCompetitorServiceIntegrationTest`:**
+  New three-tier tests for `findCompetitor` — the interface contract with a mocked repository (number, full-name and
+  nickname matching, excluded aliases, the "RO" suffix and ambiguous or missing matches), the impl's repository calls
+  (normalised arguments and skipped queries) and an end-to-end run against the H2 `test` database
+- **`IpscCompetitorServiceImplTest`:** New `resolveCompetitorNumber` tests covering both arguments `null`, only the
+  competitor number, only the SAPSA number, both supplied (competitor number wins), a blank competitor number with and
+  without a SAPSA number and one that is not a whole number, plus `parseCompetitorNumber`
+
+#### 🐛 Fixed
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** The "RO" suffix is now stripped from a full name that has
+  leading or trailing whitespace — the name is trimmed before the suffix is removed, so `"Jane Doe (RO) "` no longer
+  misses the competitor it names
 
 ### 🧾 [10.0.0] - 2026-10-03
 

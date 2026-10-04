@@ -93,7 +93,7 @@ public class IpscCompetitorController {
      * @throws FatalException      if a critical error occurs during processing, that prevents the
      *                             operation from completing successfully.
      */
-    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create competitors", description = "Create IPSC competitors in bulk from CSV data. A "
             + "row's club number is required when its home club is HPSC, and is otherwise ignored (forced to "
             + "null).")
@@ -114,10 +114,10 @@ public class IpscCompetitorController {
     })
     ResponseEntity<CompetitorResponseHolder> createCompetitors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "text/csv",
+                    content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
                             examples = @ExampleObject("""
-                                    FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                                    FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                                     string,string,string,string,yyyy-MM-dd,string,string,0,string,string,string,string,string;string,false,false
                                     """)))
             @RequestBody String csvData)

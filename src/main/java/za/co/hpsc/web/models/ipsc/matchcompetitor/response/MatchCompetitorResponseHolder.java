@@ -11,6 +11,7 @@ import java.util.List;
  * A container class holding the {@link MatchCompetitorResponse}s created by a bulk CSV import.
  *
  * @see za.co.hpsc.web.controllers.IpscMatchCompetitorController
+ * @since 9.1.0
  */
 @Getter
 @Setter

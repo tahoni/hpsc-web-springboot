@@ -114,8 +114,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getMiddleNames() != null) {
             competitor.setMiddleNames(request.getMiddleNames());
         }
-        if (request.getNickname() != null) {
-            competitor.setNickname(request.getNickname());
+        if (request.getNickName() != null) {
+            competitor.setNickName(request.getNickName());
         }
         if (request.getDateOfBirth() != null) {
             competitor.setDateOfBirth(request.getDateOfBirth());
@@ -129,8 +129,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getSapsaNumber() != null) {
             competitor.setSapsaNumber(request.getSapsaNumber());
         }
-        if (request.getCompetitorNumber() != null) {
-            competitor.setCompetitorNumber(request.getCompetitorNumber());
+        Integer competitorNumber = parseCompetitorNumber(request.getCompetitorNumber());
+        if (competitorNumber != null) {
+            competitor.setCompetitorNumber(competitorNumber);
         }
         if ((request.getHomeClub() != null) || (request.getClubNumber() != null)) {
             String clubNumber = (request.getClubNumber() != null) ? request.getClubNumber() : competitor.getClubNumber();
@@ -269,7 +270,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 StringUtils.toProperCase(csvRow.getFirstName()),
                 CompetitorHelpers.toSentenceCaseLastName(StringUtils.toProperCase(csvRow.getLastName())),
                 StringUtils.toProperCase(csvRow.getMiddleNames()),
-                StringUtils.toProperCase(csvRow.getNickname()),
+                StringUtils.toProperCase(csvRow.getNickName()),
                 csvRow.getDateOfBirth(),
                 StringUtils.toProperCase(csvRow.getGender()),
                 csvRow.getHomeClub(),
@@ -300,13 +301,13 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setFirstName(request.getFirstName());
         competitor.setLastName(request.getLastName());
         competitor.setMiddleNames(request.getMiddleNames());
-        competitor.setNickname(request.getNickname());
+        competitor.setNickName(request.getNickName());
         competitor.setDateOfBirth(request.getDateOfBirth());
         competitor.setGender(resolveGender(request.getGender()));
         Club homeClub = resolveHomeClub(request.getHomeClub());
         competitor.setHomeClub(homeClub);
         competitor.setSapsaNumber(request.getSapsaNumber());
-        competitor.setCompetitorNumber(request.getCompetitorNumber());
+        competitor.setCompetitorNumber(resolveCompetitorNumber(request.getCompetitorNumber(), request.getSapsaNumber()));
         competitor.setClubNumber(resolveClubNumber(homeClub, request.getClubNumber()));
         competitor.setIdNumber(request.getIdNumber());
         competitor.setCellphoneNumber(request.getCellphoneNumber());
@@ -417,6 +418,45 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
+     * Resolves the competitor number to use for a competitor, preferring an explicit competitor
+     * number and falling back to the SAPSA number.
+     *
+     * <p>
+     * A blank competitor number is treated the same as a {@code null} one, and so triggers the
+     * fallback.
+     * </p>
+     *
+     * @param competitorNumber the explicit competitor number, as text; may be null or blank.
+     * @param sapsaNumber      the SAPSA number to fall back on; may be null.
+     * @return {@code competitorNumber} as a whole number if it was supplied, otherwise {@code sapsaNumber},
+     * or {@code null} if neither was supplied.
+     * @throws ValidationException if {@code competitorNumber} is not a whole number.
+     */
+    protected Integer resolveCompetitorNumber(String competitorNumber, Integer sapsaNumber) {
+        Integer parsedCompetitorNumber = parseCompetitorNumber(competitorNumber);
+        return (parsedCompetitorNumber != null) ? parsedCompetitorNumber : sapsaNumber;
+    }
+
+    /**
+     * Converts a competitor number received as text to the whole number it is stored as.
+     *
+     * @param competitorNumber the competitor number as text; surrounding whitespace is ignored. May be null or
+     *                         blank.
+     * @return the competitor number as a whole number, or {@code null} if it is null or blank.
+     * @throws ValidationException if the competitor number is not a whole number.
+     */
+    protected Integer parseCompetitorNumber(String competitorNumber) {
+        if ((competitorNumber == null) || competitorNumber.isBlank()) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(competitorNumber.trim());
+        } catch (NumberFormatException e) {
+            throw new ValidationException("Competitor number must be a whole number: " + competitorNumber.trim());
+        }
+    }
+
+    /**
      * Validates that a request carries every field required to create or fully replace a
      * competitor.
      *
@@ -447,7 +487,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getFirstName(),
                 competitor.getLastName(),
                 competitor.getMiddleNames(),
-                competitor.getNickname(),
+                competitor.getNickName(),
                 competitor.getDateOfBirth(),
                 competitor.getGender(),
                 ((competitor.getHomeClub() != null) ? competitor.getHomeClub().getIdentifier() : null),

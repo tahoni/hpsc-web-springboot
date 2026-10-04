@@ -341,6 +341,14 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Replace that section's "groundwork only — not yet consumed by any controller" sentence with a note that the
   overall-score fields travel on the match competitor request/response DTOs
 
+**`ARCHITECTURE.md` bulk import content type** *(improvement-plan.md → Gap #35)* — ✅ Closed in v11.0.0
+
+- [x] Change the `Content-Type: text/csv` line in `ARCHITECTURE.md`'s Award / Image, Competitor, Match and Match
+  Competitor bulk CSV import flow diagrams to `text/plain`
+- [x] Add a short note that the body is CSV text sent as plain text, per the breaking `CHANGELOG.md` entry — done as
+  one sentence in the Award / Image CSV Processing Flow, covering every bulk CSV flow below it
+- [x] Check `README.md` and `CONTRIBUTING.md` for any remaining `text/csv` mention — none found
+
 ---
 
 ## 🟡 Partially Completed
@@ -381,7 +389,13 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**Wire in `EntityIpscCompetitorService` and the match competitor result models** *(improvement-plan.md → Gap #36)*
+
+- [ ] Call `EntityIpscCompetitorService.findCompetitor` from `IpscMatchCompetitorServiceImpl`'s competitor resolution
+  and remove the `TODO` in `EntityIpscCompetitorService`
+- [ ] Return `MatchCompetitorResultHolder` from the bulk match competitor import, reporting each row's success or
+  failure — or remove the unused `MatchCompetitorResult`/`MatchCompetitorResultHolder` if that is no longer wanted
+- [ ] Cover the wiring at all three test tiers, per `AGENTS.md`'s Test Conventions
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

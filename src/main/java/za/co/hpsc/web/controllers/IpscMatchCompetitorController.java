@@ -33,6 +33,8 @@ import java.util.List;
  * Provides endpoints for creating, fully or partially updating, retrieving (individually or all
  * at once) and deleting match competitors: one competitor's entry in one match, in one firearm type.
  * </p>
+ *
+ * @since 9.1.0
  */
 @Controller
 @RequestMapping("/ipsc/match-competitors")
@@ -86,7 +88,7 @@ public class IpscMatchCompetitorController {
      * @throws FatalException      if a critical error occurs during processing, that prevents the operation from
      *                             completing successfully.
      */
-    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match competitors", description = "Create competitors' entries in matches in bulk "
             + "from CSV data. Every row is checked before any is saved, so either every row is created or none is.")
     @ApiResponses(value = {
@@ -107,7 +109,7 @@ public class IpscMatchCompetitorController {
     })
     ResponseEntity<MatchCompetitorResponseHolder> createMatchCompetitors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "text/csv",
+                    content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
                             examples = @ExampleObject("""
                                     CompetitorId,Name,Mem #,MatchId,Class,Cats,FirearmType,Div,PF,Pts,%,Time,% psbl,A,C,D,M,NPM,NS,Proc,Apen,OverallRanking,ClubRanking,IsVisitor

@@ -21,8 +21,8 @@ class CompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenValidRow_thenMapsAllFields() throws Exception {
         // Arrange
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
-                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com,true,false
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,7001,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com,true,false
                 """;
 
         // Act
@@ -35,12 +35,12 @@ class CompetitorRequestCsvMixInTest {
         assertEquals("Jane", row.getFirstName());
         assertEquals("Doe", row.getLastName());
         assertEquals("Ann", row.getMiddleNames());
-        assertEquals("Janie", row.getNickname());
+        assertEquals("Janie", row.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), row.getDateOfBirth());
         assertEquals("Female", row.getGender());
         assertEquals("Test Club", row.getHomeClub());
         assertEquals(12345, row.getSapsaNumber());
-        assertEquals("C-1", row.getCompetitorNumber());
+        assertEquals("7001", row.getCompetitorNumber());
         assertEquals("HPSC-001", row.getClubNumber());
         assertEquals("9001015800083", row.getIdNumber());
         assertEquals("0821234567", row.getCellphoneNumber());
@@ -53,7 +53,7 @@ class CompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenHeaderOmitsOptionalColumns_thenLeavesThemNullAndEmailsEmpty() throws Exception {
         // Arrange
         String csvData = """
-                FirstName,LastName,Nickname
+                FirstName,LastName,NickName
                 Jane,Doe,Janie
                 """;
 
@@ -63,7 +63,7 @@ class CompetitorRequestCsvMixInTest {
         // Assert
         assertEquals(1, rows.size());
         assertEquals("Jane", rows.getFirst().getFirstName());
-        assertEquals("Janie", rows.getFirst().getNickname());
+        assertEquals("Janie", rows.getFirst().getNickName());
         assertNull(rows.getFirst().getMiddleNames());
         assertNull(rows.getFirst().getDateOfBirth());
         assertTrue(rows.getFirst().getEmailAddresses().isEmpty());
@@ -73,7 +73,7 @@ class CompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenRowIsRaggedAndMissesOnlyOptionalTrailingColumns_thenLeavesThemNull() throws Exception {
         // Arrange - a row doesn't have to supply a value for every column in the header
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe
                 """;
 
@@ -142,7 +142,7 @@ class CompetitorRequestCsvMixInTest {
         // Arrange - a row missing LastName entirely (not just blank) still trips the required
         // creator property check
         String csvData = """
-                FirstName,LastName,MiddleNames,Nickname,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane
                 """;
 
@@ -154,7 +154,7 @@ class CompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenHeaderOmitsRequiredColumn_thenThrowsMismatchedInputException() {
         // Arrange
         String csvData = """
-                FirstName,Nickname
+                FirstName,NickName
                 Jane,Janie
                 """;
 

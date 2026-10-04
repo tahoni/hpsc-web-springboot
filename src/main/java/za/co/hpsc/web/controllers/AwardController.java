@@ -55,7 +55,7 @@ public class AwardController {
      * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
-    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create awards", description = "Create awards in bulk from CSV data, grouped into ceremonies.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Awards created.",
@@ -70,7 +70,7 @@ public class AwardController {
     })
     ResponseEntity<AwardCeremonyResponseHolder> createAwards(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "text/csv",
+                    content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = AwardRequest.class),
                             examples = @ExampleObject("""
                                     title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName

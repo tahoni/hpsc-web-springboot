@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (32):**
+- **✅ Completed (33):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -110,13 +110,16 @@ number or a newly met precondition on an existing gap — see the `update-improv
     v10.0.0 (rows added; the Release Checklist now checks the table)
   - #34 `ARCHITECTURE.md` still describes the deleted `models/ipsc/scores/request/` DTOs as groundwork — closed
     v10.0.0 (tree and section corrected)
+  - #35 `ARCHITECTURE.md`'s bulk CSV import flows still show `Content-Type: text/csv` — closed v11.0.0 (four
+    diagrams corrected to `text/plain`)
 - **🟡 Partially Completed (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
     competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (0):** none
+- **⚪ Open (1):**
+  - #36 `EntityIpscCompetitorService` and the match competitor result models are built but not wired in
 
 ### ✅ Completed
 
@@ -1042,6 +1045,29 @@ code change is needed.
 the `shared/` description is unchanged. No code change was needed. The `prep-version-release` skill now also
 cross-checks that tree at release time, as `AGENTS.md`'s Release Checklist already did.
 
+#### 35. `ARCHITECTURE.md`'s bulk CSV import flows still show `Content-Type: text/csv` — ✅ Closed in v11.0.0
+
+**Evidence:** v11.0.0 changed every `POST /bulk` endpoint — `AwardController`, `ImageController`,
+`IpscCompetitorController`, `IpscMatchController` and `IpscMatchCompetitorController` — from
+`consumes = "text/csv"` to `consumes = "text/plain"` (commits `f83f30c`, `96c699f`; flagged as breaking in
+`CHANGELOG.md`'s `[Unreleased]` section). But `ARCHITECTURE.md` still opens four data-flow diagrams with
+`Client uploads CSV (Content-Type: text/csv)`: the Award / Image CSV Processing Flow, the Competitor Bulk CSV Import
+Flow, the Match Bulk CSV Import Flow and the Match Competitor Bulk CSV Import Flow. `grep -rn "consumes"
+src/main/java` finds no `text/csv` left.
+
+**Why it matters:** `ARCHITECTURE.md` is the evergreen design reference, and a client built from its diagrams would send
+`text/csv` and receive `415 Unsupported Media Type` from every bulk endpoint — the same doc-vs-code disagreement as
+Gaps #15, #19, #21 and #34, here caused by a deliberately breaking change.
+
+**Proposed improvement:** Change the four diagrams to `Content-Type: text/plain`, adding a short note that the body is
+CSV text sent as plain text (and why, per the `CHANGELOG.md` entry). Check `README.md` and `CONTRIBUTING.md` for any
+`text/csv` mention at the same time (a search found none).
+
+**Outcome:** Done as proposed in v11.0.0. `ARCHITECTURE.md`'s four bulk CSV import flow diagrams now open with
+`Client uploads CSV (Content-Type: text/plain)`, and the Award / Image CSV Processing Flow gained a sentence saying
+every bulk CSV flow sends the CSV text as the request body with `Content-Type: text/plain`. A search of `README.md`
+and `CONTRIBUTING.md` found no `text/csv` mention to correct. No code change was needed.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1117,7 +1143,27 @@ pin).
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 36. `EntityIpscCompetitorService` and the match competitor result models are built but not wired in
+
+**Evidence:** v11.0.0 adds `EntityIpscCompetitorService`/`EntityIpscCompetitorServiceImpl` (`findCompetitor(fullName,
+competitorNumber)`, matching by number, then by full name or nickname) and the `MatchCompetitorResult`/
+`MatchCompetitorResultHolder` response models. The interface carries the marker `// TODO: wire this into
+MatchCompetitorServiceImpl` (`services/EntityIpscCompetitorService.java:32`), and `grep` finds no caller of
+`findCompetitor` and no use of either result model anywhere under `src/main` — `IpscMatchCompetitorServiceImpl` still
+resolves competitors through its own `CompetitorRepository` finders. `CHANGELOG.md` records the models as the response
+for a bulk match competitor import, which does not yet return them.
+
+**Why it matters:** Both are inert groundwork — the same shape as Gap #9's unused `DEFAULT_MATCH_CLUB_IDENTIFIER` —
+so the lookup logic is tested in isolation but changes nothing for a client, and the three-tier tests it carries
+cover a path no request reaches. Left unwired, the duplicated resolution logic in the match competitor service
+and the new service can drift apart, and Gap #6's match competitor half does not get the number-or-name matching this
+service was written to provide.
+
+**Proposed improvement:** Wire `EntityIpscCompetitorService.findCompetitor` into `IpscMatchCompetitorServiceImpl`'s
+competitor resolution and return `MatchCompetitorResultHolder` from the bulk match competitor import, reporting each
+row's success or failure rather than failing the whole import — or, if that is no longer wanted, remove the unused
+classes rather than leaving them in place. Resolve the `TODO` either way, and cover the wiring at all three test tiers
+per `AGENTS.md`'s Test Conventions.
 
 ---
 
@@ -1126,7 +1172,7 @@ pin).
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | No items currently scoped — #33 and #34 closed in v10.0.0                                                                                                                                                                                          |
+| **Next**    | Wire `EntityIpscCompetitorService` and the match competitor result models into the match competitor service (#36)                                                                                                                                  |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1210,6 +1256,10 @@ pin).
   `db/migration/`, and the Release Checklist checks it, closing Gap #33.
 - ✅ Met in v10.0.0: `ARCHITECTURE.md` no longer names the deleted `models/ipsc/scores/request/` package or calls its
   DTOs groundwork, closing Gap #34.
+- ✅ Met in v11.0.0: `ARCHITECTURE.md`'s four bulk CSV import diagrams show `Content-Type: text/plain`, matching
+  every `POST /bulk` endpoint, closing Gap #35.
+- `EntityIpscCompetitorService.findCompetitor` is called by the match competitor service and the bulk match competitor
+  import returns `MatchCompetitorResultHolder` (or the unused classes are removed), closing Gap #36.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

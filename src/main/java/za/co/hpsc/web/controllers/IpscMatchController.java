@@ -94,7 +94,7 @@ public class IpscMatchController {
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
      */
-    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create matches", description = "Create IPSC matches in bulk from CSV data.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Matches created.",
@@ -113,7 +113,7 @@ public class IpscMatchController {
     })
     ResponseEntity<MatchResponseHolder> createMatches(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "text/csv",
+                    content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
                             examples = @ExampleObject("""
                                     MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
