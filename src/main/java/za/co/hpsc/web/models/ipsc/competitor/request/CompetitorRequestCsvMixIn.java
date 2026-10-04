@@ -19,6 +19,8 @@ import java.util.List;
  * CSV bulk import only ever creates new competitors, so a {@code CompetitorId} column is bound but never used.
  * {@code EmailAddresses} is a single cell of addresses separated by the shared array separator.
  * </p>
+ *
+ * @since 9.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class CompetitorRequestCsvMixIn {
@@ -27,7 +29,7 @@ public abstract class CompetitorRequestCsvMixIn {
                               @JsonProperty(value = "FirstName", required = true) String firstName,
                               @JsonProperty(value = "LastName", required = true) String lastName,
                               @JsonProperty("MiddleNames") String middleNames,
-                              @JsonProperty("Nickname") String nickname,
+                              @JsonProperty("NickName") String nickName,
                               @JsonProperty("DateOfBirth")
                               @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT) LocalDate dateOfBirth,
                               @JsonProperty("Gender") String gender,

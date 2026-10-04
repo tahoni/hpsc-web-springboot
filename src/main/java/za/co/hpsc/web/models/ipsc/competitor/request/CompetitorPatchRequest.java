@@ -20,6 +20,7 @@ import java.util.List;
  * </p>
  *
  * @see CompetitorRequest
+ * @since 9.0.0
  */
 @Getter
 @Setter
@@ -32,7 +33,7 @@ public class CompetitorPatchRequest {
     /** The competitor's middle name(s); may be null. */
     private String middleNames;
     /** The competitor's nickname; may be null. */
-    private String nickname;
+    private String nickName;
     /** The competitor's date of birth; may be null. */
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate dateOfBirth;
@@ -42,7 +43,7 @@ public class CompetitorPatchRequest {
     private String homeClub;
     /** The competitor's SAPSA membership number; may be null. */
     private Integer sapsaNumber;
-    /** The competitor's number, as assigned for competition; may be null. */
+    /** The competitor's number, as assigned for competition; a whole number. May be null or blank to leave it unchanged. */
     private String competitorNumber;
     /**
      * The competitor's HPSC membership number; must be unique across all competitors. Supplying this or

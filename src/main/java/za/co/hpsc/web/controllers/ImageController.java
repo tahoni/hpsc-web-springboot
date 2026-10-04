@@ -55,7 +55,7 @@ public class ImageController {
      * @throws FatalException      If a critical error occurs during processing, that prevents
      *                             the operation from completing successfully.
      */
-    @PostMapping(value = "/bulk", consumes = "text/csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create images", description = "Create images in bulk from CSV data.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Images created.",
@@ -70,7 +70,7 @@ public class ImageController {
     })
     ResponseEntity<ImageResponseHolder> createImages(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(mediaType = "text/csv",
+                    content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = ImageRequest.class),
                             examples = @ExampleObject("""
                                     title,summary,description,category,tags,filePath,fileName

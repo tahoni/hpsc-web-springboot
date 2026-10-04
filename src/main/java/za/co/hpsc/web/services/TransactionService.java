@@ -17,6 +17,8 @@ import java.util.List;
  * and email addresses, a match's club) already loaded, so it stays usable after the
  * transaction has ended.
  * </p>
+ *
+ * @since 8.9.0
  */
 public interface TransactionService {
     /**

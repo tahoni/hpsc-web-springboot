@@ -17,7 +17,7 @@ class MatchCompetitorRequestTest {
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
-        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", "A123", 2L, "HPSC", "Junior",
+        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", "123", 2L, "HPSC", "Junior",
                 "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
                 new BigDecimal("41.5"), new BigDecimal("93.75"), 30, 4, 1, 2, 1, 0, 3, 0,
                 new BigDecimal("2"), new BigDecimal("1"), false);
@@ -29,7 +29,7 @@ class MatchCompetitorRequestTest {
         assertEquals(7, node.get("matchCompetitorId").asInt());
         assertEquals(1, node.get("competitorId").asInt());
         assertEquals("Jane Doe", node.get("name").asText());
-        assertEquals("A123", node.get("competitorNumber").asText());
+        assertEquals("123", node.get("competitorNumber").asText());
         assertEquals(2, node.get("matchId").asInt());
         assertEquals("HPSC", node.get("matchClub").asText());
         assertEquals("Junior", node.get("competitorCategory").asText());

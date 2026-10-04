@@ -15,6 +15,8 @@ import java.math.BigDecimal;
  * <p>
  * A {@code MatchCompetitorId} column is bound as given.
  * </p>
+ *
+ * @since 9.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class MatchCompetitorRequestCsvMixIn {

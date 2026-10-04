@@ -146,11 +146,11 @@ class IpscMatchCompetitorServiceIntegrationTest {
     void testCreateMatchCompetitor_whenOnlyCompetitorNumberGiven_thenFindsCompetitorByNumber() {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-005");
-        competitor.setCompetitorNumber("A123");
+        competitor.setCompetitorNumber(123);
         competitorRepository.save(competitor);
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(null, match.getId());
-        request.setCompetitorNumber("A123");
+        request.setCompetitorNumber("123");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);

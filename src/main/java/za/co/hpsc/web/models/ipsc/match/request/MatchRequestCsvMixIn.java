@@ -18,6 +18,8 @@ import java.time.LocalTime;
  * <p>
  * CSV bulk import only ever creates new matches, so a {@code MatchId} column is bound but never used.
  * </p>
+ *
+ * @since 9.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class MatchRequestCsvMixIn {

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
  * </p>
  *
  * @see MatchCompetitorRequest
+ * @since 9.1.0
  */
 @Getter
 @Setter

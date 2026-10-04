@@ -32,7 +32,8 @@ public class Competitor {
     @Column(name = "middle_names")
     private String middleNames;
 
-    private String nickname;
+    @Column(name = "nick_name")
+    private String nickName;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
@@ -48,7 +49,7 @@ public class Competitor {
     private Integer sapsaNumber;
 
     @Column(name = "competitor_number")
-    private String competitorNumber;
+    private Integer competitorNumber;
 
     @Column(name = "club_number", unique = true)
     private String clubNumber;

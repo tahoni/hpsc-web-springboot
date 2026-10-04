@@ -20,6 +20,8 @@ import java.util.List;
  * A competitor can only have one entry per match and firearm type; creating, replacing or patching an entry so that
  * it duplicates another is refused.
  * </p>
+ *
+ * @since 9.1.0
  */
 public interface IpscMatchCompetitorService {
     /**
