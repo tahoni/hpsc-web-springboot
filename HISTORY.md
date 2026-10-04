@@ -21,6 +21,34 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 11.0.0 (October 4, 2026)
+
+**Theme:** Competitor Contract Tightening & Competitor Lookup Service
+
+**Key Focus:**
+
+- Every `POST /bulk` endpoint — awards, images, competitors, matches and match competitors — now consumes `text/plain`
+  rather than `text/csv`, and answers `415` to anything else; the body is unchanged
+- The competitor's nickname is renamed `nickname` → `nickName` in the entity field, the JSON property and the CSV
+  column (`Nickname` → `NickName`), and the `nickname` column becomes `nick_name` through the `V11_0_0` migration
+- `competitorNumber` becomes a whole number: `Competitor.competitorNumber` is an `Integer` held in an `INT` column
+  through `V11_1_0`, which is refused when existing data is non-numeric; competitor and match competitor requests (JSON
+  and CSV `CompetitorNumber`/`Mem #`) still send a string, but it must be a whole number, a blank means not supplied
+  and a blank in a patch leaves the stored number unchanged, and `CompetitorResponse` returns a whole number
+- New `EntityIpscCompetitorService.findCompetitor(fullName, competitorNumber)` resolves one competitor by number,
+  skipping the excluded ICS aliases 15000 and 16000, and then by full name — "FirstName LastName" or
+  "NickName LastName", ignoring case, with an RO suffix stripped — narrowed to the number matches; it is not yet wired
+  into a caller
+- New `MatchCompetitorResult` and `MatchCompetitorResultHolder` response models, unused so far
+- `CompetitorRepository`'s finders are renamed `findAll…` and gain
+  `findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase`; `IpscConstants.MAX_SAPSA_NUMBER` rises from 99,999 to
+  999,999 and `EXCLUDE_ICS_ALIAS` becomes a `List<Integer>`; `IpscCompetitorServiceImpl.resolveCompetitorNumber`
+  falls back to the SAPSA number
+- Three-tier tests for the new service take the suite to 1,109 passing tests
+- Scoped as `v11.0.0` **MAJOR**: three groups of changes are backward-incompatible and flagged `**Breaking:**` in
+  `CHANGELOG.md` — the `text/plain` bulk endpoints, the `nickName` rename and the whole-number `competitorNumber`
+- Project version bumped to 11.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 10.0.0 (October 3, 2026)
 
 **Theme:** PractiScore-Style Match Competitor Import & Overall Scores
@@ -1116,6 +1144,21 @@ resource, without breaking any existing caller.
 proved the full migration chain by running it against an empty database, which caught a migration that could never
 have run.
 
+### Milestone 45: Competitor Contract Tightening & Lookup Service (v11.0.0)
+
+- Every bulk endpoint declares the one content type it reads, `text/plain`, so a client sending `text/csv` is told so
+  with a `415` rather than silently accepted
+- The competitor's nickname is spelt `nickName` everywhere — entity, JSON, CSV and column — and `competitorNumber` is
+  a whole number in the entity and the table, while requests still send it as a string that must parse as one
+- A competitor can be found from a name and a number together: number first, then name, with the ICS aliases skipped
+  and a nickname accepted in place of a first name, ready for a caller to use
+- Project's third MAJOR release in a row, with three groups of breaking changes flagged `**Breaking:**` in
+  `CHANGELOG.md` as they landed
+
+**Achievement:** Settled the competitor's contract — one content type, one spelling and one type for the membership
+number — and built the lookup that depends on it, with a migration that refuses data it cannot convert rather than
+losing it.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1232,6 +1275,29 @@ PractiScore CSV ──(CsvMapper + MatchCompetitorRequestCsvMixIn)──→ Matc
   names stay descriptive (`points`, `percentageOfPossiblePoints`)
 - `MatchCompetitor` holds its overall scores as optional columns, and `competitorCategory` is a single value again on
   both `MatchCompetitor` and `ShooterLogCompetitor`, with no child tables
+
+### v11.0.0: Typed Competitor Number & Competitor Lookup Service
+
+```
+request (competitorNumber: String, "NickName"/"FirstName" + LastName)
+                          ↓  whole-number check — refused if not an integer, blank = not supplied
+Competitor.competitorNumber (Integer, INT column)
+                          ↓
+EntityIpscCompetitorService.findCompetitor(fullName, competitorNumber)
+        number (ICS aliases 15000/16000 skipped) → full name, narrowed to the number matches
+                          ↓
+CompetitorRepository.findAll… / findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase
+```
+
+**Characteristics:**
+
+- The request models keep `competitorNumber` a string, so the JSON and CSV contract reads the same, and the whole-number
+  rule is enforced by the service when it reads the request; only the entity, the table and `CompetitorResponse` hold a number
+- Number resolution comes before name resolution, and the name only narrows the number's matches, so a name cannot
+  select a different competitor than the number does
+- The lookup sits behind the entity service layer and is not yet called, so the competitor and match competitor
+  services still resolve competitors as v10.0.0 did
+- Every bulk endpoint reads `text/plain`, so the content type is the same for all five, whatever the resource
 
 ---
 
@@ -1451,6 +1517,12 @@ PractiScore CSV ──(CsvMapper + MatchCompetitorRequestCsvMixIn)──→ Matc
   — and settle `competitorCategory` back to a single value. Because that renames a JSON field, renames the CSV headers
   and turns a list back into a single value, the release is the project's second consecutive MAJOR, with each breaking
   change flagged in `CHANGELOG.md` as it landed.
+- **Version 11.x (v11.0.0):** Settle the competitor's contract before more is built on it — one content type
+  (`text/plain`) for every bulk endpoint, one spelling (`nickName`) for the nickname and a whole number for
+  `competitorNumber`, which the new competitor lookup service matches on before it falls back to the name. Because
+  that changes the content type the bulk endpoints accept, renames a JSON property and a CSV column and refuses a
+  competitor number that is not a whole number, the release is the project's third consecutive MAJOR, with each
+  breaking change flagged in `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -1736,11 +1808,20 @@ PractiScore CSV ──(CsvMapper + MatchCompetitorRequestCsvMixIn)──→ Matc
     - A refactor that returns a column to its earlier shape (`competitorCategory` back from a child table) needs the
       same check, because the migration reverses several earlier ones
 
+20. **Tighten a Type Where Bad Data Can Still Be Refused (v11.0.0):** Changing a column's type is safe only if the
+    data can be converted, and a migration that cannot convert it should stop rather than guess
+    - `V11_1_0` turns `competitor_number` into an `INT` and is refused when a stored number is non-numeric, so an old
+      value that was never a number surfaces at migration time instead of being lost
+    - Keeping `competitorNumber` a string in the requests while holding a number in the entity left the JSON and CSV
+      contract readable by existing clients, and put the whole-number rule in one place
+    - A lookup that depends on the number being comparable (`findCompetitor`) was only worth building once the number
+      was a number, which is why the contract change and the new service shipped together
+
 ---
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v10.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v11.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
@@ -1980,7 +2061,22 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v10.0.0)
+### Recently Completed (v11.0.0)
+
+- Every `POST /bulk` endpoint consumes `text/plain` instead of `text/csv`, answering `415` otherwise
+- Competitor `nickname` renamed `nickName` in the entity, the JSON property and the CSV column (`NickName`), with the
+  column renamed `nick_name` by `V11_0_0`
+- `Competitor.competitorNumber` an `Integer` in an `INT` column by `V11_1_0`, refused when existing data is
+  non-numeric; requests still send a string that must be a whole number, and `CompetitorResponse` returns one
+- New `EntityIpscCompetitorService.findCompetitor`, resolving a competitor by number and then by full name, not yet
+  wired into a caller, and the unused `MatchCompetitorResult` and `MatchCompetitorResultHolder` response models
+- `CompetitorRepository` finders renamed `findAll…` with the new
+  `findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase`; `IpscConstants.MAX_SAPSA_NUMBER` raised to 999,999 and
+  `EXCLUDE_ICS_ALIAS` a `List<Integer>`; `resolveCompetitorNumber` falls back to the SAPSA number
+- Three-tier tests for the new service, taking the suite to 1,109 passing tests
+- Project version bumped to 11.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v10.0.0)
 
 - `MatchCompetitor` gains the overall-score columns and `MatchCompetitorRequest`/`MatchCompetitorPatchRequest`/
   `MatchCompetitorResponse` the matching optional fields, with `matchPoints` renamed `points`, by `V10_0_0` and
@@ -2181,3 +2277,9 @@ Version 10.0.0 reshapes that first half of the scoring layer around the format t
 carry a PractiScore export's overall scores and headers, are found by membership number or name, and hold a single
 competitor category again. It is a MAJOR release, because the JSON field `matchPoints`, the CSV headers and the shape of
 `competitorCategory` all change for existing callers.
+
+Version 11.0.0 settles the competitor's contract and builds the lookup that depends on it: every bulk endpoint reads
+`text/plain`, the nickname is spelt `nickName` throughout and `competitorNumber` is a whole number in the entity and
+the table, with a new service that finds a competitor by number and then by name. It is a MAJOR release, because the
+bulk endpoints' content type, the nickname's JSON property and CSV column and the whole-number rule for
+`competitorNumber` all change for existing callers.

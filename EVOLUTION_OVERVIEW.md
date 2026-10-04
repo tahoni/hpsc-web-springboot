@@ -1581,6 +1581,65 @@ category again. Three changes are backward-incompatible, so it is MAJOR under th
 - Updated request, patch request, CSV mix-in, service, implementation and integration tests for the renamed and new
   fields, the single category and competitor resolution; the deleted request models' tests are removed
 
+### Phase 45: Competitor Contract Tightening & Competitor Lookup Service (v11.0.0)
+
+**Duration:** October 4, 2026
+
+A major release: the competitor contract is tightened and normalised, and a competitor lookup service is added. Every
+bulk endpoint reads `text/plain`, the nickname is spelt `nickName` throughout and `competitorNumber` is a whole number.
+Three groups of changes are backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Bulk Endpoints**
+
+- **Breaking:** every `POST /bulk` endpoint — awards, images, competitors, matches and match competitors — consumes
+  `text/plain` instead of `text/csv`, and answers `415` to any other content type; the request body is unchanged
+
+**Competitor Nickname**
+
+- **Breaking:** `nickname` is renamed `nickName` in the `Competitor` entity field and the JSON property, and the CSV
+  column `Nickname` becomes `NickName`
+- `V11_0_0` renames the `competitor.nickname` column to `nick_name`, keeping its type, nullability and values
+
+**Competitor Number**
+
+- **Breaking:** `Competitor.competitorNumber` is an `Integer`, held in an `INT` column by `V11_1_0`, which is refused
+  when existing data is non-numeric
+- **Breaking:** competitor and match competitor requests (JSON and CSV `CompetitorNumber`/`Mem #`) still send a string,
+  but it must be a whole number and is refused otherwise; a blank means not supplied, and a blank in a patch leaves the
+  stored number unchanged; `CompetitorResponse` returns a whole number
+
+**Competitor Lookup Service**
+
+- New `EntityIpscCompetitorService.findCompetitor(fullName, competitorNumber)` and its implementation resolve one
+  `Competitor`: first by number, skipping the excluded ICS aliases 15000 and 16000, then by full name — "FirstName
+  LastName" or "NickName LastName", ignoring case, trimmed first and with an RO suffix stripped — narrowed to the
+  number matches; it is not yet wired into a caller
+- New `MatchCompetitorResult` and `MatchCompetitorResultHolder` response models, unused so far
+
+**Repository & Services**
+
+- `CompetitorRepository`'s finders are renamed `findAll…`, and the new
+  `findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase` backs the name lookup
+- `IpscConstants.MAX_SAPSA_NUMBER` rises from 99,999 to 999,999 and `EXCLUDE_ICS_ALIAS` becomes a `List<Integer>`
+- `IpscCompetitorServiceImpl.resolveCompetitorNumber` falls back to the SAPSA number
+- Class-level `@since` tags are added
+
+**Build & Metadata**
+
+- Project version bumped to 11.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Giving the competitor one content type, one spelling and one numeric type, and refusing data that cannot be
+  converted rather than guessing
+
+**Test Coverage:**
+
+- Three-tier tests for `EntityIpscCompetitorService` and its implementation, and updated request, response, CSV and
+  repository tests for the renamed and retyped fields; the suite stands at 1,109 passing tests
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
